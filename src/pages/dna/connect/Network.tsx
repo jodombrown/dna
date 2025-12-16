@@ -54,35 +54,54 @@ export default function Network() {
     if (!user) return;
     try {
       setLoading(prev => ({ ...prev, sentRequests: true }));
-      // Query sent connection requests directly
-      const { data, error } = await supabase
+      
+      // First get the pending connection requests sent by the user
+      const { data: connections, error: connectionsError } = await supabase
         .from('connections')
-        .select(`
-          id,
-          recipient_id,
-          created_at,
-          recipient:profiles!connections_recipient_id_fkey (
-            id,
-            full_name,
-            avatar_url,
-            headline
-          )
-        `)
+        .select('id, recipient_id, created_at')
         .eq('requester_id', user.id)
         .eq('status', 'pending')
         .order('created_at', { ascending: false });
       
-      if (error) throw error;
+      if (connectionsError) {
+        console.error('Error fetching sent requests:', connectionsError);
+        setSentRequests([]);
+        return;
+      }
+      
+      if (!connections || connections.length === 0) {
+        setSentRequests([]);
+        return;
+      }
+      
+      // Get the recipient IDs
+      const recipientIds = connections.map(c => c.recipient_id);
+      
+      // Fetch the recipient profiles
+      const { data: profiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, full_name, avatar_url, headline')
+        .in('id', recipientIds);
+      
+      if (profilesError) {
+        console.error('Error fetching recipient profiles:', profilesError);
+      }
+      
+      // Create a map for quick lookup
+      const profileMap = new Map((profiles || []).map(p => [p.id, p]));
       
       // Map to expected format
-      const mappedRequests = (data || []).map((r: any) => ({
-        connection_id: r.id,
-        recipient_id: r.recipient_id,
-        recipient_name: r.recipient?.full_name || 'Unknown',
-        recipient_avatar: r.recipient?.avatar_url,
-        recipient_headline: r.recipient?.headline,
-        created_at: r.created_at,
-      }));
+      const mappedRequests = connections.map((c) => {
+        const profile = profileMap.get(c.recipient_id);
+        return {
+          connection_id: c.id,
+          recipient_id: c.recipient_id,
+          recipient_name: profile?.full_name || 'Unknown',
+          recipient_avatar: profile?.avatar_url,
+          recipient_headline: profile?.headline,
+          created_at: c.created_at,
+        };
+      });
       
       setSentRequests(mappedRequests);
     } finally {

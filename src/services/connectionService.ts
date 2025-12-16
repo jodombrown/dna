@@ -102,6 +102,64 @@ export const connectionService = {
     })) as ConnectionRequest[];
   },
 
+  async getSentRequests(): Promise<Array<{
+    connection_id: string;
+    recipient_id: string;
+    recipient_name: string;
+    recipient_avatar?: string | null;
+    recipient_headline?: string | null;
+    created_at: string;
+  }>> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+
+    // Get pending connection requests sent by the user
+    const { data: connections, error: connectionsError } = await supabase
+      .from('connections')
+      .select('id, recipient_id, created_at')
+      .eq('requester_id', user.id)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false });
+    
+    if (connectionsError) {
+      console.error('Error fetching sent requests:', connectionsError);
+      return [];
+    }
+    
+    if (!connections || connections.length === 0) {
+      return [];
+    }
+    
+    // Get the recipient IDs
+    const recipientIds = connections.map(c => c.recipient_id);
+    
+    // Fetch the recipient profiles
+    const { data: profiles, error: profilesError } = await supabase
+      .from('profiles')
+      .select('id, full_name, avatar_url, headline')
+      .in('id', recipientIds);
+    
+    if (profilesError) {
+      console.error('Error fetching recipient profiles:', profilesError);
+    }
+    
+    // Create a map for quick lookup
+    const profileMap = new Map((profiles || []).map(p => [p.id, p]));
+    
+    // Map to expected format
+    return connections.map((c) => {
+      const profile = profileMap.get(c.recipient_id);
+      return {
+        connection_id: c.id,
+        recipient_id: c.recipient_id,
+        recipient_name: profile?.full_name || 'Unknown',
+        recipient_avatar: profile?.avatar_url,
+        recipient_headline: profile?.headline,
+        created_at: c.created_at,
+      };
+    });
+  },
+
   async getConnections(searchQuery?: string): Promise<ConnectionProfile[]> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return [];
