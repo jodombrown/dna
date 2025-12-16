@@ -108,10 +108,14 @@ export function FirstTimeWalkthrough() {
   
   const [isVisible, setIsVisible] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const [hasCompletedLocally, setHasCompletedLocally] = useState(() => {
+    // Check localStorage for immediate completion state
+    return localStorage.getItem('dna_tour_completed') === 'true';
+  });
 
   useEffect(() => {
-    // Only show if tour is NOT completed
-    if (isCompleted) {
+    // Don't show if completed in DB or locally
+    if (isCompleted || hasCompletedLocally) {
       setIsVisible(false);
       return;
     }
@@ -123,7 +127,7 @@ export function FirstTimeWalkthrough() {
     }, 500);
     
     return () => clearTimeout(timer);
-  }, [isCompleted, markTourShown]);
+  }, [isCompleted, hasCompletedLocally, markTourShown]);
 
   // Sync with saved step if resuming
   useEffect(() => {
@@ -132,9 +136,17 @@ export function FirstTimeWalkthrough() {
     }
   }, [savedStep]);
  
-  const handleComplete = () => {
-    completeTour();
+  const handleComplete = async () => {
+    // Set local state immediately to prevent re-showing
+    setHasCompletedLocally(true);
+    localStorage.setItem('dna_tour_completed', 'true');
     setIsVisible(false);
+    
+    // Then persist to database
+    completeTour();
+    
+    // Navigate to feed after completion
+    window.location.href = '/dna/feed';
   };
 
   const handleNext = () => {
@@ -155,7 +167,7 @@ export function FirstTimeWalkthrough() {
     }
   };
 
-  if (!isVisible) return null;
+  if (!isVisible || hasCompletedLocally) return null;
 
   const step = walkthroughSteps[currentStep];
   const isLastStep = currentStep === walkthroughSteps.length - 1;
