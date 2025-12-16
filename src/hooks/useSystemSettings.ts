@@ -30,8 +30,8 @@ export const useSystemSettings = (): UseSystemSettingsReturn => {
 
   const fetchSettings = useCallback(async () => {
     try {
-      const { data, error: fetchError } = await supabase
-        .from('system_settings')
+      const { data, error: fetchError } = await (supabase
+        .from('system_settings' as any) as any)
         .select('*')
         .order('category')
         .order('setting_key');
@@ -43,11 +43,11 @@ export const useSystemSettings = (): UseSystemSettingsReturn => {
       }
 
       if (data) {
-        setAllSettings(data as SystemSetting[]);
+        setAllSettings(data as unknown as SystemSetting[]);
 
         // Convert to key-value map
         const settingsMap: Record<string, any> = {};
-        data.forEach((setting: SystemSetting) => {
+        (data as any[]).forEach((setting: SystemSetting) => {
           settingsMap[setting.setting_key] = setting.setting_value;
         });
         setSettings(settingsMap);
@@ -75,7 +75,7 @@ export const useSystemSettings = (): UseSystemSettingsReturn => {
 
   const updateSetting = useCallback(async (key: string, value: any): Promise<boolean> => {
     try {
-      const { data, error: rpcError } = await supabase.rpc('update_system_setting', {
+      const { data, error: rpcError } = await (supabase.rpc as any)('update_system_setting', {
         p_key: key,
         p_value: value
       });

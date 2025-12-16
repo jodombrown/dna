@@ -160,9 +160,9 @@ export const AdminDashboardLayout: React.FC = () => {
   useEffect(() => {
     const fetchAdminUser = async () => {
       try {
-        const { data, error } = await supabase.rpc('get_current_admin_status');
+        const { data, error } = await (supabase.rpc as any)('get_current_admin_status');
 
-        if (!error && data && data.length > 0) {
+        if (!error && data && Array.isArray(data) && data.length > 0) {
           const result = data[0];
           setAdminUser({
             userId: result.user_id,
@@ -178,10 +178,10 @@ export const AdminDashboardLayout: React.FC = () => {
 
     const fetchPendingCounts = async () => {
       try {
-        const { data: stats } = await supabase.rpc('get_admin_dashboard_stats');
+        const { data: stats } = await (supabase.rpc as any)('get_admin_dashboard_stats');
         if (stats) {
-          setPendingFeedback(stats.feedback?.pending || 0);
-          setPendingModeration(stats.moderation?.pending_flags || 0);
+          setPendingFeedback((stats as any)?.feedback?.pending || 0);
+          setPendingModeration((stats as any)?.moderation?.pending_flags || 0);
         }
       } catch (err) {
         console.error('Failed to fetch pending counts:', err);
@@ -199,7 +199,7 @@ export const AdminDashboardLayout: React.FC = () => {
   const handleLogout = async () => {
     try {
       // End admin session
-      await supabase.rpc('end_admin_session', { p_reason: 'manual' });
+      await (supabase.rpc as any)('end_admin_session', { p_reason: 'manual' });
 
       // Sign out
       await supabase.auth.signOut();
