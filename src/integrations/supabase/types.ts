@@ -7170,6 +7170,10 @@ export type Database = {
         }
         Returns: string
       }
+      admin_verify_user: {
+        Args: { admin_user_id: string; target_user_id: string }
+        Returns: boolean
+      }
       approve_beta_application: {
         Args: { admin_id: string; application_id: string }
         Returns: {

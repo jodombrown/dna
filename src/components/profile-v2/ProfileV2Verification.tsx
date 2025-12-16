@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Shield, Award, Clock, CheckCircle2 } from 'lucide-react';
+import { Shield, Award, Clock, CheckCircle2, BadgeCheck } from 'lucide-react';
 import { ProfileV2VerificationMeta } from '@/types/profileV2';
 
 interface ProfileV2VerificationProps {
@@ -15,20 +15,24 @@ const getVerificationConfig = (tier: string | undefined) => {
       return {
         icon: Award,
         label: 'Fully Verified',
-        color: 'text-primary',
-        bgColor: 'bg-primary/10',
-        borderColor: 'border-primary/20',
-        description: 'Confirmed diaspora identity with full platform access',
+        color: 'text-amber-600 dark:text-amber-400',
+        bgColor: 'bg-amber-500/10',
+        borderColor: 'border-amber-500/20',
+        badgeColor: 'bg-amber-500/20 text-amber-700 dark:text-amber-300',
+        description: 'Admin-verified diaspora member with full platform trust',
+        showBadge: true,
       };
     case 'soft_verified':
     case 'soft':
       return {
-        icon: Shield,
+        icon: BadgeCheck,
         label: 'Verified Member',
-        color: 'text-blue-600 dark:text-blue-400',
-        bgColor: 'bg-blue-500/10',
-        borderColor: 'border-blue-500/20',
-        description: 'Trusted DNA member with verified email and profile',
+        color: 'text-primary',
+        bgColor: 'bg-primary/10',
+        borderColor: 'border-primary/20',
+        badgeColor: 'bg-primary/20 text-primary',
+        description: 'Profile complete — trusted DNA member',
+        showBadge: true,
       };
     default:
       return {
@@ -37,7 +41,9 @@ const getVerificationConfig = (tier: string | undefined) => {
         color: 'text-muted-foreground',
         bgColor: 'bg-secondary',
         borderColor: 'border-secondary',
-        description: 'Complete your profile to unlock verification',
+        badgeColor: 'bg-secondary text-muted-foreground',
+        description: 'Complete your profile to 100% to unlock verification',
+        showBadge: false,
       };
   }
 };
@@ -47,6 +53,7 @@ const ProfileV2Verification: React.FC<ProfileV2VerificationProps> = ({
 }) => {
   const config = getVerificationConfig(verificationMeta.tier || verificationMeta.status);
   const IconComponent = config.icon;
+  const isVerified = config.showBadge;
 
   return (
     <Card className="overflow-hidden">
@@ -62,7 +69,7 @@ const ProfileV2Verification: React.FC<ProfileV2VerificationProps> = ({
             <IconComponent className={`w-5 h-5 ${config.color}`} />
           </div>
           <div className="flex-1 min-w-0">
-            <Badge variant="secondary" className={`mb-1 text-xs ${config.color}`}>
+            <Badge className={`mb-1 text-xs ${config.badgeColor} border-0`}>
               {config.label}
             </Badge>
             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -71,7 +78,8 @@ const ProfileV2Verification: React.FC<ProfileV2VerificationProps> = ({
           </div>
         </div>
 
-        {verificationMeta.improvement_suggestions && verificationMeta.improvement_suggestions.length > 0 && (
+        {/* Only show improvement suggestions if NOT verified */}
+        {!isVerified && verificationMeta.improvement_suggestions && verificationMeta.improvement_suggestions.length > 0 && (
           <div>
             <p className="text-sm font-medium mb-2">Steps to verify:</p>
             <ul className="space-y-2">
@@ -85,9 +93,10 @@ const ProfileV2Verification: React.FC<ProfileV2VerificationProps> = ({
           </div>
         )}
 
-        {verificationMeta.updated_at && (
+        {/* Show verification date if verified */}
+        {isVerified && verificationMeta.updated_at && (
           <p className="text-xs text-muted-foreground pt-2 border-t border-border">
-            Last updated: {new Date(verificationMeta.updated_at).toLocaleDateString()}
+            Verified on {new Date(verificationMeta.updated_at).toLocaleDateString()}
           </p>
         )}
       </CardContent>
