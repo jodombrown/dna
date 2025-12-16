@@ -50,7 +50,7 @@ export const useAdminAuth = (): UseAdminAuthReturn => {
         return;
       }
 
-      const { data, error } = await supabase.rpc('get_current_admin_status');
+      const { data, error } = await (supabase.rpc as any)('get_current_admin_status');
 
       if (error) {
         console.error('Error fetching admin status:', error);
@@ -58,7 +58,7 @@ export const useAdminAuth = (): UseAdminAuthReturn => {
         return;
       }
 
-      if (data && data.length > 0) {
+      if (data && Array.isArray(data) && data.length > 0) {
         const result = data[0];
         setAdminUser({
           userId: result.user_id,
@@ -114,7 +114,7 @@ export const useAdminAuth = (): UseAdminAuthReturn => {
 
   const logout = useCallback(async () => {
     try {
-      await supabase.rpc('end_admin_session', { p_reason: 'manual' });
+      await (supabase.rpc as any)('end_admin_session', { p_reason: 'manual' });
       await supabase.auth.signOut();
       setAdminUser(null);
     } catch (error) {

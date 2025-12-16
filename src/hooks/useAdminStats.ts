@@ -81,7 +81,7 @@ export const useAdminStats = (): UseAdminStatsReturn => {
 
   const fetchStats = useCallback(async () => {
     try {
-      const { data, error: rpcError } = await supabase.rpc('get_admin_dashboard_stats');
+      const { data, error: rpcError } = await (supabase.rpc as any)('get_admin_dashboard_stats');
 
       if (rpcError) {
         console.error('Error fetching stats:', rpcError);
@@ -90,7 +90,7 @@ export const useAdminStats = (): UseAdminStatsReturn => {
       }
 
       if (data) {
-        setStats(data as AdminDashboardStats);
+        setStats(data as unknown as AdminDashboardStats);
         setError(null);
       }
     } catch (err) {
@@ -101,7 +101,7 @@ export const useAdminStats = (): UseAdminStatsReturn => {
 
   const fetchGrowth = useCallback(async (days: number = 30) => {
     try {
-      const { data, error: rpcError } = await supabase.rpc('get_user_growth_data', {
+      const { data, error: rpcError } = await (supabase.rpc as any)('get_user_growth_data', {
         p_days: days
       });
 
@@ -111,7 +111,7 @@ export const useAdminStats = (): UseAdminStatsReturn => {
       }
 
       if (data) {
-        setUserGrowth(data as UserGrowthDataPoint[]);
+        setUserGrowth(data as unknown as UserGrowthDataPoint[]);
       }
     } catch (err) {
       console.error('Growth data fetch error:', err);
@@ -120,7 +120,7 @@ export const useAdminStats = (): UseAdminStatsReturn => {
 
   const fetchSegments = useCallback(async () => {
     try {
-      const { data, error: rpcError } = await supabase.rpc('get_user_segments_distribution');
+      const { data, error: rpcError } = await (supabase.rpc as any)('get_user_segments_distribution');
 
       if (rpcError) {
         console.error('Error fetching segments:', rpcError);
@@ -128,7 +128,7 @@ export const useAdminStats = (): UseAdminStatsReturn => {
       }
 
       if (data) {
-        setUserSegments(data as UserSegment[]);
+        setUserSegments(data as unknown as UserSegment[]);
       }
     } catch (err) {
       console.error('Segments fetch error:', err);
