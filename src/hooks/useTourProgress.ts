@@ -23,8 +23,9 @@ export function useTourProgress() {
   };
 
   const isCompleted = !!tourProgress.tour_completed_at;
-  const wasSkipped = !!tourProgress.tour_skipped_at && !isCompleted;
-  const shouldShowTour = !isCompleted && !tourProgress.tour_last_shown_at;
+  const wasSkipped = !!tourProgress.tour_skipped_at;
+  // Only show tour if: not completed, not skipped, and never shown before
+  const shouldShowTour = !isCompleted && !wasSkipped && !tourProgress.tour_last_shown_at;
 
   // Update tour progress mutation
   const updateMutation = useMutation({
