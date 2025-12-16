@@ -12,6 +12,7 @@ import UnifiedHeader from '@/components/UnifiedHeader';
 import ProfileCompletionBar, { calculateProfileCompletionPts } from '@/components/profile/ProfileCompletionBar';
 import TourResumeBanner from '@/components/onboarding/TourResumeBanner';
 import OnboardingTour from '@/components/onboarding/OnboardingTour';
+import UsernameManager from '@/components/profile/UsernameManager';
 
 // Import modular profile edit components
 import {
@@ -409,6 +410,25 @@ const ProfileEdit = () => {
         <TourResumeBanner onStartTour={() => setShowTour(true)} />
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Username Section */}
+          <div className="bg-card rounded-lg border p-6">
+            <h3 className="text-lg font-semibold mb-4">Username</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Your username is your unique identity on DNA. You can change it up to 2 times.
+            </p>
+            <UsernameManager
+              currentUsername={profile?.username || ''}
+              changesLeft={2 - ((profile as any)?.username_changes_count || 0)}
+              onUsernameChange={(newUsername) => {
+                queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
+                toast({
+                  title: '🎉 Username updated!',
+                  description: `Your new username is @${newUsername}`,
+                });
+              }}
+            />
+          </div>
+
           {/* Profile Images */}
           <ProfileEditImages
             userId={user.id}
