@@ -107,7 +107,7 @@ const MobileBottomNav: React.FC = () => {
       icon: Bell, 
       path: '/dna/notifications',
       description: 'Activity updates',
-      badge: unreadCount
+      badge: unreadCount > 0 ? unreadCount : undefined
     },
     { 
       label: 'Settings', 
