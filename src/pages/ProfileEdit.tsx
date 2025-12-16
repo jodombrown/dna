@@ -414,11 +414,10 @@ const ProfileEdit = () => {
           <div className="bg-card rounded-lg border p-6">
             <h3 className="text-lg font-semibold mb-4">Username</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Your username is your unique identity on DNA. You can change it up to 2 times.
+              Your username is your unique identity on DNA.
             </p>
             <UsernameManager
               currentUsername={profile?.username || ''}
-              changesLeft={2 - ((profile as any)?.username_changes_count || 0)}
               onUsernameChange={(newUsername) => {
                 queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
                 toast({

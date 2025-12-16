@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
+
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, CheckCircle, AlertCircle } from 'lucide-react';
@@ -10,14 +10,12 @@ import confetti from 'canvas-confetti';
 
 interface UsernameManagerProps {
   currentUsername?: string;
-  changesLeft: number;
   onUsernameChange?: (username: string) => void;
   disabled?: boolean;
 }
 
 const UsernameManager: React.FC<UsernameManagerProps> = ({
   currentUsername = '',
-  changesLeft,
   onUsernameChange,
   disabled = false
 }) => {
@@ -28,7 +26,7 @@ const UsernameManager: React.FC<UsernameManagerProps> = ({
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
 
-  const canChangeUsername = changesLeft > 0 && !disabled;
+  const canChangeUsername = !disabled;
 
   useEffect(() => {
     if (username === currentUsername) {
@@ -130,7 +128,7 @@ const UsernameManager: React.FC<UsernameManagerProps> = ({
         
         toast({ 
           title: "🎉 Username Saved!", 
-          description: `Welcome, @${username}! You have ${changesLeft - 1} changes remaining.`
+          description: `Welcome, @${username}!`
         });
         onUsernameChange?.(username);
       }
@@ -144,9 +142,6 @@ const UsernameManager: React.FC<UsernameManagerProps> = ({
 
     setSaving(false);
   };
-
-  const usedChanges = 2 - changesLeft;
-  const progressValue = (usedChanges / 2) * 100;
 
   return (
     <div className="space-y-4">
@@ -186,12 +181,6 @@ const UsernameManager: React.FC<UsernameManagerProps> = ({
           )}
         </div>
 
-        {!canChangeUsername && (
-          <p className="text-sm text-red-500">
-            You've used all your username changes. Contact support to request another change.
-          </p>
-        )}
-
         {username.length >= 3 && username !== currentUsername && !checking && (
           <>
             {isAvailable === true && (
@@ -221,18 +210,6 @@ const UsernameManager: React.FC<UsernameManagerProps> = ({
             )}
           </>
         )}
-      </div>
-
-      {/* Changes Progress */}
-      <div className="space-y-2">
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Username changes used</span>
-          <span className="font-medium">{usedChanges}/2</span>
-        </div>
-        <Progress value={progressValue} className="h-2" />
-        <p className="text-xs text-gray-500">
-          {changesLeft} username change{changesLeft !== 1 ? 's' : ''} remaining over your account lifetime
-        </p>
       </div>
 
       {/* Save Button */}
