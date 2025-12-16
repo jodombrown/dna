@@ -103,9 +103,11 @@ const NotificationsMainContent = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-dna-forest">Notifications</h2>
-          <p className="text-gray-600">
-            {unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}
-          </p>
+          {unreadCount > 0 && (
+            <p className="text-gray-600">
+              {unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}
+            </p>
+          )}
         </div>
         <Button variant="outline" size="sm">
           Mark all as read
