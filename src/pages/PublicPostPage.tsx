@@ -1,0 +1,411 @@
+/**
+ * Publicly Accessible Post Page
+ * Route: /post/:postId
+ * 
+ * This page is accessible to ANYONE - no authentication required.
+ * Shows post content and CTAs to sign up or engage.
+ */
+
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { 
+  MessageCircle, 
+  Heart, 
+  Share2, 
+  ExternalLink,
+  FileText,
+  Copy,
+  Check,
+} from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { Helmet } from 'react-helmet-async';
+import { useState } from 'react';
+import { formatDistanceToNow } from 'date-fns';
+import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
+
+const PublicPostPage = () => {
+  const { postId } = useParams<{ postId: string }>();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [copied, setCopied] = useState(false);
+
+  // Fetch post data
+  const { data: post, isLoading, error } = useQuery({
+    queryKey: ['public-post', postId],
+    queryFn: async () => {
+      // First get the post
+      const { data: postData, error: postError } = await supabase
+        .from('posts')
+        .select('*')
+        .eq('id', postId)
+        .eq('is_deleted', false)
+        .maybeSingle();
+
+      if (postError) throw postError;
+      if (!postData) throw new Error('Post not found');
+
+      // Check if post is public
+      if (postData.privacy_level !== 'public') {
+        throw new Error('This post is private');
+      }
+
+      // Get author profile
+      const { data: authorData, error: authorError } = await supabase
+        .from('profiles')
+        .select('id, username, full_name, avatar_url, headline, profession')
+        .eq('id', postData.author_id)
+        .maybeSingle();
+
+      if (authorError) throw authorError;
+
+      // Get engagement counts
+      const [likesResult, commentsResult] = await Promise.all([
+        supabase
+          .from('post_likes')
+          .select('*', { count: 'exact', head: true })
+          .eq('post_id', postId),
+        supabase
+          .from('post_comments')
+          .select('*', { count: 'exact', head: true })
+          .eq('post_id', postId)
+          .eq('is_deleted', false),
+      ]);
+
+      return {
+        ...postData,
+        author: authorData,
+        likes_count: likesResult.count || 0,
+        comments_count: commentsResult.count || 0,
+      };
+    },
+    enabled: !!postId,
+  });
+
+  const isLoggedIn = !!user;
+
+  const handleCopyLink = async () => {
+    const url = `${window.location.origin}/post/${postId}`;
+    await navigator.clipboard.writeText(url);
+    setCopied(true);
+    toast({
+      title: 'Link copied!',
+      description: 'Share this post with anyone',
+    });
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleNativeShare = async () => {
+    const url = `${window.location.origin}/post/${postId}`;
+    const title = post?.author?.full_name 
+      ? `Post by ${post.author.full_name} on DNA` 
+      : 'Post on DNA';
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title,
+          text: post?.content?.slice(0, 100) + (post?.content?.length > 100 ? '...' : ''),
+          url,
+        });
+      } catch (err) {
+        // User cancelled or error - fallback to copy
+        handleCopyLink();
+      }
+    } else {
+      handleCopyLink();
+    }
+  };
+
+  const handleEngage = () => {
+    if (!isLoggedIn) {
+      sessionStorage.setItem('dna_post_after_auth', postId || '');
+      navigate(`/auth?redirect=/dna/feed`);
+      return;
+    }
+    navigate('/dna/feed');
+  };
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (error || !post) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container max-w-2xl mx-auto px-4 py-16 text-center">
+          <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+          <h1 className="text-3xl font-bold mb-4">Post Not Found</h1>
+          <p className="text-muted-foreground mb-6">
+            This post doesn't exist, has been removed, or is set to private.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button onClick={() => navigate('/')}>
+              Visit DNA
+            </Button>
+            {!isLoggedIn && (
+              <Button variant="outline" onClick={() => navigate('/auth')}>
+                Sign Up for DNA
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const authorName = post.author?.full_name || 'DNA Member';
+  const authorUsername = post.author?.username;
+  const contentPreview = post.content?.slice(0, 160) || '';
+
+  return (
+    <>
+      {/* SEO Meta Tags */}
+      <Helmet>
+        <title>{authorName} on DNA | Diaspora Network of Africa</title>
+        <meta name="description" content={contentPreview} />
+        <meta property="og:title" content={`${authorName} on DNA`} />
+        <meta property="og:description" content={contentPreview} />
+        <meta property="og:image" content={post.image_url || post.author?.avatar_url || '/og-image.png'} />
+        <meta property="og:url" content={`${window.location.origin}/post/${postId}`} />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content={post.image_url ? 'summary_large_image' : 'summary'} />
+        <meta name="twitter:title" content={`${authorName} on DNA`} />
+        <meta name="twitter:description" content={contentPreview} />
+      </Helmet>
+
+      <div className="min-h-screen bg-background">
+        {/* Header */}
+        <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+          <div className="container max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
+            <Link to="/" className="flex items-center gap-2">
+              <img src="/logo.svg" alt="DNA" className="h-8 w-8" onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }} />
+              <span className="font-bold text-lg">DNA</span>
+            </Link>
+            <Button variant="outline" size="sm" onClick={handleNativeShare}>
+              <Share2 className="w-4 h-4 mr-2" />
+              Share
+            </Button>
+          </div>
+        </header>
+
+        <div className="container max-w-2xl mx-auto px-4 py-8">
+          {/* Post Card */}
+          <Card className="overflow-hidden">
+            <CardContent className="p-6">
+              {/* Author Header */}
+              <div className="flex items-start gap-4 mb-4">
+                <Link to={authorUsername ? `/u/${authorUsername}` : '#'}>
+                  <Avatar className="w-12 h-12 border-2 border-background">
+                    <AvatarImage src={post.author?.avatar_url || undefined} />
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                      {getInitials(authorName)}
+                    </AvatarFallback>
+                  </Avatar>
+                </Link>
+                
+                <div className="flex-1 min-w-0">
+                  <Link 
+                    to={authorUsername ? `/u/${authorUsername}` : '#'}
+                    className="font-semibold hover:underline"
+                  >
+                    {authorName}
+                  </Link>
+                  {(post.author?.headline || post.author?.profession) && (
+                    <p className="text-sm text-muted-foreground truncate">
+                      {post.author?.headline || post.author?.profession}
+                    </p>
+                  )}
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+                  </p>
+                </div>
+              </div>
+
+              {/* Post Content */}
+              <div className="mb-4">
+                <p className="whitespace-pre-wrap break-words text-foreground leading-relaxed">
+                  {post.content}
+                </p>
+              </div>
+
+              {/* Post Image */}
+              {post.image_url && (
+                <div className="mb-4 rounded-lg overflow-hidden">
+                  <img
+                    src={post.image_url}
+                    alt="Post image"
+                    className="w-full max-h-[500px] object-cover"
+                  />
+                </div>
+              )}
+
+              {/* Link Preview */}
+              {post.link_url && (
+                <div className="mb-4">
+                  <LinkPreviewCard
+                    data={{
+                      url: post.link_url,
+                      title: post.link_title || undefined,
+                      description: post.link_description || undefined,
+                      thumbnail_url: (post.link_metadata as any)?.thumbnail_url || undefined,
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* Engagement Stats */}
+              <div className="flex items-center gap-6 py-3 border-t border-b text-sm text-muted-foreground">
+                <div className="flex items-center gap-1.5">
+                  <Heart className="w-4 h-4" />
+                  <span>{post.likes_count} likes</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <MessageCircle className="w-4 h-4" />
+                  <span>{post.comments_count} comments</span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2 pt-4">
+                <Button
+                  onClick={handleEngage}
+                  className="flex-1 bg-primary hover:bg-primary/90"
+                >
+                  <Heart className="w-4 h-4 mr-2" />
+                  {isLoggedIn ? 'Like & Comment' : 'Sign Up to Engage'}
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleCopyLink}
+                >
+                  {copied ? (
+                    <Check className="w-4 h-4 text-green-500" />
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Author Card */}
+          {post.author && (
+            <Card className="mt-6">
+              <CardContent className="p-6">
+                <h3 className="font-semibold mb-4">About the Author</h3>
+                <div className="flex items-center gap-4">
+                  <Link to={authorUsername ? `/u/${authorUsername}` : '#'}>
+                    <Avatar className="w-16 h-16">
+                      <AvatarImage src={post.author.avatar_url || undefined} />
+                      <AvatarFallback className="bg-primary text-primary-foreground text-lg">
+                        {getInitials(authorName)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Link>
+                  <div className="flex-1">
+                    <Link 
+                      to={authorUsername ? `/u/${authorUsername}` : '#'}
+                      className="font-semibold text-lg hover:underline"
+                    >
+                      {authorName}
+                    </Link>
+                    {(post.author.headline || post.author.profession) && (
+                      <p className="text-muted-foreground">
+                        {post.author.headline || post.author.profession}
+                      </p>
+                    )}
+                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={() => authorUsername && navigate(`/u/${authorUsername}`)}
+                  >
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    View Profile
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* CTA Card for non-logged-in users */}
+          {!isLoggedIn && (
+            <Card className="mt-6 bg-gradient-to-r from-dna-forest to-dna-emerald text-white overflow-hidden">
+              <CardContent className="py-8 text-center">
+                <h2 className="text-xl sm:text-2xl font-bold mb-3">
+                  Join the Conversation on DNA
+                </h2>
+                <p className="text-white/90 mb-6 max-w-md mx-auto">
+                  Connect with the global African diaspora. Like, comment, and share your own stories with the community.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Button 
+                    size="lg" 
+                    className="bg-dna-copper hover:bg-dna-gold text-white"
+                    asChild
+                  >
+                    <Link to="/auth?mode=signup">
+                      Create Your Free Account
+                    </Link>
+                  </Button>
+                  <Button 
+                    size="lg" 
+                    variant="secondary"
+                    className="bg-white text-dna-forest hover:bg-white/90"
+                    asChild
+                  >
+                    <Link to="/about">
+                      Learn More About DNA
+                    </Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Footer */}
+          <footer className="mt-8 pt-6 border-t text-center text-sm text-muted-foreground">
+            <p>
+              DNA — Diaspora Network of Africa
+            </p>
+            <div className="flex items-center justify-center gap-4 mt-2">
+              <Link to="/about" className="hover:text-foreground transition-colors">
+                About
+              </Link>
+              <Link to="/privacy-policy" className="hover:text-foreground transition-colors">
+                Privacy
+              </Link>
+              <Link to="/terms-of-service" className="hover:text-foreground transition-colors">
+                Terms
+              </Link>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default PublicPostPage;
