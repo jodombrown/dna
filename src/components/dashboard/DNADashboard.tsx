@@ -21,6 +21,7 @@ import {
 import { Link } from 'react-router-dom';
 import { MyEventsWidget } from '@/components/convene/MyEventsWidget';
 import { RegisteredEventsWidget } from '@/components/convene/RegisteredEventsWidget';
+import { calculateProfileCompletionPts } from '@/lib/profileCompletion';
 
 const DNADashboard: React.FC = () => {
   const { profile } = useAuth();
@@ -36,7 +37,7 @@ const DNADashboard: React.FC = () => {
     );
   }
 
-  const completionScore = profile.profile_completion_percentage || 0;
+  const completionScore = calculateProfileCompletionPts(profile);
 
   return (
     <div className="min-h-screen bg-background">

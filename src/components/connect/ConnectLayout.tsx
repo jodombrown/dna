@@ -4,6 +4,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProfileStrengthCard } from '@/components/profile/ProfileStrengthCard';
 import { Users, Network, MessageCircle } from 'lucide-react';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+import { calculateProfileCompletionPts } from '@/lib/profileCompletion';
 
 export const ConnectLayout = () => {
   const location = useLocation();
@@ -33,7 +34,7 @@ export const ConnectLayout = () => {
               {profile && (
                 <div className="w-full max-w-sm hidden md:block">
                   <ProfileStrengthCard
-                    completionScore={profile.profile_completion_percentage || 0}
+                    completionScore={calculateProfileCompletionPts(profile)}
                     compact
                   />
                 </div>
