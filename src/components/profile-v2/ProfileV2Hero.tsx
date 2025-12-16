@@ -14,15 +14,34 @@ interface ProfileV2HeroProps {
   onMessage?: () => void;
 }
 
-// Returns ring styling for verified avatars - amber for full, primary for soft
-const getVerificationRingClass = (status: VerificationStatus): string => {
-  if (status === 'fully_verified') {
-    return 'ring-4 ring-amber-500/80 ring-offset-2 ring-offset-background';
+// Returns whether user is verified for gradient ring display
+const isVerified = (status: VerificationStatus): boolean => {
+  return status === 'fully_verified' || status === 'soft_verified';
+};
+
+// Gradient ring wrapper for verified users - uses DNA cultural colors
+const VerificationRing: React.FC<{ status: VerificationStatus; children: React.ReactNode }> = ({ status, children }) => {
+  if (!isVerified(status)) {
+    return <>{children}</>;
   }
-  if (status === 'soft_verified') {
-    return 'ring-4 ring-primary/60 ring-offset-2 ring-offset-background';
-  }
-  return '';
+  
+  const isFullyVerified = status === 'fully_verified';
+  
+  return (
+    <div 
+      className="relative p-1 rounded-full"
+      style={{
+        background: isFullyVerified 
+          ? 'linear-gradient(135deg, hsl(var(--dna-ochre)), hsl(var(--dna-terra)), hsl(var(--dna-sunset)))'
+          : 'linear-gradient(135deg, hsl(var(--dna-forest)), hsl(var(--dna-emerald)))',
+        boxShadow: isFullyVerified
+          ? '0 4px 20px hsla(var(--dna-ochre), 0.4), 0 2px 8px hsla(var(--dna-terra), 0.3)'
+          : '0 4px 16px hsla(var(--dna-forest), 0.35), 0 2px 6px hsla(var(--dna-emerald), 0.25)'
+      }}
+    >
+      {children}
+    </div>
+  );
 };
 
 const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
@@ -67,14 +86,16 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
         {/* Avatar & Actions Row */}
         <div className="relative -mt-14 sm:-mt-18 md:-mt-20">
           <div className="flex items-end justify-between gap-4">
-            {/* Avatar */}
+            {/* Avatar with Verification Ring */}
             <div className="relative flex-shrink-0">
-              <Avatar className={`w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 border-4 border-background shadow-xl ${getVerificationRingClass(profile.verification_status)}`}>
-                <AvatarImage src={profile.avatar_url || undefined} alt={profile.full_name} />
-                <AvatarFallback className="text-xl sm:text-2xl md:text-3xl font-bold bg-primary text-primary-foreground">
-                  {profile.full_name?.split(' ').map(n => n[0]).join('').slice(0, 2) || '?'}
-                </AvatarFallback>
-              </Avatar>
+              <VerificationRing status={profile.verification_status}>
+                <Avatar className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 border-4 border-background shadow-xl">
+                  <AvatarImage src={profile.avatar_url || undefined} alt={profile.full_name} />
+                  <AvatarFallback className="text-xl sm:text-2xl md:text-3xl font-bold bg-primary text-primary-foreground">
+                    {profile.full_name?.split(' ').map(n => n[0]).join('').slice(0, 2) || '?'}
+                  </AvatarFallback>
+                </Avatar>
+              </VerificationRing>
             </div>
 
             {/* Desktop Action Buttons */}
