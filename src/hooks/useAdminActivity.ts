@@ -24,7 +24,7 @@ export const useAdminActivity = (): UseAdminActivityReturn => {
     setError(null);
 
     try {
-      const { data, error: rpcError } = await (supabase.rpc as any)('log_admin_activity', {
+      const { data, error: rpcError } = await (supabase as any).rpc('log_admin_activity', {
         p_action_type: actionType,
         p_action_details: actionDetails,
         p_target_user_id: targetUserId || null
