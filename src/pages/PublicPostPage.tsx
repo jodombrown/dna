@@ -21,12 +21,15 @@ import {
   FileText,
   Copy,
   Check,
+  Sparkles,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Helmet } from 'react-helmet-async';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
+import UnifiedHeader from '@/components/UnifiedHeader';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const PublicPostPage = () => {
   const { postId } = useParams<{ postId: string }>();
@@ -34,6 +37,17 @@ const PublicPostPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
+  const [showBanner, setShowBanner] = useState(false);
+
+  const isLoggedIn = !!user;
+
+  // Animate banner in after a short delay for non-logged-in users
+  useEffect(() => {
+    if (!isLoggedIn) {
+      const timer = setTimeout(() => setShowBanner(true), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoggedIn]);
 
   // Fetch post data
   const { data: post, isLoading, error } = useQuery({
@@ -86,8 +100,6 @@ const PublicPostPage = () => {
     },
     enabled: !!postId,
   });
-
-  const isLoggedIn = !!user;
 
   const handleCopyLink = async () => {
     const url = `${window.location.origin}/post/${postId}`;
@@ -151,6 +163,7 @@ const PublicPostPage = () => {
   if (error || !post) {
     return (
       <div className="min-h-screen bg-background">
+        <UnifiedHeader />
         <div className="container max-w-2xl mx-auto px-4 py-16 text-center">
           <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
           <h1 className="text-3xl font-bold mb-4">Post Not Found</h1>
@@ -193,30 +206,48 @@ const PublicPostPage = () => {
       </Helmet>
 
       <div className="min-h-screen bg-background">
-        {/* Header */}
-        <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-          <div className="container max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2">
-              <img src="/logo.svg" alt="DNA" className="h-8 w-8" onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }} />
-              <span className="font-bold text-lg">DNA</span>
-            </Link>
-            <Button variant="outline" size="sm" onClick={handleNativeShare}>
-              <Share2 className="w-4 h-4 mr-2" />
-              Share
-            </Button>
-          </div>
-        </header>
+        {/* Use the standard unified header */}
+        <UnifiedHeader />
 
-        <div className="container max-w-2xl mx-auto px-4 py-8">
+        {/* Animated CTA Banner for non-logged-in users */}
+        <AnimatePresence>
+          {!isLoggedIn && showBanner && (
+            <motion.div
+              initial={{ y: -100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -100, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="bg-gradient-to-r from-dna-forest via-dna-emerald to-dna-forest sticky top-[60px] z-40 shadow-lg"
+            >
+              <div className="container max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2 text-white min-w-0">
+                  <Sparkles className="w-4 h-4 shrink-0" />
+                  <span className="text-sm font-medium truncate">
+                    Shared from DNA — Connect with the global African diaspora
+                  </span>
+                </div>
+                <Button
+                  size="sm"
+                  className="bg-white text-dna-forest hover:bg-white/90 shrink-0"
+                  asChild
+                >
+                  <Link to="/auth?mode=signup">
+                    Join DNA
+                  </Link>
+                </Button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="container max-w-2xl mx-auto px-4 py-6">
           {/* Post Card */}
           <Card className="overflow-hidden">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               {/* Author Header */}
-              <div className="flex items-start gap-4 mb-4">
+              <div className="flex items-start gap-3 mb-4">
                 <Link to={authorUsername ? `/u/${authorUsername}` : '#'}>
-                  <Avatar className="w-12 h-12 border-2 border-background">
+                  <Avatar className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-background">
                     <AvatarImage src={post.author?.avatar_url || undefined} />
                     <AvatarFallback className="bg-primary text-primary-foreground">
                       {getInitials(authorName)}
@@ -236,10 +267,14 @@ const PublicPostPage = () => {
                       {post.author?.headline || post.author?.profession}
                     </p>
                   )}
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="text-xs text-muted-foreground mt-0.5">
                     {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
                   </p>
                 </div>
+
+                <Button variant="ghost" size="sm" onClick={handleNativeShare} className="shrink-0">
+                  <Share2 className="w-4 h-4" />
+                </Button>
               </div>
 
               {/* Post Content */}
@@ -311,39 +346,41 @@ const PublicPostPage = () => {
             </CardContent>
           </Card>
 
-          {/* Author Card */}
+          {/* Compact Horizontal Author Card */}
           {post.author && (
-            <Card className="mt-6">
-              <CardContent className="p-6">
-                <h3 className="font-semibold mb-4">About the Author</h3>
-                <div className="flex items-center gap-4">
-                  <Link to={authorUsername ? `/u/${authorUsername}` : '#'}>
-                    <Avatar className="w-16 h-16">
+            <Card className="mt-4">
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex items-center gap-3">
+                  <Link to={authorUsername ? `/u/${authorUsername}` : '#'} className="shrink-0">
+                    <Avatar className="w-10 h-10">
                       <AvatarImage src={post.author.avatar_url || undefined} />
-                      <AvatarFallback className="bg-primary text-primary-foreground text-lg">
+                      <AvatarFallback className="bg-primary text-primary-foreground text-sm">
                         {getInitials(authorName)}
                       </AvatarFallback>
                     </Avatar>
                   </Link>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <Link 
                       to={authorUsername ? `/u/${authorUsername}` : '#'}
-                      className="font-semibold text-lg hover:underline"
+                      className="font-semibold text-sm hover:underline block truncate"
                     >
                       {authorName}
                     </Link>
                     {(post.author.headline || post.author.profession) && (
-                      <p className="text-muted-foreground">
+                      <p className="text-xs text-muted-foreground truncate">
                         {post.author.headline || post.author.profession}
                       </p>
                     )}
                   </div>
                   <Button
                     variant="outline"
+                    size="sm"
                     onClick={() => authorUsername && navigate(`/u/${authorUsername}`)}
+                    className="shrink-0"
                   >
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    View Profile
+                    <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
+                    <span className="hidden sm:inline">View Profile</span>
+                    <span className="sm:hidden">Profile</span>
                   </Button>
                 </div>
               </CardContent>
@@ -352,17 +389,17 @@ const PublicPostPage = () => {
 
           {/* CTA Card for non-logged-in users */}
           {!isLoggedIn && (
-            <Card className="mt-6 bg-gradient-to-r from-dna-forest to-dna-emerald text-white overflow-hidden">
-              <CardContent className="py-8 text-center">
-                <h2 className="text-xl sm:text-2xl font-bold mb-3">
+            <Card className="mt-4 bg-gradient-to-r from-dna-forest to-dna-emerald text-white overflow-hidden">
+              <CardContent className="py-6 text-center">
+                <h2 className="text-lg sm:text-xl font-bold mb-2">
                   Join the Conversation on DNA
                 </h2>
-                <p className="text-white/90 mb-6 max-w-md mx-auto">
-                  Connect with the global African diaspora. Like, comment, and share your own stories with the community.
+                <p className="text-white/90 mb-4 text-sm max-w-md mx-auto">
+                  Connect with the global African diaspora. Like, comment, and share your own stories.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <div className="flex flex-col sm:flex-row gap-2 justify-center">
                   <Button 
-                    size="lg" 
+                    size="sm" 
                     className="bg-dna-copper hover:bg-dna-gold text-white"
                     asChild
                   >
@@ -371,13 +408,13 @@ const PublicPostPage = () => {
                     </Link>
                   </Button>
                   <Button 
-                    size="lg" 
+                    size="sm" 
                     variant="secondary"
                     className="bg-white text-dna-forest hover:bg-white/90"
                     asChild
                   >
                     <Link to="/about">
-                      Learn More About DNA
+                      Learn About DNA
                     </Link>
                   </Button>
                 </div>
@@ -386,7 +423,7 @@ const PublicPostPage = () => {
           )}
 
           {/* Footer */}
-          <footer className="mt-8 pt-6 border-t text-center text-sm text-muted-foreground">
+          <footer className="mt-6 pt-4 border-t text-center text-sm text-muted-foreground">
             <p>
               DNA — Diaspora Network of Africa
             </p>
