@@ -36,6 +36,7 @@ const DnaMe = lazy(() => import("./pages/dna/Me"));
 const DnaUserDashboard = lazy(() => import("./pages/dna/Username"));
 const PublicProfile = lazy(() => import("./pages/dna/PublicProfile"));
 const PublicProfilePage = lazy(() => import("./pages/PublicProfilePage"));
+const PublicPostPage = lazy(() => import("./pages/PublicPostPage"));
 const ProfileV2 = lazy(() => import("./pages/ProfileV2"));
 const ActivityFeed = lazy(() => import("./pages/ActivityFeed"));
 const SavedPostsPage = lazy(() => import("./pages/SavedPostsPage"));
@@ -224,8 +225,9 @@ function App() {
                       <BaseLayout>
                         <Suspense fallback={<PageLoader />}>
                           <Routes>
-              {/* Public profile - accessible without authentication */}
+              {/* Public pages - accessible without authentication */}
               <Route path="/u/:username" element={<PublicProfilePage />} />
+              <Route path="/post/:postId" element={<PublicPostPage />} />
               
               {/* Core authentication */}
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
