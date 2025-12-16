@@ -102,8 +102,7 @@ const OnboardingTour: React.FC<OnboardingTourProps> = ({ open, onClose }) => {
   const { 
     currentStep: savedStep, 
     markTourShown, 
-    updateStep, 
-    skipTour, 
+    updateStep,
     completeTour 
   } = useTourProgress();
   
@@ -146,16 +145,17 @@ const OnboardingTour: React.FC<OnboardingTourProps> = ({ open, onClose }) => {
     }
   };
 
-  const handleSkip = () => {
-    skipTour();
-    onClose();
-  };
-
   const isLastStep = currentStep === totalSteps - 1;
   const isFirstStep = currentStep === 0;
 
+  // Prevent closing dialog without completing - user must go through all steps
+  const handleOpenChange = (isOpen: boolean) => {
+    // Only allow closing if explicitly completing via handleNext on last step
+    // This prevents escape key or clicking outside from closing
+  };
+
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && handleSkip()}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -184,14 +184,10 @@ const OnboardingTour: React.FC<OnboardingTourProps> = ({ open, onClose }) => {
 
         {/* Navigation buttons */}
         <div className="flex items-center justify-between pt-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleSkip}
-            className="text-muted-foreground"
-          >
-            Skip tour
-          </Button>
+          {/* Step indicator instead of skip button */}
+          <span className="text-xs text-muted-foreground">
+            Step {currentStep + 1} of {totalSteps}
+          </span>
           
           <div className="flex gap-2">
             {!isFirstStep && (

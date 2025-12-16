@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Users, MessageCircle, PenSquare, BookOpen, Search, 
-  Heart, Bookmark, Share2, ArrowRight, X, Sparkles,
-  UserPlus, Send, Eye
+  Users, MessageCircle, PenSquare, BookOpen, 
+  ArrowRight, Sparkles
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { useAuth } from '@/contexts/AuthContext';
+import { useTourProgress } from '@/hooks/useTourProgress';
 
 interface WalkthroughStep {
   id: string;
@@ -99,48 +98,50 @@ const walkthroughSteps: WalkthroughStep[] = [
 ];
 
 export function FirstTimeWalkthrough() {
-  const { user } = useAuth();
+  const { 
+    isCompleted, 
+    completeTour, 
+    markTourShown,
+    currentStep: savedStep,
+    updateStep 
+  } = useTourProgress();
+  
   const [isVisible, setIsVisible] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
 
   useEffect(() => {
-    if (!user?.id) return;
-    
-    // Check if user has seen the walkthrough (guarded for environments where localStorage may fail)
-    try {
-      const walkthroughKey = `dna_walkthrough_completed_${user.id}`;
-      const hasCompleted = localStorage.getItem(walkthroughKey);
-
-      // Only show if user has NOT completed the walkthrough
-      if (hasCompleted === 'true') {
-        setIsVisible(false);
-        return;
-      }
-
-      // First time user - show walkthrough after a short delay
-      const timer = setTimeout(() => setIsVisible(true), 500);
-      return () => clearTimeout(timer);
-    } catch (error) {
-      console.warn('FirstTimeWalkthrough: localStorage unavailable, skipping persistence', error);
-      // Don't show walkthrough if localStorage fails
+    // Only show if tour is NOT completed
+    if (isCompleted) {
       setIsVisible(false);
+      return;
     }
-  }, [user?.id]);
+
+    // Show walkthrough after a short delay for first-time users
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+      markTourShown();
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, [isCompleted, markTourShown]);
+
+  // Sync with saved step if resuming
+  useEffect(() => {
+    if (savedStep > 0 && savedStep < walkthroughSteps.length) {
+      setCurrentStep(savedStep);
+    }
+  }, [savedStep]);
  
   const handleComplete = () => {
-    if (!user?.id) return;
-    const walkthroughKey = `dna_walkthrough_completed_${user.id}`;
-    try {
-      localStorage.setItem(walkthroughKey, 'true');
-    } catch (error) {
-      console.warn('FirstTimeWalkthrough: failed to persist walkthrough completion', error);
-    }
+    completeTour();
     setIsVisible(false);
   };
 
   const handleNext = () => {
     if (currentStep < walkthroughSteps.length - 1) {
-      setCurrentStep(prev => prev + 1);
+      const nextStep = currentStep + 1;
+      setCurrentStep(nextStep);
+      updateStep(nextStep);
     } else {
       handleComplete();
     }
@@ -148,17 +149,16 @@ export function FirstTimeWalkthrough() {
 
   const handlePrevious = () => {
     if (currentStep > 0) {
-      setCurrentStep(prev => prev - 1);
+      const prevStep = currentStep - 1;
+      setCurrentStep(prevStep);
+      updateStep(prevStep);
     }
-  };
-
-  const handleSkip = () => {
-    handleComplete();
   };
 
   if (!isVisible) return null;
 
   const step = walkthroughSteps[currentStep];
+  const isLastStep = currentStep === walkthroughSteps.length - 1;
 
   return (
     <AnimatePresence>
@@ -186,24 +186,13 @@ export function FirstTimeWalkthrough() {
               />
             </div>
 
-            {/* Close button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute top-4 right-4 h-8 w-8 rounded-full"
-              onClick={handleSkip}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-
             {/* Content */}
             <div className="p-6 pt-8">
               {/* Step indicator */}
               <div className="flex justify-center gap-1.5 mb-6">
                 {walkthroughSteps.map((_, idx) => (
-                  <button
+                  <div
                     key={idx}
-                    onClick={() => setCurrentStep(idx)}
                     className={`h-1.5 rounded-full transition-all ${
                       idx === currentStep 
                         ? 'w-6 bg-dna-emerald' 
@@ -261,7 +250,7 @@ export function FirstTimeWalkthrough() {
                 ))}
               </motion.div>
 
-              {/* Actions */}
+              {/* Actions - No skip, must complete */}
               <div className="mt-8 flex gap-3">
                 {currentStep > 0 && (
                   <Button
@@ -276,7 +265,7 @@ export function FirstTimeWalkthrough() {
                   onClick={handleNext}
                   className="flex-1 bg-dna-emerald hover:bg-dna-emerald/90 text-white"
                 >
-                  {currentStep === walkthroughSteps.length - 1 ? (
+                  {isLastStep ? (
                     'Get Started'
                   ) : (
                     <>
@@ -287,14 +276,11 @@ export function FirstTimeWalkthrough() {
                 </Button>
               </div>
 
-              {/* Skip link */}
+              {/* Step count indicator */}
               <div className="mt-4 text-center">
-                <button
-                  onClick={handleSkip}
-                  className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Skip tutorial
-                </button>
+                <span className="text-xs text-muted-foreground">
+                  Step {currentStep + 1} of {walkthroughSteps.length}
+                </span>
               </div>
             </div>
           </Card>
