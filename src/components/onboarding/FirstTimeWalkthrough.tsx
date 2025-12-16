@@ -129,10 +129,13 @@ export function FirstTimeWalkthrough() {
     return () => clearTimeout(timer);
   }, [isCompleted, hasCompletedLocally, markTourShown]);
 
-  // Sync with saved step if resuming
+  // Sync with saved step if resuming (with bounds checking)
   useEffect(() => {
     if (savedStep > 0 && savedStep < walkthroughSteps.length) {
       setCurrentStep(savedStep);
+    } else if (savedStep >= walkthroughSteps.length) {
+      // Reset to 0 if savedStep is out of bounds
+      setCurrentStep(0);
     }
   }, [savedStep]);
  
@@ -169,7 +172,10 @@ export function FirstTimeWalkthrough() {
 
   if (!isVisible || hasCompletedLocally) return null;
 
+  // Safety check: ensure step exists
   const step = walkthroughSteps[currentStep];
+  if (!step) return null;
+  
   const isLastStep = currentStep === walkthroughSteps.length - 1;
 
   return (
