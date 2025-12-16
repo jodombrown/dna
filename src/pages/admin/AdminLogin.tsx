@@ -49,7 +49,7 @@ const AdminLogin = () => {
 
         if (session?.user) {
           // Check if current user is admin
-          const { data, error } = await (supabase.rpc as any)('get_current_admin_status');
+          const { data, error } = await (supabase as any).rpc('get_current_admin_status');
 
           if (!error && data && Array.isArray(data) && data.length > 0 && data[0].is_admin) {
             navigate('/admin/dashboard', { replace: true });
@@ -78,7 +78,7 @@ const AdminLogin = () => {
     setEmailError(null);
 
     try {
-      const { data, error } = await (supabase.rpc as any)('is_valid_admin_email', {
+      const { data, error } = await (supabase as any).rpc('is_valid_admin_email', {
         check_email: email.toLowerCase().trim()
       });
 
@@ -154,7 +154,7 @@ const AdminLogin = () => {
       if (data.session) {
         // Create admin session
         try {
-          await (supabase.rpc as any)('create_admin_session', {
+          await (supabase as any).rpc('create_admin_session', {
             p_ip_address: null,
             p_user_agent: navigator.userAgent,
             p_device_info: {

@@ -83,7 +83,7 @@ export const AdminRouteGuard: React.FC<AdminRouteGuardProps> = ({
         }
 
         // Get admin status
-        const { data, error: rpcError } = await (supabase.rpc as any)('get_current_admin_status');
+        const { data, error: rpcError } = await (supabase as any).rpc('get_current_admin_status');
 
         if (rpcError) {
           console.error('Error checking admin status:', rpcError);
@@ -134,7 +134,7 @@ export const AdminRouteGuard: React.FC<AdminRouteGuardProps> = ({
 
     const updateActivity = async () => {
       try {
-        await (supabase.rpc as any)('update_admin_session_activity');
+        await (supabase as any).rpc('update_admin_session_activity');
       } catch (err) {
         console.error('Failed to update session activity:', err);
       }

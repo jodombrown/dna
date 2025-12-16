@@ -82,7 +82,7 @@ export const useAdminStats = (): UseAdminStatsReturn => {
 
   const fetchStats = useCallback(async () => {
     try {
-      const { data, error: rpcError } = await (supabase.rpc as any)('get_admin_dashboard_stats');
+      const { data, error: rpcError } = await (supabase as any).rpc('get_admin_dashboard_stats');
 
       if (rpcError) {
         console.error('Error fetching stats:', rpcError);
@@ -102,7 +102,7 @@ export const useAdminStats = (): UseAdminStatsReturn => {
 
   const fetchGrowth = useCallback(async (days: number = 30) => {
     try {
-      const { data, error: rpcError } = await (supabase.rpc as any)('get_user_growth_data', {
+      const { data, error: rpcError } = await (supabase as any).rpc('get_user_growth_data', {
         p_days: days
       });
 
@@ -121,7 +121,7 @@ export const useAdminStats = (): UseAdminStatsReturn => {
 
   const fetchSegments = useCallback(async () => {
     try {
-      const { data, error: rpcError } = await (supabase.rpc as any)('get_user_segments_distribution');
+      const { data, error: rpcError } = await (supabase as any).rpc('get_user_segments_distribution');
 
       if (rpcError) {
         console.error('Error fetching segments:', rpcError);

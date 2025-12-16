@@ -31,8 +31,8 @@ export const useSystemSettings = (): UseSystemSettingsReturn => {
 
   const fetchSettings = useCallback(async () => {
     try {
-      const { data, error: fetchError } = await (supabase
-        .from('system_settings' as any) as any)
+      const { data, error: fetchError } = await (supabase as any)
+        .from('system_settings')
         .select('*')
         .order('category')
         .order('setting_key');
@@ -76,7 +76,7 @@ export const useSystemSettings = (): UseSystemSettingsReturn => {
 
   const updateSetting = useCallback(async (key: string, value: any): Promise<boolean> => {
     try {
-      const { data, error: rpcError } = await (supabase.rpc as any)('update_system_setting', {
+      const { data, error: rpcError } = await (supabase as any).rpc('update_system_setting', {
         p_key: key,
         p_value: value
       });

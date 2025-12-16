@@ -161,7 +161,7 @@ export const AdminDashboardLayout: React.FC = () => {
   useEffect(() => {
     const fetchAdminUser = async () => {
       try {
-        const { data, error } = await (supabase.rpc as any)('get_current_admin_status');
+        const { data, error } = await (supabase as any).rpc('get_current_admin_status');
 
         if (!error && data && Array.isArray(data) && data.length > 0) {
           const result = data[0];
@@ -179,7 +179,7 @@ export const AdminDashboardLayout: React.FC = () => {
 
     const fetchPendingCounts = async () => {
       try {
-        const { data: stats } = await (supabase.rpc as any)('get_admin_dashboard_stats');
+        const { data: stats } = await (supabase as any).rpc('get_admin_dashboard_stats');
         if (stats) {
           setPendingFeedback((stats as any)?.feedback?.pending || 0);
           setPendingModeration((stats as any)?.moderation?.pending_flags || 0);
@@ -200,7 +200,7 @@ export const AdminDashboardLayout: React.FC = () => {
   const handleLogout = async () => {
     try {
       // End admin session
-      await (supabase.rpc as any)('end_admin_session', { p_reason: 'manual' });
+      await (supabase as any).rpc('end_admin_session', { p_reason: 'manual' });
 
       // Sign out
       await supabase.auth.signOut();
