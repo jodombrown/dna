@@ -35,6 +35,7 @@ import {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+// Admin RPC functions use 'as any' to bypass TypeScript since they're not in auto-generated types
 import { cn } from '@/lib/utils';
 
 type AdminRoleLevel =

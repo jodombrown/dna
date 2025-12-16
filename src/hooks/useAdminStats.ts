@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+// Admin RPC functions use 'as any' to bypass TypeScript since they're not in auto-generated types
 
 export interface UserStats {
   total: number;

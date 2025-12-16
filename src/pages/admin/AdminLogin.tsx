@@ -19,6 +19,7 @@ import {
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+// Admin RPC functions use 'as any' to bypass TypeScript since they're not in auto-generated types
 
 interface AdminValidation {
   isValid: boolean;
