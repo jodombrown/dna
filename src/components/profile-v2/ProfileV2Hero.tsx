@@ -1,7 +1,7 @@
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Edit, Award, MapPin, Globe, Briefcase, MessageCircle, UserPlus } from 'lucide-react';
+import { Edit, MapPin, Globe, Briefcase, MessageCircle, UserPlus } from 'lucide-react';
 import { ProfileV2Data, ProfileV2Permissions, VerificationStatus } from '@/types/profileV2';
 import { useToast } from '@/hooks/use-toast';
 import { ProfileShareDropdown } from '@/components/profile/ProfileShareDropdown';
@@ -14,22 +14,15 @@ interface ProfileV2HeroProps {
   onMessage?: () => void;
 }
 
-const getVerificationBadge = (status: VerificationStatus) => {
+// Returns ring styling for verified avatars - amber for full, primary for soft
+const getVerificationRingClass = (status: VerificationStatus): string => {
   if (status === 'fully_verified') {
-    return (
-      <div className="absolute -bottom-1 -right-1 w-7 h-7 sm:w-8 sm:h-8 bg-primary rounded-full flex items-center justify-center border-2 border-background shadow-lg">
-        <Award className="w-4 h-4 sm:w-5 sm:h-5 text-primary-foreground" />
-      </div>
-    );
+    return 'ring-4 ring-amber-500/80 ring-offset-2 ring-offset-background';
   }
   if (status === 'soft_verified') {
-    return (
-      <div className="absolute -bottom-1 -right-1 w-7 h-7 sm:w-8 sm:h-8 bg-background rounded-full flex items-center justify-center border-2 border-primary shadow-lg">
-        <Award className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-      </div>
-    );
+    return 'ring-4 ring-primary/60 ring-offset-2 ring-offset-background';
   }
-  return null;
+  return '';
 };
 
 const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
@@ -76,13 +69,12 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
           <div className="flex items-end justify-between gap-4">
             {/* Avatar */}
             <div className="relative flex-shrink-0">
-              <Avatar className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 border-4 border-background shadow-xl">
+              <Avatar className={`w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 border-4 border-background shadow-xl ${getVerificationRingClass(profile.verification_status)}`}>
                 <AvatarImage src={profile.avatar_url || undefined} alt={profile.full_name} />
                 <AvatarFallback className="text-xl sm:text-2xl md:text-3xl font-bold bg-primary text-primary-foreground">
                   {profile.full_name?.split(' ').map(n => n[0]).join('').slice(0, 2) || '?'}
                 </AvatarFallback>
               </Avatar>
-              {getVerificationBadge(profile.verification_status)}
             </div>
 
             {/* Desktop Action Buttons */}
