@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { calculateProfileCompletionPts } from '@/lib/profileCompletion';
 
 export interface ProfileAccessLevel {
   name: string;
@@ -86,10 +87,10 @@ const getAccessLevel = (score: number): ProfileAccessLevel => {
 export const useProfileAccess = () => {
   const { profile } = useAuth();
   
-  // Memoize the score to prevent recalculation on every render
+  // Memoize the score using canonical calculation function - single source of truth
   const completenessScore = useMemo(() => {
-    return profile?.profile_completion_percentage || 0;
-  }, [profile?.profile_completion_percentage]);
+    return calculateProfileCompletionPts(profile);
+  }, [profile]);
   
   // Memoize the access level to prevent object recreation
   const currentAccessLevel = useMemo(() => {
