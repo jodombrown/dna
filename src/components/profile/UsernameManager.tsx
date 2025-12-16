@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import confetti from 'canvas-confetti';
 
 interface UsernameManagerProps {
   currentUsername?: string;
@@ -119,8 +120,16 @@ const UsernameManager: React.FC<UsernameManagerProps> = ({
           variant: "destructive"
         });
       } else {
+        // Trigger confetti celebration!
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#10B981', '#F59E0B', '#D97706', '#059669']
+        });
+        
         toast({ 
-          title: "Username Saved", 
+          title: "🎉 Username Saved!", 
           description: `Welcome, @${username}! You have ${changesLeft - 1} changes remaining.`
         });
         onUsernameChange?.(username);
