@@ -218,7 +218,7 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
       <div className="flex items-center justify-between p-4 border-b border-border">
         <div className="flex items-center gap-2">
           <h3 className="font-semibold text-foreground">Notifications</h3>
-          {unreadCount && unreadCount > 0 && (
+          {unreadCount > 0 && (
             <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
               {unreadCount}
             </span>

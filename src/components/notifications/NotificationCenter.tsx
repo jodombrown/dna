@@ -166,7 +166,7 @@ export function NotificationCenter() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
-          {unreadCount && unreadCount > 0 && (
+          {unreadCount > 0 && (
             <Badge 
               variant="destructive" 
               className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
@@ -180,7 +180,7 @@ export function NotificationCenter() {
         <div className="flex items-center justify-between px-3 py-2">
           <div className="flex items-center gap-2">
             <h3 className="font-semibold">Notifications</h3>
-            {unreadCount && unreadCount > 0 && (
+            {unreadCount > 0 && (
               <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
                 {unreadCount}
               </span>
@@ -214,7 +214,7 @@ export function NotificationCenter() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {unreadCount && unreadCount > 0 && (
+            {unreadCount > 0 && (
               <Button
                 variant="ghost"
                 size="sm"
