@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import { Calendar, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -8,37 +7,22 @@ import LayoutController from '@/components/LayoutController';
 import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { CreateEventForm } from '@/components/events/CreateEventForm';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { calculateProfileCompletionPts } from '@/lib/profileCompletion';
 
 const CreateEvent = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, profile, loading } = useAuth();
 
   // Get preselected group ID from navigation state
   const preselectedGroupId = location.state?.groupId;
 
-  // Check user eligibility
-  const { data: profile, isLoading } = useQuery({
-    queryKey: ['profile-eligibility', user?.id],
-    queryFn: async () => {
-      if (!user) return null;
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('profile_completion_percentage, user_type')
-        .eq('id', user.id)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!user,
-  });
-
-  const completionPercentage = profile?.profile_completion_percentage ?? 0;
+  // Use canonical profile completion calculation
+  const completionPercentage = calculateProfileCompletionPts(profile);
   const canCreateEvent = completionPercentage >= 40;
 
-  if (isLoading) {
+  if (loading) {
     return (
       <LayoutController
         leftColumn={<LeftNav />}

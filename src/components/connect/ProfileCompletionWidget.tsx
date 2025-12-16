@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertCircle, CheckCircle, Sparkles, Zap, Target, Globe } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { calculateProfileCompletionPts } from '@/lib/profileCompletion';
 
 // Field priority ranking by impact
 const FIELD_PRIORITY: Record<string, number> = {
@@ -50,7 +51,7 @@ export const ProfileCompletionWidget = () => {
 
   if (!profile) return null;
 
-  const completion = profile.profile_completion_percentage || 0;
+  const completion = calculateProfileCompletionPts(profile);
 
   // Don't show widget if 100% complete
   if (completion >= 100) return null;

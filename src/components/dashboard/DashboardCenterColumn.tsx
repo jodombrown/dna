@@ -11,6 +11,7 @@ import { DNAPillarNavigation } from '@/components/navigation/DNAPillarNavigation
 import DashboardCenterOpportunities from './DashboardCenterOpportunities';
 import { EngagementPrompt } from '@/components/connect/EngagementPrompt';
 import { ProfileDiscoveryTags } from '@/components/profile/ProfileDiscoveryTags';
+import { calculateProfileCompletionPts } from '@/lib/profileCompletion';
 
 interface DashboardCenterColumnProps {
   profile: Profile;
@@ -35,7 +36,7 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
     }
   };
 
-  const completionScore = profile.profile_completion_percentage || 0;
+  const completionScore = calculateProfileCompletionPts(profile);
 
   return (
     <div className="space-y-3 md:space-y-4">
