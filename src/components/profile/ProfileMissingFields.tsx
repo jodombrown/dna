@@ -85,12 +85,13 @@ export const ProfileMissingFields: React.FC<ProfileMissingFieldsProps> = ({
             )}
           </div>
           <span className={cn(
+            'flex-1',
             field.complete && 'line-through opacity-60'
           )}>
             {field.label}
           </span>
-          {!field.complete && !compact && (
-            <span className="text-xs text-dna-copper font-medium ml-auto">
+          {!field.complete && (
+            <span className="text-xs text-dna-copper font-semibold bg-dna-copper/10 px-2 py-0.5 rounded-full">
               +{field.points} pts
             </span>
           )}
