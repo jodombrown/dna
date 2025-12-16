@@ -59,6 +59,12 @@ const PlatformHealth = lazy(() => import("./pages/admin/PlatformHealth"));
 const ContentModeration = lazy(() => import("./pages/admin/ContentModeration"));
 const FeedComingSoon = lazy(() => import("./pages/FeedComingSoon"));
 
+// New Admin Dashboard Routes
+const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
+const AdminDashboardLayout = lazy(() => import("./components/admin/AdminDashboardLayout"));
+const AdminDashboardOverview = lazy(() => import("./pages/admin/AdminDashboardOverview"));
+const AdminRouteGuard = lazy(() => import("./components/admin/AdminRouteGuard").then(m => ({ default: m.AdminRouteGuard })));
+
 // Static pages  
 const About = lazy(() => import("./pages/About"));
 const Install = lazy(() => import("./pages/Install"));
@@ -532,7 +538,24 @@ function App() {
               <Route path="/contribute" element={<ContributeExample />} />
               <Route path="/convey" element={<ConveyExample />} />
               
-              {/* Admin routes */}
+              {/* New Admin Portal Routes */}
+              <Route path="/admin-login" element={<AdminLogin />} />
+              <Route path="/admin" element={
+                <Suspense fallback={<PageLoader />}>
+                  <AdminRouteGuard>
+                    <AdminDashboardLayout />
+                  </AdminRouteGuard>
+                </Suspense>
+              }>
+                <Route index element={<AdminDashboardOverview />} />
+                <Route path="dashboard" element={<AdminDashboardOverview />} />
+                <Route path="users" element={<UserManagement />} />
+                <Route path="moderation" element={<ContentModeration />} />
+                <Route path="analytics" element={<EngagementDashboard />} />
+                <Route path="analytics/engagement" element={<EngagementDashboard />} />
+              </Route>
+
+              {/* Legacy Admin routes */}
               <Route path="/app/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="waitlist" element={<WaitlistManagement />} />
