@@ -91,7 +91,6 @@ const HeroSection = () => {
                   src={heroProfessional} 
                   alt="African diaspora professionals collaborating and working together" 
                   className="w-full h-full object-cover"
-                  fetchPriority="high"
                   width={800}
                   height={600}
                   loading="eager"
