@@ -117,6 +117,15 @@ export function PostCard({
   const postTypeDisplay = getPostTypeDisplay();
 
   const handleReactionSelect = async (reaction: ReactionEmoji) => {
+    if (!post.post_id) {
+      console.error('Cannot add reaction: post_id is undefined', { post });
+      toast({
+        description: 'Unable to react to this post.',
+        variant: 'default',
+      });
+      return;
+    }
+    
     const userHasThisReaction = reactions.find((r) =>
       r.emoji === reaction && r.users.some((u) => u.user_id === currentUserId)
     );

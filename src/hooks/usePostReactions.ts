@@ -13,7 +13,7 @@ interface ReactionData {
   }[];
 }
 
-export function usePostReactions(postId: string, userId?: string) {
+export function usePostReactions(postId: string | undefined, userId?: string) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -21,6 +21,8 @@ export function usePostReactions(postId: string, userId?: string) {
   const { data: reactions = [], isLoading } = useQuery({
     queryKey: ['post-reactions', postId],
     queryFn: async () => {
+      if (!postId) return [];
+      
       // Get all reactions for the post with user info
       const { data, error } = await supabase
         .from('post_reactions')
