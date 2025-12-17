@@ -19,6 +19,7 @@ import {
   Flag,
   Ban
 } from 'lucide-react';
+import { BANNER_GRADIENTS, BannerGradientKey } from '@/lib/constants/bannerGradients';
 import { useConnectionStatus } from '@/hooks/useConnectionStatus';
 import { connectionService } from '@/services/connectionService';
 import { messageService } from '@/services/messageService';
@@ -236,13 +237,38 @@ const PublicProfile = () => {
   // Main profile view
   return (
     <div className="min-h-screen bg-background pt-20">
-      {/* Banner */}
-      {profile.banner_url && (
-        <div 
-          className="h-64 bg-cover bg-center"
-          style={{ backgroundImage: `url(${profile.banner_url})` }}
-        />
-      )}
+      {/* Banner - supports gradients, images, and overlay */}
+      {(() => {
+        const bannerType = profile.banner_type || 'gradient';
+        const bannerGradient = profile.banner_gradient || 'dna';
+        const bannerOverlay = profile.banner_overlay || false;
+        
+        const getBannerStyle = () => {
+          if (bannerType === 'image' && profile.banner_url) {
+            return { 
+              backgroundImage: `url(${profile.banner_url})`, 
+              backgroundSize: 'cover', 
+              backgroundPosition: 'center' 
+            };
+          }
+          if (bannerType === 'gradient') {
+            const gradient = BANNER_GRADIENTS[bannerGradient as BannerGradientKey];
+            return { background: gradient?.css || BANNER_GRADIENTS.dna.css };
+          }
+          return { background: BANNER_GRADIENTS.dna.css };
+        };
+
+        return (
+          <div 
+            className="h-64 relative"
+            style={getBannerStyle()}
+          >
+            {bannerOverlay && (
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+            )}
+          </div>
+        );
+      })()}
 
       <div className="container max-w-4xl mx-auto px-4 pb-16">
         {!isOwnProfile && (
@@ -257,7 +283,7 @@ const PublicProfile = () => {
         )}
         
         {/* Header Card */}
-        <Card className={profile.banner_url ? '-mt-24 relative' : 'mt-8'}>
+        <Card className="-mt-24 relative">
           <CardContent className="pt-8">
             <div className="flex items-start justify-between mb-6">
               <div className="flex items-start gap-6">
