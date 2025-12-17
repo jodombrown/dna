@@ -106,9 +106,27 @@ const OnboardingTour: React.FC<OnboardingTourProps> = ({ open, onClose }) => {
     completeTour 
   } = useTourProgress();
   
-  const [currentStep, setCurrentStep] = useState(savedStep || 0);
   const totalSteps = TOUR_STEPS.length;
-  const step = TOUR_STEPS[currentStep];
+  
+  // Ensure savedStep is within bounds to prevent accessing undefined array elements
+  const getValidStep = (step: number | undefined | null): number => {
+    if (step === undefined || step === null || step < 0 || step >= totalSteps) {
+      return 0;
+    }
+    return step;
+  };
+  
+  const [currentStep, setCurrentStep] = useState(() => getValidStep(savedStep));
+  
+  // Safety: ensure step is always valid even if currentStep somehow goes out of bounds
+  const safeStepIndex = currentStep >= 0 && currentStep < totalSteps ? currentStep : 0;
+  const step = TOUR_STEPS[safeStepIndex];
+  
+  // Additional safety check - if step is somehow still undefined, don't render
+  if (!step) {
+    return null;
+  }
+  
   const Icon = step.icon;
 
   // Mark tour as shown when opened
