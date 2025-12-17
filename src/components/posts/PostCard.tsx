@@ -16,17 +16,15 @@ import { ThreadedComments } from './ThreadedComments';
 import { ReactionSummary } from './ReactionSummary';
 import { RepostDialog } from './RepostDialog';
 import { SharedPostCard } from './SharedPostCard';
-import { LikedByModal } from './LikedByModal';
 import { ShareDialog } from './ShareDialog';
 import { ReshareDialog } from '@/components/feed/dialogs/ReshareDialog';
 import { PostMenuOwn } from './PostMenuOwn';
 import { PostMenuOthers } from './PostMenuOthers';
 import { usePostReactions } from '@/hooks/usePostReactions';
-import { usePostLikes } from '@/hooks/usePostLikes';
 import { usePostBookmark } from '@/hooks/usePostBookmark';
 import { usePostRepost } from '@/hooks/usePostRepost';
 import { usePostShares } from '@/hooks/usePostShares';
-import { ReactionEmoji, REACTION_EMOJIS, getEmojiLabel } from '@/types/reactions';
+import { ReactionEmoji, getEmojiLabel } from '@/types/reactions';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { usePostViewTracker } from '@/hooks/usePostViewTracker';
@@ -60,7 +58,6 @@ export function PostCard({
   
   const [showRepostDialog, setShowRepostDialog] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
-  const [showLikedByModal, setShowLikedByModal] = useState(false);
   const [showReshareDialog, setShowReshareDialog] = useState(false);
   const [showMediaLightbox, setShowMediaLightbox] = useState(false);
   
@@ -73,15 +70,6 @@ export function PostCard({
     removeReaction,
     isLoading: isReacting,
   } = usePostReactions(post.post_id, currentUserId);
-
-  // Post likes (simple heart like)
-  const {
-    likeCount,
-    userHasLiked,
-    likedBy,
-    toggleLike,
-    isLoading: isLiking,
-  } = usePostLikes(post.post_id, currentUserId);
 
   // Post bookmark
   const {
@@ -361,84 +349,56 @@ export function PostCard({
         </>
       )}
 
-      {/* Stats */}
-      {(likeCount > 0 || totalReactions > 0 || post.comments_count > 0 || shareCount > 0) && (
-        <div className="flex items-center justify-between pb-3 mb-3 border-b text-sm">
-          <div className="flex items-center gap-3">
-            {/* Like count - clickable */}
-            {likeCount > 0 && (
-              <button
-                onClick={() => setShowLikedByModal(true)}
-                className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <Heart className="h-4 w-4 fill-red-500 text-red-500" />
-                <span>{likeCount}</span>
-              </button>
-            )}
-            
-            {/* Emoji reactions summary */}
+      {/* Stats - LinkedIn-inspired engagement summary */}
+      {(totalReactions > 0 || post.comments_count > 0 || shareCount > 0) && (
+        <div className="flex items-center justify-between py-2 text-sm text-muted-foreground">
+          {/* Reactions summary - clickable to show who reacted */}
+          <div className="flex items-center gap-1">
             {totalReactions > 0 && (
               <ReactionSummary reactions={reactions} totalCount={totalReactions} />
             )}
           </div>
           
-          <div className="flex items-center gap-3 text-muted-foreground">
+          {/* Comments and shares count */}
+          <div className="flex items-center gap-3">
             {post.comments_count > 0 && (
-              <span>
+              <button 
+                onClick={onCommentClick}
+                className="hover:text-foreground hover:underline transition-colors"
+              >
                 {post.comments_count} {post.comments_count === 1 ? 'comment' : 'comments'}
-              </span>
+              </button>
             )}
             {shareCount > 0 && (
               <span>
-                {shareCount} {shareCount === 1 ? 'share' : 'shares'}
+                {shareCount} {shareCount === 1 ? 'repost' : 'reposts'}
               </span>
             )}
           </div>
         </div>
       )}
 
-      {/* Reaction Summary */}
-      {totalReactions > 0 && (
-        <div className="flex items-center pt-2">
-          <ReactionSummary reactions={reactions} totalCount={totalReactions} />
-        </div>
-      )}
-
-      {/* Actions */}
-      <div className="flex items-center justify-between gap-2 pt-3 border-t">
+      {/* Actions - LinkedIn-inspired action bar */}
+      <div className="flex items-center justify-between gap-1 pt-3 border-t">
         {/* Emoji Reaction Picker */}
-        <ReactionPicker onReactionSelect={(emoji) => {
-          if (currentReaction === emoji) {
-            removeReaction(emoji);
-          } else {
-            if (currentReaction) {
-              removeReaction(currentReaction);
-            }
-            addReaction(emoji);
-          }
-          feedAnalytics.like({
-            userId: currentUserId,
-            postId: post.post_id,
-            postType: post.post_type || 'post',
-            context: { surface: 'home' },
-          });
-        }}>
+        <ReactionPicker onReactionSelect={handleReactionSelect}>
           <Button
             variant="ghost"
             size="sm"
             disabled={isReacting}
             className={cn(
-              'flex-1 gap-1.5 px-2',
+              'flex-1 gap-1.5 h-10',
               currentReaction && 'text-primary'
             )}
           >
             {currentReaction ? (
               <span className="text-lg">{currentReaction}</span>
             ) : (
-              <Heart className="h-4 w-4" />
+              <Heart className="h-5 w-5" />
             )}
-            <span className="hidden sm:inline">{currentReaction ? getEmojiLabel(currentReaction) : 'React'}</span>
-            {totalReactions > 0 && <span>{totalReactions}</span>}
+            <span className="hidden sm:inline text-sm font-medium">
+              {currentReaction ? getEmojiLabel(currentReaction) : 'Like'}
+            </span>
           </Button>
         </ReactionPicker>
 
@@ -457,39 +417,35 @@ export function PostCard({
               context: { surface: 'home' },
             });
           }}
-          className="flex-1 gap-1.5 px-2"
+          className="flex-1 gap-1.5 h-10"
         >
-          <MessageCircle className="h-4 w-4" />
-          <span className="hidden sm:inline">Comment</span>
-          <span className="sm:hidden">{post.comments_count > 0 ? post.comments_count : ''}</span>
+          <MessageCircle className="h-5 w-5" />
+          <span className="hidden sm:inline text-sm font-medium">Comment</span>
         </Button>
 
-        {/* Reshare Button - TEMPORARILY HIDDEN for Lockdown v1 */}
-        {/* {feedItem && (
+        {/* Repost Button - Re-enabled */}
+        {feedItem && (
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setShowReshareDialog(true)}
-            className="flex-1 gap-1.5 px-2"
+            className="flex-1 gap-1.5 h-10"
           >
-            <Repeat2 className="h-4 w-4" />
-            <span className="hidden sm:inline">Share</span>
-            {feedItem?.share_count && feedItem.share_count > 0 && (
-              <span className="sm:hidden">{feedItem.share_count}</span>
-            )}
+            <Repeat2 className="h-5 w-5" />
+            <span className="hidden sm:inline text-sm font-medium">Repost</span>
           </Button>
-        )} */}
+        )}
 
-        {/* Bookmark Button */}
+        {/* Bookmark/Save Button */}
         <Button
           variant="ghost"
           size="sm"
           onClick={() => toggleBookmark()}
           disabled={isBookmarking}
-          className={cn('gap-1.5 px-2', isBookmarked && 'text-primary')}
+          className={cn('flex-1 gap-1.5 h-10', isBookmarked && 'text-primary')}
         >
-          <Bookmark className={cn('h-4 w-4', isBookmarked && 'fill-current')} />
-          <span className="hidden sm:inline">{isBookmarked ? 'Saved' : 'Save'}</span>
+          <Bookmark className={cn('h-5 w-5', isBookmarked && 'fill-current')} />
+          <span className="hidden sm:inline text-sm font-medium">{isBookmarked ? 'Saved' : 'Save'}</span>
         </Button>
       </div>
 
@@ -498,8 +454,8 @@ export function PostCard({
         <ThreadedComments postId={post.post_id} currentUserId={currentUserId} />
       )}
 
-      {/* Reshare Dialog - TEMPORARILY HIDDEN for Lockdown v1 */}
-      {/* {feedItem && (
+      {/* Reshare Dialog */}
+      {feedItem && (
         <ReshareDialog
           open={showReshareDialog}
           onOpenChange={setShowReshareDialog}
@@ -507,7 +463,7 @@ export function PostCard({
           currentUserId={currentUserId}
           onSuccess={onUpdate}
         />
-      )} */}
+      )}
 
       {/* Share Dialog */}
       {profile && (
