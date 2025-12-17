@@ -49,7 +49,6 @@ interface ChatBubbleProps {
   isOwn: boolean;
   showAvatar?: boolean;
   onDeleteMessage?: (messageId: string) => void;
-  onReportMessage?: (messageId: string) => void;
 }
 
 export const ChatBubble: React.FC<ChatBubbleProps> = ({
@@ -57,7 +56,6 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   isOwn,
   showAvatar = true,
   onDeleteMessage,
-  onReportMessage,
 }) => {
   const queryClient = useQueryClient();
   
@@ -138,7 +136,6 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
           content={message.content}
           isOwn={isOwn}
           onDelete={onDeleteMessage}
-          onReport={onReportMessage}
         />
       </div>
 

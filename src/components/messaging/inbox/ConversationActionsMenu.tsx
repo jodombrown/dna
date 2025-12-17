@@ -57,7 +57,7 @@ export const ConversationActionsMenu: React.FC<ConversationActionsMenuProps> = (
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const handleViewProfile = () => {
-    navigate(`/u/${otherUser.username}`);
+    navigate(`/dna/${otherUser.username}`);
   };
 
   const handleMuteToggle = () => {

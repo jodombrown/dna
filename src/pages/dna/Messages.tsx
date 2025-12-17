@@ -61,9 +61,6 @@ const DnaMessages = () => {
             <ChatThread 
               conversationId={selectedConversationId}
               otherUser={otherUser}
-              isPinned={selectedConversation?.is_pinned ?? false}
-              isMuted={selectedConversation?.is_muted ?? false}
-              isArchived={selectedConversation?.is_archived ?? false}
               onBack={() => setSelectedConversationId(null)}
             />
           </div>
@@ -117,9 +114,6 @@ const DnaMessages = () => {
             <ChatThread 
               conversationId={selectedConversationId}
               otherUser={otherUser}
-              isPinned={selectedConversation?.is_pinned ?? false}
-              isMuted={selectedConversation?.is_muted ?? false}
-              isArchived={selectedConversation?.is_archived ?? false}
               onBack={() => setSelectedConversationId(null)}
             />
           ) : (
