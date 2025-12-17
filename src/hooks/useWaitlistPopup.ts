@@ -18,7 +18,6 @@ export const useWaitlistPopup = () => {
     const hasBeenShown = localStorage.getItem('dna_waitlist_shown');
     
     if (hasJoined || hasDismissed || hasBeenShown) {
-      console.log('Waitlist popup blocked:', { hasJoined: !!hasJoined, hasDismissed: !!hasDismissed, hasBeenShown: !!hasBeenShown });
       return;
     }
 
@@ -45,18 +44,11 @@ export const useWaitlistPopup = () => {
         const sectionMidpoint = sectionTop + (rect.height * 0.5);
         
         if (viewportBottom > sectionMidpoint) {
-          console.log('🎯 Triggering waitlist popup after Connect section!', {
-            sectionMidpoint,
-            viewportBottom,
-            hasScrolledPastMidpoint: viewportBottom > sectionMidpoint
-          });
           setShowWaitlistPopup(true);
           setHasTriggered(true);
           localStorage.setItem('dna_waitlist_shown', Date.now().toString());
           window.removeEventListener('scroll', handleScroll);
         }
-      } else {
-        console.log('❌ Connect section not found in DOM');
       }
     };
 

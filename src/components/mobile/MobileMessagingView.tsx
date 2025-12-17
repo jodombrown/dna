@@ -66,8 +66,7 @@ const MobileMessagingView = () => {
 
   const handleSendMessage = () => {
     if (messageText.trim()) {
-      // TODO: Implement actual message sending
-      console.log('Sending message:', messageText);
+      // TODO: Implement actual message sending via messaging service
       setMessageText('');
     }
   };
