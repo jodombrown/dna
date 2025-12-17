@@ -43,8 +43,20 @@ export const useProfile = () => {
   
   return useQuery({
     queryKey: ['profile', user?.id],
-    queryFn: () => profilesService.getCurrentUserProfile(user!.id),
+    queryFn: async () => {
+      if (!user?.id) return null;
+      
+      try {
+        const data = await profilesService.getCurrentUserProfile(user.id);
+        return data;
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        throw error;
+      }
+    },
     enabled: !!user?.id,
     staleTime: 5 * 60 * 1000,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 };
