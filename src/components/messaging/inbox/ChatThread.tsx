@@ -91,6 +91,8 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
     mutationFn: () => archiveConversation(conversationId, !isArchived),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      queryClient.invalidateQueries({ queryKey: ['conversations-archived'] });
+      queryClient.invalidateQueries({ queryKey: ['conversation-details', conversationId] });
       toast({
         title: isArchived ? "Conversation unarchived" : "Conversation archived",
         description: isArchived 
@@ -112,6 +114,7 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
     mutationFn: () => pinConversation(conversationId, !isPinned),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      queryClient.invalidateQueries({ queryKey: ['conversation-details', conversationId] });
       toast({
         title: isPinned ? "Conversation unpinned" : "Conversation pinned",
         description: isPinned 
@@ -133,6 +136,7 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
     mutationFn: () => muteConversation(conversationId, !isMuted),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      queryClient.invalidateQueries({ queryKey: ['conversation-details', conversationId] });
       toast({
         title: isMuted ? "Notifications unmuted" : "Notifications muted",
         description: isMuted 
