@@ -8409,6 +8409,14 @@ export type Database = {
         Args: { p_event: string; p_user: string }
         Returns: boolean
       }
+      is_group_creator: {
+        Args: { p_group_id: string; p_user_id: string }
+        Returns: boolean
+      }
+      is_group_member: {
+        Args: { p_group_id: string; p_user_id: string }
+        Returns: boolean
+      }
       is_member_of_space: {
         Args: {
           _approved_only?: boolean

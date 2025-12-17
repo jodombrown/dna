@@ -45,8 +45,21 @@ export async function logError(options: LogErrorOptions): Promise<void> {
   } = options;
 
   try {
-    // Extract error details
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    // Extract error details - properly serialize non-Error objects
+    const getErrorMessage = (err: unknown): string => {
+      if (err instanceof Error) return err.message;
+      if (typeof err === 'string') return err;
+      if (err && typeof err === 'object') {
+        try {
+          return JSON.stringify(err, null, 2);
+        } catch {
+          return Object.prototype.toString.call(err);
+        }
+      }
+      return String(err);
+    };
+    
+    const errorMessage = getErrorMessage(error);
     const errorStack = error instanceof Error ? error.stack : undefined;
     const errorType = error instanceof Error ? error.name : typeof error;
 

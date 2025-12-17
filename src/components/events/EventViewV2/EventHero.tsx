@@ -23,7 +23,6 @@ const EventHero: React.FC<EventHeroProps> = ({ event }) => {
             className="absolute inset-0 w-full h-full object-cover"
             loading="eager"
             decoding="async"
-            fetchPriority="high"
           />
         )}
         <div className="absolute inset-0 bg-black/40" />
