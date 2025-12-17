@@ -327,7 +327,7 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
                 >
                   <button
                     onClick={() => onSelectConversation(conversation.conversation_id)}
-                    className="w-full p-4 hover:bg-accent transition-colors text-left"
+                    className="w-full p-4 pr-12 hover:bg-accent transition-colors text-left"
                   >
                     <div className="flex items-start gap-3">
                       {/* Avatar with presence indicator */}
