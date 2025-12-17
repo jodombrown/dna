@@ -633,12 +633,30 @@ async getConversations(
    * Report a message
    */
   async reportMessage(
-    _messageId: string,
-    _reason: 'spam' | 'harassment' | 'inappropriate' | 'scam' | 'other',
+    messageId: string,
+    reason: 'spam' | 'harassment' | 'inappropriate' | 'scam' | 'other',
     _description?: string
   ): Promise<string> {
-    console.log('Report message - feature pending');
-    return 'pending';
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { data, error } = await supabase
+      .from('content_flags')
+      .insert({
+        content_type: 'message',
+        content_id: messageId,
+        flagged_by: user.id,
+        reason: reason,
+      })
+      .select('id')
+      .single();
+
+    if (error) {
+      console.error('[messageService] Error reporting message:', error);
+      throw error;
+    }
+
+    return data.id;
   },
 
   // =====================================================
