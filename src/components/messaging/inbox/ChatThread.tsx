@@ -63,6 +63,18 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
     mutationFn: (messageId: string) => messageService.deleteMessage(messageId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      toast({
+        title: "Message deleted",
+        description: "Your message has been deleted",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete message",
+        variant: "destructive",
+      });
     },
   });
 
@@ -231,6 +243,22 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
     deleteMutation.mutate(messageId);
   };
 
+  const handleReportMessage = async (messageId: string) => {
+    try {
+      await messageService.reportMessage(messageId, 'inappropriate');
+      toast({
+        title: "Report submitted",
+        description: "Thank you for reporting this message. We'll review it shortly.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to report message",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
@@ -280,6 +308,7 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
                       isOwn={isOwn}
                       showAvatar={showAvatar}
                       onDeleteMessage={handleDeleteMessage}
+                      onReportMessage={handleReportMessage}
                     />
                   );
                 })}

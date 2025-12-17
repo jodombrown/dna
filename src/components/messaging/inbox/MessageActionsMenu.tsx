@@ -1,5 +1,5 @@
 import React from 'react';
-import { MoreVertical, Copy, Trash2, Flag, Reply } from 'lucide-react';
+import { MoreVertical, Copy, Trash2, Flag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -15,7 +15,6 @@ interface MessageActionsMenuProps {
   content: string;
   isOwn: boolean;
   onDelete?: (messageId: string) => void;
-  onReply?: (messageId: string) => void;
   onReport?: (messageId: string) => void;
 }
 
@@ -24,7 +23,6 @@ export const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
   content,
   isOwn,
   onDelete,
-  onReply,
   onReport,
 }) => {
   const { toast } = useToast();
@@ -56,24 +54,13 @@ export const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
     }
   };
 
-  const handleReply = () => {
-    if (onReply) {
-      onReply(messageId);
-    } else {
-      toast({
-        title: "Reply",
-        description: "This feature is coming soon",
-      });
-    }
-  };
-
   const handleReport = () => {
     if (onReport) {
       onReport(messageId);
     } else {
       toast({
-        title: "Report message",
-        description: "This feature is coming soon",
+        title: "Report submitted",
+        description: "Thank you for reporting this message. We'll review it shortly.",
       });
     }
   };
@@ -93,11 +80,6 @@ export const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
         <DropdownMenuItem onClick={handleCopy}>
           <Copy className="h-4 w-4 mr-2" />
           Copy Message
-        </DropdownMenuItem>
-
-        <DropdownMenuItem onClick={handleReply}>
-          <Reply className="h-4 w-4 mr-2" />
-          Reply
         </DropdownMenuItem>
 
         {isOwn && (
