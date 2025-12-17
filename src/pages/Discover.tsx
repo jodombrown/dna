@@ -171,7 +171,7 @@ export default function Discover() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return [];
 
-      console.log('🔍 Fetching connection suggestions for user:', user.id);
+      
 
       // Use discover_members RPC to get valid, existing users only
       const { data: similarUsers, error } = await supabase.rpc('discover_members', {
@@ -192,8 +192,6 @@ export default function Discover() {
         return [];
       }
       
-      console.log('✅ Received connection suggestions:', similarUsers?.length, 'users');
-      console.log('Users:', similarUsers?.map(u => ({ id: u.id, name: u.full_name })));
       
       if (!similarUsers) return [];
 

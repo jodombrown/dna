@@ -157,7 +157,7 @@ export async function createStoryPost(params: {
       linked_entity_id: null,
     };
 
-    console.log('createStoryPost inserting:', insertPayload);
+    // Debug logging removed for production
 
     const { data: postData, error: postError } = await supabase
       .from('posts')
@@ -300,7 +300,7 @@ export async function createStandardPost(params: {
       link_metadata: linkMetadata,
     };
 
-    console.log('createStandardPost inserting:', insertPayload);
+    // Debug logging removed for production
 
     const { data: postData, error: postError } = await supabase
       .from('posts')

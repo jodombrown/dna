@@ -45,7 +45,7 @@ const DnaFeed = lazy(() => import("./pages/dna/Feed"));
 const HashtagFeed = lazy(() => import("./pages/dna/HashtagFeed"));
 const DebugUniversalFeed = lazy(() => import("./pages/dna/DebugUniversalFeed"));
 const DnaEvents = lazy(() => import("./pages/dna/Events"));
-const DnaMessages = lazy(() => import("./pages/dna/MessagesInbox"));
+const DnaMessages = lazy(() => import("./pages/dna/Messages"));
 const DnaImpact = lazy(() => import("./pages/dna/Impact"));
 const DnaNotifications = lazy(() => import("./pages/dna/Notifications"));
 const DnaAnalytics = lazy(() => import("./pages/dna/Analytics"));
@@ -138,8 +138,7 @@ const Discover = lazy(() => import("./pages/Discover"));
 const DiscoverMembers = lazy(() => import("./pages/DiscoverMembers"));
 const DnaDiscover = lazy(() => import("./pages/dna/Discover"));
 const Network = lazy(() => import("./pages/Network"));
-const Messages = lazy(() => import("./pages/Messages"));
-const MessagesPage = lazy(() => import("./pages/MessagesPage"));
+// Messages pages consolidated - using DnaMessages from ./pages/dna/Messages
 const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
 const NotificationSettingsPage = lazy(() => import("./pages/NotificationSettingsPage"));
 const ProfileEdit = lazy(() => import("./pages/ProfileEdit"));
@@ -164,8 +163,7 @@ const Connect = lazy(() => import("./pages/dna/connect/Connect"));
 const ConnectLayout = lazy(() => import("./components/connect/ConnectLayout").then(m => ({ default: m.ConnectLayout })));
 const ConnectDiscover = lazy(() => import("./pages/dna/connect/Discover"));
 const ConnectNetwork = lazy(() => import("./pages/dna/connect/Network"));
-const ConnectMessages = lazy(() => import("./pages/dna/connect/Messages"));
-const ConversationView = lazy(() => import("./pages/dna/connect/ConversationView"));
+// Legacy connect messages pages removed - using canonical /dna/messages route
 
 // Regional pages
 const NorthAfricaLandingPage = lazy(() => import("./pages/NorthAfricaLandingPage"));
