@@ -54,6 +54,9 @@ const ProfileEdit = () => {
   // Image state
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [bannerUrl, setBannerUrl] = useState<string | null>(null);
+  const [bannerType, setBannerType] = useState<'gradient' | 'solid' | 'image'>('gradient');
+  const [bannerGradient, setBannerGradient] = useState<string>('dna');
+  const [bannerOverlay, setBannerOverlay] = useState<boolean>(false);
 
   // Basic info state
   const [fullName, setFullName] = useState('');
@@ -119,6 +122,9 @@ const ProfileEdit = () => {
       // Images
       setAvatarUrl(profile.avatar_url || null);
       setBannerUrl(profile.banner_url || null);
+      setBannerType((profile as any).banner_type || 'gradient');
+      setBannerGradient((profile as any).banner_gradient || 'dna');
+      setBannerOverlay((profile as any).banner_overlay || false);
 
       // Basic info
       setFullName(profile.full_name || '');
@@ -493,8 +499,12 @@ const ProfileEdit = () => {
             userId={user.id}
             avatarUrl={avatarUrl}
             bannerUrl={bannerUrl}
+            bannerType={bannerType}
+            bannerGradient={bannerGradient}
+            bannerOverlay={bannerOverlay}
             onAvatarChange={setAvatarUrl}
             onBannerChange={setBannerUrl}
+            onBannerUpdate={() => refetch()}
           />
 
           {/* Basic Information */}
