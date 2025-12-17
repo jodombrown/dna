@@ -34,9 +34,22 @@ const ProfileEdit = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [showTour, setShowTour] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   
   // Fetch current profile using unified hook
-  const { data: profile, isLoading, isError, error } = useProfile();
+  const { data: profile, isLoading, isError, error, refetch } = useProfile();
+
+  // Auto-retry if profile is null but user exists (give trigger time to complete)
+  useEffect(() => {
+    if (!isLoading && !profile && user && retryCount < 3) {
+      const timeout = setTimeout(() => {
+        console.log(`Profile not found, retrying... (attempt ${retryCount + 1})`);
+        setRetryCount(prev => prev + 1);
+        refetch();
+      }, 1000);
+      return () => clearTimeout(timeout);
+    }
+  }, [isLoading, profile, user, retryCount, refetch]);
 
   // Image state
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -314,10 +327,11 @@ const ProfileEdit = () => {
     updateMutation.mutate(updates);
   };
 
-  if (isLoading) {
+  if (isLoading || (!profile && user && retryCount < 3)) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <p className="text-sm text-muted-foreground">Loading your profile...</p>
       </div>
     );
   }
@@ -335,7 +349,10 @@ const ProfileEdit = () => {
           <Button variant="outline" onClick={() => navigate('/dna/feed')}>
             Back to Feed
           </Button>
-          <Button onClick={() => window.location.reload()}>
+          <Button onClick={() => {
+            setRetryCount(0);
+            refetch();
+          }}>
             Try Again
           </Button>
         </div>
@@ -343,11 +360,11 @@ const ProfileEdit = () => {
     );
   }
 
-  if (!user || !profile) {
+  if (!user) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-4">
         <div className="text-center">
-          <h2 className="text-xl font-semibold">Profile not found</h2>
+          <h2 className="text-xl font-semibold">Not signed in</h2>
           <p className="text-muted-foreground mt-2">
             Please sign in to edit your profile.
           </p>
@@ -355,6 +372,30 @@ const ProfileEdit = () => {
         <Button onClick={() => navigate('/auth')}>
           Sign In
         </Button>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold">Profile not found</h2>
+          <p className="text-muted-foreground mt-2">
+            Your profile may still be loading. Please wait or try refreshing.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => navigate('/dna/feed')}>
+            Back to Feed
+          </Button>
+          <Button onClick={() => {
+            setRetryCount(0);
+            refetch();
+          }}>
+            Reload Profile
+          </Button>
+        </div>
       </div>
     );
   }
