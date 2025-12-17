@@ -119,6 +119,9 @@ const MessageOverlay: React.FC<MessageOverlayProps> = ({
             <ChatThread
               conversationId={conversationId}
               otherUser={otherUser}
+              isPinned={conversation?.is_pinned ?? false}
+              isMuted={conversation?.is_muted ?? false}
+              isArchived={conversation?.is_archived ?? false}
               onBack={onClose}
             />
           ) : recipientId ? (
