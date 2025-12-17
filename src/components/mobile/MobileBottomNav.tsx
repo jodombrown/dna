@@ -151,12 +151,7 @@ const MobileBottomNav: React.FC = () => {
               
               {/* Active indicator */}
               {isActive(item.path) && (
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-primary rounded-b-full" />
-              )}
-              
-              {/* Pillar badge for 5C items */}
-              {'pillar' in item && item.pillar && isActive(item.path) && (
-                <div className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full animate-pulse" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-foreground/80 rounded-b-full" />
               )}
               
               {/* Notification badge for More menu */}
