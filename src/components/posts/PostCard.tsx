@@ -397,44 +397,50 @@ export function PostCard({
         </div>
       )}
 
+      {/* Reaction Summary */}
+      {totalReactions > 0 && (
+        <div className="flex items-center pt-2">
+          <ReactionSummary reactions={reactions} totalCount={totalReactions} />
+        </div>
+      )}
+
       {/* Actions */}
       <div className="flex items-center justify-between gap-2 pt-3 border-t">
-        {/* Simple Like Button */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            toggleLike();
-            feedAnalytics[userHasLiked ? 'unlike' : 'like']({
-              userId: currentUserId,
-              postId: post.post_id,
-              postType: post.post_type || 'post',
-              context: { surface: 'home' },
-            });
-          }}
-          disabled={isLiking}
-          className={cn(
-            'flex-1 gap-1.5 px-2',
-            userHasLiked && 'text-red-500 hover:text-red-600'
-          )}
-        >
-          <Heart className={cn('h-4 w-4', userHasLiked && 'fill-red-500')} />
-          <span className="hidden sm:inline">{userHasLiked ? 'Liked' : 'Like'}</span>
-          <span className="sm:hidden">{likeCount > 0 ? likeCount : ''}</span>
-        </Button>
-
-        {/* DNA v1.0 LOCKDOWN: Emoji Reactions hidden until stable */}
-        {/* <ReactionPicker onReactionSelect={handleReactionSelect}>
+        {/* Emoji Reaction Picker */}
+        <ReactionPicker onReactionSelect={(emoji) => {
+          if (currentReaction === emoji) {
+            removeReaction(emoji);
+          } else {
+            if (currentReaction) {
+              removeReaction(currentReaction);
+            }
+            addReaction(emoji);
+          }
+          feedAnalytics.like({
+            userId: currentUserId,
+            postId: post.post_id,
+            postType: post.post_type || 'post',
+            context: { surface: 'home' },
+          });
+        }}>
           <Button
             variant="ghost"
             size="sm"
             disabled={isReacting}
-            className="flex-1 gap-1.5 px-2"
+            className={cn(
+              'flex-1 gap-1.5 px-2',
+              currentReaction && 'text-primary'
+            )}
           >
-            <span>😊</span>
-            <span className="hidden sm:inline">React</span>
+            {currentReaction ? (
+              <span className="text-lg">{currentReaction}</span>
+            ) : (
+              <Heart className="h-4 w-4" />
+            )}
+            <span className="hidden sm:inline">{currentReaction ? getEmojiLabel(currentReaction) : 'React'}</span>
+            {totalReactions > 0 && <span>{totalReactions}</span>}
           </Button>
-        </ReactionPicker> */}
+        </ReactionPicker>
 
         {/* Comment Button */}
         <Button
