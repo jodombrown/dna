@@ -64,19 +64,26 @@ export function usePostReactions(postId: string, userId?: string) {
   const addReaction = useMutation({
     mutationFn: async (emoji: ReactionEmoji) => {
       if (!userId) throw new Error('Must be logged in');
+      if (!postId) throw new Error('Invalid post ID');
 
       const { error } = await supabase
         .from('post_reactions')
         .insert({ post_id: postId, user_id: userId, emoji });
 
-      if (error) throw error;
+      if (error) {
+        // Handle duplicate key gracefully (user already reacted with same emoji)
+        if (error.code === '23505') {
+          console.warn('Reaction already exists');
+          return;
+        }
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['post-reactions', postId] });
     },
     onError: (error: any) => {
-      // DNA v1.0 LOCKDOWN: Gentle feedback only
-      console.warn('Failed to add reaction:', error);
+      console.error('Failed to add reaction:', error, { postId, userId });
       toast({
         description: 'Could not add reaction. Please try again.',
         variant: 'default',
