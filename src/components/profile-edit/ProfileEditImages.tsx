@@ -7,21 +7,30 @@ import { Camera, Image, Info, Pencil } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { AvatarUploadModal } from '@/components/profile/AvatarUploadModal';
 import { BannerUploadModal } from '@/components/profile/BannerUploadModal';
+import { BANNER_GRADIENTS, BannerGradientKey } from '@/lib/constants/bannerGradients';
 
 interface ProfileEditImagesProps {
   userId: string;
   avatarUrl: string | null;
   bannerUrl: string | null;
+  bannerType?: 'gradient' | 'solid' | 'image';
+  bannerGradient?: string;
+  bannerOverlay?: boolean;
   onAvatarChange: (url: string) => void;
   onBannerChange: (url: string) => void;
+  onBannerUpdate?: () => void;
 }
 
 const ProfileEditImages: React.FC<ProfileEditImagesProps> = ({
   userId,
   avatarUrl,
   bannerUrl,
+  bannerType = 'gradient',
+  bannerGradient = 'dna',
+  bannerOverlay = false,
   onAvatarChange,
   onBannerChange,
+  onBannerUpdate,
 }) => {
   const queryClient = useQueryClient();
 
@@ -38,9 +47,29 @@ const ProfileEditImages: React.FC<ProfileEditImagesProps> = ({
   const handleBannerUploadComplete = () => {
     queryClient.invalidateQueries({ queryKey: ['profile', userId] });
     queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
-    // Refetch to get the new banner URL
+    // Refetch to get the new banner data
     queryClient.refetchQueries({ queryKey: ['profile', userId] });
+    onBannerUpdate?.();
   };
+
+  // Get banner display style
+  const getBannerStyle = (): React.CSSProperties => {
+    if (bannerType === 'image' && bannerUrl) {
+      return { 
+        backgroundImage: `url(${bannerUrl})`, 
+        backgroundSize: 'cover', 
+        backgroundPosition: 'center' 
+      };
+    }
+    if (bannerType === 'gradient' && bannerGradient) {
+      const gradient = BANNER_GRADIENTS[bannerGradient as BannerGradientKey];
+      return { background: gradient?.css || BANNER_GRADIENTS.dna.css };
+    }
+    return { background: BANNER_GRADIENTS.dna.css };
+  };
+
+  // Check if banner has content (gradient or image)
+  const hasBannerContent = bannerType === 'image' ? !!bannerUrl : !!bannerGradient;
 
   return (
     <>
@@ -110,10 +139,14 @@ const ProfileEditImages: React.FC<ProfileEditImagesProps> = ({
             <div
               className="relative w-full h-32 rounded-lg overflow-hidden bg-muted border-2 border-dashed border-border cursor-pointer hover:border-primary/50 transition-colors group"
               onClick={() => setBannerModalOpen(true)}
+              style={hasBannerContent ? getBannerStyle() : undefined}
             >
-              {bannerUrl ? (
+              {hasBannerContent ? (
                 <>
-                  <img src={bannerUrl} alt="Banner" className="w-full h-full object-cover" />
+                  {/* Overlay preview */}
+                  {bannerOverlay && (
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                  )}
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <Pencil className="h-6 w-6 text-white" />
                   </div>
@@ -147,9 +180,9 @@ const ProfileEditImages: React.FC<ProfileEditImagesProps> = ({
         onOpenChange={setBannerModalOpen}
         userId={userId}
         currentBanner={{
-          type: bannerUrl ? 'image' : 'gradient',
-          value: bannerUrl || 'dna',
-          overlay: false
+          type: bannerType,
+          value: bannerType === 'image' ? (bannerUrl || '') : (bannerGradient || 'dna'),
+          overlay: bannerOverlay
         }}
         onUploadComplete={handleBannerUploadComplete}
       />

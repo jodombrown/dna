@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -34,10 +34,8 @@ export function BannerUploadModal({
   const { toast } = useToast();
   const [uploading, setUploading] = useState(false);
   const [selectedTab, setSelectedTab] = useState<'gradients' | 'upload'>('gradients');
-  const [selectedGradient, setSelectedGradient] = useState<BannerGradientKey>(
-    currentBanner.type === 'gradient' ? (currentBanner.value as BannerGradientKey) : 'dna'
-  );
-  const [overlay, setOverlay] = useState(currentBanner.overlay);
+  const [selectedGradient, setSelectedGradient] = useState<BannerGradientKey>('dna');
+  const [overlay, setOverlay] = useState(false);
 
   // Image cropping state
   const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -49,6 +47,23 @@ export function BannerUploadModal({
   const BANNER_ASPECT_RATIO = 3 / 1;
   const MIN_IMAGE_WIDTH = 1200;
   const MIN_IMAGE_HEIGHT = 400;
+
+  // Reset state when modal opens or currentBanner changes
+  useEffect(() => {
+    if (open) {
+      setSelectedTab(currentBanner.type === 'image' ? 'upload' : 'gradients');
+      setSelectedGradient(
+        currentBanner.type === 'gradient' 
+          ? (currentBanner.value as BannerGradientKey) || 'dna'
+          : 'dna'
+      );
+      setOverlay(currentBanner.overlay);
+      setImageSrc(null);
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
+      setCroppedAreaPixels(null);
+    }
+  }, [open, currentBanner]);
 
   const onCropComplete = useCallback((croppedArea: any, croppedAreaPixels: any) => {
     setCroppedAreaPixels(croppedAreaPixels);
