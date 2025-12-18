@@ -106,7 +106,7 @@ const DnaUserDashboard = () => {
               <CardContent className="pt-6">
                 <div className="flex gap-6">
                   <Avatar className="w-24 h-24 border-4 border-background">
-                    <AvatarImage src={profile.avatar_url || undefined} />
+                    <AvatarImage src={profile.avatar_url || undefined} loading="lazy" />
                     <AvatarFallback className="text-2xl">
                       {profile.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
                     </AvatarFallback>
@@ -219,7 +219,7 @@ const DnaUserDashboard = () => {
             <div className="flex flex-col sm:flex-row gap-6">
               {/* Avatar */}
               <Avatar className="w-24 h-24 border-4 border-background">
-                <AvatarImage src={profile.avatar_url || undefined} />
+                <AvatarImage src={profile.avatar_url || undefined} loading="lazy" />
                 <AvatarFallback className="text-2xl">
                   {profile.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
                 </AvatarFallback>
