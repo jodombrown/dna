@@ -56,8 +56,8 @@ const DnaMessages = () => {
   if (isMobile) {
     if (selectedConversationId && otherUser) {
       return (
-        <div className="min-h-screen bg-background pt-20">
-          <div className="h-[calc(100vh-80px)]">
+        <div className="min-h-screen bg-background pt-20 pb-20">
+          <div className="h-[calc(100vh-160px)]">
             <ChatThread 
               conversationId={selectedConversationId}
               otherUser={otherUser}
