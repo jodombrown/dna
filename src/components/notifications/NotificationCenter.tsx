@@ -112,7 +112,7 @@ export function NotificationCenter() {
         break;
       case 'connection_accepted':
         if (notification.actor_username) {
-          targetRoute = `/dna/${notification.actor_username}`;
+          targetRoute = `/u/${notification.actor_username}`;
         } else {
           targetRoute = '/dna/connect/network';
         }
@@ -143,7 +143,7 @@ export function NotificationCenter() {
         break;
       case 'profile_view':
         targetRoute = notification.actor_username 
-          ? `/dna/${notification.actor_username}` 
+          ? `/u/${notification.actor_username}` 
           : '/dna/connect';
         break;
     }
