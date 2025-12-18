@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { ConnectionStatus, Connection, ConnectionRequest, ConnectionProfile } from '@/types/connections';
 import { BlockedUser } from '@/types/blocked';
+import { sendNotificationEmail, NOTIFICATION_TYPES } from './notificationService';
 
 export const connectionService = {
   async sendConnectionRequest(receiverId: string, message?: string) {
@@ -46,11 +47,31 @@ export const connectionService = {
       }
       throw new Error(error.message || 'Failed to send connection request');
     }
+
+    // Get requester's profile for email notification
+    const { data: requesterProfile } = await supabase
+      .from('profiles')
+      .select('full_name, avatar_url')
+      .eq('id', user.id)
+      .single();
+
+    // Send email notification to recipient (async, don't block)
+    sendNotificationEmail({
+      user_id: receiverId,
+      notification_type: NOTIFICATION_TYPES.CONNECTION_REQUEST,
+      title: 'New Connection Request',
+      message: message || `${requesterProfile?.full_name || 'Someone'} wants to connect with you on DNA.`,
+      action_url: 'https://diasporanetwork.africa/dna/connect/network',
+      actor_name: requesterProfile?.full_name,
+      actor_avatar_url: requesterProfile?.avatar_url,
+    }).catch(err => console.error('Failed to send connection request email:', err));
     
     return data;
   },
 
   async acceptConnectionRequest(connectionId: string) {
+    const { data: { user } } = await supabase.auth.getUser();
+    
     const { data, error } = await supabase
       .from('connections')
       .update({ status: 'accepted', updated_at: new Date().toISOString() })
@@ -60,6 +81,26 @@ export const connectionService = {
       .single();
 
     if (error) throw error;
+
+    // Send email notification to the requester that their request was accepted
+    if (data && user) {
+      const { data: accepterProfile } = await supabase
+        .from('profiles')
+        .select('full_name, avatar_url')
+        .eq('id', user.id)
+        .single();
+
+      sendNotificationEmail({
+        user_id: data.requester_id,
+        notification_type: NOTIFICATION_TYPES.CONNECTION_ACCEPTED,
+        title: 'Connection Request Accepted',
+        message: `${accepterProfile?.full_name || 'Someone'} accepted your connection request. You are now connected!`,
+        action_url: `https://diasporanetwork.africa/u/${accepterProfile?.full_name?.toLowerCase().replace(/\s+/g, '-') || user.id}`,
+        actor_name: accepterProfile?.full_name,
+        actor_avatar_url: accepterProfile?.avatar_url,
+      }).catch(err => console.error('Failed to send connection accepted email:', err));
+    }
+
     return data;
   },
 

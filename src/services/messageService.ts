@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-
+import { sendNotificationEmail, NOTIFICATION_TYPES } from './notificationService';
 /**
  * Attachment data for messages
  */
@@ -409,6 +409,40 @@ async getConversations(
       .from('conversations')
       .update({ last_message_at: new Date().toISOString() })
       .eq('id', conversationId);
+
+    // Send email notification to recipient (async, don't block)
+    try {
+      // Get conversation to find recipient
+      const { data: conversation } = await supabase
+        .from('conversations')
+        .select('user_a, user_b')
+        .eq('id', conversationId)
+        .single();
+
+      if (conversation) {
+        const recipientId = conversation.user_a === user.id ? conversation.user_b : conversation.user_a;
+        
+        // Get sender profile
+        const { data: senderProfile } = await supabase
+          .from('profiles')
+          .select('full_name, avatar_url')
+          .eq('id', user.id)
+          .single();
+
+        // Send email notification (async)
+        sendNotificationEmail({
+          user_id: recipientId,
+          notification_type: NOTIFICATION_TYPES.MESSAGE,
+          title: 'New Message',
+          message: content?.trim() ? `${senderProfile?.full_name || 'Someone'}: "${content.substring(0, 100)}${content.length > 100 ? '...' : ''}"` : `${senderProfile?.full_name || 'Someone'} sent you a message.`,
+          action_url: `https://diasporanetwork.africa/dna/messages?conversation=${conversationId}`,
+          actor_name: senderProfile?.full_name,
+          actor_avatar_url: senderProfile?.avatar_url,
+        }).catch(err => console.error('Failed to send message email:', err));
+      }
+    } catch (emailError) {
+      console.error('[messageService] Error sending message email notification:', emailError);
+    }
 
     console.log('[messageService] Message sent successfully');
     return data as Message;
