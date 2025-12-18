@@ -119,7 +119,7 @@ export function NotificationItem({
       case 'connection_accepted':
         // Go to the actor's profile if available
         if (notification.actor_username) {
-          targetRoute = `/dna/${notification.actor_username}`;
+          targetRoute = `/u/${notification.actor_username}`;
         } else {
           targetRoute = '/dna/connect/network';
         }
@@ -164,7 +164,7 @@ export function NotificationItem({
         break;
       case 'profile_view':
         if (notification.actor_username) {
-          targetRoute = `/dna/${notification.actor_username}`;
+          targetRoute = `/u/${notification.actor_username}`;
         } else {
           targetRoute = '/dna/connect';
         }
@@ -174,7 +174,7 @@ export function NotificationItem({
         if (notification.action_url && notification.action_url.startsWith('/dna')) {
           targetRoute = notification.action_url;
         } else if (notification.actor_username) {
-          targetRoute = `/dna/${notification.actor_username}`;
+          targetRoute = `/u/${notification.actor_username}`;
         }
     }
     
