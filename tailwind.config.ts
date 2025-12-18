@@ -297,7 +297,7 @@ export default {
 			'breathing-pulse': 'breathing-pulse 1.5s ease-in-out forwards',
 			'breathing-pulse-staggered': 'breathing-pulse-staggered 2s ease-in-out infinite',
 			'image-heartbeat': 'image-heartbeat 2.5s ease-in-out infinite',
-			'badge-glow': 'badge-glow 2s ease-in-out infinite'
+			'badge-glow': 'badge-glow 4s ease-in-out infinite'
 		}
 		}
 	},
