@@ -34,7 +34,7 @@ const DnaUserDashboard = () => {
   const { isMobile } = useMobile();
 
   // Fetch profile data
-  const { data: profile, isLoading } = useQuery({
+  const { data: profile, isLoading, error } = useQuery({
     queryKey: ['dna-profile', username],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -44,9 +44,10 @@ const DnaUserDashboard = () => {
         .maybeSingle();
 
       if (error) throw error;
-      if (!data) throw new Error('Profile not found');
+      // Return null instead of throwing - let UI handle gracefully
       return data;
     },
+    retry: 1, // Only retry once to avoid long waits
   });
 
   // Fetch contribution history (placeholder - adjust table name based on your schema)
