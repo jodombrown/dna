@@ -241,20 +241,12 @@ export default {
 					opacity: '0.8'
 				}
 			},
-			'match-pulse': {
+			'badge-grow': {
 				'0%, 100%': {
 					transform: 'scale(1)'
 				},
 				'50%': {
-					transform: 'scale(1.03)'
-				}
-			},
-			'badge-breathe': {
-				'0%, 100%': {
-					opacity: '1'
-				},
-				'50%': {
-					opacity: '0.75'
+					transform: 'scale(1.06)'
 				}
 			},
 				'breathing-pulse': {
@@ -303,8 +295,7 @@ export default {
 			'breathing-pulse': 'breathing-pulse 1.5s ease-in-out forwards',
 			'breathing-pulse-staggered': 'breathing-pulse-staggered 2s ease-in-out infinite',
 			'image-heartbeat': 'image-heartbeat 2.5s ease-in-out infinite',
-			'match-pulse': 'match-pulse 10s ease-in-out infinite',
-			'badge-breathe': 'badge-breathe 4s ease-in-out infinite'
+			'badge-grow': 'badge-grow 1.5s ease-in-out 6'
 		}
 		}
 	},
