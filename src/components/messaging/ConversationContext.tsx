@@ -70,9 +70,9 @@ const ConversationContext: React.FC<ConversationContextProps> = ({
       case 'project':
         return `/dna/collaborate/projects/${originId}`;
       case 'profile':
-        return `/dna/connect/profile/${originId}`;
+        return `/u/${originId}`;
       case 'post':
-        return `/dna/connect/feed?post=${originId}`;
+        return `/dna/feed?post=${originId}`;
       default:
         return null;
     }

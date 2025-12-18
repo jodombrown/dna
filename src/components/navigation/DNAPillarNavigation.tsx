@@ -28,11 +28,11 @@ const pillars = [
     label: 'Feed',
     description: 'Latest updates and community insights',
     icon: Home,
-    href: '/dna/connect/feed',
+    href: '/dna/feed',
     color: 'dna-forest',
     actions: [
-      { label: 'Browse Posts', icon: Search, href: '/dna/connect/feed' },
-      { label: 'Create Post', icon: MessageSquare, href: '/dna/connect/feed' }
+      { label: 'Browse Posts', icon: Search, href: '/dna/feed' },
+      { label: 'Create Post', icon: MessageSquare, href: '/dna/feed' }
     ]
   },
   {
@@ -128,8 +128,8 @@ export const DNAPillarNavigation: React.FC<DNAPillarNavigationProps> = ({
   };
   
   const isActivePillar = (href: string) => {
-    if (href === '/dna/connect/feed') {
-      return location.pathname === '/dna/connect/feed' || location.pathname === '/dna/feed';
+    if (href === '/dna/feed') {
+      return location.pathname === '/dna/feed';
     }
     return location.pathname.startsWith(href);
   };

@@ -305,9 +305,10 @@ function App() {
               {/* ========== LEGACY CONNECT & DISCOVER ROUTES - Redirects ========== */}
               <Route path="/dna/discover/members" element={<Navigate to="/dna/connect/discover" replace />} />
               <Route path="/dna/discover" element={<Navigate to="/dna/connect/discover" replace />} />
-              <Route path="/dna/discover/feed" element={<Navigate to="/dna/connect/discover" replace />} />
+              <Route path="/dna/discover/feed" element={<Navigate to="/dna/feed" replace />} />
               <Route path="/dna/network" element={<Navigate to="/dna/connect/network" replace />} />
-              <Route path="/dna/network/feed" element={<Navigate to="/dna/connect/discover" replace />} />
+              <Route path="/dna/network/feed" element={<Navigate to="/dna/feed" replace />} />
+              <Route path="/dna/connect/feed" element={<Navigate to="/dna/feed" replace />} />
                {/* Feed is the multi-C activity stream home */}
                <Route path="/dna/feed" element={
                  <OnboardingGuard>
