@@ -243,10 +243,10 @@ export default {
 			},
 			'badge-glow': {
 				'0%, 100%': {
-					boxShadow: '0 0 8px 2px hsla(var(--primary), 0.3)'
+					boxShadow: '0 2px 8px 2px hsla(var(--primary), 0.4), 0 0 12px 3px hsla(var(--primary), 0.3)'
 				},
 				'50%': {
-					boxShadow: '0 0 16px 4px hsla(var(--primary), 0.5)'
+					boxShadow: '0 2px 8px 2px hsla(var(--primary), 0.4), 0 0 24px 8px hsla(var(--primary), 0.6)'
 				}
 			},
 				'breathing-pulse': {
