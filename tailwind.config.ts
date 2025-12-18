@@ -243,12 +243,10 @@ export default {
 			},
 			'match-pulse': {
 				'0%, 100%': {
-					opacity: '1',
 					transform: 'scale(1)'
 				},
 				'50%': {
-					opacity: '0.7',
-					transform: 'scale(1.05)'
+					transform: 'scale(1.03)'
 				}
 			},
 				'breathing-pulse': {
@@ -297,7 +295,7 @@ export default {
 			'breathing-pulse': 'breathing-pulse 1.5s ease-in-out forwards',
 			'breathing-pulse-staggered': 'breathing-pulse-staggered 2s ease-in-out infinite',
 			'image-heartbeat': 'image-heartbeat 2.5s ease-in-out infinite',
-			'match-pulse': 'match-pulse 6s ease-in-out infinite'
+			'match-pulse': 'match-pulse 10s ease-in-out infinite'
 		}
 		}
 	},
