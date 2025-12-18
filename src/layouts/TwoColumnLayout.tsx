@@ -56,29 +56,25 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
     <div className={cn("flex w-full gap-4 p-4", className)} style={{ height: 'calc(100vh - 64px)' }}>
       {left && (
         <div 
-          className="transition-all duration-300 ease-in-out overflow-auto h-full"
+          className="transition-all duration-300 ease-in-out overflow-hidden h-full"
           style={{ 
             width: leftWidth,
-            minWidth: 0, // Allow shrinking below content width
+            minWidth: 0,
           }}
         >
-          <div className="min-w-max">
-            {left}
-          </div>
+          {left}
         </div>
       )}
       
       {right && (
         <div 
-          className="transition-all duration-300 ease-in-out overflow-auto flex-1 h-full"
+          className="transition-all duration-300 ease-in-out overflow-hidden flex-1 h-full"
           style={{ 
             width: rightWidth,
-            minWidth: 0, // Allow shrinking below content width
+            minWidth: 0,
           }}
         >
-          <div className="min-w-max">
-            {right}
-          </div>
+          {right}
         </div>
       )}
     </div>
