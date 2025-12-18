@@ -148,7 +148,7 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
         break;
       case 'connection_accepted':
         if (notification.actor_username) {
-          targetRoute = `/dna/${notification.actor_username}`;
+          targetRoute = `/u/${notification.actor_username}`;
         } else {
           targetRoute = '/dna/connect/network';
         }
@@ -185,7 +185,7 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
         break;
       case 'profile_view':
         if (notification.actor_username) {
-          targetRoute = `/dna/${notification.actor_username}`;
+          targetRoute = `/u/${notification.actor_username}`;
         } else {
           targetRoute = '/dna/connect';
         }
