@@ -241,12 +241,12 @@ export default {
 					opacity: '0.8'
 				}
 			},
-			'badge-grow': {
+			'badge-glow': {
 				'0%, 100%': {
-					transform: 'scale(1)'
+					boxShadow: '0 0 8px 2px hsla(var(--primary), 0.3)'
 				},
 				'50%': {
-					transform: 'scale(1.06)'
+					boxShadow: '0 0 16px 4px hsla(var(--primary), 0.5)'
 				}
 			},
 				'breathing-pulse': {
@@ -295,7 +295,7 @@ export default {
 			'breathing-pulse': 'breathing-pulse 1.5s ease-in-out forwards',
 			'breathing-pulse-staggered': 'breathing-pulse-staggered 2s ease-in-out infinite',
 			'image-heartbeat': 'image-heartbeat 2.5s ease-in-out infinite',
-			'badge-grow': 'badge-grow 1.5s ease-in-out 6'
+			'badge-glow': 'badge-glow 3s ease-in-out infinite'
 		}
 		}
 	},
