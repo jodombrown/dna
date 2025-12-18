@@ -243,10 +243,12 @@ export default {
 			},
 			'badge-glow': {
 				'0%, 100%': {
-					boxShadow: '0 2px 8px 2px hsla(var(--primary), 0.4), 0 0 12px 3px hsla(var(--primary), 0.3)'
+					transform: 'scale(1)',
+					boxShadow: '0 4px 12px -2px rgba(0, 0, 0, 0.4), 0 0 8px 2px rgba(22, 163, 74, 0.3)'
 				},
 				'50%': {
-					boxShadow: '0 2px 8px 2px hsla(var(--primary), 0.4), 0 0 24px 8px hsla(var(--primary), 0.6)'
+					transform: 'scale(1.03)',
+					boxShadow: '0 6px 16px -2px rgba(0, 0, 0, 0.5), 0 0 16px 4px rgba(22, 163, 74, 0.5)'
 				}
 			},
 				'breathing-pulse': {
@@ -295,7 +297,7 @@ export default {
 			'breathing-pulse': 'breathing-pulse 1.5s ease-in-out forwards',
 			'breathing-pulse-staggered': 'breathing-pulse-staggered 2s ease-in-out infinite',
 			'image-heartbeat': 'image-heartbeat 2.5s ease-in-out infinite',
-			'badge-glow': 'badge-glow 3s ease-in-out infinite'
+			'badge-glow': 'badge-glow 2s ease-in-out infinite'
 		}
 		}
 	},
