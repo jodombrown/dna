@@ -231,16 +231,26 @@ export default {
 						transform: 'translateY(0)'
 					}
 				},
-				'heartbeat': {
-					'0%, 100%': {
-						transform: 'scale(1)',
-						opacity: '1'
-					},
-					'50%': {
-						transform: 'scale(1.05)',
-						opacity: '0.8'
-					}
+			'heartbeat': {
+				'0%, 100%': {
+					transform: 'scale(1)',
+					opacity: '1'
 				},
+				'50%': {
+					transform: 'scale(1.05)',
+					opacity: '0.8'
+				}
+			},
+			'match-pulse': {
+				'0%, 100%': {
+					transform: 'scale(1)',
+					boxShadow: '0 0 0 0 hsl(151 75% 50% / 0.4)'
+				},
+				'50%': {
+					transform: 'scale(1.03)',
+					boxShadow: '0 0 0 6px hsl(151 75% 50% / 0)'
+				}
+			},
 				'breathing-pulse': {
 					'0%': {
 						transform: 'scale(1)',
@@ -277,17 +287,18 @@ export default {
 					}
 				}
 			},
-			animation: {
-				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out',
-				'fade-in': 'fade-in 0.3s ease-out',
-				'heartbeat': 'heartbeat 2s ease-in-out infinite',
-				'heartbeat-delayed': 'heartbeat 2s ease-in-out infinite 1s',
-				'heartbeat-delayed-2': 'heartbeat 2s ease-in-out infinite 2s',
-				'breathing-pulse': 'breathing-pulse 1.5s ease-in-out forwards',
-				'breathing-pulse-staggered': 'breathing-pulse-staggered 2s ease-in-out infinite',
-				'image-heartbeat': 'image-heartbeat 2.5s ease-in-out infinite'
-			}
+		animation: {
+			'accordion-down': 'accordion-down 0.2s ease-out',
+			'accordion-up': 'accordion-up 0.2s ease-out',
+			'fade-in': 'fade-in 0.3s ease-out',
+			'heartbeat': 'heartbeat 2s ease-in-out infinite',
+			'heartbeat-delayed': 'heartbeat 2s ease-in-out infinite 1s',
+			'heartbeat-delayed-2': 'heartbeat 2s ease-in-out infinite 2s',
+			'breathing-pulse': 'breathing-pulse 1.5s ease-in-out forwards',
+			'breathing-pulse-staggered': 'breathing-pulse-staggered 2s ease-in-out infinite',
+			'image-heartbeat': 'image-heartbeat 2.5s ease-in-out infinite',
+			'match-pulse': 'match-pulse 2.5s ease-in-out infinite'
+		}
 		}
 	},
 	plugins: [require("tailwindcss-animate")],

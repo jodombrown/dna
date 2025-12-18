@@ -3,7 +3,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Progress } from '@/components/ui/progress';
 import { MapPin, Briefcase, UserPlus, Eye, Check, MessageSquare, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,6 +12,7 @@ import { useConnectionStatus } from '@/hooks/useConnectionStatus';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useMutualConnections } from '@/hooks/useMutualConnections';
+import { MatchScoreBadge, MatchReasoning } from '@/components/discover/MatchScoreBadge';
 
 interface MemberCardProps {
   member: {
@@ -136,6 +136,20 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
 
   const matchReasons = getMatchReasons();
 
+  // Build detailed reasoning for the popover
+  const matchReasoning: MatchReasoning = {
+    same_country_of_origin: !!(currentUserProfile?.country_of_origin && member.country_of_origin &&
+      currentUserProfile.country_of_origin.toLowerCase() === member.country_of_origin.toLowerCase()),
+    same_location: !!((currentUserProfile as any)?.current_country && member.current_country &&
+      (currentUserProfile as any).current_country.toLowerCase() === member.current_country.toLowerCase()),
+    shared_focus_areas: currentUserProfile?.focus_areas?.filter(f => member.focus_areas?.includes(f)),
+    shared_industries: currentUserProfile?.industries?.filter(i => member.industries?.includes(i)),
+    shared_skills: currentUserProfile?.skills?.filter(s => member.skills?.includes(s)),
+    regional_expertise_match: !!(currentUserProfile as any)?.regional_expertise?.some((r: string) => 
+      member.regional_expertise?.includes(r)
+    ),
+  };
+
   const handleConnect = async (e: React.MouseEvent) => {
     e.stopPropagation();
     
@@ -231,12 +245,6 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
     navigate(`/dna/${member.username}`);
   };
 
-  const getMatchColor = (score: number) => {
-    if (score >= 70) return 'text-green-600';
-    if (score >= 50) return 'text-yellow-600';
-    return 'text-gray-600';
-  };
-
   return (
     <Card className="hover:shadow-lg transition-all shadow-md border-border/50 overflow-hidden">
       <CardContent className="p-3 sm:p-5">
@@ -259,12 +267,14 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
               >
                 {member.full_name}
               </h3>
-              {/* Match Score - compact on mobile */}
-              <div className="flex items-center gap-1 shrink-0">
-                <span className={`text-xs sm:text-sm font-semibold ${getMatchColor(member.match_score)}`}>
-                  {member.match_score}%
-                </span>
-                <Progress value={member.match_score} className="w-10 sm:w-16 h-1.5" />
+              {/* Match Score - clickable with popover */}
+              <div className="shrink-0">
+                <MatchScoreBadge 
+                  score={member.match_score} 
+                  size="sm"
+                  matchReasons={matchReasons}
+                  reasoning={matchReasoning}
+                />
               </div>
             </div>
 
@@ -272,17 +282,6 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
             <p className="text-xs sm:text-sm text-muted-foreground truncate mb-1.5">
               {member.headline || member.profession || 'DNA Member'}
             </p>
-
-            {/* Why this match - enhanced match reasons */}
-            {matchReasons.length > 0 && (
-              <div className="flex flex-wrap gap-1 mb-2">
-                {matchReasons.slice(0, 2).map((reason, idx) => (
-                  <Badge key={idx} variant="secondary" className="text-[10px] sm:text-xs px-1.5 py-0 bg-dna-copper/10 text-dna-copper border-none">
-                    {reason}
-                  </Badge>
-                ))}
-              </div>
-            )}
 
             {/* Location */}
             {member.location && (
