@@ -249,6 +249,14 @@ export default {
 					transform: 'scale(1.03)'
 				}
 			},
+			'badge-breathe': {
+				'0%, 100%': {
+					opacity: '1'
+				},
+				'50%': {
+					opacity: '0.75'
+				}
+			},
 				'breathing-pulse': {
 					'0%': {
 						transform: 'scale(1)',
@@ -295,7 +303,8 @@ export default {
 			'breathing-pulse': 'breathing-pulse 1.5s ease-in-out forwards',
 			'breathing-pulse-staggered': 'breathing-pulse-staggered 2s ease-in-out infinite',
 			'image-heartbeat': 'image-heartbeat 2.5s ease-in-out infinite',
-			'match-pulse': 'match-pulse 10s ease-in-out infinite'
+			'match-pulse': 'match-pulse 10s ease-in-out infinite',
+			'badge-breathe': 'badge-breathe 4s ease-in-out infinite'
 		}
 		}
 	},
