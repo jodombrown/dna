@@ -243,12 +243,12 @@ export default {
 			},
 			'match-pulse': {
 				'0%, 100%': {
-					transform: 'scale(1)',
-					boxShadow: '0 0 0 0 hsl(151 75% 50% / 0.4)'
+					opacity: '1',
+					transform: 'scale(1)'
 				},
 				'50%': {
-					transform: 'scale(1.03)',
-					boxShadow: '0 0 0 6px hsl(151 75% 50% / 0)'
+					opacity: '0.7',
+					transform: 'scale(1.05)'
 				}
 			},
 				'breathing-pulse': {
