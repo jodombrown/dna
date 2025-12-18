@@ -99,7 +99,7 @@ export function MatchScoreBadge({
         config.className,
         size === 'sm' && 'text-xs px-2 py-0.5',
         size === 'lg' && 'text-sm px-3 py-1',
-        isHighMatch && 'cursor-pointer',
+        isHighMatch && 'shadow-[0_4px_12px_-2px_rgba(0,0,0,0.4)] cursor-pointer',
         !isHighMatch && showTooltip && (reasoning || matchReasons.length > 0) && 'cursor-pointer',
         'transition-all duration-200 hover:scale-105'
       )}
