@@ -28,8 +28,8 @@ export const pillarNavigation = {
     label: 'Discover',
     icon: 'Compass',
     items: [
-      { name: 'Members', path: '/dna/discover/members' },
-      { name: 'Feed', path: '/dna/discover/feed' },
+      { name: 'Members', path: '/dna/connect/discover' },
+      { name: 'Feed', path: '/dna/feed' },
     ],
   },
   connect: {
@@ -37,8 +37,8 @@ export const pillarNavigation = {
     icon: 'Users',
     items: [
       { name: 'Network', path: '/dna/connect/network' },
-      { name: 'Feed', path: '/dna/connect/feed' },
-      { name: 'Messages', path: '/dna/connect/messages' },
+      { name: 'Feed', path: '/dna/feed' },
+      { name: 'Messages', path: '/dna/messages' },
     ],
   },
   convene: {
