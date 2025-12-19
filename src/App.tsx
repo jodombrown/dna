@@ -177,6 +177,7 @@ const PartnerStart = lazy(() => import("./pages/PartnerStart"));
 
 // Regional Hubs
 const RegionHubPage = lazy(() => import("./pages/africa/RegionHubPage"));
+const CountryHubPage = lazy(() => import("./pages/africa/CountryHubPage"));
 
 
 const queryClient = new QueryClient();
@@ -582,6 +583,7 @@ function App() {
 
               {/* Regional Hubs */}
               <Route path="/africa/:regionSlug" element={<RegionHubPage />} />
+              <Route path="/africa/:regionSlug/:countrySlug" element={<CountryHubPage />} />
 
               {/* Static pages */}
               <Route path="/contact" element={<Contact />} />
