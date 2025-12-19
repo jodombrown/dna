@@ -46,7 +46,7 @@ export function MatchScoreBadge({
   const getMatchConfig = () => {
     if (score >= 90) {
       return {
-        label: "Excellent",
+        label: "Strong Match",
         className: "bg-[hsl(151,75%,45%)] text-white font-bold",
         icon: Heart
       };
@@ -182,7 +182,7 @@ export function MatchScoreBadge({
             </div>
             <div>
               <p className="font-semibold text-sm">
-                {score >= 90 ? 'Excellent Match!' : score >= 80 ? 'Great Match!' : score >= 70 ? 'Strong Match' : 'Good Match'}
+                {score >= 90 ? 'Strong Match!' : score >= 80 ? 'Great Match!' : score >= 70 ? 'Good Match' : 'Fair Match'}
               </p>
               <p className="text-xs text-muted-foreground">Why you're connected</p>
             </div>
