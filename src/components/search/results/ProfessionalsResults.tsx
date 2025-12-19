@@ -30,7 +30,7 @@ const ProfessionalsResults: React.FC<ProfessionalsResultsProps> = ({
               <Avatar className="w-16 h-16">
                 <AvatarImage src={professional.avatar_url} alt={professional.full_name} />
                 <AvatarFallback>
-                  {professional.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                  {(professional.full_name || 'DN').split(' ').map(n => n[0]).join('').toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               
