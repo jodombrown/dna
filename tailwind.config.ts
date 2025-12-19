@@ -165,13 +165,6 @@ export default {
 					error: 'hsl(var(--dna-error))',
 					info: 'hsl(var(--dna-info))'
 				},
-				// North Africa Regional Colors
-				'north-africa': {
-					sand: 'hsl(var(--north-africa-sand))',
-					terracotta: 'hsl(var(--north-africa-terracotta))',
-					desert: 'hsl(var(--north-africa-desert))',
-					oasis: 'hsl(var(--north-africa-oasis))'
-				},
 				// Country Flag Colors
 				morocco: {
 					red: 'hsl(var(--morocco-red))',
