@@ -143,7 +143,7 @@ export default function CollaborationSpaces() {
                     <div className="flex items-center gap-2">
                       <Avatar className="h-6 w-6">
                         <AvatarImage src={space.creator.avatar_url || undefined} />
-                        <AvatarFallback>{space.creator.full_name[0]}</AvatarFallback>
+                        <AvatarFallback>{(space.creator.full_name || 'DN')[0]}</AvatarFallback>
                       </Avatar>
                       <span className="text-sm text-muted-foreground">
                         {space.creator.full_name}
