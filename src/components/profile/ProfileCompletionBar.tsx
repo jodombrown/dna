@@ -23,9 +23,9 @@ const ProfileCompletionBar: React.FC<ProfileCompletionBarProps> = ({
   const completionPts = calculateProfileCompletionPts(profile);
 
   const getStrengthLabel = (score: number) => {
-    if (score >= 80) return { label: 'Excellent', color: 'text-green-600' };
-    if (score >= 60) return { label: 'Great', color: 'text-blue-600' };
-    if (score >= 40) return { label: 'Good', color: 'text-amber-600' };
+    if (score >= 80) return { label: 'Strong Match', color: 'text-green-600' };
+    if (score >= 60) return { label: 'Good Match', color: 'text-blue-600' };
+    if (score >= 40) return { label: 'Building', color: 'text-amber-600' };
     return { label: 'Getting Started', color: 'text-dna-copper' };
   };
 
