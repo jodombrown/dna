@@ -160,9 +160,6 @@ const ConnectDiscover = lazy(() => import("./pages/dna/connect/Discover"));
 const ConnectNetwork = lazy(() => import("./pages/dna/connect/Network"));
 // Legacy connect messages pages removed - using canonical /dna/messages route
 
-// Regional pages
-const NorthAfricaLandingPage = lazy(() => import("./pages/NorthAfricaLandingPage"));
-
 // Phase pages
 const MarketResearchPhase = lazy(() => import("./pages/MarketResearchPhase"));
 const PrototypingPhase = lazy(() => import("./pages/PrototypingPhase"));
@@ -563,9 +560,6 @@ function App() {
                 <Route path="convey" element={<ConveyAnalytics />} />
               </Route>
               <Route path="/app/admin/moderation" element={<Moderation />} />
-
-              {/* Regional landing pages */}
-              <Route path="/north-africa" element={<NorthAfricaLandingPage />} />
               
               {/* Static pages */}
               

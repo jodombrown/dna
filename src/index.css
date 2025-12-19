@@ -122,12 +122,6 @@ html, body {
     --dna-error: 0 100% 40%; /* Crimson for error states */
     --dna-info: 200 50% 45%; /* Ocean for informational states */
 
-    /* North Africa Regional Colors */
-    --north-africa-sand: 35 52% 82%;
-    --north-africa-terracotta: 14 78% 62%;
-    --north-africa-desert: 25 42% 45%;
-    --north-africa-oasis: 170 60% 65%;
-
     /* Country Flag Inspired Colors */
     --morocco-red: 0 100% 50%;
     --morocco-green: 120 100% 25%;
