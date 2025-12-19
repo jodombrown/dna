@@ -49,7 +49,7 @@ export const FeedContributionCard: React.FC<FeedContributionCardProps> = ({ acti
               <Avatar className="h-10 w-10 cursor-pointer" onClick={handleViewProfile}>
                 <AvatarImage src={activity.actor_avatar_url} alt={activity.actor_full_name} />
                 <AvatarFallback>
-                  {activity.actor_full_name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                  {(activity.actor_full_name || 'DN').split(' ').map(n => n[0]).join('').slice(0, 2)}
                 </AvatarFallback>
               </Avatar>
               

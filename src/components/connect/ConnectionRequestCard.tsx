@@ -112,7 +112,7 @@ export const ConnectionRequestCard: React.FC<ConnectionRequestCardProps> = ({
           >
             <AvatarImage src={request.avatar_url} alt={request.full_name} />
             <AvatarFallback>
-              {request.full_name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+              {(request.full_name || request.username || 'DN').split(' ').map(n => n[0]).join('').slice(0, 2)}
             </AvatarFallback>
           </Avatar>
 
