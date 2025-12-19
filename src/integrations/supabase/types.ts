@@ -1655,38 +1655,95 @@ export type Database = {
       countries: {
         Row: {
           capital: string | null
+          capital_coordinates: Json | null
+          country_code_iso2: string | null
+          country_code_iso3: string | null
+          country_slug: string | null
           created_at: string
+          currency_code: string | null
           description: string | null
+          description_full: string | null
+          description_short: string | null
+          diaspora_population_estimate: number | null
+          diaspora_top_destinations: string[] | null
           flag_url: string | null
+          gdp_growth_rate: number | null
+          gdp_usd: number | null
+          hero_image_url: string | null
           id: string
+          interest_tags: string[] | null
           iso_code: string | null
+          key_sectors: string[] | null
           name: string
+          official_languages: string[] | null
           population: number | null
           region_id: string
+          skill_relevance: string[] | null
+          status: string | null
+          tagline: string | null
+          timezone: string | null
           updated_at: string
         }
         Insert: {
           capital?: string | null
+          capital_coordinates?: Json | null
+          country_code_iso2?: string | null
+          country_code_iso3?: string | null
+          country_slug?: string | null
           created_at?: string
+          currency_code?: string | null
           description?: string | null
+          description_full?: string | null
+          description_short?: string | null
+          diaspora_population_estimate?: number | null
+          diaspora_top_destinations?: string[] | null
           flag_url?: string | null
+          gdp_growth_rate?: number | null
+          gdp_usd?: number | null
+          hero_image_url?: string | null
           id?: string
+          interest_tags?: string[] | null
           iso_code?: string | null
+          key_sectors?: string[] | null
           name: string
+          official_languages?: string[] | null
           population?: number | null
           region_id: string
+          skill_relevance?: string[] | null
+          status?: string | null
+          tagline?: string | null
+          timezone?: string | null
           updated_at?: string
         }
         Update: {
           capital?: string | null
+          capital_coordinates?: Json | null
+          country_code_iso2?: string | null
+          country_code_iso3?: string | null
+          country_slug?: string | null
           created_at?: string
+          currency_code?: string | null
           description?: string | null
+          description_full?: string | null
+          description_short?: string | null
+          diaspora_population_estimate?: number | null
+          diaspora_top_destinations?: string[] | null
           flag_url?: string | null
+          gdp_growth_rate?: number | null
+          gdp_usd?: number | null
+          hero_image_url?: string | null
           id?: string
+          interest_tags?: string[] | null
           iso_code?: string | null
+          key_sectors?: string[] | null
           name?: string
+          official_languages?: string[] | null
           population?: number | null
           region_id?: string
+          skill_relevance?: string[] | null
+          status?: string | null
+          tagline?: string | null
+          timezone?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -2904,6 +2961,39 @@ export type Database = {
           },
         ]
       }
+      geographic_relevance: {
+        Row: {
+          created_at: string | null
+          entity_id: string
+          entity_type: string
+          hub_id: string
+          hub_type: string
+          id: string
+          relevance_score: number | null
+          relevance_type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          entity_id: string
+          entity_type: string
+          hub_id: string
+          hub_type: string
+          id?: string
+          relevance_score?: number | null
+          relevance_type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          entity_id?: string
+          entity_type?: string
+          hub_id?: string
+          hub_type?: string
+          id?: string
+          relevance_score?: number | null
+          relevance_type?: string | null
+        }
+        Relationships: []
+      }
       group_conversations: {
         Row: {
           created_at: string | null
@@ -3300,6 +3390,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      hub_metrics: {
+        Row: {
+          connections_made: number | null
+          contributions_total: number | null
+          created_at: string | null
+          events_hosted: number | null
+          hub_id: string
+          hub_type: string
+          id: string
+          last_calculated_at: string | null
+          members_connected: number | null
+          projects_active: number | null
+          stories_published: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          connections_made?: number | null
+          contributions_total?: number | null
+          created_at?: string | null
+          events_hosted?: number | null
+          hub_id: string
+          hub_type: string
+          id?: string
+          last_calculated_at?: string | null
+          members_connected?: number | null
+          projects_active?: number | null
+          stories_published?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          connections_made?: number | null
+          contributions_total?: number | null
+          created_at?: string | null
+          events_hosted?: number | null
+          hub_id?: string
+          hub_type?: string
+          id?: string
+          last_calculated_at?: string | null
+          members_connected?: number | null
+          projects_active?: number | null
+          stories_published?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       impact_attributions: {
         Row: {
@@ -5819,27 +5954,69 @@ export type Database = {
       }
       regions: {
         Row: {
-          continent_id: string
+          continent_id: string | null
           created_at: string
           description: string | null
+          description_full: string | null
+          description_short: string | null
+          diaspora_population_estimate: number | null
+          hero_image_url: string | null
           id: string
+          interest_tags: string[] | null
+          key_sectors: string[] | null
+          languages_primary: string[] | null
+          map_coordinates: Json | null
           name: string
+          region_code: string | null
+          region_slug: string | null
+          skill_relevance: string[] | null
+          status: string | null
+          tagline: string | null
+          timezone_primary: string | null
           updated_at: string
         }
         Insert: {
-          continent_id: string
+          continent_id?: string | null
           created_at?: string
           description?: string | null
+          description_full?: string | null
+          description_short?: string | null
+          diaspora_population_estimate?: number | null
+          hero_image_url?: string | null
           id?: string
+          interest_tags?: string[] | null
+          key_sectors?: string[] | null
+          languages_primary?: string[] | null
+          map_coordinates?: Json | null
           name: string
+          region_code?: string | null
+          region_slug?: string | null
+          skill_relevance?: string[] | null
+          status?: string | null
+          tagline?: string | null
+          timezone_primary?: string | null
           updated_at?: string
         }
         Update: {
-          continent_id?: string
+          continent_id?: string | null
           created_at?: string
           description?: string | null
+          description_full?: string | null
+          description_short?: string | null
+          diaspora_population_estimate?: number | null
+          hero_image_url?: string | null
           id?: string
+          interest_tags?: string[] | null
+          key_sectors?: string[] | null
+          languages_primary?: string[] | null
+          map_coordinates?: Json | null
           name?: string
+          region_code?: string | null
+          region_slug?: string | null
+          skill_relevance?: string[] | null
+          status?: string | null
+          tagline?: string | null
+          timezone_primary?: string | null
           updated_at?: string
         }
         Relationships: [
