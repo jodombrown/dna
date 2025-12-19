@@ -24,13 +24,13 @@ const EventHostSection: React.FC<EventHostSectionProps> = ({ event, onCreatorCli
       >
         <div className="flex items-center gap-3 w-full">
           <Avatar className="w-12 h-12">
-            <AvatarImage src={event.creator_profile.avatar_url} alt={event.creator_profile.full_name} />
+            <AvatarImage src={event.creator_profile.avatar_url} alt={event.creator_profile.full_name || event.creator_profile.username} />
             <AvatarFallback className="bg-dna-copper text-white">
-              {event.creator_profile.full_name.split(' ').map(n => n[0]).join('')}
+              {event.creator_profile.full_name?.split(' ').map(n => n[0]).join('') || event.creator_profile.username?.slice(0, 2).toUpperCase() || '?'}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 text-left">
-            <div className={`${TYPOGRAPHY.h5} text-gray-900`}>{event.creator_profile.full_name}</div>
+            <div className={`${TYPOGRAPHY.h5} text-gray-900`}>{event.creator_profile.full_name || event.creator_profile.username || 'Event Host'}</div>
             <div className={`${TYPOGRAPHY.bodySmall} text-gray-600`}>Event Host</div>
           </div>
           <ExternalLink className="w-4 h-4 text-gray-400" />

@@ -82,10 +82,10 @@ export function SpaceMembers({ spaceId, canManage }: SpaceMembersProps) {
                 <div className="flex items-center gap-3">
                   <Avatar>
                     <AvatarImage src={member.profile.avatar_url || undefined} />
-                    <AvatarFallback>{member.profile.full_name[0]}</AvatarFallback>
+                    <AvatarFallback>{member.profile.full_name?.[0] || member.profile.username?.[0]?.toUpperCase() || '?'}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold truncate">{member.profile.full_name}</p>
+                    <p className="font-semibold truncate">{member.profile.full_name || member.profile.username || 'DNA Member'}</p>
                     <p className="text-sm text-muted-foreground truncate">
                       @{member.profile.username}
                     </p>

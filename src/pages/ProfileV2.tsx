@@ -130,19 +130,19 @@ const ProfileV2: React.FC = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col items-center text-center -mt-16">
             <Avatar className="w-28 h-28 border-4 border-background shadow-xl mb-4">
-              <AvatarImage src={profile.avatar_url || undefined} alt={profile.full_name} />
+              <AvatarImage src={profile.avatar_url || undefined} alt={profile.full_name || profile.username} />
               <AvatarFallback className="text-2xl font-bold bg-primary text-primary-foreground">
-                {profile.full_name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                {profile.full_name?.split(' ').map(n => n[0]).join('').slice(0, 2) || profile.username?.slice(0, 2).toUpperCase() || '?'}
               </AvatarFallback>
             </Avatar>
-            <h1 className="text-2xl font-bold text-foreground">{profile.full_name}</h1>
+            <h1 className="text-2xl font-bold text-foreground">{profile.full_name || profile.username || 'DNA Member'}</h1>
             <p className="text-muted-foreground text-sm mb-6">@{profile.username}</p>
             <Card className="max-w-md">
               <CardContent className="pt-6 text-center">
                 <Lock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                 <h2 className="text-lg font-semibold mb-2">This profile is private</h2>
                 <p className="text-muted-foreground text-sm">
-                  {profile.full_name} has chosen to keep their profile information private.
+                  {profile.full_name || profile.username || 'This user'} has chosen to keep their profile information private.
                 </p>
               </CardContent>
             </Card>

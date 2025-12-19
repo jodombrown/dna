@@ -82,12 +82,12 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
             }}
           >
             <Avatar className="w-5 h-5">
-              <AvatarImage src={creatorImage} alt={event.creator_profile.full_name} />
+              <AvatarImage src={creatorImage} alt={event.creator_profile.full_name || event.creator_profile.username} />
               <AvatarFallback className="bg-dna-copper text-white text-xs">
-                {event.creator_profile.full_name.split(' ').map(n => n[0]).join('')}
+                {event.creator_profile.full_name?.split(' ').map(n => n[0]).join('') || event.creator_profile.username?.slice(0, 2).toUpperCase() || '?'}
               </AvatarFallback>
             </Avatar>
-            <span className="max-w-[60px] truncate">{event.creator_profile.full_name}</span>
+            <span className="max-w-[60px] truncate">{event.creator_profile.full_name || event.creator_profile.username || 'Host'}</span>
           </button>
         )}
 
