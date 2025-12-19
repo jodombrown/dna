@@ -37,17 +37,28 @@ const DnaUserDashboard = () => {
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ['dna-profile', username],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('username', username)
-        .maybeSingle();
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('username', username)
+          .maybeSingle();
 
-      if (error) throw error;
-      // Return null instead of throwing - let UI handle gracefully
-      return data;
+        // Return null on error - don't throw, let UI handle gracefully
+        if (error) {
+          console.warn('Profile fetch error:', error.message);
+          return null;
+        }
+        return data;
+      } catch (err) {
+        // Catch any unexpected errors - NEVER throw to avoid ErrorBoundary
+        console.warn('Profile fetch unexpected error:', err);
+        return null;
+      }
     },
-    retry: 1, // Only retry once to avoid long waits
+    retry: 1,
+    // Never throw errors to React Query - always return graceful null
+    throwOnError: false,
   });
 
   // Fetch contribution history (placeholder - adjust table name based on your schema)
@@ -70,18 +81,25 @@ const DnaUserDashboard = () => {
     );
   }
 
-  if (!profile) {
+  // Graceful fallback for missing profile OR any query error
+  if (!profile || error) {
     return (
       <div className="min-h-screen bg-background pt-20">
         <div className="container max-w-4xl mx-auto px-4 py-16 text-center">
           <User className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
           <h1 className="text-3xl font-bold mb-4">Profile Not Found</h1>
           <p className="text-muted-foreground mb-6">
-            The user you're looking for doesn't exist or has been removed.
+            The user you're looking for doesn't exist or is temporarily unavailable.
           </p>
-          <Button onClick={() => navigate('/dna/feed')}>
-            Go to Home
-          </Button>
+          <div className="flex gap-3 justify-center">
+            <Button variant="outline" onClick={() => navigate(-1)}>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Go Back
+            </Button>
+            <Button onClick={() => navigate('/dna/connect/discover')}>
+              Discover Members
+            </Button>
+          </div>
         </div>
       </div>
     );
