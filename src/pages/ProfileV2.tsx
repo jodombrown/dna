@@ -13,6 +13,7 @@ import { useMessage } from '@/contexts/MessageContext';
 import { useToast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useProfile } from '@/hooks/useProfile';
 
@@ -91,13 +92,22 @@ const ProfileV2: React.FC = () => {
     );
   }
 
+  // Graceful fallback for missing profile OR any query error
   if (error || !bundle) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-4">
         <h1 className="text-2xl font-bold text-foreground mb-2">Profile Not Found</h1>
-        <p className="text-muted-foreground">
-          {username ? `@${username} does not exist or has been removed.` : 'No username provided.'}
+        <p className="text-muted-foreground mb-6 text-center">
+          {username ? `@${username} doesn't exist or is temporarily unavailable.` : 'No username provided.'}
         </p>
+        <div className="flex gap-3">
+          <Button variant="outline" onClick={() => navigate(-1)}>
+            Go Back
+          </Button>
+          <Button onClick={() => navigate('/dna/connect/discover')}>
+            Discover Members
+          </Button>
+        </div>
       </div>
     );
   }
