@@ -112,15 +112,40 @@ const ProfileV2: React.FC = () => {
     );
   }
 
-  const { profile, tags, activity, permissions, visibility, completion, verification_meta } = bundle;
+  // Normalize the bundle - handle both flat RPC response and expected structure
+  const profile = bundle.profile;
+  const tags = bundle.tags ?? {};
+  const activity = bundle.activity ?? { spaces: [], events: [] };
+  
+  // Handle flat isOwner from RPC vs nested permissions object
+  const rawIsOwner = (bundle as any).isOwner ?? bundle.permissions?.is_owner ?? false;
+  const permissions = bundle.permissions ?? {
+    is_owner: rawIsOwner,
+    can_edit: rawIsOwner,
+    can_create_events: true,
+    can_create_public_spaces: true,
+  };
+  
+  // Ensure visibility has defaults
+  const visibility = bundle.visibility ?? {
+    about: 'public',
+    skills: 'public',
+    interests: 'public',
+    activity: 'public',
+  };
+  
+  // Ensure completion and verification_meta have defaults
+  const completion = bundle.completion ?? { score: 0, suggested_actions: [] };
+  const verification_meta = bundle.verification_meta ?? { tier: 'pending' };
+  
   const profileForCompletion = permissions.is_owner && ownerProfile ? ownerProfile : profile;
 
   // Check if this is a private profile (all main sections hidden for non-owner)
   const isPrivateProfile = !permissions.is_owner &&
-    visibility.about === 'hidden' &&
-    visibility.skills === 'hidden' &&
-    visibility.interests === 'hidden' &&
-    visibility.activity === 'hidden';
+    visibility?.about === 'hidden' &&
+    visibility?.skills === 'hidden' &&
+    visibility?.interests === 'hidden' &&
+    visibility?.activity === 'hidden';
 
   // Private profile view for non-owners
   if (isPrivateProfile) {
@@ -132,17 +157,17 @@ const ProfileV2: React.FC = () => {
             <Avatar className="w-28 h-28 border-4 border-background shadow-xl mb-4">
               <AvatarImage src={profile.avatar_url || undefined} alt={profile.full_name} />
               <AvatarFallback className="text-2xl font-bold bg-primary text-primary-foreground">
-                {(profile.full_name || 'DN').split(' ').map(n => n[0]).join('').slice(0, 2) || 'DN'}
+                {(profile?.full_name || profile?.username || 'DN').split(' ').map(n => n[0]).join('').slice(0, 2) || 'DN'}
               </AvatarFallback>
             </Avatar>
-            <h1 className="text-2xl font-bold text-foreground">{profile.full_name}</h1>
-            <p className="text-muted-foreground text-sm mb-6">@{profile.username}</p>
+            <h1 className="text-2xl font-bold text-foreground">{profile?.full_name || profile?.username || 'DNA Member'}</h1>
+            <p className="text-muted-foreground text-sm mb-6">@{profile?.username || 'member'}</p>
             <Card className="max-w-md">
               <CardContent className="pt-6 text-center">
                 <Lock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                 <h2 className="text-lg font-semibold mb-2">This profile is private</h2>
                 <p className="text-muted-foreground text-sm">
-                  {profile.full_name} has chosen to keep their profile information private.
+                  {profile?.full_name || 'This user'} has chosen to keep their profile information private.
                 </p>
               </CardContent>
             </Card>
