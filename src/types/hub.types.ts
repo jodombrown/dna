@@ -35,6 +35,7 @@ export interface HubMetrics {
 export interface MemberCard {
   id: string;
   display_name: string;
+  username?: string;
   avatar_url?: string;
   headline?: string;
   location?: string;

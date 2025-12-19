@@ -2,38 +2,54 @@ import { useParams } from 'react-router-dom';
 import { useHubData } from '@/hooks/useHubData';
 import { useAuth } from '@/contexts/AuthContext';
 
-// Placeholder components - will be built in Session 5
-const RegionHero = ({ metadata }: any) => (
-  <div className="h-[70vh] min-h-[400px] bg-gradient-to-b from-gray-800 to-gray-900 flex items-center justify-center">
-    <div className="text-center text-white">
-      <h1 className="text-5xl md:text-7xl font-bold mb-4">{metadata?.name?.toUpperCase()}</h1>
-      <p className="text-xl italic opacity-90">"{metadata?.tagline}"</p>
+const CountryHero = ({ metadata }: any) => (
+  <div
+    className="h-[50vh] min-h-[300px] bg-gradient-to-b from-gray-800 to-gray-900 flex items-center justify-center relative"
+    style={{
+      backgroundImage: metadata?.hero_image_url ? `linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url(${metadata.hero_image_url})` : undefined,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center'
+    }}
+  >
+    <div className="text-center text-white z-10">
+      <h1 className="text-4xl md:text-6xl font-bold mb-4">{metadata?.name?.toUpperCase()}</h1>
+      <p className="text-lg md:text-xl italic opacity-90">"{metadata?.tagline}"</p>
     </div>
   </div>
 );
 
-const HubMetrics = ({ metrics }: any) => (
-  <div className="bg-white py-6">
+const CountryMetrics = ({ metrics }: any) => (
+  <div className="bg-white py-6 shadow-sm">
     <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-      <div><div className="text-3xl font-bold text-emerald-600">{metrics?.members_connected?.toLocaleString()}</div><div className="text-sm text-gray-500">Members</div></div>
-      <div><div className="text-3xl font-bold text-emerald-600">{metrics?.events_hosted?.toLocaleString()}</div><div className="text-sm text-gray-500">Events</div></div>
-      <div><div className="text-3xl font-bold text-emerald-600">{metrics?.projects_active?.toLocaleString()}</div><div className="text-sm text-gray-500">Projects</div></div>
-      <div><div className="text-3xl font-bold text-emerald-600">${(metrics?.contributions_total / 1000000).toFixed(1)}M</div><div className="text-sm text-gray-500">Contributed</div></div>
+      <div>
+        <div className="text-2xl md:text-3xl font-bold text-emerald-600">{metrics?.members_connected?.toLocaleString() || 0}</div>
+        <div className="text-sm text-gray-500">Members</div>
+      </div>
+      <div>
+        <div className="text-2xl md:text-3xl font-bold text-emerald-600">{metrics?.events_hosted?.toLocaleString() || 0}</div>
+        <div className="text-sm text-gray-500">Events</div>
+      </div>
+      <div>
+        <div className="text-2xl md:text-3xl font-bold text-emerald-600">{metrics?.projects_active?.toLocaleString() || 0}</div>
+        <div className="text-sm text-gray-500">Projects</div>
+      </div>
+      <div>
+        <div className="text-2xl md:text-3xl font-bold text-emerald-600">
+          {metrics?.contributions_total ? `$${(metrics.contributions_total / 1000000).toFixed(1)}M` : '$0'}
+        </div>
+        <div className="text-sm text-gray-500">Contributed</div>
+      </div>
     </div>
   </div>
 );
 
-const CountryCardGrid = ({ countries, regionSlug }: any) => (
+const CountryNarrative = ({ metadata }: any) => (
   <div className="bg-gray-50 py-8">
-    <div className="max-w-6xl mx-auto px-4">
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-        {countries?.map((country: any) => (
-          <a key={country.id} href={`/africa/${regionSlug}/${country.slug}`} className="bg-white rounded-lg p-4 text-center hover:shadow-md transition-shadow">
-            <img src={country.flag_url} alt={country.name} className="w-12 h-8 object-cover mx-auto mb-2 rounded" />
-            <div className="font-semibold text-sm">{country.name}</div>
-          </a>
-        ))}
-      </div>
+    <div className="max-w-4xl mx-auto px-4 text-center">
+      <p className="text-lg text-gray-700 leading-relaxed">{metadata?.description_short}</p>
+      {metadata?.description_full && metadata.description_full !== metadata.description_short && (
+        <p className="text-gray-600 mt-4 leading-relaxed">{metadata.description_full}</p>
+      )}
     </div>
   </div>
 );
@@ -46,6 +62,7 @@ const MemberCard = ({ member }: any) => {
     .toUpperCase()
     .slice(0, 2) || '?';
 
+  // Extract username from display_name or use id as fallback
   const username = member.username || member.display_name?.toLowerCase().replace(/\s+/g, '') || member.id;
 
   return (
@@ -120,30 +137,44 @@ const FeedSection = ({ type, feed, hubName }: any) => {
   );
 };
 
+const BackToRegion = ({ regionSlug, regionName }: any) => (
+  <div className="bg-gray-100 py-3">
+    <div className="max-w-6xl mx-auto px-4">
+      <a href={`/africa/${regionSlug}`} className="text-emerald-600 hover:underline text-sm">
+        ← Back to {regionName || 'Region'}
+      </a>
+    </div>
+  </div>
+);
+
 const HubSkeleton = () => (
   <div className="animate-pulse">
-    <div className="h-[70vh] bg-gray-200" />
+    <div className="h-[50vh] bg-gray-200" />
     <div className="h-24 bg-gray-100" />
-    <div className="h-64 bg-gray-50" />
+    <div className="h-32 bg-gray-50" />
+    <div className="h-64 bg-white" />
   </div>
 );
 
 const HubError = ({ error }: any) => (
   <div className="min-h-screen flex items-center justify-center">
     <div className="text-center">
-      <h1 className="text-2xl font-bold text-red-600 mb-2">Error Loading Hub</h1>
+      <h1 className="text-2xl font-bold text-red-600 mb-2">Error Loading Country</h1>
       <p className="text-gray-500">{error?.message || 'Something went wrong'}</p>
+      <a href="/africa" className="text-emerald-600 hover:underline mt-4 inline-block">
+        ← Back to Africa
+      </a>
     </div>
   </div>
 );
 
-export default function RegionHubPage() {
-  const { regionSlug } = useParams<{ regionSlug: string }>();
+export default function CountryHubPage() {
+  const { regionSlug, countrySlug } = useParams<{ regionSlug: string; countrySlug: string }>();
   const { user } = useAuth();
 
   const { data, isLoading, error } = useHubData({
-    hubType: 'region',
-    hubSlug: regionSlug!,
+    hubType: 'country',
+    hubSlug: countrySlug!,
     userId: user?.id
   });
 
@@ -151,13 +182,14 @@ export default function RegionHubPage() {
   if (error || !data?.success) return <HubError error={error} />;
 
   const { metadata, metrics } = data.hub;
-  const hubName = metadata?.name || 'Region';
+  const hubName = metadata?.name || 'Country';
 
   return (
-    <div className="region-hub">
-      <RegionHero metadata={metadata} />
-      <HubMetrics metrics={metrics} />
-      <CountryCardGrid countries={metadata?.countries} regionSlug={regionSlug} />
+    <div className="country-hub">
+      <BackToRegion regionSlug={regionSlug} regionName={regionSlug?.replace('-', ' ')} />
+      <CountryHero metadata={metadata} />
+      <CountryMetrics metrics={metrics} />
+      <CountryNarrative metadata={metadata} />
       <FeedSection type="connect" feed={data.feeds.connect} hubName={hubName} />
       <FeedSection type="convene" feed={data.feeds.convene} hubName={hubName} />
       <FeedSection type="collaborate" feed={data.feeds.collaborate} hubName={hubName} />
