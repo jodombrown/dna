@@ -1,7 +1,6 @@
 /**
  * DNA Profile v2 Hook
  * Fetches and manages Profile v2 bundle data
- * BULLETPROOF: Never throws errors - always returns null on failure
  */
 
 import { useQuery } from '@tanstack/react-query';
@@ -17,28 +16,19 @@ export const useProfileV2 = (username: string | undefined) => {
     queryFn: async (): Promise<ProfileV2Bundle | null> => {
       if (!username) return null;
 
-      try {
-        const { data, error } = await supabase.rpc('rpc_get_profile_bundle', {
-          p_username: username,
-          p_viewer_id: user?.id || null,
-        });
+      const { data, error } = await supabase.rpc('rpc_get_profile_bundle', {
+        p_username: username,
+        p_viewer_id: user?.id || null,
+      });
 
-        // Return null on error - NEVER throw to avoid ErrorBoundary
-        if (error) {
-          console.warn('Profile bundle fetch error:', error.message);
-          return null;
-        }
-
-        return data as unknown as ProfileV2Bundle;
-      } catch (err) {
-        // Catch any unexpected errors - NEVER throw
-        console.warn('Profile bundle unexpected error:', err);
-        return null;
+      if (error) {
+        console.error('Error fetching profile bundle:', error);
+        throw error;
       }
+
+      return data as unknown as ProfileV2Bundle;
     },
     enabled: !!username,
-    staleTime: 5 * 60 * 1000,
-    retry: 1, // Only retry once
-    throwOnError: false, // Never throw to React Query error boundary
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };

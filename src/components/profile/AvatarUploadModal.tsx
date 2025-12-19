@@ -74,58 +74,22 @@ export function AvatarUploadModal({
     reader.readAsDataURL(file);
   };
 
-  // Compress image to reduce file size for faster mobile loading
-  const compressImage = async (blob: Blob, maxSizeKB: number = 300): Promise<Blob> => {
-    return new Promise((resolve) => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const img = new Image();
-      
-      img.onload = () => {
-        // Target 400x400 for avatars - good quality, small size
-        const targetSize = 400;
-        canvas.width = targetSize;
-        canvas.height = targetSize;
-        
-        ctx?.drawImage(img, 0, 0, targetSize, targetSize);
-        
-        // Convert to JPEG with quality compression
-        canvas.toBlob(
-          (compressedBlob) => {
-            resolve(compressedBlob || blob);
-          },
-          'image/jpeg',
-          0.85 // 85% quality - good balance
-        );
-      };
-      
-      img.src = URL.createObjectURL(blob);
-    });
-  };
-
   const handleUpload = async () => {
     if (!imageSrc || !croppedAreaPixels) return;
 
     setUploading(true);
     try {
       const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels);
-      
-      // Compress the image for faster loading on mobile
-      const compressedBlob = await compressImage(croppedBlob);
-      const fileName = `${userId}/avatar-${Date.now()}.jpeg`;
+      const fileName = `${userId}/avatar-${Date.now()}.png`;
 
-      // Use profile-images bucket (standardized)
       const { error: uploadError } = await supabase.storage
-        .from('profile-images')
-        .upload(fileName, compressedBlob, { 
-          upsert: true,
-          contentType: 'image/jpeg'
-        });
+        .from('avatars')
+        .upload(fileName, croppedBlob, { upsert: true });
 
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage
-        .from('profile-images')
+        .from('avatars')
         .getPublicUrl(fileName);
 
       const { error: updateError } = await supabase

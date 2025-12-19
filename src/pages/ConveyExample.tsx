@@ -69,14 +69,14 @@ const ConveyExample = () => {
       </div>
 
       {/* Category Navigation */}
-      <div className="border-b bg-muted/30 overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center gap-2 overflow-x-auto py-3 px-4 sm:px-6 lg:px-8 scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch' }}>
+      <div className="border-b bg-muted/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-1 overflow-x-auto py-3 no-scrollbar">
             <Button 
               variant={filterCategory === 'all' ? 'default' : 'ghost'} 
               size="sm"
               onClick={() => setFilterCategory('all')}
-              className="whitespace-nowrap flex-shrink-0 text-sm"
+              className="whitespace-nowrap"
             >
               All Stories
             </Button>
@@ -86,13 +86,11 @@ const ConveyExample = () => {
                 variant={filterCategory === cat ? 'default' : 'ghost'} 
                 size="sm"
                 onClick={() => setFilterCategory(cat)}
-                className="whitespace-nowrap flex-shrink-0 text-sm"
+                className="whitespace-nowrap"
               >
                 {cat}
               </Button>
             ))}
-            {/* Spacer for scroll padding on right */}
-            <div className="w-4 flex-shrink-0" aria-hidden="true" />
           </div>
         </div>
       </div>

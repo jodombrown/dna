@@ -38,6 +38,7 @@ const PublicProfile = lazy(() => import("./pages/dna/PublicProfile"));
 const PublicProfilePage = lazy(() => import("./pages/PublicProfilePage"));
 const PublicPostPage = lazy(() => import("./pages/PublicPostPage"));
 const ProfileV2 = lazy(() => import("./pages/ProfileV2"));
+const ActivityFeed = lazy(() => import("./pages/ActivityFeed"));
 const SavedPostsPage = lazy(() => import("./pages/SavedPostsPage"));
 const DnaNetwork = lazy(() => import("./pages/dna/Network"));
 const DnaFeed = lazy(() => import("./pages/dna/Feed"));
@@ -57,6 +58,7 @@ const WaitlistManagement = lazy(() => import("./pages/admin/WaitlistManagement")
 const UserManagement = lazy(() => import("./pages/admin/UserManagement"));
 const PlatformHealth = lazy(() => import("./pages/admin/PlatformHealth"));
 const ContentModeration = lazy(() => import("./pages/admin/ContentModeration"));
+const FeedComingSoon = lazy(() => import("./pages/FeedComingSoon"));
 
 // New Admin Dashboard Routes
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
@@ -132,7 +134,10 @@ const Opportunities = lazy(() => import("./pages/Opportunities"));
 const MyApplications = lazy(() => import("./pages/MyApplications"));
 const CollaborationSpaces = lazy(() => import("./pages/CollaborationSpaces"));
 const SpaceDetail = lazy(() => import("./pages/SpaceDetail"));
+const Discover = lazy(() => import("./pages/Discover"));
+const DiscoverMembers = lazy(() => import("./pages/DiscoverMembers"));
 const DnaDiscover = lazy(() => import("./pages/dna/Discover"));
+const Network = lazy(() => import("./pages/Network"));
 // Messages pages consolidated - using DnaMessages from ./pages/dna/Messages
 const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
 const NotificationSettingsPage = lazy(() => import("./pages/NotificationSettingsPage"));
