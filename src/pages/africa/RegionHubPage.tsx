@@ -23,20 +23,45 @@ const HubMetrics = ({ metrics }: any) => (
   </div>
 );
 
-const CountryCardGrid = ({ countries, regionSlug }: any) => (
-  <div className="bg-gray-50 py-8">
-    <div className="max-w-6xl mx-auto px-4">
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-        {countries?.map((country: any) => (
-          <a key={country.id} href={`/africa/${regionSlug}/${country.slug}`} className="bg-white rounded-lg p-4 text-center hover:shadow-md transition-shadow">
-            <img src={country.flag_url} alt={country.name} className="w-12 h-8 object-cover mx-auto mb-2 rounded" />
-            <div className="font-semibold text-sm">{country.name}</div>
-          </a>
-        ))}
+const CountryCardGrid = ({ countries, regionSlug }: any) => {
+  // Sort countries alphabetically
+  const sortedCountries = [...(countries || [])].sort((a: any, b: any) =>
+    a.name.localeCompare(b.name)
+  );
+
+  return (
+    <div className="bg-gray-50 py-8">
+      <div className="max-w-6xl mx-auto px-4">
+        <h3 className="text-lg font-semibold text-gray-700 mb-4">
+          Explore {sortedCountries.length} Countries
+        </h3>
+        <div className="relative">
+          <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+            {sortedCountries.map((country: any) => (
+              <a
+                key={country.id}
+                href={`/africa/${regionSlug}/${country.slug}`}
+                className="flex-shrink-0 w-32 bg-white rounded-lg p-4 text-center hover:shadow-md transition-shadow border border-gray-200"
+              >
+                <img
+                  src={country.flag_url}
+                  alt={country.name}
+                  className="w-12 h-8 object-cover mx-auto mb-2 rounded shadow-sm"
+                />
+                <div className="font-semibold text-sm text-gray-900 truncate">{country.name}</div>
+                {country.tagline && (
+                  <div className="text-xs text-gray-500 mt-1 line-clamp-2">{country.tagline}</div>
+                )}
+              </a>
+            ))}
+          </div>
+          {/* Scroll fade indicators */}
+          <div className="absolute right-0 top-0 bottom-4 w-8 bg-gradient-to-l from-gray-50 to-transparent pointer-events-none" />
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const MemberCard = ({ member }: any) => {
   const initials = member.display_name
