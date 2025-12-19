@@ -12,9 +12,9 @@ interface ProfileStrengthCardProps {
 }
 
 const getStrengthTier = (score: number) => {
-  if (score >= 80) return { label: 'Excellent', color: 'text-green-600', bgColor: 'bg-green-100' };
-  if (score >= 60) return { label: 'Great', color: 'text-blue-600', bgColor: 'bg-blue-100' };
-  if (score >= 40) return { label: 'Good', color: 'text-amber-600', bgColor: 'bg-amber-100' };
+  if (score >= 80) return { label: 'Strong Match', color: 'text-green-600', bgColor: 'bg-green-100' };
+  if (score >= 60) return { label: 'Good Match', color: 'text-blue-600', bgColor: 'bg-blue-100' };
+  if (score >= 40) return { label: 'Building', color: 'text-amber-600', bgColor: 'bg-amber-100' };
   return { label: 'Getting Started', color: 'text-orange-600', bgColor: 'bg-orange-100' };
 };
 
