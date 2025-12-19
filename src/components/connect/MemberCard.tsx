@@ -264,7 +264,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
               loading="lazy"
             />
             <AvatarFallback className="text-sm bg-primary/10 text-primary">
-              {member.full_name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+              {(member.full_name || member.username || 'DN').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
 
