@@ -132,7 +132,7 @@ const ProfileV2: React.FC = () => {
             <Avatar className="w-28 h-28 border-4 border-background shadow-xl mb-4">
               <AvatarImage src={profile.avatar_url || undefined} alt={profile.full_name} />
               <AvatarFallback className="text-2xl font-bold bg-primary text-primary-foreground">
-                {profile.full_name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                {(profile.full_name || 'DN').split(' ').map(n => n[0]).join('').slice(0, 2) || 'DN'}
               </AvatarFallback>
             </Avatar>
             <h1 className="text-2xl font-bold text-foreground">{profile.full_name}</h1>

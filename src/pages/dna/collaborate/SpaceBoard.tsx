@@ -212,7 +212,7 @@ export default function SpaceBoard() {
                 <Avatar className="h-5 w-5">
                   <AvatarImage src={task.assignee.avatar_url || undefined} />
                   <AvatarFallback className="text-xs">
-                    {task.assignee.full_name[0]}
+                    {(task.assignee.full_name || 'DN')[0]}
                   </AvatarFallback>
                 </Avatar>
                 <span className="text-xs">{task.assignee.full_name}</span>
