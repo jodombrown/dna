@@ -125,18 +125,18 @@ const CollaborationsPageWrapper = () => {
       />
 
       {/* Page-specific Survey CTA */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 mb-8">
-        <div className="bg-gradient-to-r from-dna-emerald/10 via-dna-copper/10 to-dna-gold/10 rounded-xl p-8 text-center border border-dna-emerald/20">
-          <h3 className="text-2xl font-bold text-dna-forest mb-4">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-8 sm:mt-12 mb-6 sm:mb-8">
+        <div className="bg-gradient-to-r from-dna-emerald/10 via-dna-copper/10 to-dna-gold/10 rounded-xl p-4 sm:p-8 text-center border border-dna-emerald/20">
+          <h3 className="text-lg sm:text-2xl font-bold text-dna-forest mb-2 sm:mb-4">
             Shape Our Collaboration Platform
           </h3>
-          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 max-w-2xl mx-auto">
             Help us build the perfect space for diaspora collaboration. Share your ideas on 
             project discovery, team formation, and the tools you need to create lasting impact.
           </p>
           <button
             onClick={() => setIsSurveyOpen(true)}
-            className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-3 rounded-lg font-semibold transition-colors"
+            className="bg-dna-emerald hover:bg-dna-forest text-white px-4 sm:px-8 py-2 sm:py-3 rounded-lg font-semibold transition-colors text-sm sm:text-base"
           >
             Share Your Collaboration Ideas
           </button>

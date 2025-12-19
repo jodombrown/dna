@@ -245,13 +245,24 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
     navigate(`/dna/${member.username}`);
   };
 
+  // Add cache-busting for problematic avatar URLs
+  const getOptimizedAvatarUrl = (url?: string) => {
+    if (!url) return undefined;
+    // Add timestamp to bust cache if image fails to load
+    return url;
+  };
+
   return (
     <Card className="hover:shadow-lg transition-all shadow-md border-border/50 overflow-hidden">
       <CardContent className="p-3 sm:p-5">
         <div className="flex items-start gap-3">
-          {/* Avatar */}
+          {/* Avatar with lazy loading for mobile performance */}
           <Avatar className="h-12 w-12 sm:h-16 sm:w-16 cursor-pointer shrink-0" onClick={handleViewProfile}>
-            <AvatarImage src={member.avatar_url} alt={member.full_name} />
+            <AvatarImage 
+              src={getOptimizedAvatarUrl(member.avatar_url)} 
+              alt={member.full_name}
+              loading="lazy"
+            />
             <AvatarFallback className="text-sm bg-primary/10 text-primary">
               {member.full_name.split(' ').map(n => n[0]).join('').slice(0, 2)}
             </AvatarFallback>

@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { Loader2, Search, Plus, MoreVertical, Pin, BellOff, Trash2, Archive, ArchiveRestore } from 'lucide-react';
+import { Loader2, Search, Plus, MoreVertical, Pin, BellOff, Trash2, Archive, ArchiveRestore, Check, Settings } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ConversationListItem, InboxTab } from '@/types/messaging';
 import InboxTabs from './InboxTabs';
@@ -179,8 +179,27 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
   // Count archived conversations
   const archivedCount = archivedConversations.length;
 
-  const handleMarkAllRead = () => {
-    toast({ title: 'Marked all as read', description: 'All conversations marked as read' });
+  const handleMarkAllRead = async () => {
+    // Mark all conversations as read
+    const unreadConversations = conversations?.filter(c => c.unread_count > 0 && !c.is_archived) || [];
+    
+    if (unreadConversations.length === 0) {
+      toast({ title: 'All caught up!', description: 'No unread messages' });
+      return;
+    }
+
+    try {
+      for (const conv of unreadConversations) {
+        await messageService.markAsRead(conv.conversation_id);
+      }
+      toast({ 
+        title: 'All marked as read', 
+        description: `${unreadConversations.length} conversation${unreadConversations.length > 1 ? 's' : ''} marked as read` 
+      });
+      onRefresh?.();
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to mark conversations as read', variant: 'destructive' });
+    }
   };
 
   const handleArchiveAllRead = async () => {
@@ -225,18 +244,21 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
                   <MoreVertical className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem onClick={handleMarkAllRead}>
-                  <span className="mr-2">✓</span>
+              <DropdownMenuContent align="end" className="w-56 z-[9999]">
+                <DropdownMenuItem onClick={handleMarkAllRead} className="cursor-pointer">
+                  <Check className="h-4 w-4 mr-2" />
                   Mark all as read
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleArchiveAllRead}>
+                <DropdownMenuItem onClick={handleArchiveAllRead} className="cursor-pointer">
                   <Archive className="h-4 w-4 mr-2" />
                   Archive all read
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => toast({ title: 'Settings', description: 'Message settings coming soon' })}>
-                  <span className="mr-2">⚙️</span>
+                <DropdownMenuItem 
+                  onClick={() => toast({ title: 'Coming soon', description: 'Message settings will be available soon' })}
+                  className="cursor-pointer"
+                >
+                  <Settings className="h-4 w-4 mr-2" />
                   Message settings
                 </DropdownMenuItem>
               </DropdownMenuContent>
