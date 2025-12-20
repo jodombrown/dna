@@ -76,8 +76,8 @@ const AdminLogin = () => {
     setEmailError(null);
 
     try {
-      const { data, error } = await (supabase as any).rpc('is_valid_admin_email', {
-        check_email: email.toLowerCase().trim()
+      const { data, error } = await supabase.rpc('is_admin_email', {
+        email_address: email.toLowerCase().trim()
       });
 
       if (error) {
@@ -87,20 +87,18 @@ const AdminLogin = () => {
         return;
       }
 
-      if (data && Array.isArray(data) && data.length > 0) {
-        const result = data[0];
-        setEmailValidation({
-          isValid: result.is_valid,
-          roleLevel: result.role_level,
-          isSuperAdmin: result.is_super_admin
-        });
+      // is_admin_email returns a boolean directly
+      const isValid = data === true;
+      const isSuperAdmin = email.toLowerCase().trim() === 'aweh@diasporanetwork.africa';
+      
+      setEmailValidation({
+        isValid,
+        roleLevel: isValid ? (isSuperAdmin ? 'superadmin' : 'admin') : null,
+        isSuperAdmin
+      });
 
-        if (!result.is_valid) {
-          setEmailError('This email is not authorized for admin access. Only @diasporanetwork.africa emails or pre-approved accounts can access the admin panel.');
-        }
-      } else {
-        setEmailValidation({ isValid: false, roleLevel: null, isSuperAdmin: false });
-        setEmailError('This email is not authorized for admin access.');
+      if (!isValid) {
+        setEmailError('This email is not authorized for admin access. Only @diasporanetwork.africa emails can access the admin panel.');
       }
     } catch (error) {
       console.error('Email validation error:', error);
