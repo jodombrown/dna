@@ -46,13 +46,14 @@ export function FeedbackFAB({ className }: FeedbackFABProps) {
         onClick={handleClick}
         size="lg"
         className={cn(
-          'fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all z-40',
+          'fixed bottom-24 right-4 h-12 w-12 rounded-full shadow-lg hover:shadow-xl transition-all z-40',
+          'md:bottom-6 md:right-6 md:h-14 md:w-14',
           'bg-primary hover:bg-primary/90',
           className
         )}
         aria-label="Open Feedback Hub"
       >
-        <MessageSquarePlus className="h-6 w-6" />
+        <MessageSquarePlus className="h-5 w-5 md:h-6 md:w-6" />
       </Button>
 
       <FeedbackDrawer
