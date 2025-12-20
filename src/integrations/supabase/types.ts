@@ -3107,6 +3107,7 @@ export type Database = {
           sender_id: string
           status: string
           updated_at: string | null
+          user_tag: string | null
         }
         Insert: {
           admin_notes?: string | null
@@ -3123,6 +3124,7 @@ export type Database = {
           sender_id: string
           status?: string
           updated_at?: string | null
+          user_tag?: string | null
         }
         Update: {
           admin_notes?: string | null
@@ -3139,6 +3141,7 @@ export type Database = {
           sender_id?: string
           status?: string
           updated_at?: string | null
+          user_tag?: string | null
         }
         Relationships: [
           {
