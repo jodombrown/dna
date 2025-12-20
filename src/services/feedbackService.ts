@@ -5,20 +5,17 @@ import type {
   FeedbackMessage,
   FeedbackMessageWithSender,
   FeedbackAttachment,
-  FeedbackReaction,
   ReactionSummary,
   PaginatedMessages,
   SendMessageParams,
   FeedbackFilter,
-  AdminStatus,
-  AdminCategory,
-  AdminPriority,
+  FeedbackStatus,
+  FeedbackCategory,
+  FeedbackPriority,
   FeedbackEmoji,
-  FeedbackAnalytics,
 } from '@/types/feedback';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 
-const DEFAULT_CHANNEL_SLUG = 'feedback-hub';
 const MESSAGES_PER_PAGE = 50;
 
 /**
@@ -36,7 +33,7 @@ export const feedbackService = {
     const { data, error } = await supabase
       .from('feedback_channels')
       .select('*')
-      .eq('slug', DEFAULT_CHANNEL_SLUG)
+      .eq('is_default', true)
       .eq('is_active', true)
       .single();
 
@@ -109,10 +106,7 @@ export const feedbackService = {
 
     const { error } = await supabase
       .from('feedback_channel_memberships')
-      .update({
-        status: 'opted_out',
-        opted_out_at: new Date().toISOString(),
-      })
+      .update({ status: 'opted_out' })
       .eq('user_id', user.id)
       .eq('channel_id', channelId);
 
@@ -133,10 +127,7 @@ export const feedbackService = {
 
     const { error } = await supabase
       .from('feedback_channel_memberships')
-      .update({
-        status: 'active',
-        opted_out_at: null,
-      })
+      .update({ status: 'active' })
       .eq('user_id', user.id)
       .eq('channel_id', channelId);
 
@@ -193,8 +184,7 @@ export const feedbackService = {
         attachments:feedback_attachments (*)
       `)
       .eq('channel_id', channelId)
-      .eq('is_deleted', false)
-      .is('parent_message_id', null) // Only top-level messages
+      .is('parent_id', null) // Only top-level messages
       .order('is_pinned', { ascending: false })
       .order('created_at', { ascending: false })
       .limit(limit + 1);
@@ -224,7 +214,7 @@ export const feedbackService = {
 
     // Fetch reactions for each message
     const messagesWithReactions = await Promise.all(
-      messages.map(async (msg) => {
+      messages.map(async (msg: any) => {
         const reactions = await this.getReactions(msg.id);
         return {
           ...msg,
@@ -253,9 +243,9 @@ export const feedbackService = {
         channel_id: params.channelId,
         sender_id: user.id,
         content: params.content,
-        content_type: params.contentType || 'text',
-        user_tag: params.userTag || null,
-        parent_message_id: params.parentMessageId || null,
+        message_type: params.messageType || 'text',
+        category: params.category || null,
+        parent_id: params.parentId || null,
       })
       .select()
       .single();
@@ -284,8 +274,7 @@ export const feedbackService = {
         ),
         attachments:feedback_attachments (*)
       `)
-      .eq('parent_message_id', parentMessageId)
-      .eq('is_deleted', false)
+      .eq('parent_id', parentMessageId)
       .order('created_at', { ascending: true });
 
     if (error) {
@@ -293,7 +282,7 @@ export const feedbackService = {
       return [];
     }
 
-    return data as FeedbackMessageWithSender[];
+    return data as unknown as FeedbackMessageWithSender[];
   },
 
   /**
@@ -321,7 +310,7 @@ export const feedbackService = {
     }
 
     const reactions = await this.getReactions(messageId);
-    return { ...data, reactions } as FeedbackMessageWithSender;
+    return { ...data, reactions } as unknown as FeedbackMessageWithSender;
   },
 
   // ============================================
@@ -352,16 +341,20 @@ export const feedbackService = {
       return null;
     }
 
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from('feedback-media')
+      .getPublicUrl(fileName);
+
     // Create attachment record
     const { data, error } = await supabase
       .from('feedback_attachments')
       .insert({
         message_id: messageId,
-        attachment_type: type,
-        storage_path: fileName,
+        file_url: urlData.publicUrl,
+        file_type: type,
         file_name: file.name,
-        file_size_bytes: file.size,
-        mime_type: file.type,
+        file_size: file.size,
       })
       .select()
       .single();
@@ -372,22 +365,6 @@ export const feedbackService = {
     }
 
     return data as FeedbackAttachment;
-  },
-
-  /**
-   * Get signed URL for an attachment
-   */
-  async getAttachmentUrl(storagePath: string): Promise<string | null> {
-    const { data, error } = await supabase.storage
-      .from('feedback-media')
-      .createSignedUrl(storagePath, 3600); // 1 hour expiry
-
-    if (error) {
-      console.error('[feedbackService] Error getting attachment URL:', error);
-      return null;
-    }
-
-    return data.signedUrl;
   },
 
   // ============================================
@@ -482,42 +459,24 @@ export const feedbackService = {
   // ============================================
 
   /**
-   * Check if current user is admin
+   * Check if current user is admin via RPC
    */
   async isAdmin(): Promise<boolean> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return false;
-
-    const { data, error } = await supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', user.id)
-      .eq('role', 'admin')
-      .single();
-
-    if (error) return false;
+    const { data, error } = await supabase.rpc('is_feedback_admin');
+    if (error) {
+      console.error('[feedbackService] Error checking admin status:', error);
+      return false;
+    }
     return !!data;
   },
 
   /**
    * Update message status (admin only)
    */
-  async updateMessageStatus(messageId: string, status: AdminStatus): Promise<boolean> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return false;
-
-    const updateData: Partial<FeedbackMessage> = {
-      admin_status: status,
-    };
-
-    if (status === 'resolved') {
-      updateData.resolved_at = new Date().toISOString();
-      updateData.resolved_by = user.id;
-    }
-
+  async updateStatus(messageId: string, status: FeedbackStatus): Promise<boolean> {
     const { error } = await supabase
       .from('feedback_messages')
-      .update(updateData)
+      .update({ status })
       .eq('id', messageId);
 
     if (error) {
@@ -531,10 +490,10 @@ export const feedbackService = {
   /**
    * Update message category (admin only)
    */
-  async updateMessageCategory(messageId: string, category: AdminCategory): Promise<boolean> {
+  async updateCategory(messageId: string, category: FeedbackCategory): Promise<boolean> {
     const { error } = await supabase
       .from('feedback_messages')
-      .update({ admin_category: category })
+      .update({ category })
       .eq('id', messageId);
 
     if (error) {
@@ -548,10 +507,10 @@ export const feedbackService = {
   /**
    * Update message priority (admin only)
    */
-  async updateMessagePriority(messageId: string, priority: AdminPriority): Promise<boolean> {
+  async updatePriority(messageId: string, priority: FeedbackPriority): Promise<boolean> {
     const { error } = await supabase
       .from('feedback_messages')
-      .update({ admin_priority: priority })
+      .update({ priority })
       .eq('id', messageId);
 
     if (error) {
@@ -565,14 +524,14 @@ export const feedbackService = {
   /**
    * Pin/unpin a message (admin only)
    */
-  async pinMessage(messageId: string, pinned: boolean): Promise<boolean> {
+  async togglePin(messageId: string, isPinned: boolean): Promise<boolean> {
     const { error } = await supabase
       .from('feedback_messages')
-      .update({ is_pinned: pinned })
+      .update({ is_pinned: isPinned })
       .eq('id', messageId);
 
     if (error) {
-      console.error('[feedbackService] Error pinning message:', error);
+      console.error('[feedbackService] Error toggling pin:', error);
       return false;
     }
 
@@ -582,14 +541,14 @@ export const feedbackService = {
   /**
    * Highlight/unhighlight a message (admin only)
    */
-  async highlightMessage(messageId: string, highlighted: boolean): Promise<boolean> {
+  async toggleHighlight(messageId: string, isHighlighted: boolean): Promise<boolean> {
     const { error } = await supabase
       .from('feedback_messages')
-      .update({ is_highlighted: highlighted })
+      .update({ is_highlighted: isHighlighted })
       .eq('id', messageId);
 
     if (error) {
-      console.error('[feedbackService] Error highlighting message:', error);
+      console.error('[feedbackService] Error toggling highlight:', error);
       return false;
     }
 
@@ -597,23 +556,16 @@ export const feedbackService = {
   },
 
   /**
-   * Soft delete a message (admin only)
+   * Add admin notes to a message
    */
-  async deleteMessage(messageId: string): Promise<boolean> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return false;
-
+  async updateAdminNotes(messageId: string, notes: string): Promise<boolean> {
     const { error } = await supabase
       .from('feedback_messages')
-      .update({
-        is_deleted: true,
-        deleted_at: new Date().toISOString(),
-        deleted_by: user.id,
-      })
+      .update({ admin_notes: notes })
       .eq('id', messageId);
 
     if (error) {
-      console.error('[feedbackService] Error deleting message:', error);
+      console.error('[feedbackService] Error updating admin notes:', error);
       return false;
     }
 
@@ -627,10 +579,7 @@ export const feedbackService = {
   /**
    * Subscribe to new messages in a channel
    */
-  subscribeToMessages(
-    channelId: string,
-    onNewMessage: (msg: FeedbackMessage) => void
-  ): RealtimeChannel {
+  subscribeToMessages(channelId: string, onMessage: () => void): RealtimeChannel {
     return supabase
       .channel(`feedback-messages-${channelId}`)
       .on(
@@ -641,20 +590,15 @@ export const feedbackService = {
           table: 'feedback_messages',
           filter: `channel_id=eq.${channelId}`,
         },
-        (payload) => {
-          onNewMessage(payload.new as FeedbackMessage);
-        }
+        onMessage
       )
       .subscribe();
   },
 
   /**
-   * Subscribe to message updates (status, pin, etc.)
+   * Subscribe to message updates
    */
-  subscribeToMessageUpdates(
-    channelId: string,
-    onUpdate: (msg: FeedbackMessage) => void
-  ): RealtimeChannel {
+  subscribeToMessageUpdates(channelId: string, onUpdate: () => void): RealtimeChannel {
     return supabase
       .channel(`feedback-updates-${channelId}`)
       .on(
@@ -665,9 +609,7 @@ export const feedbackService = {
           table: 'feedback_messages',
           filter: `channel_id=eq.${channelId}`,
         },
-        (payload) => {
-          onUpdate(payload.new as FeedbackMessage);
-        }
+        onUpdate
       )
       .subscribe();
   },
