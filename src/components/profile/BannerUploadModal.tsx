@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,8 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { BANNER_GRADIENTS, BannerGradientKey } from "@/lib/constants/bannerGradients";
-import { Loader2, Upload, Check, Move, ZoomIn, ZoomOut } from "lucide-react";
+import { BANNER_GRADIENTS, BannerGradientKey, DEFAULT_GRADIENT } from "@/lib/constants/bannerGradients";
+import { Loader2, Upload, Check, Move, ZoomIn, ZoomOut, RotateCcw, User } from "lucide-react";
 import Cropper from "react-easy-crop";
 import { getCroppedImg } from "@/lib/utils/cropImage";
 
@@ -29,6 +29,8 @@ interface BannerUploadModalProps {
     overlay: boolean;
   };
   onUploadComplete: (data: BannerSaveData) => void;
+  userDisplayName?: string;
+  userAvatarUrl?: string;
 }
 
 export function BannerUploadModal({
@@ -36,7 +38,9 @@ export function BannerUploadModal({
   onOpenChange,
   userId,
   currentBanner,
-  onUploadComplete
+  onUploadComplete,
+  userDisplayName,
+  userAvatarUrl
 }: BannerUploadModalProps) {
   const { toast } = useToast();
   const [uploading, setUploading] = useState(false);
@@ -181,12 +185,92 @@ export function BannerUploadModal({
     }
   };
 
+  // Group gradients by category for better organization
+  const groupedGradients = useMemo(() => {
+    const groups: Record<string, [string, typeof BANNER_GRADIENTS[BannerGradientKey]][]> = {
+      brand: [],
+      african: [],
+      classic: []
+    };
+    Object.entries(BANNER_GRADIENTS).forEach(([key, gradient]) => {
+      const category = gradient.category || 'classic';
+      if (!groups[category]) groups[category] = [];
+      groups[category].push([key, gradient]);
+    });
+    return groups;
+  }, []);
+
+  // Get current preview style
+  const previewStyle = useMemo(() => {
+    if (selectedTab === 'upload' && imageSrc) {
+      return { backgroundImage: `url(${imageSrc})`, backgroundSize: 'cover', backgroundPosition: 'center' };
+    }
+    return { background: BANNER_GRADIENTS[selectedGradient]?.css || BANNER_GRADIENTS.dna.css };
+  }, [selectedTab, imageSrc, selectedGradient]);
+
+  const handleResetToDefault = () => {
+    setSelectedTab('gradients');
+    setSelectedGradient(DEFAULT_GRADIENT);
+    setOverlay(false);
+    setImageSrc(null);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    toast({ title: "Reset", description: "Banner reset to default DNA gradient" });
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Customize Your Banner</DialogTitle>
+          <DialogTitle className="flex items-center justify-between">
+            <span>Customize Your Banner</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleResetToDefault}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <RotateCcw className="h-4 w-4 mr-2" />
+              Reset to Default
+            </Button>
+          </DialogTitle>
         </DialogHeader>
+
+        {/* Live Profile Card Preview */}
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Preview</Label>
+          <div className="relative rounded-xl overflow-hidden border border-border shadow-sm">
+            {/* Banner Preview */}
+            <div 
+              className="h-28 sm:h-32 relative"
+              style={previewStyle}
+            >
+              {overlay && (
+                <div className="absolute inset-0 bg-black/40" />
+              )}
+            </div>
+            {/* Profile Info Preview */}
+            <div className="relative bg-card px-4 pb-4 pt-12">
+              {/* Avatar */}
+              <div className="absolute -top-10 left-4">
+                <div className="h-20 w-20 rounded-full border-4 border-card bg-muted overflow-hidden">
+                  {userAvatarUrl ? (
+                    <img src={userAvatarUrl} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center bg-muted">
+                      <User className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                  )}
+                </div>
+              </div>
+              {/* Name */}
+              <div className="ml-24">
+                <p className="font-semibold text-foreground">{userDisplayName || 'Your Name'}</p>
+                <p className="text-sm text-muted-foreground">DNA Member</p>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <Tabs value={selectedTab} onValueChange={(v) => setSelectedTab(v as any)}>
           <TabsList className="grid w-full grid-cols-2">
@@ -194,29 +278,61 @@ export function BannerUploadModal({
             <TabsTrigger value="upload">Upload Image</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="gradients" className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {Object.entries(BANNER_GRADIENTS).map(([key, gradient]) => (
-                <button
-                  key={key}
-                  onClick={() => setSelectedGradient(key as BannerGradientKey)}
-                  className={`relative h-24 rounded-lg overflow-hidden border-2 transition-all ${
-                    selectedGradient === key 
-                      ? 'border-dna-emerald ring-2 ring-dna-emerald/20' 
-                      : 'border-warm-gray-200 hover:border-warm-gray-300'
-                  }`}
-                  style={{ background: gradient.css }}
-                >
-                  {selectedGradient === key && (
-                    <div className="absolute top-2 right-2 bg-white rounded-full p-1">
-                      <Check className="h-4 w-4 text-dna-emerald" />
+          <TabsContent value="gradients" className="space-y-6">
+            {/* African Cultural Gradients */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-dna-emerald">African Cultural Themes</Label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {groupedGradients.african?.map(([key, gradient]) => (
+                  <button
+                    key={key}
+                    onClick={() => setSelectedGradient(key as BannerGradientKey)}
+                    className={`relative h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                      selectedGradient === key 
+                        ? 'border-dna-emerald ring-2 ring-dna-emerald/20' 
+                        : 'border-warm-gray-200 hover:border-warm-gray-300'
+                    }`}
+                    style={{ background: gradient.css }}
+                  >
+                    {selectedGradient === key && (
+                      <div className="absolute top-1 right-1 bg-white rounded-full p-0.5">
+                        <Check className="h-3 w-3 text-dna-emerald" />
+                      </div>
+                    )}
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-1.5 truncate">
+                      {gradient.name}
                     </div>
-                  )}
-                  <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-2">
-                    {gradient.name}
-                  </div>
-                </button>
-              ))}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Brand & Classic Gradients */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Classic Themes</Label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {[...groupedGradients.brand || [], ...groupedGradients.classic || []].map(([key, gradient]) => (
+                  <button
+                    key={key}
+                    onClick={() => setSelectedGradient(key as BannerGradientKey)}
+                    className={`relative h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                      selectedGradient === key 
+                        ? 'border-dna-emerald ring-2 ring-dna-emerald/20' 
+                        : 'border-warm-gray-200 hover:border-warm-gray-300'
+                    }`}
+                    style={{ background: gradient.css }}
+                  >
+                    {selectedGradient === key && (
+                      <div className="absolute top-1 right-1 bg-white rounded-full p-0.5">
+                        <Check className="h-3 w-3 text-dna-emerald" />
+                      </div>
+                    )}
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-1.5 truncate">
+                      {gradient.name}
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
           </TabsContent>
 
