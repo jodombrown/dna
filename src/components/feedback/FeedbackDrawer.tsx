@@ -29,6 +29,7 @@ import { FeedbackMessageList, FeedbackComposer } from '@/components/feedback';
 import { FeedbackThreadView } from './FeedbackThreadView';
 import { useFeedbackMessages } from '@/hooks/useFeedbackMessages';
 import { useFeedbackMembership } from '@/hooks/useFeedbackMembership';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
 import type { FeedbackFilter, FeedbackMessageWithSender } from '@/types/feedback';
 
@@ -39,6 +40,7 @@ interface FeedbackDrawerProps {
 
 export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   const [filter, setFilter] = useState<FeedbackFilter>('all');
   const [replyTo, setReplyTo] = useState<{
     id: string;
@@ -141,8 +143,28 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
             </div>
           </SheetHeader>
 
-          {/* Opted Out State */}
-          {isOptedOut ? (
+          {/* Auth Loading State */}
+          {authLoading ? (
+            <div className="flex-1 flex items-center justify-center p-6">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : !user ? (
+            /* Not Logged In State */
+            <div className="flex-1 flex items-center justify-center p-6">
+              <div className="text-center max-w-xs">
+                <div className="text-4xl mb-4">🔐</div>
+                <h3 className="text-lg font-semibold mb-2">Sign in to share feedback</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Join the DNA community to share your thoughts, report bugs, and suggest new features.
+                </p>
+                <Button onClick={() => { onClose(); navigate('/auth'); }}>
+                  <LogIn className="h-4 w-4 mr-2" />
+                  Sign In
+                </Button>
+              </div>
+            </div>
+          ) : isOptedOut ? (
+            /* Opted Out State */
             <div className="flex-1 flex items-center justify-center p-6">
               <div className="text-center max-w-xs">
                 <div className="text-4xl mb-4">👋</div>
