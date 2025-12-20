@@ -5,7 +5,7 @@ import { Edit, MapPin, Globe, Briefcase, MessageCircle, UserPlus } from 'lucide-
 import { ProfileV2Data, ProfileV2Permissions, VerificationStatus } from '@/types/profileV2';
 import { useToast } from '@/hooks/use-toast';
 import { ProfileShareDropdown } from '@/components/profile/ProfileShareDropdown';
-
+import { BANNER_GRADIENTS, BannerGradientKey } from '@/lib/constants/bannerGradients';
 interface ProfileV2HeroProps {
   profile: ProfileV2Data;
   permissions: ProfileV2Permissions;
@@ -69,17 +69,41 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
     }
   };
 
+  // Get banner style based on banner_type, banner_gradient, and banner_url
+  const getBannerStyle = (): React.CSSProperties => {
+    const bannerType = profile.banner_type || 'gradient';
+    const bannerGradient = profile.banner_gradient || 'dna';
+    const bannerUrl = profile.banner_url;
+
+    if (bannerType === 'image' && bannerUrl) {
+      return {
+        backgroundImage: `url(${bannerUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      };
+    }
+    
+    if (bannerType === 'gradient' && bannerGradient) {
+      const gradient = BANNER_GRADIENTS[bannerGradient as BannerGradientKey];
+      return { background: gradient?.css || BANNER_GRADIENTS.dna.css };
+    }
+    
+    // Default fallback to DNA gradient
+    return { background: BANNER_GRADIENTS.dna.css };
+  };
+
   return (
     <div className="relative w-full">
       {/* Banner */}
       <div
-        className="h-32 sm:h-44 md:h-56 w-full bg-gradient-to-br from-primary/30 via-secondary/20 to-accent/30"
-        style={profile.banner_url ? {
-          backgroundImage: `url(${profile.banner_url})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        } : undefined}
-      />
+        className="h-32 sm:h-44 md:h-56 w-full relative"
+        style={getBannerStyle()}
+      >
+        {/* Dark overlay for text contrast if enabled */}
+        {profile.banner_overlay && (
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+        )}
+      </div>
 
       {/* Content Container */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
