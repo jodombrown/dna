@@ -1,26 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useToast } from '@/hooks/use-toast';
+import React from 'react';
+import { useAdinPreferences, useUpdateAdinPreferences } from '@/hooks/useAdinPreferences';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { SettingsLayout } from '@/components/settings/SettingsLayout';
-import { Loader2, Bell, Mail, Smartphone, Clock, Globe } from 'lucide-react';
-
-interface AdinPreferences {
-  id: string;
-  email_enabled: boolean;
-  in_app_enabled: boolean;
-  notification_frequency: string;
-  quiet_hours_start: string | null;
-  quiet_hours_end: string | null;
-  timezone: string;
-}
+import { Loader2, Bell, Mail, Smartphone, Clock, Globe, Users, MessageSquare, Heart, AtSign, Send, Calendar, BookOpen } from 'lucide-react';
 
 // Common timezones for diaspora
 const TIMEZONES = [
@@ -43,91 +29,28 @@ const TIMEZONES = [
 ];
 
 const FREQUENCY_OPTIONS = [
-  { value: 'realtime', label: 'Real-time' },
-  { value: 'daily', label: 'Daily digest' },
-  { value: 'weekly', label: 'Weekly digest' },
+  { value: 'high', label: 'High - Real-time notifications' },
+  { value: 'normal', label: 'Normal - Regular frequency' },
+  { value: 'low', label: 'Low - Batched updates' },
+  { value: 'never', label: 'Never - No email notifications' },
 ];
 
+const EMAIL_CATEGORIES = [
+  { key: 'email_connections', label: 'Connections', description: 'New connection requests and acceptances', icon: Users },
+  { key: 'email_comments', label: 'Comments', description: 'Comments on your posts', icon: MessageSquare },
+  { key: 'email_reactions', label: 'Reactions & Likes', description: 'Reactions and likes on your content', icon: Heart },
+  { key: 'email_mentions', label: 'Mentions', description: 'When someone mentions you', icon: AtSign },
+  { key: 'email_messages', label: 'Messages', description: 'New direct messages', icon: Send },
+  { key: 'email_events', label: 'Events', description: 'Event invites and reminders', icon: Calendar },
+  { key: 'email_stories', label: 'Stories', description: 'New stories from your network', icon: BookOpen },
+] as const;
+
 export default function NotificationSettings() {
-  const { user } = useAuth();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const { data: preferences, isLoading } = useAdinPreferences();
+  const { mutate: updatePreferences } = useUpdateAdinPreferences();
 
-  const [preferences, setPreferences] = useState<AdinPreferences | null>(null);
-
-  // Fetch notification preferences
-  const { data, isLoading } = useQuery({
-    queryKey: ['adin-preferences', user?.id],
-    queryFn: async () => {
-      if (!user?.id) return null;
-
-      const { data, error } = await supabase
-        .from('adin_preferences')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
-
-      if (error && error.code !== 'PGRST116') throw error;
-
-      // Return data or default values
-      return data || {
-        id: null,
-        email_enabled: true,
-        in_app_enabled: true,
-        notification_frequency: 'realtime',
-        quiet_hours_start: null,
-        quiet_hours_end: null,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      };
-    },
-    enabled: !!user?.id,
-  });
-
-  useEffect(() => {
-    if (data) {
-      setPreferences(data as AdinPreferences);
-    }
-  }, [data]);
-
-  // Update mutation
-  const updateMutation = useMutation({
-    mutationFn: async (updates: Partial<AdinPreferences>) => {
-      if (!user?.id) throw new Error('Not authenticated');
-
-      // Upsert preferences
-      const { error } = await supabase
-        .from('adin_preferences')
-        .upsert({
-          user_id: user.id,
-          ...updates,
-          updated_at: new Date().toISOString(),
-        }, {
-          onConflict: 'user_id',
-        });
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['adin-preferences', user?.id] });
-      toast({ title: 'Preferences saved' });
-    },
-    onError: (error: any) => {
-      toast({
-        title: 'Error saving preferences',
-        description: error.message,
-        variant: 'destructive',
-      });
-    },
-  });
-
-  const handleUpdate = (field: keyof AdinPreferences, value: any) => {
-    if (!preferences) return;
-
-    const updatedPreferences = { ...preferences, [field]: value };
-    setPreferences(updatedPreferences);
-
-    // Debounced save
-    updateMutation.mutate({ [field]: value });
+  const handleUpdate = (field: string, value: any) => {
+    updatePreferences({ [field]: value });
   };
 
   if (isLoading || !preferences) {
@@ -172,7 +95,7 @@ export default function NotificationSettings() {
               </div>
               <Switch
                 id="email_enabled"
-                checked={preferences.email_enabled}
+                checked={preferences.email_enabled ?? true}
                 onCheckedChange={(checked) => handleUpdate('email_enabled', checked)}
               />
             </div>
@@ -191,12 +114,49 @@ export default function NotificationSettings() {
               </div>
               <Switch
                 id="in_app_enabled"
-                checked={preferences.in_app_enabled}
+                checked={preferences.in_app_enabled ?? true}
                 onCheckedChange={(checked) => handleUpdate('in_app_enabled', checked)}
               />
             </div>
           </CardContent>
         </Card>
+
+        {/* Granular Email Preferences */}
+        {preferences.email_enabled && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Mail className="h-5 w-5" />
+                Email Notification Types
+              </CardTitle>
+              <CardDescription>
+                Choose which types of emails you want to receive
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {EMAIL_CATEGORIES.map(({ key, label, description, icon: Icon }) => (
+                <div key={key} className="flex items-center justify-between py-2">
+                  <div className="flex items-center gap-3">
+                    <Icon className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <Label htmlFor={key} className="text-sm font-medium">
+                        {label}
+                      </Label>
+                      <p className="text-xs text-muted-foreground">
+                        {description}
+                      </p>
+                    </div>
+                  </div>
+                  <Switch
+                    id={key}
+                    checked={(preferences as any)[key] ?? true}
+                    onCheckedChange={(checked) => handleUpdate(key, checked)}
+                  />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Frequency */}
         <Card>
@@ -214,7 +174,7 @@ export default function NotificationSettings() {
               <div>
                 <Label htmlFor="frequency">Email Frequency</Label>
                 <Select
-                  value={preferences.notification_frequency}
+                  value={preferences.notification_frequency || 'realtime'}
                   onValueChange={(value) => handleUpdate('notification_frequency', value)}
                 >
                   <SelectTrigger id="frequency" className="w-full md:w-64">
@@ -229,9 +189,10 @@ export default function NotificationSettings() {
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {preferences.notification_frequency === 'realtime' && 'You\'ll receive emails as events happen'}
-                  {preferences.notification_frequency === 'daily' && 'You\'ll receive a summary email once per day'}
-                  {preferences.notification_frequency === 'weekly' && 'You\'ll receive a summary email once per week'}
+                  {preferences.notification_frequency === 'high' && 'You\'ll receive emails as events happen'}
+                  {preferences.notification_frequency === 'normal' && 'You\'ll receive emails at regular intervals'}
+                  {preferences.notification_frequency === 'low' && 'You\'ll receive batched email updates'}
+                  {preferences.notification_frequency === 'never' && 'You won\'t receive any email notifications'}
                 </p>
               </div>
             </div>
@@ -289,7 +250,7 @@ export default function NotificationSettings() {
           </CardHeader>
           <CardContent>
             <Select
-              value={preferences.timezone}
+              value={preferences.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone}
               onValueChange={(value) => handleUpdate('timezone', value)}
             >
               <SelectTrigger className="w-full md:w-80">
