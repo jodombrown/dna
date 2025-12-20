@@ -8,7 +8,13 @@ import {
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { X, Maximize2, LogOut, LogIn, Loader2 } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { Maximize2, LogOut, LogIn, Loader2 } from 'lucide-react';
 import { FeedbackMessageList, FeedbackComposer } from '@/components/feedback';
 import { FeedbackThreadView } from './FeedbackThreadView';
 import { useFeedbackMessages } from '@/hooks/useFeedbackMessages';
@@ -99,31 +105,15 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
                 {channel?.name || 'DNA | Feedback Hub'}
               </SheetTitle>
               <div className="flex items-center gap-1">
+                {/* Full page - desktop only */}
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={handleOpenFullPage}
                   title="Open full page"
+                  className="hidden md:flex"
                 >
                   <Maximize2 className="h-4 w-4" />
-                </Button>
-                {!isOptedOut && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handleOptOut}
-                    disabled={isOptingOut}
-                    title="Opt out"
-                  >
-                    {isOptingOut ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <LogOut className="h-4 w-4" />
-                    )}
-                  </Button>
-                )}
-                <Button variant="ghost" size="icon" onClick={onClose}>
-                  <X className="h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -150,15 +140,44 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
             </div>
           ) : (
             <>
-              {/* Filters */}
+              {/* Filters with opt-out option */}
               <div className="px-4 py-2 border-b shrink-0">
-                <Tabs value={filter} onValueChange={(v) => setFilter(v as FeedbackFilter)}>
-                  <TabsList className="h-8">
-                    <TabsTrigger value="all" className="text-xs h-7">All</TabsTrigger>
-                    <TabsTrigger value="my_feedback" className="text-xs h-7">Mine</TabsTrigger>
-                    <TabsTrigger value="pinned" className="text-xs h-7">Pinned</TabsTrigger>
-                  </TabsList>
-                </Tabs>
+                <div className="flex items-center justify-between gap-2">
+                  <Tabs value={filter} onValueChange={(v) => setFilter(v as FeedbackFilter)}>
+                    <TabsList className="h-8">
+                      <TabsTrigger value="all" className="text-xs h-7">All</TabsTrigger>
+                      <TabsTrigger value="my_feedback" className="text-xs h-7">Mine</TabsTrigger>
+                      <TabsTrigger value="pinned" className="text-xs h-7">Pinned</TabsTrigger>
+                    </TabsList>
+                  </Tabs>
+                  
+                  {/* Opt out option - moved here */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground hidden sm:inline">Opt in/out</span>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={handleOptOut}
+                            disabled={isOptingOut}
+                            className="h-7 w-7"
+                          >
+                            {isOptingOut ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <LogOut className="h-3.5 w-3.5" />
+                            )}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom">
+                          <p>Stop receiving feedback updates and hide this hub</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                </div>
               </div>
 
               {/* Message List */}
