@@ -221,7 +221,6 @@ function App() {
                         <Suspense fallback={<PageLoader />}>
                           <Routes>
               {/* Public pages - accessible without authentication */}
-              <Route path="/u/:username" element={<PublicProfilePage />} />
               <Route path="/dna/u/:username" element={<PublicProfilePage />} />
               <Route path="/post/:postId" element={<PublicPostPage />} />
               
