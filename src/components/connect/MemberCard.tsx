@@ -219,7 +219,8 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
         .maybeSingle();
 
       if (existingConversation) {
-        navigate(`/dna/messages?conversation=${existingConversation.id}`);
+        // Navigate to messages with conversation ID in URL path
+        navigate(`/dna/messages/${existingConversation.id}`);
       } else {
         // Create new conversation
         const { data: newConv, error } = await supabase
@@ -229,7 +230,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
           .single();
 
         if (error) throw error;
-        navigate(`/dna/messages?conversation=${newConv.id}`);
+        navigate(`/dna/messages/${newConv.id}`);
       }
     } catch (error) {
       console.error('Message error:', error);
@@ -325,8 +326,8 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
                   Investor
                 </Badge>
               )}
-              {member.focus_areas?.slice(0, 1).map((area) => (
-                <Badge key={area} variant="secondary" className="text-[10px] sm:text-xs px-1.5 py-0 max-w-[100px] truncate">
+              {member.focus_areas?.slice(0, 2).map((area) => (
+                <Badge key={area} variant="secondary" className="text-[10px] sm:text-xs px-1.5 py-0.5 whitespace-nowrap">
                   {area}
                 </Badge>
               ))}

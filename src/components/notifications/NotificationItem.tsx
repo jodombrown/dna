@@ -142,7 +142,7 @@ export function NotificationItem({
       case 'new_message':
         // Go to messages, ideally to the specific conversation
         if (notification.entity_id) {
-          targetRoute = `/dna/messages?conversation=${notification.entity_id}`;
+          targetRoute = `/dna/messages/${notification.entity_id}`;
         } else {
           targetRoute = '/dna/messages';
         }
