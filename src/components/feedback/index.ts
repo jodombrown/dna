@@ -12,3 +12,5 @@ export { FeedbackAdminControls } from './FeedbackAdminControls';
 export { FeedbackFAB } from './FeedbackFAB';
 export { FeedbackDrawer } from './FeedbackDrawer';
 export { FeedbackAnalytics } from './FeedbackAnalytics';
+export { FeedbackWelcomeBanner } from './FeedbackWelcomeBanner';
+export { FeedbackHeroSection } from './FeedbackHeroSection';
