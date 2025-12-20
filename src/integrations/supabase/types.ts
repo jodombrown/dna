@@ -7603,15 +7603,21 @@ export type Database = {
               p_sort_by?: string
             }
             Returns: {
+              available_for: string[]
               avatar_url: string
               country_of_origin: string
               current_country: string
+              diaspora_status: string
               focus_areas: string[]
               full_name: string
               headline: string
               id: string
               industries: string[]
               is_connected: boolean
+              is_investor: boolean
+              is_mentor: boolean
+              languages: string[]
+              location: string
               match_score: number
               regional_expertise: string[]
               skills: string[]
