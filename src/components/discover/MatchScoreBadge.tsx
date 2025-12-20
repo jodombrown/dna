@@ -41,41 +41,55 @@ export function MatchScoreBadge({
   matchReasons = [],
   showTooltip = true 
 }: MatchScoreBadgeProps) {
-  const isHighMatch = score >= 80;
-  
+  const isHighMatch = score >= 70;
+  const isLowScore = score < 20;
   const getMatchConfig = () => {
-    if (score >= 90) {
+    if (score >= 85) {
       return {
         label: "Strong Match",
         className: "bg-[hsl(151,75%,45%)] text-white font-bold",
-        icon: Heart
-      };
-    }
-    if (score >= 80) {
-      return {
-        label: "Great",
-        className: "bg-[hsl(151,75%,50%)]/90 text-white font-semibold",
-        icon: Heart
+        icon: Heart,
+        popoverTitle: "Excellent Match!"
       };
     }
     if (score >= 70) {
       return {
-        label: "Strong",
-        className: "bg-[hsl(151,75%,50%)]/15 text-[hsl(151,75%,30%)] border border-[hsl(151,75%,50%)]/30 font-semibold",
-        icon: null
+        label: "Great Match",
+        className: "bg-[hsl(151,75%,50%)]/90 text-white font-semibold",
+        icon: Heart,
+        popoverTitle: "Great Match!"
       };
     }
-    if (score >= 60) {
+    if (score >= 55) {
       return {
-        label: "Good",
-        className: "bg-[hsl(18,60%,55%)]/10 text-[hsl(18,60%,35%)] border border-[hsl(18,60%,55%)]/30 font-semibold",
-        icon: null
+        label: "Good Match",
+        className: "bg-[hsl(151,75%,50%)]/15 text-[hsl(151,75%,30%)] border border-[hsl(151,75%,50%)]/30 font-semibold",
+        icon: null,
+        popoverTitle: "Good Match"
       };
     }
+    if (score >= 40) {
+      return {
+        label: "Potential",
+        className: "bg-[hsl(18,60%,55%)]/10 text-[hsl(18,60%,35%)] border border-[hsl(18,60%,55%)]/30 font-medium",
+        icon: null,
+        popoverTitle: "Potential Connection"
+      };
+    }
+    if (score >= 20) {
+      return {
+        label: "Explore",
+        className: "bg-muted text-muted-foreground border border-border font-medium",
+        icon: null,
+        popoverTitle: "Worth Exploring"
+      };
+    }
+    // Very low score - likely incomplete profile
     return {
-      label: "Match",
-      className: "bg-muted text-muted-foreground font-medium",
-      icon: null
+      label: "New Member",
+      className: "bg-muted/50 text-muted-foreground/70 border border-border/50 font-normal",
+      icon: null,
+      popoverTitle: "New to DNA"
     };
   };
 
@@ -106,7 +120,8 @@ export function MatchScoreBadge({
       {isHighMatch && config.icon && (
         <config.icon className="inline mr-1 h-3 w-3" />
       )}
-      {score}% {config.label}
+      {/* Show percentage for meaningful scores, hide for new members */}
+      {isLowScore ? config.label : `${score}% ${config.label}`}
     </Badge>
   );
 
@@ -171,20 +186,22 @@ export function MatchScoreBadge({
           <div className="flex items-center gap-2 pb-2 border-b border-border">
             <div className={cn(
               "flex items-center justify-center w-10 h-10 rounded-full",
-              score >= 80 ? "bg-[hsl(151,75%,50%)]/20" : "bg-muted"
+              isHighMatch ? "bg-[hsl(151,75%,50%)]/20" : "bg-muted"
             )}>
               <span className={cn(
                 "text-lg font-bold",
-                score >= 80 ? "text-[hsl(151,75%,35%)]" : "text-muted-foreground"
+                isHighMatch ? "text-[hsl(151,75%,35%)]" : "text-muted-foreground"
               )}>
-                {score}%
+                {isLowScore ? '?' : `${score}%`}
               </span>
             </div>
             <div>
               <p className="font-semibold text-sm">
-                {score >= 90 ? 'Strong Match!' : score >= 80 ? 'Great Match!' : score >= 70 ? 'Good Match' : 'Fair Match'}
+                {config.popoverTitle}
               </p>
-              <p className="text-xs text-muted-foreground">Why you're connected</p>
+              <p className="text-xs text-muted-foreground">
+                {isLowScore ? 'Complete profile for better matches' : 'Why you might connect'}
+              </p>
             </div>
           </div>
           
@@ -199,7 +216,9 @@ export function MatchScoreBadge({
             </div>
           ) : (
             <p className="text-sm text-muted-foreground text-center py-2">
-              Based on your profile and interests
+              {isLowScore 
+                ? 'Not enough profile data to calculate match' 
+                : 'Based on your profile and interests'}
             </p>
           )}
           
