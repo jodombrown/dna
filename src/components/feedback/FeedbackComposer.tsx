@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Send, X, Loader2 } from 'lucide-react';
@@ -42,13 +42,26 @@ export function FeedbackComposer({
 }: FeedbackComposerProps) {
   const [content, setContent] = useState('');
   const [selectedTag, setSelectedTag] = useState<UserTag | null>(initialTag || null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Update selected tag when initialTag changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (initialTag !== undefined) {
       setSelectedTag(initialTag);
     }
   }, [initialTag]);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      const scrollHeight = textarea.scrollHeight;
+      // Min 2 rows (~48px), max 6 rows (~144px)
+      textarea.style.height = `${Math.min(Math.max(scrollHeight, 48), 144)}px`;
+    }
+  }, [content]);
+
   const [pendingAttachments, setPendingAttachments] = useState<PendingAttachment[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showMediaOptions, setShowMediaOptions] = useState(false);
@@ -144,7 +157,9 @@ export function FeedbackComposer({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+    // Enter sends, Shift+Enter for new line
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
       handleSubmit(e);
     }
   };
@@ -261,16 +276,17 @@ export function FeedbackComposer({
           🎤
         </Button>
 
-        {/* Text Input - Single line style */}
+        {/* Text Input - Auto-expanding */}
         <Textarea
+          ref={textareaRef}
           value={content}
           onChange={(e) => setContent(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Share your feedback..."
-          className="min-h-[36px] h-9 py-2 resize-none flex-1 text-sm"
+          placeholder="Share your feedback... (Shift+Enter for new line)"
+          className="min-h-[48px] py-2 resize-none flex-1 text-sm overflow-y-auto"
           maxLength={5000}
           disabled={isSubmitting}
-          rows={1}
+          rows={2}
         />
 
         {/* Send Button */}
@@ -307,7 +323,7 @@ export function FeedbackComposer({
       </div>
 
       <p className="mt-1.5 text-[10px] text-muted-foreground">
-        Press Cmd/Ctrl + Enter to send
+        Press Enter to send, Shift+Enter for new line
       </p>
     </form>
   );
