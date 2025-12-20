@@ -87,7 +87,7 @@ export const useUpdateAdinPreferences = () => {
       queryClient.invalidateQueries({ queryKey: ['adin-preferences'] });
       toast({
         title: 'Preferences Updated',
-        description: 'Your ADIN notification preferences have been saved.',
+        description: 'Your notification preferences have been saved.',
       });
     },
     onError: (error) => {
