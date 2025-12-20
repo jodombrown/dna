@@ -19,6 +19,8 @@ interface FeedbackComposerProps {
   } | null;
   onCancelReply?: () => void;
   onSuccess?: () => void;
+  initialTag?: UserTag | null;
+  composerRef?: React.RefObject<HTMLFormElement>;
 }
 
 const TAG_OPTIONS: UserTag[] = ['bug', 'suggestion', 'question', 'praise', 'other'];
@@ -35,9 +37,18 @@ export function FeedbackComposer({
   replyTo,
   onCancelReply,
   onSuccess,
+  initialTag,
+  composerRef,
 }: FeedbackComposerProps) {
   const [content, setContent] = useState('');
-  const [selectedTag, setSelectedTag] = useState<UserTag | null>(null);
+  const [selectedTag, setSelectedTag] = useState<UserTag | null>(initialTag || null);
+
+  // Update selected tag when initialTag changes
+  React.useEffect(() => {
+    if (initialTag !== undefined) {
+      setSelectedTag(initialTag);
+    }
+  }, [initialTag]);
   const [pendingAttachments, setPendingAttachments] = useState<PendingAttachment[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showMediaOptions, setShowMediaOptions] = useState(false);
@@ -139,7 +150,7 @@ export function FeedbackComposer({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="border-t bg-background p-4">
+    <form ref={composerRef} onSubmit={handleSubmit} className="border-t bg-background p-4">
       {/* Reply Preview */}
       {replyTo && (
         <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 px-3 py-2 rounded">

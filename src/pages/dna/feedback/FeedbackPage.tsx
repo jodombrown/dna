@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -12,13 +12,17 @@ import {
 } from '@/components/ui/sheet';
 import { ArrowLeft, BarChart2, LogOut, LogIn, Loader2 } from 'lucide-react';
 import { FeedbackMessageList, FeedbackComposer, FeedbackAnalytics } from '@/components/feedback';
+import { FeedbackWelcomeBanner } from '@/components/feedback/FeedbackWelcomeBanner';
+import { FeedbackHeroSection } from '@/components/feedback/FeedbackHeroSection';
 import { useFeedbackMessages } from '@/hooks/useFeedbackMessages';
 import { useFeedbackMembership } from '@/hooks/useFeedbackMembership';
-import type { FeedbackFilter } from '@/types/feedback';
+import type { FeedbackFilter, UserTag } from '@/types/feedback';
 
 export default function FeedbackPage() {
   const navigate = useNavigate();
+  const composerRef = useRef<HTMLFormElement>(null);
   const [filter, setFilter] = useState<FeedbackFilter>('all');
+  const [selectedTag, setSelectedTag] = useState<UserTag | null>(null);
   const [replyTo, setReplyTo] = useState<{
     id: string;
     username: string;
@@ -69,6 +73,14 @@ export default function FeedbackPage() {
     setReplyTo(null);
   }, []);
 
+  const handleHeroCardClick = useCallback((tag: UserTag | null) => {
+    setSelectedTag(tag);
+    // Scroll to composer
+    setTimeout(() => {
+      composerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+  }, []);
+
   // Loading state
   if (isMembershipLoading) {
     return (
@@ -103,6 +115,9 @@ export default function FeedbackPage() {
 
   return (
     <div className="h-screen flex flex-col bg-background">
+      {/* Welcome Banner */}
+      <FeedbackWelcomeBanner />
+
       {/* Header */}
       <header className="border-b px-4 py-3 flex items-center gap-4 shrink-0">
         <Button
@@ -155,6 +170,9 @@ export default function FeedbackPage() {
         </div>
       </header>
 
+      {/* Hero Section */}
+      <FeedbackHeroSection onCardClick={handleHeroCardClick} />
+
       {/* Filters */}
       <div className="border-b px-4 py-2 shrink-0">
         <Tabs value={filter} onValueChange={(v) => setFilter(v as FeedbackFilter)}>
@@ -184,6 +202,8 @@ export default function FeedbackPage() {
           channelId={channel.id}
           replyTo={replyTo}
           onCancelReply={handleCancelReply}
+          initialTag={selectedTag}
+          composerRef={composerRef}
         />
       )}
     </div>
