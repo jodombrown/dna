@@ -5,6 +5,7 @@ import { useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { AccountDrawer } from '@/components/navigation/AccountDrawer';
+import { FeedbackFAB } from '@/components/feedback/FeedbackFAB';
 
 interface BaseLayoutProps {
   children: React.ReactNode;
@@ -84,6 +85,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
       >
         {children}
       </div>
+      <FeedbackFAB />
     </>
   );
 };
