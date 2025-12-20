@@ -13,6 +13,15 @@ export interface AdinPreferences {
   quiet_hours_start: string;
   quiet_hours_end: string;
   timezone: string;
+  // Granular email preferences
+  email_connections?: boolean;
+  email_comments?: boolean;
+  email_reactions?: boolean;
+  email_mentions?: boolean;
+  email_messages?: boolean;
+  email_events?: boolean;
+  email_stories?: boolean;
+  unsubscribe_token?: string;
   created_at: string;
   updated_at: string;
 }
