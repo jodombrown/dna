@@ -330,7 +330,14 @@ export type Database = {
       adin_preferences: {
         Row: {
           created_at: string | null
+          email_comments: boolean | null
+          email_connections: boolean | null
           email_enabled: boolean | null
+          email_events: boolean | null
+          email_mentions: boolean | null
+          email_messages: boolean | null
+          email_reactions: boolean | null
+          email_stories: boolean | null
           id: string
           in_app_enabled: boolean | null
           notification_frequency: string | null
@@ -339,12 +346,20 @@ export type Database = {
           quiet_hours_end: string | null
           quiet_hours_start: string | null
           timezone: string | null
+          unsubscribe_token: string | null
           updated_at: string | null
           user_id: string
         }
         Insert: {
           created_at?: string | null
+          email_comments?: boolean | null
+          email_connections?: boolean | null
           email_enabled?: boolean | null
+          email_events?: boolean | null
+          email_mentions?: boolean | null
+          email_messages?: boolean | null
+          email_reactions?: boolean | null
+          email_stories?: boolean | null
           id?: string
           in_app_enabled?: boolean | null
           notification_frequency?: string | null
@@ -353,12 +368,20 @@ export type Database = {
           quiet_hours_end?: string | null
           quiet_hours_start?: string | null
           timezone?: string | null
+          unsubscribe_token?: string | null
           updated_at?: string | null
           user_id: string
         }
         Update: {
           created_at?: string | null
+          email_comments?: boolean | null
+          email_connections?: boolean | null
           email_enabled?: boolean | null
+          email_events?: boolean | null
+          email_mentions?: boolean | null
+          email_messages?: boolean | null
+          email_reactions?: boolean | null
+          email_stories?: boolean | null
           id?: string
           in_app_enabled?: boolean | null
           notification_frequency?: string | null
@@ -367,6 +390,7 @@ export type Database = {
           quiet_hours_end?: string | null
           quiet_hours_start?: string | null
           timezone?: string | null
+          unsubscribe_token?: string | null
           updated_at?: string | null
           user_id?: string
         }
@@ -8092,7 +8116,14 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: {
           created_at: string | null
+          email_comments: boolean | null
+          email_connections: boolean | null
           email_enabled: boolean | null
+          email_events: boolean | null
+          email_mentions: boolean | null
+          email_messages: boolean | null
+          email_reactions: boolean | null
+          email_stories: boolean | null
           id: string
           in_app_enabled: boolean | null
           notification_frequency: string | null
@@ -8101,6 +8132,7 @@ export type Database = {
           quiet_hours_end: string | null
           quiet_hours_start: string | null
           timezone: string | null
+          unsubscribe_token: string | null
           updated_at: string | null
           user_id: string
         }[]
