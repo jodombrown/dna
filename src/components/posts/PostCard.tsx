@@ -64,7 +64,7 @@ export function PostCard({
   const [showReshareDialog, setShowReshareDialog] = useState(false);
   const [showMediaLightbox, setShowMediaLightbox] = useState(false);
   
-  // Post reactions (emoji reactions)
+  // Post reactions (emoji reactions) with notification context
   const {
     reactions,
     totalReactions,
@@ -72,16 +72,24 @@ export function PostCard({
     addReaction,
     removeReaction,
     isLoading: isReacting,
-  } = usePostReactions(post.post_id, currentUserId);
+  } = usePostReactions(post.post_id, currentUserId, {
+    postAuthorId: post.author_id,
+    actorName: profile?.full_name,
+    actorAvatarUrl: profile?.avatar_url,
+  });
 
-  // Post likes (simple heart like)
+  // Post likes (simple heart like) with notification context
   const {
     likeCount,
     userHasLiked,
     likedBy,
     toggleLike,
     isLoading: isLiking,
-  } = usePostLikes(post.post_id, currentUserId);
+  } = usePostLikes(post.post_id, currentUserId, {
+    postAuthorId: post.author_id,
+    actorName: profile?.full_name,
+    actorAvatarUrl: profile?.avatar_url,
+  });
 
   // Post bookmark
   const {

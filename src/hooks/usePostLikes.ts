@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { sendNotificationEmail, NOTIFICATION_TYPES } from '@/services/notificationService';
 
 interface LikeUser {
   user_id: string;
@@ -9,8 +10,13 @@ interface LikeUser {
   avatar_url?: string;
   headline?: string;
 }
+interface NotificationContext {
+  postAuthorId?: string;
+  actorName?: string;
+  actorAvatarUrl?: string;
+}
 
-export function usePostLikes(postId: string, userId?: string) {
+export function usePostLikes(postId: string, userId?: string, notificationContext?: NotificationContext) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -91,6 +97,19 @@ export function usePostLikes(postId: string, userId?: string) {
             console.error('Like failed:', error);
             throw error;
           }
+        }
+
+        // Send email notification to post author (if not self-liking)
+        if (notificationContext?.postAuthorId && notificationContext.postAuthorId !== userId) {
+          sendNotificationEmail({
+            user_id: notificationContext.postAuthorId,
+            notification_type: NOTIFICATION_TYPES.POST_LIKE,
+            title: 'Someone liked your post',
+            message: `${notificationContext.actorName || 'Someone'} liked your post`,
+            action_url: `https://diasporanetwork.africa/dna/convey/post/${postId}`,
+            actor_name: notificationContext.actorName,
+            actor_avatar_url: notificationContext.actorAvatarUrl,
+          }).catch(err => console.error('Failed to send like notification email:', err));
         }
       }
     },
