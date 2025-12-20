@@ -6,6 +6,16 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -19,6 +29,7 @@ import { FeedbackMessageList, FeedbackComposer } from '@/components/feedback';
 import { FeedbackThreadView } from './FeedbackThreadView';
 import { useFeedbackMessages } from '@/hooks/useFeedbackMessages';
 import { useFeedbackMembership } from '@/hooks/useFeedbackMembership';
+import { toast } from '@/hooks/use-toast';
 import type { FeedbackFilter, FeedbackMessageWithSender } from '@/types/feedback';
 
 interface FeedbackDrawerProps {
@@ -35,6 +46,7 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
     preview: string;
   } | null>(null);
   const [selectedThread, setSelectedThread] = useState<FeedbackMessageWithSender | null>(null);
+  const [showOptOutConfirm, setShowOptOutConfirm] = useState(false);
 
   const {
     channel,
@@ -89,9 +101,19 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
     navigate('/dna/feedback');
   };
 
-  const handleOptOut = () => {
+  const handleOptOutClick = () => {
+    setShowOptOutConfirm(true);
+  };
+
+  const handleConfirmOptOut = () => {
     optOut();
+    setShowOptOutConfirm(false);
     onClose();
+    toast({
+      title: "You've opted out of the Feedback Hub",
+      description: "To opt back in, tap the feedback button again and select 'Opt Back In'.",
+      duration: 6000,
+    });
   };
 
   return (
@@ -160,7 +182,7 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={handleOptOut}
+                            onClick={handleOptOutClick}
                             disabled={isOptingOut}
                             className="h-7 w-7"
                           >
@@ -215,6 +237,26 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
           isAdmin={isAdmin}
         />
       )}
+      {/* Opt Out Confirmation Dialog */}
+      <AlertDialog open={showOptOutConfirm} onOpenChange={setShowOptOutConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Opt out of Feedback Hub?</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-2">
+              <p>Are you sure you want to opt out? You will no longer see the feedback button or receive updates.</p>
+              <p className="font-medium text-foreground">
+                To opt back in later, tap the feedback button (it will reappear after you refresh) and select "Opt Back In".
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>No, stay in</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmOptOut}>
+              Yes, opt me out
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
