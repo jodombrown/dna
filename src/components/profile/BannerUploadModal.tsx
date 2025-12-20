@@ -222,18 +222,7 @@ export function BannerUploadModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            <span>Customize Your Banner</span>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleResetToDefault}
-              className="text-muted-foreground hover:text-foreground"
-            >
-              <RotateCcw className="h-4 w-4 mr-2" />
-              Reset to Default
-            </Button>
-          </DialogTitle>
+          <DialogTitle>Customize Your Banner</DialogTitle>
         </DialogHeader>
 
         {/* Live Profile Card Preview */}
@@ -270,6 +259,16 @@ export function BannerUploadModal({
               </div>
             </div>
           </div>
+          {/* Reset Button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleResetToDefault}
+            className="text-muted-foreground hover:text-foreground self-start"
+          >
+            <RotateCcw className="h-4 w-4 mr-2" />
+            Reset to Default
+          </Button>
         </div>
 
         <Tabs value={selectedTab} onValueChange={(v) => setSelectedTab(v as any)}>
