@@ -513,6 +513,7 @@ const ProfileEdit = () => {
               // Also refetch for any other data
               refetch();
             }}
+            userDisplayName={fullName}
           />
 
           {/* Basic Information */}

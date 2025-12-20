@@ -26,6 +26,7 @@ interface ProfileEditImagesProps {
   onAvatarChange: (url: string) => void;
   onBannerChange: (url: string) => void;
   onBannerUpdate?: (data: BannerUpdateData) => void;
+  userDisplayName?: string;
 }
 
 const ProfileEditImages: React.FC<ProfileEditImagesProps> = ({
@@ -38,6 +39,7 @@ const ProfileEditImages: React.FC<ProfileEditImagesProps> = ({
   onAvatarChange,
   onBannerChange,
   onBannerUpdate,
+  userDisplayName,
 }) => {
   const queryClient = useQueryClient();
 
@@ -193,6 +195,8 @@ const ProfileEditImages: React.FC<ProfileEditImagesProps> = ({
           overlay: bannerOverlay
         }}
         onUploadComplete={handleBannerUploadComplete}
+        userDisplayName={userDisplayName}
+        userAvatarUrl={avatarUrl || undefined}
       />
     </>
   );
