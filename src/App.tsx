@@ -48,6 +48,7 @@ const DnaMessages = lazy(() => import("./pages/dna/Messages"));
 const DnaImpact = lazy(() => import("./pages/dna/Impact"));
 const DnaNotifications = lazy(() => import("./pages/dna/Notifications"));
 const DnaAnalytics = lazy(() => import("./pages/dna/Analytics"));
+const DnaFeedback = lazy(() => import("./pages/dna/feedback/FeedbackPage"));
 const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const EngagementDashboard = lazy(() => import("./pages/admin/EngagementDashboard"));
@@ -517,7 +518,14 @@ function App() {
                   <DnaAnalytics />
                 </OnboardingGuard>
               } />
-              
+
+              {/* ========== FEEDBACK HUB ========== */}
+              <Route path="/dna/feedback" element={
+                <OnboardingGuard>
+                  <DnaFeedback />
+                </OnboardingGuard>
+              } />
+
               <Route path="/app/profile/edit" element={
                 <OnboardingGuard>
                   <ProfileEdit />
