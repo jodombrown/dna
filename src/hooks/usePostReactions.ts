@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { ReactionEmoji } from '@/types/reactions';
 import { useToast } from '@/hooks/use-toast';
+import { sendNotificationEmail, NOTIFICATION_TYPES } from '@/services/notificationService';
 
 interface ReactionData {
   emoji: ReactionEmoji;
@@ -13,7 +14,13 @@ interface ReactionData {
   }[];
 }
 
-export function usePostReactions(postId: string, userId?: string) {
+interface NotificationContext {
+  postAuthorId?: string;
+  actorName?: string;
+  actorAvatarUrl?: string;
+}
+
+export function usePostReactions(postId: string, userId?: string, notificationContext?: NotificationContext) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -70,6 +77,19 @@ export function usePostReactions(postId: string, userId?: string) {
         .insert({ post_id: postId, user_id: userId, emoji });
 
       if (error) throw error;
+
+      // Send email notification to post author (if not self-reacting)
+      if (notificationContext?.postAuthorId && notificationContext.postAuthorId !== userId) {
+        sendNotificationEmail({
+          user_id: notificationContext.postAuthorId,
+          notification_type: NOTIFICATION_TYPES.REACTION,
+          title: 'Someone reacted to your post',
+          message: `${notificationContext.actorName || 'Someone'} reacted ${emoji} to your post`,
+          action_url: `https://diasporanetwork.africa/dna/convey/post/${postId}`,
+          actor_name: notificationContext.actorName,
+          actor_avatar_url: notificationContext.actorAvatarUrl,
+        }).catch(err => console.error('Failed to send reaction notification email:', err));
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['post-reactions', postId] });

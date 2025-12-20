@@ -64,14 +64,18 @@ export function PostCard({ post }: PostCardProps) {
     },
   });
 
-  // Use reactions hook
+  // Use reactions hook with notification context
   const {
     reactions,
     totalReactions,
     currentReaction,
     addReaction,
     removeReaction,
-  } = usePostReactions(post.id, user?.id);
+  } = usePostReactions(post.id, user?.id, {
+    postAuthorId: post.author_id,
+    actorName: author?.full_name,
+    actorAvatarUrl: author?.avatar_url,
+  });
 
   // Fetch like count and status
   const { data: likeCount } = useQuery({
@@ -402,7 +406,7 @@ export function PostCard({ post }: PostCardProps) {
       </div>
 
       {/* Comments Section */}
-      {showComments && <CommentSection postId={post.id} />}
+      {showComments && <CommentSection postId={post.id} postAuthorId={post.author_id} />}
 
       {/* Reshare Dialog */}
       <ReshareDialog

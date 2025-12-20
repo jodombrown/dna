@@ -12,12 +12,14 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MentionAutocomplete } from './MentionAutocomplete';
 import { linkifyContent } from '@/utils/linkifyContent';
 import type { MentionSuggestion } from '@/hooks/useMentionAutocomplete';
+import { sendNotificationEmail, NOTIFICATION_TYPES } from '@/services/notificationService';
 
 interface CommentSectionProps {
   postId: string;
+  postAuthorId?: string;
 }
 
-export function CommentSection({ postId }: CommentSectionProps) {
+export function CommentSection({ postId, postAuthorId }: CommentSectionProps) {
   const { user, profile } = useAuth();
   const [commentText, setCommentText] = useState('');
   const [cursorPosition, setCursorPosition] = useState(0);
@@ -40,7 +42,7 @@ export function CommentSection({ postId }: CommentSectionProps) {
     },
   });
 
-  // Create comment
+  // Create comment with email notification
   const createCommentMutation = useMutation({
     mutationFn: async (content: string) => {
       const { error } = await supabase
@@ -52,6 +54,19 @@ export function CommentSection({ postId }: CommentSectionProps) {
         } as any);
 
       if (error) throw error;
+
+      // Send email notification to post author (if not self-commenting)
+      if (postAuthorId && postAuthorId !== user!.id) {
+        sendNotificationEmail({
+          user_id: postAuthorId,
+          notification_type: NOTIFICATION_TYPES.COMMENT,
+          title: 'New comment on your post',
+          message: `${profile?.full_name || 'Someone'} commented: "${content.slice(0, 100)}${content.length > 100 ? '...' : ''}"`,
+          action_url: `https://diasporanetwork.africa/dna/convey/post/${postId}`,
+          actor_name: profile?.full_name,
+          actor_avatar_url: profile?.avatar_url,
+        }).catch(err => console.error('Failed to send comment notification email:', err));
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['post-comments', postId] });
