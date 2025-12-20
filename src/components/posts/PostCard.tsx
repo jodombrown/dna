@@ -63,6 +63,14 @@ export function PostCard({
   const [showLikedByModal, setShowLikedByModal] = useState(false);
   const [showReshareDialog, setShowReshareDialog] = useState(false);
   const [showMediaLightbox, setShowMediaLightbox] = useState(false);
+  const [isContentExpanded, setIsContentExpanded] = useState(false);
+  
+  // Truncate content at ~200 characters
+  const CONTENT_PREVIEW_LENGTH = 200;
+  const needsContentExpansion = post.content.length > CONTENT_PREVIEW_LENGTH;
+  const contentPreview = needsContentExpansion 
+    ? post.content.slice(0, CONTENT_PREVIEW_LENGTH) 
+    : post.content;
   
   // Post reactions (emoji reactions) with notification context
   const {
@@ -315,9 +323,20 @@ export function PostCard({
         <SharedPostCard post={post} />
       ) : (
         <>
-          {/* Content */}
+          {/* Content with Read More */}
           <div className="mb-4">
-            <p className="whitespace-pre-wrap break-words">{post.content}</p>
+            <p className="whitespace-pre-wrap break-words">
+              {isContentExpanded ? post.content : contentPreview}
+              {needsContentExpansion && !isContentExpanded && '...'}
+            </p>
+            {needsContentExpansion && (
+              <button
+                onClick={() => setIsContentExpanded(!isContentExpanded)}
+                className="text-primary text-sm font-medium mt-1 hover:underline"
+              >
+                {isContentExpanded ? 'Show less' : 'Read more'}
+              </button>
+            )}
           </div>
 
           {/* Media Display - Image or Video - Clickable to open lightbox */}
