@@ -504,7 +504,15 @@ const ProfileEdit = () => {
             bannerOverlay={bannerOverlay}
             onAvatarChange={setAvatarUrl}
             onBannerChange={setBannerUrl}
-            onBannerUpdate={() => refetch()}
+            onBannerUpdate={(data) => {
+              // Immediately update local state for instant preview
+              setBannerType(data.type);
+              setBannerGradient(data.gradient || 'dna');
+              setBannerUrl(data.url || null);
+              setBannerOverlay(data.overlay);
+              // Also refetch for any other data
+              refetch();
+            }}
           />
 
           {/* Basic Information */}

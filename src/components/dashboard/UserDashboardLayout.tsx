@@ -187,7 +187,7 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
               value: profile.banner_type === 'image' ? profile.banner_url : (profile.banner_gradient || 'dna'),
               overlay: profile.banner_overlay || false
             }}
-            onUploadComplete={() => window.location.reload()}
+            onUploadComplete={(_data) => window.location.reload()}
           />
           
           <ProfileUnlockModal
