@@ -9,6 +9,13 @@ import { AvatarUploadModal } from '@/components/profile/AvatarUploadModal';
 import { BannerUploadModal } from '@/components/profile/BannerUploadModal';
 import { BANNER_GRADIENTS, BannerGradientKey } from '@/lib/constants/bannerGradients';
 
+interface BannerUpdateData {
+  type: 'gradient' | 'solid' | 'image';
+  gradient?: string;
+  url?: string;
+  overlay: boolean;
+}
+
 interface ProfileEditImagesProps {
   userId: string;
   avatarUrl: string | null;
@@ -18,7 +25,7 @@ interface ProfileEditImagesProps {
   bannerOverlay?: boolean;
   onAvatarChange: (url: string) => void;
   onBannerChange: (url: string) => void;
-  onBannerUpdate?: () => void;
+  onBannerUpdate?: (data: BannerUpdateData) => void;
 }
 
 const ProfileEditImages: React.FC<ProfileEditImagesProps> = ({
@@ -44,12 +51,13 @@ const ProfileEditImages: React.FC<ProfileEditImagesProps> = ({
     queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
   };
 
-  const handleBannerUploadComplete = () => {
+  const handleBannerUploadComplete = (data: BannerUpdateData) => {
     queryClient.invalidateQueries({ queryKey: ['profile', userId] });
     queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
     // Refetch to get the new banner data
     queryClient.refetchQueries({ queryKey: ['profile', userId] });
-    onBannerUpdate?.();
+    // Pass the data up so parent can update local state immediately
+    onBannerUpdate?.(data);
   };
 
   // Get banner display style

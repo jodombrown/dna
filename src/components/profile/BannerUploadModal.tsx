@@ -12,6 +12,13 @@ import { Loader2, Upload, Check, Move, ZoomIn, ZoomOut } from "lucide-react";
 import Cropper from "react-easy-crop";
 import { getCroppedImg } from "@/lib/utils/cropImage";
 
+export interface BannerSaveData {
+  type: 'gradient' | 'solid' | 'image';
+  gradient?: string;
+  url?: string;
+  overlay: boolean;
+}
+
 interface BannerUploadModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -21,7 +28,7 @@ interface BannerUploadModalProps {
     value: string;
     overlay: boolean;
   };
-  onUploadComplete: () => void;
+  onUploadComplete: (data: BannerSaveData) => void;
 }
 
 export function BannerUploadModal({
@@ -156,7 +163,14 @@ export function BannerUploadModal({
 
       if (error) throw error;
 
-      onUploadComplete();
+      // Pass the saved data back to parent for immediate state update
+      onUploadComplete({
+        type: bannerData.type as 'gradient' | 'image',
+        gradient: bannerData.type === 'gradient' ? bannerData.value : undefined,
+        url: bannerData.type === 'image' ? bannerData.value : undefined,
+        overlay
+      });
+      
       toast({ title: "Success", description: "Banner updated!" });
       handleClearImage();
       onOpenChange(false);
