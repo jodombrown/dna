@@ -9,7 +9,7 @@ interface AuthContextType {
   loading: boolean;
   profile: any | null;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signIn: (email: string, password: string) => Promise<{ error: any; data?: { user: User | null } }>;
   signOut: () => Promise<void>;
   updatePassword: (password: string) => Promise<{ error: any }>;
   refreshProfile: () => Promise<void>;
@@ -207,7 +207,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error, data } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -226,7 +226,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
       
-      return { error };
+      return { error, data: { user: data?.user ?? null } };
     } catch (networkError: any) {
       console.error('Network error during sign in:', networkError);
       return { 
