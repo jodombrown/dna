@@ -2985,6 +2985,210 @@ export type Database = {
           },
         ]
       }
+      feedback_attachments: {
+        Row: {
+          created_at: string | null
+          file_name: string | null
+          file_size: number | null
+          file_type: string
+          file_url: string
+          id: string
+          message_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          file_type: string
+          file_url: string
+          id?: string
+          message_id: string
+        }
+        Update: {
+          created_at?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          file_type?: string
+          file_url?: string
+          id?: string
+          message_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_attachments_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "feedback_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feedback_channel_memberships: {
+        Row: {
+          channel_id: string
+          created_at: string | null
+          id: string
+          last_read_at: string | null
+          status: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          channel_id: string
+          created_at?: string | null
+          id?: string
+          last_read_at?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          channel_id?: string
+          created_at?: string | null
+          id?: string
+          last_read_at?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_channel_memberships_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "feedback_channels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feedback_channels: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_default: boolean | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      feedback_messages: {
+        Row: {
+          admin_notes: string | null
+          category: string | null
+          channel_id: string
+          content: string
+          created_at: string | null
+          id: string
+          is_highlighted: boolean | null
+          is_pinned: boolean | null
+          message_type: string
+          parent_id: string | null
+          priority: string | null
+          sender_id: string
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          category?: string | null
+          channel_id: string
+          content: string
+          created_at?: string | null
+          id?: string
+          is_highlighted?: boolean | null
+          is_pinned?: boolean | null
+          message_type?: string
+          parent_id?: string | null
+          priority?: string | null
+          sender_id: string
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          category?: string | null
+          channel_id?: string
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_highlighted?: boolean | null
+          is_pinned?: boolean | null
+          message_type?: string
+          parent_id?: string | null
+          priority?: string | null
+          sender_id?: string
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_messages_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "feedback_channels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feedback_messages_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "feedback_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feedback_reactions: {
+        Row: {
+          created_at: string | null
+          emoji: string
+          id: string
+          message_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          emoji: string
+          id?: string
+          message_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          emoji?: string
+          id?: string
+          message_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_reactions_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "feedback_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       geographic_relevance: {
         Row: {
           created_at: string | null
@@ -8588,6 +8792,7 @@ export type Database = {
         Args: { p_event: string; p_user: string }
         Returns: boolean
       }
+      is_feedback_admin: { Args: never; Returns: boolean }
       is_group_creator: {
         Args: { p_group_id: string; p_user_id: string }
         Returns: boolean
