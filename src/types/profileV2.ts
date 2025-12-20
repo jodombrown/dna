@@ -27,6 +27,9 @@ export interface ProfileV2Data {
   company: string | null;
   avatar_url: string | null;
   banner_url: string | null;
+  banner_type?: 'gradient' | 'solid' | 'image';
+  banner_gradient?: string;
+  banner_overlay?: boolean;
   current_country: string | null;
   current_city?: string | null;
   location: string | null;
