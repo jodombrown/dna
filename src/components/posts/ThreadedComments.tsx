@@ -55,9 +55,9 @@ export function ThreadedComments({ postId, currentUserId, commentsDisabled = fal
 
   const handleSubmit = async (parentId?: string | null) => {
     const content = newComment.trim();
-    if (!content || content.length > 2000) {
-      if (content.length > 2000) {
-        toast.error('Comment must be 2000 characters or less');
+    if (!content || content.length > 500) {
+      if (content.length > 500) {
+        toast.error('Comment must be 500 characters or less');
       }
       return;
     }
@@ -156,7 +156,7 @@ export function ThreadedComments({ postId, currentUserId, commentsDisabled = fal
             <Textarea
               placeholder={`Reply to ${comment.author_full_name}...`}
               value={newComment}
-              onChange={(e) => setNewComment(e.target.value.slice(0, 2000))}
+              onChange={(e) => setNewComment(e.target.value.slice(0, 500))}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
@@ -200,7 +200,7 @@ export function ThreadedComments({ postId, currentUserId, commentsDisabled = fal
             <Textarea
               placeholder="Write a comment..."
               value={replyingTo ? '' : newComment}
-              onChange={(e) => !replyingTo && setNewComment(e.target.value.slice(0, 2000))}
+              onChange={(e) => !replyingTo && setNewComment(e.target.value.slice(0, 500))}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey && !replyingTo) {
                   e.preventDefault();
@@ -216,7 +216,7 @@ export function ThreadedComments({ postId, currentUserId, commentsDisabled = fal
                 Press Enter to post, Shift+Enter for new line
               </span>
               <span className="text-xs text-muted-foreground">
-                {newComment.length}/2000
+                {newComment.length}/500
               </span>
             </div>
           </div>
