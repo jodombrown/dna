@@ -7624,6 +7624,39 @@ export type Database = {
               username: string
             }[]
           }
+        | {
+            Args: {
+              p_country_of_origin?: string
+              p_focus_areas?: string[]
+              p_industries?: string[]
+              p_limit?: number
+              p_location_country?: string
+              p_offset?: number
+              p_regional_expertise?: string[]
+              p_search_term?: string
+              p_sort_by?: string
+              p_sort_order?: string
+              p_user_id?: string
+            }
+            Returns: {
+              avatar_url: string
+              bio: string
+              company: string
+              country_of_origin: string
+              current_country: string
+              focus_areas: string[]
+              full_name: string
+              headline: string
+              id: string
+              industries: string[]
+              interests: string[]
+              location: string
+              match_score: number
+              profession: string
+              regional_expertise: string[]
+              skills: string[]
+            }[]
+          }
       enqueue_reminders_for_all_users: { Args: never; Returns: number }
       ensure_connection: { Args: { u1: string; u2: string }; Returns: string }
       ensure_profile_for_user: {
