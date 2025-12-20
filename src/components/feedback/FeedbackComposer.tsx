@@ -1,14 +1,20 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Send, X, Loader2 } from 'lucide-react';
+import { Send, X, Loader2, Plus, Paperclip, Mic, Camera } from 'lucide-react';
 import type { UserTag, ContentType } from '@/types/feedback';
 import { USER_TAG_LABELS } from '@/types/feedback';
 import { feedbackService } from '@/services/feedbackService';
-import { FeedbackMediaUpload } from './FeedbackMediaUpload';
 import { FeedbackVoiceRecorder } from './FeedbackVoiceRecorder';
 import { FeedbackVideoRecorder } from './FeedbackVideoRecorder';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface FeedbackComposerProps {
   channelId: string;
@@ -42,7 +48,11 @@ export function FeedbackComposer({
 }: FeedbackComposerProps) {
   const [content, setContent] = useState('');
   const [selectedTag, setSelectedTag] = useState<UserTag | null>(initialTag || null);
+  const [pendingAttachments, setPendingAttachments] = useState<PendingAttachment[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showRecorders, setShowRecorders] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Update selected tag when initialTag changes
   useEffect(() => {
@@ -57,14 +67,10 @@ export function FeedbackComposer({
     if (textarea) {
       textarea.style.height = 'auto';
       const scrollHeight = textarea.scrollHeight;
-      // Min 2 rows (~48px), max 6 rows (~144px)
-      textarea.style.height = `${Math.min(Math.max(scrollHeight, 48), 144)}px`;
+      // Min height ~44px (1 row), max ~120px (~4 rows)
+      textarea.style.height = `${Math.min(Math.max(scrollHeight, 44), 120)}px`;
     }
   }, [content]);
-
-  const [pendingAttachments, setPendingAttachments] = useState<PendingAttachment[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showMediaOptions, setShowMediaOptions] = useState(false);
 
   const handleFilesSelected = useCallback((files: File[]) => {
     const newAttachments: PendingAttachment[] = files.map((file) => ({
@@ -74,6 +80,17 @@ export function FeedbackComposer({
     }));
     setPendingAttachments((prev) => [...prev, ...newAttachments]);
   }, []);
+
+  const handleFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      handleFilesSelected(files);
+    }
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }, [handleFilesSelected]);
 
   const handleRemoveFile = useCallback((index: number) => {
     setPendingAttachments((prev) => {
@@ -90,7 +107,7 @@ export function FeedbackComposer({
       ...prev,
       { file: blob, type: 'voice', duration },
     ]);
-    setShowMediaOptions(false);
+    setShowRecorders(false);
   }, []);
 
   const handleVideoRecording = useCallback((blob: Blob, duration: number) => {
@@ -98,7 +115,7 @@ export function FeedbackComposer({
       ...prev,
       { file: blob, type: 'video', duration },
     ]);
-    setShowMediaOptions(false);
+    setShowRecorders(false);
   }, []);
 
   const determineContentType = (): ContentType => {
@@ -109,10 +126,21 @@ export function FeedbackComposer({
     return 'mixed';
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
 
-    if (!content.trim() && pendingAttachments.length === 0) return;
+    if (!content.trim() && pendingAttachments.length === 0) {
+      console.log('[FeedbackComposer] Nothing to send');
+      return;
+    }
+
+    console.log('[FeedbackComposer] Submitting:', { 
+      channelId, 
+      content: content.trim(), 
+      contentType: determineContentType(),
+      tag: selectedTag,
+      attachments: pendingAttachments.length 
+    });
 
     try {
       setIsSubmitting(true);
@@ -125,6 +153,8 @@ export function FeedbackComposer({
         userTag: selectedTag || undefined,
         parentMessageId: replyTo?.id,
       });
+
+      console.log('[FeedbackComposer] Message result:', message);
 
       if (!message) {
         throw new Error('Failed to send message');
@@ -149,7 +179,7 @@ export function FeedbackComposer({
       onSuccess?.();
       toast.success('Feedback sent!');
     } catch (error) {
-      console.error('Error sending feedback:', error);
+      console.error('[FeedbackComposer] Error sending feedback:', error);
       toast.error('Failed to send feedback. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -160,75 +190,91 @@ export function FeedbackComposer({
     // Enter sends, Shift+Enter for new line
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSubmit(e);
+      handleSubmit();
     }
   };
 
+  const hasContent = content.trim() || pendingAttachments.length > 0;
+
   return (
-    <form ref={composerRef} onSubmit={handleSubmit} className="border-t bg-background p-3">
+    <div className="border-t border-border bg-card">
+      {/* Hidden file input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileInputChange}
+        accept="image/*"
+        multiple
+        className="hidden"
+      />
+
       {/* Reply Preview */}
       {replyTo && (
-        <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 px-2 py-1.5 rounded">
-          <span className="flex-1 truncate">
-            Replying to <span className="font-medium">@{replyTo.username}</span>:{' '}
-            <span className="italic">"{replyTo.preview.slice(0, 40)}..."</span>
-          </span>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={onCancelReply}
-            className="h-5 w-5 p-0"
-          >
-            <X className="h-3 w-3" />
-          </Button>
+        <div className="px-3 pt-3">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 px-3 py-2 rounded-lg">
+            <span className="flex-1 truncate">
+              Replying to <span className="font-medium">@{replyTo.username}</span>:{' '}
+              <span className="italic">"{replyTo.preview.slice(0, 40)}..."</span>
+            </span>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={onCancelReply}
+              className="h-5 w-5 p-0"
+            >
+              <X className="h-3 w-3" />
+            </Button>
+          </div>
         </div>
       )}
 
       {/* Attachment Previews */}
       {pendingAttachments.length > 0 && (
-        <div className="mb-2 flex flex-wrap gap-1.5">
-          {pendingAttachments.map((attachment, index) => (
-            <div key={index} className="relative group">
-              {attachment.type === 'image' && attachment.preview && (
-                <img
-                  src={attachment.preview}
-                  alt={`Preview ${index + 1}`}
-                  className="h-12 w-12 object-cover rounded border"
-                />
-              )}
-              {attachment.type === 'voice' && (
-                <div className="h-10 px-2 flex items-center gap-1 bg-muted rounded border text-xs">
-                  <span>🎤</span>
-                  <span className="text-muted-foreground">
-                    {Math.floor((attachment.duration || 0) / 60)}:{((attachment.duration || 0) % 60).toString().padStart(2, '0')}
-                  </span>
-                </div>
-              )}
-              {attachment.type === 'video' && (
-                <div className="h-10 px-2 flex items-center gap-1 bg-muted rounded border text-xs">
-                  <span>🎥</span>
-                  <span className="text-muted-foreground">
-                    {Math.floor((attachment.duration || 0) / 60)}:{((attachment.duration || 0) % 60).toString().padStart(2, '0')}
-                  </span>
-                </div>
-              )}
-              <button
-                type="button"
-                onClick={() => handleRemoveFile(index)}
-                className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <X className="h-2.5 w-2.5" />
-              </button>
-            </div>
-          ))}
+        <div className="px-3 pt-3">
+          <div className="flex flex-wrap gap-2">
+            {pendingAttachments.map((attachment, index) => (
+              <div key={index} className="relative group">
+                {attachment.type === 'image' && attachment.preview && (
+                  <img
+                    src={attachment.preview}
+                    alt={`Preview ${index + 1}`}
+                    className="h-16 w-16 object-cover rounded-lg border"
+                  />
+                )}
+                {attachment.type === 'voice' && (
+                  <div className="h-12 px-3 flex items-center gap-2 bg-muted rounded-lg border text-sm">
+                    <Mic className="h-4 w-4 text-primary" />
+                    <span className="text-muted-foreground">
+                      {Math.floor((attachment.duration || 0) / 60)}:{((attachment.duration || 0) % 60).toString().padStart(2, '0')}
+                    </span>
+                  </div>
+                )}
+                {attachment.type === 'video' && (
+                  <div className="h-12 px-3 flex items-center gap-2 bg-muted rounded-lg border text-sm">
+                    <Camera className="h-4 w-4 text-primary" />
+                    <span className="text-muted-foreground">
+                      {Math.floor((attachment.duration || 0) / 60)}:{((attachment.duration || 0) % 60).toString().padStart(2, '0')}
+                    </span>
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveFile(index)}
+                  className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
-      {/* Media Recording UI - Compact */}
-      {showMediaOptions && (
-        <div className="mb-2 p-2 border rounded bg-muted/30">
-          <div className="flex items-center gap-4 flex-wrap">
+      {/* Voice/Video Recorders */}
+      {showRecorders && (
+        <div className="px-3 pt-3">
+          <div className="flex items-center gap-3 p-3 border rounded-lg bg-muted/30">
             <div className="flex items-center gap-2">
               <span className="text-xs text-muted-foreground">Voice:</span>
               <FeedbackVoiceRecorder
@@ -247,84 +293,98 @@ export function FeedbackComposer({
               type="button"
               variant="ghost"
               size="sm"
-              onClick={() => setShowMediaOptions(false)}
-              className="h-6 text-xs ml-auto"
+              onClick={() => setShowRecorders(false)}
+              className="ml-auto h-7 px-2"
             >
-              <X className="h-3 w-3" />
+              <X className="h-4 w-4" />
             </Button>
           </div>
         </div>
       )}
 
-      {/* Input Row - Compact */}
-      <div className="flex gap-1.5 items-center">
-        {/* Media Buttons */}
-        <FeedbackMediaUpload
-          onFilesSelected={handleFilesSelected}
-          selectedFiles={pendingAttachments.filter((a) => a.type === 'image').map((a) => a.file as File)}
-          onRemoveFile={() => {}}
-          disabled={isSubmitting}
-        />
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => setShowMediaOptions(!showMediaOptions)}
-          className="h-8 w-8 p-0"
-          title="Record voice or video"
-        >
-          🎤
-        </Button>
+      {/* Main Input Area - Conversational Style */}
+      <form ref={composerRef} onSubmit={handleSubmit} className="p-3">
+        <div className="flex items-center gap-2 min-w-0">
+          {/* Plus button with dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 flex-shrink-0"
+                disabled={isSubmitting}
+              >
+                <Plus className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              <DropdownMenuItem onClick={() => fileInputRef.current?.click()}>
+                <Paperclip className="h-4 w-4 mr-2" />
+                Attach Image
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setShowRecorders(true)}>
+                <Mic className="h-4 w-4 mr-2" />
+                Voice/Video
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-        {/* Text Input - Auto-expanding */}
-        <Textarea
-          ref={textareaRef}
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Share your feedback... (Shift+Enter for new line)"
-          className="min-h-[48px] py-2 resize-none flex-1 text-sm overflow-y-auto"
-          maxLength={5000}
-          disabled={isSubmitting}
-          rows={2}
-        />
+          {/* Text Input - Conversational style */}
+          <div className="flex-1 min-w-0">
+            <Textarea
+              ref={textareaRef}
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Share your feedback..."
+              disabled={isSubmitting}
+              rows={1}
+              className={cn(
+                "min-h-[44px] max-h-[120px] resize-none",
+                "text-base md:text-sm",
+                "bg-muted/50 border-0 focus-visible:ring-1 rounded-2xl py-3 px-4"
+              )}
+            />
+          </div>
 
-        {/* Send Button */}
-        <Button
-          type="submit"
-          size="icon"
-          disabled={(!content.trim() && pendingAttachments.length === 0) || isSubmitting}
-          className="h-9 w-9 shrink-0"
-        >
-          {isSubmitting ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Send className="h-4 w-4" />
+          {/* Send button - show when there's content */}
+          {hasContent && (
+            <Button
+              type="submit"
+              disabled={!hasContent || isSubmitting}
+              size="icon"
+              className="h-10 w-10 rounded-full flex-shrink-0"
+            >
+              {isSubmitting ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <Send className="h-5 w-5" />
+              )}
+            </Button>
           )}
-        </Button>
-      </div>
+        </div>
 
-      {/* Tag Selector - Inline and compact */}
-      <div className="mt-2 flex items-center gap-1.5 flex-wrap">
-        <span className="text-xs text-muted-foreground">Tag:</span>
-        {TAG_OPTIONS.map((tag) => (
-          <Button
-            key={tag}
-            type="button"
-            variant={selectedTag === tag ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
-            className="h-6 text-xs px-2"
-            disabled={isSubmitting}
-          >
-            #{USER_TAG_LABELS[tag]}
-          </Button>
-        ))}
-      </div>
-
-      <p className="mt-1.5 text-[10px] text-muted-foreground">
-        Press Enter to send, Shift+Enter for new line
-      </p>
-    </form>
+        {/* Tags - Compact tabs below input */}
+        <div className="mt-2 flex items-center gap-1 overflow-x-auto pb-1">
+          {TAG_OPTIONS.map((tag) => (
+            <Button
+              key={tag}
+              type="button"
+              variant={selectedTag === tag ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
+              className={cn(
+                "h-7 text-xs px-3 whitespace-nowrap",
+                selectedTag === tag && "bg-primary text-primary-foreground"
+              )}
+              disabled={isSubmitting}
+            >
+              #{USER_TAG_LABELS[tag]}
+            </Button>
+          ))}
+        </div>
+      </form>
+    </div>
   );
 }
