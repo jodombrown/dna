@@ -18,12 +18,15 @@ export function FeedbackAttachmentDisplay({ attachment }: FeedbackAttachmentDisp
   useEffect(() => {
     const loadUrl = async () => {
       setIsLoading(true);
-      const signedUrl = await feedbackService.getAttachmentUrl(attachment.storage_path);
-      setUrl(signedUrl);
+      // Use file_url if available, otherwise try to get signed URL for storage_path
+      const urlToUse = attachment.file_url || (attachment.storage_path 
+        ? await feedbackService.getAttachmentUrl(attachment.storage_path) 
+        : null);
+      setUrl(urlToUse);
       setIsLoading(false);
     };
     loadUrl();
-  }, [attachment.storage_path]);
+  }, [attachment.file_url, attachment.storage_path]);
 
   if (isLoading || !url) {
     return (
