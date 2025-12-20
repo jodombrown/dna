@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { MessageSquarePlus } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { FeedbackDrawer } from './FeedbackDrawer';
@@ -42,19 +41,23 @@ export function FeedbackFAB({ className }: FeedbackFABProps) {
 
   return (
     <>
-      <Button
+      {/* Right-edge tab trigger */}
+      <button
         onClick={handleClick}
-        size="lg"
         className={cn(
-          'fixed bottom-24 right-4 h-12 w-12 rounded-full shadow-lg hover:shadow-xl transition-all z-40',
-          'md:bottom-6 md:right-6 md:h-14 md:w-14',
-          'bg-primary hover:bg-primary/90',
+          'fixed right-0 top-1/2 -translate-y-1/2 z-40',
+          'flex items-center justify-center',
+          'w-6 h-16 md:w-8 md:h-20',
+          'bg-primary/90 hover:bg-primary',
+          'rounded-l-lg shadow-lg hover:shadow-xl',
+          'transition-all duration-200',
+          'hover:w-8 md:hover:w-10',
           className
         )}
         aria-label="Open Feedback Hub"
       >
-        <MessageSquarePlus className="h-5 w-5 md:h-6 md:w-6" />
-      </Button>
+        <ChevronLeft className="h-5 w-5 md:h-6 md:w-6 text-primary-foreground" />
+      </button>
 
       <FeedbackDrawer
         isOpen={isDrawerOpen}
