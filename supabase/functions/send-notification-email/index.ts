@@ -20,20 +20,6 @@ interface NotificationEmailRequest {
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
-// Map notification types to preference columns
-const NOTIFICATION_TYPE_TO_PREF: Record<string, string> = {
-  connection_request: 'email_connections',
-  connection_accepted: 'email_connections',
-  comment: 'email_comments',
-  reaction: 'email_reactions',
-  post_like: 'email_reactions',
-  message: 'email_messages',
-  mention: 'email_mentions',
-  event_reminder: 'email_events',
-  event_update: 'email_events',
-  story_published: 'email_stories',
-};
-
 const getNotificationIcon = (type: string): string => {
   const icons: Record<string, string> = {
     connection_request: '🤝',
@@ -51,12 +37,7 @@ const getNotificationIcon = (type: string): string => {
   return icons[type] || icons.default;
 };
 
-const generateEmailHtml = (
-  data: NotificationEmailRequest, 
-  userName: string, 
-  unsubscribeUrl: string,
-  unsubscribeTypeUrl: string
-): string => {
+const generateEmailHtml = (data: NotificationEmailRequest, userName: string): string => {
   const icon = getNotificationIcon(data.notification_type);
   const actionButton = data.action_url ? `
     <tr>
@@ -174,17 +155,7 @@ const generateEmailHtml = (
                         <p style="margin: 0; color: #71717a; font-size: 12px;">
                           <a href="https://diasporanetwork.africa/dna/settings/notifications" 
                              style="color: #D97706; text-decoration: none;">
-                            Manage preferences
-                          </a>
-                          &nbsp;|&nbsp;
-                          <a href="${unsubscribeTypeUrl}" 
-                             style="color: #71717a; text-decoration: none;">
-                            Unsubscribe from these
-                          </a>
-                          &nbsp;|&nbsp;
-                          <a href="${unsubscribeUrl}" 
-                             style="color: #71717a; text-decoration: none;">
-                            Unsubscribe from all
+                            Manage notification preferences
                           </a>
                         </p>
                       </td>
@@ -244,16 +215,16 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    // Check user's email notification preferences (including granular settings)
+    // Check user's email notification preferences
     const { data: preferences, error: prefsError } = await supabase
       .from('adin_preferences')
-      .select('*')
+      .select('email_enabled, notification_frequency, quiet_hours_enabled, quiet_hours_start, quiet_hours_end, timezone')
       .eq('user_id', data.user_id)
       .single();
 
     // Default to enabled if no preferences found
     const emailEnabled = preferences?.email_enabled ?? true;
-    const frequency = preferences?.notification_frequency ?? 'realtime';
+    const frequency = preferences?.notification_frequency ?? 'normal';
 
     if (!emailEnabled || frequency === 'never') {
       console.log("Email notifications disabled for user");
@@ -261,19 +232,6 @@ const handler = async (req: Request): Promise<Response> => {
         JSON.stringify({ success: false, reason: "email_disabled" }),
         { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
-    }
-
-    // Check granular preference for this notification type
-    const prefColumn = NOTIFICATION_TYPE_TO_PREF[data.notification_type];
-    if (prefColumn && preferences) {
-      const typeEnabled = preferences[prefColumn] ?? true;
-      if (!typeEnabled) {
-        console.log(`${data.notification_type} emails disabled for user`);
-        return new Response(
-          JSON.stringify({ success: false, reason: `${data.notification_type}_disabled` }),
-          { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
-        );
-      }
     }
 
     // Check quiet hours
@@ -297,19 +255,9 @@ const handler = async (req: Request): Promise<Response> => {
       }
     }
 
-    // Build unsubscribe URLs
-    const unsubscribeToken = preferences?.unsubscribe_token || '';
-    const baseUnsubscribeUrl = `${supabaseUrl}/functions/v1/email-unsubscribe`;
-    const unsubscribeUrl = `${baseUnsubscribeUrl}?token=${unsubscribeToken}&type=all`;
-    
-    // Get the type key for specific unsubscribe (e.g., "comments", "reactions")
-    const typeKey = Object.entries(NOTIFICATION_TYPE_TO_PREF)
-      .find(([key, col]) => col === prefColumn)?.[0]?.split('_')[0] || 'all';
-    const unsubscribeTypeUrl = `${baseUnsubscribeUrl}?token=${unsubscribeToken}&type=${typeKey}`;
-
     // Generate email HTML
     const userName = profile.full_name || profile.username || 'DNA Member';
-    const htmlContent = generateEmailHtml(data, userName, unsubscribeUrl, unsubscribeTypeUrl);
+    const htmlContent = generateEmailHtml(data, userName);
 
     // Send email
     const emailResponse = await resend.emails.send({
@@ -317,10 +265,6 @@ const handler = async (req: Request): Promise<Response> => {
       to: [profile.email],
       subject: `${getNotificationIcon(data.notification_type)} ${data.title}`,
       html: htmlContent,
-      headers: {
-        "List-Unsubscribe": `<${unsubscribeUrl}>`,
-        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-      },
     });
 
     console.log("Email sent successfully:", emailResponse);

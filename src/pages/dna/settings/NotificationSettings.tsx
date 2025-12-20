@@ -20,14 +20,6 @@ interface AdinPreferences {
   quiet_hours_start: string | null;
   quiet_hours_end: string | null;
   timezone: string;
-  // Granular email preferences
-  email_connections: boolean;
-  email_reactions: boolean;
-  email_comments: boolean;
-  email_messages: boolean;
-  email_mentions: boolean;
-  email_events: boolean;
-  email_stories: boolean;
 }
 
 // Common timezones for diaspora
@@ -86,14 +78,6 @@ export default function NotificationSettings() {
         quiet_hours_start: null,
         quiet_hours_end: null,
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        // Granular defaults
-        email_connections: true,
-        email_reactions: true,
-        email_comments: true,
-        email_messages: true,
-        email_mentions: true,
-        email_events: true,
-        email_stories: true,
       };
     },
     enabled: !!user?.id,
@@ -213,48 +197,6 @@ export default function NotificationSettings() {
             </div>
           </CardContent>
         </Card>
-
-        {/* Granular Email Preferences */}
-        {preferences.email_enabled && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Mail className="h-5 w-5" />
-                Email Notification Types
-              </CardTitle>
-              <CardDescription>
-                Choose which types of emails you want to receive
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {[
-                { key: 'email_connections', label: 'Connections', desc: 'Connection requests and acceptances' },
-                { key: 'email_reactions', label: 'Reactions & Likes', desc: 'When someone reacts to your posts' },
-                { key: 'email_comments', label: 'Comments', desc: 'When someone comments on your posts' },
-                { key: 'email_messages', label: 'Messages', desc: 'Direct messages from other members' },
-                { key: 'email_mentions', label: 'Mentions', desc: 'When someone @mentions you' },
-                { key: 'email_events', label: 'Events', desc: 'Event reminders and updates' },
-                { key: 'email_stories', label: 'Stories', desc: 'Story notifications from your network' },
-              ].map(({ key, label, desc }) => (
-                <div key={key} className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
-                  <div>
-                    <Label htmlFor={key} className="text-sm font-medium">
-                      {label}
-                    </Label>
-                    <p className="text-xs text-muted-foreground">
-                      {desc}
-                    </p>
-                  </div>
-                  <Switch
-                    id={key}
-                    checked={preferences[key as keyof AdinPreferences] as boolean}
-                    onCheckedChange={(checked) => handleUpdate(key as keyof AdinPreferences, checked)}
-                  />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        )}
 
         {/* Frequency */}
         <Card>
