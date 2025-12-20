@@ -41,10 +41,10 @@ export function PostComments({ postId, currentUserId }: PostCommentsProps) {
       return;
     }
 
-    if (trimmedComment.length > 2000) {
+    if (trimmedComment.length > 500) {
       toast({
         title: 'Comment too long',
-        description: 'Comments must be 2000 characters or less',
+        description: 'Comments must be 500 characters or less',
         variant: 'destructive',
       });
       return;
@@ -91,7 +91,7 @@ export function PostComments({ postId, currentUserId }: PostCommentsProps) {
           <Textarea
             placeholder="Write a comment..."
             value={newComment}
-            onChange={(e) => setNewComment(e.target.value.slice(0, 2000))}
+            onChange={(e) => setNewComment(e.target.value.slice(0, 500))}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -106,7 +106,7 @@ export function PostComments({ postId, currentUserId }: PostCommentsProps) {
               Press Enter to post, Shift+Enter for new line
             </span>
             <span className="text-xs text-muted-foreground">
-              {newComment.length}/2000
+              {newComment.length}/500
             </span>
           </div>
         </div>
