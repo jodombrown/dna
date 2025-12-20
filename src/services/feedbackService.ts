@@ -235,7 +235,10 @@ export const feedbackService = {
    */
   async sendMessage(params: SendMessageParams): Promise<FeedbackMessage | null> {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return null;
+    if (!user) {
+      console.error('[feedbackService] No authenticated user');
+      return null;
+    }
 
     const { data, error } = await supabase
       .from('feedback_messages')
@@ -243,9 +246,9 @@ export const feedbackService = {
         channel_id: params.channelId,
         sender_id: user.id,
         content: params.content,
-        message_type: params.messageType || 'text',
-        category: params.category || null,
-        parent_id: params.parentId || null,
+        message_type: params.contentType || 'text',
+        user_tag: params.userTag || null,
+        parent_id: params.parentMessageId || null,
       })
       .select()
       .single();
