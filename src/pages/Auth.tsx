@@ -43,7 +43,7 @@ const Auth = () => {
     setIsSignInLoading(true);
 
     try {
-      const { error } = await signIn(signInEmail, signInPassword);
+      const { error, data } = await signIn(signInEmail, signInPassword);
       
       if (error) {
         toast({
@@ -52,13 +52,24 @@ const Auth = () => {
           variant: 'destructive',
         });
       } else {
+        // Fetch user profile to get first name for personalized greeting
+        let firstName = '';
+        if (data?.user?.id) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('first_name, full_name')
+            .eq('id', data.user.id)
+            .maybeSingle();
+          
+          firstName = profile?.first_name || profile?.full_name?.split(' ')[0] || '';
+        }
+        
         toast({
-          title: 'Welcome back!',
+          title: firstName ? `Welcome back, ${firstName}!` : 'Welcome back!',
           description: 'Successfully signed in.',
         });
         navigate('/dna/feed');
       }
-    } catch (error: any) {
       toast({
         title: 'Error',
         description: error.message || 'An unexpected error occurred',
