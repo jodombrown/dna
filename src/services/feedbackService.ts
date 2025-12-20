@@ -572,6 +572,44 @@ export const feedbackService = {
     return true;
   },
 
+  /**
+   * Soft delete a message by setting status to 'closed' (admin only)
+   */
+  async softDelete(messageId: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('feedback_messages')
+      .delete()
+      .eq('id', messageId);
+
+    if (error) {
+      console.error('[feedbackService] Error deleting message:', error);
+      return false;
+    }
+
+    return true;
+  },
+
+  /**
+   * Get a signed URL for an attachment
+   */
+  async getAttachmentUrl(storagePath: string): Promise<string | null> {
+    // If it's already a full URL, return it
+    if (storagePath.startsWith('http')) {
+      return storagePath;
+    }
+
+    const { data, error } = await supabase.storage
+      .from('feedback-media')
+      .createSignedUrl(storagePath, 3600); // 1 hour expiry
+
+    if (error) {
+      console.error('[feedbackService] Error getting attachment URL:', error);
+      return null;
+    }
+
+    return data.signedUrl;
+  },
+
   // ============================================
   // REALTIME SUBSCRIPTIONS
   // ============================================

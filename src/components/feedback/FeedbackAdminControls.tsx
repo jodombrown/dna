@@ -38,13 +38,13 @@ import {
 import { feedbackService } from '@/services/feedbackService';
 import type {
   FeedbackMessage,
-  AdminStatus,
-  AdminCategory,
-  AdminPriority,
+  FeedbackStatus,
+  FeedbackCategory,
+  FeedbackPriority,
 } from '@/types/feedback';
 import {
-  ADMIN_STATUS_LABELS,
-  ADMIN_PRIORITY_LABELS,
+  STATUS_LABELS,
+  PRIORITY_LABELS,
 } from '@/types/feedback';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
@@ -54,23 +54,23 @@ interface FeedbackAdminControlsProps {
   channelId: string;
 }
 
-const STATUS_OPTIONS: { value: AdminStatus; label: string; icon: React.ReactNode }[] = [
+const STATUS_OPTIONS: { value: FeedbackStatus; label: string; icon: React.ReactNode }[] = [
   { value: 'open', label: 'Open', icon: <CircleDot className="h-4 w-4 text-blue-500" /> },
+  { value: 'acknowledged', label: 'Acknowledged', icon: <CircleDot className="h-4 w-4 text-purple-500" /> },
   { value: 'in_progress', label: 'In Progress', icon: <Clock className="h-4 w-4 text-yellow-500" /> },
   { value: 'resolved', label: 'Resolved', icon: <CheckCircle2 className="h-4 w-4 text-green-500" /> },
-  { value: 'wont_fix', label: "Won't Fix", icon: <XCircle className="h-4 w-4 text-gray-500" /> },
+  { value: 'closed', label: 'Closed', icon: <XCircle className="h-4 w-4 text-gray-500" /> },
 ];
 
-const CATEGORY_OPTIONS: { value: AdminCategory; label: string }[] = [
+const CATEGORY_OPTIONS: { value: FeedbackCategory; label: string }[] = [
   { value: 'bug', label: 'Bug' },
-  { value: 'feature_request', label: 'Feature Request' },
-  { value: 'ux_issue', label: 'UX Issue' },
-  { value: 'question', label: 'Question' },
-  { value: 'duplicate', label: 'Duplicate' },
-  { value: 'other', label: 'Other' },
+  { value: 'feature', label: 'Feature Request' },
+  { value: 'ux', label: 'UX Issue' },
+  { value: 'general', label: 'General' },
+  { value: 'praise', label: 'Praise' },
 ];
 
-const PRIORITY_OPTIONS: { value: AdminPriority; label: string; icon: React.ReactNode }[] = [
+const PRIORITY_OPTIONS: { value: FeedbackPriority; label: string; icon: React.ReactNode }[] = [
   { value: 'low', label: 'Low', icon: <Flag className="h-4 w-4 text-slate-400" /> },
   { value: 'medium', label: 'Medium', icon: <Flag className="h-4 w-4 text-blue-500" /> },
   { value: 'high', label: 'High', icon: <Flag className="h-4 w-4 text-orange-500" /> },
@@ -86,12 +86,12 @@ export function FeedbackAdminControls({ message, channelId }: FeedbackAdminContr
     queryClient.invalidateQueries({ queryKey: ['feedback-messages', channelId] });
   };
 
-  const handleStatusChange = async (status: AdminStatus) => {
+  const handleStatusChange = async (status: FeedbackStatus) => {
     setIsLoading(true);
     try {
-      const success = await feedbackService.updateMessageStatus(message.id, status);
+      const success = await feedbackService.updateStatus(message.id, status);
       if (success) {
-        toast.success(`Status updated to ${ADMIN_STATUS_LABELS[status]}`);
+        toast.success(`Status updated to ${STATUS_LABELS[status]}`);
         invalidateMessages();
       } else {
         throw new Error('Failed to update status');
@@ -103,10 +103,10 @@ export function FeedbackAdminControls({ message, channelId }: FeedbackAdminContr
     }
   };
 
-  const handleCategoryChange = async (category: AdminCategory) => {
+  const handleCategoryChange = async (category: FeedbackCategory) => {
     setIsLoading(true);
     try {
-      const success = await feedbackService.updateMessageCategory(message.id, category);
+      const success = await feedbackService.updateCategory(message.id, category);
       if (success) {
         toast.success('Category updated');
         invalidateMessages();
@@ -120,12 +120,12 @@ export function FeedbackAdminControls({ message, channelId }: FeedbackAdminContr
     }
   };
 
-  const handlePriorityChange = async (priority: AdminPriority) => {
+  const handlePriorityChange = async (priority: FeedbackPriority) => {
     setIsLoading(true);
     try {
-      const success = await feedbackService.updateMessagePriority(message.id, priority);
+      const success = await feedbackService.updatePriority(message.id, priority);
       if (success) {
-        toast.success(`Priority set to ${ADMIN_PRIORITY_LABELS[priority]}`);
+        toast.success(`Priority set to ${PRIORITY_LABELS[priority]}`);
         invalidateMessages();
       } else {
         throw new Error('Failed to update priority');
@@ -140,7 +140,7 @@ export function FeedbackAdminControls({ message, channelId }: FeedbackAdminContr
   const handleTogglePin = async () => {
     setIsLoading(true);
     try {
-      const success = await feedbackService.pinMessage(message.id, !message.is_pinned);
+      const success = await feedbackService.togglePin(message.id, !message.is_pinned);
       if (success) {
         toast.success(message.is_pinned ? 'Message unpinned' : 'Message pinned');
         invalidateMessages();
@@ -157,7 +157,7 @@ export function FeedbackAdminControls({ message, channelId }: FeedbackAdminContr
   const handleToggleHighlight = async () => {
     setIsLoading(true);
     try {
-      const success = await feedbackService.highlightMessage(message.id, !message.is_highlighted);
+      const success = await feedbackService.toggleHighlight(message.id, !message.is_highlighted);
       if (success) {
         toast.success(message.is_highlighted ? 'Highlight removed' : 'Message highlighted');
         invalidateMessages();
@@ -174,7 +174,7 @@ export function FeedbackAdminControls({ message, channelId }: FeedbackAdminContr
   const handleDelete = async () => {
     setIsLoading(true);
     try {
-      const success = await feedbackService.deleteMessage(message.id);
+      const success = await feedbackService.softDelete(message.id);
       if (success) {
         toast.success('Message deleted');
         invalidateMessages();
@@ -216,7 +216,7 @@ export function FeedbackAdminControls({ message, channelId }: FeedbackAdminContr
                 <DropdownMenuItem
                   key={option.value}
                   onClick={() => handleStatusChange(option.value)}
-                  className={message.admin_status === option.value ? 'bg-accent' : ''}
+                  className={message.status === option.value ? 'bg-accent' : ''}
                 >
                   {option.icon}
                   <span className="ml-2">{option.label}</span>
@@ -236,7 +236,7 @@ export function FeedbackAdminControls({ message, channelId }: FeedbackAdminContr
                 <DropdownMenuItem
                   key={option.value}
                   onClick={() => handleCategoryChange(option.value)}
-                  className={message.admin_category === option.value ? 'bg-accent' : ''}
+                  className={message.category === option.value ? 'bg-accent' : ''}
                 >
                   {option.label}
                 </DropdownMenuItem>
@@ -255,7 +255,7 @@ export function FeedbackAdminControls({ message, channelId }: FeedbackAdminContr
                 <DropdownMenuItem
                   key={option.value}
                   onClick={() => handlePriorityChange(option.value)}
-                  className={message.admin_priority === option.value ? 'bg-accent' : ''}
+                  className={message.priority === option.value ? 'bg-accent' : ''}
                 >
                   {option.icon}
                   <span className="ml-2">{option.label}</span>
