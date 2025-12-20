@@ -150,51 +150,51 @@ export function FeedbackComposer({
   };
 
   return (
-    <form ref={composerRef} onSubmit={handleSubmit} className="border-t bg-background p-4">
+    <form ref={composerRef} onSubmit={handleSubmit} className="border-t bg-background p-3">
       {/* Reply Preview */}
       {replyTo && (
-        <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 px-3 py-2 rounded">
+        <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 px-2 py-1.5 rounded">
           <span className="flex-1 truncate">
             Replying to <span className="font-medium">@{replyTo.username}</span>:{' '}
-            <span className="italic">"{replyTo.preview.slice(0, 50)}..."</span>
+            <span className="italic">"{replyTo.preview.slice(0, 40)}..."</span>
           </span>
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={onCancelReply}
-            className="h-6 w-6 p-0"
+            className="h-5 w-5 p-0"
           >
-            <X className="h-4 w-4" />
+            <X className="h-3 w-3" />
           </Button>
         </div>
       )}
 
       {/* Attachment Previews */}
       {pendingAttachments.length > 0 && (
-        <div className="mb-3 flex flex-wrap gap-2">
+        <div className="mb-2 flex flex-wrap gap-1.5">
           {pendingAttachments.map((attachment, index) => (
             <div key={index} className="relative group">
               {attachment.type === 'image' && attachment.preview && (
                 <img
                   src={attachment.preview}
                   alt={`Preview ${index + 1}`}
-                  className="h-16 w-16 object-cover rounded border"
+                  className="h-12 w-12 object-cover rounded border"
                 />
               )}
               {attachment.type === 'voice' && (
-                <div className="h-16 px-3 flex items-center gap-2 bg-muted rounded border">
-                  <span className="text-lg">🎤</span>
-                  <span className="text-sm text-muted-foreground">
-                    Voice ({Math.floor((attachment.duration || 0) / 60)}:{((attachment.duration || 0) % 60).toString().padStart(2, '0')})
+                <div className="h-10 px-2 flex items-center gap-1 bg-muted rounded border text-xs">
+                  <span>🎤</span>
+                  <span className="text-muted-foreground">
+                    {Math.floor((attachment.duration || 0) / 60)}:{((attachment.duration || 0) % 60).toString().padStart(2, '0')}
                   </span>
                 </div>
               )}
               {attachment.type === 'video' && (
-                <div className="h-16 px-3 flex items-center gap-2 bg-muted rounded border">
-                  <span className="text-lg">🎥</span>
-                  <span className="text-sm text-muted-foreground">
-                    Video ({Math.floor((attachment.duration || 0) / 60)}:{((attachment.duration || 0) % 60).toString().padStart(2, '0')})
+                <div className="h-10 px-2 flex items-center gap-1 bg-muted rounded border text-xs">
+                  <span>🎥</span>
+                  <span className="text-muted-foreground">
+                    {Math.floor((attachment.duration || 0) / 60)}:{((attachment.duration || 0) % 60).toString().padStart(2, '0')}
                   </span>
                 </div>
               )}
@@ -203,75 +203,74 @@ export function FeedbackComposer({
                 onClick={() => handleRemoveFile(index)}
                 className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
               >
-                <X className="h-3 w-3" />
+                <X className="h-2.5 w-2.5" />
               </button>
             </div>
           ))}
         </div>
       )}
 
-      {/* Media Recording UI */}
+      {/* Media Recording UI - Compact */}
       {showMediaOptions && (
-        <div className="mb-3 p-3 border rounded-lg bg-muted/30">
-          <div className="flex items-start gap-6 flex-wrap">
-            <div>
-              <p className="text-xs text-muted-foreground mb-2">Voice Note</p>
+        <div className="mb-2 p-2 border rounded bg-muted/30">
+          <div className="flex items-center gap-4 flex-wrap">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">Voice:</span>
               <FeedbackVoiceRecorder
                 onRecordingComplete={handleVoiceRecording}
                 disabled={isSubmitting}
               />
             </div>
-            <div>
-              <p className="text-xs text-muted-foreground mb-2">Video Clip</p>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">Video:</span>
               <FeedbackVideoRecorder
                 onRecordingComplete={handleVideoRecording}
                 disabled={isSubmitting}
               />
             </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowMediaOptions(false)}
+              className="h-6 text-xs ml-auto"
+            >
+              <X className="h-3 w-3" />
+            </Button>
           </div>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowMediaOptions(false)}
-            className="mt-2 text-xs"
-          >
-            Hide media options
-          </Button>
         </div>
       )}
 
-      {/* Input Row */}
-      <div className="flex gap-2 items-end">
+      {/* Input Row - Compact */}
+      <div className="flex gap-1.5 items-center">
         {/* Media Buttons */}
-        <div className="flex items-center gap-1 shrink-0">
-          <FeedbackMediaUpload
-            onFilesSelected={handleFilesSelected}
-            selectedFiles={pendingAttachments.filter((a) => a.type === 'image').map((a) => a.file as File)}
-            onRemoveFile={() => {}}
-            disabled={isSubmitting}
-          />
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowMediaOptions(!showMediaOptions)}
-            className="h-8 px-2"
-            title="Record voice or video"
-          >
-            🎤
-          </Button>
-        </div>
+        <FeedbackMediaUpload
+          onFilesSelected={handleFilesSelected}
+          selectedFiles={pendingAttachments.filter((a) => a.type === 'image').map((a) => a.file as File)}
+          onRemoveFile={() => {}}
+          disabled={isSubmitting}
+        />
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowMediaOptions(!showMediaOptions)}
+          className="h-8 w-8 p-0"
+          title="Record voice or video"
+        >
+          🎤
+        </Button>
 
-        {/* Text Input */}
+        {/* Text Input - Single line style */}
         <Textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Share your feedback..."
-          className="min-h-[60px] resize-none flex-1"
+          className="min-h-[36px] h-9 py-2 resize-none flex-1 text-sm"
           maxLength={5000}
           disabled={isSubmitting}
+          rows={1}
         />
 
         {/* Send Button */}
@@ -279,7 +278,7 @@ export function FeedbackComposer({
           type="submit"
           size="icon"
           disabled={(!content.trim() && pendingAttachments.length === 0) || isSubmitting}
-          className="h-10 w-10 shrink-0"
+          className="h-9 w-9 shrink-0"
         >
           {isSubmitting ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -289,9 +288,9 @@ export function FeedbackComposer({
         </Button>
       </div>
 
-      {/* Tag Selector */}
-      <div className="mt-3 flex items-center gap-2 flex-wrap">
-        <span className="text-sm text-muted-foreground">Tag:</span>
+      {/* Tag Selector - Inline and compact */}
+      <div className="mt-2 flex items-center gap-1.5 flex-wrap">
+        <span className="text-xs text-muted-foreground">Tag:</span>
         {TAG_OPTIONS.map((tag) => (
           <Button
             key={tag}
@@ -299,7 +298,7 @@ export function FeedbackComposer({
             variant={selectedTag === tag ? 'default' : 'outline'}
             size="sm"
             onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
-            className="h-7 text-xs"
+            className="h-6 text-xs px-2"
             disabled={isSubmitting}
           >
             #{USER_TAG_LABELS[tag]}
@@ -307,7 +306,7 @@ export function FeedbackComposer({
         ))}
       </div>
 
-      <p className="mt-2 text-xs text-muted-foreground">
+      <p className="mt-1.5 text-[10px] text-muted-foreground">
         Press Cmd/Ctrl + Enter to send
       </p>
     </form>
