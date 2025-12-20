@@ -5,6 +5,7 @@ import { Send, X, Loader2, Plus, Paperclip, Mic, Camera } from 'lucide-react';
 import type { UserTag, ContentType } from '@/types/feedback';
 import { USER_TAG_LABELS } from '@/types/feedback';
 import { feedbackService } from '@/services/feedbackService';
+import { useSendFeedbackMessage } from '@/hooks/useFeedbackMessages';
 import { FeedbackVoiceRecorder } from './FeedbackVoiceRecorder';
 import { FeedbackVideoRecorder } from './FeedbackVideoRecorder';
 import { toast } from 'sonner';
@@ -53,6 +54,8 @@ export function FeedbackComposer({
   const [showRecorders, setShowRecorders] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const sendMessage = useSendFeedbackMessage();
 
   // Update selected tag when initialTag changes
   useEffect(() => {
@@ -145,8 +148,8 @@ export function FeedbackComposer({
     try {
       setIsSubmitting(true);
 
-      // First, create the message
-      const message = await feedbackService.sendMessage({
+      // Use the mutation hook to send the message (this will invalidate the query cache)
+      const message = await sendMessage.mutateAsync({
         channelId,
         content: content.trim(),
         contentType: determineContentType(),
@@ -156,11 +159,7 @@ export function FeedbackComposer({
 
       console.log('[FeedbackComposer] Message result:', message);
 
-      if (!message) {
-        throw new Error('Failed to send message');
-      }
-
-      // Then upload attachments
+      // Then upload attachments if any
       for (const attachment of pendingAttachments) {
         const file = attachment.file instanceof File
           ? attachment.file
@@ -177,10 +176,10 @@ export function FeedbackComposer({
       setPendingAttachments([]);
       onCancelReply?.();
       onSuccess?.();
-      toast.success('Feedback sent!');
+      // Note: Toast is handled by the hook
     } catch (error) {
       console.error('[FeedbackComposer] Error sending feedback:', error);
-      toast.error('Failed to send feedback. Please try again.');
+      // Note: Error toast is handled by the hook
     } finally {
       setIsSubmitting(false);
     }
