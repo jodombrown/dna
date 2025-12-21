@@ -175,12 +175,6 @@ export const feedbackService = {
       .from('feedback_messages')
       .select(`
         *,
-        sender:profiles!sender_id (
-          id,
-          username,
-          full_name,
-          avatar_url
-        ),
         attachments:feedback_attachments (*)
       `)
       .eq('channel_id', channelId)
@@ -212,12 +206,22 @@ export const feedbackService = {
     const messages = hasMore ? data.slice(0, limit) : data;
     const nextCursor = hasMore ? messages[messages.length - 1]?.created_at : null;
 
-    // Fetch reactions for each message
+    // Fetch sender profiles separately (no FK constraint exists)
+    const senderIds = [...new Set(messages.map((m: any) => m.sender_id))];
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, username, full_name, avatar_url')
+      .in('id', senderIds);
+    
+    const profileMap = new Map((profiles || []).map((p: any) => [p.id, p]));
+
+    // Fetch reactions for each message and attach sender
     const messagesWithReactions = await Promise.all(
       messages.map(async (msg: any) => {
         const reactions = await this.getReactions(msg.id);
         return {
           ...msg,
+          sender: profileMap.get(msg.sender_id) || null,
           reactions,
         } as FeedbackMessageWithSender;
       })
@@ -269,12 +273,6 @@ export const feedbackService = {
       .from('feedback_messages')
       .select(`
         *,
-        sender:profiles!sender_id (
-          id,
-          username,
-          full_name,
-          avatar_url
-        ),
         attachments:feedback_attachments (*)
       `)
       .eq('parent_id', parentMessageId)
@@ -285,7 +283,21 @@ export const feedbackService = {
       return [];
     }
 
-    return data as unknown as FeedbackMessageWithSender[];
+    if (!data || data.length === 0) return [];
+
+    // Fetch sender profiles separately
+    const senderIds = [...new Set(data.map((m: any) => m.sender_id))];
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, username, full_name, avatar_url')
+      .in('id', senderIds);
+    
+    const profileMap = new Map((profiles || []).map((p: any) => [p.id, p]));
+
+    return data.map((msg: any) => ({
+      ...msg,
+      sender: profileMap.get(msg.sender_id) || null,
+    })) as unknown as FeedbackMessageWithSender[];
   },
 
   /**
@@ -296,12 +308,6 @@ export const feedbackService = {
       .from('feedback_messages')
       .select(`
         *,
-        sender:profiles!sender_id (
-          id,
-          username,
-          full_name,
-          avatar_url
-        ),
         attachments:feedback_attachments (*)
       `)
       .eq('id', messageId)
@@ -312,8 +318,15 @@ export const feedbackService = {
       return null;
     }
 
+    // Fetch sender profile separately
+    const { data: sender } = await supabase
+      .from('profiles')
+      .select('id, username, full_name, avatar_url')
+      .eq('id', data.sender_id)
+      .single();
+
     const reactions = await this.getReactions(messageId);
-    return { ...data, reactions } as unknown as FeedbackMessageWithSender;
+    return { ...data, sender, reactions } as unknown as FeedbackMessageWithSender;
   },
 
   // ============================================
