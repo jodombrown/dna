@@ -52,11 +52,11 @@ const SuggestionsTab: React.FC = () => {
 
       if (error) throw error;
 
-      // Filter out connected and requested users, only show 70+ match scores
+      // ADIN: Filter out connected/requested users, show 80%+ match scores
       const filtered = (data || [])
         .filter((member: any) => {
           return (
-            member.match_score >= 70 &&
+            member.match_score >= 80 &&
             !connectedUserIds.has(member.id) &&
             !requestedUserIds.has(member.id)
           );

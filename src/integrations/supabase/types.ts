@@ -7795,40 +7795,75 @@ export type Database = {
             Returns: string
           }
       cron_overdue_task_reminders: { Args: never; Returns: undefined }
-      discover_members: {
-        Args: {
-          p_country_of_origin?: string
-          p_current_user_id: string
-          p_focus_areas?: string[]
-          p_industries?: string[]
-          p_limit?: number
-          p_location_country?: string
-          p_offset?: number
-          p_regional_expertise?: string[]
-          p_search_query?: string
-          p_skills?: string[]
-          p_sort_by?: string
-        }
-        Returns: {
-          avatar_url: string
-          banner_gradient: string
-          banner_overlay: boolean
-          banner_type: string
-          banner_url: string
-          country_of_origin: string
-          focus_areas: string[]
-          full_name: string
-          headline: string
-          id: string
-          industries: string[]
-          location: string
-          match_score: number
-          profession: string
-          profile_completion_percentage: number
-          regional_expertise: string[]
-          username: string
-        }[]
-      }
+      discover_members:
+        | {
+            Args: {
+              p_country_of_origin?: string
+              p_current_user_id: string
+              p_focus_areas?: string[]
+              p_industries?: string[]
+              p_limit?: number
+              p_location_country?: string
+              p_offset?: number
+              p_regional_expertise?: string[]
+              p_search_query?: string
+              p_skills?: string[]
+              p_sort_by?: string
+            }
+            Returns: {
+              avatar_url: string
+              banner_gradient: string
+              banner_overlay: string
+              banner_type: string
+              banner_url: string
+              country_of_origin: string
+              focus_areas: string[]
+              full_name: string
+              headline: string
+              id: string
+              industries: string[]
+              location: string
+              match_score: number
+              profession: string
+              profile_completion_percentage: number
+              regional_expertise: string[]
+              username: string
+            }[]
+          }
+        | {
+            Args: {
+              p_country_of_origin?: string
+              p_current_user_id: string
+              p_focus_areas?: string[]
+              p_industries?: string[]
+              p_limit?: number
+              p_location_country?: string
+              p_offset?: number
+              p_regional_expertise?: string[]
+              p_search_query?: string
+              p_skills?: string[]
+              p_sort_by?: string
+            }
+            Returns: {
+              avatar_url: string
+              banner_gradient: string
+              banner_overlay: boolean
+              banner_type: string
+              banner_url: string
+              country_of_origin: string
+              focus_areas: string[]
+              full_name: string
+              headline: string
+              id: string
+              industries: string[]
+              location: string
+              match_score: number
+              profession: string
+              profile_completion_percentage: number
+              regional_expertise: string[]
+              username: string
+            }[]
+          }
       enqueue_reminders_for_all_users: { Args: never; Returns: number }
       ensure_connection: { Args: { u1: string; u2: string }; Returns: string }
       ensure_profile_for_user: {
@@ -8830,7 +8865,9 @@ export type Database = {
         Args: { p_event: string; p_user: string }
         Returns: boolean
       }
-      is_feedback_admin: { Args: never; Returns: boolean }
+      is_feedback_admin:
+        | { Args: never; Returns: boolean }
+        | { Args: { _user_id: string }; Returns: boolean }
       is_group_creator: {
         Args: { p_group_id: string; p_user_id: string }
         Returns: boolean
