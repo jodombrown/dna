@@ -122,13 +122,13 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
     <>
       <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
         <SheetContent side="right" className="w-full sm:max-w-lg p-0 flex flex-col overflow-visible" hideCloseButton>
-          {/* Left-edge chevron close tab - positioned flush with drawer */}
+          {/* Left-edge chevron close tab - flush with drawer */}
           <button
             onClick={onClose}
-            className="absolute -left-6 md:-left-8 top-1/2 -translate-y-1/2 z-[60] flex items-center justify-center w-6 h-16 md:w-8 md:h-20 bg-background border border-r-0 border-border hover:bg-muted rounded-l-lg shadow-md transition-all duration-200"
+            className="absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 z-[60] flex items-center justify-center w-6 h-16 md:w-8 md:h-20 bg-background border border-r-0 border-border hover:bg-muted rounded-l-lg shadow-md transition-all duration-200"
             aria-label="Close Feedback Hub"
           >
-            <ChevronRight className="h-5 w-5 md:h-6 md:w-6 text-primary-foreground" />
+            <ChevronRight className="h-5 w-5 md:h-6 md:w-6 text-foreground" />
           </button>
 
           {/* Header */}
