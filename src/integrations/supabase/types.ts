@@ -3065,79 +3065,106 @@ export type Database = {
         Row: {
           created_at: string | null
           description: string | null
+          icon_url: string | null
           id: string
           is_active: boolean | null
           is_default: boolean | null
           name: string
+          slug: string | null
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
           description?: string | null
+          icon_url?: string | null
           id?: string
           is_active?: boolean | null
           is_default?: boolean | null
           name: string
+          slug?: string | null
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
           description?: string | null
+          icon_url?: string | null
           id?: string
           is_active?: boolean | null
           is_default?: boolean | null
           name?: string
+          slug?: string | null
           updated_at?: string | null
         }
         Relationships: []
       }
       feedback_messages: {
         Row: {
+          admin_category: string | null
           admin_notes: string | null
+          admin_priority: string | null
+          admin_status: string | null
           category: string | null
           channel_id: string
           content: string
+          content_type: string | null
           created_at: string | null
           id: string
+          is_deleted: boolean | null
           is_highlighted: boolean | null
           is_pinned: boolean | null
           message_type: string
           parent_id: string | null
+          parent_message_id: string | null
           priority: string | null
+          reply_count: number | null
           sender_id: string
           status: string
           updated_at: string | null
           user_tag: string | null
         }
         Insert: {
+          admin_category?: string | null
           admin_notes?: string | null
+          admin_priority?: string | null
+          admin_status?: string | null
           category?: string | null
           channel_id: string
           content: string
+          content_type?: string | null
           created_at?: string | null
           id?: string
+          is_deleted?: boolean | null
           is_highlighted?: boolean | null
           is_pinned?: boolean | null
           message_type?: string
           parent_id?: string | null
+          parent_message_id?: string | null
           priority?: string | null
+          reply_count?: number | null
           sender_id: string
           status?: string
           updated_at?: string | null
           user_tag?: string | null
         }
         Update: {
+          admin_category?: string | null
           admin_notes?: string | null
+          admin_priority?: string | null
+          admin_status?: string | null
           category?: string | null
           channel_id?: string
           content?: string
+          content_type?: string | null
           created_at?: string | null
           id?: string
+          is_deleted?: boolean | null
           is_highlighted?: boolean | null
           is_pinned?: boolean | null
           message_type?: string
           parent_id?: string | null
+          parent_message_id?: string | null
           priority?: string | null
+          reply_count?: number | null
           sender_id?: string
           status?: string
           updated_at?: string | null
@@ -3154,6 +3181,13 @@ export type Database = {
           {
             foreignKeyName: "feedback_messages_parent_id_fkey"
             columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "feedback_messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feedback_messages_parent_message_id_fkey"
+            columns: ["parent_message_id"]
             isOneToOne: false
             referencedRelation: "feedback_messages"
             referencedColumns: ["id"]
@@ -8593,54 +8627,6 @@ export type Database = {
           reaction_count: number
           trending_score: number
           view_count: number
-        }[]
-      }
-      get_universal_feed: {
-        Args: {
-          p_author_id?: string
-          p_event_id?: string
-          p_limit?: number
-          p_offset?: number
-          p_ranking_mode?: string
-          p_space_id?: string
-          p_tab?: string
-          p_viewer_id: string
-        }
-        Returns: {
-          author_avatar_url: string
-          author_full_name: string
-          author_id: string
-          author_username: string
-          comments_count: number
-          content: string
-          created_at: string
-          event_id: string
-          id: string
-          image_url: string
-          likes_count: number
-          link_description: string
-          link_metadata: Json
-          link_title: string
-          link_url: string
-          linked_entity_id: string
-          linked_entity_type: string
-          original_author_avatar_url: string
-          original_author_full_name: string
-          original_author_headline: string
-          original_author_id: string
-          original_author_username: string
-          original_content: string
-          original_created_at: string
-          original_image_url: string
-          original_post_id: string
-          post_type: string
-          privacy_level: string
-          space_id: string
-          subtitle: string
-          title: string
-          updated_at: string
-          user_has_bookmarked: boolean
-          user_has_liked: boolean
         }[]
       }
       get_unread_notification_count: {

@@ -47,7 +47,7 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
           console.log('[DEBUG_FEED] Calling get_universal_feed with params:', params);
         }
 
-        const { data, error } = await supabase.rpc('get_universal_feed', params as any);
+        const { data, error } = await (supabase.rpc as any)('get_universal_feed', params);
 
         if (DEBUG_FEED) {
           console.log('[DEBUG_FEED] RPC result:', { error, rawData: data });

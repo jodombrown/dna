@@ -17,7 +17,7 @@ export function RecentPostsWidget({ currentUserId }: RecentPostsWidgetProps) {
   const { data: posts } = useQuery({
     queryKey: ['recent-posts-widget', currentUserId],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_universal_feed', {
+      const { data, error } = await (supabase.rpc as any)('get_universal_feed', {
         p_viewer_id: currentUserId,
         p_tab: 'network',
         p_author_id: null,

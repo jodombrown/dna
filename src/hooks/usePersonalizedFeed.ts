@@ -41,12 +41,12 @@ export const usePersonalizedFeed = (limit: number = 20) => {
       if (!user) return [];
 
       // Personalized feed RPC not yet implemented - fall back to universal feed
-      const { data, error } = await supabase.rpc('get_universal_feed', {
+      const { data, error } = await (supabase.rpc as any)('get_universal_feed', {
         p_viewer_id: user.id,
         p_tab: 'all',
-        p_author_id: null as any,
-        p_space_id: null as any,
-        p_event_id: null as any,
+        p_author_id: null,
+        p_space_id: null,
+        p_event_id: null,
         p_limit: limit,
         p_offset: 0,
         p_ranking_mode: 'top',
