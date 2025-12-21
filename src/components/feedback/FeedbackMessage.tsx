@@ -10,10 +10,10 @@ import { FeedbackAdminControls } from './FeedbackAdminControls';
 import type { FeedbackMessageWithSender, FeedbackEmoji } from '@/types/feedback';
 import {
   USER_TAG_LABELS,
-  ADMIN_STATUS_LABELS,
-  ADMIN_STATUS_COLORS,
-  ADMIN_PRIORITY_LABELS,
-  ADMIN_PRIORITY_COLORS,
+  STATUS_LABELS,
+  STATUS_COLORS,
+  PRIORITY_LABELS,
+  PRIORITY_COLORS,
   FEEDBACK_EMOJIS,
 } from '@/types/feedback';
 import { useFeedbackReactions } from '@/hooks/useFeedbackMessages';
@@ -62,9 +62,9 @@ export function FeedbackMessage({
           {message.is_highlighted && (
             <span className="text-orange-600 font-medium">HIGHLIGHTED</span>
           )}
-          {message.admin_priority && (
-            <Badge className={cn('text-xs', ADMIN_PRIORITY_COLORS[message.admin_priority])}>
-              {ADMIN_PRIORITY_LABELS[message.admin_priority]}
+          {message.priority && (
+            <Badge className={cn('text-xs', PRIORITY_COLORS[message.priority])}>
+              {PRIORITY_LABELS[message.priority]}
             </Badge>
           )}
         </div>
@@ -169,9 +169,11 @@ export function FeedbackMessage({
           {/* Footer */}
           <div className="mt-3 flex items-center gap-3 flex-wrap">
             {/* Status Badge */}
-            <Badge className={cn('text-xs', ADMIN_STATUS_COLORS[message.admin_status])}>
-              {ADMIN_STATUS_LABELS[message.admin_status]}
-            </Badge>
+            {message.status && (
+              <Badge className={cn('text-xs', STATUS_COLORS[message.status])}>
+                {STATUS_LABELS[message.status]}
+              </Badge>
+            )}
 
             {/* Reply Count */}
             {message.reply_count > 0 && (
