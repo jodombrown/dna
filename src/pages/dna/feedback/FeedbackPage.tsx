@@ -43,13 +43,16 @@ export default function FeedbackPage() {
     updateLastRead,
   } = useFeedbackMembership();
 
+  // Only fetch messages once membership is confirmed (for RLS to work)
+  const isMembershipReady = !isMembershipLoading && isOptedIn;
+
   const {
     messages,
     isLoading: isMessagesLoading,
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-  } = useFeedbackMessages(channel?.id || null, filter);
+  } = useFeedbackMessages(channel?.id || null, filter, isMembershipReady);
 
   // Update last read on mount
   useEffect(() => {
