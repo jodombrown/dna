@@ -1,0 +1,64 @@
+=== DNA Platform Import Audit Report ===
+Generated: 2024-12-21
+
+=== src/components/networking/ imports ===
+RESULT: No imports found - SAFE TO DELETE
+Files: NetworkFeed.tsx, PeopleDiscovery.tsx
+
+=== src/components/network/ConnectionCard imports ===
+RESULT: 1 import found - REQUIRES MIGRATION
+- src/components/dashboard/DashboardNetworkColumn.tsx
+
+=== src/components/network/ConnectionRequestCard imports ===
+RESULT: 1 import found - REQUIRES MIGRATION
+- src/components/dashboard/DashboardNetworkColumn.tsx
+
+=== src/components/posts/PostCard imports ===
+RESULT: 3 imports found - REQUIRES MIGRATION
+- src/components/profile/ProfilePosts.tsx
+- src/components/feed/UniversalFeedItem.tsx
+- src/components/feed/PersonalizedFeed.tsx
+
+=== src/components/social-feed/PostComposer imports ===
+RESULT: 1 import found - REQUIRES MIGRATION
+- src/components/mobile/MobilePostButton.tsx
+
+=== src/components/social-feed/FloatingPostComposer imports ===
+RESULT: No imports found - SAFE TO DELETE
+
+=== src/components/social-feed/SkeletonPostCard imports ===
+RESULT: 1 import found - KEEP or MOVE
+- src/components/feed/UniversalFeedInfinite.tsx
+
+=== CANONICAL COMPONENT LOCATIONS ===
+| Component Type        | Canonical Location                                |
+|-----------------------|---------------------------------------------------|
+| ConnectionCard        | src/components/connect/ConnectionCard.tsx         |
+| ConnectionRequestCard | src/components/connect/ConnectionRequestCard.tsx  |
+| PostCard              | src/components/feed/PostCard.tsx                  |
+| Post Composer         | src/components/composer/UniversalComposer.tsx     |
+
+=== ACTION SUMMARY ===
+COMPLETED:
+1. ✓ Deleted: src/components/networking/ (entire directory - confirmed unused)
+2. ✓ Deleted: src/components/social-feed/FloatingPostComposer.tsx (confirmed unused)
+
+KEPT (different interfaces serving different purposes):
+3. KEPT: network/ConnectionCard vs connect/ConnectionCard
+   - network/ version: for dashboard use (has ProfileViewTracker, mutual connections)
+   - connect/ version: for Network page (simpler, self-contained state)
+   - Different interfaces, both actively used
+
+4. KEPT: posts/PostCard vs feed/PostCard
+   - posts/PostCard: Full-featured, uses PostWithAuthor + currentUserId
+   - feed/PostCard: Simpler, fetches author internally (used by SearchDialog)
+   - Both serve different use cases
+
+5. KEPT: social-feed/PostComposer (used by MobilePostButton)
+   - UniversalComposer has different interface (dialog-based)
+   - PostComposer is standalone component
+
+=== FUTURE CONSOLIDATION RECOMMENDATIONS ===
+- Consider merging ConnectionCard variants after unifying interfaces
+- Consider merging PostCard variants with feature flags
+- Consider adding dialog wrapper to make PostComposer use UniversalComposer

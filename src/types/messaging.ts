@@ -306,13 +306,3 @@ export interface CreateConversationParams {
   origin_metadata?: OriginMetadata;
 }
 
-// =====================================================
-// LEGACY COMPATIBILITY
-// Keep these for backward compatibility with existing code
-// =====================================================
-
-/** @deprecated Use ConversationListItem instead */
-export type LegacyConversationListItem = Omit<ConversationListItem,
-  'conversation_type' | 'origin_type' | 'origin_id' | 'origin_metadata' |
-  'last_message_preview' | 'participant_status' | 'is_muted' | 'is_pinned'
->;

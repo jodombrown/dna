@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { messageService, ConversationListItem, MessageWithSender } from '@/services/messageService';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRealtimeMessages } from '@/hooks/useRealtimeMessages';
+import { useTypingIndicator } from '@/hooks/useTypingIndicator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,6 +18,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 import { MessageBubble, MessageDateSeparator } from './MessageBubble';
+import { TypingIndicator } from './TypingIndicator';
 import { supabase } from '@/integrations/supabase/client';
 
 interface ConversationThreadProps {
@@ -39,6 +41,9 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const [messageInput, setMessageInput] = useState('');
+
+  // Typing indicator
+  const { typingUsers, startTyping, stopTyping } = useTypingIndicator(conversationId);
 
   // Fetch conversation details
   const { data: conversation, isLoading: conversationLoading } = useQuery({
@@ -105,11 +110,15 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (!messageInput.trim()) return;
+    stopTyping();
     sendMessageMutation.mutate(messageInput.trim());
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessageInput(e.target.value);
+    if (e.target.value.trim()) {
+      startTyping();
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -250,7 +259,9 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
                   key={message.message_id}
                   message={message}
                   isOwnMessage={isOwnMessage}
-                  showReadReceipt={false}
+                  showReadReceipt={isOwnMessage}
+                  isRead={message.is_read}
+                  isDelivered={true}
                 />
               );
             })}
@@ -260,6 +271,13 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
         )}
       </ScrollArea>
 
+      {/* Typing Indicator */}
+      {typingUsers.length > 0 && (
+        <div className="px-4 py-2 border-t bg-muted/30">
+          <TypingIndicator users={typingUsers} />
+        </div>
+      )}
+
       {/* Message Input */}
       <form onSubmit={handleSendMessage} className="p-4 border-t bg-card">
         <div className="flex gap-2">
@@ -267,6 +285,7 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
             value={messageInput}
             onChange={handleInputChange}
             onKeyPress={handleKeyPress}
+            onBlur={stopTyping}
             placeholder="Type a message..."
             disabled={sendMessageMutation.isPending}
             className="flex-1 text-base md:text-sm"
