@@ -17,7 +17,7 @@ export function ProfilePosts({ profileUserId, currentUserId }: ProfilePostsProps
   const { data: posts, refetch, isLoading } = useQuery({
     queryKey: ['profile-posts', profileUserId],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_universal_feed', {
+      const { data, error } = await (supabase.rpc as any)('get_universal_feed', {
         p_viewer_id: currentUserId,
         p_tab: 'my_posts',
         p_author_id: profileUserId,

@@ -20,7 +20,7 @@ export function useUniversalFeed(filters: FeedFilters) {
     enabled: !!viewerId,
     queryFn: async () => {
       try {
-        const { data, error } = await supabase.rpc('get_universal_feed', {
+        const { data, error } = await (supabase.rpc as any)('get_universal_feed', {
           p_viewer_id: viewerId,
           p_tab: tab,
           p_author_id: authorId || null,
