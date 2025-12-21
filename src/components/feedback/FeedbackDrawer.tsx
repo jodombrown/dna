@@ -24,7 +24,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Maximize2, LogOut, LogIn, Loader2 } from 'lucide-react';
+import { Maximize2, LogOut, LogIn, Loader2, ChevronRight } from 'lucide-react';
 import { FeedbackMessageList, FeedbackComposer } from '@/components/feedback';
 import { FeedbackThreadView } from './FeedbackThreadView';
 import { useFeedbackMessages } from '@/hooks/useFeedbackMessages';
@@ -121,7 +121,16 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
   return (
     <>
       <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-        <SheetContent side="right" className="w-full sm:max-w-lg p-0 flex flex-col">
+        <SheetContent side="right" className="w-full sm:max-w-lg p-0 flex flex-col" hideCloseButton>
+          {/* Left-edge chevron close tab */}
+          <button
+            onClick={onClose}
+            className="fixed left-0 top-1/2 -translate-y-1/2 z-[1001] flex items-center justify-center w-6 h-16 md:w-8 md:h-20 bg-primary/90 hover:bg-primary rounded-r-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:w-8 md:hover:w-10"
+            aria-label="Close Feedback Hub"
+          >
+            <ChevronRight className="h-5 w-5 md:h-6 md:w-6 text-primary-foreground" />
+          </button>
+
           {/* Header */}
           <SheetHeader className="px-4 py-3 border-b shrink-0">
             <div className="flex items-center justify-between">
