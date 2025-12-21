@@ -3099,14 +3099,10 @@ export type Database = {
       }
       feedback_messages: {
         Row: {
-          admin_category: string | null
           admin_notes: string | null
-          admin_priority: string | null
-          admin_status: string | null
           category: string | null
           channel_id: string
           content: string
-          content_type: string | null
           created_at: string | null
           id: string
           is_deleted: boolean | null
@@ -3114,7 +3110,6 @@ export type Database = {
           is_pinned: boolean | null
           message_type: string
           parent_id: string | null
-          parent_message_id: string | null
           priority: string | null
           reply_count: number | null
           sender_id: string
@@ -3123,14 +3118,10 @@ export type Database = {
           user_tag: string | null
         }
         Insert: {
-          admin_category?: string | null
           admin_notes?: string | null
-          admin_priority?: string | null
-          admin_status?: string | null
           category?: string | null
           channel_id: string
           content: string
-          content_type?: string | null
           created_at?: string | null
           id?: string
           is_deleted?: boolean | null
@@ -3138,7 +3129,6 @@ export type Database = {
           is_pinned?: boolean | null
           message_type?: string
           parent_id?: string | null
-          parent_message_id?: string | null
           priority?: string | null
           reply_count?: number | null
           sender_id: string
@@ -3147,14 +3137,10 @@ export type Database = {
           user_tag?: string | null
         }
         Update: {
-          admin_category?: string | null
           admin_notes?: string | null
-          admin_priority?: string | null
-          admin_status?: string | null
           category?: string | null
           channel_id?: string
           content?: string
-          content_type?: string | null
           created_at?: string | null
           id?: string
           is_deleted?: boolean | null
@@ -3162,7 +3148,6 @@ export type Database = {
           is_pinned?: boolean | null
           message_type?: string
           parent_id?: string | null
-          parent_message_id?: string | null
           priority?: string | null
           reply_count?: number | null
           sender_id?: string
@@ -3181,13 +3166,6 @@ export type Database = {
           {
             foreignKeyName: "feedback_messages_parent_id_fkey"
             columns: ["parent_id"]
-            isOneToOne: false
-            referencedRelation: "feedback_messages"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "feedback_messages_parent_message_id_fkey"
-            columns: ["parent_message_id"]
             isOneToOne: false
             referencedRelation: "feedback_messages"
             referencedColumns: ["id"]
