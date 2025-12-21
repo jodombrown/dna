@@ -28,6 +28,7 @@ import ProfileV2Activity from '@/components/profile-v2/ProfileV2Activity';
 import ProfileV2Completion from '@/components/profile-v2/ProfileV2Completion';
 import ProfileV2Verification from '@/components/profile-v2/ProfileV2Verification';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+import { MutualConnectionsWidget } from '@/components/connections/MutualConnectionsWidget';
 
 const ProfileV2: React.FC = () => {
   const { username } = useParams<{ username: string }>();
@@ -260,6 +261,15 @@ const ProfileV2: React.FC = () => {
 
           {/* Right Column - Sidebar */}
           <div className="space-y-6">
+            {/* Mutual Connections (Non-Owner Only) */}
+            {!permissions.is_owner && user?.id && profile?.id && (
+              <MutualConnectionsWidget
+                userId={profile.id}
+                currentUserId={user.id}
+                variant="full"
+              />
+            )}
+
             {/* Profile Completion (Owner Only) */}
             {permissions.is_owner && (
               <ProfileV2Completion

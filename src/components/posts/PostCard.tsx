@@ -11,10 +11,8 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
-import { ReactionPicker } from './ReactionPicker';
 import { ThreadedComments } from './ThreadedComments';
 import { ReactionSummary } from './ReactionSummary';
-import { RepostDialog } from './RepostDialog';
 import { SharedPostCard } from './SharedPostCard';
 import { LikedByModal } from './LikedByModal';
 import { ShareDialog } from './ShareDialog';
@@ -24,9 +22,9 @@ import { PostMenuOthers } from './PostMenuOthers';
 import { usePostReactions } from '@/hooks/usePostReactions';
 import { usePostLikes } from '@/hooks/usePostLikes';
 import { usePostBookmark } from '@/hooks/usePostBookmark';
-import { usePostRepost } from '@/hooks/usePostRepost';
+import { useReshare } from '@/hooks/useReshare';
 import { usePostShares } from '@/hooks/usePostShares';
-import { ReactionEmoji, REACTION_EMOJIS, getEmojiLabel } from '@/types/reactions';
+import { ReactionEmoji } from '@/types/reactions';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { usePostViewTracker } from '@/hooks/usePostViewTracker';
@@ -106,7 +104,23 @@ export function PostCard({
     isLoading: isBookmarking,
   } = usePostBookmark(post.post_id, currentUserId);
 
-  const { repost, isReposting } = usePostRepost();
+  // Reshare functionality
+  const {
+    hasReshared,
+    reshareCount,
+    isLoading: isResharing,
+    isReshareDialogOpen,
+    openReshareDialog,
+    closeReshareDialog,
+    handleReshare,
+    handleQuickReshare,
+  } = useReshare({
+    postId: post.post_id,
+    userId: currentUserId,
+    originalAuthorId: post.author_id,
+    originalAuthorName: post.author_full_name,
+    onSuccess: onUpdate,
+  });
 
   // Post shares
   const {
@@ -148,7 +162,7 @@ export function PostCard({
     const userHasThisReaction = reactions.find((r) =>
       r.emoji === reaction && r.users.some((u) => u.user_id === currentUserId)
     );
-    
+
     if (userHasThisReaction) {
       await removeReaction(reaction);
     } else {
@@ -158,16 +172,6 @@ export function PostCard({
       }
       await addReaction(reaction);
     }
-  };
-
-  const handleRepost = async (commentary?: string) => {
-    if (!currentUserId) return;
-    
-    repost({
-      postId: post.post_id,
-      userId: currentUserId,
-      commentary,
-    });
   };
 
   const handleShare = async () => {
@@ -389,7 +393,7 @@ export function PostCard({
       )}
 
       {/* Stats */}
-      {(likeCount > 0 || totalReactions > 0 || post.comments_count > 0 || shareCount > 0) && (
+      {(likeCount > 0 || totalReactions > 0 || post.comments_count > 0 || reshareCount > 0) && (
         <div className="flex items-center justify-between pb-3 mb-3 border-b text-sm">
           <div className="flex items-center gap-3">
             {/* Like count - clickable */}
@@ -402,22 +406,23 @@ export function PostCard({
                 <span>{likeCount}</span>
               </button>
             )}
-            
+
             {/* Emoji reactions summary */}
             {totalReactions > 0 && (
               <ReactionSummary reactions={reactions} totalCount={totalReactions} />
             )}
           </div>
-          
+
           <div className="flex items-center gap-3 text-muted-foreground">
             {post.comments_count > 0 && (
               <span>
                 {post.comments_count} {post.comments_count === 1 ? 'comment' : 'comments'}
               </span>
             )}
-            {shareCount > 0 && (
-              <span>
-                {shareCount} {shareCount === 1 ? 'share' : 'shares'}
+            {reshareCount > 0 && (
+              <span className="flex items-center gap-1">
+                <Repeat2 className="h-3 w-3" />
+                {reshareCount} {reshareCount === 1 ? 'reshare' : 'reshares'}
               </span>
             )}
           </div>
@@ -485,21 +490,23 @@ export function PostCard({
           <span className="sm:hidden">{post.comments_count > 0 ? post.comments_count : ''}</span>
         </Button>
 
-        {/* Reshare Button - TEMPORARILY HIDDEN for Lockdown v1 */}
-        {/* {feedItem && (
+        {/* Reshare Button - Re-enabled for DNA Interconnection */}
+        {!isRepost && !isOwnPost && (
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setShowReshareDialog(true)}
-            className="flex-1 gap-1.5 px-2"
-          >
-            <Repeat2 className="h-4 w-4" />
-            <span className="hidden sm:inline">Share</span>
-            {feedItem?.share_count && feedItem.share_count > 0 && (
-              <span className="sm:hidden">{feedItem.share_count}</span>
+            onClick={openReshareDialog}
+            disabled={isResharing}
+            className={cn(
+              'flex-1 gap-1.5 px-2',
+              hasReshared && 'text-green-600 hover:text-green-700'
             )}
+          >
+            <Repeat2 className={cn('h-4 w-4', hasReshared && 'fill-current')} />
+            <span className="hidden sm:inline">{hasReshared ? 'Reshared' : 'Reshare'}</span>
+            <span className="sm:hidden">{reshareCount > 0 ? reshareCount : ''}</span>
           </Button>
-        )} */}
+        )}
 
         {/* Bookmark Button */}
         <Button
@@ -519,16 +526,17 @@ export function PostCard({
         <ThreadedComments postId={post.post_id} currentUserId={currentUserId} />
       )}
 
-      {/* Reshare Dialog - TEMPORARILY HIDDEN for Lockdown v1 */}
-      {/* {feedItem && (
+      {/* Reshare Dialog */}
+      {feedItem && (
         <ReshareDialog
-          open={showReshareDialog}
-          onOpenChange={setShowReshareDialog}
+          open={isReshareDialogOpen}
+          onOpenChange={closeReshareDialog}
           post={feedItem}
           currentUserId={currentUserId}
-          onSuccess={onUpdate}
+          onReshare={handleReshare}
+          isLoading={isResharing}
         />
-      )} */}
+      )}
 
       {/* Share Dialog */}
       {profile && (

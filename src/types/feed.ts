@@ -51,10 +51,12 @@ export interface UniversalFeedItem {
   like_count: number;
   comment_count: number;
   share_count: number;
+  reshare_count: number;
   view_count: number;
   bookmark_count: number;
   has_liked: boolean;
   has_bookmarked: boolean;
+  has_reshared: boolean;
   // Pin and comment settings
   pinned_at: string | null;
   comments_disabled: boolean;

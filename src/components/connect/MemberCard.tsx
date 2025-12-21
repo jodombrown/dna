@@ -47,7 +47,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
   const { trackEvent } = useAnalytics();
   const [isSending, setIsSending] = useState(false);
   const { data: connectionStatus, refetch: refetchStatus } = useConnectionStatus(member.id);
-  const { data: mutualConnections } = useMutualConnections(user?.id, member.id);
+  const { mutualConnections, mutualCount, hasMutualConnections } = useMutualConnections(user?.id, member.id);
 
   // Compute match reasons for "why this match" - now with enhanced criteria
   const getMatchReasons = (): string[] => {
@@ -304,11 +304,11 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
             )}
 
             {/* Mutual Connections */}
-            {mutualConnections && mutualConnections.length > 0 && (
+            {hasMutualConnections && (
               <div className="flex items-center gap-1 text-xs text-dna-copper font-medium mb-2">
                 <Users className="h-3 w-3" />
                 <span>
-                  {mutualConnections.length} mutual connection{mutualConnections.length !== 1 ? 's' : ''}
+                  {mutualCount} mutual connection{mutualCount !== 1 ? 's' : ''}
                 </span>
               </div>
             )}
