@@ -8629,6 +8629,55 @@ export type Database = {
           view_count: number
         }[]
       }
+      get_universal_feed: {
+        Args: {
+          p_author_id?: string
+          p_event_id?: string
+          p_limit?: number
+          p_offset?: number
+          p_ranking_mode?: string
+          p_space_id?: string
+          p_tab?: string
+          p_viewer_id: string
+        }
+        Returns: {
+          author_avatar_url: string
+          author_full_name: string
+          author_headline: string
+          author_id: string
+          author_username: string
+          comments_count: number
+          content: string
+          created_at: string
+          event_id: string
+          id: string
+          image_url: string
+          likes_count: number
+          link_description: string
+          link_metadata: Json
+          link_title: string
+          link_url: string
+          linked_entity_id: string
+          linked_entity_type: string
+          original_author_avatar_url: string
+          original_author_full_name: string
+          original_author_headline: string
+          original_author_id: string
+          original_author_username: string
+          original_content: string
+          original_created_at: string
+          original_image_url: string
+          original_post_id: string
+          post_type: string
+          privacy_level: string
+          space_id: string
+          subtitle: string
+          title: string
+          updated_at: string
+          user_has_bookmarked: boolean
+          user_has_liked: boolean
+        }[]
+      }
       get_unread_notification_count: {
         Args: { p_user_id: string }
         Returns: number
