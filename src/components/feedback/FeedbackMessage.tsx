@@ -62,9 +62,9 @@ export function FeedbackMessage({
           {message.is_highlighted && (
             <span className="text-orange-600 font-medium">HIGHLIGHTED</span>
           )}
-          {(message.priority || message.admin_priority) && (
-            <Badge className={cn('text-xs', PRIORITY_COLORS[(message.priority || message.admin_priority)!])}>
-              {PRIORITY_LABELS[(message.priority || message.admin_priority)!]}
+          {message.priority && (
+            <Badge className={cn('text-xs', PRIORITY_COLORS[message.priority])}>
+              {PRIORITY_LABELS[message.priority]}
             </Badge>
           )}
         </div>
@@ -169,9 +169,9 @@ export function FeedbackMessage({
           {/* Footer */}
           <div className="mt-3 flex items-center gap-3 flex-wrap">
             {/* Status Badge */}
-            {(message.status || message.admin_status) && (
-              <Badge className={cn('text-xs', STATUS_COLORS[(message.status || message.admin_status) as keyof typeof STATUS_COLORS] || 'bg-gray-100 text-gray-800')}>
-                {STATUS_LABELS[(message.status || message.admin_status) as keyof typeof STATUS_LABELS] || message.status || message.admin_status}
+            {message.status && (
+              <Badge className={cn('text-xs', STATUS_COLORS[message.status])}>
+                {STATUS_LABELS[message.status]}
               </Badge>
             )}
 

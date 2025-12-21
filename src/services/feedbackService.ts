@@ -576,16 +576,22 @@ export const feedbackService = {
   },
 
   /**
-   * Soft delete a message by setting status to 'closed' (admin only)
+   * Soft delete a message by setting is_deleted=true and deleted_at timestamp (admin only)
    */
   async softDelete(messageId: string): Promise<boolean> {
+    const { data: { user } } = await supabase.auth.getUser();
+
     const { error } = await supabase
       .from('feedback_messages')
-      .delete()
+      .update({
+        is_deleted: true,
+        deleted_at: new Date().toISOString(),
+        deleted_by: user?.id || null,
+      })
       .eq('id', messageId);
 
     if (error) {
-      console.error('[feedbackService] Error deleting message:', error);
+      console.error('[feedbackService] Error soft-deleting message:', error);
       return false;
     }
 
