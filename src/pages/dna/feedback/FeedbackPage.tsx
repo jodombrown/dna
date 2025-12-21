@@ -200,7 +200,7 @@ export default function FeedbackPage() {
       />
 
       {/* Composer */}
-      {channel && (
+      {channel && isMembershipReady && (
         <FeedbackComposer
           channelId={channel.id}
           replyTo={replyTo}
