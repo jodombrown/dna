@@ -8,8 +8,15 @@ const MESSAGES_QUERY_KEY = 'feedback-messages';
 
 /**
  * Hook for fetching and managing feedback messages
+ * @param channelId - The channel ID to fetch messages from
+ * @param filter - Filter for messages
+ * @param isReady - Whether the membership is ready (must be true before fetching)
  */
-export function useFeedbackMessages(channelId: string | null, filter: FeedbackFilter = 'all') {
+export function useFeedbackMessages(
+  channelId: string | null, 
+  filter: FeedbackFilter = 'all',
+  isReady: boolean = true
+) {
   const queryClient = useQueryClient();
 
   // Infinite query for paginated messages
@@ -31,7 +38,7 @@ export function useFeedbackMessages(channelId: string | null, filter: FeedbackFi
     },
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
-    enabled: !!channelId,
+    enabled: !!channelId && isReady,
     staleTime: 30 * 1000, // 30 seconds
   });
 
