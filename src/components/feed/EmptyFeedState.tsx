@@ -57,8 +57,13 @@ export const EmptyFeedState = ({ tab }: EmptyFeedStateProps) => {
             {
               label: "Explore All Posts",
               icon: <TrendingUp className="h-4 w-4 mr-2" />,
-              onClick: () => navigate('/dna/feed'),
-              variant: 'outline' as const,
+              onClick: () => {
+                // Navigate to feed with 'all' tab selected
+                navigate('/dna/feed');
+                // Force a small delay then scroll to top
+                setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
+              },
+              variant: 'default' as const,
             },
           ],
         };
