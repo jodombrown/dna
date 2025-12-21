@@ -16,10 +16,12 @@ import { FeedbackWelcomeBanner } from '@/components/feedback/FeedbackWelcomeBann
 import { FeedbackHeroSection } from '@/components/feedback/FeedbackHeroSection';
 import { useFeedbackMessages } from '@/hooks/useFeedbackMessages';
 import { useFeedbackMembership } from '@/hooks/useFeedbackMembership';
+import { useAuth } from '@/contexts/AuthContext';
 import type { FeedbackFilter, UserTag } from '@/types/feedback';
 
 export default function FeedbackPage() {
   const navigate = useNavigate();
+  const { user, loading: isAuthLoading } = useAuth();
   const composerRef = useRef<HTMLFormElement>(null);
   const [filter, setFilter] = useState<FeedbackFilter>('all');
   const [selectedTag, setSelectedTag] = useState<UserTag | null>(null);
@@ -85,10 +87,29 @@ export default function FeedbackPage() {
   }, []);
 
   // Loading state
-  if (isMembershipLoading) {
+  if (isAuthLoading || isMembershipLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  // Not logged in state
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <Card className="max-w-md w-full p-6 text-center">
+          <div className="text-4xl mb-4">🔐</div>
+          <h2 className="text-xl font-semibold mb-2">Login Required</h2>
+          <p className="text-muted-foreground mb-4">
+            Please log in to view and share feedback in the DNA Feedback Hub.
+          </p>
+          <Button onClick={() => navigate('/auth')}>
+            <LogIn className="h-4 w-4 mr-2" />
+            Log In
+          </Button>
+        </Card>
       </div>
     );
   }
