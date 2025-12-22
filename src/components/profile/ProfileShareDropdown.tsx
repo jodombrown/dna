@@ -38,7 +38,7 @@ export const ProfileShareDropdown: React.FC<ProfileShareDropdownProps> = ({
   const [isDownloading, setIsDownloading] = useState(false);
 
   const getPublicProfileUrl = () => {
-    return `${window.location.origin}/u/${username}`;
+    return `${window.location.origin}/dna/u/${username}`;
   };
 
   const displayName = fullName || username || 'this DNA member';

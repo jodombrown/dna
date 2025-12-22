@@ -21,7 +21,7 @@ export const ImpactProfileLink: React.FC<ImpactProfileLinkProps> = ({
   className = "",
   showActions = false
 }) => {
-  const profileUrl = `/u/${username}`;
+  const profileUrl = `/dna/u/${username}`;
   
   const getInfluenceLevel = (score: number) => {
     if (score >= 1000) return { label: 'Expert', color: 'bg-dna-gold text-white' };
