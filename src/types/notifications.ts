@@ -12,6 +12,7 @@ export type NotificationType =
   | 'profile_view'
   | 'reaction'
   | 'reshare'
+  | 'feedback_status_change'
   | 'system';
 
 export interface Notification {
@@ -29,6 +30,7 @@ export interface Notification {
   is_read: boolean;
   created_at: string;
   read_at?: string;
+  payload?: Record<string, any>;
 }
 
 export interface NotificationPreferences {

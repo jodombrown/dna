@@ -120,4 +120,28 @@ export const NOTIFICATION_TYPES = {
   POST_LIKE: 'post_like',
   STORY_PUBLISHED: 'story_published',
   WELCOME: 'welcome',
+  FEEDBACK_STATUS_CHANGE: 'feedback_status_change',
 } as const;
+
+/**
+ * Creates a DNA system notification (for platform-level notifications like feedback status changes)
+ */
+export async function createDNANotification(params: {
+  user_id: string;
+  title: string;
+  message: string;
+  link_url?: string;
+  feedback_status?: string;
+}): Promise<{ success: boolean; notificationId?: string; error?: string }> {
+  return createNotification({
+    user_id: params.user_id,
+    type: NOTIFICATION_TYPES.FEEDBACK_STATUS_CHANGE,
+    title: params.title,
+    message: params.message,
+    link_url: params.link_url,
+    payload: {
+      is_dna_system: true,
+      feedback_status: params.feedback_status,
+    },
+  });
+}

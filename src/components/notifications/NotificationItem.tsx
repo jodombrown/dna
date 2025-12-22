@@ -18,6 +18,7 @@ import {
   Repeat2,
   X,
   Eye,
+  Sparkles,
 } from 'lucide-react';
 
 interface NotificationItemProps {
@@ -45,7 +46,16 @@ export function NotificationItem({
       .slice(0, 2);
   };
 
+  // Check if this is a DNA system notification
+  const isDNANotification = notification.type === 'feedback_status_change' || 
+    (notification.payload && typeof notification.payload === 'object' && 'is_dna_system' in notification.payload);
+
   const getIcon = () => {
+    // DNA system notifications get a special icon
+    if (isDNANotification) {
+      return <Sparkles className="h-4 w-4" />;
+    }
+    
     switch (notification.type) {
       case 'connection_request':
       case 'connection_accepted':
@@ -76,6 +86,11 @@ export function NotificationItem({
   };
 
   const getIconBgColor = () => {
+    // DNA system notifications get the brand forest green
+    if (isDNANotification) {
+      return 'bg-[#1a472a]';
+    }
+    
     switch (notification.type) {
       case 'connection_request':
       case 'connection_accepted':

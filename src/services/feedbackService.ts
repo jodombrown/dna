@@ -488,9 +488,22 @@ export const feedbackService = {
   },
 
   /**
-   * Update message status (admin only)
+   * Update message status (admin only) and notify the user
    */
   async updateStatus(messageId: string, status: FeedbackStatus): Promise<boolean> {
+    // First get the message to find the sender
+    const { data: message, error: fetchError } = await supabase
+      .from('feedback_messages')
+      .select('sender_id, content')
+      .eq('id', messageId)
+      .single();
+
+    if (fetchError) {
+      console.error('[feedbackService] Error fetching message for status update:', fetchError);
+      return false;
+    }
+
+    // Update the status
     const { error } = await supabase
       .from('feedback_messages')
       .update({ status })
@@ -499,6 +512,29 @@ export const feedbackService = {
     if (error) {
       console.error('[feedbackService] Error updating status:', error);
       return false;
+    }
+
+    // Send notification to the feedback author
+    if (message?.sender_id) {
+      const statusLabels: Record<string, string> = {
+        new: 'New',
+        in_review: 'In Review',
+        in_progress: 'In Progress',
+        resolved: 'Resolved',
+        closed: 'Closed',
+      };
+      const statusLabel = statusLabels[status] || status;
+      const preview = message.content?.slice(0, 50) || 'your feedback';
+      
+      // Import and call notification service
+      const { createDNANotification } = await import('@/services/notificationService');
+      await createDNANotification({
+        user_id: message.sender_id,
+        title: 'DNA Feedback Hub',
+        message: `Your feedback "${preview}${message.content?.length > 50 ? '...' : ''}" has been marked as ${statusLabel}`,
+        link_url: '/dna/feedback',
+        feedback_status: status,
+      });
     }
 
     return true;
