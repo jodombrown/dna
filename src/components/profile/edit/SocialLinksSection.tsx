@@ -4,12 +4,41 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ProfileEditSectionProps } from './types';
 
+/**
+ * Auto-prepend https:// to URL if missing
+ */
+const normalizeUrl = (url: string): string => {
+  if (!url) return url;
+  const trimmed = url.trim();
+  if (!trimmed) return trimmed;
+  
+  // If already has a protocol, return as-is
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed;
+  }
+  
+  // If it looks like a URL (has a dot and no spaces), prepend https://
+  if (trimmed.includes('.') && !trimmed.includes(' ')) {
+    return `https://${trimmed}`;
+  }
+  
+  return trimmed;
+};
+
 export function SocialLinksSection({
   formData,
   onUpdate,
   errors = {},
   disabled = false,
 }: ProfileEditSectionProps) {
+  
+  const handleUrlBlur = (field: 'linkedin_url' | 'twitter_url' | 'website_url', value: string) => {
+    const normalized = normalizeUrl(value);
+    if (normalized !== value) {
+      onUpdate(field, normalized);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -27,6 +56,7 @@ export function SocialLinksSection({
             placeholder="https://linkedin.com/in/yourprofile"
             value={formData.linkedin_url || ''}
             onChange={(e) => onUpdate('linkedin_url', e.target.value)}
+            onBlur={(e) => handleUrlBlur('linkedin_url', e.target.value)}
             disabled={disabled}
             className={errors.linkedin_url ? 'border-destructive' : ''}
           />
@@ -42,6 +72,7 @@ export function SocialLinksSection({
             placeholder="https://twitter.com/yourhandle"
             value={formData.twitter_url || ''}
             onChange={(e) => onUpdate('twitter_url', e.target.value)}
+            onBlur={(e) => handleUrlBlur('twitter_url', e.target.value)}
             disabled={disabled}
             className={errors.twitter_url ? 'border-destructive' : ''}
           />
@@ -57,6 +88,7 @@ export function SocialLinksSection({
             placeholder="https://yourwebsite.com"
             value={formData.website_url || ''}
             onChange={(e) => onUpdate('website_url', e.target.value)}
+            onBlur={(e) => handleUrlBlur('website_url', e.target.value)}
             disabled={disabled}
             className={errors.website_url ? 'border-destructive' : ''}
           />
