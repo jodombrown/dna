@@ -1,6 +1,6 @@
 /**
  * Publicly Accessible Profile Page
- * Route: /u/:username
+ * Route: /dna/u/:username
  * 
  * This page is accessible to ANYONE - no authentication required.
  * Shows profile information and CTAs to sign up or connect.
