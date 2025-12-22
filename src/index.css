@@ -594,3 +594,13 @@ html, body {
 .bokeh-drift-4 {
   animation: bokeh-drift-4 16s linear infinite;
 }
+
+/* Safe area padding for mobile bottom navigation */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Mobile bottom nav spacing - prevent content from being hidden behind fixed nav */
+.has-bottom-nav {
+  padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0));
+}
