@@ -233,9 +233,13 @@ export function FeedbackAdminControls({ message, channelId }: FeedbackAdminContr
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
               {CATEGORY_OPTIONS.map((option) => (
-                <DropdownMenuItem
+          <DropdownMenuItem
                   key={option.value}
-                  onClick={() => handleCategoryChange(option.value)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleCategoryChange(option.value);
+                  }}
                   className={message.category === option.value ? 'bg-accent' : ''}
                 >
                   {option.label}
@@ -313,7 +317,10 @@ export function FeedbackAdminControls({ message, channelId }: FeedbackAdminContr
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleDelete}
+              onClick={(e) => {
+                e.preventDefault();
+                handleDelete();
+              }}
               disabled={isLoading}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >

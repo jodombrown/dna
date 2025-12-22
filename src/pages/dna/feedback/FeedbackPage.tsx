@@ -155,7 +155,7 @@ export default function FeedbackPage() {
 
         <div className="flex-1 min-w-0">
           <h1 className="text-lg font-semibold truncate">
-            {channel?.name || 'DNA | Feedback Hub'}
+            DNA | Feedback Hub
           </h1>
           <p className="text-sm text-muted-foreground truncate">
             Share feedback, report bugs, suggest features
