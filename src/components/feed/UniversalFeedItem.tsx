@@ -119,7 +119,7 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
       );
     
     case 'reshare':
-      // Reshares are handled specially by PostCard
+      // Reshares are handled specially by PostCard - include original post data
       return (
         <PostCard
           post={{
@@ -137,6 +137,17 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
             comments_count: item.comment_count,
             user_has_liked: item.has_liked,
             is_connection: false,
+            // Original post data for SharedPostCard to display
+            original_post_id: item.original_post_id || undefined,
+            original_author_id: item.original_author_id || undefined,
+            original_author_username: item.original_author_username || undefined,
+            original_author_full_name: item.original_author_full_name || undefined,
+            original_author_avatar_url: item.original_author_avatar_url || undefined,
+            original_author_headline: item.original_author_headline || undefined,
+            original_content: item.original_content || undefined,
+            original_image_url: item.original_image_url || undefined,
+            original_created_at: item.original_created_at || undefined,
+            share_commentary: item.content || undefined,
           }}
           currentUserId={currentUserId}
           onUpdate={onUpdate}

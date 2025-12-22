@@ -37,7 +37,7 @@ const ConnectionRequestCard: React.FC<ConnectionRequestCardProps> = ({
 }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { data: mutualConnections } = useMutualConnections(user?.id, request.sender?.id);
+  const { mutualConnections, mutualCount, isLoading: mutualLoading } = useMutualConnections(user?.id, request.sender?.id);
 
   const getInitials = (name: string) => {
     return name

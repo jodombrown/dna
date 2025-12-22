@@ -58,12 +58,12 @@ export const useMutualConnections = (
   });
 
   // Get count separately for efficiency (uses optimized count function)
-  const { data: count = 0 } = useQuery({
+  const { data: countData = 0 } = useQuery({
     queryKey: ['mutual-connection-count', currentUserId, targetUserId],
-    queryFn: async () => {
+    queryFn: async (): Promise<number> => {
       if (!currentUserId || !targetUserId) return 0;
 
-      const { data, error } = await supabase.rpc('get_mutual_connection_count', {
+      const { data, error } = await (supabase.rpc as any)('get_mutual_connection_count', {
         user_a: currentUserId,
         user_b: targetUserId,
       });
@@ -73,12 +73,15 @@ export const useMutualConnections = (
         return connections.length;
       }
 
-      return data || 0;
+      return typeof data === 'number' ? data : 0;
     },
     enabled:
       !!currentUserId && !!targetUserId && currentUserId !== targetUserId,
     staleTime: 5 * 60 * 1000,
   });
+
+  // Ensure count is always a number
+  const count = typeof countData === 'number' ? countData : 0;
 
   return {
     mutualConnections: connections,

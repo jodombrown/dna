@@ -50,7 +50,7 @@ export const ReshareDialog: React.FC<ReshareDialogProps> = ({
       // Legacy fallback
       onSuccess();
     }
-    setCommentary('');
+    // Don't clear commentary here - let the dialog close handle cleanup
   };
 
   const handleQuickReshare = () => {
@@ -59,11 +59,19 @@ export const ReshareDialog: React.FC<ReshareDialogProps> = ({
     } else if (onSuccess) {
       onSuccess();
     }
-    setCommentary('');
+    // Don't clear commentary here - let the dialog close handle cleanup
+  };
+
+  // Reset commentary when dialog closes
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      setCommentary('');
+    }
+    onOpenChange(open);
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Share this post</DialogTitle>
