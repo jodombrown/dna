@@ -236,7 +236,7 @@ export const feedbackService = {
   },
 
   /**
-   * Send a new message
+   * Send a new message and process @mentions
    */
   async sendMessage(params: SendMessageParams): Promise<FeedbackMessage | null> {
     const { data: { user } } = await supabase.auth.getUser();
@@ -263,7 +263,92 @@ export const feedbackService = {
       return null;
     }
 
+    // Process @mentions and send notifications
+    if (params.content) {
+      this.processMentions(params.content, user.id, data.id).catch(err => {
+        console.error('[feedbackService] Error processing mentions:', err);
+      });
+    }
+
     return data as FeedbackMessage;
+  },
+
+  /**
+   * Parse @mentions from content and send notifications to mentioned users
+   */
+  async processMentions(content: string, senderId: string, messageId: string): Promise<void> {
+    // Match @username patterns
+    const mentionRegex = /@([a-zA-Z0-9_]+)/g;
+    const mentions: string[] = [];
+    let match;
+    
+    while ((match = mentionRegex.exec(content)) !== null) {
+      mentions.push(match[1].toLowerCase());
+    }
+    
+    if (mentions.length === 0) return;
+
+    console.log('[feedbackService] Found mentions:', mentions);
+
+    // Get sender info for the notification
+    const { data: senderProfile } = await supabase
+      .from('profiles')
+      .select('full_name, username')
+      .eq('id', senderId)
+      .single();
+
+    // Look up the mentioned users using case-insensitive matching
+    // Build OR filter for case-insensitive username matching
+    const orFilters = mentions.map(m => `username.ilike.${m}`).join(',');
+    const { data: mentionedUsers, error: mentionError } = await supabase
+      .from('profiles')
+      .select('id, username')
+      .or(orFilters);
+
+    if (mentionError) {
+      console.error('[feedbackService] Error looking up mentioned users:', mentionError);
+      return;
+    }
+
+    if (!mentionedUsers || mentionedUsers.length === 0) {
+      console.log('[feedbackService] No matching users found for mentions');
+      return;
+    }
+
+    console.log('[feedbackService] Found matching users:', mentionedUsers.map(u => u.username));
+
+    // Import notification service dynamically to avoid circular dependency
+    const { createNotification } = await import('@/services/notificationService');
+
+    // Create notifications for each mentioned user
+    for (const mentionedUser of mentionedUsers) {
+      // Don't notify yourself
+      if (mentionedUser.id === senderId) {
+        console.log('[feedbackService] Skipping self-mention for:', mentionedUser.username);
+        continue;
+      }
+
+      const senderName = senderProfile?.full_name || senderProfile?.username || 'Someone';
+      const preview = content.slice(0, 50);
+
+      console.log('[feedbackService] Creating mention notification for:', mentionedUser.username);
+      
+      const result = await createNotification({
+        user_id: mentionedUser.id,
+        type: 'mention',
+        title: 'DNA Feedback Hub',
+        message: `${senderName} mentioned you in feedback: "${preview}${content.length > 50 ? '...' : ''}"`,
+        link_url: '/dna/feedback',
+        payload: {
+          is_dna_system: true,
+          actor_id: senderId,
+          actor_name: senderName,
+          message_id: messageId,
+        },
+      });
+      
+      console.log('[feedbackService] Notification result:', result);
+    }
   },
 
   /**
@@ -526,15 +611,19 @@ export const feedbackService = {
       const statusLabel = statusLabels[status] || status;
       const preview = message.content?.slice(0, 50) || 'your feedback';
       
+      console.log('[feedbackService] Sending status change notification to:', message.sender_id);
+      
       // Import and call notification service
       const { createDNANotification } = await import('@/services/notificationService');
-      await createDNANotification({
+      const result = await createDNANotification({
         user_id: message.sender_id,
         title: 'DNA Feedback Hub',
         message: `Your feedback "${preview}${message.content?.length > 50 ? '...' : ''}" has been marked as ${statusLabel}`,
         link_url: '/dna/feedback',
         feedback_status: status,
       });
+      
+      console.log('[feedbackService] Status change notification result:', result);
     }
 
     return true;
