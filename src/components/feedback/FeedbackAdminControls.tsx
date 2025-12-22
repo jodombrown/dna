@@ -315,11 +315,13 @@ export function FeedbackAdminControls({ message, channelId }: FeedbackAdminContr
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={handleDelete}
+            <AlertDialogAction
+              onClick={async (e) => {
+                e.preventDefault();
+                await handleDelete();
+              }}
               disabled={isLoading}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
@@ -327,7 +329,7 @@ export function FeedbackAdminControls({ message, channelId }: FeedbackAdminContr
                 <Trash2 className="h-4 w-4 mr-2" />
               )}
               Delete
-            </Button>
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
