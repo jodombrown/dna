@@ -35,7 +35,7 @@ export function useReshare({
     queryFn: async () => {
       if (!userId || !postId) return false;
 
-      const { data, error } = await supabase.rpc('check_user_reshared', {
+      const { data, error } = await (supabase.rpc as any)('check_user_reshared', {
         p_user_id: userId,
         p_post_id: postId,
       });
@@ -52,12 +52,12 @@ export function useReshare({
   });
 
   // Get reshare count
-  const { data: reshareCount = 0, isLoading: isLoadingCount } = useQuery({
+  const { data: reshareCountData = 0, isLoading: isLoadingCount } = useQuery({
     queryKey: ['reshareCount', postId],
-    queryFn: async () => {
+    queryFn: async (): Promise<number> => {
       if (!postId) return 0;
 
-      const { data, error } = await supabase.rpc('get_reshare_count', {
+      const { data, error } = await (supabase.rpc as any)('get_reshare_count', {
         p_post_id: postId,
       });
 
@@ -66,11 +66,14 @@ export function useReshare({
         return 0;
       }
 
-      return data || 0;
+      return typeof data === 'number' ? data : 0;
     },
     enabled: !!postId,
     staleTime: 30000,
   });
+
+  // Ensure reshareCount is always a number
+  const reshareCount = typeof reshareCountData === 'number' ? reshareCountData : 0;
 
   // Create reshare mutation
   const createReshareMutation = useMutation({
@@ -134,7 +137,7 @@ export function useReshare({
     mutationFn: async () => {
       if (!userId) throw new Error('Not authenticated');
 
-      const { data, error } = await supabase.rpc('delete_reshare', {
+      const { data, error } = await (supabase.rpc as any)('delete_reshare', {
         p_user_id: userId,
         p_original_post_id: postId,
       });
