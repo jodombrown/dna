@@ -55,16 +55,16 @@ const DnaMessages = () => {
   // Mobile: Show only conversation list or thread, not both
   if (isMobile) {
     if (selectedConversationId && otherUser) {
+      // WhatsApp-style: Chat takes full screen, flush top to bottom
       return (
-        <div className="min-h-screen bg-background pt-20 pb-20">
-          <div className="h-[calc(100vh-160px)]">
+        <div className="fixed inset-0 flex flex-col bg-background pt-14 pb-16">
+          <div className="flex-1 overflow-hidden">
             <ChatThread 
               conversationId={selectedConversationId}
               otherUser={otherUser}
               onBack={() => setSelectedConversationId(null)}
             />
           </div>
-
           <MobileBottomNav />
         </div>
       );
