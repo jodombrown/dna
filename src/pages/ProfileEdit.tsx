@@ -475,7 +475,12 @@ const ProfileEdit = () => {
         {/* Tour Resume Banner - shows if user skipped tour */}
         <TourResumeBanner onStartTour={() => setShowTour(true)} />
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} onKeyDown={(e) => {
+          // Prevent Enter key from submitting the form (except in textareas)
+          if (e.key === 'Enter' && e.target instanceof HTMLElement && e.target.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+          }
+        }} className="space-y-6">
           {/* Username Section */}
           <div className="bg-card rounded-lg border p-6">
             <h3 className="text-lg font-semibold mb-4">Username</h3>

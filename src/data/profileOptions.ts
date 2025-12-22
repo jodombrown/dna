@@ -238,7 +238,7 @@ export const isAfricanLanguage = (language: string): boolean => {
 export const ETHNIC_HERITAGE_OPTIONS = [
   // West Africa
   'Yoruba', 'Igbo', 'Hausa', 'Fulani', 'Akan', 'Ashanti', 'Ewe', 'Fon', 'Wolof',
-  'Mandinka', 'Serer', 'Bambara', 'Soninke', 'Mossi', 'Tuareg', 'Kanuri',
+  'Mandinka', 'Serer', 'Bambara', 'Soninke', 'Mossi', 'Tuareg', 'Kanuri', 'Krio',
   // East Africa
   'Amhara', 'Oromo', 'Tigray', 'Somali', 'Kikuyu', 'Luo', 'Maasai', 'Kalenjin',
   'Luhya', 'Kamba', 'Baganda', 'Tutsi', 'Hutu', 'Swahili',

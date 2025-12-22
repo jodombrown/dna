@@ -453,14 +453,28 @@ async getConversations(
    */
   async markAsRead(conversationId: string): Promise<void> {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
+    if (!user) {
+      console.error('[messageService] markAsRead: Not authenticated');
+      throw new Error('Not authenticated');
+    }
+
+    console.log('[messageService] markAsRead: Marking messages as read for conversation:', conversationId);
 
     // Mark all messages in this conversation as read (except own messages)
-    await supabase
+    const { data, error } = await supabase
       .from('messages')
       .update({ read: true })
       .eq('conversation_id', conversationId)
-      .neq('sender_id', user.id);
+      .eq('read', false) // Only update unread messages
+      .neq('sender_id', user.id)
+      .select('id');
+
+    if (error) {
+      console.error('[messageService] markAsRead: Error updating messages:', error);
+      throw error;
+    }
+
+    console.log('[messageService] markAsRead: Updated messages:', data?.length || 0);
   },
 
   /**

@@ -152,10 +152,18 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
   // Mark as read on mount and when new messages arrive
   useEffect(() => {
     if (conversationId) {
-      messageService.markAsRead(conversationId);
-      queryClient.invalidateQueries({ queryKey: ['unread-message-count'] });
+      messageService.markAsRead(conversationId)
+        .then(() => {
+          // Invalidate all relevant queries after marking as read
+          queryClient.invalidateQueries({ queryKey: ['unread-message-count'] });
+          queryClient.invalidateQueries({ queryKey: ['conversations'] });
+          queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
+        })
+        .catch((err) => {
+          console.error('[ChatThread] Failed to mark messages as read:', err);
+        });
     }
-  }, [conversationId, messages.length]);
+  }, [conversationId, messages.length, queryClient]);
 
   // Subscribe to new messages
   useEffect(() => {
