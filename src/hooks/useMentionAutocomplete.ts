@@ -11,26 +11,25 @@ export interface MentionSuggestion {
 }
 
 /**
- * Hook to fetch user connections for @mention autocomplete
+ * Hook to fetch ALL platform users for @mention autocomplete
  * Returns suggestions based on username/name search query
  */
 export const useMentionAutocomplete = (query: string, enabled: boolean = true) => {
   const { user } = useAuth();
 
   return useQuery({
-    queryKey: ['mention-autocomplete', user?.id, query],
+    queryKey: ['mention-autocomplete', query],
     queryFn: async () => {
-      if (!user || !query) return [];
+      if (!query || query.length < 1) return [];
 
-      // Fetch user's connections that match the query
+      // Search all platform users (not just connections)
+      const searchLower = query.toLowerCase();
+      
       const { data, error } = await supabase
-        .from('connections')
-        .select(`
-          requester:profiles!connections_requester_id_fkey(id, username, full_name, avatar_url, headline),
-          recipient:profiles!connections_recipient_id_fkey(id, username, full_name, avatar_url, headline)
-        `)
-        .eq('status', 'accepted')
-        .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`)
+        .from('profiles')
+        .select('id, username, full_name, avatar_url, headline')
+        .or(`username.ilike.%${searchLower}%,full_name.ilike.%${searchLower}%`)
+        .neq('id', user?.id || '') // Exclude current user
         .limit(10);
 
       if (error) {
@@ -38,47 +37,31 @@ export const useMentionAutocomplete = (query: string, enabled: boolean = true) =
         return [];
       }
 
-      // Flatten connections into a single array of profiles
-      const profiles: MentionSuggestion[] = [];
-      const searchLower = query.toLowerCase();
+      // Map to MentionSuggestion format
+      const profiles: MentionSuggestion[] = (data || []).map((profile: any) => ({
+        id: profile.id,
+        username: profile.username || '',
+        full_name: profile.full_name || '',
+        avatar_url: profile.avatar_url,
+        headline: profile.headline,
+      }));
 
-      data?.forEach((connection: any) => {
-        const requester = connection.requester;
-        const recipient = connection.recipient;
-
-        // Add the other person in the connection (not the current user)
-        const otherProfile = requester.id === user.id ? recipient : requester;
-
-        // Filter by username or full name match
-        if (
-          otherProfile.username?.toLowerCase().includes(searchLower) ||
-          otherProfile.full_name?.toLowerCase().includes(searchLower)
-        ) {
-          // Avoid duplicates
-          if (!profiles.find(p => p.id === otherProfile.id)) {
-            profiles.push({
-              id: otherProfile.id,
-              username: otherProfile.username,
-              full_name: otherProfile.full_name,
-              avatar_url: otherProfile.avatar_url,
-              headline: otherProfile.headline,
-            });
-          }
-        }
-      });
-
-      // Sort by relevance: exact username match first, then alphabetical
+      // Sort by relevance: exact username match first, starts with match second, then alphabetical
       return profiles.sort((a, b) => {
-        const aUsernameMatch = a.username?.toLowerCase().startsWith(searchLower);
-        const bUsernameMatch = b.username?.toLowerCase().startsWith(searchLower);
+        const aExact = a.username?.toLowerCase() === searchLower;
+        const bExact = b.username?.toLowerCase() === searchLower;
+        if (aExact && !bExact) return -1;
+        if (!aExact && bExact) return 1;
 
-        if (aUsernameMatch && !bUsernameMatch) return -1;
-        if (!aUsernameMatch && bUsernameMatch) return 1;
+        const aStartsWith = a.username?.toLowerCase().startsWith(searchLower);
+        const bStartsWith = b.username?.toLowerCase().startsWith(searchLower);
+        if (aStartsWith && !bStartsWith) return -1;
+        if (!aStartsWith && bStartsWith) return 1;
 
         return (a.username || '').localeCompare(b.username || '');
       }).slice(0, 5); // Limit to 5 suggestions
     },
-    enabled: enabled && !!user && query.length > 0,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    enabled: enabled && query.length > 0,
+    staleTime: 2 * 60 * 1000, // 2 minutes
   });
 };
