@@ -16,6 +16,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface FeedbackComposerProps {
   channelId: string;
@@ -31,6 +37,14 @@ interface FeedbackComposerProps {
 }
 
 const TAG_OPTIONS: UserTag[] = ['bug', 'suggestion', 'question', 'praise', 'other'];
+
+const TAG_DESCRIPTIONS: Record<UserTag, string> = {
+  bug: 'Report a bug or issue you encountered',
+  suggestion: 'Share an idea or feature suggestion',
+  question: 'Ask a question about the platform',
+  praise: 'Share positive feedback or appreciation',
+  other: 'General feedback that doesn\'t fit other categories',
+};
 
 interface PendingAttachment {
   file: File | Blob;
@@ -364,24 +378,32 @@ export function FeedbackComposer({
           )}
         </div>
 
-        {/* Tags - Compact tabs below input */}
+        {/* Tags - Compact tabs below input with tooltips */}
         <div className="mt-2 flex items-center gap-1 overflow-x-auto pb-1">
-          {TAG_OPTIONS.map((tag) => (
-            <Button
-              key={tag}
-              type="button"
-              variant={selectedTag === tag ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
-              className={cn(
-                "h-7 text-xs px-3 whitespace-nowrap",
-                selectedTag === tag && "bg-primary text-primary-foreground"
-              )}
-              disabled={isSubmitting}
-            >
-              #{USER_TAG_LABELS[tag]}
-            </Button>
-          ))}
+          <TooltipProvider delayDuration={300}>
+            {TAG_OPTIONS.map((tag) => (
+              <Tooltip key={tag}>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    variant={selectedTag === tag ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
+                    className={cn(
+                      "h-7 text-xs px-3 whitespace-nowrap",
+                      selectedTag === tag && "bg-primary text-primary-foreground"
+                    )}
+                    disabled={isSubmitting}
+                  >
+                    #{USER_TAG_LABELS[tag]}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[200px] text-center">
+                  <p className="text-xs">{TAG_DESCRIPTIONS[tag]}</p>
+                </TooltipContent>
+              </Tooltip>
+            ))}
+          </TooltipProvider>
         </div>
       </form>
     </div>
