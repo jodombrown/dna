@@ -139,7 +139,7 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
           <SheetHeader className="px-4 py-3 border-b shrink-0">
             <div className="flex items-center justify-between">
               <SheetTitle className="text-lg">
-                {channel?.name || 'DNA | Feedback Hub'}
+                DNA | Feedback Hub
               </SheetTitle>
               <div className="flex items-center gap-1">
                 {/* Full page - desktop only */}
