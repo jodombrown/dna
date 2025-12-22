@@ -178,6 +178,7 @@ export const feedbackService = {
         attachments:feedback_attachments (*)
       `)
       .eq('channel_id', channelId)
+      .eq('is_deleted', false) // Exclude deleted messages
       .is('parent_id', null) // Only top-level messages
       .order('is_pinned', { ascending: false })
       .order('created_at', { ascending: false })
