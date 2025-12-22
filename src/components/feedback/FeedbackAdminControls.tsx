@@ -309,8 +309,7 @@ export function FeedbackAdminControls({ message, channelId }: FeedbackAdminContr
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Feedback</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this feedback? This action will soft-delete the
-              message and it will no longer be visible to users.
+              Are you sure you want to delete this feedback? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
