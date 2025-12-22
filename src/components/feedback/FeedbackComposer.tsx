@@ -8,6 +8,8 @@ import { feedbackService } from '@/services/feedbackService';
 import { useSendFeedbackMessage } from '@/hooks/useFeedbackMessages';
 import { FeedbackVoiceRecorder } from './FeedbackVoiceRecorder';
 import { FeedbackVideoRecorder } from './FeedbackVideoRecorder';
+import { MentionAutocomplete } from '@/components/feed/MentionAutocomplete';
+import { MentionSuggestion } from '@/hooks/useMentionAutocomplete';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useMobile } from '@/hooks/useMobile';
@@ -70,6 +72,7 @@ export function FeedbackComposer({
   composerRef,
 }: FeedbackComposerProps) {
   const [content, setContent] = useState('');
+  const [cursorPosition, setCursorPosition] = useState(0);
   const [selectedTag, setSelectedTag] = useState<UserTag | null>(initialTag || null);
   const [pendingAttachments, setPendingAttachments] = useState<PendingAttachment[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -455,13 +458,19 @@ export function FeedbackComposer({
           )}
 
           {/* Text Input - Conversational style */}
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 relative">
             <Textarea
               ref={textareaRef}
               value={content}
-              onChange={(e) => setContent(e.target.value)}
+              onChange={(e) => {
+                setContent(e.target.value);
+                setCursorPosition(e.target.selectionStart || 0);
+              }}
+              onSelect={(e) => {
+                setCursorPosition((e.target as HTMLTextAreaElement).selectionStart || 0);
+              }}
               onKeyDown={handleKeyDown}
-              placeholder="Share your feedback..."
+              placeholder="Share your feedback... Use @username to mention"
               disabled={isSubmitting}
               rows={1}
               className={cn(
@@ -469,6 +478,28 @@ export function FeedbackComposer({
                 "text-base md:text-sm",
                 "bg-muted/50 border-0 focus-visible:ring-1 rounded-2xl py-3 px-4"
               )}
+            />
+            {/* Mention Autocomplete */}
+            <MentionAutocomplete
+              text={content}
+              cursorPosition={cursorPosition}
+              onSelectMention={(mention: MentionSuggestion, startPos: number, endPos: number) => {
+                const before = content.substring(0, startPos);
+                const after = content.substring(endPos);
+                const newContent = `${before}@${mention.username} ${after}`;
+                setContent(newContent);
+                // Set cursor position after the mention
+                const newCursorPos = startPos + mention.username.length + 2; // +2 for @ and space
+                setCursorPosition(newCursorPos);
+                // Focus and set cursor
+                setTimeout(() => {
+                  if (textareaRef.current) {
+                    textareaRef.current.focus();
+                    textareaRef.current.setSelectionRange(newCursorPos, newCursorPos);
+                  }
+                }, 0);
+              }}
+              textareaRef={textareaRef as React.RefObject<HTMLTextAreaElement>}
             />
           </div>
 
