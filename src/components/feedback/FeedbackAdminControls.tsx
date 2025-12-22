@@ -231,13 +231,12 @@ export function FeedbackAdminControls({ message, channelId }: FeedbackAdminContr
               <Flag className="h-4 w-4 mr-2" />
               Category
             </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent>
+            <DropdownMenuSubContent sideOffset={8} alignOffset={-5}>
               {CATEGORY_OPTIONS.map((option) => (
-          <DropdownMenuItem
+                <DropdownMenuItem
                   key={option.value}
-                  onClick={(e) => {
+                  onSelect={(e) => {
                     e.preventDefault();
-                    e.stopPropagation();
                     handleCategoryChange(option.value);
                   }}
                   className={message.category === option.value ? 'bg-accent' : ''}
@@ -316,13 +315,11 @@ export function FeedbackAdminControls({ message, channelId }: FeedbackAdminContr
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={(e) => {
-                e.preventDefault();
-                handleDelete();
-              }}
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleDelete}
               disabled={isLoading}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
@@ -330,7 +327,7 @@ export function FeedbackAdminControls({ message, channelId }: FeedbackAdminContr
                 <Trash2 className="h-4 w-4 mr-2" />
               )}
               Delete
-            </AlertDialogAction>
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
