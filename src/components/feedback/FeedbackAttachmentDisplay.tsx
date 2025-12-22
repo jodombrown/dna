@@ -36,7 +36,10 @@ export function FeedbackAttachmentDisplay({ attachment }: FeedbackAttachmentDisp
     );
   }
 
-  if (attachment.attachment_type === 'image') {
+  // Check both file_type (database column) and attachment_type for compatibility
+  const attachmentType = attachment.file_type || attachment.attachment_type;
+  
+  if (attachmentType === 'image') {
     return (
       <>
         <button
@@ -69,11 +72,11 @@ export function FeedbackAttachmentDisplay({ attachment }: FeedbackAttachmentDisp
     );
   }
 
-  if (attachment.attachment_type === 'voice') {
+  if (attachmentType === 'voice') {
     return <VoicePlayer url={url} duration={attachment.duration_seconds || 0} />;
   }
 
-  if (attachment.attachment_type === 'video') {
+  if (attachmentType === 'video') {
     return <VideoPlayer url={url} />;
   }
 

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Send, X, Loader2, Plus, Paperclip, Mic, Camera } from 'lucide-react';
+import { Send, X, Loader2, Plus, Paperclip, Mic, Video as VideoIcon, Image as ImageIcon } from 'lucide-react';
 import type { UserTag, ContentType } from '@/types/feedback';
 import { USER_TAG_LABELS } from '@/types/feedback';
 import { feedbackService } from '@/services/feedbackService';
@@ -10,12 +10,20 @@ import { FeedbackVoiceRecorder } from './FeedbackVoiceRecorder';
 import { FeedbackVideoRecorder } from './FeedbackVideoRecorder';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { useMobile } from '@/hooks/useMobile';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerClose,
+} from '@/components/ui/drawer';
 import {
   Tooltip,
   TooltipContent,
@@ -66,8 +74,13 @@ export function FeedbackComposer({
   const [pendingAttachments, setPendingAttachments] = useState<PendingAttachment[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showRecorders, setShowRecorders] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [activeRecorder, setActiveRecorder] = useState<'voice' | 'video' | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
+  
+  const { isMobile } = useMobile();
   
   const sendMessage = useSendFeedbackMessage();
 
@@ -133,6 +146,26 @@ export function FeedbackComposer({
       { file: blob, type: 'video', duration },
     ]);
     setShowRecorders(false);
+    setActiveRecorder(null);
+  }, []);
+
+  const handleVideoFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    files.forEach(file => {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      video.onloadedmetadata = () => {
+        setPendingAttachments(prev => [...prev, {
+          file,
+          type: 'video',
+          duration: Math.round(video.duration),
+        }]);
+        URL.revokeObjectURL(video.src);
+      };
+      video.src = URL.createObjectURL(file);
+    });
+    if (videoInputRef.current) videoInputRef.current.value = '';
+    setIsDrawerOpen(false);
   }, []);
 
   const determineContentType = (): ContentType => {
@@ -211,13 +244,20 @@ export function FeedbackComposer({
 
   return (
     <div className="border-t border-border bg-card">
-      {/* Hidden file input */}
+      {/* Hidden file inputs */}
       <input
         type="file"
         ref={fileInputRef}
         onChange={handleFileInputChange}
         accept="image/*"
         multiple
+        className="hidden"
+      />
+      <input
+        type="file"
+        ref={videoInputRef}
+        onChange={handleVideoFileChange}
+        accept="video/*"
         className="hidden"
       />
 
@@ -265,7 +305,7 @@ export function FeedbackComposer({
                 )}
                 {attachment.type === 'video' && (
                   <div className="h-12 px-3 flex items-center gap-2 bg-muted rounded-lg border text-sm">
-                    <Camera className="h-4 w-4 text-primary" />
+                    <VideoIcon className="h-4 w-4 text-primary" />
                     <span className="text-muted-foreground">
                       {Math.floor((attachment.duration || 0) / 60)}:{((attachment.duration || 0) % 60).toString().padStart(2, '0')}
                     </span>
@@ -318,30 +358,101 @@ export function FeedbackComposer({
       {/* Main Input Area - Conversational Style */}
       <form ref={composerRef} onSubmit={handleSubmit} className="p-3">
         <div className="flex items-center gap-2 min-w-0">
-          {/* Plus button with dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+          {/* Plus button - Desktop: Dropdown, Mobile: Drawer */}
+          {isMobile ? (
+            <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
                 className="h-10 w-10 flex-shrink-0"
                 disabled={isSubmitting}
+                onClick={() => setIsDrawerOpen(true)}
               >
                 <Plus className="h-5 w-5" />
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48">
-              <DropdownMenuItem onClick={() => fileInputRef.current?.click()}>
-                <Paperclip className="h-4 w-4 mr-2" />
-                Attach Image
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setShowRecorders(true)}>
-                <Mic className="h-4 w-4 mr-2" />
-                Voice/Video
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              <DrawerContent>
+                <DrawerHeader className="text-left">
+                  <DrawerTitle>Add to Feedback</DrawerTitle>
+                </DrawerHeader>
+                <div className="grid grid-cols-3 gap-4 p-4 pb-8">
+                  {/* Attach Screenshot */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      fileInputRef.current?.click();
+                      setIsDrawerOpen(false);
+                    }}
+                    className="flex flex-col items-center gap-2 p-4 rounded-xl bg-muted/50 hover:bg-muted active:bg-muted transition-colors"
+                  >
+                    <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                      <ImageIcon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <span className="text-sm font-medium">Screenshot</span>
+                  </button>
+
+                  {/* Voice Message */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveRecorder('voice');
+                      setShowRecorders(true);
+                      setIsDrawerOpen(false);
+                    }}
+                    className="flex flex-col items-center gap-2 p-4 rounded-xl bg-muted/50 hover:bg-muted active:bg-muted transition-colors"
+                  >
+                    <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
+                      <Mic className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+                    </div>
+                    <span className="text-sm font-medium">Voice</span>
+                  </button>
+
+                  {/* Video Upload */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      videoInputRef.current?.click();
+                      setIsDrawerOpen(false);
+                    }}
+                    className="flex flex-col items-center gap-2 p-4 rounded-xl bg-muted/50 hover:bg-muted active:bg-muted transition-colors"
+                  >
+                    <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                      <VideoIcon className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <span className="text-sm font-medium">Video</span>
+                  </button>
+                </div>
+              </DrawerContent>
+            </Drawer>
+          ) : (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-10 w-10 flex-shrink-0"
+                  disabled={isSubmitting}
+                >
+                  <Plus className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48">
+                <DropdownMenuItem onClick={() => fileInputRef.current?.click()}>
+                  <ImageIcon className="h-4 w-4 mr-2" />
+                  Attach Screenshot
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowRecorders(true)}>
+                  <Mic className="h-4 w-4 mr-2" />
+                  Voice Message
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => videoInputRef.current?.click()}>
+                  <VideoIcon className="h-4 w-4 mr-2" />
+                  Video Upload
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
 
           {/* Text Input - Conversational style */}
           <div className="flex-1 min-w-0">
@@ -354,7 +465,7 @@ export function FeedbackComposer({
               disabled={isSubmitting}
               rows={1}
               className={cn(
-                "min-h-[44px] max-h-[120px] resize-none",
+                "min-h-[44px] max-h-[120px] resize-none tracking-normal",
                 "text-base md:text-sm",
                 "bg-muted/50 border-0 focus-visible:ring-1 rounded-2xl py-3 px-4"
               )}
