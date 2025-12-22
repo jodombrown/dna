@@ -1,7 +1,8 @@
 /**
  * DNA | FEED - Reshare Dialog
- * 
+ *
  * Allows users to reshare posts with optional commentary.
+ * Implements the CONVEY principle for content amplification.
  */
 
 import React, { useState } from 'react';
@@ -16,9 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
-import { Loader2, Share2 } from 'lucide-react';
-import { createResharePost } from '@/lib/feedWriter';
-import { toast } from 'sonner';
+import { Loader2, Repeat2 } from 'lucide-react';
 import { UniversalFeedItem } from '@/types/feed';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -27,6 +26,9 @@ interface ReshareDialogProps {
   onOpenChange: (open: boolean) => void;
   post: UniversalFeedItem;
   currentUserId: string;
+  onReshare?: (commentary?: string) => void;
+  isLoading?: boolean;
+  // Legacy prop for backwards compatibility
   onSuccess?: () => void;
 }
 
@@ -35,31 +37,29 @@ export const ReshareDialog: React.FC<ReshareDialogProps> = ({
   onOpenChange,
   post,
   currentUserId,
+  onReshare,
+  isLoading = false,
   onSuccess,
 }) => {
   const [commentary, setCommentary] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleReshare = async () => {
-    try {
-      setIsSubmitting(true);
-      
-      await createResharePost({
-        originalPostId: post.post_id,
-        authorId: currentUserId,
-        commentary: commentary.trim() || undefined,
-      });
-
-      toast.success('Post reshared successfully!');
-      onOpenChange(false);
-      setCommentary('');
-      onSuccess?.();
-    } catch (error) {
-      console.error('Error resharing post:', error);
-      toast.error('Failed to reshare post');
-    } finally {
-      setIsSubmitting(false);
+  const handleSubmit = () => {
+    if (onReshare) {
+      onReshare(commentary.trim() || undefined);
+    } else if (onSuccess) {
+      // Legacy fallback
+      onSuccess();
     }
+    setCommentary('');
+  };
+
+  const handleQuickReshare = () => {
+    if (onReshare) {
+      onReshare(undefined);
+    } else if (onSuccess) {
+      onSuccess();
+    }
+    setCommentary('');
   };
 
   return (
@@ -117,24 +117,29 @@ export const ReshareDialog: React.FC<ReshareDialogProps> = ({
           <div className="flex justify-end gap-2 pt-2">
             <Button
               variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={isSubmitting}
+              onClick={handleQuickReshare}
+              disabled={isLoading}
             >
-              Cancel
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Repeat2 className="w-4 h-4 mr-2" />
+              )}
+              Quick Reshare
             </Button>
             <Button
-              onClick={handleReshare}
-              disabled={isSubmitting}
+              onClick={handleSubmit}
+              disabled={isLoading}
             >
-              {isSubmitting ? (
+              {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Sharing...
                 </>
               ) : (
                 <>
-                  <Share2 className="w-4 h-4 mr-2" />
-                  Share
+                  <Repeat2 className="w-4 h-4 mr-2" />
+                  {commentary.trim() ? 'Reshare with Comment' : 'Reshare'}
                 </>
               )}
             </Button>

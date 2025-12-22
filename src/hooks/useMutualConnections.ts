@@ -1,3 +1,10 @@
+/**
+ * DNA | CONNECT - Mutual Connections Hook
+ *
+ * Fetches mutual connections between two users.
+ * Implements the CONNECT principle for relationship visibility.
+ */
+
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -6,17 +13,29 @@ export interface MutualConnection {
   full_name: string;
   username: string;
   avatar_url: string | null;
+  headline?: string | null;
 }
 
-export const useMutualConnections = (userId1: string | undefined, userId2: string | undefined) => {
-  return useQuery({
-    queryKey: ['mutual-connections', userId1, userId2],
+/**
+ * Hook to get mutual connections between the current user and a target user
+ */
+export const useMutualConnections = (
+  currentUserId: string | undefined,
+  targetUserId: string | undefined
+) => {
+  // Fetch mutual connections list
+  const {
+    data: connections = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['mutual-connections', currentUserId, targetUserId],
     queryFn: async (): Promise<MutualConnection[]> => {
-      if (!userId1 || !userId2) return [];
+      if (!currentUserId || !targetUserId) return [];
 
       const { data, error } = await supabase.rpc('get_mutual_connections', {
-        user1_id: userId1,
-        user2_id: userId2,
+        user1_id: currentUserId,
+        user2_id: targetUserId,
       });
 
       if (error) {
@@ -25,14 +44,47 @@ export const useMutualConnections = (userId1: string | undefined, userId2: strin
       }
 
       // Map the RPC response to our interface
-      return ((data as any[]) || []).map(item => ({
+      return ((data as any[]) || []).map((item) => ({
         user_id: item.id || item.user_id,
         full_name: item.full_name || '',
         username: item.username || '',
         avatar_url: item.avatar_url || null,
+        headline: item.headline || null,
       }));
     },
-    enabled: !!userId1 && !!userId2 && userId1 !== userId2,
+    enabled:
+      !!currentUserId && !!targetUserId && currentUserId !== targetUserId,
     staleTime: 5 * 60 * 1000,
   });
+
+  // Get count separately for efficiency (uses optimized count function)
+  const { data: count = 0 } = useQuery({
+    queryKey: ['mutual-connection-count', currentUserId, targetUserId],
+    queryFn: async () => {
+      if (!currentUserId || !targetUserId) return 0;
+
+      const { data, error } = await supabase.rpc('get_mutual_connection_count', {
+        user_a: currentUserId,
+        user_b: targetUserId,
+      });
+
+      if (error) {
+        // Fallback to connections length if count function not available
+        return connections.length;
+      }
+
+      return data || 0;
+    },
+    enabled:
+      !!currentUserId && !!targetUserId && currentUserId !== targetUserId,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  return {
+    mutualConnections: connections,
+    mutualCount: count || connections.length,
+    isLoading,
+    error,
+    hasMutualConnections: (count || connections.length) > 0,
+  };
 };
