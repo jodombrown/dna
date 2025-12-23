@@ -3,10 +3,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MessageCircle, User } from 'lucide-react';
+import { MessageCircle, User, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { useMutualConnections } from '@/hooks/useMutualConnections';
 import { ProfileViewTracker } from '@/components/analytics/ProfileViewTracker';
 import { messageService } from '@/services/messageService';
 import { ConnectionActionsMenu } from '@/components/connections/ConnectionActionsMenu';
@@ -29,6 +30,9 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, connectionI
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
+
+  // Get mutual connections count
+  const { mutualCount, hasMutualConnections } = useMutualConnections(user?.id, connection.id);
 
   const getInitials = (name: string) => {
     return name
@@ -82,6 +86,12 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, connectionI
               <Badge variant="secondary" className="mt-2 text-xs">
                 {connection.location}
               </Badge>
+            )}
+            {hasMutualConnections && (
+              <div className="flex items-center gap-1 text-xs text-muted-foreground mt-2">
+                <Users className="h-3 w-3" />
+                <span>{mutualCount} mutual connection{mutualCount !== 1 ? 's' : ''}</span>
+              </div>
             )}
             <div className="flex gap-2 mt-3 items-center">
               <Button

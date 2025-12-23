@@ -3,9 +3,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { MessageCircle, Eye, MoreVertical, UserMinus } from 'lucide-react';
+import { MessageCircle, Eye, MoreVertical, UserMinus, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { useMutualConnections } from '@/hooks/useMutualConnections';
 import { useToast } from '@/hooks/use-toast';
 import {
   DropdownMenu,
@@ -43,8 +45,12 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
 }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isRemoving, setIsRemoving] = useState(false);
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
+
+  // Get mutual connections count
+  const { mutualCount, hasMutualConnections } = useMutualConnections(user?.id, connection.id);
 
   const handleMessage = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -141,6 +147,12 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
               </p>
               {connection.location && (
                 <p className="text-xs text-muted-foreground/70 truncate">{connection.location}</p>
+              )}
+              {hasMutualConnections && (
+                <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+                  <Users className="h-3 w-3" />
+                  <span>{mutualCount} mutual connection{mutualCount !== 1 ? 's' : ''}</span>
+                </div>
               )}
             </div>
 
