@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Send, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import { mentionService } from '@/services/mentionService';
 
 interface Comment {
   id: string;
@@ -81,19 +82,35 @@ export function GroupPostComments({ postId, isOpen, onClose }: GroupPostComments
     mutationFn: async (content: string) => {
       if (!user) throw new Error('Not authenticated');
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('group_post_comments')
         .insert({
           post_id: postId,
           author_id: user.id,
           content,
-        });
+        })
+        .select()
+        .single();
 
       if (error) throw error;
+      return data;
     },
-    onSuccess: () => {
+    onSuccess: (data, content) => {
       refetch();
       queryClient.invalidateQueries({ queryKey: ['group-posts'] });
+
+      // Process mentions and send notifications (async, don't block UI)
+      if (data && content) {
+        const authorName = user?.user_metadata?.full_name || 'Someone';
+        mentionService.processMentionsForComment(
+          content,
+          data.id,
+          postId,
+          user!.id,
+          authorName
+        ).catch(err => console.error('Failed to process group comment mentions:', err));
+      }
+
       setNewComment('');
       toast({
         title: 'Comment added',

@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { CreatePostInput, PostWithAuthor, PostComment, PostLiker } from '@/types/posts';
+import { mentionService } from './mentionService';
 
 /**
  * Fetch posts using the optimized RPC function
@@ -101,11 +102,18 @@ export async function getPostLikers(postId: string): Promise<PostLiker[]> {
 /**
  * Create a new post
  */
-export async function createPost(input: CreatePostInput): Promise<void> {
+export async function createPost(input: CreatePostInput): Promise<{ id: string }> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 
-  const { error } = await supabase.from('posts').insert({
+  // Get user profile for author name
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('full_name, username')
+    .eq('id', user.id)
+    .single();
+
+  const { data, error } = await supabase.from('posts').insert({
     author_id: user.id,
     content: input.content,
     post_type: input.post_type,
@@ -114,12 +122,25 @@ export async function createPost(input: CreatePostInput): Promise<void> {
     link_url: input.link_url,
     link_title: input.link_title,
     link_description: input.link_description,
-  });
+  }).select('id').single();
 
   if (error) {
     console.error('Error creating post:', error);
     throw error;
   }
+
+  // Process mentions and send notifications (async, don't block)
+  if (data && input.content) {
+    const authorName = profile?.full_name || profile?.username || 'Someone';
+    mentionService.processMentionsForPost(
+      input.content,
+      data.id,
+      user.id,
+      authorName
+    ).catch(err => console.error('Failed to process post mentions:', err));
+  }
+
+  return data;
 }
 
 /**
@@ -185,6 +206,13 @@ export async function createComment(postId: string, content: string): Promise<an
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 
+  // Get user profile for author name
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('full_name, username')
+    .eq('id', user.id)
+    .single();
+
   const { data, error } = await supabase
     .from('post_comments')
     .insert({
@@ -198,6 +226,18 @@ export async function createComment(postId: string, content: string): Promise<an
   if (error) {
     console.error('Error creating comment:', error);
     throw error;
+  }
+
+  // Process mentions and send notifications (async, don't block)
+  if (data && content) {
+    const authorName = profile?.full_name || profile?.username || 'Someone';
+    mentionService.processMentionsForComment(
+      content,
+      data.id,
+      postId,
+      user.id,
+      authorName
+    ).catch(err => console.error('Failed to process comment mentions:', err));
   }
 
   return data;

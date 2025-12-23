@@ -13,6 +13,7 @@ import { MentionAutocomplete } from './MentionAutocomplete';
 import { linkifyContent } from '@/utils/linkifyContent';
 import type { MentionSuggestion } from '@/hooks/useMentionAutocomplete';
 import { sendNotificationEmail, NOTIFICATION_TYPES } from '@/services/notificationService';
+import { mentionService } from '@/services/mentionService';
 
 interface CommentSectionProps {
   postId: string;
@@ -45,13 +46,15 @@ export function CommentSection({ postId, postAuthorId }: CommentSectionProps) {
   // Create comment with email notification
   const createCommentMutation = useMutation({
     mutationFn: async (content: string) => {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('post_comments')
         .insert({
           post_id: postId,
           user_id: user!.id,
           content,
-        } as any);
+        } as any)
+        .select()
+        .single();
 
       if (error) throw error;
 
@@ -67,10 +70,24 @@ export function CommentSection({ postId, postAuthorId }: CommentSectionProps) {
           actor_avatar_url: profile?.avatar_url,
         }).catch(err => console.error('Failed to send comment notification email:', err));
       }
+
+      return data;
     },
-    onSuccess: () => {
+    onSuccess: (data, content) => {
       queryClient.invalidateQueries({ queryKey: ['post-comments', postId] });
       queryClient.invalidateQueries({ queryKey: ['post-comments-count', postId] });
+
+      // Process mentions and send notifications (async, don't block UI)
+      if (data && content) {
+        mentionService.processMentionsForComment(
+          content,
+          data.id,
+          postId,
+          user!.id,
+          profile?.full_name || profile?.username || 'Someone'
+        ).catch(err => console.error('Failed to process comment mentions:', err));
+      }
+
       setCommentText('');
       toast.success('Comment added');
     },

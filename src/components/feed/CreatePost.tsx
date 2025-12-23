@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { MentionAutocomplete } from './MentionAutocomplete';
 import { useDraftPosts } from '@/hooks/useDraftPosts';
 import { useAutoEmbedDetection } from '@/hooks/useAutoEmbedDetection';
+import { mentionService } from '@/services/mentionService';
 import { VideoLinkPreview } from './VideoLinkPreview';
 import {
   DropdownMenu,
@@ -89,10 +90,21 @@ export function CreatePost() {
       console.log('CreatePost: insert successful, data:', data);
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data, postContent) => {
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
       queryClient.invalidateQueries({ queryKey: ['feed-posts'] });
+
+      // Process mentions and send notifications (async, don't block UI)
+      if (data && postContent) {
+        mentionService.processMentionsForPost(
+          postContent,
+          data.id,
+          user!.id,
+          profile?.full_name || profile?.username || 'Someone'
+        ).catch(err => console.error('Failed to process post mentions:', err));
+      }
+
       setContent('');
       clearEmbedData();
       toast.success('Post created successfully!');
