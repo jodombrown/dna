@@ -1,16 +1,19 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
 import { PostWithAuthor } from '@/types/posts';
-import { Repeat2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
+import { useState } from 'react';
 
 interface SharedPostCardProps {
   post: PostWithAuthor;
 }
 
+const CONTENT_PREVIEW_LENGTH = 200;
+
 export function SharedPostCard({ post }: SharedPostCardProps) {
   const navigate = useNavigate();
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const getInitials = (name: string) => {
     return name
@@ -22,6 +25,12 @@ export function SharedPostCard({ post }: SharedPostCardProps) {
   };
 
   if (!post.original_post_id) return null;
+
+  const content = post.original_content || post.content || '';
+  const shouldTruncate = content.length > CONTENT_PREVIEW_LENGTH;
+  const displayContent = shouldTruncate && !isExpanded 
+    ? content.slice(0, CONTENT_PREVIEW_LENGTH).trim() + '...' 
+    : content;
 
   return (
     <Card className="p-4 border-l-4 border-l-primary/50 bg-muted/30 mt-3">
@@ -60,8 +69,17 @@ export function SharedPostCard({ post }: SharedPostCardProps) {
       </div>
 
       <p className="text-sm whitespace-pre-wrap">
-        {post.original_content || post.content}
+        {displayContent}
       </p>
+      
+      {shouldTruncate && (
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="text-sm text-primary hover:text-primary/80 font-medium mt-1 transition-colors"
+        >
+          {isExpanded ? 'Show less' : 'Read more'}
+        </button>
+      )}
 
       {post.original_image_url && (
         <div className="mt-3 rounded-lg overflow-hidden border max-h-64">
