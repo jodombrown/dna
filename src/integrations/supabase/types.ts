@@ -7681,6 +7681,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      check_user_reshared: {
+        Args: { p_post_id: string; p_user_id: string }
+        Returns: boolean
+      }
       check_username_available: {
         Args: { p_user_id?: string; p_username: string }
         Returns: boolean
@@ -7773,6 +7777,10 @@ export type Database = {
             Returns: string
           }
       cron_overdue_task_reminders: { Args: never; Returns: undefined }
+      delete_reshare: {
+        Args: { p_original_post_id: string; p_user_id: string }
+        Returns: undefined
+      }
       discover_members: {
         Args: {
           p_country_of_origin?: string
@@ -8268,6 +8276,10 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_mutual_connection_count: {
+        Args: { user_a: string; user_b: string }
+        Returns: number
+      }
       get_mutual_connections:
         | {
             Args: {
@@ -8440,6 +8452,7 @@ export type Database = {
           username: string
         }[]
       }
+      get_reshare_count: { Args: { p_post_id: string }; Returns: number }
       get_safe_profile_fields: {
         Args: { profile_id: string; viewer_id: string }
         Returns: {
