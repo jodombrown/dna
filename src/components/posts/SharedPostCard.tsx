@@ -4,6 +4,7 @@ import { PostWithAuthor } from '@/types/posts';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 
 interface SharedPostCardProps {
   post: PostWithAuthor;
@@ -68,17 +69,28 @@ export function SharedPostCard({ post }: SharedPostCardProps) {
         </div>
       </div>
 
-      <p className="text-sm whitespace-pre-wrap">
-        {displayContent}
-      </p>
+      <motion.div
+        layout
+        initial={false}
+        animate={{ opacity: 1 }}
+        transition={{ 
+          layout: { duration: 0.3, ease: "easeInOut" },
+          opacity: { duration: 0.2 }
+        }}
+      >
+        <p className="text-sm whitespace-pre-wrap">
+          {displayContent}
+        </p>
+      </motion.div>
       
       {shouldTruncate && (
-        <button
+        <motion.button
           onClick={() => setIsExpanded(!isExpanded)}
           className="text-sm text-primary hover:text-primary/80 font-medium mt-1 transition-colors"
+          whileTap={{ scale: 0.98 }}
         >
           {isExpanded ? 'Show less' : 'Read more'}
-        </button>
+        </motion.button>
       )}
 
       {post.original_image_url && (
