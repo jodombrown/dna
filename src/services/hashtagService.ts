@@ -59,11 +59,11 @@ export const hashtagService = {
   /**
    * Get trending hashtags
    */
-  async getTrending(limit: number = 10, timeframeHours: number = 24): Promise<TrendingHashtag[]> {
+  async getTrending(limit: number = 10, days: number = 7): Promise<TrendingHashtag[]> {
     const { data, error } = await supabase
       .rpc('get_trending_hashtags', {
         p_limit: limit,
-        p_timeframe_hours: timeframeHours
+        p_days: days
       });
 
     if (error) {
@@ -71,25 +71,35 @@ export const hashtagService = {
       return [];
     }
 
-    return (data || []) as TrendingHashtag[];
+    // Map the database response to our interface
+    return ((data as unknown as any[]) || []).map(item => ({
+      id: item.id || '',
+      name: item.name || item.tag || '',
+      display_name: item.display_name || item.name || '',
+      type: item.type || 'community',
+      usage_count: item.usage_count || item.post_count || 0,
+      follower_count: item.follower_count || 0,
+      recent_uses: item.recent_uses || item.recent_post_count || 0,
+      trending_score: item.trending_score || 0,
+    }));
   },
 
   /**
    * Get hashtag details
    */
   async getDetails(hashtagName: string, userId?: string): Promise<HashtagDetails | null> {
-    const { data, error } = await supabase
-      .rpc('get_hashtag_details', {
-        p_hashtag_name: hashtagName,
-        p_user_id: userId || null
-      });
+    const { data, error } = await (supabase.rpc as any)('get_hashtag_details', {
+      p_hashtag_name: hashtagName,
+      p_user_id: userId || null
+    });
 
     if (error) {
       console.error('Error fetching hashtag details:', error);
       return null;
     }
 
-    return data?.[0] || null;
+    const result = Array.isArray(data) ? data[0] : data;
+    return result || null;
   },
 
   /**
@@ -101,13 +111,12 @@ export const hashtagService = {
     offset: number = 0,
     sort: 'recent' | 'top' = 'recent'
   ): Promise<HashtagPost[]> {
-    const { data, error } = await supabase
-      .rpc('get_hashtag_posts', {
-        p_hashtag_name: hashtagName,
-        p_limit: limit,
-        p_offset: offset,
-        p_sort: sort
-      });
+    const { data, error } = await (supabase.rpc as any)('get_hashtag_posts', {
+      p_hashtag_name: hashtagName,
+      p_limit: limit,
+      p_offset: offset,
+      p_sort: sort
+    });
 
     if (error) {
       console.error('Error fetching hashtag posts:', error);
@@ -121,11 +130,10 @@ export const hashtagService = {
    * Search hashtags (for autocomplete)
    */
   async search(query: string, limit: number = 10): Promise<Hashtag[]> {
-    const { data, error } = await supabase
-      .rpc('search_hashtags', {
-        p_query: query,
-        p_limit: limit
-      });
+    const { data, error } = await (supabase.rpc as any)('search_hashtags', {
+      p_query: query,
+      p_limit: limit
+    });
 
     if (error) {
       console.error('Error searching hashtags:', error);
@@ -139,43 +147,41 @@ export const hashtagService = {
    * Toggle follow/unfollow a hashtag
    */
   async toggleFollow(hashtagId: string, userId: string): Promise<boolean> {
-    const { data, error } = await supabase
-      .rpc('toggle_hashtag_follow', {
-        p_hashtag_id: hashtagId,
-        p_user_id: userId
-      });
+    const { data, error } = await (supabase.rpc as any)('toggle_hashtag_follow', {
+      p_hashtag_id: hashtagId,
+      p_user_id: userId
+    });
 
     if (error) {
       console.error('Error toggling hashtag follow:', error);
       throw error;
     }
 
-    return data; // true if now following, false if unfollowed
+    return Boolean(data);
   },
 
   /**
    * Check if a hashtag is reserved
    */
   async checkReserved(name: string): Promise<ReservedHashtagInfo> {
-    const { data, error } = await supabase
-      .rpc('is_hashtag_reserved', {
-        p_name: name
-      });
+    const { data, error } = await (supabase.rpc as any)('is_hashtag_reserved', {
+      p_name: name
+    });
 
     if (error) {
       console.error('Error checking reserved hashtag:', error);
       return { is_reserved: false, category: null, reason: null, can_be_used: true };
     }
 
-    return data?.[0] || { is_reserved: false, category: null, reason: null, can_be_used: true };
+    const result = Array.isArray(data) ? data[0] : data;
+    return result || { is_reserved: false, category: null, reason: null, can_be_used: true };
   },
 
   /**
    * Get hashtags a user is following
    */
   async getUserFollowedHashtags(userId: string): Promise<Hashtag[]> {
-    const { data, error } = await supabase
-      .from('hashtag_followers')
+    const { data, error } = await (supabase.from as any)('hashtag_followers')
       .select(`
         hashtag:hashtags(*)
       `)

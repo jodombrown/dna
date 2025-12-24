@@ -70,34 +70,18 @@ export const useTrendingHashtags = (limit: number = 10, days: number = 7) => {
   return useQuery({
     queryKey: ['trending-hashtags', limit, days],
     queryFn: async (): Promise<TrendingHashtag[]> => {
-      // Try the new enhanced RPC first
       const { data, error } = await supabase.rpc('get_trending_hashtags', {
         p_limit: limit,
-        p_timeframe_hours: days * 24, // Convert days to hours for new RPC
+        p_days: days,
       });
 
       if (error) {
-        // Fall back to old RPC signature
-        const { data: oldData, error: oldError } = await supabase.rpc('get_trending_hashtags', {
-          p_limit: limit,
-          p_days: days,
-        } as any);
-
-        if (oldError) {
-          console.error('Error fetching trending hashtags:', oldError);
-          return [];
-        }
-
-        // Map old RPC response
-        return ((oldData as any[]) || []).map(item => ({
-          hashtag: item.hashtag || item.tag,
-          post_count: item.post_count || item.usage_count || 0,
-          recent_post_count: item.recent_post_count || item.recent_uses || 0,
-        }));
+        console.error('Error fetching trending hashtags:', error);
+        return [];
       }
 
-      // Map the new RPC response to our interface
-      return ((data as any[]) || []).map(item => ({
+      // Map the RPC response to our interface
+      return ((data as unknown as any[]) || []).map(item => ({
         hashtag: item.name || item.tag || item.hashtag,
         post_count: item.usage_count || item.post_count || 0,
         recent_post_count: item.recent_uses || item.recent_usage_count || item.recent_post_count || 0,

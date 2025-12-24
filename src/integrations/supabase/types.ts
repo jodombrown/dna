@@ -3578,32 +3578,111 @@ export type Database = {
         }
         Relationships: []
       }
+      hashtag_followers: {
+        Row: {
+          created_at: string | null
+          hashtag_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          hashtag_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          hashtag_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hashtag_followers_hashtag_id_fkey"
+            columns: ["hashtag_id"]
+            isOneToOne: false
+            referencedRelation: "hashtags"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hashtag_followers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hashtag_followers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hashtags: {
         Row: {
           created_at: string
+          description: string | null
           first_used_at: string
+          follower_count: number | null
           id: string
+          is_verified: boolean | null
           last_used_at: string
+          owner_id: string | null
+          status: Database["public"]["Enums"]["hashtag_status"] | null
           tag: string
+          type: Database["public"]["Enums"]["hashtag_type"] | null
+          updated_at: string | null
           usage_count: number
         }
         Insert: {
           created_at?: string
+          description?: string | null
           first_used_at?: string
+          follower_count?: number | null
           id?: string
+          is_verified?: boolean | null
           last_used_at?: string
+          owner_id?: string | null
+          status?: Database["public"]["Enums"]["hashtag_status"] | null
           tag: string
+          type?: Database["public"]["Enums"]["hashtag_type"] | null
+          updated_at?: string | null
           usage_count?: number
         }
         Update: {
           created_at?: string
+          description?: string | null
           first_used_at?: string
+          follower_count?: number | null
           id?: string
+          is_verified?: boolean | null
           last_used_at?: string
+          owner_id?: string | null
+          status?: Database["public"]["Enums"]["hashtag_status"] | null
           tag?: string
+          type?: Database["public"]["Enums"]["hashtag_type"] | null
+          updated_at?: string | null
           usage_count?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "hashtags_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hashtags_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       hidden_posts: {
         Row: {
@@ -6272,6 +6351,36 @@ export type Database = {
           },
         ]
       }
+      reserved_hashtags: {
+        Row: {
+          can_be_used: boolean | null
+          category: Database["public"]["Enums"]["reserved_category"]
+          claimable_with_verification: boolean | null
+          created_at: string | null
+          name: string
+          reason: string | null
+          source: string | null
+        }
+        Insert: {
+          can_be_used?: boolean | null
+          category: Database["public"]["Enums"]["reserved_category"]
+          claimable_with_verification?: boolean | null
+          created_at?: string | null
+          name: string
+          reason?: string | null
+          source?: string | null
+        }
+        Update: {
+          can_be_used?: boolean | null
+          category?: Database["public"]["Enums"]["reserved_category"]
+          claimable_with_verification?: boolean | null
+          created_at?: string | null
+          name?: string
+          reason?: string | null
+          source?: string | null
+        }
+        Relationships: []
+      }
       saved_posts: {
         Row: {
           created_at: string | null
@@ -8240,6 +8349,48 @@ export type Database = {
           user_role: Database["public"]["Enums"]["group_member_role"]
         }[]
       }
+      get_hashtag_details: {
+        Args: { p_hashtag_name: string; p_user_id?: string }
+        Returns: {
+          created_at: string
+          description: string
+          display_name: string
+          follower_count: number
+          id: string
+          is_following: boolean
+          is_verified: boolean
+          name: string
+          owner_avatar: string
+          owner_id: string
+          owner_name: string
+          owner_username: string
+          status: Database["public"]["Enums"]["hashtag_status"]
+          type: Database["public"]["Enums"]["hashtag_type"]
+          usage_count: number
+        }[]
+      }
+      get_hashtag_posts: {
+        Args: {
+          p_hashtag_name: string
+          p_limit?: number
+          p_offset?: number
+          p_sort?: string
+        }
+        Returns: {
+          author_avatar: string
+          author_headline: string
+          author_id: string
+          author_name: string
+          author_username: string
+          comment_count: number
+          content: string
+          created_at: string
+          like_count: number
+          media_urls: string[]
+          post_id: string
+          reshare_count: number
+        }[]
+      }
       get_inactive_users_for_reengagement: {
         Args: { p_days_inactive?: number }
         Returns: {
@@ -8832,6 +8983,15 @@ export type Database = {
         Args: { p_group_id: string; p_user_id: string }
         Returns: boolean
       }
+      is_hashtag_reserved: {
+        Args: { p_name: string }
+        Returns: {
+          can_be_used: boolean
+          category: Database["public"]["Enums"]["reserved_category"]
+          is_reserved: boolean
+          reason: string
+        }[]
+      }
       is_member_of_space: {
         Args: {
           _approved_only?: boolean
@@ -9209,6 +9369,18 @@ export type Database = {
         Args: { p_post: string; p_value: boolean }
         Returns: undefined
       }
+      search_hashtags: {
+        Args: { p_limit?: number; p_query: string }
+        Returns: {
+          display_name: string
+          follower_count: number
+          id: string
+          is_verified: boolean
+          name: string
+          type: Database["public"]["Enums"]["hashtag_type"]
+          usage_count: number
+        }[]
+      }
       send_message: {
         Args: {
           p_content: string
@@ -9236,6 +9408,10 @@ export type Database = {
           p_visibility?: string
         }
         Returns: string
+      }
+      toggle_hashtag_follow: {
+        Args: { p_hashtag_id: string; p_user_id: string }
+        Returns: boolean
       }
       track_post_engagement: {
         Args: {
@@ -9371,6 +9547,8 @@ export type Database = {
       group_join_policy: "open" | "approval_required" | "invite_only"
       group_member_role: "owner" | "admin" | "moderator" | "member"
       group_privacy: "public" | "private" | "secret"
+      hashtag_status: "active" | "archived" | "suspended" | "reserved"
+      hashtag_type: "community" | "personal"
       linked_entity_type:
         | "event"
         | "space"
@@ -9379,6 +9557,14 @@ export type Database = {
         | "community_post"
       opportunity_status: "draft" | "active" | "paused" | "closed" | "archived"
       opportunity_visibility: "public" | "network_only" | "private"
+      reserved_category:
+        | "country"
+        | "public_figure"
+        | "company"
+        | "government"
+        | "offensive"
+        | "system"
+        | "trademark"
       rsvp_status: "going" | "maybe" | "not_going" | "pending" | "waitlist"
       space_update_type: "manual_update" | "milestone" | "auto_task_event"
       task_status: "open" | "in_progress" | "done"
@@ -9551,9 +9737,20 @@ export const Constants = {
       group_join_policy: ["open", "approval_required", "invite_only"],
       group_member_role: ["owner", "admin", "moderator", "member"],
       group_privacy: ["public", "private", "secret"],
+      hashtag_status: ["active", "archived", "suspended", "reserved"],
+      hashtag_type: ["community", "personal"],
       linked_entity_type: ["event", "space", "need", "story", "community_post"],
       opportunity_status: ["draft", "active", "paused", "closed", "archived"],
       opportunity_visibility: ["public", "network_only", "private"],
+      reserved_category: [
+        "country",
+        "public_figure",
+        "company",
+        "government",
+        "offensive",
+        "system",
+        "trademark",
+      ],
       rsvp_status: ["going", "maybe", "not_going", "pending", "waitlist"],
       space_update_type: ["manual_update", "milestone", "auto_task_event"],
       task_status: ["open", "in_progress", "done"],
