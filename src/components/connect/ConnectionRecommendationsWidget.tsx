@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Globe, MapPin, Lightbulb, UserPlus, Sparkles, Users, Heart, Flag } from 'lucide-react';
+import { Globe, MapPin, Lightbulb, UserPlus, Sparkles, Users, Heart, Flag, X } from 'lucide-react';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
@@ -50,6 +50,7 @@ export const ConnectionRecommendationsWidget = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [connectingTo, setConnectingTo] = useState<string | null>(null);
+  const [dismissingId, setDismissingId] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
 
@@ -91,7 +92,7 @@ export const ConnectionRecommendationsWidget = () => {
       // Invalidate queries to refresh recommendations
       queryClient.invalidateQueries({ queryKey: ['connection-recommendations'] });
       queryClient.invalidateQueries({ queryKey: ['pending-requests'] });
-      
+
     } catch (error: any) {
       toast({
         title: 'Failed to send request',
@@ -101,6 +102,27 @@ export const ConnectionRecommendationsWidget = () => {
       throw error; // Re-throw so modal knows to stay open
     } finally {
       setConnectingTo(null);
+    }
+  };
+
+  const handleDismiss = async (userId: string, userName: string) => {
+    setDismissingId(userId);
+    try {
+      await connectionService.dismissRecommendation(userId);
+      toast({
+        title: 'Recommendation dismissed',
+        description: `${userName} won't appear in your recommendations.`,
+      });
+      // Invalidate to refresh the list
+      queryClient.invalidateQueries({ queryKey: ['adin-connection-recommendations'] });
+    } catch (error: any) {
+      toast({
+        title: 'Failed to dismiss',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setDismissingId(null);
     }
   };
 
@@ -251,19 +273,41 @@ export const ConnectionRecommendationsWidget = () => {
                   </div>
                 </div>
 
-                <Button
-                  variant="default"
-                  size="sm"
-                  onClick={() => handleConnect(profileForModal)}
-                  disabled={connectingTo === rec.user_id}
-                  className="shrink-0 min-w-[44px] min-h-[44px] bg-dna-emerald hover:bg-dna-forest"
-                >
-                  {connectingTo === rec.user_id ? (
-                    <LoadingSpinner size="sm" />
-                  ) : (
-                    <><UserPlus className="h-3 w-3 mr-1" /> Connect</>
-                  )}
-                </Button>
+                <div className="flex items-center gap-1 shrink-0">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDismiss(rec.user_id, rec.full_name)}
+                        disabled={dismissingId === rec.user_id}
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted"
+                      >
+                        {dismissingId === rec.user_id ? (
+                          <LoadingSpinner size="sm" />
+                        ) : (
+                          <X className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">
+                      <span className="text-xs">Not interested</span>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={() => handleConnect(profileForModal)}
+                    disabled={connectingTo === rec.user_id}
+                    className="shrink-0 min-w-[44px] min-h-[44px] bg-dna-emerald hover:bg-dna-forest"
+                  >
+                    {connectingTo === rec.user_id ? (
+                      <LoadingSpinner size="sm" />
+                    ) : (
+                      <><UserPlus className="h-3 w-3 mr-1" /> Connect</>
+                    )}
+                  </Button>
+                </div>
               </div>
             );
           })}

@@ -305,6 +305,27 @@ export const connectionService = {
   },
 
   /**
+   * Dismiss a connection recommendation
+   * User won't see this person in recommendations again
+   */
+  async dismissRecommendation(dismissedUserId: string): Promise<void> {
+    const { error } = await supabase.rpc('dismiss_recommendation', {
+      p_dismissed_user_id: dismissedUserId,
+    });
+    if (error) throw error;
+  },
+
+  /**
+   * Undismiss a previously dismissed recommendation
+   */
+  async undismissRecommendation(dismissedUserId: string): Promise<void> {
+    const { error } = await supabase.rpc('undismiss_recommendation', {
+      p_dismissed_user_id: dismissedUserId,
+    });
+    if (error) throw error;
+  },
+
+  /**
    * Get smart connection recommendations based on ADIN algorithm
    * Uses weighted scoring: skills (25%), interests (25%), heritage (20%), mutual connections (20%), region (10%)
    */
