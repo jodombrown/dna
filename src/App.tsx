@@ -131,6 +131,7 @@ const ConveyAnalytics = lazy(() => import("./pages/dna/admin/ConveyAnalytics"));
 // Feature pages
 const Opportunities = lazy(() => import("./pages/Opportunities"));
 const MyApplications = lazy(() => import("./pages/MyApplications"));
+const ApplicationsReceived = lazy(() => import("./pages/ApplicationsReceived"));
 const CollaborationSpaces = lazy(() => import("./pages/CollaborationSpaces"));
 const SpaceDetail = lazy(() => import("./pages/SpaceDetail"));
 const DnaDiscover = lazy(() => import("./pages/dna/Discover"));
@@ -502,6 +503,7 @@ function App() {
               } />
               <Route path="/dna/impact/:id" element={<OpportunityDetail />} />
                <Route path="/dna/applications" element={<MyApplications />} />
+               <Route path="/dna/applications/received" element={<ApplicationsReceived />} />
                <Route path="/dna/spaces" element={<CollaborationSpaces />} />
                <Route path="/dna/spaces/:id" element={<SpaceDetail />} />
                <Route path="/dna/saved" element={

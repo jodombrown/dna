@@ -1,8 +1,8 @@
 # DNA Platform - Master Product Requirements Document
 
-**Version:** 1.1  
-**Last Updated:** December 25, 2024  
-**Status:** Active Development - Phase 1 Complete, Phase 2 In Progress
+**Version:** 1.2
+**Last Updated:** December 25, 2024
+**Status:** Active Development - Phase 1 & 2 Complete, Phase 3 Ready
 
 ---
 
@@ -154,11 +154,18 @@ src/
 |---------|--------|------------|----------------|
 | Messaging | 85% | 1-on-1 conversations, send/receive | Delete message, real-time polish, group chat |
 | Opportunities | 70% | Listings, application submission | Review workflow, org profiles |
-| ADIN Recommendations | 60% | Basic RPC function, widget | Score refinement, "why recommended" |
 | Contribution Cards | 60% | Create cards, display | Submit offer flow, tracking |
-| Regional Hubs | 40% | Country pages, basic regions | Live metrics, heritage matching |
 | Admin Dashboard | 70% | Basic analytics, user management | Moderation actions, bulk operations |
 | Content Moderation | 50% | Report submission, view reports | Admin review queue, action flow |
+
+### ✅ Recently Completed (Phase 2 - ADIN Intelligence)
+
+| Feature | Status | What's Implemented |
+|---------|--------|-------------------|
+| ADIN Recommendations | 100% | Weighted scoring (14+ criteria), match reasons with icons, "why recommended" tooltip, shared skills/interests/mutuals display |
+| Regional Hubs | 100% | Region pages with live metrics (members, events, projects, contributions), country cards, heritage mapping |
+| Heritage Matching | 100% | Profile heritage fields, regional scoring, heritage-based recommendations |
+| Dismiss Recommendations | 100% | X button to dismiss, RPC functions, database table with RLS |
 
 ### 📋 Not Started (0%)
 
@@ -175,6 +182,14 @@ src/
 
 ## Recent Completions (Dec 25, 2024)
 
+### Phase 2: ADIN Intelligence ✅
+1. **Connection Recommendations** - Full ADIN algorithm with 14+ matching criteria
+2. **"Why Recommended" Tooltip** - Match reasons, shared skills/interests/mutuals
+3. **Regional Hub Metrics** - Live member/event/project counts per region
+4. **Heritage Matching** - Heritage-based recommendations and filtering
+5. **Dismiss Recommendations** - Dismiss button with database persistence
+
+### Phase 1: Safety & Trust ✅
 1. **Reshares** - Full reshare flow with attribution and counts
 2. **Mutual Connections** - Display shared connections on profiles
 3. **Mentions + Notifications** - @username mentions trigger notifications
@@ -323,23 +338,24 @@ collaboration_spaces 1--* space_tasks
 | Blocked Users Settings | ✅ | View/unblock from settings |
 | Content Flags | ✅ | Reports submitted and viewable |
 
-### 🚧 Phase 2: ADIN Intelligence (IN PROGRESS)
-**Status**: 60% Complete  
-**Priority**: HIGH  
-**Effort Remaining**: 2-3 days
+### ✅ Phase 2: ADIN Intelligence (COMPLETE)
+**Status**: 100% Complete
+**Completed**: December 25, 2024
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Connection Recommendations | 🚧 70% | RPC exists, widget exists, needs refinement |
-| Regional Hub Metrics | 📋 30% | Country pages exist, needs live metrics |
-| Heritage Matching | 📋 20% | Profile has fields, needs scoring |
-| "Why Recommended" Tooltip | 📋 0% | UI component needed |
+| Connection Recommendations | ✅ | 14+ criteria weighted scoring, ADIN algorithm, RPC functions |
+| Regional Hub Metrics | ✅ | Live metrics display (members, events, projects, contributions) |
+| Heritage Matching | ✅ | Profile heritage fields, regional scoring, heritage-based filtering |
+| "Why Recommended" Tooltip | ✅ | Full tooltip with match reasons, icons, shared counts |
+| Dismiss Recommendations | ✅ | X button, dismissed_recommendations table, RLS policies |
 
-**Next Steps**:
-1. Enhance `rpc_adin_recommend_people` with weighted scoring
-2. Create `RegionalMetricsWidget` component
-3. Add `WhyRecommended` tooltip to recommendation cards
-4. Implement heritage-based opportunity filtering
+**Key Components**:
+- `ConnectionRecommendationsWidget.tsx` - Full recommendation display with dismiss
+- `RegionHubPage.tsx` / `CountryHubPage.tsx` - Regional hubs with metrics
+- `connectionService.ts` - getConnectionRecommendations, dismissRecommendation
+- `rpc_adin_recommend_people` - ADIN algorithm RPC
+- `find_adin_matches` - Core matching with blocked/dismissed exclusion
 
 ### 📋 Phase 3: Contribute Flow (PENDING)
 **Status**: 0% Started  
