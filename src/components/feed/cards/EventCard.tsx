@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar, MapPin, Users, Heart, MessageCircle, Share2, Bookmark } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import { linkifyContent } from '@/utils/linkifyContent';
 
 interface EventCardProps {
   item: UniversalFeedItem;
@@ -46,7 +47,7 @@ export const EventCard: React.FC<EventCardProps> = ({ item, currentUserId, onUpd
         <div>
           <h3 className="text-xl font-bold mb-2">{item.event_title}</h3>
           {item.content && (
-            <p className="text-muted-foreground">{item.content}</p>
+            <p className="text-muted-foreground">{linkifyContent(item.content)}</p>
           )}
         </div>
 

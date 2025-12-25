@@ -7,6 +7,7 @@
 
 import React, { useState } from 'react';
 import { UniversalFeedItem } from '@/types/feed';
+import { linkifyContent } from '@/utils/linkifyContent';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -160,17 +161,17 @@ export const StoryCard: React.FC<StoryCardProps> = ({
 
         {/* Body Preview with Paragraph Formatting */}
         <div className="prose prose-sm max-w-none">
-          {isExpanded ? (
+        {isExpanded ? (
             <div className="text-sm md:text-base text-muted-foreground space-y-3">
               {item.content.split('\n\n').map((paragraph, idx) => (
                 <p key={idx} className="whitespace-pre-line leading-relaxed">
-                  {paragraph}
+                  {linkifyContent(paragraph)}
                 </p>
               ))}
             </div>
           ) : (
             <p className="text-sm md:text-base text-muted-foreground line-clamp-4 whitespace-pre-line leading-relaxed">
-              {bodyPreview}
+              {linkifyContent(bodyPreview)}
               {needsExpansion && '...'}
             </p>
           )}

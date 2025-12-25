@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { linkifyContent } from '@/utils/linkifyContent';
 
 interface SharedPostCardProps {
   post: PostWithAuthor;
@@ -79,7 +80,7 @@ export function SharedPostCard({ post }: SharedPostCardProps) {
         }}
       >
         <p className="text-sm whitespace-pre-wrap">
-          {displayContent}
+          {linkifyContent(displayContent)}
         </p>
       </motion.div>
       
