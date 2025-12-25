@@ -3578,6 +3578,47 @@ export type Database = {
         }
         Relationships: []
       }
+      hashtag_analytics: {
+        Row: {
+          created_at: string | null
+          date: string
+          engagement_count: number | null
+          follower_change: number | null
+          hashtag_id: string
+          id: string
+          unique_users: number | null
+          usage_count: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          engagement_count?: number | null
+          follower_change?: number | null
+          hashtag_id: string
+          id?: string
+          unique_users?: number | null
+          usage_count?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          engagement_count?: number | null
+          follower_change?: number | null
+          hashtag_id?: string
+          id?: string
+          unique_users?: number | null
+          usage_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hashtag_analytics_hashtag_id_fkey"
+            columns: ["hashtag_id"]
+            isOneToOne: false
+            referencedRelation: "hashtags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hashtag_followers: {
         Row: {
           created_at: string | null
@@ -7939,6 +7980,7 @@ export type Database = {
         Args: { p_content: string; p_post_id: string }
         Returns: undefined
       }
+      extract_hashtags: { Args: { content: string }; Returns: string[] }
       find_adin_matches:
         | {
             Args: { target_user_id: string }
@@ -8364,8 +8406,9 @@ export type Database = {
           owner_id: string
           owner_name: string
           owner_username: string
-          status: Database["public"]["Enums"]["hashtag_status"]
-          type: Database["public"]["Enums"]["hashtag_type"]
+          status: string
+          tag: string
+          type: string
           usage_count: number
         }[]
       }
@@ -8497,6 +8540,10 @@ export type Database = {
       }
       get_or_create_conversation: {
         Args: { p_other_user_id: string; p_user_id: string }
+        Returns: string
+      }
+      get_or_create_hashtag: {
+        Args: { p_display_name?: string; p_name: string }
         Returns: string
       }
       get_organizer_analytics:
@@ -8755,8 +8802,14 @@ export type Database = {
       get_trending_hashtags: {
         Args: { p_days?: number; p_limit?: number }
         Returns: {
-          recent_usage_count: number
+          display_name: string
+          follower_count: number
+          id: string
+          name: string
+          recent_uses: number
           tag: string
+          trending_score: number
+          type: string
           usage_count: number
         }[]
       }
@@ -9044,6 +9097,10 @@ export type Database = {
       owns_organization: {
         Args: { _org_id: string; _user_id: string }
         Returns: boolean
+      }
+      process_post_hashtags: {
+        Args: { p_content: string; p_post_id: string; p_user_id: string }
+        Returns: undefined
       }
       profile_meets_visibility_requirement: {
         Args: { min_score?: number; user_id_param: string }
@@ -9377,7 +9434,8 @@ export type Database = {
           id: string
           is_verified: boolean
           name: string
-          type: Database["public"]["Enums"]["hashtag_type"]
+          tag: string
+          type: string
           usage_count: number
         }[]
       }

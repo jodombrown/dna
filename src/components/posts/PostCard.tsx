@@ -31,6 +31,7 @@ import { usePostViewTracker } from '@/hooks/usePostViewTracker';
 import { PostAnalytics } from './PostAnalytics';
 import { feedAnalytics } from '@/lib/feedAnalytics';
 import { MediaLightbox } from '@/components/feed/MediaLightbox';
+import { linkifyContent } from '@/utils/linkifyContent';
 
 interface PostCardProps {
   post: PostWithAuthor;
@@ -318,7 +319,7 @@ export function PostCard({
       {/* Share Commentary (if this is a repost with commentary) */}
       {isRepost && post.share_commentary && (
         <div className="mb-4">
-          <p className="whitespace-pre-wrap break-words">{post.share_commentary}</p>
+          <div className="whitespace-pre-wrap break-words">{linkifyContent(post.share_commentary)}</div>
         </div>
       )}
 
@@ -329,10 +330,10 @@ export function PostCard({
         <>
           {/* Content with Read More */}
           <div className="mb-4">
-            <p className="whitespace-pre-wrap break-words">
-              {isContentExpanded ? post.content : contentPreview}
+            <div className="whitespace-pre-wrap break-words">
+              {linkifyContent(isContentExpanded ? post.content : contentPreview)}
               {needsContentExpansion && !isContentExpanded && '...'}
-            </p>
+            </div>
             {needsContentExpansion && (
               <button
                 onClick={() => setIsContentExpanded(!isContentExpanded)}
