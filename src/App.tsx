@@ -144,6 +144,7 @@ const AccountSettings = lazy(() => import("./pages/dna/settings/AccountSettings"
 const PrivacySettings = lazy(() => import("./pages/dna/settings/PrivacySettings"));
 const NotificationSettings = lazy(() => import("./pages/dna/settings/NotificationSettings"));
 const PreferencesSettings = lazy(() => import("./pages/dna/settings/PreferencesSettings"));
+const MyHashtagsSettings = lazy(() => import("./pages/dna/settings/MyHashtagsSettings"));
 const AdinPreferences = lazy(() => import("./pages/AdinPreferences"));
 const NudgeCenter = lazy(() => import("./pages/NudgeCenter"));
 const EventsPage = lazy(() => import("./pages/EventsPage"));
@@ -258,6 +259,11 @@ function App() {
               <Route path="/dna/settings/preferences" element={
                 <OnboardingGuard>
                   <PreferencesSettings />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/settings/hashtags" element={
+                <OnboardingGuard>
+                  <MyHashtagsSettings />
                 </OnboardingGuard>
               } />
               {/* Legacy settings routes - redirect to new hub */}

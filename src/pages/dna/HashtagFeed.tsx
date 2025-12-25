@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Loader2, Hash, TrendingUp, Users, Calendar, ArrowLeft, Share2 } from 'lucide-react';
+import { Loader2, Hash, TrendingUp, Users, Calendar, ArrowLeft, Share2, Settings, Crown } from 'lucide-react';
 import { useHashtag } from '@/hooks/useHashtag';
 import { useTrendingHashtags } from '@/hooks/useTrendingHashtags';
 import { UniversalFeedItemComponent } from '@/components/feed/UniversalFeedItem';
@@ -83,6 +83,12 @@ export default function HashtagFeed() {
                       Verified
                     </Badge>
                   )}
+                  {hashtag?.owner_id === user?.id && (
+                    <Badge className="bg-dna-copper text-white">
+                      <Crown className="h-3 w-3 mr-1" />
+                      You own this
+                    </Badge>
+                  )}
                 </CardTitle>
                 <div className="flex items-center gap-2 mt-1">
                   <Badge variant={hashtag?.type === 'personal' ? 'default' : 'secondary'}>
@@ -93,7 +99,15 @@ export default function HashtagFeed() {
             </div>
 
             <div className="flex gap-2">
-              {user && (
+              {user && hashtag?.owner_id === user.id && (
+                <Button variant="outline" asChild>
+                  <Link to="/dna/settings/hashtags">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Manage
+                  </Link>
+                </Button>
+              )}
+              {user && hashtag?.owner_id !== user.id && (
                 <Button
                   variant={isFollowing ? 'outline' : 'default'}
                   onClick={toggleFollow}
@@ -115,8 +129,8 @@ export default function HashtagFeed() {
             </div>
           </div>
 
-          {/* Owner info (for personal hashtags) */}
-          {hashtag?.type === 'personal' && hashtag?.owner_id && (
+          {/* Owner info (for personal hashtags, only show if not the current user) */}
+          {hashtag?.type === 'personal' && hashtag?.owner_id && hashtag.owner_id !== user?.id && (
             <div className="flex items-center gap-2 mt-4 p-3 bg-muted/50 rounded-lg">
               <span className="text-sm text-muted-foreground">Owned by</span>
               <Link
