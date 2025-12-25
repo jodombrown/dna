@@ -681,12 +681,43 @@ async getConversations(
    * Report a message
    */
   async reportMessage(
-    _messageId: string,
-    _reason: 'spam' | 'harassment' | 'inappropriate' | 'scam' | 'other',
-    _description?: string
+    messageId: string,
+    reason: 'spam' | 'harassment' | 'inappropriate' | 'scam' | 'other',
+    description?: string
   ): Promise<string> {
-    console.log('Report message - feature pending');
-    return 'pending';
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    // Map UI reason values to database flag_type enum
+    const flagTypeMap: Record<string, string> = {
+      'spam': 'spam',
+      'harassment': 'harassment',
+      'inappropriate': 'inappropriate_content',
+      'scam': 'spam', // Scam maps to spam
+      'other': 'other',
+    };
+
+    const flagType = flagTypeMap[reason] || 'other';
+
+    const { data, error } = await supabase
+      .from('content_flags')
+      .insert({
+        content_type: 'message',
+        content_id: messageId,
+        flagged_by: user.id,
+        flag_type: flagType,
+        reason: description || null,
+        status: 'pending',
+      })
+      .select('id')
+      .single();
+
+    if (error) {
+      console.error('Error reporting message:', error);
+      throw new Error('Failed to report message');
+    }
+
+    return data.id;
   },
 
   // =====================================================

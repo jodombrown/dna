@@ -35,3 +35,20 @@ export interface MutualConnection {
   avatar_url?: string;
   headline?: string;
 }
+
+export interface ConnectionRecommendation {
+  user_id: string;
+  username: string;
+  full_name: string;
+  avatar_url?: string;
+  headline?: string;
+  location?: string;
+  profession?: string;
+  match_score: number;
+  shared_skills_count: number;
+  shared_interests_count: number;
+  mutual_connections_count: number;
+  same_heritage: boolean;
+  same_region: boolean;
+  match_reasons: string[];
+}

@@ -142,6 +142,8 @@ const ProfileEdit = lazy(() => import("./pages/ProfileEdit"));
 // Settings Hub pages
 const AccountSettings = lazy(() => import("./pages/dna/settings/AccountSettings"));
 const PrivacySettings = lazy(() => import("./pages/dna/settings/PrivacySettings"));
+const BlockedUsersSettings = lazy(() => import("./pages/dna/settings/BlockedUsersSettings"));
+const MyReportsSettings = lazy(() => import("./pages/dna/settings/MyReportsSettings"));
 const NotificationSettings = lazy(() => import("./pages/dna/settings/NotificationSettings"));
 const PreferencesSettings = lazy(() => import("./pages/dna/settings/PreferencesSettings"));
 const MyHashtagsSettings = lazy(() => import("./pages/dna/settings/MyHashtagsSettings"));
@@ -249,6 +251,16 @@ function App() {
               <Route path="/dna/settings/privacy" element={
                 <OnboardingGuard>
                   <PrivacySettings />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/settings/blocked" element={
+                <OnboardingGuard>
+                  <BlockedUsersSettings />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/settings/reports" element={
+                <OnboardingGuard>
+                  <MyReportsSettings />
                 </OnboardingGuard>
               } />
               <Route path="/dna/settings/notifications" element={

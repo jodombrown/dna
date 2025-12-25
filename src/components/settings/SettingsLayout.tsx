@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, User, Shield, Bell, Settings, ChevronRight, Hash } from 'lucide-react';
+import { ArrowLeft, User, Shield, Bell, Settings, ChevronRight, Hash, UserX, Flag } from 'lucide-react';
 
 interface SettingsNavItem {
   label: string;
@@ -24,6 +24,18 @@ const settingsNavItems: SettingsNavItem[] = [
     href: '/dna/settings/privacy',
     icon: Shield,
     description: 'Control who can see your profile',
+  },
+  {
+    label: 'Blocked Users',
+    href: '/dna/settings/blocked',
+    icon: UserX,
+    description: 'Manage users you\'ve blocked',
+  },
+  {
+    label: 'My Reports',
+    href: '/dna/settings/reports',
+    icon: Flag,
+    description: 'View reports you\'ve submitted',
   },
   {
     label: 'Notifications',
