@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { ConnectionStatus, Connection, ConnectionRequest, ConnectionProfile } from '@/types/connections';
+import { ConnectionStatus, Connection, ConnectionRequest, ConnectionProfile, ConnectionRecommendation } from '@/types/connections';
 import { BlockedUser } from '@/types/blocked';
 import { sendNotificationEmail, NOTIFICATION_TYPES } from './notificationService';
 
@@ -302,5 +302,41 @@ export const connectionService = {
     }
 
     return data || false;
+  },
+
+  /**
+   * Get smart connection recommendations based on ADIN algorithm
+   * Uses weighted scoring: skills (25%), interests (25%), heritage (20%), mutual connections (20%), region (10%)
+   */
+  async getConnectionRecommendations(limit: number = 10): Promise<ConnectionRecommendation[]> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+
+    const { data, error } = await supabase.rpc('get_connection_recommendations', {
+      p_user_id: user.id,
+      p_limit: limit,
+    });
+
+    if (error) {
+      console.error('Error getting connection recommendations:', error);
+      return [];
+    }
+
+    return (data || []).map((item: any) => ({
+      user_id: item.user_id,
+      username: item.username,
+      full_name: item.full_name,
+      avatar_url: item.avatar_url,
+      headline: item.headline,
+      location: item.location,
+      profession: item.profession,
+      match_score: item.match_score,
+      shared_skills_count: item.shared_skills_count,
+      shared_interests_count: item.shared_interests_count,
+      mutual_connections_count: item.mutual_connections_count,
+      same_heritage: item.same_heritage,
+      same_region: item.same_region,
+      match_reasons: item.match_reasons || [],
+    })) as ConnectionRecommendation[];
   },
 };

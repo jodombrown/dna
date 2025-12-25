@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Globe, MapPin, Lightbulb, UserPlus } from 'lucide-react';
+import { Globe, MapPin, Lightbulb, UserPlus, Sparkles, Users, Heart, Flag } from 'lucide-react';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
@@ -12,13 +12,15 @@ import { useState } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { ConnectionRequestModal } from './ConnectionRequestModal';
 import { ActivityIndicator } from '@/components/profile/ActivityIndicator';
-import { SocialProofBadge } from '@/components/profile/SocialProofBadge';
 import { TYPOGRAPHY } from '@/lib/typography.config';
-
-interface AfricaFocusArea {
-  geography: string;
-  sectors: string[];
-}
+import { connectionService } from '@/services/connectionService';
+import { ConnectionRecommendation } from '@/types/connections';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface Profile {
   id: string;
@@ -33,11 +35,15 @@ interface Profile {
   [key: string]: any; // Allow other profile fields
 }
 
-interface ScoredProfile extends Profile {
-  score: number;
-  matchPercentage?: number;
-  reason: string;
-}
+// Icon mapping for match reasons
+const getReasonIcon = (reason: string) => {
+  if (reason.includes('skill')) return Sparkles;
+  if (reason.includes('interest')) return Heart;
+  if (reason.includes('heritage') || reason.includes('Heritage')) return Flag;
+  if (reason.includes('mutual') || reason.includes('connection')) return Users;
+  if (reason.includes('region') || reason.includes('Region')) return MapPin;
+  return Lightbulb;
+};
 
 export const ConnectionRecommendationsWidget = () => {
   const { user } = useAuth();
@@ -47,183 +53,12 @@ export const ConnectionRecommendationsWidget = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
 
-  // Fetch current user profile
-  const { data: currentUser } = useQuery({
-    queryKey: ['current-user-full', user?.id],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user!.id)
-        .single();
-      return data as Profile;
-    },
-    enabled: !!user?.id,
-  });
-
-  // Fetch existing connections
-  const { data: existingConnections } = useQuery({
-    queryKey: ['user-connections', user?.id],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from('connections')
-        .select('requester_id, recipient_id')
-        .or(`requester_id.eq.${user!.id},recipient_id.eq.${user!.id}`)
-        .eq('status', 'accepted');
-      return data?.flatMap(c => [c.requester_id, c.recipient_id]).filter(id => id !== user!.id) || [];
-    },
-    enabled: !!user?.id,
-  });
-
-  // Fetch pending connection requests (sent and received)
-  const { data: pendingRequests } = useQuery({
-    queryKey: ['pending-requests', user?.id],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from('connections')
-        .select('requester_id, recipient_id')
-        .or(`requester_id.eq.${user!.id},recipient_id.eq.${user!.id}`)
-        .eq('status', 'pending');
-      
-      return data?.flatMap(c => [c.requester_id, c.recipient_id]).filter(id => id !== user!.id) || [];
-    },
-    enabled: !!user?.id,
-  });
-
-  // Fetch and score recommendations
+  // Use the ADIN algorithm via RPC for smart recommendations
   const { data: recommendations, isLoading } = useQuery({
-    queryKey: ['connection-recommendations', user?.id, currentUser, existingConnections, pendingRequests],
-    queryFn: async () => {
-      if (!currentUser) return [];
-
-      // Fetch potential candidates (exclude self, existing connections, pending requests, incomplete profiles)
-      const excludedIds = [
-        user!.id,
-        ...(existingConnections || []),
-        ...(pendingRequests || [])
-      ];
-
-      const { data: candidates } = await supabase
-        .from('profiles')
-        .select('*')
-        .not('id', 'in', `(${excludedIds.join(',')})`)
-        .gte('profile_completion_percentage', 40)
-        .limit(100); // Fetch more to apply diversity later
-
-      if (!candidates) return [];
-
-      // Get viewed recommendations from localStorage for anti-staleness
-      const viewedKey = `recommendations_viewed_${user!.id}`;
-      const viewed = JSON.parse(localStorage.getItem(viewedKey) || '{}');
-      const now = Date.now();
-      const sevenDaysAgo = now - 7 * 24 * 60 * 60 * 1000;
-
-      // Score each candidate with multi-dimensional algorithm
-      const scored: ScoredProfile[] = candidates.map(candidate => {
-        let score = 0;
-        const reasons: string[] = [];
-
-        // A. DIASPORA ALIGNMENT (30 points max)
-        if (candidate.country_of_origin === currentUser.country_of_origin && candidate.country_of_origin) {
-          score += 20;
-          reasons.push(`Both from ${currentUser.country_of_origin}`);
-        }
-        if (candidate.diaspora_status === currentUser.diaspora_status && candidate.diaspora_status) {
-          score += 10;
-        }
-
-        // B. INTENTION COMPLEMENTARITY (25 points max)
-        const userIntents = currentUser.intentions || [];
-        const candIntents = candidate.intentions || [];
-        
-        // High synergy pairs
-        if ((userIntents.includes('invest') && candIntents.includes('build')) ||
-            (userIntents.includes('build') && candIntents.includes('invest'))) {
-          score += 25;
-          reasons.push('Investor seeking builders');
-        } else if ((userIntents.includes('mentor') && candIntents.includes('learn')) ||
-                   (userIntents.includes('learn') && candIntents.includes('mentor'))) {
-          score += 20;
-          reasons.push('Mentor-learner match');
-        } else if ((userIntents.includes('give_back') && candIntents.includes('build')) ||
-                   (userIntents.includes('build') && candIntents.includes('give_back'))) {
-          score += 15;
-        } else {
-          // Matching intentions
-          const sharedIntents = userIntents.filter(i => candIntents.includes(i));
-          if (sharedIntents.length > 0) {
-            score += Math.min(10, sharedIntents.length * 5);
-          }
-        }
-
-        // C. AFRICA FOCUS OVERLAP (20 points max)
-        const userAreas = currentUser.africa_focus_areas || [];
-        const candAreas = candidate.africa_focus_areas || [];
-        const sharedAreas = userAreas.filter(a => candAreas.includes(a));
-        
-        if (sharedAreas.length > 0) {
-          score += 15;
-          if (reasons.length === 0) {
-            reasons.push(`Both focused on ${sharedAreas[0]}`);
-          }
-          // Additional points for sector overlap (up to 5 more)
-          score += Math.min(5, sharedAreas.length - 1);
-        }
-
-        // D. SKILLS RELEVANCE (15 points max)
-        const userSkills = currentUser.skills || [];
-        const candSkills = candidate.skills || [];
-        const sharedSkills = userSkills.filter(s => candSkills.includes(s));
-        score += Math.min(15, sharedSkills.length * 3);
-
-        // E. NETWORK PROXIMITY (10 points max)
-        // For now, placeholder - would need connections graph query
-        // In future: query mutual connections via connections table
-
-        // Apply anti-staleness decay (10% if shown in last 7 days)
-        if (viewed[candidate.id] && viewed[candidate.id] > sevenDaysAgo) {
-          score = Math.floor(score * 0.9);
-        }
-
-        // Calculate match percentage
-        const matchPercentage = Math.min(100, Math.round(score));
-
-        return {
-          ...candidate,
-          score,
-          matchPercentage,
-          reason: reasons[0] || 'Recommended for you'
-        };
-      });
-
-      // Apply diversity rules
-      let diverse: ScoredProfile[] = [];
-      const cityCounts: Record<string, number> = {};
-
-      for (const profile of scored.sort((a, b) => b.score - a.score)) {
-        const city = profile.location?.split(',')[0]?.trim() || 'Unknown';
-        const cityCount = cityCounts[city] || 0;
-
-        // Max 2 from same city in recommendations
-        if (cityCount < 2) {
-          diverse.push(profile);
-          cityCounts[city] = cityCount + 1;
-        }
-
-        if (diverse.length >= 5) break;
-      }
-
-      // Track viewed recommendations
-      const updatedViewed = { ...viewed };
-      diverse.forEach(p => {
-        updatedViewed[p.id] = now;
-      });
-      localStorage.setItem(viewedKey, JSON.stringify(updatedViewed));
-
-      return diverse;
-    },
-    enabled: !!currentUser && !!existingConnections && !!pendingRequests,
-    staleTime: 24 * 60 * 60 * 1000, // Cache for 24 hours
+    queryKey: ['adin-connection-recommendations', user?.id],
+    queryFn: () => connectionService.getConnectionRecommendations(6),
+    enabled: !!user?.id,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
   const handleConnect = (profile: Profile) => {
@@ -269,13 +104,13 @@ export const ConnectionRecommendationsWidget = () => {
     }
   };
 
-  if (!currentUser || isLoading) {
+  if (isLoading) {
     return (
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Globe className="h-5 w-5" />
-            Recommended Connections
+            <Sparkles className="h-5 w-5 text-dna-emerald" />
+            Smart Recommendations
           </CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-center py-8">
@@ -290,8 +125,8 @@ export const ConnectionRecommendationsWidget = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Globe className="h-5 w-5" />
-            Recommended Connections
+            <Sparkles className="h-5 w-5 text-dna-emerald" />
+            Smart Recommendations
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -304,102 +139,154 @@ export const ConnectionRecommendationsWidget = () => {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Globe className="h-5 w-5 text-copper-500" />
-          Recommended Connections
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {recommendations.map((profile) => (
-          <div
-            key={profile.id}
-            className="flex items-start gap-3 p-3 rounded-lg border hover:bg-accent/50 transition-colors"
-          >
-            <Avatar className="h-12 w-12">
-              <AvatarImage src={profile.avatar_url} alt={profile.full_name} />
-              <AvatarFallback>
-                {profile.full_name?.split(' ').map(n => n[0]).join('').slice(0, 2)}
-              </AvatarFallback>
-            </Avatar>
+    <TooltipProvider>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-dna-emerald" />
+            Smart Recommendations
+            <Badge variant="outline" className="ml-auto text-xs font-normal">
+              ADIN Powered
+            </Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {recommendations.map((rec) => {
+            const profileForModal: Profile = {
+              id: rec.user_id,
+              full_name: rec.full_name,
+              avatar_url: rec.avatar_url,
+              headline: rec.headline,
+              location: rec.location,
+            };
 
-            <div className="flex-1 min-w-0">
-              <h4 className={`${TYPOGRAPHY.h5} truncate`}>
-                {profile.full_name}
-                {profile.username && (
-                  <span className={`${TYPOGRAPHY.caption} ml-1`}>
-                    @{profile.username}
-                  </span>
-                )}
-              </h4>
-              {profile.headline && (
-                <p className={`${TYPOGRAPHY.caption} truncate`}>
-                  {profile.headline}
-                  {profile.company && ` @ ${profile.company}`}
-                </p>
-              )}
-              {profile.location && (
-                <div className="flex items-center gap-1 mt-1">
-                  <MapPin className="h-3 w-3 text-muted-foreground" />
-                  <span className={TYPOGRAPHY.caption}>{profile.location}</span>
+            return (
+              <div
+                key={rec.user_id}
+                className="flex items-start gap-3 p-3 rounded-lg border hover:bg-accent/50 transition-colors"
+              >
+                <Avatar className="h-12 w-12 cursor-pointer" onClick={() => navigate(`/u/${rec.username}`)}>
+                  <AvatarImage src={rec.avatar_url} alt={rec.full_name} />
+                  <AvatarFallback>
+                    {rec.full_name?.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                  </AvatarFallback>
+                </Avatar>
+
+                <div className="flex-1 min-w-0">
+                  <h4
+                    className={`${TYPOGRAPHY.h5} truncate cursor-pointer hover:text-dna-emerald transition-colors`}
+                    onClick={() => navigate(`/u/${rec.username}`)}
+                  >
+                    {rec.full_name}
+                    {rec.username && (
+                      <span className={`${TYPOGRAPHY.caption} ml-1`}>
+                        @{rec.username}
+                      </span>
+                    )}
+                  </h4>
+                  {rec.headline && (
+                    <p className={`${TYPOGRAPHY.caption} truncate`}>
+                      {rec.headline}
+                    </p>
+                  )}
+                  {rec.location && (
+                    <div className="flex items-center gap-1 mt-1">
+                      <MapPin className="h-3 w-3 text-muted-foreground" />
+                      <span className={TYPOGRAPHY.caption}>{rec.location}</span>
+                    </div>
+                  )}
+
+                  {/* Match Score & Reasons */}
+                  <div className="flex items-center gap-2 mt-2 flex-wrap">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Badge
+                          variant={rec.match_score >= 50 ? 'default' : 'secondary'}
+                          className={`text-xs cursor-help ${rec.match_score >= 70 ? 'bg-dna-emerald hover:bg-dna-forest' : ''}`}
+                        >
+                          {Math.round(rec.match_score)}% match
+                        </Badge>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="max-w-xs">
+                        <div className="space-y-2">
+                          <p className="font-medium text-sm">Why you're matched:</p>
+                          <ul className="text-xs space-y-1">
+                            {rec.match_reasons.map((reason, idx) => {
+                              const Icon = getReasonIcon(reason);
+                              return (
+                                <li key={idx} className="flex items-center gap-2">
+                                  <Icon className="h-3 w-3 text-dna-emerald" />
+                                  <span>{reason}</span>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                          <div className="pt-2 border-t text-xs text-muted-foreground">
+                            <p>Skills: {rec.shared_skills_count} shared</p>
+                            <p>Interests: {rec.shared_interests_count} shared</p>
+                            <p>Mutual connections: {rec.mutual_connections_count}</p>
+                          </div>
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+
+                    {/* Show top reason icons */}
+                    <div className="flex items-center gap-1">
+                      {rec.match_reasons.slice(0, 2).map((reason, idx) => {
+                        const Icon = getReasonIcon(reason);
+                        return (
+                          <Tooltip key={idx}>
+                            <TooltipTrigger asChild>
+                              <div className="p-1 rounded-full bg-muted cursor-help">
+                                <Icon className="h-3 w-3 text-dna-emerald" />
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent side="top">
+                              <span className="text-xs">{reason}</span>
+                            </TooltipContent>
+                          </Tooltip>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
-              )}
-              
-              {/* Activity Indicator */}
-              <ActivityIndicator 
-                lastSeen={profile.last_seen_at} 
-                className="mt-1"
-              />
-              
-              <div className="flex items-center gap-2 mt-2">
-                <Badge 
-                  variant={profile.matchPercentage && profile.matchPercentage >= 70 ? 'default' : 'secondary'} 
-                  className="text-xs animate-breathing-pulse shadow-md"
+
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={() => handleConnect(profileForModal)}
+                  disabled={connectingTo === rec.user_id}
+                  className="shrink-0 min-w-[44px] min-h-[44px] bg-dna-emerald hover:bg-dna-forest"
                 >
-                  {profile.matchPercentage || profile.score}% match
-                </Badge>
-                <div className="flex items-center gap-1 text-xs text-copper-600">
-                  <Lightbulb className="h-3 w-3" />
-                  <span>{profile.reason}</span>
-                </div>
+                  {connectingTo === rec.user_id ? (
+                    <LoadingSpinner size="sm" />
+                  ) : (
+                    <><UserPlus className="h-3 w-3 mr-1" /> Connect</>
+                  )}
+                </Button>
               </div>
-            </div>
+            );
+          })}
 
-            <Button
-              variant="default"
-              size="sm"
-              onClick={() => handleConnect(profile)}
-              disabled={connectingTo === profile.id}
-              className="shrink-0 min-w-[44px] min-h-[44px] bg-dna-emerald hover:bg-dna-forest"
-            >
-              {connectingTo === profile.id ? (
-                <LoadingSpinner size="sm" />
-              ) : (
-                <><UserPlus className="h-3 w-3 mr-1" /> Connect</>
-              )}
-            </Button>
-          </div>
-        ))}
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => navigate('/dna/discover')}
+          >
+            See all suggestions &rarr;
+          </Button>
+        </CardContent>
 
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={() => navigate('/dna/discover')}
-        >
-          See all suggestions &rarr;
-        </Button>
-      </CardContent>
-
-      <ConnectionRequestModal
-        isOpen={modalOpen}
-        onClose={() => {
-          setModalOpen(false);
-          setSelectedUser(null);
-        }}
-        onSend={handleSendRequest}
-        targetUser={selectedUser}
-      />
-    </Card>
+        <ConnectionRequestModal
+          isOpen={modalOpen}
+          onClose={() => {
+            setModalOpen(false);
+            setSelectedUser(null);
+          }}
+          onSend={handleSendRequest}
+          targetUser={selectedUser}
+        />
+      </Card>
+    </TooltipProvider>
   );
 };
