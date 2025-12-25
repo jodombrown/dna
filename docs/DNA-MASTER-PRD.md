@@ -1,8 +1,8 @@
 # DNA Platform - Master Product Requirements Document
 
-**Version:** 1.0  
+**Version:** 1.1  
 **Last Updated:** December 25, 2024  
-**Status:** Active Development
+**Status:** Active Development - Phase 1 Complete, Phase 2 In Progress
 
 ---
 
@@ -129,42 +129,59 @@ src/
 
 ### ✅ Fully Functional (100%)
 
-| Feature | Components | Database |
-|---------|------------|----------|
-| Authentication | Login, signup, password reset | auth.users, profiles |
-| User Profiles | Creation, editing, completion tracking | profiles, public_profiles view |
-| Onboarding | Multi-step flow, 40% completion gate | profiles.onboarding_completed |
-| Connections | Request, accept, reject, health tracking | connections, adin_nudges |
-| Events (Convene) | Create, register, check-in, analytics | events, event_attendees, event_registrations |
-| Collaboration Spaces | Create, manage, membership | collaboration_spaces, collaboration_memberships |
-| Tasks & Milestones | CRUD, assignment, comments | space_tasks, task_milestones, task_comments |
-| Social Feed | Posts with text/media, comments | posts, comments, post_comments |
-| Hashtags Core | Create, link to posts, trending | hashtags, post_hashtags |
-| Hashtag Ownership | Personal hashtags, approval flow | hashtags (is_personal, requires_approval), hashtag_usage_requests |
-| Mentions | @username in posts, notifications | post_mentions |
-| Reshares | Share posts, attribution | post_reshares |
-| Notifications | In-app, preferences | notifications, adin_preferences |
+| Feature | Components | Database | Notes |
+|---------|------------|----------|-------|
+| Authentication | Login, signup, password reset | auth.users, profiles | Email/password + session management |
+| User Profiles | Creation, editing, completion tracking | profiles, public_profiles view | 40% completion gate |
+| Onboarding | Multi-step flow | profiles.onboarding_completed | Heritage, skills, interests |
+| Connections | Request, accept, reject, remove | connections | Bidirectional model |
+| Block/Unblock Users | Block button, settings page | blocked_users | Full integration |
+| Events (Convene) | Create, register, check-in, analytics | events, event_attendees | Registration forms |
+| Collaboration Spaces | Create, manage, membership | collaboration_spaces, collaboration_memberships | Owner/admin/member roles |
+| Tasks & Milestones | CRUD, assignment, comments | space_tasks, task_milestones | Full task workflow |
+| Social Feed | Posts with text/media, comments | posts, comments, post_comments | Visibility controls |
+| Hashtags Core | Create, link to posts, trending | hashtags, post_hashtags | Usage tracking |
+| Hashtag Ownership | Personal hashtags, approval flow | hashtags (is_personal, requires_approval), hashtag_usage_requests | Owner limits (5 active) |
+| Mentions | @username in posts, notifications | post_mentions | Links to profiles |
+| Reshares | Share posts, attribution | post_reshares | Reshare counts |
+| Mutual Connections | Display shared connections | Via RPC functions | Profile pages |
+| Notifications | In-app, preferences | notifications, adin_preferences | Categorized types |
+| Report Content | Report dialog, my reports page | content_flags | Multiple content types |
 
 ### 🚧 Partially Implemented (50-90%)
 
-| Feature | Status | Missing |
-|---------|--------|---------|
-| Messaging | 80% | Delete message, real-time polish, group conversations |
-| Opportunities | 70% | Application review workflow, org profiles |
-| Contribution Cards | 60% | Submit offer flow, impact tracking |
-| ADIN Intelligence | 40% | Smart recommendations, match scoring |
-| Regional Hubs | 30% | Live metrics, heritage matching |
-| Admin Dashboard | 60% | Content moderation actions, analytics depth |
+| Feature | Status | What Works | What's Missing |
+|---------|--------|------------|----------------|
+| Messaging | 85% | 1-on-1 conversations, send/receive | Delete message, real-time polish, group chat |
+| Opportunities | 70% | Listings, application submission | Review workflow, org profiles |
+| ADIN Recommendations | 60% | Basic RPC function, widget | Score refinement, "why recommended" |
+| Contribution Cards | 60% | Create cards, display | Submit offer flow, tracking |
+| Regional Hubs | 40% | Country pages, basic regions | Live metrics, heritage matching |
+| Admin Dashboard | 70% | Basic analytics, user management | Moderation actions, bulk operations |
+| Content Moderation | 50% | Report submission, view reports | Admin review queue, action flow |
 
 ### 📋 Not Started (0%)
 
-| Feature | Priority | Complexity |
-|---------|----------|------------|
-| Block/Report User | HIGH | Medium |
-| Video/Audio Intros | LOW | High |
-| Calendar Integrations | MEDIUM | Medium |
-| PWA Support | LOW | Medium |
-| Push Notifications | LOW | High |
+| Feature | Priority | Complexity | Notes |
+|---------|----------|------------|-------|
+| Delete Message | HIGH | Low | Add soft delete + UI |
+| Moderation Actions | HIGH | Medium | Admin approve/reject/warn |
+| Video/Audio Intros | LOW | High | Storage + playback |
+| Calendar Integrations | MEDIUM | Medium | ICS export exists partially |
+| PWA Support | LOW | Medium | Service worker needed |
+| Push Notifications | LOW | High | FCM/Web Push |
+
+---
+
+## Recent Completions (Dec 25, 2024)
+
+1. **Reshares** - Full reshare flow with attribution and counts
+2. **Mutual Connections** - Display shared connections on profiles
+3. **Mentions + Notifications** - @username mentions trigger notifications
+4. **Hashtags Phase 1** - Core hashtag create, link, trending
+5. **Hashtags Phase 2** - Personal hashtag ownership with approval
+6. **Block/Report User** - Block user flow, report content/users
+7. **My Reports Settings** - View submitted reports with status
 
 ---
 
@@ -295,58 +312,39 @@ collaboration_spaces 1--* space_tasks
 
 ## 6. Build Plan
 
-### Phase 1: Safety & Trust (Priority: CRITICAL)
-**Effort**: 2-3 days  
-**Goal**: Users can protect themselves and report abuse
+### ✅ Phase 1: Safety & Trust (COMPLETE)
+**Status**: 100% Complete  
+**Completed**: Dec 25, 2024
 
-1. **Block User Flow**
-   - Block button on profile
-   - blocked_users table integration
-   - Hide blocked users from feeds, search, suggestions
-   - Prevent messaging blocked users
+| Task | Status | Notes |
+|------|--------|-------|
+| Block User Flow | ✅ | Block button, blocked_users integration, feed filtering |
+| Report User/Content | ✅ | ReportDialog, content_flags, MyReportsSettings |
+| Blocked Users Settings | ✅ | View/unblock from settings |
+| Content Flags | ✅ | Reports submitted and viewable |
 
-2. **Report User/Content**
-   - Report dialog with reason selection
-   - content_flags table integration
-   - Admin notification
+### 🚧 Phase 2: ADIN Intelligence (IN PROGRESS)
+**Status**: 60% Complete  
+**Priority**: HIGH  
+**Effort Remaining**: 2-3 days
 
-3. **Delete Message**
-   - Soft delete in messages table
-   - UI confirmation dialog
-   - Update conversation last_message
+| Task | Status | Notes |
+|------|--------|-------|
+| Connection Recommendations | 🚧 70% | RPC exists, widget exists, needs refinement |
+| Regional Hub Metrics | 📋 30% | Country pages exist, needs live metrics |
+| Heritage Matching | 📋 20% | Profile has fields, needs scoring |
+| "Why Recommended" Tooltip | 📋 0% | UI component needed |
 
-4. **Content Moderation Actions**
-   - Admin review queue
-   - Approve/reject/warn actions
-   - User notification on action
+**Next Steps**:
+1. Enhance `rpc_adin_recommend_people` with weighted scoring
+2. Create `RegionalMetricsWidget` component
+3. Add `WhyRecommended` tooltip to recommendation cards
+4. Implement heritage-based opportunity filtering
 
-### Phase 2: ADIN Intelligence (Priority: HIGH)
-**Effort**: 3-4 days  
-**Goal**: Smart recommendations feel magical
-
-1. **Connection Recommendations**
-   - Match scoring algorithm
-   - Factors: skills, interests, heritage, mutual connections
-   - "People you may know" component
-
-2. **Regional Hub Metrics**
-   - Live counts: members, events, projects per region
-   - Aggregate queries with caching
-   - Regional activity feed
-
-3. **Heritage Matching**
-   - Country-to-region mapping
-   - Preference weighting
-   - Personalized opportunity surfacing
-
-4. **Opportunity Scoring**
-   - Weighted factors algorithm
-   - Score display on cards
-   - "Why recommended" tooltip
-
-### Phase 3: Contribute Flow (Priority: HIGH)
-**Effort**: 2-3 days  
-**Goal**: Complete contribution lifecycle
+### 📋 Phase 3: Contribute Flow (PENDING)
+**Status**: 0% Started  
+**Priority**: HIGH  
+**Effort**: 2-3 days
 
 1. **Submit Offer**
    - Offer form with amount/description
@@ -363,9 +361,10 @@ collaboration_spaces 1--* space_tasks
    - Display on profile
    - Community impact dashboard
 
-### Phase 4: Collaborate Enhancement (Priority: MEDIUM)
-**Effort**: 2-3 days  
-**Goal**: Spaces feel like real workspaces
+### 📋 Phase 4: Collaborate Enhancement (PENDING)
+**Status**: 0% Started  
+**Priority**: MEDIUM  
+**Effort**: 2-3 days
 
 1. **Space Board View**
    - Kanban-style task board
@@ -375,7 +374,6 @@ collaboration_spaces 1--* space_tasks
 2. **Task Dependencies**
    - Blocked by / blocks relationships
    - Visual dependency graph
-   - Auto-status updates
 
 3. **Member Invitations**
    - Invite by email/username
@@ -384,56 +382,51 @@ collaboration_spaces 1--* space_tasks
 
 4. **Activity Feed**
    - Space-scoped activity log
-   - Task updates, comments, milestones
-   - Real-time via Supabase
+   - Real-time updates
 
-### Phase 5: Convene Polish (Priority: MEDIUM)
-**Effort**: 2-3 days  
-**Goal**: Events are delightful to manage
+### 📋 Phase 5: Convene Polish (PENDING)
+**Status**: 0% Started  
+**Priority**: MEDIUM  
+**Effort**: 2-3 days
 
 1. **Featured Events**
    - Admin-curated featured flag
    - Featured events carousel
-   - Category highlighting
 
 2. **Event Reminders**
    - 24h and 1h before notifications
    - Edge function cron job
-   - User preference respect
 
 3. **Ticketing Basics**
    - Free vs paid ticket types
-   - Quantity limits
-   - Waitlist support
+   - Quantity limits, waitlist
 
 4. **Calendar Export**
    - ICS file generation
    - Add to Google/Outlook buttons
-   - Recurring events support
 
-### Phase 6: Mobile & Polish (Priority: LOW)
-**Effort**: 2-3 days  
-**Goal**: Mobile experience is first-class
+### 📋 Phase 6: Messaging & Polish (PENDING)
+**Status**: 0% Started  
+**Priority**: MEDIUM  
+**Effort**: 2-3 days
 
-1. **Mobile Navigation**
+1. **Delete Message**
+   - Soft delete in messages table
+   - UI confirmation dialog
+   - "Message deleted" placeholder
+
+2. **Group Conversations**
+   - Multi-participant threads
+   - Group name/avatar
+
+3. **Mobile Navigation**
    - Bottom tab bar
    - Swipe gestures
    - Pull-to-refresh
 
-2. **Filter Improvements**
-   - Mobile-friendly filter sheets
-   - Saved filter presets
-   - Quick filter chips
-
-3. **Profile Editing**
-   - Full profile edit flow
-   - Image cropping
-   - Preview mode
-
 4. **PWA Enhancements**
    - Service worker caching
    - Offline indicator
-   - Install prompt
 
 ---
 

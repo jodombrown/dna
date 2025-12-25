@@ -312,31 +312,46 @@ export const connectionService = {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return [];
 
-    const { data, error } = await supabase.rpc('get_connection_recommendations', {
-      p_user_id: user.id,
-      p_limit: limit,
-    });
+    // Use rpc_adin_recommend_people which uses auth.uid() internally
+    const { data, error } = await supabase.rpc('rpc_adin_recommend_people');
 
     if (error) {
       console.error('Error getting connection recommendations:', error);
       return [];
     }
 
-    return (data || []).map((item: any) => ({
-      user_id: item.user_id,
-      username: item.username,
-      full_name: item.full_name,
-      avatar_url: item.avatar_url,
-      headline: item.headline,
-      location: item.location,
-      profession: item.profession,
-      match_score: item.match_score,
-      shared_skills_count: item.shared_skills_count,
-      shared_interests_count: item.shared_interests_count,
-      mutual_connections_count: item.mutual_connections_count,
-      same_heritage: item.same_heritage,
-      same_region: item.same_region,
-      match_reasons: item.match_reasons || [],
-    })) as ConnectionRecommendation[];
+    if (!data || !Array.isArray(data)) return [];
+
+    // Fetch profile details for the matched users
+    const userIds = data.map((item: any) => item.matched_user_id).filter(Boolean);
+    if (userIds.length === 0) return [];
+
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, username, full_name, avatar_url, headline, location, profession')
+      .in('id', userIds)
+      .limit(limit);
+
+    const profileMap = new Map((profiles || []).map(p => [p.id, p]));
+
+    return data.slice(0, limit).map((item: any) => {
+      const profile = profileMap.get(item.matched_user_id);
+      return {
+        user_id: item.matched_user_id,
+        username: profile?.username || '',
+        full_name: profile?.full_name || 'Unknown',
+        avatar_url: profile?.avatar_url || null,
+        headline: profile?.headline || null,
+        location: profile?.location || null,
+        profession: profile?.profession || null,
+        match_score: Number(item.match_score) || 0,
+        shared_skills_count: 0,
+        shared_interests_count: 0,
+        mutual_connections_count: 0,
+        same_heritage: (item.shared_regions?.length || 0) > 0,
+        same_region: (item.shared_sectors?.length || 0) > 0,
+        match_reasons: item.match_reason ? [item.match_reason] : [],
+      };
+    }).filter((rec: any) => rec.user_id) as ConnectionRecommendation[];
   },
 };
