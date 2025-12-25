@@ -42,10 +42,11 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
   const navigate = useNavigate();
 
   // Fetch messages
-  const { data: messages = [], isLoading } = useQuery({
+  const { data: messages = [], isLoading, isError, error } = useQuery({
     queryKey: ['messages', conversationId],
     queryFn: () => messageService.getMessages(conversationId),
     refetchInterval: 5000, // Poll every 5s as backup
+    retry: 2, // Retry failed requests twice
   });
 
   // Send message mutation
@@ -262,6 +263,16 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        ) : isError ? (
+          <div className="flex flex-col items-center justify-center h-full text-muted-foreground text-sm gap-2">
+            <p>Unable to load messages</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="text-primary hover:underline"
+            >
+              Try refreshing
+            </button>
           </div>
         ) : messages.length === 0 ? (
           <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
