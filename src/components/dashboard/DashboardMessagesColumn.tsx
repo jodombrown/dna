@@ -49,7 +49,7 @@ export default function DashboardMessagesColumn({ profile, isOwnProfile }: Dashb
         {
           event: '*',
           schema: 'public',
-          table: 'messages_new',
+          table: 'messages',
         },
         () => {
           refetch();

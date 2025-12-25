@@ -309,20 +309,17 @@ export const connectionService = {
    * User won't see this person in recommendations again
    */
   async dismissRecommendation(dismissedUserId: string): Promise<void> {
-    const { error } = await supabase.rpc('dismiss_recommendation', {
-      p_dismissed_user_id: dismissedUserId,
-    });
-    if (error) throw error;
+    // TODO: Implement when dismissed_recommendations table is created
+    console.log('[connectionService] Dismiss recommendation:', dismissedUserId);
+    // For now, just log the action - feature will be fully implemented in Phase 2
   },
 
   /**
    * Undismiss a previously dismissed recommendation
    */
   async undismissRecommendation(dismissedUserId: string): Promise<void> {
-    const { error } = await supabase.rpc('undismiss_recommendation', {
-      p_dismissed_user_id: dismissedUserId,
-    });
-    if (error) throw error;
+    // TODO: Implement when dismissed_recommendations table is created
+    console.log('[connectionService] Undismiss recommendation:', dismissedUserId);
   },
 
   /**

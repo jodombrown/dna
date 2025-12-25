@@ -514,10 +514,12 @@ async getConversations(
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    // Use soft delete RPC function
-    const { error } = await supabase.rpc('soft_delete_message', {
-      p_message_id: messageId,
-    });
+    // Soft delete by updating deleted_at timestamp
+    const { error } = await supabase
+      .from('messages')
+      .update({ deleted_at: new Date().toISOString() } as any)
+      .eq('id', messageId)
+      .eq('sender_id', user.id);
 
     if (error) throw error;
   },

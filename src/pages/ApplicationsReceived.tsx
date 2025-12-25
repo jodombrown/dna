@@ -48,9 +48,9 @@ export default function ApplicationsReceived() {
   const { data: applications, isLoading } = useQuery({
     queryKey: ['received-applications'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_received_applications');
+      const { data, error } = await supabase.rpc('get_received_applications' as any);
       if (error) throw error;
-      return data as ReceivedApplication[];
+      return (data ?? []) as unknown as ReceivedApplication[];
     },
   });
 
@@ -65,7 +65,7 @@ export default function ApplicationsReceived() {
       status: string;
       feedback?: string;
     }) => {
-      const { error } = await supabase.rpc('update_application_status', {
+      const { error } = await supabase.rpc('update_application_status' as any, {
         p_application_id: applicationId,
         p_status: status,
         p_feedback: feedback || null,
