@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { usePostBookmark } from '@/hooks/usePostBookmark';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { linkifyContent } from '@/utils/linkifyContent';
 
 export default function SavedPostsPage() {
   const { user } = useAuth();
@@ -210,7 +211,7 @@ function SavedPostCard({ bookmark, onNavigate, userId }: any) {
         </div>
       </div>
 
-      <p className="whitespace-pre-wrap break-words mb-4">{bookmark.post.content}</p>
+      <p className="whitespace-pre-wrap break-words mb-4">{linkifyContent(bookmark.post.content)}</p>
 
       {bookmark.post.image_url && (
         <div className="rounded-lg overflow-hidden border">

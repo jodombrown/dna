@@ -28,6 +28,7 @@ import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
+import { linkifyContent } from '@/utils/linkifyContent';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -283,7 +284,7 @@ const PublicPostPage = () => {
               {/* Post Content */}
               <div className="mb-4">
                 <p className="whitespace-pre-wrap break-words text-foreground leading-relaxed">
-                  {post.content}
+                  {linkifyContent(post.content)}
                 </p>
               </div>
 

@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { HandHeart, Heart, MessageCircle, Share2, Bookmark } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import { linkifyContent } from '@/utils/linkifyContent';
 
 interface NeedCardProps {
   item: UniversalFeedItem;
@@ -46,7 +47,7 @@ export const NeedCard: React.FC<NeedCardProps> = ({ item, currentUserId, onUpdat
         <div className="flex items-start gap-3">
           <HandHeart className="h-6 w-6 text-dna-orange flex-shrink-0 mt-1" />
           <div>
-            <p className="font-medium text-lg mb-2">{item.content}</p>
+            <p className="font-medium text-lg mb-2">{linkifyContent(item.content)}</p>
             {item.space_title && (
               <p className="text-sm text-muted-foreground">
                 In space: <span className="text-foreground">{item.space_title}</span>
