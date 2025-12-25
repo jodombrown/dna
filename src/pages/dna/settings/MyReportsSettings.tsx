@@ -24,12 +24,11 @@ interface ContentFlag {
   id: string;
   content_type: string;
   content_id: string;
-  flag_type: string;
   reason: string | null;
-  status: string;
   created_at: string;
   resolved_at: string | null;
   moderator_notes: string | null;
+  flagged_by: string | null;
 }
 
 const contentTypeIcons: Record<string, React.ElementType> = {
@@ -41,21 +40,21 @@ const contentTypeIcons: Record<string, React.ElementType> = {
   image: Image,
 };
 
-const flagTypeLabels: Record<string, string> = {
+const reasonLabels: Record<string, string> = {
   inappropriate_content: 'Inappropriate Content',
   spam: 'Spam',
   harassment: 'Harassment',
   misinformation: 'Misinformation',
   copyright_violation: 'Copyright Violation',
+  hate_speech: 'Hate Speech',
   other: 'Other',
 };
 
-const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; icon: React.ElementType }> = {
-  pending: { label: 'Under Review', variant: 'secondary', icon: Clock },
-  approved: { label: 'Action Taken', variant: 'default', icon: CheckCircle2 },
-  rejected: { label: 'No Action Needed', variant: 'outline', icon: XCircle },
-  hidden: { label: 'Content Hidden', variant: 'default', icon: CheckCircle2 },
-  deleted: { label: 'Content Removed', variant: 'destructive', icon: CheckCircle2 },
+const getReportStatus = (report: ContentFlag): { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; icon: React.ElementType } => {
+  if (report.resolved_at) {
+    return { label: 'Resolved', variant: 'default', icon: CheckCircle2 };
+  }
+  return { label: 'Under Review', variant: 'secondary', icon: Clock };
 };
 
 export default function MyReportsSettings() {
@@ -83,8 +82,8 @@ export default function MyReportsSettings() {
     return <Icon className="h-4 w-4" />;
   };
 
-  const getStatusBadge = (status: string) => {
-    const config = statusConfig[status] || statusConfig.pending;
+  const getStatusBadge = (report: ContentFlag) => {
+    const config = getReportStatus(report);
     const Icon = config.icon;
     return (
       <Badge variant={config.variant} className="flex items-center gap-1">
@@ -180,15 +179,12 @@ export default function MyReportsSettings() {
                             <span className="font-medium capitalize">
                               {report.content_type} Report
                             </span>
-                            {getStatusBadge(report.status)}
+                            {getStatusBadge(report)}
                           </div>
-                          <p className="text-sm text-muted-foreground">
-                            <span className="font-medium">Reason:</span>{' '}
-                            {flagTypeLabels[report.flag_type] || report.flag_type}
-                          </p>
                           {report.reason && (
                             <p className="text-sm text-muted-foreground">
-                              <span className="font-medium">Details:</span> {report.reason}
+                              <span className="font-medium">Reason:</span>{' '}
+                              {reasonLabels[report.reason] || report.reason}
                             </p>
                           )}
                           <p className="text-xs text-muted-foreground">
