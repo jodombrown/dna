@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, User, Shield, Bell, Settings, ChevronRight } from 'lucide-react';
+import { ArrowLeft, User, Shield, Bell, Settings, ChevronRight, Hash } from 'lucide-react';
 
 interface SettingsNavItem {
   label: string;
@@ -36,6 +36,12 @@ const settingsNavItems: SettingsNavItem[] = [
     href: '/dna/settings/preferences',
     icon: Settings,
     description: 'Display settings and module visibility',
+  },
+  {
+    label: 'My Hashtags',
+    href: '/dna/settings/hashtags',
+    icon: Hash,
+    description: 'Manage your personal hashtags',
   },
 ];
 
