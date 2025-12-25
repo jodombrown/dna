@@ -44,6 +44,7 @@ interface ChatBubbleProps {
     sender_avatar_url: string;
     sender_full_name: string;
     is_read?: boolean;
+    is_deleted?: boolean;
     payload?: MessagePayload;
   };
   isOwn: boolean;
@@ -101,6 +102,29 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
       queryClient.invalidateQueries({ queryKey: ['message-reactions', message.message_id] });
     },
   });
+
+  // Render deleted message placeholder
+  if (message.is_deleted) {
+    return (
+      <div className={cn(
+        "flex gap-2 px-4 py-1",
+        isOwn ? "flex-row-reverse" : "flex-row"
+      )}>
+        {!isOwn && showAvatar && <div className="w-8 h-8" />}
+        {!isOwn && !showAvatar && <div className="w-8" />}
+        <div className="max-w-[70%]">
+          <div className={cn(
+            "rounded-lg px-3 py-2 bg-muted",
+            isOwn ? "rounded-tr-[2px]" : "rounded-tl-[2px]"
+          )}>
+            <p className="text-sm text-muted-foreground italic">
+              This message was deleted
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={cn(

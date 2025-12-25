@@ -312,10 +312,10 @@ async getConversations(
     // Get messages - cast to bypass type checking for payload column
     const { data: messages, error } = await supabase
       .from('messages')
-      .select('id, conversation_id, sender_id, content, read, created_at, payload')
+      .select('id, conversation_id, sender_id, content, read, created_at, payload, deleted_at')
       .eq('conversation_id', conversationId)
       .order('created_at', { ascending: true })
-      .limit(limit) as unknown as { 
+      .limit(limit) as unknown as {
         data: Array<{
           id: string;
           conversation_id: string;
@@ -324,6 +324,7 @@ async getConversations(
           read: boolean;
           created_at: string;
           payload: MessagePayload | null;
+          deleted_at: string | null;
         }> | null;
         error: Error | null;
       };
@@ -352,7 +353,7 @@ async getConversations(
       message_id: m.id,
       content: m.content,
       created_at: m.created_at,
-      is_deleted: false,
+      is_deleted: m.deleted_at !== null,
       sender_id: m.sender_id,
       sender_username: profileMap.get(m.sender_id)?.username || '',
       sender_full_name: profileMap.get(m.sender_id)?.full_name || 'Unknown',
@@ -506,18 +507,17 @@ async getConversations(
   },
 
   /**
-   * Delete a message (mark as deleted)
+   * Delete a message (soft delete - marks as deleted)
+   * Message will show "This message was deleted" placeholder
    */
   async deleteMessage(messageId: string): Promise<void> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    // For the simple messages table, we just delete the message
-    const { error } = await supabase
-      .from('messages')
-      .delete()
-      .eq('id', messageId)
-      .eq('sender_id', user.id);
+    // Use soft delete RPC function
+    const { error } = await supabase.rpc('soft_delete_message', {
+      p_message_id: messageId,
+    });
 
     if (error) throw error;
   },
