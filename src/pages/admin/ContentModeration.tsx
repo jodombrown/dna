@@ -3,11 +3,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { CheckCircle, XCircle, Flag, Eye, Clock, MessageSquare, FileText } from 'lucide-react';
+import { CheckCircle, XCircle, Flag, Eye, Clock, MessageSquare, FileText, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { createNotification } from '@/services/notificationService';
 
 interface FlaggedPost {
   id: string;
@@ -46,6 +48,9 @@ const ContentModeration = () => {
   const [selectedPost, setSelectedPost] = useState<FlaggedPost | null>(null);
   const [selectedComment, setSelectedComment] = useState<FlaggedComment | null>(null);
   const [reviewNotes, setReviewNotes] = useState('');
+  const [selectedPostIds, setSelectedPostIds] = useState<Set<string>>(new Set());
+  const [selectedCommentIds, setSelectedCommentIds] = useState<Set<string>>(new Set());
+  const [bulkProcessing, setBulkProcessing] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -143,10 +148,40 @@ const ContentModeration = () => {
     }
   };
 
+  // Send moderation notification to user
+  const sendModerationNotification = async (
+    userId: string,
+    contentType: 'post' | 'comment',
+    status: 'approved' | 'rejected',
+    reason?: string
+  ) => {
+    const isRejected = status === 'rejected';
+    const title = isRejected
+      ? `Your ${contentType} has been removed`
+      : `Your ${contentType} has been reviewed`;
+    const message = isRejected
+      ? `Your ${contentType} was removed for violating our community guidelines.${reason ? ` Reason: ${reason}` : ''}`
+      : `Your flagged ${contentType} has been reviewed and approved.`;
+
+    await createNotification({
+      user_id: userId,
+      type: 'moderation_action',
+      title,
+      message,
+      payload: {
+        content_type: contentType,
+        moderation_status: status,
+        is_dna_system: true,
+      },
+    });
+  };
+
   const handlePostModeration = async (postId: string, status: 'approved' | 'rejected') => {
     try {
       const { data: user } = await supabase.auth.getUser();
       if (!user.user) throw new Error('Not authenticated');
+
+      const post = selectedPost;
 
       const { error } = await supabase
         .from('posts')
@@ -159,6 +194,11 @@ const ContentModeration = () => {
         .eq('id', postId);
 
       if (error) throw error;
+
+      // Send notification to the post author
+      if (post) {
+        await sendModerationNotification(post.author_id, 'post', status, post.flag_reason);
+      }
 
       toast({
         title: "Success",
@@ -183,6 +223,8 @@ const ContentModeration = () => {
       const { data: user } = await supabase.auth.getUser();
       if (!user.user) throw new Error('Not authenticated');
 
+      const comment = selectedComment;
+
       const { error } = await supabase
         .from('post_comments')
         .update({
@@ -194,6 +236,11 @@ const ContentModeration = () => {
         .eq('id', commentId);
 
       if (error) throw error;
+
+      // Send notification to the comment author
+      if (comment) {
+        await sendModerationNotification(comment.user_id, 'comment', status, comment.flag_reason);
+      }
 
       toast({
         title: "Success",
@@ -210,6 +257,143 @@ const ContentModeration = () => {
         description: "Failed to moderate comment",
         variant: "destructive",
       });
+    }
+  };
+
+  // Bulk moderation functions
+  const handleBulkPostModeration = async (status: 'approved' | 'rejected') => {
+    if (selectedPostIds.size === 0) return;
+
+    try {
+      setBulkProcessing(true);
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) throw new Error('Not authenticated');
+
+      const ids = Array.from(selectedPostIds);
+
+      // Get the posts to be moderated for notifications
+      const postsToNotify = flaggedPosts.filter(p => ids.includes(p.id));
+
+      const { error } = await supabase
+        .from('posts')
+        .update({
+          moderation_status: status,
+          moderated_by: user.user.id,
+          moderated_at: new Date().toISOString(),
+        })
+        .in('id', ids);
+
+      if (error) throw error;
+
+      // Send notifications to all affected users
+      await Promise.all(
+        postsToNotify.map(post =>
+          sendModerationNotification(post.author_id, 'post', status, post.flag_reason)
+        )
+      );
+
+      toast({
+        title: "Bulk action complete",
+        description: `${ids.length} post(s) ${status} successfully`,
+      });
+
+      setSelectedPostIds(new Set());
+      fetchFlaggedContent();
+    } catch (error) {
+      console.error('Error bulk moderating posts:', error);
+      toast({
+        title: "Error",
+        description: "Failed to process bulk moderation",
+        variant: "destructive",
+      });
+    } finally {
+      setBulkProcessing(false);
+    }
+  };
+
+  const handleBulkCommentModeration = async (status: 'approved' | 'rejected') => {
+    if (selectedCommentIds.size === 0) return;
+
+    try {
+      setBulkProcessing(true);
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) throw new Error('Not authenticated');
+
+      const ids = Array.from(selectedCommentIds);
+
+      // Get the comments to be moderated for notifications
+      const commentsToNotify = flaggedComments.filter(c => ids.includes(c.id));
+
+      const { error } = await supabase
+        .from('post_comments')
+        .update({
+          moderation_status: status,
+          moderated_by: user.user.id,
+          moderated_at: new Date().toISOString(),
+        })
+        .in('id', ids);
+
+      if (error) throw error;
+
+      // Send notifications to all affected users
+      await Promise.all(
+        commentsToNotify.map(comment =>
+          sendModerationNotification(comment.user_id, 'comment', status, comment.flag_reason)
+        )
+      );
+
+      toast({
+        title: "Bulk action complete",
+        description: `${ids.length} comment(s) ${status} successfully`,
+      });
+
+      setSelectedCommentIds(new Set());
+      fetchFlaggedContent();
+    } catch (error) {
+      console.error('Error bulk moderating comments:', error);
+      toast({
+        title: "Error",
+        description: "Failed to process bulk moderation",
+        variant: "destructive",
+      });
+    } finally {
+      setBulkProcessing(false);
+    }
+  };
+
+  const togglePostSelection = (id: string) => {
+    const newSelection = new Set(selectedPostIds);
+    if (newSelection.has(id)) {
+      newSelection.delete(id);
+    } else {
+      newSelection.add(id);
+    }
+    setSelectedPostIds(newSelection);
+  };
+
+  const toggleCommentSelection = (id: string) => {
+    const newSelection = new Set(selectedCommentIds);
+    if (newSelection.has(id)) {
+      newSelection.delete(id);
+    } else {
+      newSelection.add(id);
+    }
+    setSelectedCommentIds(newSelection);
+  };
+
+  const toggleAllPosts = () => {
+    if (selectedPostIds.size === flaggedPosts.length) {
+      setSelectedPostIds(new Set());
+    } else {
+      setSelectedPostIds(new Set(flaggedPosts.map(p => p.id)));
+    }
+  };
+
+  const toggleAllComments = () => {
+    if (selectedCommentIds.size === flaggedComments.length) {
+      setSelectedCommentIds(new Set());
+    } else {
+      setSelectedCommentIds(new Set(flaggedComments.map(c => c.id)));
     }
   };
 
@@ -256,10 +440,54 @@ const ContentModeration = () => {
         </TabsList>
 
         <TabsContent value="posts" className="mt-6">
+          {/* Bulk Actions Bar */}
+          {selectedPostIds.size > 0 && (
+            <div className="mb-4 p-3 bg-muted rounded-lg flex items-center justify-between">
+              <span className="text-sm font-medium">
+                {selectedPostIds.size} post(s) selected
+              </span>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setSelectedPostIds(new Set())}
+                  disabled={bulkProcessing}
+                >
+                  Clear Selection
+                </Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => handleBulkPostModeration('rejected')}
+                  disabled={bulkProcessing}
+                >
+                  {bulkProcessing ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <XCircle className="h-4 w-4 mr-1" />}
+                  Reject All
+                </Button>
+                <Button
+                  size="sm"
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                  onClick={() => handleBulkPostModeration('approved')}
+                  disabled={bulkProcessing}
+                >
+                  {bulkProcessing ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <CheckCircle className="h-4 w-4 mr-1" />}
+                  Approve All
+                </Button>
+              </div>
+            </div>
+          )}
+
           <div className="border rounded-lg overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-12">
+                    <Checkbox
+                      checked={flaggedPosts.length > 0 && selectedPostIds.size === flaggedPosts.length}
+                      onCheckedChange={toggleAllPosts}
+                      aria-label="Select all posts"
+                    />
+                  </TableHead>
                   <TableHead>Author</TableHead>
                   <TableHead>Content</TableHead>
                   <TableHead>Reason</TableHead>
@@ -271,7 +499,14 @@ const ContentModeration = () => {
               </TableHeader>
               <TableBody>
                 {flaggedPosts.map((post) => (
-                  <TableRow key={post.id}>
+                  <TableRow key={post.id} className={selectedPostIds.has(post.id) ? 'bg-muted/50' : ''}>
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedPostIds.has(post.id)}
+                        onCheckedChange={() => togglePostSelection(post.id)}
+                        aria-label={`Select post by ${post.author_name}`}
+                      />
+                    </TableCell>
                     <TableCell>
                       <div>
                         <div className="font-medium">{post.author_name}</div>
@@ -381,10 +616,54 @@ const ContentModeration = () => {
         </TabsContent>
 
         <TabsContent value="comments" className="mt-6">
+          {/* Bulk Actions Bar */}
+          {selectedCommentIds.size > 0 && (
+            <div className="mb-4 p-3 bg-muted rounded-lg flex items-center justify-between">
+              <span className="text-sm font-medium">
+                {selectedCommentIds.size} comment(s) selected
+              </span>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setSelectedCommentIds(new Set())}
+                  disabled={bulkProcessing}
+                >
+                  Clear Selection
+                </Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => handleBulkCommentModeration('rejected')}
+                  disabled={bulkProcessing}
+                >
+                  {bulkProcessing ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <XCircle className="h-4 w-4 mr-1" />}
+                  Reject All
+                </Button>
+                <Button
+                  size="sm"
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                  onClick={() => handleBulkCommentModeration('approved')}
+                  disabled={bulkProcessing}
+                >
+                  {bulkProcessing ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <CheckCircle className="h-4 w-4 mr-1" />}
+                  Approve All
+                </Button>
+              </div>
+            </div>
+          )}
+
           <div className="border rounded-lg overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-12">
+                    <Checkbox
+                      checked={flaggedComments.length > 0 && selectedCommentIds.size === flaggedComments.length}
+                      onCheckedChange={toggleAllComments}
+                      aria-label="Select all comments"
+                    />
+                  </TableHead>
                   <TableHead>Author</TableHead>
                   <TableHead>Content</TableHead>
                   <TableHead>Reason</TableHead>
@@ -396,7 +675,14 @@ const ContentModeration = () => {
               </TableHeader>
               <TableBody>
                 {flaggedComments.map((comment) => (
-                  <TableRow key={comment.id}>
+                  <TableRow key={comment.id} className={selectedCommentIds.has(comment.id) ? 'bg-muted/50' : ''}>
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedCommentIds.has(comment.id)}
+                        onCheckedChange={() => toggleCommentSelection(comment.id)}
+                        aria-label={`Select comment by ${comment.author_name}`}
+                      />
+                    </TableCell>
                     <TableCell>
                       <div>
                         <div className="font-medium">{comment.author_name}</div>
