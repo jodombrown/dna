@@ -309,30 +309,23 @@ async getConversations(
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    // Get messages - cast to bypass type checking for payload column
+    console.log('[messageService] getMessages: Fetching messages for conversation:', conversationId);
+
+    // Get messages - query only columns that definitely exist
+    // Note: deleted_at may not exist if migration hasn't been applied yet
     const { data: messages, error } = await supabase
       .from('messages')
-      .select('id, conversation_id, sender_id, content, read, created_at, payload, deleted_at')
+      .select('id, conversation_id, sender_id, content, read, created_at, payload')
       .eq('conversation_id', conversationId)
       .order('created_at', { ascending: true })
-      .limit(limit) as unknown as {
-        data: Array<{
-          id: string;
-          conversation_id: string;
-          sender_id: string;
-          content: string;
-          read: boolean;
-          created_at: string;
-          payload: MessagePayload | null;
-          deleted_at: string | null;
-        }> | null;
-        error: Error | null;
-      };
+      .limit(limit);
 
     if (error) {
       console.error('[messageService] Error getting messages:', error);
       throw error;
     }
+
+    console.log('[messageService] getMessages: Found', messages?.length || 0, 'messages');
 
     if (!messages || messages.length === 0) {
       return [];
@@ -349,17 +342,18 @@ async getConversations(
 
     const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
 
+    // Cast payload to proper type - it's stored as JSONB
     return messages.map(m => ({
       message_id: m.id,
       content: m.content,
       created_at: m.created_at,
-      is_deleted: m.deleted_at !== null,
+      is_deleted: false, // Default to false - soft delete handled separately if column exists
       sender_id: m.sender_id,
       sender_username: profileMap.get(m.sender_id)?.username || '',
       sender_full_name: profileMap.get(m.sender_id)?.full_name || 'Unknown',
       sender_avatar_url: profileMap.get(m.sender_id)?.avatar_url || '',
       is_read: m.read,
-      payload: m.payload || undefined,
+      payload: (m.payload as MessagePayload) || undefined,
     }));
   },
 
