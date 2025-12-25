@@ -3662,16 +3662,98 @@ export type Database = {
           },
         ]
       }
+      hashtag_usage_requests: {
+        Row: {
+          created_at: string | null
+          hashtag_id: string
+          id: string
+          owner_id: string
+          post_id: string
+          requester_id: string
+          review_note: string | null
+          reviewed_at: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string | null
+          hashtag_id: string
+          id?: string
+          owner_id: string
+          post_id: string
+          requester_id: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string | null
+          hashtag_id?: string
+          id?: string
+          owner_id?: string
+          post_id?: string
+          requester_id?: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hashtag_usage_requests_hashtag_id_fkey"
+            columns: ["hashtag_id"]
+            isOneToOne: false
+            referencedRelation: "hashtags"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hashtag_usage_requests_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hashtag_usage_requests_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hashtag_usage_requests_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hashtag_usage_requests_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hashtag_usage_requests_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hashtags: {
         Row: {
+          archived_at: string | null
           created_at: string
           description: string | null
           first_used_at: string
           follower_count: number | null
           id: string
+          is_personal: boolean | null
           is_verified: boolean | null
           last_used_at: string
           owner_id: string | null
+          requires_approval: boolean | null
           status: Database["public"]["Enums"]["hashtag_status"] | null
           tag: string
           type: Database["public"]["Enums"]["hashtag_type"] | null
@@ -3679,14 +3761,17 @@ export type Database = {
           usage_count: number
         }
         Insert: {
+          archived_at?: string | null
           created_at?: string
           description?: string | null
           first_used_at?: string
           follower_count?: number | null
           id?: string
+          is_personal?: boolean | null
           is_verified?: boolean | null
           last_used_at?: string
           owner_id?: string | null
+          requires_approval?: boolean | null
           status?: Database["public"]["Enums"]["hashtag_status"] | null
           tag: string
           type?: Database["public"]["Enums"]["hashtag_type"] | null
@@ -3694,14 +3779,17 @@ export type Database = {
           usage_count?: number
         }
         Update: {
+          archived_at?: string | null
           created_at?: string
           description?: string | null
           first_used_at?: string
           follower_count?: number | null
           id?: string
+          is_personal?: boolean | null
           is_verified?: boolean | null
           last_used_at?: string
           owner_id?: string | null
+          requires_approval?: boolean | null
           status?: Database["public"]["Enums"]["hashtag_status"] | null
           tag?: string
           type?: Database["public"]["Enums"]["hashtag_type"] | null
@@ -7751,6 +7839,13 @@ export type Database = {
           magic_link_token: string
         }[]
       }
+      archive_personal_hashtag: {
+        Args: { p_hashtag_id: string; p_user_id: string }
+        Returns: {
+          error_message: string
+          success: boolean
+        }[]
+      }
       are_users_connected: {
         Args: { u1: string; u2: string }
         Returns: boolean
@@ -7926,6 +8021,14 @@ export type Database = {
             }
             Returns: string
           }
+      create_personal_hashtag: {
+        Args: { p_description?: string; p_tag: string; p_user_id: string }
+        Returns: {
+          error_message: string
+          hashtag_id: string
+          success: boolean
+        }[]
+      }
       cron_overdue_task_reminders: { Args: never; Returns: undefined }
       delete_reshare: {
         Args: { p_original_post_id: string; p_user_id: string }
@@ -8552,6 +8655,20 @@ export type Database = {
             Args: { p_days_back: number; p_organizer_id: string }
             Returns: Json
           }
+      get_pending_hashtag_requests: {
+        Args: { p_owner_id: string }
+        Returns: {
+          created_at: string
+          hashtag_id: string
+          hashtag_tag: string
+          post_content: string
+          post_id: string
+          request_id: string
+          requester_avatar: string
+          requester_id: string
+          requester_name: string
+        }[]
+      }
       get_pending_reminders: {
         Args: { batch_size?: number }
         Returns: {
@@ -8941,6 +9058,15 @@ export type Database = {
           unread_count: number
         }[]
       }
+      get_user_hashtag_limits: {
+        Args: { p_user_id: string }
+        Returns: {
+          active_count: number
+          archived_count: number
+          available_slots: number
+          max_hashtags: number
+        }[]
+      }
       get_user_notifications: {
         Args: {
           p_limit?: number
@@ -8963,6 +9089,20 @@ export type Database = {
           read_at: string
           title: string
           type: string
+        }[]
+      }
+      get_user_owned_hashtags: {
+        Args: { p_user_id: string }
+        Returns: {
+          archived_at: string
+          created_at: string
+          description: string
+          follower_count: number
+          id: string
+          pending_requests: number
+          status: string
+          tag: string
+          usage_count: number
         }[]
       }
       get_user_role: { Args: { user_id: string }; Returns: string }
@@ -9107,6 +9247,13 @@ export type Database = {
         Returns: boolean
       }
       promote_from_waitlist: { Args: { p_event: string }; Returns: string }
+      reactivate_personal_hashtag: {
+        Args: { p_hashtag_id: string; p_user_id: string }
+        Returns: {
+          error_message: string
+          success: boolean
+        }[]
+      }
       recent_engagement_score_for_opportunity: {
         Args: { p_op: string }
         Returns: number
@@ -9128,10 +9275,34 @@ export type Database = {
         Args: { p_message_id: string; p_reaction: string; p_user_id: string }
         Returns: undefined
       }
+      request_hashtag_usage: {
+        Args: {
+          p_hashtag_id: string
+          p_post_id: string
+          p_requester_id: string
+        }
+        Returns: {
+          error_message: string
+          request_id: string
+          success: boolean
+        }[]
+      }
       reset_seeded_data: { Args: never; Returns: undefined }
       resolve_nudge: {
         Args: { p_nudge: string; p_snooze_until?: string; p_status: string }
         Returns: undefined
+      }
+      review_hashtag_request: {
+        Args: {
+          p_approved: boolean
+          p_note?: string
+          p_owner_id: string
+          p_request_id: string
+        }
+        Returns: {
+          error_message: string
+          success: boolean
+        }[]
       }
       rpc_adin_recommend_opportunities:
         | {
