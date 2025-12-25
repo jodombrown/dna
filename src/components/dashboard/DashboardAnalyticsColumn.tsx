@@ -65,7 +65,7 @@ export const DashboardAnalyticsColumn = () => {
     queryKey: ['messages-analytics', user?.id, timeRange],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('messages_new')
+        .from('messages')
         .select('created_at')
         .eq('sender_id', user?.id)
         .gte('created_at', startDate.toISOString())

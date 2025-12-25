@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { messageService } from '@/services/messageService';
 
 interface MessageComposerProps {
   conversationId: string;
@@ -46,13 +46,7 @@ export function MessageComposer({
 
     setIsSending(true);
     try {
-      const { error } = await supabase.from('messages_new').insert({
-        conversation_id: conversationId,
-        sender_id: currentUserId,
-        content: trimmedMessage,
-      });
-
-      if (error) throw error;
+      await messageService.sendMessage(conversationId, trimmedMessage);
 
       setMessage('');
       onMessageSent?.();
