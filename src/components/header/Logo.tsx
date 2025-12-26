@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import dnaLogo from '@/assets/dna-logo-optimized.webp';
 
 const Logo = () => {
   const navigate = useNavigate();
@@ -13,12 +14,11 @@ const Logo = () => {
         aria-label="Navigate to home"
       >
         <img 
-          src="/lovable-uploads/2768ac69-7468-4ee5-a1aa-3f241d1b7b25.png" 
+          src={dnaLogo}
           alt="DNA Logo" 
-          className="h-12 w-auto"
-          onError={(e) => {
-            console.log('Logo failed to load:', e);
-          }}
+          className="h-8 w-auto"
+          width="57"
+          height="32"
         />
       </button>
     </div>
