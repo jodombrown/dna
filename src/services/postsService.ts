@@ -138,6 +138,13 @@ export async function createPost(input: CreatePostInput): Promise<{ id: string }
       user.id,
       authorName
     ).catch(err => console.error('Failed to process post mentions:', err));
+    
+    // Process hashtags - extract and create/link them
+    (supabase.rpc as any)('process_post_hashtags', {
+      p_content: input.content,
+      p_post_id: data.id,
+      p_user_id: user.id
+    }).catch((err: Error) => console.error('Failed to process post hashtags:', err));
   }
 
   return data;

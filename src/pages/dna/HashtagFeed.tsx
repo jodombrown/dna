@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Loader2, Hash, TrendingUp, Users, Calendar, ArrowLeft, Share2, Settings, Crown } from 'lucide-react';
+import { Loader2, Hash, TrendingUp, Users, Calendar, ArrowLeft, Share2, Settings, Crown, Copy, Check } from 'lucide-react';
 import { useHashtag } from '@/hooks/useHashtag';
 import { useTrendingHashtags } from '@/hooks/useTrendingHashtags';
 import { UniversalFeedItemComponent } from '@/components/feed/UniversalFeedItem';
@@ -15,6 +15,13 @@ import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
 import { hashtagService } from '@/services/hashtagService';
 import { useQuery } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export default function HashtagFeed() {
   const { hashtag: hashtagParam } = useParams<{ hashtag: string }>();
@@ -123,9 +130,45 @@ export default function HashtagFeed() {
                   )}
                 </Button>
               )}
-              <Button variant="outline" size="icon">
-                <Share2 className="h-4 w-4" />
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <Share2 className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    onClick={() => {
+                      const url = `${window.location.origin}/dna/hashtag/${displayName}`;
+                      navigator.clipboard.writeText(url);
+                      toast.success('Link copied to clipboard');
+                    }}
+                  >
+                    <Copy className="h-4 w-4 mr-2" />
+                    Copy link
+                  </DropdownMenuItem>
+                  {typeof navigator.share === 'function' && (
+                    <DropdownMenuItem
+                      onClick={async () => {
+                        try {
+                          await navigator.share({
+                            title: `#${displayName} on DNA`,
+                            text: `Check out #${displayName} on DNA - Diaspora Network of Africa`,
+                            url: `${window.location.origin}/dna/hashtag/${displayName}`,
+                          });
+                        } catch (err) {
+                          if ((err as Error).name !== 'AbortError') {
+                            toast.error('Failed to share');
+                          }
+                        }
+                      }}
+                    >
+                      <Share2 className="h-4 w-4 mr-2" />
+                      Share
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
 
