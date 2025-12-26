@@ -19,13 +19,17 @@ import {
   Briefcase, 
   Globe2, 
   MessageCircle, 
-  UserPlus, 
+  UserPlus,
+  UserCheck,
+  Clock,
   User,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ProfileShareDropdown } from '@/components/profile/ProfileShareDropdown';
 import { Helmet } from 'react-helmet-async';
 import { useState } from 'react';
+import { useConnectionStatus } from '@/hooks/useConnectionStatus';
+import { messageService } from '@/services/messageService';
 
 // About section component with read more functionality
 const AboutSection = ({ bio }: { bio: string }) => {
@@ -97,6 +101,9 @@ const PublicProfilePage = () => {
   // Check if profile allows sharing by others (default to true if not set)
   const allowSharing = profile?.allow_profile_sharing !== false;
   
+  // Get connection status between current user and profile owner
+  const { data: connectionStatus, isLoading: connectionLoading } = useConnectionStatus(profile?.id);
+  
   // Helper to check visibility settings
   const shouldShowSection = (section: 'about' | 'skills' | 'interests' | 'activity'): boolean => {
     if (isOwnProfile) return true; // Owner sees everything
@@ -116,13 +123,30 @@ const PublicProfilePage = () => {
     navigate(`/dna/${username}`);
   };
 
-  // Handle message click
-  const handleMessage = () => {
+  // Handle message click - now works directly for connected users
+  const handleMessage = async () => {
     if (!isLoggedIn) {
       sessionStorage.setItem('dna_message_after_auth', profile?.id || '');
       navigate(`/auth?redirect=/dna/${username}`);
       return;
     }
+    
+    // If connected, start a conversation directly
+    if (connectionStatus === 'accepted' && profile?.id) {
+      try {
+        const { id: conversationId } = await messageService.getOrCreateConversation(profile.id);
+        navigate(`/dna/messages/${conversationId}`);
+      } catch (error: any) {
+        toast({
+          title: 'Cannot start conversation',
+          description: error.message || 'Please try again',
+          variant: 'destructive',
+        });
+      }
+      return;
+    }
+    
+    // Otherwise redirect to profile page
     navigate(`/dna/${username}`);
   };
 
@@ -215,38 +239,107 @@ const PublicProfilePage = () => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex flex-wrap gap-3 mb-6">
-                <Button
-                  onClick={handleConnect}
-                  className="bg-dna-copper hover:bg-dna-gold"
-                >
-                  <UserPlus className="w-4 h-4 mr-2" />
-                  {isLoggedIn ? 'Connect' : 'Sign Up to Connect'}
-                </Button>
-                
-                {isLoggedIn && (
-                  <Button onClick={handleMessage} variant="outline">
-                    <MessageCircle className="w-4 h-4 mr-2" />
-                    Message
-                  </Button>
-                )}
-                
-                {/* Share dropdown - only show if profile owner allows sharing OR if viewer is the owner */}
-                {(allowSharing || isOwnProfile) && (
+              {/* Action Buttons - Only show for non-own profiles */}
+              {!isOwnProfile && (
+                <div className="flex flex-wrap gap-3 mb-6">
+                  {/* Not logged in - show sign up CTA */}
+                  {!isLoggedIn && (
+                    <Button
+                      onClick={handleConnect}
+                      className="bg-dna-copper hover:bg-dna-gold"
+                    >
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Sign Up to Connect
+                    </Button>
+                  )}
+                  
+                  {/* Loading state for connection status */}
+                  {isLoggedIn && connectionLoading && (
+                    <Button variant="outline" disabled>
+                      <Clock className="w-4 h-4 mr-2 animate-pulse" />
+                      Checking...
+                    </Button>
+                  )}
+                  
+                  {/* Logged in - show status-based buttons (only when not loading) */}
+                  {isLoggedIn && !connectionLoading && connectionStatus === 'none' && (
+                    <Button
+                      onClick={handleConnect}
+                      className="bg-dna-copper hover:bg-dna-gold"
+                    >
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Connect
+                    </Button>
+                  )}
+                  
+                  {isLoggedIn && !connectionLoading && connectionStatus === 'pending_sent' && (
+                    <Button variant="outline" disabled>
+                      <Clock className="w-4 h-4 mr-2" />
+                      Request Sent
+                    </Button>
+                  )}
+                  
+                  {isLoggedIn && !connectionLoading && connectionStatus === 'pending_received' && (
+                    <Button
+                      onClick={handleConnect}
+                      className="bg-dna-copper hover:bg-dna-gold"
+                    >
+                      <UserCheck className="w-4 h-4 mr-2" />
+                      Respond to Request
+                    </Button>
+                  )}
+                  
+                  {isLoggedIn && !connectionLoading && connectionStatus === 'accepted' && (
+                    <>
+                      <Button variant="outline" disabled className="text-dna-forest border-dna-emerald">
+                        <UserCheck className="w-4 h-4 mr-2" />
+                        Connected
+                      </Button>
+                      <Button onClick={handleMessage} variant="outline">
+                        <MessageCircle className="w-4 h-4 mr-2" />
+                        Message
+                      </Button>
+                    </>
+                  )}
+                  
+                  {/* Share dropdown - only show if profile owner allows sharing */}
+                  {allowSharing && (
+                    <ProfileShareDropdown
+                      username={username || ''}
+                      fullName={profile.full_name}
+                      profile={{
+                        ...profile,
+                        skills: tags?.skills || profile.skills,
+                        focus_areas: tags?.focus_areas || profile.focus_areas,
+                        interests: tags?.interests,
+                        industries: tags?.industries || profile.industries,
+                        display_name: profile.full_name,
+                        professional_role: profile.profession || profile.headline,
+                        visibility: profileBundle?.visibility,
+                        isOwnerView: isOwnProfile,
+                      }}
+                      showDownload={true}
+                      variant="outline"
+                      size="icon"
+                    />
+                  )}
+                </div>
+              )}
+              
+              {/* Share dropdown for own profile - show outside the action buttons div */}
+              {isOwnProfile && allowSharing && (
+                <div className="flex flex-wrap gap-3 mb-6">
                   <ProfileShareDropdown
                     username={username || ''}
                     fullName={profile.full_name}
                     profile={{
                       ...profile,
-                      // Include tags from bundle for PDF
                       skills: tags?.skills || profile.skills,
                       focus_areas: tags?.focus_areas || profile.focus_areas,
                       interests: tags?.interests,
                       industries: tags?.industries || profile.industries,
                       display_name: profile.full_name,
                       professional_role: profile.profession || profile.headline,
-                      // Pass visibility settings for PDF generation
                       visibility: profileBundle?.visibility,
                       isOwnerView: isOwnProfile,
                     }}
@@ -254,8 +347,8 @@ const PublicProfilePage = () => {
                     variant="outline"
                     size="icon"
                   />
-                )}
-              </div>
+                </div>
+              )}
 
               {/* My Connection to Africa */}
               {(profile.diaspora_status || profile.ethnic_heritage?.length > 0 || profile.african_causes?.length > 0 || profile.engagement_intentions?.length > 0) && (
