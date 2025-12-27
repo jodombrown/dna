@@ -1,7 +1,4 @@
-import { useCallback, useState, useEffect } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
+import { useCallback, useState } from 'react';
 
 /**
  * Feature Tour IDs - centralized registry of all feature tours
@@ -52,7 +49,7 @@ function setLocalTours(state: FeatureToursState): void {
 }
 
 /**
- * Hook to manage feature-specific tour progress
+ * Hook to manage feature-specific tour progress (localStorage only)
  *
  * Usage:
  * ```tsx
@@ -60,72 +57,14 @@ function setLocalTours(state: FeatureToursState): void {
  * ```
  */
 export function useFeatureTour(featureId: FeatureTourId) {
-  const { user, profile } = useAuth();
-  const queryClient = useQueryClient();
-
   // Local state for immediate UI updates
   const [localState, setLocalState] = useState<FeatureTourProgress>(() => {
     const tours = getLocalTours();
     return tours[featureId] || { completedAt: null, currentStep: 0, lastShownAt: null };
   });
 
-  // Sync from profile on mount (if available)
-  useEffect(() => {
-    if (profile) {
-      const profileTours = (profile as any)?.feature_tours_completed as FeatureToursState | undefined;
-      if (profileTours && profileTours[featureId]) {
-        const serverState = profileTours[featureId];
-        // Server state takes precedence if it has completion data
-        if (serverState.completedAt || (!localState.completedAt && serverState.currentStep > localState.currentStep)) {
-          setLocalState(serverState);
-          // Also update localStorage to stay in sync
-          const tours = getLocalTours();
-          tours[featureId] = serverState;
-          setLocalTours(tours);
-        }
-      }
-    }
-  }, [profile, featureId]);
-
-  // Mutation to persist to server
-  const updateMutation = useMutation({
-    mutationFn: async (updates: Partial<FeatureTourProgress>) => {
-      if (!user) return; // Don't persist for unauthenticated users
-
-      // Get current server state
-      const { data: currentProfile } = await supabase
-        .from('profiles')
-        .select('feature_tours_completed')
-        .eq('id', user.id)
-        .single();
-
-      const currentTours = (currentProfile?.feature_tours_completed as FeatureToursState) || {};
-      const currentFeatureState = currentTours[featureId] || { completedAt: null, currentStep: 0, lastShownAt: null };
-
-      const updatedTours: FeatureToursState = {
-        ...currentTours,
-        [featureId]: {
-          ...currentFeatureState,
-          ...updates,
-        },
-      };
-
-      const { error } = await supabase
-        .from('profiles')
-        .update({ feature_tours_completed: updatedTours })
-        .eq('id', user.id);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
-      queryClient.invalidateQueries({ queryKey: ['auth-profile'] });
-    },
-  });
-
-  // Helper to update both local and server state
+  // Helper to update local state
   const updateState = useCallback((updates: Partial<FeatureTourProgress>) => {
-    // Update local state immediately
     setLocalState(prev => {
       const newState = { ...prev, ...updates };
       // Update localStorage
@@ -134,10 +73,7 @@ export function useFeatureTour(featureId: FeatureTourId) {
       setLocalTours(tours);
       return newState;
     });
-
-    // Persist to server (fire-and-forget)
-    updateMutation.mutate(updates);
-  }, [featureId, updateMutation]);
+  }, [featureId]);
 
   const hasCompleted = !!localState.completedAt;
   const shouldShowTour = !hasCompleted;
@@ -165,7 +101,7 @@ export function useFeatureTour(featureId: FeatureTourId) {
   const markComplete = useCallback(() => {
     updateState({
       completedAt: new Date().toISOString(),
-      currentStep: 0, // Reset step for potential re-take
+      currentStep: 0,
     });
   }, [updateState]);
 
@@ -188,6 +124,6 @@ export function useFeatureTour(featureId: FeatureTourId) {
     updateStep,
     markComplete,
     reset,
-    isUpdating: updateMutation.isPending,
+    isUpdating: false,
   };
 }

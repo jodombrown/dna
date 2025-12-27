@@ -29,11 +29,12 @@ export default function PrivacySettings() {
     if (profile) {
       setIsPublic(profile.is_public || false);
       setAllowProfileSharing(profile.allow_profile_sharing !== false);
-      // Load per-field visibility settings
-      if (profile.public_visibility) {
+      // Load per-field visibility settings from profile (cast to any to access JSONB field)
+      const profileVisibility = (profile as any).public_visibility;
+      if (profileVisibility) {
         setPublicVisibility({
           ...DEFAULT_PUBLIC_VISIBILITY,
-          ...(typeof profile.public_visibility === 'object' ? profile.public_visibility : {}),
+          ...(typeof profileVisibility === 'object' ? profileVisibility : {}),
         } as PublicVisibilitySettings);
       }
     }
