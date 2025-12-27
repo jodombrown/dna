@@ -36,7 +36,7 @@ const HERO_CARDS = [
 
 export function FeedbackHeroSection({ onCardClick }: FeedbackHeroSectionProps) {
   return (
-    <div className="relative px-4 py-8 overflow-hidden">
+    <div className="relative px-3 py-4 md:px-4 md:py-6 overflow-hidden shrink-0">
       {/* Subtle African-inspired geometric pattern background */}
       <div 
         className="absolute inset-0 opacity-[0.08] pointer-events-none"
@@ -45,13 +45,13 @@ export function FeedbackHeroSection({ onCardClick }: FeedbackHeroSectionProps) {
         }}
       />
       
-      {/* Decorative corner accents */}
-      <div className="absolute top-0 left-0 w-24 h-24 opacity-10">
+      {/* Decorative corner accents - hidden on mobile */}
+      <div className="absolute top-0 left-0 w-16 h-16 md:w-24 md:h-24 opacity-10 hidden sm:block">
         <svg viewBox="0 0 100 100" className="w-full h-full text-dna-copper">
           <polygon fill="currentColor" points="0,0 100,0 0,100" />
         </svg>
       </div>
-      <div className="absolute bottom-0 right-0 w-24 h-24 opacity-10 rotate-180">
+      <div className="absolute bottom-0 right-0 w-16 h-16 md:w-24 md:h-24 opacity-10 rotate-180 hidden sm:block">
         <svg viewBox="0 0 100 100" className="w-full h-full text-dna-copper">
           <polygon fill="currentColor" points="0,0 100,0 0,100" />
         </svg>
@@ -59,29 +59,26 @@ export function FeedbackHeroSection({ onCardClick }: FeedbackHeroSectionProps) {
 
       {/* Content */}
       <div className="relative z-10 max-w-3xl mx-auto text-center">
-        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-          Your Voice Matters
-        </h1>
-        <p className="text-lg text-muted-foreground mb-8">
+        <p className="text-sm md:text-lg text-muted-foreground mb-3 md:mb-6">
           Help us build DNA together
         </p>
 
-        {/* Quick-tip cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Quick-tip cards - horizontal scroll on mobile */}
+        <div className="flex gap-2 md:gap-4 overflow-x-auto pb-2 -mx-1 px-1 md:grid md:grid-cols-3 md:overflow-visible md:pb-0 snap-x snap-mandatory">
           {HERO_CARDS.map((card) => (
             <Card
               key={card.title}
               onClick={() => onCardClick(card.tag)}
-              className="cursor-pointer group transition-all duration-200 hover:shadow-lg hover:-translate-y-1 border-border/50 bg-card/80 backdrop-blur-sm"
+              className="cursor-pointer group transition-all duration-200 hover:shadow-lg hover:-translate-y-1 border-border/50 bg-card/80 backdrop-blur-sm flex-shrink-0 w-[140px] md:w-auto snap-start"
             >
-              <CardContent className="p-5 text-center">
-                <div className={`inline-flex p-3 rounded-full ${card.bgColor} mb-3 group-hover:scale-110 transition-transform`}>
-                  <card.icon className={`h-6 w-6 ${card.iconColor}`} />
+              <CardContent className="p-3 md:p-5 text-center">
+                <div className={`inline-flex p-2 md:p-3 rounded-full ${card.bgColor} mb-2 md:mb-3 group-hover:scale-110 transition-transform`}>
+                  <card.icon className={`h-4 w-4 md:h-6 md:w-6 ${card.iconColor}`} />
                 </div>
-                <h3 className="font-semibold text-foreground mb-1">
+                <h3 className="font-semibold text-foreground text-xs md:text-base mb-0.5 md:mb-1">
                   {card.title}
                 </h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs text-muted-foreground hidden md:block">
                   {card.description}
                 </p>
               </CardContent>
