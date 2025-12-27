@@ -72,7 +72,7 @@ export const SentRequestCard: React.FC<SentRequestCardProps> = ({
     <Card>
       <CardContent className="p-6">
         <div className="flex items-start gap-4">
-          <Avatar className="w-16 h-16 cursor-pointer" onClick={() => navigate(request.recipient_username ? `/dna/${request.recipient_username}` : `/dna/profile/${request.recipient_id}`)}>
+          <Avatar className="w-16 h-16 cursor-pointer" onClick={() => navigate(`/dna/${request.recipient_username || request.recipient_id}`)}>
             <AvatarImage src={request.recipient_avatar || ''} />
             <AvatarFallback className="bg-dna-copper text-white">
               {getInitials(request.recipient_name)}
@@ -83,7 +83,7 @@ export const SentRequestCard: React.FC<SentRequestCardProps> = ({
               <div>
                 <h3
                   className="font-semibold text-lg text-foreground cursor-pointer hover:text-dna-copper transition-colors"
-                  onClick={() => navigate(request.recipient_username ? `/dna/${request.recipient_username}` : `/dna/profile/${request.recipient_id}`)}
+                  onClick={() => navigate(`/dna/${request.recipient_username || request.recipient_id}`)}
                 >
                   {request.recipient_name}
                 </h3>

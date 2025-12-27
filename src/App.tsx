@@ -36,6 +36,7 @@ const DnaMe = lazy(() => import("./pages/dna/Me"));
 const DnaUserDashboard = lazy(() => import("./pages/dna/Username"));
 const PublicProfile = lazy(() => import("./pages/dna/PublicProfile"));
 const PublicProfilePage = lazy(() => import("./pages/PublicProfilePage"));
+const LegacyProfileRedirect = lazy(() => import("./components/routing/LegacyProfileRedirect"));
 const PublicPostPage = lazy(() => import("./pages/PublicPostPage"));
 const ProfileV2 = lazy(() => import("./pages/ProfileV2"));
 const SavedPostsPage = lazy(() => import("./pages/SavedPostsPage"));
@@ -297,6 +298,12 @@ function App() {
                 <OnboardingGuard>
                   <ProfileV2 />
                 </OnboardingGuard>
+              } />
+              {/* Legacy profile ID redirect - looks up username and redirects */}
+              <Route path="/dna/profile/:id" element={
+                <Suspense fallback={<PageLoader />}>
+                  <LegacyProfileRedirect />
+                </Suspense>
               } />
               <Route path="/dna/profile/edit" element={
                 <OnboardingGuard>
