@@ -300,11 +300,7 @@ function App() {
               
               {/* Redirect old /dna/me to user's profile */}
               <Route path="/dna/me" element={<Navigate to="/dna/feed" replace />} />
-              <Route path="/dna/:username" element={
-                <OnboardingGuard>
-                  <ProfileV2 />
-                </OnboardingGuard>
-              } />
+              <Route path="/dna/:username" element={<ProfileV2 />} />
               {/* Legacy profile ID redirect - looks up username and redirects */}
               <Route path="/dna/profile/:id" element={
                 <Suspense fallback={<PageLoader />}>
