@@ -132,7 +132,7 @@ const ConnectionRequestCard: React.FC<ConnectionRequestCardProps> = ({
               <Button
                 size="sm"
                 variant="ghost"
-                onClick={() => navigate(request.sender?.username ? `/dna/${request.sender.username}` : `/dna/profile/${request.sender?.id}`)}
+                onClick={() => navigate(`/dna/${request.sender?.username || request.sender?.id}`)}
               >
                 <User className="w-4 h-4 mr-2" />
                 View Profile
