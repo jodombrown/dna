@@ -113,6 +113,47 @@ export interface ProfileV2Visibility {
   show_activity?: boolean;
 }
 
+/**
+ * Per-field visibility settings for public profiles
+ * Controls what fields are visible on the public profile page
+ */
+export interface PublicVisibilitySettings {
+  avatar: boolean;
+  headline: boolean;
+  bio: boolean;
+  location: boolean;
+  heritage: boolean;
+  industry: boolean;
+  company: boolean;
+  email: boolean;
+  phone: boolean;
+  linkedin_url: boolean;
+  website_url: boolean;
+  connection_count: boolean;
+  event_count: boolean;
+  member_since: boolean;
+}
+
+/**
+ * Default public visibility settings per PRD Section 3.3
+ */
+export const DEFAULT_PUBLIC_VISIBILITY: PublicVisibilitySettings = {
+  avatar: true,
+  headline: true,
+  bio: true,
+  location: true,
+  heritage: true,
+  industry: true,
+  company: true,
+  email: false,
+  phone: false,
+  linkedin_url: true,
+  website_url: true,
+  connection_count: true,
+  event_count: true,
+  member_since: true,
+};
+
 export interface ProfileV2Completion {
   score: number;
   suggested_actions: string[];

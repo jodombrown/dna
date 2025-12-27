@@ -1,6 +1,8 @@
 /**
  * DNA Profile v2 - Diaspora Impact Dashboard
  * Main profile page at /dna/:username
+ *
+ * Includes SEO optimization for public profiles.
  */
 
 import React from 'react';
@@ -30,6 +32,12 @@ import ProfileV2Verification from '@/components/profile-v2/ProfileV2Verification
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { MutualConnectionsWidget } from '@/components/connections/MutualConnectionsWidget';
 
+// SEO component for public profiles
+import { PublicProfileSEO } from '@/components/public-profile';
+
+// Profile view tracking
+import { useTrackProfileView } from '@/hooks/useTrackProfileView';
+
 const ProfileV2: React.FC = () => {
   const { username } = useParams<{ username: string }>();
   const { user } = useAuth();
@@ -39,6 +47,12 @@ const ProfileV2: React.FC = () => {
   const navigate = useNavigate();
   const { data: bundle, isLoading, error } = useProfileV2(username);
   const { data: ownerProfile } = useProfile();
+
+  // Track profile views for analytics (non-owner views only)
+  useTrackProfileView({
+    profileId: bundle?.profile?.id,
+    enabled: !isLoading && !!bundle?.profile && !bundle?.permissions?.is_owner,
+  });
 
   // Update handlers
   const handleUpdateAbout = async (bio: string) => {
@@ -212,6 +226,21 @@ const ProfileV2: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
+      {/* SEO Meta Tags - for public profile visibility */}
+      <PublicProfileSEO
+        username={profile.username}
+        fullName={profile.full_name || profile.username || 'DNA Member'}
+        firstName={profile.first_name}
+        lastName={profile.last_name}
+        headline={profile.headline || profile.professional_role}
+        bio={profile.bio}
+        avatarUrl={profile.avatar_url}
+        company={profile.company}
+        linkedinUrl={(profile as any).linkedin_url}
+        websiteUrl={(profile as any).website_url}
+        memberSince={profile.created_at}
+      />
+
       {/* Hero Section */}
       <ProfileV2Hero
         profile={profile}
