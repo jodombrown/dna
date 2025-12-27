@@ -65,64 +65,63 @@ export default function HashtagFeed() {
   const displayName = hashtag?.display_name || hashtagParam;
 
   return (
-    <div className="container max-w-6xl mx-auto px-4 py-6 space-y-6">
+    <div className="container max-w-6xl mx-auto px-3 sm:px-4 py-4 space-y-4">
       {/* Back button */}
-      <Button variant="ghost" size="sm" className="mb-2" asChild>
+      <Button variant="ghost" size="sm" className="-ml-2" asChild>
         <Link to="/dna/feed">
-          <ArrowLeft className="h-4 w-4 mr-2" />
+          <ArrowLeft className="h-4 w-4 mr-1.5" />
           Back to Feed
         </Link>
       </Button>
 
-      {/* Header Card */}
+      {/* Header Card - Compact */}
       <Card className="border-l-4 border-l-dna-copper">
-        <CardHeader>
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <div className="h-14 w-14 rounded-full bg-dna-copper/10 flex items-center justify-center">
-                <Hash className="h-7 w-7 text-dna-copper" />
+        <CardHeader className="p-4 sm:p-5">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-dna-copper/10 flex items-center justify-center flex-shrink-0">
+                <Hash className="h-5 w-5 sm:h-6 sm:w-6 text-dna-copper" />
               </div>
-              <div>
-                <CardTitle className="text-2xl flex items-center gap-2">
-                  #{displayName}
+              <div className="min-w-0">
+                <CardTitle className="text-lg sm:text-xl flex items-center gap-1.5 flex-wrap">
+                  <span className="truncate">#{displayName}</span>
                   {hashtag?.is_verified && (
-                    <Badge variant="outline" className="text-blue-500 border-blue-500">
+                    <Badge variant="outline" className="text-blue-500 border-blue-500 text-xs px-1.5 py-0">
                       Verified
                     </Badge>
                   )}
                   {hashtag?.owner_id === user?.id && (
-                    <Badge className="bg-dna-copper text-white">
-                      <Crown className="h-3 w-3 mr-1" />
-                      You own this
+                    <Badge className="bg-dna-copper text-white text-xs px-1.5 py-0">
+                      <Crown className="h-2.5 w-2.5 mr-0.5" />
+                      Owner
                     </Badge>
                   )}
                 </CardTitle>
-                <div className="flex items-center gap-2 mt-1">
-                  <Badge variant={hashtag?.type === 'personal' ? 'default' : 'secondary'}>
-                    {hashtag?.type === 'personal' ? 'Personal' : 'Community'}
-                  </Badge>
-                </div>
+                <Badge variant={hashtag?.type === 'personal' ? 'default' : 'secondary'} className="mt-1 text-xs px-2 py-0">
+                  {hashtag?.type === 'personal' ? 'Personal' : 'Community'}
+                </Badge>
               </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex gap-1.5 flex-shrink-0">
               {user && hashtag?.owner_id === user.id && (
-                <Button variant="outline" asChild>
+                <Button variant="outline" size="sm" className="h-8 px-2 sm:px-3" asChild>
                   <Link to="/dna/settings/hashtags">
-                    <Settings className="h-4 w-4 mr-2" />
-                    Manage
+                    <Settings className="h-3.5 w-3.5 sm:mr-1.5" />
+                    <span className="hidden sm:inline">Manage</span>
                   </Link>
                 </Button>
               )}
               {user && hashtag?.owner_id !== user.id && (
                 <Button
                   variant={isFollowing ? 'outline' : 'default'}
+                  size="sm"
+                  className={`h-8 px-3 ${isFollowing ? '' : 'bg-dna-copper hover:bg-dna-copper/90'}`}
                   onClick={toggleFollow}
                   disabled={isTogglingFollow}
-                  className={isFollowing ? '' : 'bg-dna-copper hover:bg-dna-copper/90'}
                 >
                   {isTogglingFollow ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
                   ) : isFollowing ? (
                     'Following'
                   ) : (
@@ -132,8 +131,8 @@ export default function HashtagFeed() {
               )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon">
-                    <Share2 className="h-4 w-4" />
+                  <Button variant="outline" size="icon" className="h-8 w-8">
+                    <Share2 className="h-3.5 w-3.5" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -174,19 +173,19 @@ export default function HashtagFeed() {
 
           {/* Owner info (for personal hashtags, only show if not the current user) */}
           {hashtag?.type === 'personal' && hashtag?.owner_id && hashtag.owner_id !== user?.id && (
-            <div className="flex items-center gap-2 mt-4 p-3 bg-muted/50 rounded-lg">
-              <span className="text-sm text-muted-foreground">Owned by</span>
+            <div className="flex items-center gap-2 mt-3 p-2 bg-muted/50 rounded-lg">
+              <span className="text-xs text-muted-foreground">Owned by</span>
               <Link
                 to={`/dna/${hashtag.owner_username || hashtag.owner_id}`}
-                className="flex items-center gap-2 hover:underline"
+                className="flex items-center gap-1.5 hover:underline"
               >
-                <Avatar className="h-6 w-6">
+                <Avatar className="h-5 w-5">
                   <AvatarImage src={hashtag.owner_avatar || undefined} />
-                  <AvatarFallback>{hashtag.owner_name?.charAt(0)}</AvatarFallback>
+                  <AvatarFallback className="text-xs">{hashtag.owner_name?.charAt(0)}</AvatarFallback>
                 </Avatar>
-                <span className="font-medium">{hashtag.owner_name}</span>
+                <span className="font-medium text-sm">{hashtag.owner_name}</span>
                 {hashtag.owner_username && (
-                  <span className="text-muted-foreground">@{hashtag.owner_username}</span>
+                  <span className="text-muted-foreground text-xs">@{hashtag.owner_username}</span>
                 )}
               </Link>
             </div>
@@ -194,10 +193,10 @@ export default function HashtagFeed() {
 
           {/* Description */}
           {hashtag?.description && (
-            <p className="text-muted-foreground mt-4">{hashtag.description}</p>
+            <p className="text-muted-foreground text-sm mt-3">{hashtag.description}</p>
           )}
 
-          {/* Stats */}
+          {/* Stats - More compact */}
           <HashtagStatsGrid
             postCount={hashtag?.usage_count || posts?.length || 0}
             followerCount={hashtag?.follower_count || 0}
@@ -347,42 +346,42 @@ export default function HashtagFeed() {
 
 function HashtagPageSkeleton() {
   return (
-    <div className="container max-w-6xl mx-auto px-4 py-6 space-y-6">
-      <Skeleton className="h-8 w-32" />
+    <div className="container max-w-6xl mx-auto px-3 sm:px-4 py-4 space-y-4">
+      <Skeleton className="h-7 w-28" />
       <Card className="border-l-4 border-l-dna-copper">
-        <CardHeader>
-          <div className="flex items-start gap-3">
-            <Skeleton className="h-14 w-14 rounded-full" />
-            <div className="space-y-2">
-              <Skeleton className="h-8 w-48" />
-              <Skeleton className="h-5 w-24" />
+        <CardHeader className="p-4 sm:p-5">
+          <div className="flex items-start gap-2.5">
+            <Skeleton className="h-10 w-10 sm:h-12 sm:w-12 rounded-full flex-shrink-0" />
+            <div className="space-y-1.5">
+              <Skeleton className="h-6 w-36" />
+              <Skeleton className="h-4 w-20" />
             </div>
           </div>
           {/* Stats skeleton */}
-          <div className="grid grid-cols-3 gap-2 sm:gap-4 p-3 sm:p-4 bg-muted/50 rounded-lg mt-4">
-            <div className="text-center space-y-2">
-              <Skeleton className="h-6 w-12 mx-auto" />
+          <div className="grid grid-cols-3 gap-2 p-2.5 sm:p-3 bg-muted/50 rounded-lg mt-3">
+            <div className="text-center space-y-1">
+              <Skeleton className="h-5 w-10 mx-auto" />
+              <Skeleton className="h-3 w-8 mx-auto" />
+            </div>
+            <div className="text-center space-y-1">
+              <Skeleton className="h-5 w-10 mx-auto" />
+              <Skeleton className="h-3 w-14 mx-auto" />
+            </div>
+            <div className="text-center space-y-1">
+              <Skeleton className="h-5 w-14 mx-auto" />
               <Skeleton className="h-3 w-10 mx-auto" />
-            </div>
-            <div className="text-center space-y-2">
-              <Skeleton className="h-6 w-12 mx-auto" />
-              <Skeleton className="h-3 w-16 mx-auto" />
-            </div>
-            <div className="text-center space-y-2">
-              <Skeleton className="h-6 w-16 mx-auto" />
-              <Skeleton className="h-3 w-12 mx-auto" />
             </div>
           </div>
         </CardHeader>
       </Card>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-4">
-          <Skeleton className="h-10 w-48" />
-          <Skeleton className="h-40 w-full" />
-          <Skeleton className="h-40 w-full" />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="lg:col-span-2 space-y-3">
+          <Skeleton className="h-9 w-40" />
+          <Skeleton className="h-32 w-full" />
+          <Skeleton className="h-32 w-full" />
         </div>
-        <div>
-          <Skeleton className="h-64 w-full" />
+        <div className="hidden lg:block">
+          <Skeleton className="h-56 w-full" />
         </div>
       </div>
     </div>
