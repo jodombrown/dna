@@ -279,18 +279,18 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
       <Card className={cn(
         "transition-all border-border/50 overflow-hidden",
         compact
-          ? "shadow-sm hover:shadow-md"
+          ? "shadow-sm hover:shadow"
           : "shadow-md hover:shadow-lg"
       )}>
         <CardContent className={cn(
-          compact ? "p-3" : "p-3 sm:p-5"
+          compact ? "p-2.5" : "p-3 sm:p-5"
         )}>
-          <div className="flex items-start gap-3">
-            {/* Avatar - compact: 40px, regular: 48px/64px */}
+          <div className={cn("flex items-start", compact ? "gap-2.5" : "gap-3")}>
+            {/* Avatar - compact: 36px, regular: 48px/64px */}
             <Avatar
               className={cn(
                 "cursor-pointer shrink-0",
-                compact ? "h-10 w-10" : "h-12 w-12 sm:h-16 sm:w-16"
+                compact ? "h-9 w-9" : "h-12 w-12 sm:h-16 sm:w-16"
               )}
               onClick={handleViewProfile}
             >
@@ -301,7 +301,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
               />
               <AvatarFallback className={cn(
                 "bg-primary/10 text-primary",
-                compact ? "text-xs" : "text-sm"
+                compact ? "text-[10px]" : "text-sm"
               )}>
                 {(member.full_name || member.username || 'DN').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
               </AvatarFallback>
@@ -310,11 +310,11 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
             {/* Content */}
             <div className="flex-1 min-w-0">
               {/* Header row with name and match score */}
-              <div className="flex items-start justify-between gap-1 mb-0.5">
+              <div className="flex items-center justify-between gap-1">
                 <h3
                   className={cn(
                     "font-semibold hover:text-dna-copper cursor-pointer truncate flex-1 min-w-0",
-                    compact ? "text-sm" : "text-sm sm:text-base"
+                    compact ? "text-[13px] leading-tight" : "text-sm sm:text-base"
                   )}
                   onClick={handleViewProfile}
                 >
@@ -332,30 +332,34 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
               </div>
 
               {/* Headline - single line, truncated */}
-              <p className="text-xs text-muted-foreground truncate mb-1">
+              <p className={cn(
+                "text-muted-foreground truncate",
+                compact ? "text-[11px] leading-tight mb-0.5" : "text-xs mb-1"
+              )}>
                 {member.headline || member.profession || 'DNA Member'}
               </p>
 
-              {/* Location */}
-              {member.location && (
-                <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1.5">
-                  <MapPin className="h-3 w-3 shrink-0" />
-                  <span className="truncate">{member.location}</span>
-                </div>
-              )}
-
-              {/* Mutual Connections - compact inline */}
-              {hasMutualConnections && (
-                <div className="flex items-center gap-1 text-xs text-dna-copper font-medium mb-1.5">
-                  <Users className="h-3 w-3 shrink-0" />
-                  <span>
-                    {mutualCount} mutual{mutualCount !== 1 ? 's' : ''}
-                  </span>
-                </div>
-              )}
+              {/* Location & Mutuals - inline row */}
+              <div className={cn(
+                "flex items-center gap-2 text-muted-foreground flex-wrap",
+                compact ? "text-[11px] mb-1" : "text-xs mb-1.5"
+              )}>
+                {member.location && (
+                  <div className="flex items-center gap-0.5">
+                    <MapPin className="h-2.5 w-2.5 shrink-0" />
+                    <span className="truncate max-w-[100px]">{member.location}</span>
+                  </div>
+                )}
+                {hasMutualConnections && (
+                  <div className="flex items-center gap-0.5 text-dna-copper font-medium">
+                    <Users className="h-2.5 w-2.5 shrink-0" />
+                    <span>{mutualCount} mutual{mutualCount !== 1 ? 's' : ''}</span>
+                  </div>
+                )}
+              </div>
 
               {/* Tags - max 2 visible + overflow badge */}
-              <div className="flex flex-wrap gap-1 mb-2">
+              <div className={cn("flex flex-wrap gap-1", compact ? "mb-1.5" : "mb-2")}>
                 {visibleTags.map((tag, idx) => {
                   // Special styling for Mentor/Investor
                   if (tag === 'Mentor') {
@@ -363,7 +367,10 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
                       <Badge
                         key={tag}
                         variant="outline"
-                        className="text-[10px] px-1.5 py-0 border-green-300 bg-green-50 text-green-700"
+                        className={cn(
+                          "px-1.5 py-0 border-green-300 bg-green-50 text-green-700",
+                          compact ? "text-[9px]" : "text-[10px]"
+                        )}
                       >
                         Mentor
                       </Badge>
@@ -374,7 +381,10 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
                       <Badge
                         key={tag}
                         variant="outline"
-                        className="text-[10px] px-1.5 py-0 border-blue-300 bg-blue-50 text-blue-700"
+                        className={cn(
+                          "px-1.5 py-0 border-blue-300 bg-blue-50 text-blue-700",
+                          compact ? "text-[9px]" : "text-[10px]"
+                        )}
                       >
                         Investor
                       </Badge>
@@ -384,7 +394,10 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
                     <Badge
                       key={`${tag}-${idx}`}
                       variant="secondary"
-                      className="text-[10px] px-1.5 py-0.5 whitespace-nowrap max-w-[100px] truncate"
+                      className={cn(
+                        "px-1.5 py-0.5 whitespace-nowrap max-w-[90px] truncate",
+                        compact ? "text-[9px]" : "text-[10px]"
+                      )}
                     >
                       {tag}
                     </Badge>
@@ -393,7 +406,10 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
                 {overflowCount > 0 && (
                   <Badge
                     variant="outline"
-                    className="text-[10px] px-1.5 py-0.5 text-muted-foreground"
+                    className={cn(
+                      "px-1.5 py-0.5 text-muted-foreground",
+                      compact ? "text-[9px]" : "text-[10px]"
+                    )}
                   >
                     +{overflowCount}
                   </Badge>
