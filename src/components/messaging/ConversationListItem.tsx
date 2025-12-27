@@ -47,10 +47,10 @@ export function ConversationListItem({
       )}
       onClick={onClick}
     >
-      {/* Unread indicator dot - Apple style */}
+      {/* Unread indicator dot - DNA copper accent */}
       <div className="w-2.5 flex-shrink-0">
         {hasUnread && (
-          <div className="w-2.5 h-2.5 rounded-full bg-primary" />
+          <div className="w-2.5 h-2.5 rounded-full bg-dna-copper" />
         )}
       </div>
 
