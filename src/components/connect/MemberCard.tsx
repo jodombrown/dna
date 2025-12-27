@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { MapPin, Briefcase, UserPlus, Eye, Check, MessageSquare, Users } from 'lucide-react';
+import { MapPin, UserPlus, Check, MessageSquare, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -14,7 +14,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useMutualConnections } from '@/hooks/useMutualConnections';
 import { MatchScoreBadge, MatchReasoning } from '@/components/discover/MatchScoreBadge';
-import { cn } from '@/lib/utils';
+
 
 interface MemberCardProps {
   member: {
@@ -39,11 +39,9 @@ interface MemberCardProps {
     match_score: number;
   };
   onConnectionSent?: () => void;
-  /** Enable compact mobile-first layout */
-  compact?: boolean;
 }
 
-export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent, compact = false }) => {
+export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent }) => {
   const { user } = useAuth();
   const { data: currentUserProfile } = useProfile();
   const navigate = useNavigate();
@@ -275,23 +273,14 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
     <motion.div
       whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+      className="w-full"
     >
-      <Card className={cn(
-        "transition-all border-border/50 overflow-hidden",
-        compact
-          ? "shadow-sm hover:shadow"
-          : "shadow-md hover:shadow-lg"
-      )}>
-        <CardContent className={cn(
-          compact ? "p-2.5" : "p-3 sm:p-5"
-        )}>
-          <div className={cn("flex items-start", compact ? "gap-2.5" : "gap-3")}>
-            {/* Avatar - compact: 36px, regular: 48px/64px */}
+      <Card className="transition-all border-border/50 overflow-hidden shadow-sm hover:shadow">
+        <CardContent className="p-3">
+          <div className="flex items-start gap-3 w-full overflow-hidden">
+            {/* Avatar - fixed 40px */}
             <Avatar
-              className={cn(
-                "cursor-pointer shrink-0",
-                compact ? "h-9 w-9" : "h-12 w-12 sm:h-16 sm:w-16"
-              )}
+              className="h-10 w-10 cursor-pointer shrink-0"
               onClick={handleViewProfile}
             >
               <AvatarImage
@@ -299,28 +288,22 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
                 alt={member.full_name}
                 loading="lazy"
               />
-              <AvatarFallback className={cn(
-                "bg-primary/10 text-primary",
-                compact ? "text-[10px]" : "text-sm"
-              )}>
+              <AvatarFallback className="bg-primary/10 text-primary text-xs">
                 {(member.full_name || member.username || 'DN').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
 
-            {/* Content */}
-            <div className="flex-1 min-w-0">
+            {/* Content - constrained width */}
+            <div className="flex-1 min-w-0 overflow-hidden">
               {/* Header row with name and match score */}
-              <div className="flex items-center justify-between gap-1">
+              <div className="flex items-center justify-between gap-2">
                 <h3
-                  className={cn(
-                    "font-semibold hover:text-dna-copper cursor-pointer truncate flex-1 min-w-0",
-                    compact ? "text-[13px] leading-tight" : "text-sm sm:text-base"
-                  )}
+                  className="font-semibold text-sm hover:text-dna-copper cursor-pointer truncate flex-1 min-w-0"
                   onClick={handleViewProfile}
                 >
                   {member.full_name}
                 </h3>
-                {/* Match Score - clickable with popover */}
+                {/* Match Score */}
                 <div className="shrink-0">
                   <MatchScoreBadge
                     score={member.match_score}
@@ -332,45 +315,35 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
               </div>
 
               {/* Headline - single line, truncated */}
-              <p className={cn(
-                "text-muted-foreground truncate",
-                compact ? "text-[11px] leading-tight mb-0.5" : "text-xs mb-1"
-              )}>
+              <p className="text-xs text-muted-foreground truncate mb-1">
                 {member.headline || member.profession || 'DNA Member'}
               </p>
 
               {/* Location & Mutuals - inline row */}
-              <div className={cn(
-                "flex items-center gap-2 text-muted-foreground flex-wrap",
-                compact ? "text-[11px] mb-1" : "text-xs mb-1.5"
-              )}>
+              <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
                 {member.location && (
-                  <div className="flex items-center gap-0.5">
-                    <MapPin className="h-2.5 w-2.5 shrink-0" />
-                    <span className="truncate max-w-[100px]">{member.location}</span>
+                  <div className="flex items-center gap-1 min-w-0">
+                    <MapPin className="h-3 w-3 shrink-0" />
+                    <span className="truncate">{member.location}</span>
                   </div>
                 )}
                 {hasMutualConnections && (
-                  <div className="flex items-center gap-0.5 text-dna-copper font-medium">
-                    <Users className="h-2.5 w-2.5 shrink-0" />
+                  <div className="flex items-center gap-1 text-dna-copper font-medium shrink-0">
+                    <Users className="h-3 w-3" />
                     <span>{mutualCount} mutual{mutualCount !== 1 ? 's' : ''}</span>
                   </div>
                 )}
               </div>
 
               {/* Tags - max 2 visible + overflow badge */}
-              <div className={cn("flex flex-wrap gap-1", compact ? "mb-1.5" : "mb-2")}>
+              <div className="flex flex-wrap gap-1 mb-2">
                 {visibleTags.map((tag, idx) => {
-                  // Special styling for Mentor/Investor
                   if (tag === 'Mentor') {
                     return (
                       <Badge
                         key={tag}
                         variant="outline"
-                        className={cn(
-                          "px-1.5 py-0 border-green-300 bg-green-50 text-green-700",
-                          compact ? "text-[9px]" : "text-[10px]"
-                        )}
+                        className="px-1.5 py-0 text-[10px] border-green-300 bg-green-50 text-green-700"
                       >
                         Mentor
                       </Badge>
@@ -381,10 +354,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
                       <Badge
                         key={tag}
                         variant="outline"
-                        className={cn(
-                          "px-1.5 py-0 border-blue-300 bg-blue-50 text-blue-700",
-                          compact ? "text-[9px]" : "text-[10px]"
-                        )}
+                        className="px-1.5 py-0 text-[10px] border-blue-300 bg-blue-50 text-blue-700"
                       >
                         Investor
                       </Badge>
@@ -394,10 +364,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
                     <Badge
                       key={`${tag}-${idx}`}
                       variant="secondary"
-                      className={cn(
-                        "px-1.5 py-0.5 whitespace-nowrap max-w-[90px] truncate",
-                        compact ? "text-[9px]" : "text-[10px]"
-                      )}
+                      className="px-1.5 py-0.5 text-[10px] whitespace-nowrap max-w-[100px] truncate"
                     >
                       {tag}
                     </Badge>
@@ -406,122 +373,55 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
                 {overflowCount > 0 && (
                   <Badge
                     variant="outline"
-                    className={cn(
-                      "px-1.5 py-0.5 text-muted-foreground",
-                      compact ? "text-[9px]" : "text-[10px]"
-                    )}
+                    className="px-1.5 py-0.5 text-[10px] text-muted-foreground"
                   >
                     +{overflowCount}
                   </Badge>
                 )}
               </div>
 
-              {/* Actions - compact height 28px (h-7) */}
-              <div className="flex gap-1.5">
+              {/* Actions */}
+              <div className="flex gap-2">
                 {connectionStatus === 'accepted' ? (
-                  <>
-                    <Button
-                      variant="default"
-                      size="sm"
-                      onClick={handleMessage}
-                      className={cn(
-                        "flex-1 text-xs",
-                        compact ? "h-7" : "h-8"
-                      )}
-                    >
-                      <MessageSquare className="mr-1 h-3 w-3" />
-                      Message
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleViewProfile}
-                      className={cn(
-                        "px-2 text-xs",
-                        compact ? "h-7" : "h-8"
-                      )}
-                    >
-                      <Eye className="h-3 w-3" />
-                    </Button>
-                  </>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={handleMessage}
+                    className="flex-1 h-8 text-xs"
+                  >
+                    <MessageSquare className="mr-1.5 h-3.5 w-3.5" />
+                    Message
+                  </Button>
                 ) : connectionStatus === 'pending_sent' ? (
-                  <>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled
-                      className={cn(
-                        "flex-1 text-xs",
-                        compact ? "h-7" : "h-8"
-                      )}
-                    >
-                      <Check className="mr-1 h-3 w-3" />
-                      Sent
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleViewProfile}
-                      className={cn(
-                        "px-2 text-xs",
-                        compact ? "h-7" : "h-8"
-                      )}
-                    >
-                      <Eye className="h-3 w-3" />
-                    </Button>
-                  </>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled
+                    className="flex-1 h-8 text-xs"
+                  >
+                    <Check className="mr-1.5 h-3.5 w-3.5" />
+                    Sent
+                  </Button>
                 ) : connectionStatus === 'pending_received' ? (
-                  <>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigate('/dna/connect/network?tab=requests')}
-                      className={cn(
-                        "flex-1 text-xs",
-                        compact ? "h-7" : "h-8"
-                      )}
-                    >
-                      Respond
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleViewProfile}
-                      className={cn(
-                        "px-2 text-xs",
-                        compact ? "h-7" : "h-8"
-                      )}
-                    >
-                      <Eye className="h-3 w-3" />
-                    </Button>
-                  </>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate('/dna/connect/network?tab=requests')}
+                    className="flex-1 h-8 text-xs"
+                  >
+                    Respond
+                  </Button>
                 ) : (
-                  <>
-                    <Button
-                      variant="default"
-                      size="sm"
-                      onClick={handleConnect}
-                      disabled={isSending}
-                      className={cn(
-                        "flex-1 text-xs",
-                        compact ? "h-7" : "h-8"
-                      )}
-                    >
-                      <UserPlus className="mr-1 h-3 w-3" />
-                      {isSending ? '...' : 'Connect'}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleViewProfile}
-                      className={cn(
-                        "px-2 text-xs",
-                        compact ? "h-7" : "h-8"
-                      )}
-                    >
-                      <Eye className="h-3 w-3" />
-                    </Button>
-                  </>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={handleConnect}
+                    disabled={isSending}
+                    className="flex-1 h-8 text-xs"
+                  >
+                    <MessageSquare className="mr-1.5 h-3.5 w-3.5" />
+                    {isSending ? '...' : 'Message'}
+                  </Button>
                 )}
               </div>
             </div>
