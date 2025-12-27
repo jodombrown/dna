@@ -15,6 +15,7 @@ import {
 import { Share2, Copy, MessageSquare, Linkedin, Twitter, Share, Download, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { generateProfilePDF } from '@/lib/generateProfilePDF';
+import { ROUTES } from '@/config/routes';
 
 interface ProfileShareDropdownProps {
   username: string;
@@ -38,7 +39,7 @@ export const ProfileShareDropdown: React.FC<ProfileShareDropdownProps> = ({
   const [isDownloading, setIsDownloading] = useState(false);
 
   const getPublicProfileUrl = () => {
-    return `${window.location.origin}/dna/u/${username}`;
+    return `${window.location.origin}${ROUTES.profile.view(username)}`;
   };
 
   const displayName = fullName || username || 'this DNA member';

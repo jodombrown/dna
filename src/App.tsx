@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ViewStateProvider } from "@/contexts/ViewStateContext";
 import { MessageProvider } from "@/contexts/MessageContext";
@@ -208,6 +208,12 @@ const AppShell = ({ children }: { children: React.ReactNode }) => (
   </AuthGuard>
 );
 
+// Legacy /dna/u/:username redirect to canonical /dna/:username
+const LegacyUsernameRedirect = () => {
+  const { username } = useParams();
+  return <Navigate to={`/dna/${username}`} replace />;
+};
+
 function App() {
   return (
     <ErrorBoundary>
@@ -225,8 +231,8 @@ function App() {
                       <BaseLayout>
                         <Suspense fallback={<PageLoader />}>
                           <Routes>
-              {/* Public pages - accessible without authentication */}
-              <Route path="/dna/u/:username" element={<PublicProfilePage />} />
+              {/* Legacy /dna/u/:username redirect to canonical profile URL */}
+              <Route path="/dna/u/:username" element={<LegacyUsernameRedirect />} />
               <Route path="/post/:postId" element={<PublicPostPage />} />
               
               {/* Core authentication */}

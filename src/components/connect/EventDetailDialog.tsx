@@ -7,6 +7,7 @@ import { Calendar, MapPin, Users as UsersIcon, Image as ImageIcon } from "lucide
 import { Event } from "@/types/search";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
+import { ROUTES } from '@/config/routes';
 
 type Props = {
   open: boolean;
@@ -98,7 +99,7 @@ export default function EventDetailDialog({
           {event.creator_profile && (
             <button
               className="absolute bottom-4 right-4 rounded-full shadow border-2 border-white bg-white/80 hover:bg-dna-emerald/80 flex items-center gap-2 px-3 py-1 z-20"
-              onClick={() => navigate(`/dna/${(event.creator_profile as any).username || event.creator_profile.id}`)}
+              onClick={() => navigate(ROUTES.profile.view(event.creator_profile.username || event.creator_profile.id))}
               title={`View profile: ${event.creator_profile.full_name}`}
               aria-label="View event creator profile"
               tabIndex={0}
