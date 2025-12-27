@@ -60,7 +60,7 @@ export const RegisteredEventsWidget = () => {
             <Button
               size="sm"
               className="bg-dna-emerald hover:bg-dna-forest"
-              onClick={() => navigate('/dna/events')}
+              onClick={() => navigate('/dna/convene/events')}
             >
               Browse Events
             </Button>
@@ -75,7 +75,7 @@ export const RegisteredEventsWidget = () => {
                 <div
                   key={registration.id}
                   className="flex gap-3 p-3 rounded-lg border hover:bg-accent/50 transition-colors cursor-pointer"
-                  onClick={() => navigate('/dna/events')}
+                  onClick={() => navigate('/dna/convene/events')}
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
@@ -113,7 +113,7 @@ export const RegisteredEventsWidget = () => {
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => navigate('/dna/events')}
+              onClick={() => navigate('/dna/convene/events')}
             >
               View All Events
             </Button>

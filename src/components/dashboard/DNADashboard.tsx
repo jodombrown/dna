@@ -183,7 +183,7 @@ const DNADashboard: React.FC = () => {
                 </Card>
               </Link>
 
-              <Link to="/dna/impact">
+              <Link to="/dna/contribute">
                 <Card className="cursor-pointer hover:shadow-md transition-all border-l-4 border-l-dna-gold hover:border-l-dna-gold/80">
                   <CardContent className="p-4 text-center">
                     <div className="w-12 h-12 bg-dna-gold/10 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -290,7 +290,7 @@ const DNADashboard: React.FC = () => {
                   <p className={`${TYPOGRAPHY.body} text-muted-foreground mb-3`}>
                     Find meaningful ways to give back to the community
                   </p>
-                  <Link to="/dna/impact">
+                  <Link to="/dna/contribute">
                     <Button variant="outline" size="sm">
                       Explore Opportunities
                     </Button>

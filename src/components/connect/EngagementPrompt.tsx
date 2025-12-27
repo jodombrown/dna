@@ -44,7 +44,7 @@ export const EngagementPrompt: React.FC<EngagementPromptProps> = ({
       title: 'Join your first event',
       description: 'Discover events happening in your community this week',
       action: 'Browse Events',
-      onClick: () => navigate('/dna/events'),
+      onClick: () => navigate('/dna/convene/events'),
       gradient: 'from-blue-50 to-indigo-50',
       border: 'border-blue-200',
     },

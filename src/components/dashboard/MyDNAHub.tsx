@@ -98,9 +98,9 @@ const MyDNAHub: React.FC<MyDNAHubProps> = ({ profile, currentUser }) => {
             </CardContent>
           </Card>
 
-          <Card 
+          <Card
             className="cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => navigate('/dna/impact')}
+            onClick={() => navigate('/dna/contribute')}
           >
             <CardContent className="pt-6 text-center">
               <div className="text-3xl mb-2">💝</div>

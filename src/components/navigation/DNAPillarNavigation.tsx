@@ -65,10 +65,10 @@ const pillars = [
     label: 'Contribute',
     description: 'Give back and create lasting impact',
     icon: Heart,
-    href: '/dna/impact',
+    href: '/dna/contribute',
     color: 'dna-gold',
     actions: [
-      { label: 'Impact Opportunities', icon: Heart, href: '/dna/impact' },
+      { label: 'Contribute Opportunities', icon: Heart, href: '/dna/contribute' },
       { label: 'My Applications', icon: Users, href: '/dna/applications' }
     ]
   }

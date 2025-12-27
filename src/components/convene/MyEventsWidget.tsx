@@ -59,7 +59,7 @@ export const MyEventsWidget = () => {
             <Button
               size="sm"
               className="bg-dna-emerald hover:bg-dna-forest"
-              onClick={() => navigate('/dna/events')}
+              onClick={() => navigate('/dna/convene/events')}
             >
               <Plus className="h-4 w-4 mr-2" />
               Create Your First Event
@@ -71,7 +71,7 @@ export const MyEventsWidget = () => {
               <div
                 key={event.id}
                 className="flex gap-3 p-3 rounded-lg border hover:bg-accent/50 transition-colors cursor-pointer"
-                onClick={() => navigate('/dna/events')}
+                onClick={() => navigate('/dna/convene/events')}
               >
                 <div className="flex-1 min-w-0">
                   <h4 className="font-semibold text-sm truncate">
@@ -105,7 +105,7 @@ export const MyEventsWidget = () => {
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => navigate('/dna/events')}
+              onClick={() => navigate('/dna/convene/events')}
             >
               <Plus className="h-3 w-3 mr-2" />
               Create New Event

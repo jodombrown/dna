@@ -149,7 +149,7 @@ const DashboardRightColumn: React.FC<DashboardRightColumnProps> = ({
                 variant="ghost" 
                 size="sm" 
                 className="w-full text-dna-copper hover:bg-dna-emerald/10"
-                onClick={() => navigate('/dna/events')}
+                onClick={() => navigate('/dna/convene/events')}
               >
                 View all events
                 <ArrowRight className="w-3 h-3 ml-1" />
@@ -164,7 +164,7 @@ const DashboardRightColumn: React.FC<DashboardRightColumnProps> = ({
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={() => navigate('/dna/events')}
+                onClick={() => navigate('/dna/convene/events')}
               >
                 Explore Events
               </Button>

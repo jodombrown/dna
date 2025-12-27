@@ -128,7 +128,7 @@ const EventCreateWizard: React.FC = () => {
 
       toast.success('Event created successfully!');
       // Phase 1.5: Navigate to events list instead of detail page
-      navigate('/dna/events');
+      navigate('/dna/convene/events');
     } catch (error) {
       console.error('Unexpected error:', error);
       toast.error('An unexpected error occurred');
@@ -323,7 +323,7 @@ const EventCreateWizard: React.FC = () => {
             <div className="space-x-2">
               <Button
                 variant="outline"
-                onClick={() => navigate('/dna/events')}
+                onClick={() => navigate('/dna/convene/events')}
               >
                 Cancel
               </Button>

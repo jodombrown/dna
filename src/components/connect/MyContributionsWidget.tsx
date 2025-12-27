@@ -77,7 +77,7 @@ export const MyContributionsWidget: React.FC<MyContributionsWidgetProps> = ({ us
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate('/dna/impact')}
+            onClick={() => navigate('/dna/contribute')}
             className="text-dna-copper hover:text-dna-copper/80"
           >
             View All
@@ -93,14 +93,14 @@ export const MyContributionsWidget: React.FC<MyContributionsWidgetProps> = ({ us
               <p className="font-medium mb-1">Start making an impact</p>
               <p className="text-sm">Support projects, join initiatives, and contribute to the community</p>
             </div>
-            <Button onClick={() => navigate('/dna/impact')} variant="outline">
+            <Button onClick={() => navigate('/dna/contribute')} variant="outline">
               Find Opportunities
             </Button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div
-              onClick={() => navigate('/dna/impact')}
+              onClick={() => navigate('/dna/contribute')}
               className="p-4 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
             >
               <div className="flex items-center gap-3 mb-2">
