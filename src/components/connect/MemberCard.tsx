@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { MapPin, UserPlus, Check, MessageSquare, Users } from 'lucide-react';
+import { 
+  MapPin, 
+  UserPlus, 
+  Check, 
+  MessageSquare, 
+  Users,
+  MoreHorizontal,
+  Bookmark,
+  Share2
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -13,8 +21,13 @@ import { useConnectionStatus } from '@/hooks/useConnectionStatus';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useMutualConnections } from '@/hooks/useMutualConnections';
-import { MatchScoreBadge, MatchReasoning } from '@/components/discover/MatchScoreBadge';
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface MemberCardProps {
   member: {
@@ -49,108 +62,18 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
   const { trackEvent } = useAnalytics();
   const [isSending, setIsSending] = useState(false);
   const { data: connectionStatus, refetch: refetchStatus } = useConnectionStatus(member.id);
-  const { mutualConnections, mutualCount, hasMutualConnections } = useMutualConnections(user?.id, member.id);
+  const { mutualCount, hasMutualConnections } = useMutualConnections(user?.id, member.id);
 
-  // Compute match reasons for "why this match" - now with enhanced criteria
-  const getMatchReasons = (): string[] => {
-    if (!currentUserProfile) return [];
-    const reasons: string[] = [];
-
-    // Complementary collaboration opportunities (highest priority)
-    const userAvailableFor = (currentUserProfile as any).available_for || [];
-    const memberAvailableFor = member.available_for || [];
-
-    if ((userAvailableFor.includes('hiring') && memberAvailableFor.includes('job_seeking')) ||
-        (userAvailableFor.includes('job_seeking') && memberAvailableFor.includes('hiring'))) {
-      reasons.push('Career match');
-    }
-    if ((userAvailableFor.includes('investing') && memberAvailableFor.includes('seeking_investment')) ||
-        (userAvailableFor.includes('seeking_investment') && memberAvailableFor.includes('investing'))) {
-      reasons.push('Investment fit');
-    }
-    if ((userAvailableFor.includes('mentoring') && memberAvailableFor.includes('being_mentored')) ||
-        (userAvailableFor.includes('being_mentored') && memberAvailableFor.includes('mentoring'))) {
-      reasons.push('Mentorship match');
-    }
-
-    // Mentor/Investor badges
-    if (member.is_mentor && (currentUserProfile as any).seeking_mentorship) {
-      reasons.push('Mentor available');
-    }
-    if (member.is_investor && userAvailableFor.includes('seeking_investment')) {
-      reasons.push('Investor');
-    }
-
-    // Same heritage country
-    if (currentUserProfile.country_of_origin && member.country_of_origin &&
-        currentUserProfile.country_of_origin.toLowerCase() === member.country_of_origin.toLowerCase()) {
-      reasons.push('Same heritage');
-    }
-
-    // Same current location
-    if ((currentUserProfile as any).current_country && member.current_country &&
-        (currentUserProfile as any).current_country.toLowerCase() === member.current_country.toLowerCase()) {
-      reasons.push('Same location');
-    }
-
-    // Shared languages
-    if ((currentUserProfile as any).languages && member.languages) {
-      const sharedLangs = (currentUserProfile as any).languages.filter((l: string) =>
-        member.languages?.map(ml => ml.toLowerCase()).includes(l.toLowerCase())
-      );
-      if (sharedLangs.length > 0 && reasons.length < 4) {
-        reasons.push(`Speaks ${sharedLangs[0]}`);
-      }
-    }
-
-    // Check focus areas
-    if (currentUserProfile.focus_areas && member.focus_areas && reasons.length < 4) {
-      const sharedFocus = currentUserProfile.focus_areas.filter(f =>
-        member.focus_areas?.includes(f)
-      );
-      if (sharedFocus.length > 0) {
-        reasons.push(sharedFocus[0]);
-      }
-    }
-
-    // Check industries
-    if (currentUserProfile.industries && member.industries && reasons.length < 4) {
-      const sharedIndustries = currentUserProfile.industries.filter(i =>
-        member.industries?.includes(i)
-      );
-      if (sharedIndustries.length > 0) {
-        reasons.push(sharedIndustries[0]);
-      }
-    }
-
-    // Check regional expertise
-    if ((currentUserProfile as any).regional_expertise && member.regional_expertise && reasons.length < 4) {
-      const sharedRegions = (currentUserProfile as any).regional_expertise.filter((r: string) =>
-        member.regional_expertise?.includes(r)
-      );
-      if (sharedRegions.length > 0) {
-        reasons.push(sharedRegions[0]);
-      }
-    }
-
-    return reasons.slice(0, 3);
+  // Get primary industry/expertise for "source" badge
+  const getPrimaryLabel = (): string | null => {
+    if (member.is_mentor) return 'Mentor';
+    if (member.is_investor) return 'Investor';
+    if (member.industries?.[0]) return member.industries[0];
+    if (member.focus_areas?.[0]) return member.focus_areas[0];
+    return null;
   };
 
-  const matchReasons = getMatchReasons();
-
-  // Build detailed reasoning for the popover
-  const matchReasoning: MatchReasoning = {
-    same_country_of_origin: !!(currentUserProfile?.country_of_origin && member.country_of_origin &&
-      currentUserProfile.country_of_origin.toLowerCase() === member.country_of_origin.toLowerCase()),
-    same_location: !!((currentUserProfile as any)?.current_country && member.current_country &&
-      (currentUserProfile as any).current_country.toLowerCase() === member.current_country.toLowerCase()),
-    shared_focus_areas: currentUserProfile?.focus_areas?.filter(f => member.focus_areas?.includes(f)),
-    shared_industries: currentUserProfile?.industries?.filter(i => member.industries?.includes(i)),
-    shared_skills: currentUserProfile?.skills?.filter(s => member.skills?.includes(s)),
-    regional_expertise_match: !!(currentUserProfile as any)?.regional_expertise?.some((r: string) => 
-      member.regional_expertise?.includes(r)
-    ),
-  };
+  const primaryLabel = getPrimaryLabel();
 
   const handleConnect = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -209,11 +132,11 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
     }
   };
 
-  const handleMessage = async () => {
+  const handleMessage = async (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     if (!user) return;
     
     try {
-      // Get or create conversation
       const { data: existingConversation } = await supabase
         .from('conversations')
         .select('id')
@@ -221,10 +144,8 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
         .maybeSingle();
 
       if (existingConversation) {
-        // Navigate to messages with conversation ID in URL path
         navigate(`/dna/messages/${existingConversation.id}`);
       } else {
-        // Create new conversation
         const { data: newConv, error } = await supabase
           .from('conversations')
           .insert({ user_a: user.id, user_b: member.id })
@@ -248,21 +169,34 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
     navigate(`/dna/${member.username}`);
   };
 
-  // Add cache-busting for problematic avatar URLs
-  const getOptimizedAvatarUrl = (url?: string) => {
-    if (!url) return undefined;
-    // Add timestamp to bust cache if image fails to load
-    return url;
+  const handleShare = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const profileUrl = `${window.location.origin}/dna/${member.username}`;
+    navigator.clipboard.writeText(profileUrl);
+    toast({
+      title: 'Link copied',
+      description: 'Profile link copied to clipboard',
+    });
   };
 
-  // Calculate tag overflow
-  const allTags = [
-    ...(member.is_mentor ? ['Mentor'] : []),
-    ...(member.is_investor ? ['Investor'] : []),
-    ...(member.focus_areas || []),
-  ];
-  const visibleTags = allTags.slice(0, 2);
-  const overflowCount = allTags.length - 2;
+  const handleSave = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toast({
+      title: 'Profile saved',
+      description: `${member.full_name} added to your saved profiles`,
+    });
+  };
+
+  // Build metadata string like Apple News: "Location · Mutual connections"
+  const getMetadataString = (): string => {
+    const parts: string[] = [];
+    if (member.location) parts.push(member.location);
+    if (hasMutualConnections) parts.push(`${mutualCount} mutual${mutualCount !== 1 ? 's' : ''}`);
+    if (member.country_of_origin && !member.location) parts.push(member.country_of_origin);
+    return parts.join(' · ');
+  };
+
+  const metadata = getMetadataString();
 
   // Check for reduced motion preference
   const prefersReducedMotion =
@@ -272,161 +206,121 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
   return (
     <motion.div
       whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 25 } as const}
       className="w-full"
     >
-      <Card className="transition-all border-border/50 overflow-hidden shadow-sm hover:shadow">
-        <CardContent className="p-3">
-          <div className="flex items-start gap-3 w-full overflow-hidden">
-            {/* Avatar - fixed 40px */}
-            <Avatar
-              className="h-10 w-10 cursor-pointer shrink-0"
-              onClick={handleViewProfile}
-            >
-              <AvatarImage
-                src={getOptimizedAvatarUrl(member.avatar_url)}
-                alt={member.full_name}
-                loading="lazy"
-              />
-              <AvatarFallback className="bg-primary/10 text-primary text-xs">
-                {(member.full_name || member.username || 'DN').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-
-            {/* Content - constrained width */}
-            <div className="flex-1 min-w-0 overflow-hidden">
-              {/* Header row with name and match score */}
-              <div className="flex items-center justify-between gap-2">
-                <h3
-                  className="font-semibold text-sm hover:text-dna-copper cursor-pointer truncate flex-1 min-w-0"
-                  onClick={handleViewProfile}
+      <Card 
+        className="bg-card/60 backdrop-blur-sm border-border/30 overflow-hidden cursor-pointer hover:bg-card/80 transition-colors"
+        onClick={handleViewProfile}
+      >
+        <div className="p-4">
+          {/* Apple News style: Two columns - Text left, Image right */}
+          <div className="flex gap-3">
+            {/* Left column: Content */}
+            <div className="flex-1 min-w-0 flex flex-col">
+              {/* Source badge (like USA TODAY, The Guardian) */}
+              {primaryLabel && (
+                <Badge 
+                  variant="secondary" 
+                  className="w-fit mb-1.5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide bg-primary/10 text-primary border-0"
                 >
-                  {member.full_name}
-                </h3>
-                {/* Match Score */}
-                <div className="shrink-0">
-                  <MatchScoreBadge
-                    score={member.match_score}
-                    size="sm"
-                    matchReasons={matchReasons}
-                    reasoning={matchReasoning}
-                  />
-                </div>
-              </div>
+                  {primaryLabel}
+                </Badge>
+              )}
 
-              {/* Headline - single line, truncated */}
-              <p className="text-xs text-muted-foreground truncate mb-1">
-                {member.headline || member.profession || 'DNA Member'}
+              {/* Headline: Name */}
+              <h3 className="font-semibold text-base text-foreground leading-tight mb-1 line-clamp-2">
+                {member.full_name}
+              </h3>
+
+              {/* Subheadline: Role/Profession */}
+              <p className="text-sm text-muted-foreground leading-snug line-clamp-2 mb-2">
+                {member.headline || member.profession || 'DNA Community Member'}
               </p>
 
-              {/* Location & Mutuals - inline row */}
-              <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
-                {member.location && (
-                  <div className="flex items-center gap-1 min-w-0">
-                    <MapPin className="h-3 w-3 shrink-0" />
-                    <span className="truncate">{member.location}</span>
-                  </div>
-                )}
-                {hasMutualConnections && (
-                  <div className="flex items-center gap-1 text-dna-copper font-medium shrink-0">
-                    <Users className="h-3 w-3" />
-                    <span>{mutualCount} mutual{mutualCount !== 1 ? 's' : ''}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Tags - max 2 visible + overflow badge */}
-              <div className="flex flex-wrap gap-1 mb-2">
-                {visibleTags.map((tag, idx) => {
-                  if (tag === 'Mentor') {
-                    return (
-                      <Badge
-                        key={tag}
-                        variant="outline"
-                        className="px-1.5 py-0 text-[10px] border-green-300 bg-green-50 text-green-700"
-                      >
-                        Mentor
-                      </Badge>
-                    );
-                  }
-                  if (tag === 'Investor') {
-                    return (
-                      <Badge
-                        key={tag}
-                        variant="outline"
-                        className="px-1.5 py-0 text-[10px] border-blue-300 bg-blue-50 text-blue-700"
-                      >
-                        Investor
-                      </Badge>
-                    );
-                  }
-                  return (
-                    <Badge
-                      key={`${tag}-${idx}`}
-                      variant="secondary"
-                      className="px-1.5 py-0.5 text-[10px] whitespace-nowrap max-w-[100px] truncate"
-                    >
-                      {tag}
-                    </Badge>
-                  );
-                })}
-                {overflowCount > 0 && (
-                  <Badge
-                    variant="outline"
-                    className="px-1.5 py-0.5 text-[10px] text-muted-foreground"
-                  >
-                    +{overflowCount}
-                  </Badge>
-                )}
-              </div>
-
-              {/* Actions */}
-              <div className="flex gap-2">
-                {connectionStatus === 'accepted' ? (
-                  <Button
-                    variant="default"
-                    size="sm"
-                    onClick={handleMessage}
-                    className="flex-1 h-8 text-xs"
-                  >
-                    <MessageSquare className="mr-1.5 h-3.5 w-3.5" />
-                    Message
-                  </Button>
-                ) : connectionStatus === 'pending_sent' ? (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled
-                    className="flex-1 h-8 text-xs"
-                  >
-                    <Check className="mr-1.5 h-3.5 w-3.5" />
-                    Sent
-                  </Button>
-                ) : connectionStatus === 'pending_received' ? (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigate('/dna/connect/network?tab=requests')}
-                    className="flex-1 h-8 text-xs"
-                  >
-                    Respond
-                  </Button>
-                ) : (
-                  <Button
-                    variant="default"
-                    size="sm"
-                    onClick={handleConnect}
-                    disabled={isSending}
-                    className="flex-1 h-8 text-xs"
-                  >
-                    <MessageSquare className="mr-1.5 h-3.5 w-3.5" />
-                    {isSending ? '...' : 'Message'}
-                  </Button>
-                )}
+              {/* Metadata footer like Apple News: "6h ago · Author Name" */}
+              <div className="mt-auto flex items-center gap-1.5 text-xs text-muted-foreground/70">
+                {member.location && <MapPin className="h-3 w-3 shrink-0" />}
+                <span className="truncate">{metadata || 'DNA Member'}</span>
               </div>
             </div>
+
+            {/* Right column: Square avatar + overflow menu */}
+            <div className="flex flex-col items-end gap-2 shrink-0">
+              {/* Square avatar with rounded corners - Apple News style */}
+              <Avatar className="h-20 w-20 rounded-xl">
+                <AvatarImage
+                  src={member.avatar_url}
+                  alt={member.full_name}
+                  className="object-cover"
+                  loading="lazy"
+                />
+                <AvatarFallback className="bg-primary/10 text-primary text-lg font-semibold rounded-xl">
+                  {(member.full_name || member.username || 'DN')
+                    .split(' ')
+                    .map(n => n[0])
+                    .join('')
+                    .slice(0, 2)
+                    .toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+
+              {/* Overflow menu - Apple News style "..." */}
+              <DropdownMenu>
+                <DropdownMenuTrigger 
+                  className="p-1 rounded-full hover:bg-muted transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  {connectionStatus === 'accepted' ? (
+                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleMessage(); }}>
+                      <MessageSquare className="mr-2 h-4 w-4" />
+                      Message
+                    </DropdownMenuItem>
+                  ) : connectionStatus === 'pending_sent' ? (
+                    <DropdownMenuItem disabled>
+                      <Check className="mr-2 h-4 w-4" />
+                      Request Sent
+                    </DropdownMenuItem>
+                  ) : connectionStatus === 'pending_received' ? (
+                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); navigate('/dna/connect/network?tab=requests'); }}>
+                      <UserPlus className="mr-2 h-4 w-4" />
+                      Respond to Request
+                    </DropdownMenuItem>
+                  ) : (
+                    <DropdownMenuItem 
+                      onClick={handleConnect}
+                      disabled={isSending}
+                    >
+                      <UserPlus className="mr-2 h-4 w-4" />
+                      {isSending ? 'Sending...' : 'Connect'}
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSave}>
+                    <Bookmark className="mr-2 h-4 w-4" />
+                    Save Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleShare}>
+                    <Share2 className="mr-2 h-4 w-4" />
+                    Share Profile
+                  </DropdownMenuItem>
+                  {hasMutualConnections && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <div className="px-2 py-1.5 text-xs text-muted-foreground flex items-center gap-1.5">
+                        <Users className="h-3 w-3" />
+                        {mutualCount} mutual connection{mutualCount !== 1 ? 's' : ''}
+                      </div>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
-        </CardContent>
+        </div>
       </Card>
     </motion.div>
   );
