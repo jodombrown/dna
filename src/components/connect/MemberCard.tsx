@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,6 +14,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useMutualConnections } from '@/hooks/useMutualConnections';
 import { MatchScoreBadge, MatchReasoning } from '@/components/discover/MatchScoreBadge';
+import { cn } from '@/lib/utils';
 
 interface MemberCardProps {
   member: {
@@ -37,9 +39,11 @@ interface MemberCardProps {
     match_score: number;
   };
   onConnectionSent?: () => void;
+  /** Enable compact mobile-first layout */
+  compact?: boolean;
 }
 
-export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent }) => {
+export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent, compact = false }) => {
   const { user } = useAuth();
   const { data: currentUserProfile } = useProfile();
   const navigate = useNavigate();
@@ -253,180 +257,261 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
     return url;
   };
 
+  // Calculate tag overflow
+  const allTags = [
+    ...(member.is_mentor ? ['Mentor'] : []),
+    ...(member.is_investor ? ['Investor'] : []),
+    ...(member.focus_areas || []),
+  ];
+  const visibleTags = allTags.slice(0, 2);
+  const overflowCount = allTags.length - 2;
+
+  // Check for reduced motion preference
+  const prefersReducedMotion =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   return (
-    <Card className="hover:shadow-lg transition-all shadow-md border-border/50 overflow-hidden">
-      <CardContent className="p-3 sm:p-5">
-        <div className="flex items-start gap-3">
-          {/* Avatar with lazy loading for mobile performance */}
-          <Avatar className="h-12 w-12 sm:h-16 sm:w-16 cursor-pointer shrink-0" onClick={handleViewProfile}>
-            <AvatarImage 
-              src={getOptimizedAvatarUrl(member.avatar_url)} 
-              alt={member.full_name}
-              loading="lazy"
-            />
-            <AvatarFallback className="text-sm bg-primary/10 text-primary">
-              {(member.full_name || member.username || 'DN').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-
-          {/* Content */}
-          <div className="flex-1 min-w-0">
-            {/* Header row with name and match score */}
-            <div className="flex items-start justify-between gap-1 mb-1">
-              <h3 
-                className="font-semibold text-sm sm:text-base hover:text-dna-copper cursor-pointer truncate flex-1 min-w-0"
-                onClick={handleViewProfile}
-              >
-                {member.full_name}
-              </h3>
-              {/* Match Score - clickable with popover */}
-              <div className="shrink-0">
-                <MatchScoreBadge 
-                  score={member.match_score} 
-                  size="sm"
-                  matchReasons={matchReasons}
-                  reasoning={matchReasoning}
-                />
-              </div>
-            </div>
-
-            {/* Headline */}
-            <p className="text-xs sm:text-sm text-muted-foreground truncate mb-1.5">
-              {member.headline || member.profession || 'DNA Member'}
-            </p>
-
-            {/* Location */}
-            {member.location && (
-              <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
-                <MapPin className="h-3 w-3" />
-                <span className="truncate">{member.location}</span>
-              </div>
-            )}
-
-            {/* Mutual Connections */}
-            {hasMutualConnections && (
-              <div className="flex items-center gap-1 text-xs text-dna-copper font-medium mb-2">
-                <Users className="h-3 w-3" />
-                <span>
-                  {mutualCount} mutual connection{mutualCount !== 1 ? 's' : ''}
-                </span>
-              </div>
-            )}
-
-            {/* Tags - limited on mobile */}
-            <div className="flex flex-wrap gap-1 mb-2 sm:mb-3">
-              {/* Mentor/Investor badges - high visibility */}
-              {member.is_mentor && (
-                <Badge variant="outline" className="text-[10px] sm:text-xs px-1.5 py-0 border-green-300 bg-green-50 text-green-700">
-                  Mentor
-                </Badge>
+    <motion.div
+      whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+    >
+      <Card className={cn(
+        "transition-all border-border/50 overflow-hidden",
+        compact
+          ? "shadow-sm hover:shadow-md"
+          : "shadow-md hover:shadow-lg"
+      )}>
+        <CardContent className={cn(
+          compact ? "p-3" : "p-3 sm:p-5"
+        )}>
+          <div className="flex items-start gap-3">
+            {/* Avatar - compact: 40px, regular: 48px/64px */}
+            <Avatar
+              className={cn(
+                "cursor-pointer shrink-0",
+                compact ? "h-10 w-10" : "h-12 w-12 sm:h-16 sm:w-16"
               )}
-              {member.is_investor && (
-                <Badge variant="outline" className="text-[10px] sm:text-xs px-1.5 py-0 border-blue-300 bg-blue-50 text-blue-700">
-                  Investor
-                </Badge>
-              )}
-              {member.focus_areas?.slice(0, 2).map((area) => (
-                <Badge key={area} variant="secondary" className="text-[10px] sm:text-xs px-1.5 py-0.5 whitespace-nowrap">
-                  {area}
-                </Badge>
-              ))}
-              <span className="hidden sm:inline-flex">
-                {member.industries?.slice(0, 1).map((industry) => (
-                  <Badge key={industry} variant="outline" className="text-xs">
-                    <Briefcase className="h-3 w-3 mr-1 shrink-0" />
-                    <span className="truncate max-w-[80px]">{industry}</span>
-                  </Badge>
-                ))}
-              </span>
-            </div>
+              onClick={handleViewProfile}
+            >
+              <AvatarImage
+                src={getOptimizedAvatarUrl(member.avatar_url)}
+                alt={member.full_name}
+                loading="lazy"
+              />
+              <AvatarFallback className={cn(
+                "bg-primary/10 text-primary",
+                compact ? "text-xs" : "text-sm"
+              )}>
+                {(member.full_name || member.username || 'DN').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
 
-            {/* Actions - compact on mobile */}
-            <div className="flex gap-1.5 sm:gap-2">
-              {connectionStatus === 'accepted' ? (
-                <>
-                  <Button
-                    variant="default"
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+              {/* Header row with name and match score */}
+              <div className="flex items-start justify-between gap-1 mb-0.5">
+                <h3
+                  className={cn(
+                    "font-semibold hover:text-dna-copper cursor-pointer truncate flex-1 min-w-0",
+                    compact ? "text-sm" : "text-sm sm:text-base"
+                  )}
+                  onClick={handleViewProfile}
+                >
+                  {member.full_name}
+                </h3>
+                {/* Match Score - clickable with popover */}
+                <div className="shrink-0">
+                  <MatchScoreBadge
+                    score={member.match_score}
                     size="sm"
-                    onClick={handleMessage}
-                    className="flex-1 h-8 text-xs sm:text-sm"
-                  >
-                    <MessageSquare className="mr-1.5 h-3.5 w-3.5" />
-                    Message
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleViewProfile}
-                    className="h-8 text-xs sm:text-sm px-2 sm:px-3"
-                  >
-                    <Eye className="h-3.5 w-3.5 sm:mr-1.5" />
-                    <span className="hidden sm:inline">Profile</span>
-                  </Button>
-                </>
-              ) : connectionStatus === 'pending_sent' ? (
-                <>
-                  <Button variant="outline" size="sm" disabled className="flex-1 h-8 text-xs sm:text-sm">
-                    <Check className="mr-1.5 h-3.5 w-3.5" />
-                    Sent
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleViewProfile}
-                    className="h-8 text-xs sm:text-sm px-2 sm:px-3"
-                  >
-                    <Eye className="h-3.5 w-3.5 sm:mr-1.5" />
-                    <span className="hidden sm:inline">Profile</span>
-                  </Button>
-                </>
-              ) : connectionStatus === 'pending_received' ? (
-                <>
-                  <Button
+                    matchReasons={matchReasons}
+                    reasoning={matchReasoning}
+                  />
+                </div>
+              </div>
+
+              {/* Headline - single line, truncated */}
+              <p className="text-xs text-muted-foreground truncate mb-1">
+                {member.headline || member.profession || 'DNA Member'}
+              </p>
+
+              {/* Location */}
+              {member.location && (
+                <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1.5">
+                  <MapPin className="h-3 w-3 shrink-0" />
+                  <span className="truncate">{member.location}</span>
+                </div>
+              )}
+
+              {/* Mutual Connections - compact inline */}
+              {hasMutualConnections && (
+                <div className="flex items-center gap-1 text-xs text-dna-copper font-medium mb-1.5">
+                  <Users className="h-3 w-3 shrink-0" />
+                  <span>
+                    {mutualCount} mutual{mutualCount !== 1 ? 's' : ''}
+                  </span>
+                </div>
+              )}
+
+              {/* Tags - max 2 visible + overflow badge */}
+              <div className="flex flex-wrap gap-1 mb-2">
+                {visibleTags.map((tag, idx) => {
+                  // Special styling for Mentor/Investor
+                  if (tag === 'Mentor') {
+                    return (
+                      <Badge
+                        key={tag}
+                        variant="outline"
+                        className="text-[10px] px-1.5 py-0 border-green-300 bg-green-50 text-green-700"
+                      >
+                        Mentor
+                      </Badge>
+                    );
+                  }
+                  if (tag === 'Investor') {
+                    return (
+                      <Badge
+                        key={tag}
+                        variant="outline"
+                        className="text-[10px] px-1.5 py-0 border-blue-300 bg-blue-50 text-blue-700"
+                      >
+                        Investor
+                      </Badge>
+                    );
+                  }
+                  return (
+                    <Badge
+                      key={`${tag}-${idx}`}
+                      variant="secondary"
+                      className="text-[10px] px-1.5 py-0.5 whitespace-nowrap max-w-[100px] truncate"
+                    >
+                      {tag}
+                    </Badge>
+                  );
+                })}
+                {overflowCount > 0 && (
+                  <Badge
                     variant="outline"
-                    size="sm"
-                    onClick={() => navigate('/dna/connect/network?tab=requests')}
-                    className="flex-1 h-8 text-xs sm:text-sm"
+                    className="text-[10px] px-1.5 py-0.5 text-muted-foreground"
                   >
-                    Respond
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleViewProfile}
-                    className="h-8 text-xs sm:text-sm px-2 sm:px-3"
-                  >
-                    <Eye className="h-3.5 w-3.5 sm:mr-1.5" />
-                    <span className="hidden sm:inline">Profile</span>
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    variant="default"
-                    size="sm"
-                    onClick={handleConnect}
-                    disabled={isSending}
-                    className="flex-1 h-8 text-xs sm:text-sm"
-                  >
-                    <UserPlus className="mr-1.5 h-3.5 w-3.5" />
-                    {isSending ? '...' : 'Connect'}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleViewProfile}
-                    className="h-8 text-xs sm:text-sm px-2 sm:px-3"
-                  >
-                    <Eye className="h-3.5 w-3.5 sm:mr-1.5" />
-                    <span className="hidden sm:inline">Profile</span>
-                  </Button>
-                </>
-              )}
+                    +{overflowCount}
+                  </Badge>
+                )}
+              </div>
+
+              {/* Actions - compact height 28px (h-7) */}
+              <div className="flex gap-1.5">
+                {connectionStatus === 'accepted' ? (
+                  <>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={handleMessage}
+                      className={cn(
+                        "flex-1 text-xs",
+                        compact ? "h-7" : "h-8"
+                      )}
+                    >
+                      <MessageSquare className="mr-1 h-3 w-3" />
+                      Message
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleViewProfile}
+                      className={cn(
+                        "px-2 text-xs",
+                        compact ? "h-7" : "h-8"
+                      )}
+                    >
+                      <Eye className="h-3 w-3" />
+                    </Button>
+                  </>
+                ) : connectionStatus === 'pending_sent' ? (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled
+                      className={cn(
+                        "flex-1 text-xs",
+                        compact ? "h-7" : "h-8"
+                      )}
+                    >
+                      <Check className="mr-1 h-3 w-3" />
+                      Sent
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleViewProfile}
+                      className={cn(
+                        "px-2 text-xs",
+                        compact ? "h-7" : "h-8"
+                      )}
+                    >
+                      <Eye className="h-3 w-3" />
+                    </Button>
+                  </>
+                ) : connectionStatus === 'pending_received' ? (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate('/dna/connect/network?tab=requests')}
+                      className={cn(
+                        "flex-1 text-xs",
+                        compact ? "h-7" : "h-8"
+                      )}
+                    >
+                      Respond
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleViewProfile}
+                      className={cn(
+                        "px-2 text-xs",
+                        compact ? "h-7" : "h-8"
+                      )}
+                    >
+                      <Eye className="h-3 w-3" />
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={handleConnect}
+                      disabled={isSending}
+                      className={cn(
+                        "flex-1 text-xs",
+                        compact ? "h-7" : "h-8"
+                      )}
+                    >
+                      <UserPlus className="mr-1 h-3 w-3" />
+                      {isSending ? '...' : 'Connect'}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleViewProfile}
+                      className={cn(
+                        "px-2 text-xs",
+                        compact ? "h-7" : "h-8"
+                      )}
+                    >
+                      <Eye className="h-3 w-3" />
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 };
