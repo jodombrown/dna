@@ -1,13 +1,33 @@
+/**
+ * Connection Request Card - Apple News Style
+ * Displays incoming connection requests with Accept/Decline actions
+ */
+
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, XCircle, User, Loader2, Clock, Users } from 'lucide-react';
+import { 
+  CheckCircle, 
+  XCircle, 
+  Loader2, 
+  Clock, 
+  Users,
+  MoreHorizontal,
+  User
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { useMutualConnections } from '@/hooks/useMutualConnections';
 import { useAuth } from '@/contexts/AuthContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface ConnectionRequestCardProps {
   request: {
@@ -18,6 +38,7 @@ interface ConnectionRequestCardProps {
       full_name?: string;
       avatar_url?: string;
       professional_role?: string;
+      headline?: string;
       location?: string;
     };
     message?: string;
@@ -38,109 +59,155 @@ const ConnectionRequestCard: React.FC<ConnectionRequestCardProps> = ({
 }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { mutualConnections, mutualCount, isLoading: mutualLoading } = useMutualConnections(user?.id, request.sender?.id);
+  const { mutualCount, hasMutualConnections } = useMutualConnections(user?.id, request.sender?.id);
 
   const getInitials = (name: string) => {
     return name
       ?.split(' ')
       .map((n) => n[0])
       .join('')
+      .slice(0, 2)
       .toUpperCase() || '?';
   };
 
   const timeAgo = request.created_at
-    ? formatDistanceToNow(new Date(request.created_at), { addSuffix: true })
+    ? formatDistanceToNow(new Date(request.created_at), { addSuffix: false })
     : '';
 
+  const handleViewProfile = () => {
+    navigate(`/dna/${request.sender?.username || request.sender?.id}`);
+  };
+
+  // Build metadata string
+  const getMetadataString = (): string => {
+    const parts: string[] = [];
+    if (timeAgo) parts.push(timeAgo);
+    if (request.sender?.location) parts.push(request.sender.location);
+    if (hasMutualConnections) parts.push(`${mutualCount} mutual${mutualCount !== 1 ? 's' : ''}`);
+    return parts.join(' · ');
+  };
+
+  const metadata = getMetadataString();
+
   return (
-    <Card>
-      <CardContent className="p-6">
-        <div className="flex items-start gap-4">
-          <Avatar className="w-16 h-16">
-            <AvatarImage src={request.sender?.avatar_url || ''} />
-            <AvatarFallback className="bg-[hsl(151,75%,50%)] text-white">
-              {getInitials(request.sender?.full_name || '')}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1">
-            <div className="flex items-start justify-between">
-              <div>
-                <h3 className="font-semibold text-lg text-foreground">
-                  {request.sender?.full_name}
-                </h3>
-                {request.sender?.professional_role && (
-                  <p className="text-sm text-muted-foreground">{request.sender.professional_role}</p>
-                )}
-              </div>
-              {timeAgo && (
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Clock className="w-3 h-3" />
-                  {timeAgo}
-                </div>
-              )}
-            </div>
-            {request.sender?.location && (
-              <Badge variant="secondary" className="mt-2 text-xs">
-                {request.sender.location}
-              </Badge>
-            )}
-            {mutualConnections && mutualConnections.length > 0 && (
-              <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
-                <Users className="w-4 h-4 text-dna-copper" />
-                <span>
-                  {mutualConnections.length} mutual connection{mutualConnections.length !== 1 ? 's' : ''}
-                  {mutualConnections.length <= 3 && (
-                    <span className="ml-1">
-                      ({mutualConnections.map(c => c.full_name).join(', ')})
-                    </span>
-                  )}
-                </span>
-              </div>
-            )}
+    <Card 
+      className="bg-card/60 backdrop-blur-sm border-border/30 overflow-hidden cursor-pointer hover:bg-card/80 transition-colors"
+      onClick={handleViewProfile}
+    >
+      <div className="p-4">
+        {/* Apple News style: Two columns - Text left, Image right */}
+        <div className="flex gap-3">
+          {/* Left column: Content */}
+          <div className="flex-1 min-w-0 flex flex-col">
+            {/* Source badge - role or "New Request" */}
+            <Badge 
+              variant="secondary" 
+              className="w-fit mb-1.5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide bg-primary/10 text-primary border-0"
+            >
+              {request.sender?.professional_role || 'New Request'}
+            </Badge>
+
+            {/* Headline: Name */}
+            <h3 className="font-semibold text-base text-foreground leading-tight mb-1 line-clamp-2">
+              {request.sender?.full_name}
+            </h3>
+
+            {/* Subheadline: Headline */}
+            <p className="text-sm text-muted-foreground leading-snug line-clamp-2 mb-2">
+              {request.sender?.headline || 'Wants to connect with you'}
+            </p>
+
+            {/* Message preview if exists */}
             {request.message && (
-              <div className="mt-3 p-3 bg-muted rounded-md border-l-4 border-[hsl(30,65%,55%)]">
-                <p className="text-sm italic text-foreground">"{request.message}"</p>
-              </div>
+              <p className="text-xs text-muted-foreground/80 italic line-clamp-2 mb-2">
+                "{request.message}"
+              </p>
             )}
-            <div className="flex gap-2 mt-4">
+
+            {/* Metadata footer */}
+            <div className="mt-auto flex items-center gap-1.5 text-xs text-muted-foreground/70">
+              <Clock className="h-3 w-3 shrink-0" />
+              <span className="truncate">{metadata || 'Just now'}</span>
+            </div>
+
+            {/* Action buttons - Accept/Decline */}
+            <div className="flex items-center gap-2 mt-3" onClick={(e) => e.stopPropagation()}>
               <Button
                 size="sm"
                 onClick={() => onAccept(request.id)}
                 disabled={isAccepting || isDeclining}
-                className="bg-[hsl(151,75%,50%)] text-white hover:bg-[hsl(151,75%,40%)]"
+                className="h-8 px-3 bg-primary hover:bg-primary/90"
               >
                 {isAccepting ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
                 ) : (
-                  <CheckCircle className="w-4 h-4 mr-2" />
+                  <>
+                    <CheckCircle className="h-3.5 w-3.5 mr-1.5" />
+                    Accept
+                  </>
                 )}
-                Accept
               </Button>
               <Button
                 size="sm"
                 variant="outline"
                 onClick={() => onDecline(request.id)}
                 disabled={isAccepting || isDeclining}
+                className="h-8 px-3"
               >
                 {isDeclining ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
                 ) : (
-                  <XCircle className="w-4 h-4 mr-2" />
+                  <>
+                    <XCircle className="h-3.5 w-3.5 mr-1.5" />
+                    Decline
+                  </>
                 )}
-                Decline
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => navigate(`/dna/${request.sender?.username || request.sender?.id}`)}
-              >
-                <User className="w-4 h-4 mr-2" />
-                View Profile
               </Button>
             </div>
           </div>
+
+          {/* Right column: Square avatar + overflow menu */}
+          <div className="flex flex-col items-end gap-2 shrink-0">
+            {/* Square avatar with rounded corners */}
+            <Avatar className="h-20 w-20 rounded-xl">
+              <AvatarImage
+                src={request.sender?.avatar_url || ''}
+                alt={request.sender?.full_name}
+                className="object-cover"
+                loading="lazy"
+              />
+              <AvatarFallback className="bg-primary/10 text-primary text-lg font-semibold rounded-xl">
+                {getInitials(request.sender?.full_name || '')}
+              </AvatarFallback>
+            </Avatar>
+
+            {/* Overflow menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger 
+                className="p-1 rounded-full hover:bg-muted transition-colors"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleViewProfile(); }}>
+                  <User className="mr-2 h-4 w-4" />
+                  View Profile
+                </DropdownMenuItem>
+                {hasMutualConnections && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <div className="px-2 py-1.5 text-xs text-muted-foreground flex items-center gap-1.5">
+                      <Users className="h-3 w-3" />
+                      {mutualCount} mutual connection{mutualCount !== 1 ? 's' : ''}
+                    </div>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
-      </CardContent>
+      </div>
     </Card>
   );
 };

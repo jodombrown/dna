@@ -1,16 +1,34 @@
+/**
+ * Connection Card - Apple News Style
+ * Displays an established connection with message and profile actions
+ */
+
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MessageCircle, User, Users } from 'lucide-react';
+import { 
+  MessageCircle, 
+  User, 
+  Users,
+  MoreHorizontal,
+  MapPin,
+  Share2,
+  Bookmark
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useMutualConnections } from '@/hooks/useMutualConnections';
 import { ProfileViewTracker } from '@/components/analytics/ProfileViewTracker';
 import { messageService } from '@/services/messageService';
-import { ConnectionActionsMenu } from '@/components/connections/ConnectionActionsMenu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface ConnectionCardProps {
   connection: {
@@ -22,7 +40,7 @@ interface ConnectionCardProps {
     location?: string;
     username?: string;
   };
-  connectionId?: string; // The ID of the connection record (for removal)
+  connectionId?: string;
   onMessage?: (userId: string) => void;
 }
 
@@ -30,8 +48,6 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, connectionI
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
-
-  // Get mutual connections count
   const { mutualCount, hasMutualConnections } = useMutualConnections(user?.id, connection.id);
 
   const getInitials = (name: string) => {
@@ -39,10 +55,12 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, connectionI
       ?.split(' ')
       .map((n) => n[0])
       .join('')
+      .slice(0, 2)
       .toUpperCase() || '?';
   };
 
-  const handleMessage = async () => {
+  const handleMessage = async (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     if (!user) return;
     
     try {
@@ -58,73 +76,122 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, connectionI
     }
   };
 
+  const handleViewProfile = () => {
+    navigate(`/dna/${connection.username || connection.id}`);
+  };
+
+  const handleShare = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const profileUrl = `${window.location.origin}/dna/${connection.username || connection.id}`;
+    navigator.clipboard.writeText(profileUrl);
+    toast({
+      title: 'Link copied',
+      description: 'Profile link copied to clipboard',
+    });
+  };
+
+  // Build metadata string
+  const getMetadataString = (): string => {
+    const parts: string[] = [];
+    if (connection.location) parts.push(connection.location);
+    if (hasMutualConnections) parts.push(`${mutualCount} mutual${mutualCount !== 1 ? 's' : ''}`);
+    return parts.join(' · ');
+  };
+
+  const metadata = getMetadataString();
+
   return (
     <>
-      {/* Track connection card view */}
       <ProfileViewTracker profileId={connection.id} viewType="connection_card" />
       
-      <Card className="hover:shadow-md transition-shadow">
-      <CardContent className="p-6">
-        <div className="flex items-start gap-4">
-          <Avatar className="w-16 h-16">
-            <AvatarImage src={connection.avatar_url || ''} />
-            <AvatarFallback className="bg-[hsl(151,75%,50%)] text-white">
-              {getInitials(connection.full_name || '')}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-lg text-foreground truncate">
-              {connection.full_name}
-            </h3>
-            {connection.professional_role && (
-              <p className="text-sm text-muted-foreground truncate">{connection.professional_role}</p>
-            )}
-            {connection.headline && (
-              <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{connection.headline}</p>
-            )}
-            {connection.location && (
-              <Badge variant="secondary" className="mt-2 text-xs">
-                {connection.location}
-              </Badge>
-            )}
-            {hasMutualConnections && (
-              <div className="flex items-center gap-1 text-xs text-muted-foreground mt-2">
-                <Users className="h-3 w-3" />
-                <span>{mutualCount} mutual connection{mutualCount !== 1 ? 's' : ''}</span>
-              </div>
-            )}
-            <div className="flex gap-2 mt-3 items-center">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate(`/dna/${connection.username || connection.id}`)}
-              >
-                <User className="w-4 h-4 mr-2" />
-                View Profile
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleMessage}
-              >
-                <MessageCircle className="w-4 h-4 mr-2" />
-                Message
-              </Button>
-              
-              {/* Connection Actions Menu */}
-              {connectionId && (
-                <ConnectionActionsMenu
-                  connectionId={connectionId}
-                  userId={connection.id}
-                  userName={connection.full_name}
-                  onMessage={handleMessage}
-                />
+      <Card 
+        className="bg-card/60 backdrop-blur-sm border-border/30 overflow-hidden cursor-pointer hover:bg-card/80 transition-colors"
+        onClick={handleViewProfile}
+      >
+        <div className="p-4">
+          {/* Apple News style: Two columns - Text left, Image right */}
+          <div className="flex gap-3">
+            {/* Left column: Content */}
+            <div className="flex-1 min-w-0 flex flex-col">
+              {/* Source badge - role */}
+              {connection.professional_role && (
+                <Badge 
+                  variant="secondary" 
+                  className="w-fit mb-1.5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide bg-primary/10 text-primary border-0"
+                >
+                  {connection.professional_role}
+                </Badge>
               )}
+
+              {/* Headline: Name */}
+              <h3 className="font-semibold text-base text-foreground leading-tight mb-1 line-clamp-2">
+                {connection.full_name}
+              </h3>
+
+              {/* Subheadline: Headline */}
+              <p className="text-sm text-muted-foreground leading-snug line-clamp-2 mb-2">
+                {connection.headline || 'DNA Community Member'}
+              </p>
+
+              {/* Metadata footer */}
+              <div className="mt-auto flex items-center gap-1.5 text-xs text-muted-foreground/70">
+                {connection.location && <MapPin className="h-3 w-3 shrink-0" />}
+                <span className="truncate">{metadata || 'Connected'}</span>
+              </div>
+            </div>
+
+            {/* Right column: Square avatar + overflow menu */}
+            <div className="flex flex-col items-end gap-2 shrink-0">
+              {/* Square avatar with rounded corners */}
+              <Avatar className="h-20 w-20 rounded-xl">
+                <AvatarImage
+                  src={connection.avatar_url || ''}
+                  alt={connection.full_name}
+                  className="object-cover"
+                  loading="lazy"
+                />
+                <AvatarFallback className="bg-primary/10 text-primary text-lg font-semibold rounded-xl">
+                  {getInitials(connection.full_name)}
+                </AvatarFallback>
+              </Avatar>
+
+              {/* Overflow menu */}
+              <DropdownMenu>
+                <DropdownMenuTrigger 
+                  className="p-1 rounded-full hover:bg-muted transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleMessage(); }}>
+                    <MessageCircle className="mr-2 h-4 w-4" />
+                    Message
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleViewProfile(); }}>
+                    <User className="mr-2 h-4 w-4" />
+                    View Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleShare}>
+                    <Share2 className="mr-2 h-4 w-4" />
+                    Share Profile
+                  </DropdownMenuItem>
+                  {hasMutualConnections && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <div className="px-2 py-1.5 text-xs text-muted-foreground flex items-center gap-1.5">
+                        <Users className="h-3 w-3" />
+                        {mutualCount} mutual connection{mutualCount !== 1 ? 's' : ''}
+                      </div>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </Card>
     </>
   );
 };
