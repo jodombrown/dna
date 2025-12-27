@@ -4,7 +4,7 @@
  * Designed to intrigue visitors and drive DNA sign-ups.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -19,15 +19,75 @@ import {
   Sparkles,
   Users,
   Target,
-  Heart
+  Heart,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { ProfileV2Bundle } from '@/types/profileV2';
 import { BANNER_GRADIENTS, BannerGradientKey } from '@/lib/constants/bannerGradients';
 import { PublicProfileSEO } from '@/components/public-profile';
 
+const BIO_TRUNCATE_LENGTH = 500;
+
 interface PublicProfileLandingViewProps {
   bundle: ProfileV2Bundle;
 }
+
+// About section with paragraph preservation and read more
+const AboutSection: React.FC<{ bio: string }> = ({ bio }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const shouldTruncate = bio.length > BIO_TRUNCATE_LENGTH;
+  
+  // Preserve paragraph formatting by splitting on newlines
+  const formatBio = (text: string) => {
+    return text.split(/\n\n|\r\n\r\n/).map((paragraph, index) => (
+      <p key={index} className="mb-4 last:mb-0">
+        {paragraph.split(/\n|\r\n/).map((line, lineIndex, arr) => (
+          <React.Fragment key={lineIndex}>
+            {line}
+            {lineIndex < arr.length - 1 && <br />}
+          </React.Fragment>
+        ))}
+      </p>
+    ));
+  };
+
+  const displayBio = shouldTruncate && !isExpanded 
+    ? bio.slice(0, BIO_TRUNCATE_LENGTH) + '...'
+    : bio;
+
+  return (
+    <Card className="mb-6 max-w-2xl mx-auto">
+      <CardContent className="pt-6">
+        <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-primary" />
+          About
+        </h2>
+        <div className="text-muted-foreground leading-relaxed">
+          {formatBio(displayBio)}
+        </div>
+        {shouldTruncate && (
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="mt-3 text-primary hover:text-primary/80 text-sm font-medium flex items-center gap-1 transition-colors"
+          >
+            {isExpanded ? (
+              <>
+                <ChevronUp className="w-4 h-4" />
+                Read less
+              </>
+            ) : (
+              <>
+                <ChevronDown className="w-4 h-4" />
+                Read more
+              </>
+            )}
+          </button>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
 
 const PublicProfileLandingView: React.FC<PublicProfileLandingViewProps> = ({ bundle }) => {
   const navigate = useNavigate();
@@ -195,15 +255,7 @@ const PublicProfileLandingView: React.FC<PublicProfileLandingViewProps> = ({ bun
 
         {/* About Section */}
         {profile.bio && (
-          <Card className="mb-6 max-w-2xl mx-auto">
-            <CardContent className="pt-6">
-              <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-primary" />
-                About
-              </h2>
-              <p className="text-muted-foreground leading-relaxed">{profile.bio}</p>
-            </CardContent>
-          </Card>
+          <AboutSection bio={profile.bio} />
         )}
 
         {/* Skills & Interests Grid */}
