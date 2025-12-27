@@ -1,3 +1,4 @@
+// Apple Messages-inspired messaging UI - v2
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ConversationListItem as ConversationListItemComponent } from '@/components/messaging/ConversationListItem';
