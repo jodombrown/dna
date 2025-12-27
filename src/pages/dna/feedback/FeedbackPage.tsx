@@ -204,7 +204,7 @@ export default function FeedbackPage() {
         <Tabs value={filter} onValueChange={(v) => setFilter(v as FeedbackFilter)}>
           <TabsList>
             <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="mine">Mine</TabsTrigger>
+            <TabsTrigger value="my_feedback">Mine</TabsTrigger>
             <TabsTrigger value="pinned">Pinned</TabsTrigger>
           </TabsList>
         </Tabs>

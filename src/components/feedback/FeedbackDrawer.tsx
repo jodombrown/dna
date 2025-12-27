@@ -24,13 +24,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Maximize2, LogOut, LogIn, Loader2, ChevronRight } from 'lucide-react';
+import { Maximize2, LogOut, LogIn, Loader2, ChevronRight, HelpCircle } from 'lucide-react';
 import { FeedbackMessageList, FeedbackComposer } from '@/components/feedback';
 import { FeedbackThreadView } from './FeedbackThreadView';
 import { useFeedbackMessages } from '@/hooks/useFeedbackMessages';
 import { useFeedbackMembership } from '@/hooks/useFeedbackMembership';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
+import { FeedbackHubTour } from '@/components/tours';
 import type { FeedbackFilter, FeedbackMessageWithSender } from '@/types/feedback';
 
 interface FeedbackDrawerProps {
@@ -49,6 +50,7 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
   } | null>(null);
   const [selectedThread, setSelectedThread] = useState<FeedbackMessageWithSender | null>(null);
   const [showOptOutConfirm, setShowOptOutConfirm] = useState(false);
+  const [showHelpTour, setShowHelpTour] = useState(false);
 
   const {
     channel,
@@ -208,32 +210,41 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
                     </TabsList>
                   </Tabs>
                   
-                  {/* Opt out option - moved here */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground hidden sm:inline">Opt in/out</span>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={handleOptOutClick}
-                            disabled={isOptingOut}
-                            className="h-7 w-7"
-                          >
-                            {isOptingOut ? (
-                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                            ) : (
-                              <LogOut className="h-3.5 w-3.5" />
-                            )}
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom">
-                          <p>Stop receiving feedback updates and hide this hub</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
+                  {/* Help button */}
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={() => setShowHelpTour(true)}
+                    title="Learn how to use Feedback Hub"
+                    className="gap-1.5 text-xs h-7 bg-primary text-primary-foreground"
+                  >
+                    <HelpCircle className="h-3.5 w-3.5" />
+                    <span>Help</span>
+                  </Button>
+                  
+                  {/* Opt out option */}
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={handleOptOutClick}
+                          disabled={isOptingOut}
+                          className="h-7 w-7"
+                        >
+                          {isOptingOut ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          ) : (
+                            <LogOut className="h-3.5 w-3.5" />
+                          )}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom">
+                        <p>Stop receiving feedback updates and hide this hub</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
               </div>
 
@@ -292,6 +303,12 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Help Tour */}
+      <FeedbackHubTour
+        open={showHelpTour}
+        onClose={() => setShowHelpTour(false)}
+      />
     </>
   );
 }
