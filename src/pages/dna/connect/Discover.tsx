@@ -235,7 +235,6 @@ export default function Discover() {
                   <MemberCard
                     member={m}
                     onConnectionSent={() => loadMembers(true)}
-                    compact
                   />
                 </motion.div>
               ))}
