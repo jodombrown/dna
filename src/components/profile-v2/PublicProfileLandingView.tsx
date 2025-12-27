@@ -307,8 +307,8 @@ const PublicProfileLandingView: React.FC<PublicProfileLandingViewProps> = ({ bun
               Join the Diaspora Network of Africa
             </h3>
             <p className="text-muted-foreground text-sm mb-5 max-w-md mx-auto">
-              Connect with professionals like {profile.first_name || profile.full_name?.split(' ')[0] || 'this member'} and 
-              thousands of others building bridges between Africa and its global diaspora.
+              Connect with professionals like {profile.first_name || profile.full_name?.split(' ')[0] || 'this member'} who 
+              are building bridges between Africa and its global diaspora.
             </p>
             <Button 
               onClick={() => navigate('/auth')}
