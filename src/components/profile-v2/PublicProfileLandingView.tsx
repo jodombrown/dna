@@ -340,17 +340,6 @@ const PublicProfileLandingView: React.FC<PublicProfileLandingViewProps> = ({ bun
                 </AvatarFallback>
               </Avatar>
             </motion.div>
-            {/* Verified Badge */}
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.6, type: "spring", stiffness: 500 }}
-              className="absolute -bottom-1 -right-1 bg-background rounded-full p-0.5"
-            >
-              <div className="bg-primary rounded-full p-1">
-                <BadgeCheck className="w-5 h-5 text-primary-foreground" />
-              </div>
-            </motion.div>
           </div>
 
           <motion.h1 
