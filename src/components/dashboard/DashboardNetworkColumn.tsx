@@ -131,7 +131,7 @@ export default function DashboardNetworkColumn({ profile, isOwnProfile }: Dashbo
                 <Users className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                 <h3 className="text-lg font-semibold mb-2">No connections yet</h3>
                 <p className="text-muted-foreground mb-4">Start building your network by discovering members</p>
-                <Button onClick={() => navigate('/dna/discover/members')}>
+                <Button onClick={() => navigate('/dna/connect/discover')}>
                   <UserPlus className="w-4 h-4 mr-2" />
                   Go to Discovery
                 </Button>

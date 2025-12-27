@@ -15,7 +15,7 @@ export const aboutUsDropdown = [
 // Main navigation for authenticated users - Pillar-based structure (5 C's)
 export const mainNavItems = [
   { name: 'Home', path: '/dna/feed', icon: 'Home' },
-  { name: 'Discover', path: '/dna/discover/members', icon: 'Search' },
+  { name: 'Discover', path: '/dna/connect/discover', icon: 'Search' },
   { name: 'Connect', path: '/dna/connect/network', icon: 'Users2' },
   { name: 'Convene', path: '/dna/convene/events', icon: 'Calendar' },
   { name: 'Messages', path: '/dna/connect/messages', icon: 'MessageCircle' },

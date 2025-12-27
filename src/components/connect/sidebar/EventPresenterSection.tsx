@@ -11,7 +11,7 @@ const EventPresenterSection: React.FC = () => {
         <Button
           variant="ghost"
           className="p-0 h-auto min-w-[44px] min-h-[44px] hover:opacity-80"
-          onClick={() => window.open('https://diasporanetworkafrica.com', '_blank')}
+          onClick={() => window.open('https://diasporanetwork.africa', '_blank')}
         >
           <img 
             src="/lovable-uploads/c6f51307-c7df-4a26-a66e-b99e88b55c53.png" 
