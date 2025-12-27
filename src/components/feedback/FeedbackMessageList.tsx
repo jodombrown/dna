@@ -74,11 +74,11 @@ export function FeedbackMessageList({
   const regularMessages = messages.filter((m) => !m.is_pinned);
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    <div className="h-full overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4">
       {/* Pinned Messages Section */}
       {pinnedMessages.length > 0 && (
-        <div className="space-y-3">
-          <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+        <div className="space-y-2 md:space-y-3">
+          <h3 className="text-xs md:text-sm font-medium text-muted-foreground flex items-center gap-2">
             📌 Pinned
           </h3>
           {pinnedMessages.map((message) => (
@@ -90,7 +90,7 @@ export function FeedbackMessageList({
               onReply={() => onReply(message.id)}
             />
           ))}
-          <hr className="my-4" />
+          <hr className="my-3 md:my-4" />
         </div>
       )}
 
@@ -110,8 +110,8 @@ export function FeedbackMessageList({
 
       {/* Loading More Indicator */}
       {isFetchingNextPage && (
-        <div className="flex justify-center py-4">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <div className="flex justify-center py-3 md:py-4">
+          <Loader2 className="h-5 w-5 md:h-6 md:w-6 animate-spin text-muted-foreground" />
         </div>
       )}
     </div>
