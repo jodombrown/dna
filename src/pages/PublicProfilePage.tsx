@@ -1,9 +1,10 @@
 /**
  * Publicly Accessible Profile Page
- * Route: /dna/u/:username
- * 
- * This page is accessible to ANYONE - no authentication required.
- * Shows profile information and CTAs to sign up or connect.
+ * Legacy Route: /dna/u/:username (redirects to /dna/:username)
+ *
+ * Note: This component is no longer directly routed. The /dna/u/:username
+ * pattern now redirects to the canonical /dna/:username route.
+ * This file is kept for reference but may be removed in future cleanup.
  */
 
 import { useParams, useNavigate, Link } from 'react-router-dom';

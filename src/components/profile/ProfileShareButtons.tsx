@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Share2, Copy, MessageSquare, Linkedin, Twitter } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { ROUTES } from '@/config/routes';
 
 interface ProfileShareButtonsProps {
   username: string;
@@ -15,8 +16,8 @@ export const ProfileShareButtons: React.FC<ProfileShareButtonsProps> = ({
   className = ""
 }) => {
   const { toast } = useToast();
-  // Use the public profile URL format /dna/u/:username for sharing
-  const profileUrl = `${window.location.origin}/dna/u/${username}`;
+  // Use the canonical profile URL format for sharing
+  const profileUrl = `${window.location.origin}${ROUTES.profile.view(username)}`;
   const shareText = `Check out ${fullName}'s profile on DNA - Diaspora Network of Africa`;
 
   const copyLink = async () => {

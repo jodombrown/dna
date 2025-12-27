@@ -8,6 +8,7 @@ import { Event } from '@/types/search';
 import ConnectDialogs from './ConnectDialogs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useNavigate } from "react-router-dom";
+import { ROUTES } from '@/config/routes';
 
 interface EventCardProps {
   event: Event;
@@ -147,7 +148,7 @@ const EventCard: React.FC<EventCardProps> = ({
               className="absolute bottom-2 right-2 rounded-full shadow border-2 border-white bg-white/90 hover:bg-dna-emerald/80 transition-all flex items-center gap-2 px-2 py-0.5 z-20"
               onClick={e => {
                 e.stopPropagation();
-                navigate(`/dna/${(event.creator_profile as any).username || event.creator_profile.id}`);
+                navigate(ROUTES.profile.view(event.creator_profile.username || event.creator_profile.id));
               }}
               title={`View profile: ${event.creator_profile.full_name}`}
               aria-label="View event creator profile"

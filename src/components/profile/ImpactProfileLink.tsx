@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ExternalLink, Eye, Share2 } from 'lucide-react';
+import { ROUTES } from '@/config/routes';
 
 interface ImpactProfileLinkProps {
   username: string;
@@ -21,7 +22,7 @@ export const ImpactProfileLink: React.FC<ImpactProfileLinkProps> = ({
   className = "",
   showActions = false
 }) => {
-  const profileUrl = `/dna/u/${username}`;
+  const profileUrl = ROUTES.profile.view(username);
   
   const getInfluenceLevel = (score: number) => {
     if (score >= 1000) return { label: 'Expert', color: 'bg-dna-gold text-white' };
