@@ -10,10 +10,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { ArrowLeft, BarChart2, LogOut, LogIn, Loader2 } from 'lucide-react';
+import { ArrowLeft, BarChart2, LogOut, LogIn, Loader2, HelpCircle } from 'lucide-react';
 import { FeedbackMessageList, FeedbackComposer, FeedbackAnalytics } from '@/components/feedback';
 import { FeedbackWelcomeBanner } from '@/components/feedback/FeedbackWelcomeBanner';
 import { FeedbackHeroSection } from '@/components/feedback/FeedbackHeroSection';
+import { FeedbackHubTour } from '@/components/tours';
 import { useFeedbackMessages } from '@/hooks/useFeedbackMessages';
 import { useFeedbackMembership } from '@/hooks/useFeedbackMembership';
 import { useAuth } from '@/contexts/AuthContext';
@@ -30,6 +31,7 @@ export default function FeedbackPage() {
     username: string;
     preview: string;
   } | null>(null);
+  const [showHelpTour, setShowHelpTour] = useState(false);
 
   const {
     channel,
@@ -163,6 +165,14 @@ export default function FeedbackPage() {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setShowHelpTour(true)}
+            title="How to use Feedback Hub"
+          >
+            <HelpCircle className="h-5 w-5" />
+          </Button>
           {isAdmin && (
             <Sheet>
               <SheetTrigger asChild>
@@ -230,6 +240,12 @@ export default function FeedbackPage() {
           composerRef={composerRef}
         />
       )}
+
+      {/* Help Tour */}
+      <FeedbackHubTour
+        open={showHelpTour}
+        onClose={() => setShowHelpTour(false)}
+      />
     </div>
   );
 }
