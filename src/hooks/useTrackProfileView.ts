@@ -34,12 +34,15 @@ export const useTrackProfileView = ({
 
     const trackView = async () => {
       try {
-        await supabase.rpc('track_profile_view', {
-          p_profile_id: profileId,
-          p_viewer_id: user?.id || null,
-          p_referrer: document.referrer || null,
-          p_user_agent: navigator.userAgent || null,
-        });
+        // Use a direct insert instead of RPC since the function may not exist
+        await supabase
+          .from('profile_views')
+          .insert({
+            profile_id: profileId,
+            viewer_id: user?.id || null,
+            referrer: document.referrer || null,
+            user_agent: navigator.userAgent || null,
+          });
         hasTracked.current = true;
       } catch (error) {
         // Silently fail - analytics shouldn't break the user experience

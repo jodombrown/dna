@@ -165,14 +165,6 @@ export default function FeedbackPage() {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setShowHelpTour(true)}
-            title="How to use Feedback Hub"
-          >
-            <HelpCircle className="h-5 w-5" />
-          </Button>
           {isAdmin && (
             <Sheet>
               <SheetTrigger asChild>
@@ -208,14 +200,23 @@ export default function FeedbackPage() {
       <FeedbackHeroSection onCardClick={handleHeroCardClick} />
 
       {/* Filters */}
-      <div className="border-b px-4 py-2 shrink-0">
+      <div className="border-b px-4 py-2 shrink-0 flex items-center justify-between">
         <Tabs value={filter} onValueChange={(v) => setFilter(v as FeedbackFilter)}>
           <TabsList>
             <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="my_feedback">My Feedback</TabsTrigger>
+            <TabsTrigger value="mine">Mine</TabsTrigger>
             <TabsTrigger value="pinned">Pinned</TabsTrigger>
           </TabsList>
         </Tabs>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setShowHelpTour(true)}
+          title="Learn how to use Feedback Hub"
+          className="text-muted-foreground hover:text-foreground"
+        >
+          <HelpCircle className="h-5 w-5" />
+        </Button>
       </div>
 
       {/* Message List */}
