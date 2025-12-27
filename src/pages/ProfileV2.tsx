@@ -31,6 +31,7 @@ import ProfileV2Completion from '@/components/profile-v2/ProfileV2Completion';
 import ProfileV2Verification from '@/components/profile-v2/ProfileV2Verification';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { MutualConnectionsWidget } from '@/components/connections/MutualConnectionsWidget';
+import PublicProfileLandingView from '@/components/profile-v2/PublicProfileLandingView';
 
 // SEO component for public profiles
 import { PublicProfileSEO } from '@/components/public-profile';
@@ -125,6 +126,12 @@ const ProfileV2: React.FC = () => {
         </div>
       </div>
     );
+  }
+
+  // Show beautiful public landing view for non-logged-in visitors
+  // This provides a focused, inviting experience that drives sign-ups
+  if (!user) {
+    return <PublicProfileLandingView bundle={bundle} />;
   }
 
   // === DEFENSIVE LOGGING (Development Mode) ===
