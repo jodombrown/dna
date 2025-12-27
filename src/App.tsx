@@ -291,6 +291,8 @@ function App() {
               <Route path="/documentation/features" element={<FeaturesHub />} />
               <Route path="/documentation/features/:slug" element={<FeatureDetail />} />
               
+              {/* Legacy profile ID redirect - catches old /dna/profile/uuid links */}
+              <Route path="/dna/profile/:id" element={<Navigate to="/dna/me" replace />} />
               {/* Redirect old /dna/me to user's profile */}
               <Route path="/dna/me" element={<Navigate to="/dna/feed" replace />} />
               <Route path="/dna/:username" element={
