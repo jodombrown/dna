@@ -1,18 +1,29 @@
 /**
- * Sent Connection Request Card
+ * Sent Connection Request Card - Apple News Style
  * Displays connection requests that the user has sent with option to withdraw
  */
 
 import React, { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { XCircle, Clock, Loader2 } from 'lucide-react';
+import { 
+  MoreHorizontal, 
+  XCircle, 
+  Loader2,
+  MapPin,
+  Clock
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface SentRequestCardProps {
   request: {
@@ -22,6 +33,8 @@ interface SentRequestCardProps {
     recipient_name: string;
     recipient_avatar?: string | null;
     recipient_headline?: string | null;
+    recipient_location?: string | null;
+    recipient_profession?: string | null;
     created_at: string;
   };
   onWithdraw: () => void;
@@ -39,17 +52,18 @@ export const SentRequestCard: React.FC<SentRequestCardProps> = ({
       ?.split(' ')
       .map((n) => n[0])
       .join('')
+      .slice(0, 2)
       .toUpperCase() || '?';
   };
 
   const timeAgo = formatDistanceToNow(new Date(request.created_at), {
-    addSuffix: true,
+    addSuffix: false,
   });
 
-  const handleWithdraw = async () => {
+  const handleWithdraw = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     setIsWithdrawing(true);
     try {
-      // Delete the pending connection request directly
       const { error } = await supabase
         .from('connections')
         .delete()
@@ -68,65 +82,101 @@ export const SentRequestCard: React.FC<SentRequestCardProps> = ({
     }
   };
 
-  return (
-    <Card>
-      <CardContent className="p-6">
-        <div className="flex items-start gap-4">
-          <Avatar className="w-16 h-16 cursor-pointer" onClick={() => navigate(`/dna/${request.recipient_username || request.recipient_id}`)}>
-            <AvatarImage src={request.recipient_avatar || ''} />
-            <AvatarFallback className="bg-dna-copper text-white">
-              {getInitials(request.recipient_name)}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1">
-            <div className="flex items-start justify-between">
-              <div>
-                <h3
-                  className="font-semibold text-lg text-foreground cursor-pointer hover:text-dna-copper transition-colors"
-                  onClick={() => navigate(`/dna/${request.recipient_username || request.recipient_id}`)}
-                >
-                  {request.recipient_name}
-                </h3>
-                {request.recipient_headline && (
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {request.recipient_headline}
-                  </p>
-                )}
-              </div>
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Clock className="w-3 h-3" />
-                {timeAgo}
-              </div>
-            </div>
+  const handleViewProfile = () => {
+    navigate(`/dna/${request.recipient_username || request.recipient_id}`);
+  };
 
-            <Badge variant="outline" className="mt-3 text-xs border-amber-500/50 text-amber-700 dark:text-amber-300">
+  // Build metadata string
+  const getMetadataString = (): string => {
+    const parts: string[] = [];
+    parts.push(timeAgo);
+    if (request.recipient_location) parts.push(request.recipient_location);
+    return parts.join(' · ');
+  };
+
+  const metadata = getMetadataString();
+
+  return (
+    <Card 
+      className="bg-card/60 backdrop-blur-sm border-border/30 overflow-hidden cursor-pointer hover:bg-card/80 transition-colors"
+      onClick={handleViewProfile}
+    >
+      <div className="p-4">
+        {/* Apple News style: Two columns - Text left, Image right */}
+        <div className="flex gap-3">
+          {/* Left column: Content */}
+          <div className="flex-1 min-w-0 flex flex-col">
+            {/* Status badge */}
+            <Badge 
+              variant="outline" 
+              className="w-fit mb-1.5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide border-amber-500/50 text-amber-600 dark:text-amber-400 bg-amber-500/10"
+            >
               Pending
             </Badge>
 
-            <div className="mt-4 flex gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleWithdraw}
-                disabled={isWithdrawing}
-                className="text-muted-foreground hover:text-destructive"
-              >
-                {isWithdrawing ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Withdrawing...
-                  </>
-                ) : (
-                  <>
-                    <XCircle className="w-4 h-4 mr-2" />
-                    Withdraw Request
-                  </>
-                )}
-              </Button>
+            {/* Headline: Name */}
+            <h3 className="font-semibold text-base text-foreground leading-tight mb-1 line-clamp-2">
+              {request.recipient_name}
+            </h3>
+
+            {/* Subheadline: Role/Profession */}
+            <p className="text-sm text-muted-foreground leading-snug line-clamp-2 mb-2">
+              {request.recipient_headline || request.recipient_profession || 'DNA Community Member'}
+            </p>
+
+            {/* Metadata footer */}
+            <div className="mt-auto flex items-center gap-1.5 text-xs text-muted-foreground/70">
+              <Clock className="h-3 w-3 shrink-0" />
+              <span className="truncate">{metadata}</span>
             </div>
           </div>
+
+          {/* Right column: Square avatar + overflow menu */}
+          <div className="flex flex-col items-end gap-2 shrink-0">
+            {/* Square avatar with rounded corners */}
+            <Avatar className="h-20 w-20 rounded-xl">
+              <AvatarImage
+                src={request.recipient_avatar || ''}
+                alt={request.recipient_name}
+                className="object-cover"
+                loading="lazy"
+              />
+              <AvatarFallback className="bg-primary/10 text-primary text-lg font-semibold rounded-xl">
+                {getInitials(request.recipient_name)}
+              </AvatarFallback>
+            </Avatar>
+
+            {/* Overflow menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger 
+                className="p-1 rounded-full hover:bg-muted transition-colors"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem 
+                  onClick={handleWithdraw}
+                  disabled={isWithdrawing}
+                  className="text-destructive focus:text-destructive"
+                >
+                  {isWithdrawing ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Withdrawing...
+                    </>
+                  ) : (
+                    <>
+                      <XCircle className="mr-2 h-4 w-4" />
+                      Withdraw Request
+                    </>
+                  )}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
-      </CardContent>
+      </div>
     </Card>
   );
 };

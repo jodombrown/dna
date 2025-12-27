@@ -1,9 +1,22 @@
+/**
+ * Connection Card - Apple News Style
+ * Displays an established connection with message and management actions
+ */
+
 import React, { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { MessageCircle, Eye, MoreVertical, UserMinus, Users } from 'lucide-react';
+import { 
+  MessageCircle, 
+  Users,
+  MoreHorizontal,
+  MapPin,
+  UserMinus,
+  User,
+  Share2,
+  Bookmark
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -13,6 +26,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -34,6 +48,7 @@ interface ConnectionCardProps {
     avatar_url?: string;
     headline?: string;
     location?: string;
+    professional_role?: string;
     connected_at: string;
   };
   onConnectionRemoved?: () => void;
@@ -48,12 +63,19 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
   const { user } = useAuth();
   const [isRemoving, setIsRemoving] = useState(false);
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
-
-  // Get mutual connections count
   const { mutualCount, hasMutualConnections } = useMutualConnections(user?.id, connection.id);
 
-  const handleMessage = async (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const getInitials = (name: string) => {
+    return name
+      ?.split(' ')
+      .map((n) => n[0])
+      .join('')
+      .slice(0, 2)
+      .toUpperCase() || '?';
+  };
+
+  const handleMessage = async (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     
     try {
       const { data, error } = await supabase.rpc('get_or_create_conversation', {
@@ -81,7 +103,6 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
       
       if (!currentUser.user) throw new Error('Not authenticated');
 
-      // Find the connection record
       const { data: connectionData, error: fetchError } = await supabase
         .from('connections')
         .select('id')
@@ -118,82 +139,127 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
     }
   };
 
+  const handleViewProfile = () => {
+    navigate(`/dna/${connection.username}`);
+  };
+
+  const handleShare = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const profileUrl = `${window.location.origin}/dna/${connection.username}`;
+    navigator.clipboard.writeText(profileUrl);
+    toast({
+      title: 'Link copied',
+      description: 'Profile link copied to clipboard',
+    });
+  };
+
+  // Build metadata string
+  const getMetadataString = (): string => {
+    const parts: string[] = [];
+    if (connection.location) parts.push(connection.location);
+    if (hasMutualConnections) parts.push(`${mutualCount} mutual${mutualCount !== 1 ? 's' : ''}`);
+    return parts.join(' · ');
+  };
+
+  const metadata = getMetadataString();
+
   return (
     <>
-      <Card className="hover:shadow-sm transition-all border-border/50">
-        <CardContent className="p-3">
-          <div className="flex items-center gap-3">
-            {/* Avatar */}
-            <Avatar 
-              className="h-10 w-10 cursor-pointer shrink-0" 
-              onClick={() => navigate(`/dna/${connection.username}`)}
-            >
-              <AvatarImage src={connection.avatar_url} alt={connection.full_name} />
-              <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                {(connection.full_name || connection.username || 'DN').split(' ').map(n => n[0]).join('').slice(0, 2)}
-              </AvatarFallback>
-            </Avatar>
+      <Card 
+        className="bg-card/60 backdrop-blur-sm border-border/30 overflow-hidden cursor-pointer hover:bg-card/80 transition-colors"
+        onClick={handleViewProfile}
+      >
+        <div className="p-4">
+          {/* Apple News style: Two columns - Text left, Image right */}
+          <div className="flex gap-3">
+            {/* Left column: Content */}
+            <div className="flex-1 min-w-0 flex flex-col">
+              {/* Source badge - role */}
+              {connection.professional_role && (
+                <Badge 
+                  variant="secondary" 
+                  className="w-fit mb-1.5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide bg-primary/10 text-primary border-0"
+                >
+                  {connection.professional_role}
+                </Badge>
+              )}
 
-            {/* Content */}
-            <div className="flex-1 min-w-0">
-              <h3 
-                className="font-medium text-sm hover:text-primary cursor-pointer truncate"
-                onClick={() => navigate(`/dna/${connection.username}`)}
-              >
+              {/* Headline: Name */}
+              <h3 className="font-semibold text-base text-foreground leading-tight mb-1 line-clamp-2">
                 {connection.full_name}
               </h3>
-              <p className="text-xs text-muted-foreground truncate">
-                {connection.headline || 'DNA Member'}
+
+              {/* Subheadline: Headline */}
+              <p className="text-sm text-muted-foreground leading-snug line-clamp-2 mb-2">
+                {connection.headline || 'DNA Community Member'}
               </p>
-              {connection.location && (
-                <p className="text-xs text-muted-foreground/70 truncate">{connection.location}</p>
-              )}
-              {hasMutualConnections && (
-                <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                  <Users className="h-3 w-3" />
-                  <span>{mutualCount} mutual connection{mutualCount !== 1 ? 's' : ''}</span>
-                </div>
-              )}
+
+              {/* Metadata footer */}
+              <div className="mt-auto flex items-center gap-1.5 text-xs text-muted-foreground/70">
+                {connection.location && <MapPin className="h-3 w-3 shrink-0" />}
+                <span className="truncate">{metadata || 'Connected'}</span>
+              </div>
             </div>
 
-            {/* Actions - Compact inline */}
-            <div className="flex items-center gap-1 shrink-0">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleMessage}
-                className="h-8 w-8"
-                title="Message"
-              >
-                <MessageCircle className="h-4 w-4" />
-              </Button>
-              
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate(`/dna/${connection.username}`)}
-                className="h-8 w-8"
-                title="View Profile"
-              >
-                <Eye className="h-4 w-4" />
-              </Button>
+            {/* Right column: Square avatar + overflow menu */}
+            <div className="flex flex-col items-end gap-2 shrink-0">
+              {/* Square avatar with rounded corners */}
+              <Avatar className="h-20 w-20 rounded-xl">
+                <AvatarImage
+                  src={connection.avatar_url || ''}
+                  alt={connection.full_name}
+                  className="object-cover"
+                  loading="lazy"
+                />
+                <AvatarFallback className="bg-primary/10 text-primary text-lg font-semibold rounded-xl">
+                  {getInitials(connection.full_name)}
+                </AvatarFallback>
+              </Avatar>
 
+              {/* Overflow menu */}
               <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
+                <DropdownMenuTrigger 
+                  className="p-1 rounded-full hover:bg-muted transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-background border shadow-lg z-50">
-                  <DropdownMenuItem onClick={() => setShowRemoveDialog(true)}>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleMessage(); }}>
+                    <MessageCircle className="mr-2 h-4 w-4" />
+                    Message
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleViewProfile(); }}>
+                    <User className="mr-2 h-4 w-4" />
+                    View Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleShare}>
+                    <Share2 className="mr-2 h-4 w-4" />
+                    Share Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={(e) => { e.stopPropagation(); setShowRemoveDialog(true); }}
+                    className="text-destructive focus:text-destructive"
+                  >
                     <UserMinus className="mr-2 h-4 w-4" />
                     Remove Connection
                   </DropdownMenuItem>
+                  {hasMutualConnections && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <div className="px-2 py-1.5 text-xs text-muted-foreground flex items-center gap-1.5">
+                        <Users className="h-3 w-3" />
+                        {mutualCount} mutual connection{mutualCount !== 1 ? 's' : ''}
+                      </div>
+                    </>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
           </div>
-        </CardContent>
+        </div>
       </Card>
 
       <AlertDialog open={showRemoveDialog} onOpenChange={setShowRemoveDialog}>
