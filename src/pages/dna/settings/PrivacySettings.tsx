@@ -7,9 +7,12 @@ import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { SettingsLayout } from '@/components/settings/SettingsLayout';
-import { Loader2, Eye, EyeOff, Globe, Lock, Info, Share2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff, Globe, Lock, Info, Share2, Copy, ExternalLink } from 'lucide-react';
+import { PublicVisibilitySettings, DEFAULT_PUBLIC_VISIBILITY } from '@/types/profileV2';
+import { ROUTES, getProfileShareUrl } from '@/config/routes';
 
 export default function PrivacySettings() {
   const { user } = useAuth();
@@ -20,13 +23,73 @@ export default function PrivacySettings() {
   const [isPublic, setIsPublic] = useState(false);
   const [allowProfileSharing, setAllowProfileSharing] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [publicVisibility, setPublicVisibility] = useState<PublicVisibilitySettings>(DEFAULT_PUBLIC_VISIBILITY);
 
   useEffect(() => {
     if (profile) {
       setIsPublic(profile.is_public || false);
       setAllowProfileSharing(profile.allow_profile_sharing !== false);
+      // Load per-field visibility settings
+      if (profile.public_visibility) {
+        setPublicVisibility({
+          ...DEFAULT_PUBLIC_VISIBILITY,
+          ...(typeof profile.public_visibility === 'object' ? profile.public_visibility : {}),
+        } as PublicVisibilitySettings);
+      }
     }
   }, [profile]);
+
+  // Copy profile URL to clipboard
+  const handleCopyProfileUrl = async () => {
+    if (!profile?.username) return;
+    try {
+      await navigator.clipboard.writeText(getProfileShareUrl(profile.username));
+      toast({
+        title: 'Copied!',
+        description: 'Profile URL copied to clipboard',
+      });
+    } catch (error) {
+      toast({
+        title: 'Copy failed',
+        description: 'Please copy the URL manually',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  // Handle per-field visibility change
+  const handleVisibilityFieldChange = async (field: keyof PublicVisibilitySettings, checked: boolean) => {
+    const newVisibility = { ...publicVisibility, [field]: checked };
+    setPublicVisibility(newVisibility);
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          public_visibility: newVisibility,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', user?.id);
+
+      if (error) throw error;
+
+      queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
+      queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
+
+      toast({
+        title: 'Visibility updated',
+        description: `${field.replace(/_/g, ' ')} is now ${checked ? 'visible' : 'hidden'} on your public profile`,
+      });
+    } catch (error: any) {
+      // Revert on error
+      setPublicVisibility({ ...publicVisibility, [field]: !checked });
+      toast({
+        title: 'Error updating visibility',
+        description: error.message,
+        variant: 'destructive',
+      });
+    }
+  };
 
   const handleVisibilityChange = async (checked: boolean) => {
     setSaving(true);
@@ -220,55 +283,251 @@ export default function PrivacySettings() {
           </CardContent>
         </Card>
 
-        {/* What's Visible */}
+        {/* Public Profile URL */}
+        {profile?.username && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ExternalLink className="h-5 w-5" />
+                Your Public Profile
+              </CardTitle>
+              <CardDescription>
+                Share your profile with others using this link
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
+                <code className="text-sm flex-1 truncate">
+                  {getProfileShareUrl(profile.username)}
+                </code>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCopyProfileUrl}
+                  className="shrink-0"
+                >
+                  <Copy className="h-4 w-4 mr-1" />
+                  Copy
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  asChild
+                  className="shrink-0"
+                >
+                  <a
+                    href={ROUTES.profile.view(profile.username)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <ExternalLink className="h-4 w-4 mr-1" />
+                    Preview
+                  </a>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Per-Field Visibility Controls */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Info className="h-5 w-5" />
-              What Others Can See
+              <Eye className="h-5 w-5" />
+              Public Profile Visibility
             </CardTitle>
             <CardDescription>
-              Understanding what information is shared when your profile is public
+              Choose what visitors can see on your public profile
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
+            {/* Always Required Fields */}
+            <div className="space-y-2">
+              <h4 className="font-medium text-sm text-muted-foreground">Always Visible (Required)</h4>
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <p>• Full name and username</p>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Configurable Fields */}
             <div className="space-y-4">
-              <div>
-                <h4 className="font-medium text-sm mb-2 text-green-700 dark:text-green-400">
-                  Visible on Public Profile
-                </h4>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• Name and profile photo</li>
-                  <li>• Headline and bio</li>
-                  <li>• Current country and country of origin</li>
-                  <li>• Skills and interests</li>
-                  <li>• Focus areas and expertise</li>
-                  <li>• Social links (LinkedIn, Twitter, Website)</li>
-                </ul>
+              <h4 className="font-medium text-sm">Choose what to show</h4>
+
+              {/* Avatar */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="vis_avatar" className="font-normal">Profile photo</Label>
+                </div>
+                <Switch
+                  id="vis_avatar"
+                  checked={publicVisibility.avatar}
+                  onCheckedChange={(checked) => handleVisibilityFieldChange('avatar', checked)}
+                  disabled={saving}
+                />
               </div>
 
-              <div>
-                <h4 className="font-medium text-sm mb-2 text-amber-700 dark:text-amber-400">
-                  Always Private
-                </h4>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• Email address</li>
-                  <li>• Phone number</li>
-                  <li>• Notification preferences</li>
-                  <li>• Account settings</li>
-                </ul>
+              {/* Headline & Bio */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="vis_headline" className="font-normal">Headline & bio</Label>
+                </div>
+                <Switch
+                  id="vis_headline"
+                  checked={publicVisibility.headline && publicVisibility.bio}
+                  onCheckedChange={(checked) => {
+                    handleVisibilityFieldChange('headline', checked);
+                    handleVisibilityFieldChange('bio', checked);
+                  }}
+                  disabled={saving}
+                />
+              </div>
+
+              {/* Location */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="vis_location" className="font-normal">Location</Label>
+                </div>
+                <Switch
+                  id="vis_location"
+                  checked={publicVisibility.location}
+                  onCheckedChange={(checked) => handleVisibilityFieldChange('location', checked)}
+                  disabled={saving}
+                />
+              </div>
+
+              {/* Heritage */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="vis_heritage" className="font-normal">Heritage / Origin countries</Label>
+                </div>
+                <Switch
+                  id="vis_heritage"
+                  checked={publicVisibility.heritage}
+                  onCheckedChange={(checked) => handleVisibilityFieldChange('heritage', checked)}
+                  disabled={saving}
+                />
+              </div>
+
+              {/* Industry & Company */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="vis_industry" className="font-normal">Industry & company</Label>
+                </div>
+                <Switch
+                  id="vis_industry"
+                  checked={publicVisibility.industry && publicVisibility.company}
+                  onCheckedChange={(checked) => {
+                    handleVisibilityFieldChange('industry', checked);
+                    handleVisibilityFieldChange('company', checked);
+                  }}
+                  disabled={saving}
+                />
+              </div>
+
+              {/* LinkedIn */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="vis_linkedin" className="font-normal">LinkedIn profile link</Label>
+                </div>
+                <Switch
+                  id="vis_linkedin"
+                  checked={publicVisibility.linkedin_url}
+                  onCheckedChange={(checked) => handleVisibilityFieldChange('linkedin_url', checked)}
+                  disabled={saving}
+                />
+              </div>
+
+              {/* Website */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="vis_website" className="font-normal">Personal website</Label>
+                </div>
+                <Switch
+                  id="vis_website"
+                  checked={publicVisibility.website_url}
+                  onCheckedChange={(checked) => handleVisibilityFieldChange('website_url', checked)}
+                  disabled={saving}
+                />
+              </div>
+
+              {/* Connection Count */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="vis_connections" className="font-normal">Connection count</Label>
+                </div>
+                <Switch
+                  id="vis_connections"
+                  checked={publicVisibility.connection_count}
+                  onCheckedChange={(checked) => handleVisibilityFieldChange('connection_count', checked)}
+                  disabled={saving}
+                />
+              </div>
+
+              {/* Event Count */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="vis_events" className="font-normal">Events attended count</Label>
+                </div>
+                <Switch
+                  id="vis_events"
+                  checked={publicVisibility.event_count}
+                  onCheckedChange={(checked) => handleVisibilityFieldChange('event_count', checked)}
+                  disabled={saving}
+                />
+              </div>
+
+              {/* Member Since */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="vis_member_since" className="font-normal">Member since date</Label>
+                </div>
+                <Switch
+                  id="vis_member_since"
+                  checked={publicVisibility.member_since}
+                  onCheckedChange={(checked) => handleVisibilityFieldChange('member_since', checked)}
+                  disabled={saving}
+                />
+              </div>
+
+              <Separator />
+
+              {/* Opt-in Fields (hidden by default) */}
+              <h4 className="font-medium text-sm text-amber-700 dark:text-amber-400">
+                Contact Information (Hidden by Default)
+              </h4>
+
+              {/* Email */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="vis_email" className="font-normal">Email address</Label>
+                  <p className="text-xs text-muted-foreground">Only visible if you opt-in</p>
+                </div>
+                <Switch
+                  id="vis_email"
+                  checked={publicVisibility.email}
+                  onCheckedChange={(checked) => handleVisibilityFieldChange('email', checked)}
+                  disabled={saving}
+                />
+              </div>
+
+              {/* Phone */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="vis_phone" className="font-normal">Phone number</Label>
+                  <p className="text-xs text-muted-foreground">Only visible if you opt-in</p>
+                </div>
+                <Switch
+                  id="vis_phone"
+                  checked={publicVisibility.phone}
+                  onCheckedChange={(checked) => handleVisibilityFieldChange('phone', checked)}
+                  disabled={saving}
+                />
               </div>
             </div>
           </CardContent>
         </Card>
-
-        {/* Future: Per-field visibility (V1) */}
-        <Alert>
-          <Info className="h-4 w-4" />
-          <AlertDescription>
-            <strong>Coming soon:</strong> Per-field visibility controls will let you choose exactly which parts of your profile to show publicly.
-          </AlertDescription>
-        </Alert>
       </div>
     </SettingsLayout>
   );

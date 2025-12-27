@@ -1,10 +1,9 @@
 /**
  * Publicly Accessible Profile Page
- * Legacy Route: /dna/u/:username (redirects to /dna/:username)
+ * Route: /dna/:username (public view for non-authenticated or viewing others' profiles)
  *
- * Note: This component is no longer directly routed. The /dna/u/:username
- * pattern now redirects to the canonical /dna/:username route.
- * This file is kept for reference but may be removed in future cleanup.
+ * Optimized for SEO with Open Graph, Twitter Cards, and JSON-LD structured data.
+ * See PRD: Public Profile Optimization for full requirements.
  */
 
 import { useParams, useNavigate, Link } from 'react-router-dom';
@@ -15,11 +14,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { 
-  MapPin, 
-  Briefcase, 
-  Globe2, 
-  MessageCircle, 
+import {
+  MapPin,
+  Briefcase,
+  Globe2,
+  MessageCircle,
   UserPlus,
   UserCheck,
   Clock,
@@ -27,10 +26,17 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ProfileShareDropdown } from '@/components/profile/ProfileShareDropdown';
-import { Helmet } from 'react-helmet-async';
 import { useState } from 'react';
 import { useConnectionStatus } from '@/hooks/useConnectionStatus';
 import { messageService } from '@/services/messageService';
+
+// Public profile components
+import {
+  PublicProfileSEO,
+  PublicProfileHeader,
+  PublicProfileCTA,
+  PublicProfileFooter,
+} from '@/components/public-profile';
 
 // About section component with read more functionality
 const AboutSection = ({ bio }: { bio: string }) => {
@@ -186,21 +192,27 @@ const PublicProfilePage = () => {
   const displayName = profile.full_name || profile.username || 'DNA Member';
   const displayRole = profile.profession || profile.headline;
 
+  // Derive first name for CTAs
+  const firstName = displayName.split(' ')[0] || displayName;
+
   return (
     <>
-      {/* SEO Meta Tags */}
-      <Helmet>
-        <title>{displayName} | DNA - Diaspora Network of Africa</title>
-        <meta name="description" content={profile.bio || `Connect with ${displayName} on DNA - the global network for the African diaspora.`} />
-        <meta property="og:title" content={`${displayName} | DNA`} />
-        <meta property="og:description" content={profile.bio || `Connect with ${displayName} on DNA.`} />
-        <meta property="og:image" content={profile.avatar_url || '/og-image.png'} />
-        <meta property="og:url" content={`${window.location.origin}/u/${username}`} />
-        <meta property="og:type" content="profile" />
-        <meta name="twitter:card" content="summary" />
-      </Helmet>
+      {/* SEO Meta Tags with JSON-LD */}
+      <PublicProfileSEO
+        username={username || ''}
+        fullName={displayName}
+        headline={displayRole}
+        bio={profile.bio}
+        avatarUrl={profile.avatar_url}
+        company={profile.company}
+        linkedinUrl={profile.linkedin_url}
+        websiteUrl={profile.website_url}
+        memberSince={profile.created_at}
+      />
 
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background flex flex-col">
+        {/* Header with navigation */}
+        <PublicProfileHeader username={username} />
         <div className="container max-w-4xl mx-auto px-4 py-8">
           {/* Profile Card */}
           <Card>
@@ -478,54 +490,16 @@ const PublicProfilePage = () => {
             </CardContent>
           </Card>
 
-          {/* CTA Card for non-logged-in users */}
+          {/* CTA Banner for non-logged-in users */}
           {!isLoggedIn && (
-            <Card className="mt-6 bg-gradient-to-r from-dna-forest to-dna-emerald text-white">
-              <CardContent className="py-8 text-center">
-                <h2 className="text-xl sm:text-2xl font-bold mb-3">
-                  Join the Diaspora Network of Africa
-                </h2>
-                <p className="text-white/90 mb-6 max-w-md mx-auto">
-                  Connect with {displayName} and thousands of other diaspora members. 
-                  Build your network, share your story, and contribute to Africa's future.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <Button 
-                    size="lg" 
-                    className="bg-dna-copper hover:bg-dna-gold text-white"
-                    asChild
-                  >
-                    <Link to="/auth?mode=signup">
-                      Create Your Free Account
-                    </Link>
-                  </Button>
-                  <Button 
-                    size="lg" 
-                    variant="secondary"
-                    className="bg-white text-dna-forest hover:bg-white/90"
-                    asChild
-                  >
-                    <Link to="/about">
-                      Learn More About DNA
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="mt-6">
+              <PublicProfileCTA firstName={firstName} username={username || ''} />
+            </div>
           )}
         </div>
 
         {/* Footer */}
-        <footer className="border-t mt-12 py-8 text-center text-sm text-muted-foreground">
-          <div className="container">
-            <p>© {new Date().getFullYear()} Diaspora Network of Africa. All rights reserved.</p>
-            <div className="flex justify-center gap-4 mt-2">
-              <Link to="/privacy" className="hover:underline">Privacy</Link>
-              <Link to="/terms" className="hover:underline">Terms</Link>
-              <Link to="/about" className="hover:underline">About</Link>
-            </div>
-          </div>
-        </footer>
+        <PublicProfileFooter />
       </div>
     </>
   );
