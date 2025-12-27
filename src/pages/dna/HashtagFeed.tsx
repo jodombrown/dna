@@ -5,13 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Loader2, Hash, TrendingUp, Users, Calendar, ArrowLeft, Share2, Settings, Crown, Copy, Check } from 'lucide-react';
+import { Loader2, Hash, TrendingUp, ArrowLeft, Share2, Settings, Crown, Copy, Check } from 'lucide-react';
 import { useHashtag } from '@/hooks/useHashtag';
 import { useTrendingHashtags } from '@/hooks/useTrendingHashtags';
 import { UniversalFeedItemComponent } from '@/components/feed/UniversalFeedItem';
 import { UniversalFeedItem } from '@/types/feed';
 import { useAuth } from '@/contexts/AuthContext';
-import { formatDistanceToNow } from 'date-fns';
+import { HashtagStatsGrid } from '@/components/hashtag/HashtagStatsGrid';
 import { useState } from 'react';
 import { hashtagService } from '@/services/hashtagService';
 import { useQuery } from '@tanstack/react-query';
@@ -198,22 +198,11 @@ export default function HashtagFeed() {
           )}
 
           {/* Stats */}
-          <div className="flex items-center gap-6 text-sm text-muted-foreground mt-4">
-            <div className="flex items-center gap-1">
-              <TrendingUp className="h-4 w-4" />
-              <span>{(hashtag?.usage_count || posts?.length || 0).toLocaleString()} posts</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Users className="h-4 w-4" />
-              <span>{(hashtag?.follower_count || 0).toLocaleString()} followers</span>
-            </div>
-            {hashtag?.created_at && (
-              <div className="flex items-center gap-1">
-                <Calendar className="h-4 w-4" />
-                <span>Created {formatDistanceToNow(new Date(hashtag.created_at), { addSuffix: true })}</span>
-              </div>
-            )}
-          </div>
+          <HashtagStatsGrid
+            postCount={hashtag?.usage_count || posts?.length || 0}
+            followerCount={hashtag?.follower_count || 0}
+            createdAt={hashtag?.created_at}
+          />
         </CardHeader>
       </Card>
 
@@ -369,10 +358,20 @@ function HashtagPageSkeleton() {
               <Skeleton className="h-5 w-24" />
             </div>
           </div>
-          <div className="flex gap-4 mt-4">
-            <Skeleton className="h-4 w-20" />
-            <Skeleton className="h-4 w-20" />
-            <Skeleton className="h-4 w-32" />
+          {/* Stats skeleton */}
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 p-3 sm:p-4 bg-muted/50 rounded-lg mt-4">
+            <div className="text-center space-y-2">
+              <Skeleton className="h-6 w-12 mx-auto" />
+              <Skeleton className="h-3 w-10 mx-auto" />
+            </div>
+            <div className="text-center space-y-2">
+              <Skeleton className="h-6 w-12 mx-auto" />
+              <Skeleton className="h-3 w-16 mx-auto" />
+            </div>
+            <div className="text-center space-y-2">
+              <Skeleton className="h-6 w-16 mx-auto" />
+              <Skeleton className="h-3 w-12 mx-auto" />
+            </div>
           </div>
         </CardHeader>
       </Card>
