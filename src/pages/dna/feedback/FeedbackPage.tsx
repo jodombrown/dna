@@ -209,13 +209,14 @@ export default function FeedbackPage() {
           </TabsList>
         </Tabs>
         <Button
-          variant="ghost"
-          size="icon"
+          variant="outline"
+          size="sm"
           onClick={() => setShowHelpTour(true)}
           title="Learn how to use Feedback Hub"
-          className="text-muted-foreground hover:text-foreground"
+          className="gap-1.5 text-xs"
         >
-          <HelpCircle className="h-5 w-5" />
+          <HelpCircle className="h-4 w-4" />
+          <span className="hidden sm:inline">Help</span>
         </Button>
       </div>
 
