@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { messageService } from '@/services/messageService';
+import { cn } from '@/lib/utils';
 
 interface MessageComposerProps {
   conversationId: string;
@@ -11,6 +11,12 @@ interface MessageComposerProps {
   onMessageSent?: () => void;
 }
 
+/**
+ * Apple Messages-inspired composer
+ * - Pill-shaped input field
+ * - Inline send button
+ * - Auto-expanding textarea
+ */
 export function MessageComposer({
   conversationId,
   currentUserId,
@@ -24,9 +30,18 @@ export function MessageComposer({
   const maxLength = 5000;
 
   useEffect(() => {
-    // Auto-focus on mount
     textareaRef.current?.focus();
   }, []);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      const newHeight = Math.min(textarea.scrollHeight, 120);
+      textarea.style.height = `${newHeight}px`;
+    }
+  }, [message]);
 
   const handleSend = async () => {
     const trimmedMessage = message.trim();
@@ -47,7 +62,6 @@ export function MessageComposer({
     setIsSending(true);
     try {
       await messageService.sendMessage(conversationId, trimmedMessage);
-
       setMessage('');
       onMessageSent?.();
       textareaRef.current?.focus();
@@ -71,33 +85,37 @@ export function MessageComposer({
   };
 
   return (
-    <div className="border-t bg-background p-4">
-      <div className="flex gap-2 items-end">
-        <div className="flex-1">
-          <Textarea
+    <div className="border-t bg-background/95 backdrop-blur-sm px-4 py-3 safe-area-bottom">
+      <div className="flex items-end gap-2">
+        {/* Pill-shaped input container */}
+        <div className="flex-1 flex items-end bg-muted rounded-3xl border border-border/50 px-4 py-2">
+          <textarea
             ref={textareaRef}
-            placeholder="Type your message... (Shift+Enter for new line)"
+            placeholder="iMessage"
             value={message}
             onChange={(e) => setMessage(e.target.value.slice(0, maxLength))}
             onKeyDown={handleKeyDown}
             disabled={isSending}
-            rows={3}
-            className="resize-none"
+            rows={1}
+            className={cn(
+              'flex-1 bg-transparent border-0 resize-none focus:outline-none focus:ring-0',
+              'text-[15px] placeholder:text-muted-foreground/60',
+              'min-h-[24px] max-h-[120px] py-0'
+            )}
           />
-          <div className="flex justify-between items-center mt-1 px-1">
-            <span className="text-xs text-muted-foreground">
-              Press Enter to send
-            </span>
-            <span className="text-xs text-muted-foreground">
-              {message.length}/{maxLength}
-            </span>
-          </div>
         </div>
+
+        {/* Send button - only shows when there's content */}
         <Button
           onClick={handleSend}
           disabled={isSending || !message.trim()}
           size="icon"
-          className="bg-primary hover:bg-primary/90 text-primary-foreground h-10 w-10 flex-shrink-0"
+          className={cn(
+            'h-9 w-9 rounded-full flex-shrink-0 transition-all',
+            message.trim()
+              ? 'bg-primary hover:bg-primary/90 text-primary-foreground scale-100 opacity-100'
+              : 'bg-muted text-muted-foreground scale-90 opacity-50'
+          )}
         >
           <Send className="h-4 w-4" />
         </Button>
