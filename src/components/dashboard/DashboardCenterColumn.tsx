@@ -153,7 +153,7 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer hover:shadow-lg transition-all duration-150 hover:border-dna-emerald/30 hover:-translate-y-1 hover:scale-[1.02] border-l-4 border-l-dna-copper" onClick={() => window.location.href = '/dna/impact'}>
+        <Card className="cursor-pointer hover:shadow-lg transition-all duration-150 hover:border-dna-emerald/30 hover:-translate-y-1 hover:scale-[1.02] border-l-4 border-l-dna-copper" onClick={() => window.location.href = '/dna/contribute'}>
           <CardContent className="p-3 sm:p-4 flex items-center gap-3">
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-dna-copper/10 rounded-full flex items-center justify-center">
               <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-dna-copper" />

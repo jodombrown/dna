@@ -19,7 +19,7 @@ export const mainNavItems = [
   { name: 'Connect', path: '/dna/connect/network', icon: 'Users2' },
   { name: 'Convene', path: '/dna/convene/events', icon: 'Calendar' },
   { name: 'Messages', path: '/dna/connect/messages', icon: 'MessageCircle' },
-  { name: 'Impact', path: '/dna/impact', icon: 'Briefcase' },
+  { name: 'Contribute', path: '/dna/contribute', icon: 'Briefcase' },
 ];
 
 // Pillar-based navigation structure

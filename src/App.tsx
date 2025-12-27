@@ -495,13 +495,16 @@ function App() {
               <Route path="/events" element={<Navigate to="/dna/convene/events" replace />} />
               <Route path="/dna/convene-example" element={<Navigate to="/dna/convene" replace />} />
               
-              {/* ========== CONTRIBUTE PILLAR (Future) ========== */}
-              <Route path="/dna/impact" element={
+              {/* ========== CONTRIBUTE PILLAR ========== */}
+              <Route path="/dna/contribute" element={
                 <OnboardingGuard>
                   <DnaImpact />
                 </OnboardingGuard>
               } />
-              <Route path="/dna/impact/:id" element={<OpportunityDetail />} />
+              <Route path="/dna/contribute/:id" element={<OpportunityDetail />} />
+              {/* Legacy impact routes - redirect to contribute */}
+              <Route path="/dna/impact" element={<Navigate to="/dna/contribute" replace />} />
+              <Route path="/dna/impact/:id" element={<Navigate to="/dna/contribute/:id" replace />} />
                <Route path="/dna/applications" element={<MyApplications />} />
                <Route path="/dna/applications/received" element={<ApplicationsReceived />} />
                <Route path="/dna/spaces" element={<CollaborationSpaces />} />

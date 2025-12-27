@@ -182,7 +182,7 @@ export default function ApplicationsReceived() {
               <p className="text-muted-foreground mb-4">
                 You haven't received any applications yet
               </p>
-              <Button onClick={() => navigate('/dna/impact')}>
+              <Button onClick={() => navigate('/dna/contribute')}>
                 View Your Opportunities
               </Button>
             </CardContent>

@@ -277,7 +277,7 @@ export const EventRecommendationsWidget = () => {
           <div
             key={event.id}
             className="flex gap-3 p-3 rounded-lg border hover:bg-accent/50 transition-colors cursor-pointer"
-            onClick={() => navigate('/dna/events')}
+            onClick={() => navigate('/dna/convene/events')}
           >
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2 mb-1">
@@ -328,7 +328,7 @@ export const EventRecommendationsWidget = () => {
         <Button
           variant="outline"
           className="w-full"
-          onClick={() => navigate('/dna/events')}
+          onClick={() => navigate('/dna/convene/events')}
         >
           See all events
           <ExternalLink className="h-3 w-3 ml-2" />

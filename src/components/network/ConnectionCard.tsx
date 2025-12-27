@@ -97,7 +97,7 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, connectionI
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => navigate(`/dna/${connection.username || `profile/${connection.id}`}`)}
+                onClick={() => navigate(connection.username ? `/dna/${connection.username}` : `/dna/profile/${connection.id}`)}
               >
                 <User className="w-4 h-4 mr-2" />
                 View Profile
