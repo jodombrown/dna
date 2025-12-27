@@ -33,7 +33,7 @@ const EventSocialSection: React.FC<EventSocialSectionProps> = ({ event }) => {
           variant="outline" 
           size="icon" 
           className="hover:bg-dna-emerald/10 hover:border-dna-emerald hover:text-dna-forest transition-colors"
-          onClick={() => window.open('https://diasporanetworkafrica.com', '_blank')}
+          onClick={() => window.open('https://diasporanetwork.africa', '_blank')}
         >
           <Link className="w-4 h-4" />
         </Button>

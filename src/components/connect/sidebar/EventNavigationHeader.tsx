@@ -31,7 +31,7 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
       .replace(/\s+/g, '-')
       .substring(0, 30);
     const eventId = event.id.substring(0, 8);
-    return `https://diasporanetworkafrica.com/events/${eventSlug}-${eventId}`;
+    return `https://diasporanetwork.africa/dna/convene/events/${eventSlug}-${eventId}`;
   };
 
   const handleCopyLink = async () => {

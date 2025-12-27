@@ -43,7 +43,7 @@ export const MyEventsWidget = () => {
           {/* <Button 
             size="sm" 
             variant="outline"
-            onClick={() => navigate('/dna/events/manage')}
+            onClick={() => navigate('/dna/convene/my-events')}
           >
             Manage
           </Button> */}
