@@ -1,13 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { MessageBubble } from './MessageBubble';
+import { MessageBubble, MessageDateSeparator } from './MessageBubble';
 import { MessageComposer } from './MessageComposer';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { messageService, MessageWithSender } from '@/services/messageService';
 import { supabase } from '@/integrations/supabase/client';
-import { ArrowLeft, User } from 'lucide-react';
+import { ArrowLeft, Phone, Video, Info } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 interface ConversationViewProps {
   conversationId: string;
@@ -18,6 +19,12 @@ interface ConversationViewProps {
   onBack?: () => void;
 }
 
+/**
+ * Apple Messages-inspired conversation view
+ * - Clean header with avatar and actions
+ * - Date separators between message groups
+ * - Smooth scrolling with message bubbles
+ */
 export function ConversationView({
   conversationId,
   currentUserId,
@@ -31,14 +38,13 @@ export function ConversationView({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
-  // Fetch messages using the simplified service
   const { data: messages = [], isLoading } = useQuery({
     queryKey: ['messages', conversationId],
     queryFn: () => messageService.getMessages(conversationId),
     enabled: !!conversationId,
   });
 
-  // Real-time subscription for new messages
+  // Real-time subscription
   useEffect(() => {
     const channel = supabase
       .channel(`conversation:${conversationId}`)
@@ -51,7 +57,6 @@ export function ConversationView({
           filter: `conversation_id=eq.${conversationId}`,
         },
         () => {
-          // Refetch messages when a new one arrives
           queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
           queryClient.invalidateQueries({ queryKey: ['conversations'] });
         }
@@ -63,14 +68,14 @@ export function ConversationView({
     };
   }, [conversationId, queryClient]);
 
-  // Mark conversation as read
+  // Mark as read
   useEffect(() => {
     if (conversationId) {
       messageService.markAsRead(conversationId);
     }
   }, [conversationId]);
 
-  // Scroll to bottom when messages change
+  // Scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -84,50 +89,72 @@ export function ConversationView({
       .slice(0, 2);
   };
 
-  const handleMessageSent = () => {
-    // Messages will be added via real-time subscription
+  // Group messages by date for date separators
+  const groupMessagesByDate = (msgs: MessageWithSender[]) => {
+    const groups: { date: Date; messages: MessageWithSender[] }[] = [];
+    let currentDate: string | null = null;
+
+    msgs.forEach((msg) => {
+      const msgDate = new Date(msg.created_at);
+      const dateKey = msgDate.toDateString();
+
+      if (dateKey !== currentDate) {
+        currentDate = dateKey;
+        groups.push({ date: msgDate, messages: [msg] });
+      } else {
+        groups[groups.length - 1].messages.push(msg);
+      }
+    });
+
+    return groups;
   };
+
+  const messageGroups = groupMessagesByDate(messages);
 
   return (
     <div className="flex flex-col h-full">
-      {/* Header */}
-      <div className="border-b bg-background p-4 flex items-center gap-3">
+      {/* Header - Apple Messages style */}
+      <div className="bg-background/95 backdrop-blur-sm border-b border-border/50 px-4 py-2 flex items-center gap-3">
         {onBack && (
-          <Button variant="ghost" size="icon" onClick={onBack} className="md:hidden">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={onBack} 
+            className="h-9 w-9 -ml-2 text-primary"
+          >
             <ArrowLeft className="h-5 w-5" />
           </Button>
         )}
-        <Avatar
-          className="h-10 w-10 cursor-pointer"
+        
+        <div 
+          className="flex items-center gap-3 flex-1 cursor-pointer"
           onClick={() => navigate(`/dna/${otherUserUsername}`)}
         >
-          <AvatarImage src={otherUserAvatar} alt={otherUserName} />
-          <AvatarFallback className="bg-primary text-primary-foreground">
-            {getInitials(otherUserName)}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex-1 min-w-0">
-          <h2
-            className="font-semibold truncate cursor-pointer hover:text-primary transition-colors"
-            onClick={() => navigate(`/dna/${otherUserUsername}`)}
-          >
-            {otherUserName}
-          </h2>
+          <Avatar className="h-9 w-9">
+            <AvatarImage src={otherUserAvatar} alt={otherUserName} />
+            <AvatarFallback className="bg-muted text-muted-foreground text-sm">
+              {getInitials(otherUserName)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
+            <h2 className="font-semibold text-[15px] truncate">{otherUserName}</h2>
+          </div>
         </div>
+
         <Button
-          variant="outline"
-          size="sm"
+          variant="ghost"
+          size="icon"
           onClick={() => navigate(`/dna/${otherUserUsername}`)}
+          className="h-9 w-9 text-primary"
         >
-          <User className="h-4 w-4 mr-2" />
-          View Profile
+          <Info className="h-5 w-5" />
         </Button>
       </div>
 
-      {/* Messages */}
+      {/* Messages - scrollable area */}
       <div
         ref={messagesContainerRef}
-        className="flex-1 overflow-y-auto p-4 space-y-4"
+        className="flex-1 overflow-y-auto px-4 py-4"
         style={{ minHeight: 0 }}
       >
         {isLoading ? (
@@ -135,28 +162,39 @@ export function ConversationView({
             Loading messages...
           </div>
         ) : messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center">
-            <p className="text-muted-foreground mb-2">No messages yet</p>
+          <div className="flex flex-col items-center justify-center h-full text-center py-16">
+            <Avatar className="h-20 w-20 mb-4">
+              <AvatarImage src={otherUserAvatar} alt={otherUserName} />
+              <AvatarFallback className="bg-muted text-muted-foreground text-xl">
+                {getInitials(otherUserName)}
+              </AvatarFallback>
+            </Avatar>
+            <h3 className="font-semibold text-lg mb-1">{otherUserName}</h3>
             <p className="text-sm text-muted-foreground">
-              Start the conversation with {otherUserName}
+              Start a conversation
             </p>
           </div>
         ) : (
           <>
-            {messages.map((message, index) => {
-              const isOwnMessage = message.sender_id === currentUserId;
-              const prevMessage = index > 0 ? messages[index - 1] : null;
-              const showAvatar = !prevMessage || prevMessage.sender_id !== message.sender_id;
+            {messageGroups.map((group, groupIndex) => (
+              <div key={groupIndex}>
+                <MessageDateSeparator date={group.date} />
+                {group.messages.map((message, index) => {
+                  const isOwnMessage = message.sender_id === currentUserId;
+                  const prevMessage = index > 0 ? group.messages[index - 1] : null;
+                  const showAvatar = !prevMessage || prevMessage.sender_id !== message.sender_id;
 
-              return (
-                <MessageBubble
-                  key={message.message_id}
-                  message={message}
-                  isOwnMessage={isOwnMessage}
-                  showAvatar={showAvatar}
-                />
-              );
-            })}
+                  return (
+                    <MessageBubble
+                      key={message.message_id}
+                      message={message}
+                      isOwnMessage={isOwnMessage}
+                      showAvatar={showAvatar}
+                    />
+                  );
+                })}
+              </div>
+            ))}
             <div ref={messagesEndRef} />
           </>
         )}
@@ -166,7 +204,7 @@ export function ConversationView({
       <MessageComposer
         conversationId={conversationId}
         currentUserId={currentUserId}
-        onMessageSent={handleMessageSent}
+        onMessageSent={() => {}}
       />
     </div>
   );

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MessageWithSender } from '@/services/messageService';
-import { formatDistanceToNow } from 'date-fns';
+import { format, isToday, isYesterday } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Check, CheckCheck } from 'lucide-react';
 
@@ -15,7 +15,10 @@ interface MessageBubbleProps {
 }
 
 /**
- * MessageBubble - Individual message display (simplified)
+ * Apple Messages-inspired bubble design
+ * - iMessage blue for sent, gray for received
+ * - Rounded pill shapes with tail effect
+ * - Compact timestamp display
  */
 export function MessageBubble({
   message,
@@ -34,21 +37,18 @@ export function MessageBubble({
       .slice(0, 2);
   };
 
-  const timeAgo = formatDistanceToNow(new Date(message.created_at), {
-    addSuffix: true,
-  });
+  const formatTime = (date: Date) => {
+    return format(date, 'h:mm a');
+  };
+
+  const messageDate = new Date(message.created_at);
 
   // Render deleted message
   if (message.is_deleted) {
     return (
-      <div className={cn('flex gap-3 mb-4', isOwnMessage && 'flex-row-reverse')}>
-        {showAvatar && <div className="w-8 h-8" />}
-        <div
-          className={cn(
-            'max-w-[70%] px-4 py-2 rounded-lg',
-            'bg-muted text-muted-foreground italic'
-          )}
-        >
+      <div className={cn('flex gap-2 mb-2', isOwnMessage && 'flex-row-reverse')}>
+        {showAvatar && <div className="w-7" />}
+        <div className="max-w-[75%] px-4 py-2 rounded-2xl bg-muted/50 text-muted-foreground italic">
           <p className="text-sm">This message was deleted</p>
         </div>
       </div>
@@ -62,56 +62,61 @@ export function MessageBubble({
     if (isRead) {
       return (
         <span className="flex items-center text-primary" title="Read">
-          <CheckCheck className="h-3.5 w-3.5" />
+          <CheckCheck className="h-3 w-3" />
         </span>
       );
     } else if (isDelivered) {
       return (
         <span className="flex items-center text-muted-foreground" title="Delivered">
-          <CheckCheck className="h-3.5 w-3.5" />
+          <CheckCheck className="h-3 w-3" />
         </span>
       );
     } else {
       return (
         <span className="flex items-center text-muted-foreground" title="Sent">
-          <Check className="h-3.5 w-3.5" />
+          <Check className="h-3 w-3" />
         </span>
       );
     }
   };
 
   return (
-    <div className={cn('flex gap-3 mb-4', isOwnMessage && 'flex-row-reverse')}>
-      {showAvatar && (
-        <Avatar className="h-8 w-8 flex-shrink-0">
+    <div className={cn('flex gap-2 mb-1', isOwnMessage && 'flex-row-reverse')}>
+      {/* Avatar - only for received messages */}
+      {!isOwnMessage && showAvatar ? (
+        <Avatar className="h-7 w-7 flex-shrink-0 mt-auto">
           <AvatarImage
             src={message.sender_avatar_url || ''}
             alt={message.sender_full_name}
           />
-          <AvatarFallback className="bg-primary text-white text-xs">
+          <AvatarFallback className="bg-muted text-muted-foreground text-[10px]">
             {getInitials(message.sender_full_name || '?')}
           </AvatarFallback>
         </Avatar>
-      )}
+      ) : !isOwnMessage ? (
+        <div className="w-7 flex-shrink-0" />
+      ) : null}
 
       <div
         className={cn(
-          'flex flex-col',
+          'flex flex-col max-w-[75%]',
           isOwnMessage ? 'items-end' : 'items-start'
         )}
       >
         <div
           className={cn(
-            'max-w-[70%] px-4 py-2 rounded-lg break-words',
+            'px-4 py-2 rounded-2xl break-words',
             isOwnMessage
-              ? 'bg-primary text-primary-foreground rounded-br-none'
-              : 'bg-muted rounded-bl-none'
+              ? 'bg-primary text-primary-foreground rounded-br-md'
+              : 'bg-muted rounded-bl-md'
           )}
         >
-          <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+          <p className="text-[15px] leading-snug whitespace-pre-wrap">{message.content}</p>
         </div>
-        <div className="flex items-center gap-1.5 mt-1 px-1">
-          <span className="text-xs text-muted-foreground">{timeAgo}</span>
+        <div className="flex items-center gap-1 mt-0.5 px-1">
+          <span className="text-[11px] text-muted-foreground">
+            {formatTime(messageDate)}
+          </span>
           {renderReadReceipt()}
         </div>
       </div>
@@ -120,31 +125,24 @@ export function MessageBubble({
 }
 
 /**
- * Message group separator with date
+ * Message group separator with date - Apple style
  */
 export const MessageDateSeparator: React.FC<{ date: Date }> = ({ date }) => {
-  const isToday = new Date().toDateString() === date.toDateString();
-  const isYesterday =
-    new Date(Date.now() - 86400000).toDateString() === date.toDateString();
-
   let label: string;
-  if (isToday) {
+  
+  if (isToday(date)) {
     label = 'Today';
-  } else if (isYesterday) {
+  } else if (isYesterday(date)) {
     label = 'Yesterday';
   } else {
-    label = date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'short',
-      day: 'numeric',
-    });
+    label = format(date, 'EEEE, MMM d');
   }
 
   return (
     <div className="flex items-center justify-center my-4">
-      <div className="flex-1 h-px bg-border" />
-      <span className="px-3 text-xs text-muted-foreground">{label}</span>
-      <div className="flex-1 h-px bg-border" />
+      <span className="px-3 py-1 text-xs text-muted-foreground bg-muted/50 rounded-full">
+        {label}
+      </span>
     </div>
   );
 };
