@@ -16,7 +16,6 @@ import {
   Briefcase, 
   UserPlus, 
   ArrowLeft,
-  Sparkles,
   Users,
   Target,
   Heart,
@@ -150,8 +149,8 @@ const AboutSection: React.FC<{ bio: string }> = ({ bio }) => {
   return (
     <Card className="mb-6 max-w-2xl mx-auto">
       <CardContent className="pt-6">
-        <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-primary" />
+          <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
+          <Users className="w-5 h-5 text-primary" />
           About
         </h2>
         <div className="text-muted-foreground leading-relaxed">
@@ -376,10 +375,12 @@ const PublicProfileLandingView: React.FC<PublicProfileLandingViewProps> = ({ bun
               <BadgeCheck className="w-3 h-3 mr-1" />
               DNA Member
             </Badge>
-            <Badge variant="outline" className="text-xs px-3 py-1">
-              <Link2 className="w-3 h-3 mr-1" />
-              <span className="font-semibold">{(bundle as any).connectionStats?.acceptedCount || 0}</span> connections
-            </Badge>
+            {((bundle as any).connectionStats?.acceptedCount || 0) > 0 && (
+              <Badge variant="outline" className="text-xs px-3 py-1">
+                <Link2 className="w-3 h-3 mr-1" />
+                <span className="font-semibold">{(bundle as any).connectionStats?.acceptedCount}</span> connections
+              </Badge>
+            )}
           </motion.div>
 
           {/* Headline */}
