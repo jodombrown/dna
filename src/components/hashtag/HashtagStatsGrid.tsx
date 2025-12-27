@@ -43,28 +43,28 @@ export function HashtagStatsGrid({ postCount, followerCount, createdAt }: Hashta
   };
 
   return (
-    <div className="grid grid-cols-3 gap-2 sm:gap-4 p-3 sm:p-4 bg-muted/50 rounded-lg mt-4">
+    <div className="grid grid-cols-3 gap-2 p-2.5 sm:p-3 bg-muted/50 rounded-lg mt-3">
       <div className="text-center">
-        <p className="text-xl sm:text-2xl font-bold text-foreground">
+        <p className="text-lg sm:text-xl font-bold text-foreground">
           {formatCount(postCount)}
         </p>
-        <p className="text-xs sm:text-sm text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Posts
         </p>
       </div>
       <div className="text-center">
-        <p className="text-xl sm:text-2xl font-bold text-foreground">
+        <p className="text-lg sm:text-xl font-bold text-foreground">
           {formatCount(followerCount)}
         </p>
-        <p className="text-xs sm:text-sm text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Followers
         </p>
       </div>
       <div className="text-center">
-        <p className="text-xl sm:text-2xl font-bold text-foreground">
+        <p className="text-lg sm:text-xl font-bold text-foreground">
           {createdAt ? formatDate(createdAt) : '—'}
         </p>
-        <p className="text-xs sm:text-sm text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Created
         </p>
       </div>
