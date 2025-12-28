@@ -26,8 +26,9 @@ export function DiaInsightOfDay({ onExplore }: DiaInsightOfDayProps) {
         (today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000
       );
 
+      // Type assertion needed as dia_insights table was added after types generation
       const { data, error } = await (supabase
-        .from('dia_insights')
+        .from('dia_insights' as any)
         .select('id, title, description, query_prompt')
         .eq('is_active', true)
         .eq('is_featured', true)
@@ -37,7 +38,7 @@ export function DiaInsightOfDay({ onExplore }: DiaInsightOfDayProps) {
 
       // Rotate through featured insights based on day of year
       const index = dayOfYear % data.length;
-      return data[index] as unknown as InsightData;
+      return data[index] as InsightData;
     },
     staleTime: 1000 * 60 * 60, // Cache for 1 hour
   });

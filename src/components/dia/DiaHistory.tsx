@@ -39,15 +39,16 @@ export function DiaHistory({
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return [];
 
-      const { data, error } = await supabase
-        .from('dia_query_log')
+      // Type assertion needed as dia_query_log table was added after types generation
+      const { data, error } = await (supabase
+        .from('dia_query_log' as any)
         .select('*')
         .eq('user_id', session.user.id)
         .order('created_at', { ascending: false })
-        .limit(limit);
+        .limit(limit) as any);
 
       if (error) throw error;
-      return data as QueryLogEntry[];
+      return (data || []) as QueryLogEntry[];
     },
   });
 

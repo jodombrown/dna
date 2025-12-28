@@ -76,16 +76,17 @@ export function DiaInsights({
   const { data: insights, isLoading, error } = useQuery({
     queryKey: ['dia-insights', limit, category, showFeaturedOnly],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('dia_insights')
+      // Type assertion needed as dia_insights table was added after types generation
+      const { data, error } = await (supabase
+        .from('dia_insights' as any)
         .select('id, title, description, query_prompt, category, region, is_featured, click_count')
         .eq('is_active', true)
         .order('display_order', { ascending: true })
-        .limit(limit) as any;
+        .limit(limit) as any);
 
       if (error) throw error;
 
-      let results = (data || []) as unknown as Insight[];
+      let results = (data || []) as Insight[];
 
       if (category) {
         results = results.filter(i => i.category === category);
@@ -100,9 +101,9 @@ export function DiaInsights({
   });
 
   const handleInsightClick = async (insight: Insight) => {
-    // Track click (fire and forget)
+    // Track click (fire and forget) - type assertion for dia_insights
     (supabase
-      .from('dia_insights')
+      .from('dia_insights' as any)
       .update({ click_count: insight.click_count + 1 })
       .eq('id', insight.id) as any)
       .then(() => {});
