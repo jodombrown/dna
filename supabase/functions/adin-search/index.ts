@@ -159,24 +159,24 @@ async function queryNetworkMatches(
   }
 
   try {
-    // Build OR filter for profiles
+    // Build OR filter for profiles - use valid columns only
     const profileFilters = keywords.flatMap((k) => [
       `headline.ilike.%${k}%`,
-      `skills.ilike.%${k}%`,
-      `location.ilike.%${k}%`,
-      `interests.cs.{${k}}`,
-      `bio.ilike.%${k}%`
+      `bio.ilike.%${k}%`,
+      `location.ilike.%${k}%`
     ]);
 
     // Query profiles - using public profiles
-    const { data: profiles } = await supabase
+    const { data: profiles, error: profileError } = await supabase
       .from("profiles")
-      .select("id, full_name, headline, avatar_url, skills, location")
+      .select("id, full_name, headline, avatar_url, location")
       .eq("is_public", true)
-      .or(profileFilters.slice(0, 10).join(",")) // Limit filter complexity
+      .or(profileFilters.slice(0, 9).join(","))
       .limit(5);
 
-    if (profiles && profiles.length > 0) {
+    if (profileError) {
+      console.log("Profile query error:", profileError.message);
+    } else if (profiles && profiles.length > 0) {
       matches.profiles = profiles.map((p: any) => ({
         id: p.id,
         full_name: p.full_name || "DNA Member",
@@ -186,62 +186,70 @@ async function queryNetworkMatches(
       }));
     }
 
-    // Query events - upcoming events
+    // Query events - upcoming events (correct column: start_time)
     const eventFilters = keywords.flatMap((k) => [
       `title.ilike.%${k}%`,
       `description.ilike.%${k}%`
     ]);
 
-    const { data: events } = await supabase
+    const { data: events, error: eventError } = await supabase
       .from("events")
-      .select("id, title, date_time, description")
-      .gte("date_time", new Date().toISOString())
+      .select("id, title, start_time, description")
+      .gte("start_time", new Date().toISOString())
+      .eq("is_cancelled", false)
+      .eq("is_public", true)
       .or(eventFilters.slice(0, 6).join(","))
-      .order("date_time", { ascending: true })
+      .order("start_time", { ascending: true })
       .limit(3);
 
-    if (events && events.length > 0) {
+    if (eventError) {
+      console.log("Event query error:", eventError.message);
+    } else if (events && events.length > 0) {
       matches.events = events.map((e: any) => ({
         id: e.id,
         title: e.title,
-        start_date: e.date_time,
+        start_date: e.start_time,
         relevance: "Topic match",
       }));
     }
 
-    // Query collaboration spaces as projects
+    // Query collaboration spaces as projects (correct column: title)
     const projectFilters = keywords.flatMap((k) => [
-      `name.ilike.%${k}%`,
+      `title.ilike.%${k}%`,
       `description.ilike.%${k}%`
     ]);
 
-    const { data: projects } = await supabase
+    const { data: projects, error: projectError } = await supabase
       .from("collaboration_spaces")
-      .select("id, name, status, description")
+      .select("id, title, status, description")
       .eq("status", "active")
       .or(projectFilters.slice(0, 6).join(","))
       .limit(3);
 
-    if (projects && projects.length > 0) {
+    if (projectError) {
+      console.log("Project query error:", projectError.message);
+    } else if (projects && projects.length > 0) {
       matches.projects = projects.map((p: any) => ({
         id: p.id,
-        name: p.name,
+        name: p.title,
         status: p.status || "active",
         relevance: "Related project",
       }));
     }
 
-    // Query hashtags
+    // Query hashtags (correct column: tag)
     const hashtagFilters = keywords.map((k) => `tag.ilike.%${k}%`);
 
-    const { data: hashtags } = await supabase
+    const { data: hashtags, error: hashtagError } = await supabase
       .from("hashtags")
       .select("id, tag, usage_count")
       .or(hashtagFilters.join(","))
       .order("usage_count", { ascending: false })
       .limit(5);
 
-    if (hashtags && hashtags.length > 0) {
+    if (hashtagError) {
+      console.log("Hashtag query error:", hashtagError.message);
+    } else if (hashtags && hashtags.length > 0) {
       matches.hashtags = hashtags.map((h: any) => ({
         id: h.id,
         name: h.tag,
@@ -250,7 +258,6 @@ async function queryNetworkMatches(
     }
   } catch (error) {
     console.error("Error querying network matches:", error);
-    // Return empty matches on error, don't fail the whole request
   }
 
   return matches;
