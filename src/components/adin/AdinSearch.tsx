@@ -60,15 +60,26 @@ interface AdinSearchProps {
   source?: string;
   placeholder?: string;
   compact?: boolean;
+  suggestions?: string[];
+  initialQuery?: string;
 }
 
 export function AdinSearch({
   source = 'dashboard',
   placeholder = 'Ask ADIN about African opportunities, markets, or trends...',
-  compact = false
+  compact = false,
+  suggestions,
+  initialQuery = ''
 }: AdinSearchProps) {
   const navigate = useNavigate();
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(initialQuery);
+
+  // Update query when initialQuery changes
+  React.useEffect(() => {
+    if (initialQuery) {
+      setQuery(initialQuery);
+    }
+  }, [initialQuery]);
   const [response, setResponse] = useState<AdinResponse | null>(null);
   const [rateLimited, setRateLimited] = useState(false);
   const [rateLimitInfo, setRateLimitInfo] = useState<{ limit: number; used: number; resets_at: string } | null>(null);
@@ -451,12 +462,12 @@ export function AdinSearch({
             and connect with your network members who share your interests.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-2">
-            {[
+            {(suggestions || [
               'Fintech opportunities in Nigeria',
               'Renewable energy investments in Kenya',
               'Tech hubs in Ghana',
               'Agricultural innovations in Ethiopia',
-            ].map((suggestion) => (
+            ]).map((suggestion) => (
               <button
                 key={suggestion}
                 onClick={() => handleSuggestionClick(suggestion)}

@@ -1,30 +1,96 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Sparkles } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Sparkles, Maximize2, History } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import AdinSearch from './AdinSearch';
+import AdinHistory from './AdinHistory';
 
 interface AdinPanelProps {
   className?: string;
+  showHistory?: boolean;
 }
 
-export function AdinPanel({ className }: AdinPanelProps) {
+export function AdinPanel({ className, showHistory = true }: AdinPanelProps) {
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<'search' | 'history'>('search');
+  const [selectedQuery, setSelectedQuery] = useState<string>('');
+
+  const handleQueryClick = (query: string) => {
+    setSelectedQuery(query);
+    setActiveTab('search');
+  };
+
   return (
     <Card className={className}>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <div className="p-2 rounded-lg bg-emerald-100">
-            <Sparkles className="h-5 w-5 text-emerald-600" />
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <div className="p-2 rounded-lg bg-emerald-500/10">
+              <Sparkles className="h-5 w-5 text-emerald-600" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold">ADIN Intelligence</h2>
+              <p className="text-xs font-normal text-muted-foreground">
+                African Diaspora Intelligence Network
+              </p>
+            </div>
+          </CardTitle>
+          <div className="flex items-center gap-1">
+            {showHistory && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setActiveTab(activeTab === 'search' ? 'history' : 'search')}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <History className="h-4 w-4" />
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/dna/adin')}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <Maximize2 className="h-4 w-4" />
+            </Button>
           </div>
-          <div>
-            <h2 className="text-xl font-semibold">ADIN Intelligence</h2>
-            <p className="text-sm font-normal text-gray-500">
-              African Diaspora Intelligence Network
-            </p>
+        </div>
+
+        {/* Tab Toggle */}
+        {showHistory && (
+          <div className="flex gap-1 mt-3 p-1 bg-muted rounded-lg">
+            <button
+              onClick={() => setActiveTab('search')}
+              className={`flex-1 px-3 py-1.5 text-sm rounded-md transition-colors ${
+                activeTab === 'search'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Search
+            </button>
+            <button
+              onClick={() => setActiveTab('history')}
+              className={`flex-1 px-3 py-1.5 text-sm rounded-md transition-colors ${
+                activeTab === 'history'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              History
+            </button>
           </div>
-        </CardTitle>
+        )}
       </CardHeader>
+
       <CardContent>
-        <AdinSearch source="dashboard" compact />
+        {activeTab === 'search' ? (
+          <AdinSearch source="dashboard" compact initialQuery={selectedQuery} />
+        ) : (
+          <AdinHistory compact onQueryClick={handleQueryClick} />
+        )}
       </CardContent>
     </Card>
   );
