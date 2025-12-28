@@ -115,3 +115,6 @@ verify_jwt = false
 
 [functions.unsubscribe-email]
 verify_jwt = false
+
+[functions.adin-search]
+verify_jwt = true
