@@ -60,12 +60,12 @@ export default function DiaAdminPage() {
     },
   });
 
-  // Daily stats
+  // Daily stats - use adin_daily_stats table (legacy name)
   const { data: dailyStats, isLoading: loadingStats } = useQuery({
     queryKey: ['dia-admin-stats'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('dia_daily_stats')
+        .from('adin_daily_stats')
         .select('*')
         .order('date', { ascending: false })
         .limit(7);
@@ -76,12 +76,12 @@ export default function DiaAdminPage() {
     enabled: isAdmin === true,
   });
 
-  // Popular queries
+  // Popular queries - use adin_popular_queries table (legacy name)
   const { data: popularQueries, isLoading: loadingPopular } = useQuery({
     queryKey: ['dia-popular-queries'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('dia_popular_queries')
+        .from('adin_popular_queries')
         .select('*')
         .limit(10);
 
@@ -91,12 +91,12 @@ export default function DiaAdminPage() {
     enabled: isAdmin === true,
   });
 
-  // Cost tracking
+  // Cost tracking - use adin_cost_tracking table (legacy name)
   const { data: costData, isLoading: loadingCost } = useQuery({
     queryKey: ['dia-cost-tracking'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('dia_cost_tracking')
+        .from('adin_cost_tracking')
         .select('*')
         .order('date', { ascending: false })
         .limit(7);

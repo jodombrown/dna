@@ -2,9 +2,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
-import { Database } from "@/integrations/supabase/types";
-
-type DiaNudgeRow = Database['public']['Tables']['dia_nudges']['Row'];
 
 export interface DiaNudge {
   id: string;
@@ -33,8 +30,9 @@ export function useDiaNudges(statusFilter?: 'sent' | 'all') {
     }
 
     setLoading(true);
+    // Use adin_nudges table (legacy name, UI displays as DIA)
     let query = supabase
-      .from("dia_nudges")
+      .from("adin_nudges")
       .select("*")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
@@ -56,10 +54,10 @@ export function useDiaNudges(statusFilter?: 'sent' | 'all') {
       setNudges([]);
     } else {
       // Map the data and add computed properties
-      const mappedNudges: DiaNudge[] = (data || []).map(nudge => ({
+      const mappedNudges: DiaNudge[] = (data || []).map((nudge: any) => ({
         ...nudge,
-        action_url: (nudge.payload as any)?.action_url,
-        priority: (nudge.payload as any)?.priority || 'medium',
+        action_url: nudge.payload?.action_url,
+        priority: nudge.payload?.priority || 'medium',
       }));
       setNudges(mappedNudges);
     }
@@ -81,7 +79,7 @@ export function useDiaNudges(statusFilter?: 'sent' | 'all') {
         {
           event: '*',
           schema: 'public',
-          table: 'dia_nudges',
+          table: 'adin_nudges',
           filter: user ? `user_id=eq.${user.id}` : undefined,
         },
         () => {
@@ -97,7 +95,7 @@ export function useDiaNudges(statusFilter?: 'sent' | 'all') {
 
   const acceptNudge = async (nudgeId: string) => {
     const { error } = await supabase
-      .from("dia_nudges")
+      .from("adin_nudges")
       .update({ status: "accepted", resolved_at: new Date().toISOString() })
       .eq("id", nudgeId);
 
@@ -119,7 +117,7 @@ export function useDiaNudges(statusFilter?: 'sent' | 'all') {
 
   const dismissNudge = async (nudgeId: string) => {
     const { error } = await supabase
-      .from("dia_nudges")
+      .from("adin_nudges")
       .update({ status: "dismissed", resolved_at: new Date().toISOString() })
       .eq("id", nudgeId);
 
@@ -137,7 +135,7 @@ export function useDiaNudges(statusFilter?: 'sent' | 'all') {
 
   const snoozeNudge = async (nudgeId: string, until: string) => {
     const { error } = await supabase
-      .from("dia_nudges")
+      .from("adin_nudges")
       .update({
         status: "snoozed"
       })

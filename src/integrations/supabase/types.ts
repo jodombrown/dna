@@ -291,57 +291,6 @@ export type Database = {
         }
         Relationships: []
       }
-      adin_insights: {
-        Row: {
-          category: string | null
-          click_count: number | null
-          created_at: string | null
-          description: string
-          display_order: number | null
-          end_date: string | null
-          id: string
-          is_active: boolean | null
-          is_featured: boolean | null
-          query_prompt: string
-          region: string | null
-          start_date: string | null
-          title: string
-          updated_at: string | null
-        }
-        Insert: {
-          category?: string | null
-          click_count?: number | null
-          created_at?: string | null
-          description: string
-          display_order?: number | null
-          end_date?: string | null
-          id?: string
-          is_active?: boolean | null
-          is_featured?: boolean | null
-          query_prompt: string
-          region?: string | null
-          start_date?: string | null
-          title: string
-          updated_at?: string | null
-        }
-        Update: {
-          category?: string | null
-          click_count?: number | null
-          created_at?: string | null
-          description?: string
-          display_order?: number | null
-          end_date?: string | null
-          id?: string
-          is_active?: boolean | null
-          is_featured?: boolean | null
-          query_prompt?: string
-          region?: string | null
-          start_date?: string | null
-          title?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       adin_nudges: {
         Row: {
           connection_id: string
@@ -447,84 +396,6 @@ export type Database = {
         }
         Relationships: []
       }
-      adin_queries: {
-        Row: {
-          cache_hits: number | null
-          citations: Json | null
-          created_at: string | null
-          estimated_cost: number | null
-          expires_at: string | null
-          id: string
-          model_used: string | null
-          network_matches: Json | null
-          normalized_query: string
-          perplexity_response: Json
-          query_hash: string
-          query_text: string
-          tokens_used: number | null
-        }
-        Insert: {
-          cache_hits?: number | null
-          citations?: Json | null
-          created_at?: string | null
-          estimated_cost?: number | null
-          expires_at?: string | null
-          id?: string
-          model_used?: string | null
-          network_matches?: Json | null
-          normalized_query: string
-          perplexity_response: Json
-          query_hash: string
-          query_text: string
-          tokens_used?: number | null
-        }
-        Update: {
-          cache_hits?: number | null
-          citations?: Json | null
-          created_at?: string | null
-          estimated_cost?: number | null
-          expires_at?: string | null
-          id?: string
-          model_used?: string | null
-          network_matches?: Json | null
-          normalized_query?: string
-          perplexity_response?: Json
-          query_hash?: string
-          query_text?: string
-          tokens_used?: number | null
-        }
-        Relationships: []
-      }
-      adin_query_log: {
-        Row: {
-          cache_hit: boolean | null
-          created_at: string | null
-          id: string
-          query_text: string
-          response_time_ms: number | null
-          source: string | null
-          user_id: string | null
-        }
-        Insert: {
-          cache_hit?: boolean | null
-          created_at?: string | null
-          id?: string
-          query_text: string
-          response_time_ms?: number | null
-          source?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          cache_hit?: boolean | null
-          created_at?: string | null
-          id?: string
-          query_text?: string
-          response_time_ms?: number | null
-          source?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       adin_recommendations: {
         Row: {
           created_at: string
@@ -617,45 +488,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      adin_user_usage: {
-        Row: {
-          created_at: string | null
-          id: string
-          last_query_at: string | null
-          period_start: string
-          query_count: number | null
-          query_limit: number | null
-          total_estimated_cost: number | null
-          total_tokens_used: number | null
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          last_query_at?: string | null
-          period_start: string
-          query_count?: number | null
-          query_limit?: number | null
-          total_estimated_cost?: number | null
-          total_tokens_used?: number | null
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          last_query_at?: string | null
-          period_start?: string
-          query_count?: number | null
-          query_limit?: number | null
-          total_estimated_cost?: number | null
-          total_tokens_used?: number | null
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: []
       }
       admin_activity_log: {
         Row: {
@@ -2034,6 +1866,174 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      dia_insights: {
+        Row: {
+          category: string | null
+          click_count: number | null
+          created_at: string | null
+          description: string
+          display_order: number | null
+          end_date: string | null
+          id: string
+          is_active: boolean | null
+          is_featured: boolean | null
+          query_prompt: string
+          region: string | null
+          start_date: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          click_count?: number | null
+          created_at?: string | null
+          description: string
+          display_order?: number | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          query_prompt: string
+          region?: string | null
+          start_date?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          click_count?: number | null
+          created_at?: string | null
+          description?: string
+          display_order?: number | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          query_prompt?: string
+          region?: string | null
+          start_date?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      dia_queries: {
+        Row: {
+          cache_hits: number | null
+          citations: Json | null
+          created_at: string | null
+          estimated_cost: number | null
+          expires_at: string | null
+          id: string
+          model_used: string | null
+          network_matches: Json | null
+          normalized_query: string
+          perplexity_response: Json
+          query_hash: string
+          query_text: string
+          tokens_used: number | null
+        }
+        Insert: {
+          cache_hits?: number | null
+          citations?: Json | null
+          created_at?: string | null
+          estimated_cost?: number | null
+          expires_at?: string | null
+          id?: string
+          model_used?: string | null
+          network_matches?: Json | null
+          normalized_query: string
+          perplexity_response: Json
+          query_hash: string
+          query_text: string
+          tokens_used?: number | null
+        }
+        Update: {
+          cache_hits?: number | null
+          citations?: Json | null
+          created_at?: string | null
+          estimated_cost?: number | null
+          expires_at?: string | null
+          id?: string
+          model_used?: string | null
+          network_matches?: Json | null
+          normalized_query?: string
+          perplexity_response?: Json
+          query_hash?: string
+          query_text?: string
+          tokens_used?: number | null
+        }
+        Relationships: []
+      }
+      dia_query_log: {
+        Row: {
+          cache_hit: boolean | null
+          created_at: string | null
+          id: string
+          query_text: string
+          response_time_ms: number | null
+          source: string | null
+          user_id: string | null
+        }
+        Insert: {
+          cache_hit?: boolean | null
+          created_at?: string | null
+          id?: string
+          query_text: string
+          response_time_ms?: number | null
+          source?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          cache_hit?: boolean | null
+          created_at?: string | null
+          id?: string
+          query_text?: string
+          response_time_ms?: number | null
+          source?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      dia_user_usage: {
+        Row: {
+          created_at: string | null
+          id: string
+          last_query_at: string | null
+          period_start: string
+          query_count: number | null
+          query_limit: number | null
+          total_estimated_cost: number | null
+          total_tokens_used: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          last_query_at?: string | null
+          period_start: string
+          query_count?: number | null
+          query_limit?: number | null
+          total_estimated_cost?: number | null
+          total_tokens_used?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          last_query_at?: string | null
+          period_start?: string
+          query_count?: number | null
+          query_limit?: number | null
+          total_estimated_cost?: number | null
+          total_tokens_used?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       diaspora_data: {
         Row: {
