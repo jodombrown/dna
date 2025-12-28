@@ -4,12 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ChevronRight, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAdinNudges } from '@/hooks/useAdinNudges';
-import NudgeCard from '@/components/adin/NudgeCard';
+import { useDiaNudges } from '@/hooks/useDiaNudges';
+import NudgeCard from '@/components/dia/NudgeCard';
 
 const DashboardNudges: React.FC = () => {
   const navigate = useNavigate();
-  const { nudges, loading, acceptNudge, dismissNudge, snoozeNudge } = useAdinNudges('sent');
+  const { nudges, loading, acceptNudge, dismissNudge, snoozeNudge } = useDiaNudges('sent');
 
   const handleAccept = async (nudgeId: string) => {
     const nudge = nudges.find(n => n.id === nudgeId);
@@ -31,7 +31,7 @@ const DashboardNudges: React.FC = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-dna-copper" />
-            <CardTitle className="text-lg text-foreground">ADIN Suggestions</CardTitle>
+            <CardTitle className="text-lg text-foreground">DIA Suggestions</CardTitle>
           </div>
           <Badge variant="outline" className="bg-dna-copper/10 text-dna-copper border-dna-copper/30">
             {nudges.length} active

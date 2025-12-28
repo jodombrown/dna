@@ -2,7 +2,7 @@ import { DashboardModule } from '@/hooks/useDashboardPreferences';
 import { ResumeModule } from './ResumeModule';
 import { WhatsNextModule } from './WhatsNextModule';
 import { TrendingHashtags } from './TrendingHashtags';
-import { AdinPanel } from '@/components/adin';
+import { DiaPanel } from '@/components/dia';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar, Users, HandHeart, UserPlus, FileText } from 'lucide-react';
@@ -223,7 +223,7 @@ function SuggestedPeopleModule({ isCompact, navigate, people }: any) {
 
 // Module registry - maps module IDs to components
 const MODULE_REGISTRY: Record<string, (props: any) => JSX.Element | null> = {
-  adin_intelligence: (props) => <AdinPanel key="adin_intelligence" />,
+  dia_intelligence: (props) => <DiaPanel key="dia_intelligence" />,
   resume_section: (props) => <ResumeModule key="resume_section" />,
   upcoming_events: (props) => <UpcomingEventsModule {...props} key="upcoming_events" />,
   whats_next: (props) => <WhatsNextModule key="whats_next" />,
@@ -236,7 +236,7 @@ const MODULE_REGISTRY: Record<string, (props: any) => JSX.Element | null> = {
 // Default module configuration (fallback if no policy)
 const DEFAULT_MODULES: ModulesConfig = {
   modules: [
-    { id: 'adin_intelligence', order: 0, visible: true },
+    { id: 'dia_intelligence', order: 0, visible: true },
     { id: 'resume_section', order: 1, visible: true },
     { id: 'whats_next', order: 2, visible: true },
     { id: 'upcoming_events', order: 3, visible: true },

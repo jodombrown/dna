@@ -41,7 +41,7 @@ interface CostData {
   avg_cost_per_query: number;
 }
 
-export default function AdinAdminPage() {
+export default function DiaAdminPage() {
   // Check if user is admin
   const { data: isAdmin, isLoading: checkingAdmin } = useQuery({
     queryKey: ['check-admin'],
@@ -62,10 +62,10 @@ export default function AdinAdminPage() {
 
   // Daily stats
   const { data: dailyStats, isLoading: loadingStats } = useQuery({
-    queryKey: ['adin-admin-stats'],
+    queryKey: ['dia-admin-stats'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('adin_daily_stats')
+        .from('dia_daily_stats')
         .select('*')
         .order('date', { ascending: false })
         .limit(7);
@@ -78,10 +78,10 @@ export default function AdinAdminPage() {
 
   // Popular queries
   const { data: popularQueries, isLoading: loadingPopular } = useQuery({
-    queryKey: ['adin-popular-queries'],
+    queryKey: ['dia-popular-queries'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('adin_popular_queries')
+        .from('dia_popular_queries')
         .select('*')
         .limit(10);
 
@@ -93,10 +93,10 @@ export default function AdinAdminPage() {
 
   // Cost tracking
   const { data: costData, isLoading: loadingCost } = useQuery({
-    queryKey: ['adin-cost-tracking'],
+    queryKey: ['dia-cost-tracking'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('adin_cost_tracking')
+        .from('dia_cost_tracking')
         .select('*')
         .order('date', { ascending: false })
         .limit(7);
@@ -142,7 +142,7 @@ export default function AdinAdminPage() {
           <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-600" />
         </div>
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold">ADIN Admin Dashboard</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">DIA Admin Dashboard</h1>
           <p className="text-sm text-muted-foreground hidden sm:block">Monitor usage, costs, and performance</p>
         </div>
       </div>

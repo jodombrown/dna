@@ -149,9 +149,9 @@ const MyReportsSettings = lazy(() => import("./pages/dna/settings/MyReportsSetti
 const NotificationSettings = lazy(() => import("./pages/dna/settings/NotificationSettings"));
 const PreferencesSettings = lazy(() => import("./pages/dna/settings/PreferencesSettings"));
 const MyHashtagsSettings = lazy(() => import("./pages/dna/settings/MyHashtagsSettings"));
-const AdinPreferences = lazy(() => import("./pages/AdinPreferences"));
-const AdinPage = lazy(() => import("./pages/dna/AdinPage"));
-const AdinAdminPage = lazy(() => import("./pages/admin/AdinAdminPage"));
+const DiaPreferences = lazy(() => import("./pages/DiaPreferences"));
+const DiaPage = lazy(() => import("./pages/dna/DiaPage"));
+const DiaAdminPage = lazy(() => import("./pages/admin/DiaAdminPage"));
 const NudgeCenter = lazy(() => import("./pages/NudgeCenter"));
 const EventsPage = lazy(() => import("./pages/EventsPage"));
 const EventDetailsPage = lazy(() => import("./pages/EventDetailsPage"));
@@ -543,14 +543,16 @@ function App() {
               } />
               <Route path="/dna/preferences" element={
                 <OnboardingGuard>
-                  <AdinPreferences />
+                  <DiaPreferences />
                 </OnboardingGuard>
               } />
-              <Route path="/dna/adin" element={
+              <Route path="/dna/dia" element={
                 <OnboardingGuard>
-                  <AdinPage />
+                  <DiaPage />
                 </OnboardingGuard>
               } />
+              {/* Legacy ADIN route redirect */}
+              <Route path="/dna/adin" element={<Navigate to="/dna/dia" replace />} />
               {/* ========== ANALYTICS ========== */}
               <Route path="/dna/analytics" element={
                 <OnboardingGuard>
@@ -597,7 +599,9 @@ function App() {
                 <Route path="moderation" element={<ContentModeration />} />
                 <Route path="analytics" element={<EngagementDashboard />} />
                 <Route path="analytics/engagement" element={<EngagementDashboard />} />
-                <Route path="adin" element={<AdinAdminPage />} />
+                <Route path="dia" element={<DiaAdminPage />} />
+                {/* Legacy ADIN admin route redirect */}
+                <Route path="adin" element={<Navigate to="/admin/dia" replace />} />
               </Route>
 
               {/* Legacy Admin routes */}

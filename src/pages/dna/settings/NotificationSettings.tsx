@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAdinPreferences, useUpdateAdinPreferences } from '@/hooks/useAdinPreferences';
+import { useDiaPreferences, useUpdateDiaPreferences } from '@/hooks/useDiaPreferences';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -46,8 +46,8 @@ const EMAIL_CATEGORIES = [
 ] as const;
 
 export default function NotificationSettings() {
-  const { data: preferences, isLoading } = useAdinPreferences();
-  const { mutate: updatePreferences } = useUpdateAdinPreferences();
+  const { data: preferences, isLoading } = useDiaPreferences();
+  const { mutate: updatePreferences } = useUpdateDiaPreferences();
 
   const handleUpdate = (field: string, value: any) => {
     updatePreferences({ [field]: value });

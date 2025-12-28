@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Lightbulb, ArrowRight, Loader2 } from 'lucide-react';
 
-interface AdinInsightOfDayProps {
+interface DiaInsightOfDayProps {
   onExplore?: (query: string) => void;
 }
 
@@ -16,9 +16,9 @@ interface InsightData {
   query_prompt: string;
 }
 
-export function AdinInsightOfDay({ onExplore }: AdinInsightOfDayProps) {
+export function DiaInsightOfDay({ onExplore }: DiaInsightOfDayProps) {
   const { data: insight, isLoading } = useQuery({
-    queryKey: ['adin-insight-of-day'],
+    queryKey: ['dia-insight-of-day'],
     queryFn: async (): Promise<InsightData | null> => {
       // Get a featured insight, rotating daily based on date
       const today = new Date();
@@ -27,7 +27,7 @@ export function AdinInsightOfDay({ onExplore }: AdinInsightOfDayProps) {
       );
 
       const { data, error } = await (supabase
-        .from('adin_insights')
+        .from('dia_insights')
         .select('id, title, description, query_prompt')
         .eq('is_active', true)
         .eq('is_featured', true)
@@ -63,7 +63,7 @@ export function AdinInsightOfDay({ onExplore }: AdinInsightOfDayProps) {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-xs font-medium text-emerald-600 mb-1">
-              ADIN Insight of the Day
+              DIA Insight of the Day
             </p>
             <h4 className="font-medium mb-1">{insight.title}</h4>
             <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
@@ -75,7 +75,7 @@ export function AdinInsightOfDay({ onExplore }: AdinInsightOfDayProps) {
               className="border-emerald-500/30 text-emerald-600 hover:bg-emerald-500/10"
               onClick={() => onExplore?.(insight.query_prompt)}
             >
-              Ask ADIN more
+              Ask DIA more
               <ArrowRight className="h-3 w-3 ml-1" />
             </Button>
           </div>
@@ -85,4 +85,4 @@ export function AdinInsightOfDay({ onExplore }: AdinInsightOfDayProps) {
   );
 }
 
-export default AdinInsightOfDay;
+export default DiaInsightOfDay;

@@ -1,4 +1,4 @@
-export interface PillarAdinConfig {
+export interface PillarDiaConfig {
   pillar: string;
   title: string;
   description: string;
@@ -7,7 +7,7 @@ export interface PillarAdinConfig {
   systemPromptAddition: string;
 }
 
-export const pillarAdinConfigs: Record<string, PillarAdinConfig> = {
+export const pillarDiaConfigs: Record<string, PillarDiaConfig> = {
   connect: {
     pillar: 'connect',
     title: 'Find Professionals',

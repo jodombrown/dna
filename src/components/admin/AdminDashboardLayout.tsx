@@ -107,8 +107,8 @@ const navigation: NavItem[] = [
   },
   {
     icon: Sparkles,
-    label: 'ADIN Intelligence',
-    href: '/admin/adin'
+    label: 'DIA',
+    href: '/admin/dia'
   },
   {
     icon: BarChart3,

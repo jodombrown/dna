@@ -82,10 +82,10 @@ const MobileBottomNav: React.FC = () => {
   ];
 
   const moreMenuItems = [
-    { 
-      label: 'ADIN Intelligence', 
-      icon: Sparkles, 
-      path: '/dna/adin',
+    {
+      label: 'DIA',
+      icon: Sparkles,
+      path: '/dna/dia',
       description: 'AI-powered insights',
       highlight: true
     },

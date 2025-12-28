@@ -6,7 +6,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface AdinRequest {
+interface DiaRequest {
   query: string;
   source?: string; // dashboard, connect, convene, etc.
 }
@@ -109,7 +109,8 @@ async function callPerplexity(query: string): Promise<PerplexityResponse> {
       messages: [
         {
           role: "system",
-          content: `You are ADIN, the African Diaspora Intelligence Network assistant.
+          content: `You are DIA, the Diaspora Intelligence Assistant.
+You are DNA's AI-powered intelligence layer built to mobilize the African diaspora toward Africa's progress.
 You specialize in providing accurate, up-to-date information about:
 - African economic opportunities and investments
 - Diaspora engagement and contributions to Africa
@@ -289,13 +290,13 @@ serve(async (req) => {
 
     if (authError || !user) {
       return new Response(
-        JSON.stringify({ error: "Invalid token", message: "Please sign in to use ADIN" }),
+        JSON.stringify({ error: "Invalid token", message: "Please sign in to use DIA" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
     // Parse request
-    const { query, source = "dashboard" }: AdinRequest = await req.json();
+    const { query, source = "dashboard" }: DiaRequest = await req.json();
 
     if (!query || query.trim().length === 0) {
       return new Response(
@@ -322,7 +323,7 @@ serve(async (req) => {
     const periodStart = currentMonth.toISOString().split("T")[0];
 
     let { data: usage } = await supabase
-      .from("adin_user_usage")
+      .from("dia_user_usage")
       .select("*")
       .eq("user_id", user.id)
       .eq("period_start", periodStart)
@@ -331,7 +332,7 @@ serve(async (req) => {
     if (!usage) {
       // Create usage record for new period
       const { data: newUsage, error: insertError } = await supabase
-        .from("adin_user_usage")
+        .from("dia_user_usage")
         .insert({
           user_id: user.id,
           period_start: periodStart,
@@ -351,7 +352,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({
           error: "Monthly query limit reached",
-          message: "You've used all your ADIN queries this month",
+          message: "You've used all your DIA queries this month",
           limit: usage.query_limit,
           used: usage.query_count,
           resets_at: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString(),
@@ -362,7 +363,7 @@ serve(async (req) => {
 
     // Step 2: Check cache
     const { data: cachedQuery } = await supabase
-      .from("adin_queries")
+      .from("dia_queries")
       .select("*")
       .eq("query_hash", queryHash)
       .gt("expires_at", new Date().toISOString())
@@ -383,7 +384,7 @@ serve(async (req) => {
 
       // Increment cache hit counter (fire and forget)
       supabase
-        .from("adin_queries")
+        .from("dia_queries")
         .update({ cache_hits: (cachedQuery.cache_hits || 0) + 1 })
         .eq("id", cachedQuery.id)
         .then(() => {})
@@ -402,7 +403,7 @@ serve(async (req) => {
       const estimatedCost = tokenCost + requestCost;
 
       // Cache the response
-      const { error: cacheError } = await supabase.from("adin_queries").insert({
+      const { error: cacheError } = await supabase.from("dia_queries").insert({
         query_hash: queryHash,
         query_text: query,
         normalized_query: normalizedQuery,
@@ -428,7 +429,7 @@ serve(async (req) => {
 
       // Update user usage stats
       const { error: usageError } = await supabase
-        .from("adin_user_usage")
+        .from("dia_user_usage")
         .update({
           query_count: (usage?.query_count || 0) + 1,
           total_tokens_used: (usage?.total_tokens_used || 0) + tokensUsed,
@@ -445,7 +446,7 @@ serve(async (req) => {
     }
 
     // Log the query (for analytics)
-    const { error: logError } = await supabase.from("adin_query_log").insert({
+    const { error: logError } = await supabase.from("dia_query_log").insert({
       user_id: user.id,
       query_text: query,
       cache_hit: cacheHit,
@@ -476,7 +477,7 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error("ADIN Search Error:", error);
+    console.error("DIA Search Error:", error);
     return new Response(
       JSON.stringify({
         error: "Internal server error",
