@@ -19,7 +19,8 @@ import {
   Bell,
   Search,
   Activity,
-  ExternalLink
+  ExternalLink,
+  Sparkles
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -103,6 +104,11 @@ const navigation: NavItem[] = [
     label: 'Moderation',
     href: '/admin/moderation',
     badge: 0
+  },
+  {
+    icon: Sparkles,
+    label: 'ADIN Intelligence',
+    href: '/admin/adin'
   },
   {
     icon: BarChart3,

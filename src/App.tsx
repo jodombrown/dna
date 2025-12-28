@@ -150,6 +150,8 @@ const NotificationSettings = lazy(() => import("./pages/dna/settings/Notificatio
 const PreferencesSettings = lazy(() => import("./pages/dna/settings/PreferencesSettings"));
 const MyHashtagsSettings = lazy(() => import("./pages/dna/settings/MyHashtagsSettings"));
 const AdinPreferences = lazy(() => import("./pages/AdinPreferences"));
+const AdinPage = lazy(() => import("./pages/dna/AdinPage"));
+const AdinAdminPage = lazy(() => import("./pages/admin/AdinAdminPage"));
 const NudgeCenter = lazy(() => import("./pages/NudgeCenter"));
 const EventsPage = lazy(() => import("./pages/EventsPage"));
 const EventDetailsPage = lazy(() => import("./pages/EventDetailsPage"));
@@ -544,6 +546,11 @@ function App() {
                   <AdinPreferences />
                 </OnboardingGuard>
               } />
+              <Route path="/dna/adin" element={
+                <OnboardingGuard>
+                  <AdinPage />
+                </OnboardingGuard>
+              } />
               {/* ========== ANALYTICS ========== */}
               <Route path="/dna/analytics" element={
                 <OnboardingGuard>
@@ -590,6 +597,7 @@ function App() {
                 <Route path="moderation" element={<ContentModeration />} />
                 <Route path="analytics" element={<EngagementDashboard />} />
                 <Route path="analytics/engagement" element={<EngagementDashboard />} />
+                <Route path="adin" element={<AdinAdminPage />} />
               </Route>
 
               {/* Legacy Admin routes */}
