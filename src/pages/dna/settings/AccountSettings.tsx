@@ -74,6 +74,11 @@ export default function AccountSettings() {
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!currentPassword) {
+      toast({ title: 'Current password required', description: 'Please enter your current password to verify your identity', variant: 'destructive' });
+      return;
+    }
+
     if (newPassword.length < 8) {
       toast({ title: 'Weak password', description: 'Password must be at least 8 characters', variant: 'destructive' });
       return;
@@ -86,6 +91,23 @@ export default function AccountSettings() {
 
     setPasswordLoading(true);
     try {
+      // First, reauthenticate the user with their current password
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: user?.email || '',
+        password: currentPassword,
+      });
+
+      if (signInError) {
+        toast({
+          title: 'Incorrect current password',
+          description: 'Please verify your current password and try again.',
+          variant: 'destructive',
+        });
+        setPasswordLoading(false);
+        return;
+      }
+
+      // Now update the password
       const { error } = await supabase.auth.updateUser({ password: newPassword });
 
       if (error) throw error;
@@ -222,6 +244,19 @@ export default function AccountSettings() {
           <CardContent>
             <form onSubmit={handlePasswordChange} className="space-y-4">
               <div>
+                <Label htmlFor="current-password">Current Password</Label>
+                <Input
+                  id="current-password"
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  placeholder="Enter current password"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Required to verify your identity
+                </p>
+              </div>
+              <div>
                 <Label htmlFor="new-password">New Password</Label>
                 <Input
                   id="new-password"
@@ -245,7 +280,7 @@ export default function AccountSettings() {
                   placeholder="Confirm new password"
                 />
               </div>
-              <Button type="submit" disabled={passwordLoading || !newPassword || !confirmPassword}>
+              <Button type="submit" disabled={passwordLoading || !currentPassword || !newPassword || !confirmPassword}>
                 {passwordLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                 Update Password
               </Button>
