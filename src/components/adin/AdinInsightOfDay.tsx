@@ -9,28 +9,35 @@ interface AdinInsightOfDayProps {
   onExplore?: (query: string) => void;
 }
 
+interface InsightData {
+  id: string;
+  title: string;
+  description: string;
+  query_prompt: string;
+}
+
 export function AdinInsightOfDay({ onExplore }: AdinInsightOfDayProps) {
   const { data: insight, isLoading } = useQuery({
     queryKey: ['adin-insight-of-day'],
-    queryFn: async () => {
+    queryFn: async (): Promise<InsightData | null> => {
       // Get a featured insight, rotating daily based on date
       const today = new Date();
       const dayOfYear = Math.floor(
         (today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000
       );
 
-      const { data, error } = await supabase
+      const { data, error } = await (supabase
         .from('adin_insights')
-        .select('*')
+        .select('id, title, description, query_prompt')
         .eq('is_active', true)
         .eq('is_featured', true)
-        .order('display_order', { ascending: true });
+        .order('display_order', { ascending: true }) as any);
 
       if (error || !data || data.length === 0) return null;
 
       // Rotate through featured insights based on day of year
       const index = dayOfYear % data.length;
-      return data[index];
+      return data[index] as unknown as InsightData;
     },
     staleTime: 1000 * 60 * 60, // Cache for 1 hour
   });

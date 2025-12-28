@@ -38,7 +38,7 @@ interface CostData {
   queries: number;
   total_tokens: number;
   total_cost: number;
-  avg_cost: number;
+  avg_cost_per_query: number;
 }
 
 export default function AdinAdminPage() {
@@ -49,14 +49,14 @@ export default function AdinAdminPage() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return false;
 
-      // Check if user has admin role
-      const { data: profile } = await supabase
-        .from('profiles')
+      // Check if user has admin role via user_roles table
+      const { data: userRoles } = await supabase
+        .from('user_roles')
         .select('role')
-        .eq('id', session.user.id)
-        .single();
+        .eq('user_id', session.user.id) as any;
 
-      return profile?.role === 'admin' || profile?.role === 'super_admin';
+      const roles = (userRoles || []).map((r: any) => r.role);
+      return roles.includes('admin');
     },
   });
 
@@ -102,7 +102,7 @@ export default function AdinAdminPage() {
         .limit(7);
 
       if (error) throw error;
-      return data as CostData[];
+      return (data || []) as unknown as CostData[];
     },
     enabled: isAdmin === true,
   });
@@ -135,30 +135,30 @@ export default function AdinAdminPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 px-2 sm:px-0 pb-20 sm:pb-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="p-3 rounded-lg bg-emerald-500/10">
-          <Sparkles className="h-6 w-6 text-emerald-600" />
+        <div className="p-2 sm:p-3 rounded-lg bg-emerald-500/10">
+          <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-600" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold">ADIN Admin Dashboard</h1>
-          <p className="text-muted-foreground">Monitor usage, costs, and performance</p>
+          <h1 className="text-xl sm:text-2xl font-bold">ADIN Admin Dashboard</h1>
+          <p className="text-sm text-muted-foreground hidden sm:block">Monitor usage, costs, and performance</p>
         </div>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-3 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">This Week</p>
-                <p className="text-2xl font-bold">{weeklyQueries}</p>
-                <p className="text-xs text-muted-foreground">total queries</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">This Week</p>
+                <p className="text-xl sm:text-2xl font-bold">{weeklyQueries}</p>
+                <p className="text-xs text-muted-foreground hidden sm:block">total queries</p>
               </div>
-              <div className="p-3 rounded-full bg-blue-500/10">
-                <Search className="h-5 w-5 text-blue-600" />
+              <div className="p-2 sm:p-3 rounded-full bg-blue-500/10">
+                <Search className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
               </div>
             </div>
           </CardContent>
@@ -327,7 +327,7 @@ export default function AdinAdminPage() {
                         <td className="text-right py-2">{cost.queries}</td>
                         <td className="text-right py-2">{cost.total_tokens?.toLocaleString()}</td>
                         <td className="text-right py-2">${cost.total_cost?.toFixed(4)}</td>
-                        <td className="text-right py-2">${cost.avg_cost?.toFixed(4)}</td>
+                        <td className="text-right py-2">${cost.avg_cost_per_query?.toFixed(4)}</td>
                       </tr>
                     ))}
                   </tbody>

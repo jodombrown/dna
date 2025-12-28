@@ -76,33 +76,35 @@ export function AdinInsights({
   const { data: insights, isLoading, error } = useQuery({
     queryKey: ['adin-insights', limit, category, showFeaturedOnly],
     queryFn: async () => {
-      let query = supabase
+      const { data, error } = await supabase
         .from('adin_insights')
-        .select('*')
+        .select('id, title, description, query_prompt, category, region, is_featured, click_count')
         .eq('is_active', true)
         .order('display_order', { ascending: true })
-        .limit(limit);
+        .limit(limit) as any;
 
+      if (error) throw error;
+      
+      let results = (data || []) as unknown as Insight[];
+      
       if (category) {
-        query = query.eq('category', category);
+        results = results.filter(i => i.category === category);
       }
 
       if (showFeaturedOnly) {
-        query = query.eq('is_featured', true);
+        results = results.filter(i => i.is_featured);
       }
 
-      const { data, error } = await query;
-      if (error) throw error;
-      return data as Insight[];
+      return results;
     },
   });
 
   const handleInsightClick = async (insight: Insight) => {
     // Track click (fire and forget)
-    supabase
+    (supabase
       .from('adin_insights')
       .update({ click_count: insight.click_count + 1 })
-      .eq('id', insight.id)
+      .eq('id', insight.id) as any)
       .then(() => {});
 
     if (onInsightClick) {
@@ -139,7 +141,7 @@ export function AdinInsights({
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         {insights.map((insight) => (
           <Card
             key={insight.id}
