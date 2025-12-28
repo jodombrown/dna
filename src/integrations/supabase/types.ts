@@ -396,6 +396,84 @@ export type Database = {
         }
         Relationships: []
       }
+      adin_queries: {
+        Row: {
+          cache_hits: number | null
+          citations: Json | null
+          created_at: string | null
+          estimated_cost: number | null
+          expires_at: string | null
+          id: string
+          model_used: string | null
+          network_matches: Json | null
+          normalized_query: string
+          perplexity_response: Json
+          query_hash: string
+          query_text: string
+          tokens_used: number | null
+        }
+        Insert: {
+          cache_hits?: number | null
+          citations?: Json | null
+          created_at?: string | null
+          estimated_cost?: number | null
+          expires_at?: string | null
+          id?: string
+          model_used?: string | null
+          network_matches?: Json | null
+          normalized_query: string
+          perplexity_response: Json
+          query_hash: string
+          query_text: string
+          tokens_used?: number | null
+        }
+        Update: {
+          cache_hits?: number | null
+          citations?: Json | null
+          created_at?: string | null
+          estimated_cost?: number | null
+          expires_at?: string | null
+          id?: string
+          model_used?: string | null
+          network_matches?: Json | null
+          normalized_query?: string
+          perplexity_response?: Json
+          query_hash?: string
+          query_text?: string
+          tokens_used?: number | null
+        }
+        Relationships: []
+      }
+      adin_query_log: {
+        Row: {
+          cache_hit: boolean | null
+          created_at: string | null
+          id: string
+          query_text: string
+          response_time_ms: number | null
+          source: string | null
+          user_id: string | null
+        }
+        Insert: {
+          cache_hit?: boolean | null
+          created_at?: string | null
+          id?: string
+          query_text: string
+          response_time_ms?: number | null
+          source?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          cache_hit?: boolean | null
+          created_at?: string | null
+          id?: string
+          query_text?: string
+          response_time_ms?: number | null
+          source?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       adin_recommendations: {
         Row: {
           created_at: string
@@ -488,6 +566,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      adin_user_usage: {
+        Row: {
+          created_at: string | null
+          id: string
+          last_query_at: string | null
+          period_start: string
+          query_count: number | null
+          query_limit: number | null
+          total_estimated_cost: number | null
+          total_tokens_used: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          last_query_at?: string | null
+          period_start: string
+          query_count?: number | null
+          query_limit?: number | null
+          total_estimated_cost?: number | null
+          total_tokens_used?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          last_query_at?: string | null
+          period_start?: string
+          query_count?: number | null
+          query_limit?: number | null
+          total_estimated_cost?: number | null
+          total_tokens_used?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       admin_activity_log: {
         Row: {
@@ -7660,6 +7777,37 @@ export type Database = {
       }
     }
     Views: {
+      adin_cost_tracking: {
+        Row: {
+          avg_cost_per_query: number | null
+          date: string | null
+          queries: number | null
+          total_cost: number | null
+          total_tokens: number | null
+        }
+        Relationships: []
+      }
+      adin_daily_stats: {
+        Row: {
+          avg_response_time_ms: number | null
+          cache_hit_rate: number | null
+          cache_hits: number | null
+          cache_misses: number | null
+          date: string | null
+          total_queries: number | null
+          unique_users: number | null
+        }
+        Relationships: []
+      }
+      adin_popular_queries: {
+        Row: {
+          last_queried: string | null
+          query_count: number | null
+          query_text: string | null
+          unique_users: number | null
+        }
+        Relationships: []
+      }
       public_profiles: {
         Row: {
           available_for: string[] | null
@@ -7934,6 +8082,7 @@ export type Database = {
         Args: { p_user_id?: string; p_username: string }
         Returns: boolean
       }
+      cleanup_expired_adin_cache: { Args: never; Returns: number }
       compute_influence_score: {
         Args: { target_user_id: string }
         Returns: number
@@ -8147,6 +8296,16 @@ export type Database = {
           metadata: Json
           target_id: string
           target_name: string
+        }[]
+      }
+      get_adin_user_usage: {
+        Args: { p_user_id: string }
+        Returns: {
+          period_start: string
+          queries_remaining: number
+          query_count: number
+          query_limit: number
+          resets_at: string
         }[]
       }
       get_blocked_users: {
@@ -9143,6 +9302,14 @@ export type Database = {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
+        }
+        Returns: boolean
+      }
+      increment_adin_usage: {
+        Args: {
+          p_estimated_cost?: number
+          p_tokens_used?: number
+          p_user_id: string
         }
         Returns: boolean
       }
