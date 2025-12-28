@@ -291,6 +291,57 @@ export type Database = {
         }
         Relationships: []
       }
+      adin_insights: {
+        Row: {
+          category: string | null
+          click_count: number | null
+          created_at: string | null
+          description: string
+          display_order: number | null
+          end_date: string | null
+          id: string
+          is_active: boolean | null
+          is_featured: boolean | null
+          query_prompt: string
+          region: string | null
+          start_date: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          click_count?: number | null
+          created_at?: string | null
+          description: string
+          display_order?: number | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          query_prompt: string
+          region?: string | null
+          start_date?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          click_count?: number | null
+          created_at?: string | null
+          description?: string
+          display_order?: number | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          query_prompt?: string
+          region?: string | null
+          start_date?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       adin_nudges: {
         Row: {
           connection_id: string
@@ -8926,6 +8977,17 @@ export type Database = {
           username: string
         }[]
       }
+      get_random_featured_insight: {
+        Args: never
+        Returns: {
+          category: string
+          description: string
+          id: string
+          query_prompt: string
+          region: string
+          title: string
+        }[]
+      }
       get_reshare_count: { Args: { p_post_id: string }; Returns: number }
       get_safe_profile_fields: {
         Args: { profile_id: string; viewer_id: string }
@@ -9312,6 +9374,10 @@ export type Database = {
           p_user_id: string
         }
         Returns: boolean
+      }
+      increment_insight_click: {
+        Args: { insight_id: string }
+        Returns: undefined
       }
       is_admin: { Args: never; Returns: boolean }
       is_admin_email: { Args: { email_address: string }; Returns: boolean }

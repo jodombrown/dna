@@ -29,17 +29,17 @@ export function AdinContextual({
 
   return (
     <Card className="border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-transparent">
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-2 px-3 sm:px-6">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
             <Sparkles className="h-4 w-4 text-emerald-600" />
-            <span>ADIN: {config.title}</span>
+            <span className="truncate">ADIN: {config.title}</span>
           </CardTitle>
           <Button
             variant="ghost"
             size="sm"
             onClick={handleToggle}
-            className="h-8 w-8 p-0"
+            className="h-9 w-9 p-0 min-h-[44px] min-w-[44px]"
           >
             {isExpanded ? (
               <ChevronUp className="h-4 w-4" />
@@ -49,14 +49,14 @@ export function AdinContextual({
           </Button>
         </div>
         {!isExpanded && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
             {config.description}
           </p>
         )}
       </CardHeader>
 
       {isExpanded && (
-        <CardContent className="pt-0">
+        <CardContent className="pt-0 px-3 sm:px-6">
           <AdinSearch
             source={pillar}
             placeholder={config.placeholder}

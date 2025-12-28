@@ -104,7 +104,7 @@ export function AdinHistory({
           <button
             key={entry.id}
             onClick={() => handleQueryClick(entry.query_text)}
-            className="w-full flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-left group"
+            className="w-full flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-left group min-h-[56px]"
           >
             <Search className="h-4 w-4 text-muted-foreground shrink-0" />
             <div className="flex-1 min-w-0">
@@ -147,13 +147,13 @@ export function AdinHistory({
             className="cursor-pointer hover:border-emerald-500/50 transition-colors group"
             onClick={() => handleQueryClick(entry.query_text)}
           >
-            <CardContent className="p-4">
-              <div className="flex items-start justify-between gap-4">
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-4">
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium group-hover:text-emerald-600 transition-colors">
+                  <p className="font-medium text-sm sm:text-base group-hover:text-emerald-600 transition-colors line-clamp-2 sm:line-clamp-none">
                     {entry.query_text}
                   </p>
-                  <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Clock className="h-3 w-3" />
                       {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true })}
@@ -164,14 +164,14 @@ export function AdinHistory({
                         Cached
                       </span>
                     )}
-                    <span>{entry.response_time_ms}ms</span>
-                    <span className="capitalize">{entry.source}</span>
+                    <span className="hidden sm:inline">{entry.response_time_ms}ms</span>
+                    <span className="capitalize hidden sm:inline">{entry.source}</span>
                   </div>
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="shrink-0 hidden sm:flex opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <Search className="h-4 w-4 mr-1" />
                   Re-run

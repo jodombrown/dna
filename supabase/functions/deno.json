@@ -3,6 +3,8 @@
     "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
   },
   "compilerOptions": {
-    "skipLibCheck": true
-  }
+    "lib": ["deno.window"],
+    "strict": true
+  },
+  "nodeModulesDir": "auto"
 }

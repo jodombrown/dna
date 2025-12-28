@@ -189,11 +189,11 @@ export function AdinSearch({
   const isInputDisabled = searchMutation.isPending || rateLimited;
 
   return (
-    <div className={`w-full ${compact ? 'max-w-xl' : 'max-w-4xl'} mx-auto`}>
+    <div className={`w-full ${compact ? 'max-w-xl' : 'max-w-4xl'} mx-auto px-1 sm:px-0`}>
       {/* Rate Limit Banner */}
       {rateLimited && (
         <Card className="mb-4 border-amber-200 bg-amber-50">
-          <CardContent className="flex items-center gap-3 py-4">
+          <CardContent className="flex flex-col sm:flex-row items-start sm:items-center gap-3 py-4">
             <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0" />
             <div className="flex-1">
               <p className="font-medium text-amber-800">Monthly Query Limit Reached</p>
@@ -204,7 +204,7 @@ export function AdinSearch({
                 )}
               </p>
             </div>
-            <Button variant="outline" size="sm" className="border-amber-300 text-amber-700 hover:bg-amber-100">
+            <Button variant="outline" size="sm" className="border-amber-300 text-amber-700 hover:bg-amber-100 w-full sm:w-auto">
               Upgrade
             </Button>
           </CardContent>
@@ -213,23 +213,39 @@ export function AdinSearch({
 
       {/* Search Input */}
       <form onSubmit={handleSearch} className="relative">
-        <div className="relative flex items-center">
-          <div className="absolute left-4 flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-emerald-600" />
+        <div className="relative flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0">
+          <div className="relative flex-1">
+            <div className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-600" />
+            </div>
+            <Input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={compact ? "Ask ADIN..." : placeholder}
+              className="pl-10 sm:pl-12 pr-4 sm:pr-28 py-4 sm:py-6 text-base sm:text-lg rounded-xl border-2 border-border focus:border-emerald-500 transition-colors bg-background w-full"
+              disabled={isInputDisabled}
+              maxLength={500}
+            />
+            {/* Desktop button inside input */}
+            <Button
+              type="submit"
+              disabled={!query.trim() || isInputDisabled}
+              className="hidden sm:flex absolute right-2 top-1/2 -translate-y-1/2 bg-emerald-600 hover:bg-emerald-700"
+            >
+              {searchMutation.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Search className="h-4 w-4" />
+              )}
+              <span className="ml-2">Ask ADIN</span>
+            </Button>
           </div>
-          <Input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={placeholder}
-            className="pl-12 pr-28 py-6 text-lg rounded-xl border-2 border-border focus:border-emerald-500 transition-colors bg-background"
-            disabled={isInputDisabled}
-            maxLength={500}
-          />
+          {/* Mobile button below input */}
           <Button
             type="submit"
             disabled={!query.trim() || isInputDisabled}
-            className="absolute right-2 bg-emerald-600 hover:bg-emerald-700"
+            className="sm:hidden w-full bg-emerald-600 hover:bg-emerald-700 py-3"
           >
             {searchMutation.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -242,7 +258,7 @@ export function AdinSearch({
 
         {/* Usage indicator */}
         {response?.usage && !rateLimited && (
-          <div className="absolute right-2 -bottom-6 text-xs text-muted-foreground">
+          <div className="text-center sm:text-right sm:absolute sm:right-2 sm:-bottom-6 text-xs text-muted-foreground mt-2 sm:mt-0">
             {response.usage.queries_remaining} queries remaining this month
           </div>
         )}
@@ -316,7 +332,7 @@ export function AdinSearch({
                       <Users className="h-4 w-4" />
                       Connected Professionals
                     </p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 gap-3">
                       {response.data.network_matches.profiles.map((profile) => (
                         <button
                           key={profile.id}
@@ -461,7 +477,7 @@ export function AdinSearch({
             Get AI-powered intelligence about African markets, opportunities,
             and connect with your network members who share your interests.
           </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-2">
+          <div className="mt-6 flex flex-wrap justify-center gap-2 px-2">
             {(suggestions || [
               'Fintech opportunities in Nigeria',
               'Renewable energy investments in Kenya',
@@ -471,7 +487,7 @@ export function AdinSearch({
               <button
                 key={suggestion}
                 onClick={() => handleSuggestionClick(suggestion)}
-                className="px-3 py-1.5 text-sm bg-muted hover:bg-emerald-600 hover:text-white rounded-full transition-colors"
+                className="px-3 py-2 text-sm bg-muted hover:bg-emerald-600 hover:text-white rounded-full transition-colors min-h-[44px]"
               >
                 {suggestion}
               </button>

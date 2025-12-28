@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, Users, Plus, Calendar, Menu } from 'lucide-react';
+import { Home, Users, Plus, Calendar, Menu, Sparkles } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useMobile } from '@/hooks/useMobile';
@@ -82,6 +82,13 @@ const MobileBottomNav: React.FC = () => {
   ];
 
   const moreMenuItems = [
+    { 
+      label: 'ADIN Intelligence', 
+      icon: Sparkles, 
+      path: '/dna/adin',
+      description: 'AI-powered insights',
+      highlight: true
+    },
     { 
       label: 'Messages', 
       icon: MessageSquare, 
@@ -222,10 +229,16 @@ const MobileBottomNav: React.FC = () => {
                   setShowMoreMenu(false);
                   navigate(item.path);
                 }}
-                className="w-full flex items-center gap-4 p-4 hover:bg-muted/50 rounded-lg transition-colors"
+                className={cn(
+                  "w-full flex items-center gap-4 p-4 hover:bg-muted/50 rounded-lg transition-colors",
+                  item.highlight && "bg-emerald-500/10 hover:bg-emerald-500/20"
+                )}
               >
                 <div className="relative">
-                  <item.icon className="w-5 h-5 text-muted-foreground" />
+                  <item.icon className={cn(
+                    "w-5 h-5",
+                    item.highlight ? "text-emerald-600" : "text-muted-foreground"
+                  )} />
                   {item.badge && item.badge > 0 && (
                     <Badge 
                       variant="destructive" 
@@ -234,9 +247,19 @@ const MobileBottomNav: React.FC = () => {
                       {item.badge > 9 ? '9+' : item.badge}
                     </Badge>
                   )}
+                  {item.highlight && (
+                    <Badge 
+                      className="absolute -top-2 -right-4 h-4 px-1 bg-emerald-600 text-[9px]"
+                    >
+                      AI
+                    </Badge>
+                  )}
                 </div>
                 <div className="flex-1 text-left">
-                  <p className="font-medium text-sm">{item.label}</p>
+                  <p className={cn(
+                    "font-medium text-sm",
+                    item.highlight && "text-emerald-600"
+                  )}>{item.label}</p>
                   <p className="text-xs text-muted-foreground">{item.description}</p>
                 </div>
               </button>
