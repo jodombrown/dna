@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { toast } from 'sonner';
 
-interface AdinResponse {
+interface DiaResponse {
   success: boolean;
   data: {
     answer: string;
@@ -56,7 +56,7 @@ interface AdinResponse {
   resets_at?: string;
 }
 
-interface AdinSearchProps {
+interface DiaSearchProps {
   source?: string;
   placeholder?: string;
   compact?: boolean;
@@ -64,13 +64,13 @@ interface AdinSearchProps {
   initialQuery?: string;
 }
 
-export function AdinSearch({
+export function DiaSearch({
   source = 'dashboard',
-  placeholder = 'Ask ADIN about African opportunities, markets, or trends...',
+  placeholder = 'Ask DIA about African opportunities, markets, or trends...',
   compact = false,
   suggestions,
   initialQuery = ''
-}: AdinSearchProps) {
+}: DiaSearchProps) {
   const navigate = useNavigate();
   const [query, setQuery] = useState(initialQuery);
 
@@ -80,7 +80,7 @@ export function AdinSearch({
       setQuery(initialQuery);
     }
   }, [initialQuery]);
-  const [response, setResponse] = useState<AdinResponse | null>(null);
+  const [response, setResponse] = useState<DiaResponse | null>(null);
   const [rateLimited, setRateLimited] = useState(false);
   const [rateLimitInfo, setRateLimitInfo] = useState<{ limit: number; used: number; resets_at: string } | null>(null);
 
@@ -89,7 +89,7 @@ export function AdinSearch({
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 
-      const res = await supabase.functions.invoke('adin-search', {
+      const res = await supabase.functions.invoke('dia-search', {
         body: { query: searchQuery, source },
       });
 
@@ -105,7 +105,7 @@ export function AdinSearch({
         }
         throw res.error;
       }
-      
+
       // Check for rate limit in response
       if (res.data?.error === 'Monthly query limit reached') {
         setRateLimited(true);
@@ -116,8 +116,8 @@ export function AdinSearch({
         });
         throw new Error('Monthly query limit reached');
       }
-      
-      return res.data as AdinResponse;
+
+      return res.data as DiaResponse;
     },
     onSuccess: (data) => {
       setResponse(data);
@@ -128,14 +128,14 @@ export function AdinSearch({
     },
     onError: (error: any) => {
       const errorMessage = error?.message || error?.error || 'Search failed';
-      
+
       if (errorMessage.includes('Monthly query limit') || errorMessage.includes('limit reached')) {
         setRateLimited(true);
         toast.error("Monthly Query Limit Reached", {
-          description: "You've used all your ADIN queries this month."
+          description: "You've used all your DIA queries this month."
         });
       } else if (errorMessage.includes('Unauthorized') || errorMessage.includes('Not authenticated')) {
-        toast.error('Please sign in to use ADIN');
+        toast.error('Please sign in to use DIA');
       } else if (errorMessage.includes('Query too long')) {
         toast.error('Query too long', {
           description: 'Maximum 500 characters allowed'
@@ -145,7 +145,7 @@ export function AdinSearch({
           description: 'Please try again.'
         });
       }
-      console.error('ADIN search error:', error);
+      console.error('DIA search error:', error);
     },
   });
 
@@ -198,7 +198,7 @@ export function AdinSearch({
             <div className="flex-1">
               <p className="font-medium text-amber-800">Monthly Query Limit Reached</p>
               <p className="text-sm text-amber-700">
-                You've used all {rateLimitInfo?.limit || 10} ADIN queries this month. 
+                You've used all {rateLimitInfo?.limit || 10} DIA queries this month.
                 {rateLimitInfo?.resets_at && (
                   <> Resets on {new Date(rateLimitInfo.resets_at).toLocaleDateString()}.</>
                 )}
@@ -222,7 +222,7 @@ export function AdinSearch({
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder={compact ? "Ask ADIN..." : placeholder}
+              placeholder={compact ? "Ask DIA..." : placeholder}
               className="pl-10 sm:pl-12 pr-4 sm:pr-28 py-4 sm:py-6 text-base sm:text-lg rounded-xl border-2 border-border focus:border-emerald-500 transition-colors bg-background w-full"
               disabled={isInputDisabled}
               maxLength={500}
@@ -238,7 +238,7 @@ export function AdinSearch({
               ) : (
                 <Search className="h-4 w-4" />
               )}
-              <span className="ml-2">Ask ADIN</span>
+              <span className="ml-2">Ask DIA</span>
             </Button>
           </div>
           {/* Mobile button below input */}
@@ -252,7 +252,7 @@ export function AdinSearch({
             ) : (
               <Search className="h-4 w-4" />
             )}
-            <span className="ml-2">Ask ADIN</span>
+            <span className="ml-2">Ask DIA</span>
           </Button>
         </div>
 
@@ -273,7 +273,7 @@ export function AdinSearch({
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Sparkles className="h-5 w-5 text-emerald-600" />
-                  ADIN Intelligence
+                  DIA
                 </CardTitle>
                 <div className="flex items-center gap-2">
                   {response.data.cached && (
@@ -461,7 +461,7 @@ export function AdinSearch({
             <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
             <Sparkles className="h-4 w-4 text-emerald-400 absolute -top-1 -right-1 animate-pulse" />
           </div>
-          <p className="text-muted-foreground mt-4">ADIN is researching...</p>
+          <p className="text-muted-foreground mt-4">DIA is researching...</p>
           <p className="text-xs text-muted-foreground/60 mt-1">Searching global sources and your network</p>
         </div>
       )}
@@ -471,7 +471,7 @@ export function AdinSearch({
         <div className="mt-8 text-center py-12">
           <Sparkles className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-foreground mb-2">
-            Ask ADIN Anything About Africa
+            Ask DIA Anything About Africa
           </h3>
           <p className="text-muted-foreground max-w-md mx-auto">
             Get AI-powered intelligence about African markets, opportunities,
@@ -499,4 +499,4 @@ export function AdinSearch({
   );
 }
 
-export default AdinSearch;
+export default DiaSearch;

@@ -3,15 +3,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Maximize2, History } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import AdinSearch from './AdinSearch';
-import AdinHistory from './AdinHistory';
+import DiaSearch from './DiaSearch';
+import DiaHistory from './DiaHistory';
 
-interface AdinPanelProps {
+interface DiaPanelProps {
   className?: string;
   showHistory?: boolean;
 }
 
-export function AdinPanel({ className, showHistory = true }: AdinPanelProps) {
+export function DiaPanel({ className, showHistory = true }: DiaPanelProps) {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'search' | 'history'>('search');
   const [selectedQuery, setSelectedQuery] = useState<string>('');
@@ -30,9 +30,9 @@ export function AdinPanel({ className, showHistory = true }: AdinPanelProps) {
               <Sparkles className="h-5 w-5 text-emerald-600" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold">ADIN Intelligence</h2>
+              <h2 className="text-lg font-semibold">DIA</h2>
               <p className="text-xs font-normal text-muted-foreground">
-                African Diaspora Intelligence Network
+                Diaspora Intelligence Assistant
               </p>
             </div>
           </CardTitle>
@@ -50,7 +50,7 @@ export function AdinPanel({ className, showHistory = true }: AdinPanelProps) {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/dna/adin')}
+              onClick={() => navigate('/dna/dia')}
               className="text-muted-foreground hover:text-foreground"
             >
               <Maximize2 className="h-4 w-4" />
@@ -87,13 +87,13 @@ export function AdinPanel({ className, showHistory = true }: AdinPanelProps) {
 
       <CardContent>
         {activeTab === 'search' ? (
-          <AdinSearch source="dashboard" compact initialQuery={selectedQuery} />
+          <DiaSearch source="dashboard" compact initialQuery={selectedQuery} />
         ) : (
-          <AdinHistory compact onQueryClick={handleQueryClick} />
+          <DiaHistory compact onQueryClick={handleQueryClick} />
         )}
       </CardContent>
     </Card>
   );
 }
 
-export default AdinPanel;
+export default DiaPanel;

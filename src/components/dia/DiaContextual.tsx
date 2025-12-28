@@ -2,22 +2,22 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
-import { pillarAdinConfigs, PillarAdinConfig } from '@/config/adin-pillar-config';
-import AdinSearch from './AdinSearch';
+import { pillarDiaConfigs, PillarDiaConfig } from '@/config/dia-pillar-config';
+import DiaSearch from './DiaSearch';
 
-interface AdinContextualProps {
+interface DiaContextualProps {
   pillar: 'connect' | 'convene' | 'collaborate' | 'contribute' | 'convey';
   collapsed?: boolean;
   onToggle?: (expanded: boolean) => void;
 }
 
-export function AdinContextual({
+export function DiaContextual({
   pillar,
   collapsed = true,
   onToggle
-}: AdinContextualProps) {
+}: DiaContextualProps) {
   const [isExpanded, setIsExpanded] = useState(!collapsed);
-  const config = pillarAdinConfigs[pillar];
+  const config = pillarDiaConfigs[pillar];
 
   if (!config) return null;
 
@@ -33,7 +33,7 @@ export function AdinContextual({
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
             <Sparkles className="h-4 w-4 text-emerald-600" />
-            <span className="truncate">ADIN: {config.title}</span>
+            <span className="truncate">DIA: {config.title}</span>
           </CardTitle>
           <Button
             variant="ghost"
@@ -57,7 +57,7 @@ export function AdinContextual({
 
       {isExpanded && (
         <CardContent className="pt-0 px-3 sm:px-6">
-          <AdinSearch
+          <DiaSearch
             source={pillar}
             placeholder={config.placeholder}
             compact
@@ -69,4 +69,4 @@ export function AdinContextual({
   );
 }
 
-export default AdinContextual;
+export default DiaContextual;

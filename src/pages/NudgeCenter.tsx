@@ -4,14 +4,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Bell, Clock, CheckCircle2, Archive } from 'lucide-react';
-import { useAdinNudges } from '@/hooks/useAdinNudges';
-import NudgeCard from '@/components/adin/NudgeCard';
+import { useDiaNudges } from '@/hooks/useDiaNudges';
+import NudgeCard from '@/components/dia/NudgeCard';
 import { useNavigate } from 'react-router-dom';
 
 const NudgeCenter: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('sent');
-  const { nudges, loading, acceptNudge, dismissNudge, snoozeNudge } = useAdinNudges(
+  const { nudges, loading, acceptNudge, dismissNudge, snoozeNudge } = useDiaNudges(
     activeTab === 'sent' ? 'sent' : 'all'
   );
 
@@ -98,7 +98,7 @@ const NudgeCenter: React.FC = () => {
             </Badge>
           </CardTitle>
           <CardDescription>
-            ADIN analyzes your activity and suggests actions to help you get the most from DNA
+            DIA analyzes your activity and suggests actions to help you get the most from DNA
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -152,10 +152,10 @@ const NudgeCenter: React.FC = () => {
       </Card>
 
       <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-        <h3 className="font-semibold text-sm mb-2">About ADIN Nudges</h3>
+        <h3 className="font-semibold text-sm mb-2">About DIA Nudges</h3>
         <p className="text-sm text-muted-foreground">
-          ADIN (African Diaspora Intelligence Network) is your AI companion that learns from your 
-          activity patterns to provide timely, personalized suggestions. Nudges are designed to help 
+          DIA (Diaspora Intelligence Assistant) is your AI companion that learns from your
+          activity patterns to provide timely, personalized suggestions. Nudges are designed to help
           you maintain connections, discover opportunities, and stay engaged with the DNA community.
         </p>
       </div>

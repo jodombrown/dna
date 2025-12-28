@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Bell, Mail, MessageSquare, Heart, AtSign, Users, Calendar, BookOpen, Loader2, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAdinPreferences, useUpdateAdinPreferences } from '@/hooks/useAdinPreferences';
+import { useDiaPreferences, useUpdateDiaPreferences } from '@/hooks/useDiaPreferences';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface NotificationToggleProps {
@@ -41,8 +41,8 @@ const NotificationToggle = ({ id, label, description, icon, checked, onCheckedCh
 
 export default function NotificationSettingsPage() {
   const navigate = useNavigate();
-  const { data: preferences, isLoading } = useAdinPreferences();
-  const updatePreferences = useUpdateAdinPreferences();
+  const { data: preferences, isLoading } = useDiaPreferences();
+  const updatePreferences = useUpdateDiaPreferences();
 
   const handleToggle = (field: string, value: boolean) => {
     updatePreferences.mutate({ [field]: value });

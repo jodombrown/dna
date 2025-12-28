@@ -5,12 +5,12 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { useAdinPreferences, useUpdateAdinPreferences } from '@/hooks/useAdinPreferences';
+import { useDiaPreferences, useUpdateDiaPreferences } from '@/hooks/useDiaPreferences';
 import { Loader2, Bell, BellOff, Mail, Smartphone, Moon, Users, MessageSquare, TrendingUp } from 'lucide-react';
 
-export default function AdinPreferencesPage() {
-  const { data: preferences, isLoading } = useAdinPreferences();
-  const updatePreferences = useUpdateAdinPreferences();
+export default function DiaPreferencesPage() {
+  const { data: preferences, isLoading } = useDiaPreferences();
+  const updatePreferences = useUpdateDiaPreferences();
 
   const [localPrefs, setLocalPrefs] = useState({
     notification_frequency: preferences?.notification_frequency || 'normal',
@@ -61,9 +61,9 @@ export default function AdinPreferencesPage() {
   return (
     <div className="container mx-auto p-6 max-w-4xl space-y-6">
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">ADIN Preferences</h1>
+        <h1 className="text-3xl font-bold tracking-tight">DIA Preferences</h1>
         <p className="text-muted-foreground">
-          Customize how ADIN keeps you engaged with the DNA community
+          Customize how DIA keeps you engaged with the DNA community
         </p>
       </div>
 
@@ -75,7 +75,7 @@ export default function AdinPreferencesPage() {
             Notification Frequency
           </CardTitle>
           <CardDescription>
-            How often should ADIN send you engagement nudges?
+            How often should DIA send you engagement nudges?
           </CardDescription>
         </CardHeader>
         <CardContent>

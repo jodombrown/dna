@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
-interface AdinHistoryProps {
+interface DiaHistoryProps {
   compact?: boolean;
   limit?: number;
   onQueryClick?: (query: string) => void;
@@ -28,19 +28,19 @@ interface QueryLogEntry {
   created_at: string;
 }
 
-export function AdinHistory({
+export function DiaHistory({
   compact = false,
   limit = 10,
   onQueryClick
-}: AdinHistoryProps) {
+}: DiaHistoryProps) {
   const { data: queries, isLoading, error } = useQuery({
-    queryKey: ['adin-history', limit],
+    queryKey: ['dia-history', limit],
     queryFn: async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return [];
 
       const { data, error } = await supabase
-        .from('adin_query_log')
+        .from('dia_query_log')
         .select('*')
         .eq('user_id', session.user.id)
         .order('created_at', { ascending: false })
@@ -91,7 +91,7 @@ export function AdinHistory({
         <History className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
         <p className="text-muted-foreground mb-1">No search history yet</p>
         <p className="text-sm text-muted-foreground/70">
-          Your ADIN queries will appear here
+          Your DIA queries will appear here
         </p>
       </div>
     );
@@ -185,4 +185,4 @@ export function AdinHistory({
   );
 }
 
-export default AdinHistory;
+export default DiaHistory;

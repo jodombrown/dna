@@ -1,11 +1,11 @@
 import React, { useState, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Sparkles, Search, History, Lightbulb } from 'lucide-react';
-import AdinSearch from '@/components/adin/AdinSearch';
-import AdinHistory from '@/components/adin/AdinHistory';
-import AdinInsights from '@/components/adin/AdinInsights';
+import DiaSearch from '@/components/dia/DiaSearch';
+import DiaHistory from '@/components/dia/DiaHistory';
+import DiaInsights from '@/components/dia/DiaInsights';
 
-export default function AdinPage() {
+export default function DiaPage() {
   const [selectedQuery, setSelectedQuery] = useState<string>('');
   const [activeTab, setActiveTab] = useState<string>('search');
 
@@ -26,9 +26,9 @@ export default function AdinPage() {
         <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-emerald-500/10 mb-3 sm:mb-4">
           <Sparkles className="h-6 w-6 sm:h-8 sm:w-8 text-emerald-600" />
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold mb-2">ADIN Intelligence</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2">DIA</h1>
         <p className="text-muted-foreground max-w-lg mx-auto text-sm sm:text-base px-2">
-          Your AI-powered gateway to African diaspora opportunities, markets, and connections.
+          Your AI assistant for Africa and its global diaspora. Get intelligence about markets, opportunities, and connect with your network.
         </p>
       </div>
 
@@ -50,18 +50,18 @@ export default function AdinPage() {
         </TabsList>
 
         <TabsContent value="search">
-          <AdinSearch
-            source="adin-page"
+          <DiaSearch
+            source="dia-page"
             initialQuery={selectedQuery}
           />
         </TabsContent>
 
         <TabsContent value="insights">
-          <AdinInsights onInsightClick={handleInsightClick} />
+          <DiaInsights onInsightClick={handleInsightClick} />
         </TabsContent>
 
         <TabsContent value="history">
-          <AdinHistory onQueryClick={handleHistoryClick} />
+          <DiaHistory onQueryClick={handleHistoryClick} />
         </TabsContent>
       </Tabs>
     </div>

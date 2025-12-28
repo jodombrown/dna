@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-export interface AdinPreferences {
+export interface DiaPreferences {
   id: string;
   user_id: string;
   notification_frequency: 'never' | 'low' | 'normal' | 'high';
@@ -26,16 +26,16 @@ export interface AdinPreferences {
   updated_at: string;
 }
 
-export const useAdinPreferences = () => {
+export const useDiaPreferences = () => {
   return useQuery({
-    queryKey: ['adin-preferences'],
+    queryKey: ['dia-preferences'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
       // Try to get existing preferences
       let { data, error } = await supabase
-        .from('adin_preferences')
+        .from('dia_preferences')
         .select('*')
         .eq('user_id', user.id)
         .single();
@@ -43,7 +43,7 @@ export const useAdinPreferences = () => {
       // If no preferences exist, create default ones
       if (error && error.code === 'PGRST116') {
         const { data: newPrefs, error: insertError } = await supabase
-          .from('adin_preferences')
+          .from('dia_preferences')
           .insert({
             user_id: user.id,
             notification_frequency: 'normal',
@@ -55,26 +55,26 @@ export const useAdinPreferences = () => {
           .single();
 
         if (insertError) throw insertError;
-        return newPrefs as AdinPreferences;
+        return newPrefs as DiaPreferences;
       }
 
       if (error) throw error;
-      return data as AdinPreferences;
+      return data as DiaPreferences;
     },
   });
 };
 
-export const useUpdateAdinPreferences = () => {
+export const useUpdateDiaPreferences = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (preferences: Partial<AdinPreferences>) => {
+    mutationFn: async (preferences: Partial<DiaPreferences>) => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
       const { data, error } = await supabase
-        .from('adin_preferences')
+        .from('dia_preferences')
         .update(preferences)
         .eq('user_id', user.id)
         .select()
@@ -84,7 +84,7 @@ export const useUpdateAdinPreferences = () => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['adin-preferences'] });
+      queryClient.invalidateQueries({ queryKey: ['dia-preferences'] });
       toast({
         title: 'Preferences Updated',
         description: 'Your notification preferences have been saved.',

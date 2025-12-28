@@ -4,9 +4,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import { Database } from "@/integrations/supabase/types";
 
-type AdinNudgeRow = Database['public']['Tables']['adin_nudges']['Row'];
+type DiaNudgeRow = Database['public']['Tables']['dia_nudges']['Row'];
 
-export interface AdinNudge {
+export interface DiaNudge {
   id: string;
   user_id: string;
   connection_id: string;
@@ -20,9 +20,9 @@ export interface AdinNudge {
   priority?: 'low' | 'medium' | 'high';
 }
 
-export function useAdinNudges(statusFilter?: 'sent' | 'all') {
+export function useDiaNudges(statusFilter?: 'sent' | 'all') {
   const { user } = useAuth();
-  const [nudges, setNudges] = useState<AdinNudge[]>([]);
+  const [nudges, setNudges] = useState<DiaNudge[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchNudges = async () => {
@@ -34,7 +34,7 @@ export function useAdinNudges(statusFilter?: 'sent' | 'all') {
 
     setLoading(true);
     let query = supabase
-      .from("adin_nudges")
+      .from("dia_nudges")
       .select("*")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
@@ -56,7 +56,7 @@ export function useAdinNudges(statusFilter?: 'sent' | 'all') {
       setNudges([]);
     } else {
       // Map the data and add computed properties
-      const mappedNudges: AdinNudge[] = (data || []).map(nudge => ({
+      const mappedNudges: DiaNudge[] = (data || []).map(nudge => ({
         ...nudge,
         action_url: (nudge.payload as any)?.action_url,
         priority: (nudge.payload as any)?.priority || 'medium',
@@ -72,7 +72,7 @@ export function useAdinNudges(statusFilter?: 'sent' | 'all') {
 
     // Subscribe to realtime changes
     const instanceId = `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
-    const channelName = `adin_nudges_changes_${user?.id || 'anon'}_${statusFilter || 'all'}_${instanceId}`;
+    const channelName = `dia_nudges_changes_${user?.id || 'anon'}_${statusFilter || 'all'}_${instanceId}`;
 
     const channel = supabase
       .channel(channelName)
@@ -81,7 +81,7 @@ export function useAdinNudges(statusFilter?: 'sent' | 'all') {
         {
           event: '*',
           schema: 'public',
-          table: 'adin_nudges',
+          table: 'dia_nudges',
           filter: user ? `user_id=eq.${user.id}` : undefined,
         },
         () => {
@@ -97,7 +97,7 @@ export function useAdinNudges(statusFilter?: 'sent' | 'all') {
 
   const acceptNudge = async (nudgeId: string) => {
     const { error } = await supabase
-      .from("adin_nudges")
+      .from("dia_nudges")
       .update({ status: "accepted", resolved_at: new Date().toISOString() })
       .eq("id", nudgeId);
 
@@ -119,7 +119,7 @@ export function useAdinNudges(statusFilter?: 'sent' | 'all') {
 
   const dismissNudge = async (nudgeId: string) => {
     const { error } = await supabase
-      .from("adin_nudges")
+      .from("dia_nudges")
       .update({ status: "dismissed", resolved_at: new Date().toISOString() })
       .eq("id", nudgeId);
 
@@ -137,8 +137,8 @@ export function useAdinNudges(statusFilter?: 'sent' | 'all') {
 
   const snoozeNudge = async (nudgeId: string, until: string) => {
     const { error } = await supabase
-      .from("adin_nudges")
-      .update({ 
+      .from("dia_nudges")
+      .update({
         status: "snoozed"
       })
       .eq("id", nudgeId);

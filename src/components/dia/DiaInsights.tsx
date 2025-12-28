@@ -17,7 +17,7 @@ import {
   GraduationCap
 } from 'lucide-react';
 
-interface AdinInsightsProps {
+interface DiaInsightsProps {
   limit?: number;
   category?: string;
   showFeaturedOnly?: boolean;
@@ -67,26 +67,26 @@ const regionLabels: Record<string, string> = {
   'central-africa': 'Central Africa',
 };
 
-export function AdinInsights({
+export function DiaInsights({
   limit = 6,
   category,
   showFeaturedOnly = false,
   onInsightClick
-}: AdinInsightsProps) {
+}: DiaInsightsProps) {
   const { data: insights, isLoading, error } = useQuery({
-    queryKey: ['adin-insights', limit, category, showFeaturedOnly],
+    queryKey: ['dia-insights', limit, category, showFeaturedOnly],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('adin_insights')
+        .from('dia_insights')
         .select('id, title, description, query_prompt, category, region, is_featured, click_count')
         .eq('is_active', true)
         .order('display_order', { ascending: true })
         .limit(limit) as any;
 
       if (error) throw error;
-      
+
       let results = (data || []) as unknown as Insight[];
-      
+
       if (category) {
         results = results.filter(i => i.category === category);
       }
@@ -102,7 +102,7 @@ export function AdinInsights({
   const handleInsightClick = async (insight: Insight) => {
     // Track click (fire and forget)
     (supabase
-      .from('adin_insights')
+      .from('dia_insights')
       .update({ click_count: insight.click_count + 1 })
       .eq('id', insight.id) as any)
       .then(() => {});
@@ -190,4 +190,4 @@ export function AdinInsights({
   );
 }
 
-export default AdinInsights;
+export default DiaInsights;
