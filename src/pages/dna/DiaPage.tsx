@@ -4,23 +4,27 @@ import { Sparkles, Search, History, Lightbulb } from 'lucide-react';
 import DiaSearch from '@/components/dia/DiaSearch';
 import DiaHistory from '@/components/dia/DiaHistory';
 import DiaInsights from '@/components/dia/DiaInsights';
+import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 
 export default function DiaPage() {
   const [selectedQuery, setSelectedQuery] = useState<string>('');
   const [activeTab, setActiveTab] = useState<string>('search');
+  const [searchKey, setSearchKey] = useState(0); // Key to force re-mount and auto-search
 
   const handleInsightClick = (query: string) => {
     setSelectedQuery(query);
+    setSearchKey(prev => prev + 1); // Force DiaSearch to re-mount and trigger search
     setActiveTab('search');
   };
 
   const handleHistoryClick = (query: string) => {
     setSelectedQuery(query);
+    setSearchKey(prev => prev + 1); // Force DiaSearch to re-mount and trigger search
     setActiveTab('search');
   };
 
   return (
-    <div className="container mx-auto py-4 sm:py-8 px-3 sm:px-4 max-w-5xl pb-20 sm:pb-8">
+    <div className="container mx-auto py-4 sm:py-8 px-3 sm:px-4 max-w-5xl pb-24 sm:pb-8">
       {/* Header */}
       <div className="text-center mb-6 sm:mb-8">
         <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-emerald-500/10 mb-3 sm:mb-4">
@@ -35,24 +39,26 @@ export default function DiaPage() {
       {/* Main Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3 mb-4 sm:mb-6">
-          <TabsTrigger value="search" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm py-2.5 min-h-[44px]">
+          <TabsTrigger value="search" className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm py-2.5 min-h-[44px]">
             <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            <span className="hidden xs:inline">Search</span>
+            <span>Search</span>
           </TabsTrigger>
-          <TabsTrigger value="insights" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm py-2.5 min-h-[44px]">
+          <TabsTrigger value="insights" className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm py-2.5 min-h-[44px]">
             <Lightbulb className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            <span className="hidden xs:inline">Insights</span>
+            <span>Insights</span>
           </TabsTrigger>
-          <TabsTrigger value="history" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm py-2.5 min-h-[44px]">
+          <TabsTrigger value="history" className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm py-2.5 min-h-[44px]">
             <History className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            <span className="hidden xs:inline">History</span>
+            <span>History</span>
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="search">
           <DiaSearch
+            key={searchKey}
             source="dia-page"
             initialQuery={selectedQuery}
+            autoSearch={searchKey > 0 && !!selectedQuery}
           />
         </TabsContent>
 
@@ -64,6 +70,8 @@ export default function DiaPage() {
           <DiaHistory onQueryClick={handleHistoryClick} />
         </TabsContent>
       </Tabs>
+
+      <MobileBottomNav />
     </div>
   );
 }
