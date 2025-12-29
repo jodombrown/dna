@@ -4,4 +4,7 @@ export { DiaHistory } from './DiaHistory';
 export { DiaInsights } from './DiaInsights';
 export { DiaInsightOfDay } from './DiaInsightOfDay';
 export { DiaContextual } from './DiaContextual';
+export { DiaProfileCard } from './DiaProfileCard';
+export { DiaStoryCard } from './DiaStoryCard';
+export { DiaHashtagChip, DiaHashtagInline } from './DiaHashtagChip';
 export { default as NudgeCard } from './NudgeCard';
