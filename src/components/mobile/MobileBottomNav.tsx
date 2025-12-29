@@ -87,7 +87,8 @@ const MobileBottomNav: React.FC = () => {
       icon: Sparkles,
       path: '/dna/dia',
       description: 'AI-powered insights',
-      highlight: true
+      highlight: true,
+      isNew: true
     },
     { 
       label: 'Messages', 
@@ -247,7 +248,14 @@ const MobileBottomNav: React.FC = () => {
                       {item.badge > 9 ? '9+' : item.badge}
                     </Badge>
                   )}
-                  {item.highlight && (
+                  {(item as any).isNew && (
+                    <Badge 
+                      className="absolute -top-2 -right-4 h-4 px-1 bg-dna-copper text-white text-[9px] font-semibold"
+                    >
+                      New
+                    </Badge>
+                  )}
+                  {item.highlight && !(item as any).isNew && (
                     <Badge 
                       className="absolute -top-2 -right-4 h-4 px-1 bg-emerald-600 text-[9px]"
                     >
