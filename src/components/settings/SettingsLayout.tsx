@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, User, Shield, Bell, Settings, ChevronRight, Hash, UserX, Flag } from 'lucide-react';
 
 interface SettingsNavItem {
@@ -10,6 +11,7 @@ interface SettingsNavItem {
   href: string;
   icon: React.ElementType;
   description?: string;
+  isNew?: boolean;
 }
 
 const settingsNavItems: SettingsNavItem[] = [
@@ -54,6 +56,7 @@ const settingsNavItems: SettingsNavItem[] = [
     href: '/dna/settings/hashtags',
     icon: Hash,
     description: 'Manage your personal hashtags',
+    isNew: true,
   },
 ];
 
@@ -107,6 +110,11 @@ export function SettingsLayout({ children, title, description }: SettingsLayoutP
                     >
                       <Icon className="h-5 w-5" />
                       <span>{item.label}</span>
+                      {item.isNew && (
+                        <Badge className="bg-dna-copper text-white text-[10px] px-1.5 py-0 h-4 font-semibold ml-auto">
+                          New
+                        </Badge>
+                      )}
                     </Link>
                   );
                 })}
@@ -123,7 +131,7 @@ export function SettingsLayout({ children, title, description }: SettingsLayoutP
                       key={item.href}
                       to={item.href}
                       className={cn(
-                        'flex flex-col items-center gap-2 p-4 rounded-lg border transition-colors',
+                        'relative flex flex-col items-center gap-2 p-4 rounded-lg border transition-colors',
                         isActive
                           ? 'bg-primary/10 border-primary text-primary'
                           : 'bg-card border-border hover:bg-muted'
@@ -131,6 +139,11 @@ export function SettingsLayout({ children, title, description }: SettingsLayoutP
                     >
                       <Icon className="h-6 w-6" />
                       <span className="text-sm font-medium">{item.label}</span>
+                      {item.isNew && (
+                        <Badge className="absolute -top-2 -right-2 bg-dna-copper text-white text-[9px] px-1.5 py-0 h-4 font-semibold">
+                          New
+                        </Badge>
+                      )}
                     </Link>
                   );
                 })}
