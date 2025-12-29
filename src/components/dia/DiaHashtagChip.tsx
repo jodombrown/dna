@@ -25,7 +25,7 @@ export function DiaHashtagChip({
     if (onClick) {
       onClick(name);
     } else {
-      navigate(`/explore?hashtag=${encodeURIComponent(name)}`);
+      navigate(`/dna/hashtag/${encodeURIComponent(name)}`);
     }
   };
 
@@ -96,7 +96,7 @@ export function DiaHashtagInline({
     if (onClick) {
       onClick(name);
     } else {
-      navigate(`/explore?hashtag=${encodeURIComponent(name)}`);
+      navigate(`/dna/hashtag/${encodeURIComponent(name)}`);
     }
   };
 
