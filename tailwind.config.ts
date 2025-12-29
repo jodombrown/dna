@@ -278,6 +278,35 @@ export default {
 						transform: 'scale(1.02)',
 						boxShadow: '0 6px 20px rgba(0, 0, 0, 0.15)'
 					}
+				},
+				// Release Hero Animations
+				'float': {
+					'0%, 100%': {
+						transform: 'translateY(0)'
+					},
+					'50%': {
+						transform: 'translateY(-10px)'
+					}
+				},
+				'slideInLeft': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateX(-20px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateX(0)'
+					}
+				},
+				'slideInRight': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateX(20px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateX(0)'
+					}
 				}
 			},
 		animation: {
@@ -290,7 +319,11 @@ export default {
 			'breathing-pulse': 'breathing-pulse 1.5s ease-in-out forwards',
 			'breathing-pulse-staggered': 'breathing-pulse-staggered 2s ease-in-out infinite',
 			'image-heartbeat': 'image-heartbeat 2.5s ease-in-out infinite',
-			'badge-glow': 'badge-glow 4s ease-in-out infinite'
+			'badge-glow': 'badge-glow 4s ease-in-out infinite',
+			// Release Hero Animations
+			'float': 'float 3s ease-in-out infinite',
+			'slideInLeft': 'slideInLeft 0.5s ease-out forwards',
+			'slideInRight': 'slideInRight 0.5s ease-out forwards'
 		}
 		}
 	},

@@ -104,6 +104,15 @@ export const ROUTES = {
   analytics: '/dna/analytics',
   feedback: '/dna/feedback',
 
+  // Releases & Features
+  releases: {
+    base: '/releases',
+    detail: (slug: string) => `/releases/${slug}`,
+    featured: '/releases?filter=featured',
+    archived: '/features/archived',
+    archivedDetail: (slug: string) => `/features/archived/${slug}`,
+  },
+
   // Applications
   applications: {
     my: '/dna/applications',

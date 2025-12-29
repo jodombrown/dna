@@ -89,6 +89,12 @@ const PitchDeck = lazy(() => import("./pages/PitchDeck"));
 const FeaturesHub = lazy(() => import("./pages/documentation/FeaturesHub"));
 const FeatureDetail = lazy(() => import("./pages/documentation/FeatureDetail"));
 
+// Releases & Features pages
+const ReleasesIndex = lazy(() => import("./pages/releases/ReleasesIndex"));
+const ReleaseDetail = lazy(() => import("./pages/releases/ReleaseDetail"));
+const ArchivedFeaturesIndex = lazy(() => import("./pages/features/archived/ArchivedFeaturesIndex"));
+const ArchivedFeatureDetail = lazy(() => import("./pages/features/archived/ArchivedFeatureDetail"));
+
 // Convene M1-M3 pages
 const ConveneHub = lazy(() => import("./pages/dna/convene/ConveneHub"));
 const ComingSoonConvene = lazy(() => import("./pages/dna/convene/ComingSoonConvene"));
@@ -299,7 +305,13 @@ function App() {
               {/* Documentation Routes */}
               <Route path="/documentation/features" element={<FeaturesHub />} />
               <Route path="/documentation/features/:slug" element={<FeatureDetail />} />
-              
+
+              {/* ========== RELEASES & FEATURES ========== */}
+              <Route path="/releases" element={<ReleasesIndex />} />
+              <Route path="/releases/:slug" element={<ReleaseDetail />} />
+              <Route path="/features/archived" element={<ArchivedFeaturesIndex />} />
+              <Route path="/features/archived/:slug" element={<ArchivedFeatureDetail />} />
+
               {/* Redirect old /dna/me to user's profile */}
               <Route path="/dna/me" element={<Navigate to="/dna/feed" replace />} />
               <Route path="/dna/:username" element={<ProfileV2 />} />
