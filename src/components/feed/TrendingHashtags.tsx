@@ -66,6 +66,9 @@ export function TrendingHashtags({
           <CardTitle className="flex items-center gap-2 text-base">
             <TrendingUp className="h-4 w-4 text-dna-copper" />
             Trending Now
+            <Badge className="bg-dna-copper text-white text-[10px] px-1.5 py-0 h-4 font-semibold">
+              New
+            </Badge>
           </CardTitle>
         </CardHeader>
       )}
