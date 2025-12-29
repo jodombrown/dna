@@ -2,13 +2,23 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Search, Sparkles, Users, Calendar, FolderKanban, Hash, ExternalLink, Loader2, AlertCircle, ArrowUpRight } from 'lucide-react';
+import {
+  Search, Sparkles, Users, Calendar, FolderKanban, Hash,
+  ExternalLink, Loader2, AlertCircle, ArrowUpRight, BookOpen,
+  ChevronDown, ChevronUp
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+import { NetworkMatchType } from '@/config/dia-pillar-config';
+import DiaProfileCard from './DiaProfileCard';
+import DiaStoryCard from './DiaStoryCard';
+import DiaHashtagChip from './DiaHashtagChip';
 
 interface DiaResponse {
   success: boolean;
@@ -22,6 +32,8 @@ interface DiaResponse {
         headline: string;
         avatar_url: string;
         relevance: string;
+        location?: string;
+        skills?: string[];
       }>;
       events: Array<{
         id: string;
@@ -39,6 +51,22 @@ interface DiaResponse {
         id: string;
         name: string;
         post_count: number;
+        trending?: boolean;
+      }>;
+      stories?: Array<{
+        id: string;
+        title: string;
+        excerpt: string;
+        author: {
+          id: string;
+          name: string;
+          avatar_url?: string;
+        };
+        published_at: string;
+        view_count: number;
+        like_count: number;
+        hashtags: string[];
+        cover_image?: string;
       }>;
     };
     cached: boolean;
@@ -63,6 +91,137 @@ interface DiaSearchProps {
   suggestions?: string[];
   initialQuery?: string;
   autoSearch?: boolean;
+  networkMatchPriority?: NetworkMatchType[];
+  maxResults?: {
+    profiles: number;
+    stories: number;
+    projects: number;
+    hashtags: number;
+    events: number;
+  };
+}
+
+// Loading skeleton component
+function DiaSearchSkeleton() {
+  return (
+    <div className="mt-8 space-y-6 animate-in fade-in-0">
+      {/* Progress text */}
+      <div className="flex flex-col items-center justify-center py-4">
+        <div className="relative">
+          <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+          <Sparkles className="h-4 w-4 text-emerald-400 absolute -top-1 -right-1 animate-pulse" />
+        </div>
+        <p className="text-muted-foreground mt-4 animate-pulse">DIA is researching...</p>
+        <p className="text-xs text-muted-foreground/60 mt-1">Searching global sources and your network</p>
+      </div>
+
+      {/* Answer skeleton */}
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-5 w-5 rounded" />
+            <Skeleton className="h-5 w-16" />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-[90%]" />
+            <Skeleton className="h-4 w-[85%]" />
+            <Skeleton className="h-4 w-[60%]" />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Network matches skeleton */}
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-5 w-5 rounded" />
+            <Skeleton className="h-5 w-32" />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                <Skeleton className="h-10 w-10 rounded-full" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-3 w-32" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// Empty state component
+function DiaEmptyState({
+  suggestions,
+  onSuggestionClick
+}: {
+  suggestions: string[];
+  onSuggestionClick: (suggestion: string) => void;
+}) {
+  return (
+    <div className="mt-8 text-center py-12">
+      <Sparkles className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+      <h3 className="text-lg font-medium text-foreground mb-2">
+        Ask DIA Anything About Africa
+      </h3>
+      <p className="text-muted-foreground max-w-md mx-auto">
+        Get AI-powered intelligence about African markets, opportunities,
+        and connect with your network members who share your interests.
+      </p>
+      <div className="mt-6 flex flex-wrap justify-center gap-2 px-2">
+        {suggestions.map((suggestion) => (
+          <button
+            key={suggestion}
+            onClick={() => onSuggestionClick(suggestion)}
+            className="px-3 py-2 text-sm bg-muted hover:bg-emerald-600 hover:text-white rounded-full transition-colors min-h-[44px]"
+          >
+            {suggestion}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// No results state
+function DiaNoResults({ onSuggestionClick }: { onSuggestionClick: (suggestion: string) => void }) {
+  const suggestions = [
+    "Fintech founders in West Africa",
+    "Diaspora investors in renewable energy",
+    "Tech professionals from Nigeria in London"
+  ];
+
+  return (
+    <div className="mt-8 text-center py-12">
+      <Search className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+      <h3 className="text-lg font-medium text-foreground mb-2">
+        No results found for your query
+      </h3>
+      <p className="text-muted-foreground max-w-md mx-auto mb-6">
+        Try being more specific or explore these suggestions:
+      </p>
+      <div className="flex flex-wrap justify-center gap-2">
+        {suggestions.map((suggestion) => (
+          <button
+            key={suggestion}
+            onClick={() => onSuggestionClick(suggestion)}
+            className="px-3 py-2 text-sm bg-muted hover:bg-emerald-600 hover:text-white rounded-full transition-colors"
+          >
+            {suggestion}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export function DiaSearch({
@@ -71,11 +230,14 @@ export function DiaSearch({
   compact = false,
   suggestions,
   initialQuery = '',
-  autoSearch = false
+  autoSearch = false,
+  networkMatchPriority = ['profiles', 'stories', 'projects', 'hashtags', 'events'],
+  maxResults = { profiles: 3, stories: 2, projects: 2, hashtags: 3, events: 2 }
 }: DiaSearchProps) {
   const navigate = useNavigate();
   const [query, setQuery] = useState(initialQuery);
   const hasAutoSearched = React.useRef(false);
+  const [showAllSources, setShowAllSources] = useState(false);
 
   // Update query when initialQuery changes
   React.useEffect(() => {
@@ -83,6 +245,7 @@ export function DiaSearch({
       setQuery(initialQuery);
     }
   }, [initialQuery]);
+
   const [response, setResponse] = useState<DiaResponse | null>(null);
   const [rateLimited, setRateLimited] = useState(false);
   const [rateLimitInfo, setRateLimitInfo] = useState<{ limit: number; used: number; resets_at: string } | null>(null);
@@ -190,14 +353,230 @@ export function DiaSearch({
     navigate(`/explore?hashtag=${encodeURIComponent(hashtagName)}`);
   };
 
+  const handleStoryClick = (storyId: string) => {
+    navigate(`/story/${storyId}`);
+  };
+
   const hasNetworkMatches = response?.data?.network_matches && (
     response.data.network_matches.profiles.length > 0 ||
     response.data.network_matches.events.length > 0 ||
     response.data.network_matches.projects.length > 0 ||
-    response.data.network_matches.hashtags.length > 0
+    response.data.network_matches.hashtags.length > 0 ||
+    (response.data.network_matches.stories?.length || 0) > 0
   );
 
   const isInputDisabled = searchMutation.isPending || rateLimited;
+
+  // Get favicon URL from citation
+  const getFaviconUrl = (url: string): string => {
+    try {
+      const urlObj = new URL(url);
+      return `https://www.google.com/s2/favicons?domain=${urlObj.hostname}&sz=16`;
+    } catch {
+      return '';
+    }
+  };
+
+  // Get display name from URL
+  const getSourceName = (url: string): string => {
+    try {
+      const urlObj = new URL(url);
+      return urlObj.hostname.replace('www.', '');
+    } catch {
+      return 'Source';
+    }
+  };
+
+  // Render network matches based on priority
+  const renderNetworkMatches = () => {
+    if (!response?.data?.network_matches) return null;
+
+    const { profiles, events, projects, hashtags, stories = [] } = response.data.network_matches;
+    const sections: React.ReactNode[] = [];
+
+    for (const matchType of networkMatchPriority) {
+      switch (matchType) {
+        case 'profiles':
+          if (profiles.length > 0) {
+            const limitedProfiles = profiles.slice(0, maxResults.profiles);
+            sections.push(
+              <div key="profiles">
+                <p className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+                  <Users className="h-4 w-4" />
+                  Connected Professionals
+                </p>
+                <div className={cn(
+                  "grid gap-3",
+                  compact ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+                )}>
+                  {limitedProfiles.map((profile) => (
+                    <DiaProfileCard
+                      key={profile.id}
+                      id={profile.id}
+                      full_name={profile.full_name}
+                      headline={profile.headline}
+                      avatar_url={profile.avatar_url}
+                      location={profile.location}
+                      relevance={profile.relevance}
+                      skills={profile.skills}
+                      compact={compact}
+                    />
+                  ))}
+                </div>
+              </div>
+            );
+          }
+          break;
+
+        case 'stories':
+          if (stories.length > 0) {
+            const limitedStories = stories.slice(0, maxResults.stories);
+            sections.push(
+              <div key="stories">
+                <p className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+                  <BookOpen className="h-4 w-4" />
+                  Related Stories
+                </p>
+                <div className={cn(
+                  "grid gap-3",
+                  compact ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"
+                )}>
+                  {limitedStories.map((story) => (
+                    <DiaStoryCard
+                      key={story.id}
+                      id={story.id}
+                      title={story.title}
+                      excerpt={story.excerpt}
+                      author={story.author}
+                      published_at={story.published_at}
+                      view_count={story.view_count}
+                      like_count={story.like_count}
+                      hashtags={story.hashtags}
+                      cover_image={story.cover_image}
+                      compact={compact}
+                      onHashtagClick={handleHashtagClick}
+                    />
+                  ))}
+                </div>
+              </div>
+            );
+          }
+          break;
+
+        case 'hashtags':
+          if (hashtags.length > 0) {
+            const limitedHashtags = hashtags.slice(0, maxResults.hashtags);
+            sections.push(
+              <div key="hashtags">
+                <p className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+                  <Hash className="h-4 w-4" />
+                  Related Topics
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {limitedHashtags.map((hashtag) => (
+                    <DiaHashtagChip
+                      key={hashtag.id}
+                      name={hashtag.name}
+                      post_count={hashtag.post_count}
+                      trending={hashtag.trending}
+                      onClick={handleHashtagClick}
+                    />
+                  ))}
+                </div>
+              </div>
+            );
+          }
+          break;
+
+        case 'events':
+          if (events.length > 0) {
+            const limitedEvents = events.slice(0, maxResults.events);
+            sections.push(
+              <div key="events">
+                <p className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  Related Events
+                </p>
+                <div className="space-y-2">
+                  {limitedEvents.map((event) => (
+                    <button
+                      key={event.id}
+                      onClick={() => handleEventClick(event.id)}
+                      className="flex items-center justify-between w-full p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer text-left group"
+                    >
+                      <div>
+                        <p className="font-medium text-sm flex items-center gap-1">
+                          {event.title}
+                          <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(event.start_date).toLocaleDateString(undefined, {
+                            weekday: 'short',
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                      <Badge variant="outline" className="text-xs">
+                        {event.relevance}
+                      </Badge>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          }
+          break;
+
+        case 'projects':
+          if (projects.length > 0) {
+            const limitedProjects = projects.slice(0, maxResults.projects);
+            sections.push(
+              <div key="projects">
+                <p className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+                  <FolderKanban className="h-4 w-4" />
+                  Active Spaces
+                </p>
+                <div className="space-y-2">
+                  {limitedProjects.map((project) => (
+                    <button
+                      key={project.id}
+                      onClick={() => handleProjectClick(project.id)}
+                      className="flex items-center justify-between w-full p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer text-left group"
+                    >
+                      <p className="font-medium text-sm flex items-center gap-1">
+                        {project.name}
+                        <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </p>
+                      <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-xs">
+                        {project.status}
+                      </Badge>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          }
+          break;
+      }
+    }
+
+    return sections.length > 0 ? (
+      <div className="space-y-6">{sections}</div>
+    ) : null;
+  };
+
+  const defaultSuggestions = suggestions || [
+    'Fintech opportunities in Nigeria',
+    'Renewable energy investments in Kenya',
+    'Tech hubs in Ghana',
+    'Agricultural innovations in Ethiopia',
+  ];
+
+  const citations = response?.data?.citations || [];
+  const visibleCitations = showAllSources ? citations : citations.slice(0, 5);
+  const hasMoreSources = citations.length > 5;
 
   return (
     <div className={`w-full ${compact ? 'max-w-xl' : 'max-w-4xl'} mx-auto px-1 sm:px-0`}>
@@ -275,8 +654,11 @@ export function DiaSearch({
         )}
       </form>
 
+      {/* Loading State */}
+      {searchMutation.isPending && <DiaSearchSkeleton />}
+
       {/* Response */}
-      {response?.data && !rateLimited && (
+      {response?.data && !rateLimited && !searchMutation.isPending && (
         <div className="mt-8 space-y-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-300">
           {/* Main Answer */}
           <Card>
@@ -303,24 +685,52 @@ export function DiaSearch({
                 </p>
               </div>
 
-              {/* Citations */}
-              {response.data.citations && response.data.citations.length > 0 && (
+              {/* Citations with favicons */}
+              {citations.length > 0 && (
                 <div className="mt-4 pt-4 border-t border-border">
-                  <p className="text-xs font-medium text-muted-foreground mb-2">Sources</p>
+                  <p className="text-xs font-medium text-muted-foreground mb-3">Sources</p>
                   <div className="flex flex-wrap gap-2">
-                    {response.data.citations.map((citation, idx) => (
+                    {visibleCitations.map((citation, idx) => (
                       <a
                         key={idx}
                         href={citation}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700 hover:underline"
+                        className="inline-flex items-center gap-2 px-3 py-1.5 text-xs rounded-full bg-muted hover:bg-muted/80 transition-colors group"
                       >
-                        <ExternalLink className="h-3 w-3" />
-                        Source {idx + 1}
+                        <img
+                          src={getFaviconUrl(citation)}
+                          alt=""
+                          className="h-4 w-4 rounded"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
+                        <span className="truncate max-w-[120px]">{getSourceName(citation)}</span>
+                        <ExternalLink className="h-3 w-3 opacity-50 group-hover:opacity-100 transition-opacity" />
                       </a>
                     ))}
                   </div>
+                  {hasMoreSources && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowAllSources(!showAllSources)}
+                      className="mt-2 text-xs text-muted-foreground hover:text-foreground"
+                    >
+                      {showAllSources ? (
+                        <>
+                          <ChevronUp className="h-3 w-3 mr-1" />
+                          Show less
+                        </>
+                      ) : (
+                        <>
+                          <ChevronDown className="h-3 w-3 mr-1" />
+                          Show {citations.length - 5} more sources
+                        </>
+                      )}
+                    </Button>
+                  )}
                 </div>
               )}
             </CardContent>
@@ -335,176 +745,20 @@ export function DiaSearch({
                   In Your DNA Network
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Profiles */}
-                {response.data.network_matches.profiles.length > 0 && (
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
-                      <Users className="h-4 w-4" />
-                      Connected Professionals
-                    </p>
-                    <div className="grid grid-cols-1 gap-3">
-                      {response.data.network_matches.profiles.map((profile) => (
-                        <button
-                          key={profile.id}
-                          onClick={() => handleProfileClick(profile.id)}
-                          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer text-left group"
-                        >
-                          <Avatar className="h-10 w-10">
-                            <AvatarImage src={profile.avatar_url} />
-                            <AvatarFallback className="bg-emerald-100 text-emerald-700">
-                              {profile.full_name?.charAt(0) || '?'}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-sm truncate flex items-center gap-1">
-                              {profile.full_name}
-                              <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            </p>
-                            <p className="text-xs text-muted-foreground truncate">
-                              {profile.headline}
-                            </p>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Events */}
-                {response.data.network_matches.events.length > 0 && (
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
-                      Related Events
-                    </p>
-                    <div className="space-y-2">
-                      {response.data.network_matches.events.map((event) => (
-                        <button
-                          key={event.id}
-                          onClick={() => handleEventClick(event.id)}
-                          className="flex items-center justify-between w-full p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer text-left group"
-                        >
-                          <div>
-                            <p className="font-medium text-sm flex items-center gap-1">
-                              {event.title}
-                              <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {new Date(event.start_date).toLocaleDateString(undefined, {
-                                weekday: 'short',
-                                month: 'short',
-                                day: 'numeric',
-                                year: 'numeric'
-                              })}
-                            </p>
-                          </div>
-                          <Badge variant="outline" className="text-xs">
-                            {event.relevance}
-                          </Badge>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Projects */}
-                {response.data.network_matches.projects.length > 0 && (
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
-                      <FolderKanban className="h-4 w-4" />
-                      Active Spaces
-                    </p>
-                    <div className="space-y-2">
-                      {response.data.network_matches.projects.map((project) => (
-                        <button
-                          key={project.id}
-                          onClick={() => handleProjectClick(project.id)}
-                          className="flex items-center justify-between w-full p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer text-left group"
-                        >
-                          <p className="font-medium text-sm flex items-center gap-1">
-                            {project.name}
-                            <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                          </p>
-                          <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-xs">
-                            {project.status}
-                          </Badge>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Hashtags */}
-                {response.data.network_matches.hashtags.length > 0 && (
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
-                      <Hash className="h-4 w-4" />
-                      Related Topics
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {response.data.network_matches.hashtags.map((hashtag) => (
-                        <Badge
-                          key={hashtag.id}
-                          variant="secondary"
-                          className="cursor-pointer hover:bg-emerald-600 hover:text-white transition-colors"
-                          onClick={() => handleHashtagClick(hashtag.name)}
-                        >
-                          #{hashtag.name}
-                          <span className="ml-1 text-xs opacity-70">
-                            ({hashtag.post_count})
-                          </span>
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
+              <CardContent>
+                {renderNetworkMatches()}
               </CardContent>
             </Card>
           )}
         </div>
       )}
 
-      {/* Loading State */}
-      {searchMutation.isPending && (
-        <div className="mt-8 flex flex-col items-center justify-center py-12 animate-in fade-in-0">
-          <div className="relative">
-            <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
-            <Sparkles className="h-4 w-4 text-emerald-400 absolute -top-1 -right-1 animate-pulse" />
-          </div>
-          <p className="text-muted-foreground mt-4">DIA is researching...</p>
-          <p className="text-xs text-muted-foreground/60 mt-1">Searching global sources and your network</p>
-        </div>
-      )}
-
       {/* Empty State */}
       {!response && !searchMutation.isPending && !rateLimited && (
-        <div className="mt-8 text-center py-12">
-          <Sparkles className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-foreground mb-2">
-            Ask DIA Anything About Africa
-          </h3>
-          <p className="text-muted-foreground max-w-md mx-auto">
-            Get AI-powered intelligence about African markets, opportunities,
-            and connect with your network members who share your interests.
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-2 px-2">
-            {(suggestions || [
-              'Fintech opportunities in Nigeria',
-              'Renewable energy investments in Kenya',
-              'Tech hubs in Ghana',
-              'Agricultural innovations in Ethiopia',
-            ]).map((suggestion) => (
-              <button
-                key={suggestion}
-                onClick={() => handleSuggestionClick(suggestion)}
-                className="px-3 py-2 text-sm bg-muted hover:bg-emerald-600 hover:text-white rounded-full transition-colors min-h-[44px]"
-              >
-                {suggestion}
-              </button>
-            ))}
-          </div>
-        </div>
+        <DiaEmptyState
+          suggestions={defaultSuggestions}
+          onSuggestionClick={handleSuggestionClick}
+        />
       )}
     </div>
   );

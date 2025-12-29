@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import LayoutController from '@/components/LayoutController';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  BookOpen, Heart, Lightbulb, Users, PenSquare, Sparkles, 
+import {
+  BookOpen, Heart, Lightbulb, Users, PenSquare, Sparkles,
   Newspaper, Camera, Megaphone, Target, ChevronDown,
   Flame, Star, Filter
 } from 'lucide-react';
@@ -20,6 +20,7 @@ import { useInfiniteUniversalFeed } from '@/hooks/useInfiniteUniversalFeed';
 import { ConveyTrendingSection } from '@/components/convey/ConveyTrendingSection';
 import { ConveyStoryCard } from '@/components/convey/ConveyStoryCard';
 import { ConveyCategorySection, ConveyDiscussionPrompt, ConveyMiniCard } from '@/components/convey/ConveyCategorySection';
+import { DiaContextual } from '@/components/dia';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -55,12 +56,12 @@ export default function ConveyStoryHub() {
   const { isMobile, isTablet } = useMobile();
 
   // Fetch stories
-  const { 
-    feedItems: stories, 
+  const {
+    feedItems: stories,
     isLoading,
     fetchNextPage,
     hasNextPage,
-    isFetchingNextPage 
+    isFetchingNextPage
   } = useInfiniteUniversalFeed({
     viewerId: user?.id || '',
     tab: activeTab === 'my_stories' ? 'my_posts' : activeTab === 'saved' ? 'bookmarks' : 'all',
@@ -77,7 +78,7 @@ export default function ConveyStoryHub() {
     }
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      result = result.filter(s => 
+      result = result.filter(s =>
         s.content?.toLowerCase().includes(query) ||
         s.author_display_name?.toLowerCase().includes(query)
       );
@@ -137,8 +138,8 @@ export default function ConveyStoryHub() {
                 onClick={() => setSelectedCategory(cat.id)}
                 className={cn(
                   "w-full flex items-center gap-3 p-2.5 rounded-xl text-sm transition-all",
-                  isActive 
-                    ? "bg-dna-gold/10 text-dna-gold font-medium" 
+                  isActive
+                    ? "bg-dna-gold/10 text-dna-gold font-medium"
                     : "text-muted-foreground hover:bg-muted/50"
                 )}
               >
@@ -168,8 +169,8 @@ export default function ConveyStoryHub() {
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
                   "w-full flex items-center gap-2 p-2.5 rounded-lg text-sm transition-colors",
-                  isActive 
-                    ? "bg-dna-gold/10 text-dna-gold font-medium" 
+                  isActive
+                    ? "bg-dna-gold/10 text-dna-gold font-medium"
                     : "text-muted-foreground hover:bg-muted/50"
                 )}
               >
@@ -285,8 +286,8 @@ export default function ConveyStoryHub() {
                 className={cn(
                   "flex items-center gap-1.5 rounded-full whitespace-nowrap transition-all",
                   "text-xs font-medium border shrink-0 px-3 py-1.5",
-                  isActive 
-                    ? "bg-dna-gold text-white border-dna-gold" 
+                  isActive
+                    ? "bg-dna-gold text-white border-dna-gold"
                     : "bg-background border-border hover:border-dna-gold/50"
                 )}
               >
@@ -300,7 +301,7 @@ export default function ConveyStoryHub() {
 
       {/* Trending Section - BuzzFeed Style (self-contained with hook) */}
       {activeTab === 'all' && selectedCategory === 'all' && (
-        <ConveyTrendingSection 
+        <ConveyTrendingSection
           onSeeAll={() => {/* TODO: Navigate to trending page */}}
         />
       )}
@@ -369,7 +370,7 @@ export default function ConveyStoryHub() {
               </div>
               <h3 className="text-lg font-semibold mb-2">No stories yet</h3>
               <p className="text-muted-foreground mb-4">
-                {activeTab === 'my_stories' 
+                {activeTab === 'my_stories'
                   ? "Share your first story with the community"
                   : activeTab === 'saved'
                   ? "Bookmark stories you want to revisit"
@@ -410,6 +411,13 @@ export default function ConveyStoryHub() {
   // Right Sidebar
   const rightColumn = isMobile ? null : (
     <div className="space-y-6">
+      {/* DIA Contextual for CONVEY */}
+      <DiaContextual
+        pillar="convey"
+        collapsed={false}
+        compact
+      />
+
       {/* Write CTA Card */}
       <Card className="overflow-hidden border-0 shadow-lg">
         <div className="h-24 bg-gradient-to-br from-dna-gold via-amber-500 to-orange-500 relative">
@@ -485,6 +493,15 @@ export default function ConveyStoryHub() {
           rightColumn={rightColumn}
         />
       </div>
+
+      {/* Mobile: Floating DIA button */}
+      {isMobile && (
+        <DiaContextual
+          pillar="convey"
+          floatingButton
+        />
+      )}
+
       <MobileBottomNav />
       <UniversalComposer
         isOpen={composer.isOpen}

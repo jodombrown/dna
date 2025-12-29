@@ -1,3 +1,7 @@
+export type DiaPillar = 'connect' | 'convene' | 'collaborate' | 'contribute' | 'convey' | 'dashboard' | 'dia-page';
+
+export type NetworkMatchType = 'profiles' | 'stories' | 'projects' | 'hashtags' | 'events';
+
 export interface PillarDiaConfig {
   pillar: string;
   title: string;
@@ -5,21 +9,33 @@ export interface PillarDiaConfig {
   placeholder: string;
   suggestions: string[];
   systemPromptAddition: string;
+  networkMatchPriority: NetworkMatchType[];
+  maxResults: {
+    profiles: number;
+    stories: number;
+    projects: number;
+    hashtags: number;
+    events: number;
+  };
 }
 
 export const pillarDiaConfigs: Record<string, PillarDiaConfig> = {
   connect: {
     pillar: 'connect',
     title: 'Find Professionals',
-    description: 'Discover diaspora professionals by expertise, location, or industry',
-    placeholder: 'Find diaspora professionals in...',
+    description: 'Find the right connections in the diaspora network',
+    placeholder: 'Find professionals, skills, or expertise...',
     suggestions: [
-      'Fintech professionals in London with Nigeria connections',
-      'Healthcare experts from the Kenyan diaspora',
+      'Fintech founders in West Africa',
+      'Diaspora investors in tech',
+      'Software engineers from Nigeria',
+      'Healthcare professionals in the diaspora',
       'Tech entrepreneurs in the US with Ghana experience',
       'Investment professionals focused on East Africa',
     ],
-    systemPromptAddition: 'Focus on professional connections, expertise areas, and diaspora professional communities.',
+    systemPromptAddition: 'Focus on professional connections, expertise areas, and diaspora professional communities. Prioritize matching users with relevant professionals in the network.',
+    networkMatchPriority: ['profiles', 'projects', 'events', 'stories'],
+    maxResults: { profiles: 6, stories: 1, projects: 2, hashtags: 0, events: 2 },
   },
   convene: {
     pillar: 'convene',
@@ -33,6 +49,8 @@ export const pillarDiaConfigs: Record<string, PillarDiaConfig> = {
       'Cultural festivals celebrating African heritage',
     ],
     systemPromptAddition: 'Focus on events, conferences, meetups, and gatherings relevant to the African diaspora.',
+    networkMatchPriority: ['events', 'profiles', 'projects', 'stories'],
+    maxResults: { profiles: 2, stories: 1, projects: 2, hashtags: 2, events: 6 },
   },
   collaborate: {
     pillar: 'collaborate',
@@ -46,6 +64,8 @@ export const pillarDiaConfigs: Record<string, PillarDiaConfig> = {
       'Funding trends for African startups',
     ],
     systemPromptAddition: 'Focus on market research, business opportunities, partnerships, and project feasibility.',
+    networkMatchPriority: ['projects', 'profiles', 'events', 'stories'],
+    maxResults: { profiles: 3, stories: 2, projects: 4, hashtags: 2, events: 2 },
   },
   contribute: {
     pillar: 'contribute',
@@ -59,18 +79,61 @@ export const pillarDiaConfigs: Record<string, PillarDiaConfig> = {
       'Diaspora bond programs across Africa',
     ],
     systemPromptAddition: 'Focus on investment opportunities, financial trends, ROI data, and wealth building strategies for diaspora investors.',
+    networkMatchPriority: ['projects', 'profiles', 'stories', 'events'],
+    maxResults: { profiles: 3, stories: 2, projects: 4, hashtags: 2, events: 2 },
   },
   convey: {
     pillar: 'convey',
-    title: 'Content & Trends',
-    description: 'Discover trending topics and content ideas',
-    placeholder: "What's trending in...",
+    title: 'Stories & Content',
+    description: 'Discover stories, content, and trending topics',
+    placeholder: 'Discover stories, content, or trending topics...',
     suggestions: [
-      'Trending topics in African tech Twitter',
-      'Popular content themes for diaspora audiences',
-      'Viral stories about African innovation',
-      'Emerging thought leaders in Pan-African discourse',
+      'Trending stories this week',
+      'Popular hashtags in African tech',
+      'Founder journey stories',
+      'Content about diaspora investment',
+      'What are people saying about fintech?',
+      'Stories from East African founders',
     ],
-    systemPromptAddition: 'Focus on trending topics, content themes, viral stories, and thought leadership in the African diaspora space.',
+    systemPromptAddition: 'Focus on trending topics, content themes, viral stories, and thought leadership in the African diaspora space. Prioritize content discovery and storytelling.',
+    networkMatchPriority: ['stories', 'hashtags', 'profiles', 'events'],
+    maxResults: { profiles: 2, stories: 4, projects: 0, hashtags: 4, events: 1 },
+  },
+  dashboard: {
+    pillar: 'dashboard',
+    title: 'DIA',
+    description: 'Your AI assistant for Africa and its global diaspora',
+    placeholder: 'Ask DIA anything about Africa and the diaspora...',
+    suggestions: [
+      'Fintech opportunities in Nigeria',
+      'Trending diaspora stories',
+      'Find tech professionals',
+      'Investment trends in East Africa',
+    ],
+    systemPromptAddition: 'Provide comprehensive intelligence about African opportunities, markets, and the global diaspora network.',
+    networkMatchPriority: ['profiles', 'stories', 'projects', 'hashtags', 'events'],
+    maxResults: { profiles: 3, stories: 2, projects: 2, hashtags: 3, events: 2 },
+  },
+  'dia-page': {
+    pillar: 'dia-page',
+    title: 'DIA',
+    description: 'Diaspora Intelligence Assistant',
+    placeholder: 'Ask DIA anything about Africa, the diaspora, or opportunities...',
+    suggestions: [
+      'What fintech opportunities exist in Kenya?',
+      'Find diaspora professionals in renewable energy',
+      'Trending stories about African startups',
+      'Investment landscape in West Africa',
+    ],
+    systemPromptAddition: 'Provide comprehensive intelligence about African opportunities, markets, and the global diaspora network. You have access to the full range of network data.',
+    networkMatchPriority: ['profiles', 'stories', 'projects', 'hashtags', 'events'],
+    maxResults: { profiles: 4, stories: 3, projects: 2, hashtags: 4, events: 3 },
   },
 };
+
+export const getDiaPillarConfig = (pillar: DiaPillar): PillarDiaConfig => {
+  return pillarDiaConfigs[pillar] || pillarDiaConfigs.dashboard;
+};
+
+// Legacy export for backward compatibility
+export type { PillarDiaConfig as DiaPillarConfig };
