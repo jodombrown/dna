@@ -3,26 +3,60 @@
  * React hooks for releases data fetching
  */
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  fetchReleases,
-  fetchFeaturedReleases,
-  fetchRecentReleases,
-  fetchArchivedReleases,
-  fetchReleaseBySlug,
-  fetchRelatedReleases,
-  getFeaturedReleasesCount,
-  incrementViewCount,
-  fetchAllReleaseTags,
-  searchReleases,
-} from '@/lib/releases';
-import type {
-  ReleaseFilters,
-  ReleaseWithDetails,
-  RelatedRelease,
-  ReleaseCategory,
-} from '@/types/releases';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { useCallback, useEffect } from 'react';
+
+// =============================================================================
+// TYPES
+// =============================================================================
+
+export type ReleaseCategory = 'CONNECT' | 'CONVENE' | 'COLLABORATE' | 'CONTRIBUTE' | 'CONVEY' | 'PLATFORM';
+export type ReleaseStatus = 'draft' | 'scheduled' | 'published' | 'archived';
+export type HeroType = 'gradient' | 'image' | 'video' | 'animation' | 'map' | 'chat' | 'network' | 'notification';
+export type FilterType = 'all' | 'featured' | 'recent' | 'archived';
+
+export interface Release {
+  id: string;
+  slug: string;
+  version: string | null;
+  title: string;
+  subtitle: string | null;
+  description: string;
+  category: ReleaseCategory;
+  tags: string[] | null;
+  release_date: string;
+  archived_at: string | null;
+  created_at: string;
+  updated_at: string;
+  status: ReleaseStatus;
+  is_pinned: boolean;
+  hero_type: HeroType;
+  hero_image_url: string | null;
+  hero_video_url: string | null;
+  cta_text: string;
+  cta_link: string | null;
+  meta_title: string | null;
+  meta_description: string | null;
+  view_count: number;
+  created_by: string | null;
+  features?: ReleaseFeature[];
+  lifecycle_stage?: 'featured' | 'recent' | 'archived';
+}
+
+export interface ReleaseFeature {
+  id: string;
+  release_id: string;
+  feature_text: string;
+  sort_order: number;
+  created_at: string;
+}
+
+interface UseReleasesOptions {
+  filter?: FilterType;
+  category?: ReleaseCategory | null;
+  search?: string;
+}
 
 // =============================================================================
 // QUERY KEYS
@@ -31,8 +65,8 @@ import { useCallback, useEffect } from 'react';
 export const releaseKeys = {
   all: ['releases'] as const,
   lists: () => [...releaseKeys.all, 'list'] as const,
-  list: (filters?: ReleaseFilters, page?: number) =>
-    [...releaseKeys.lists(), { filters, page }] as const,
+  list: (filter?: FilterType, category?: ReleaseCategory | null, search?: string) =>
+    [...releaseKeys.lists(), { filter, category, search }] as const,
   featured: () => [...releaseKeys.all, 'featured'] as const,
   recent: () => [...releaseKeys.all, 'recent'] as const,
   archived: () => [...releaseKeys.all, 'archived'] as const,
@@ -46,144 +80,254 @@ export const releaseKeys = {
 };
 
 // =============================================================================
-// LIST HOOKS
+// UTILITY FUNCTIONS
 // =============================================================================
 
 /**
- * Fetch paginated releases with filters
+ * Get lifecycle stage based on release date
  */
-export function useReleases(filters?: ReleaseFilters, page = 1, limit = 20) {
+export const getReleaseBadgeStatus = (releaseDate: string): 'featured' | 'recent' | 'archived' => {
+  const now = new Date();
+  const release = new Date(releaseDate);
+  const diffDays = Math.floor((now.getTime() - release.getTime()) / (1000 * 60 * 60 * 24));
+
+  if (diffDays <= 30) return 'featured';
+  if (diffDays <= 90) return 'recent';
+  return 'archived';
+};
+
+/**
+ * Group releases by month
+ */
+export const groupReleasesByMonth = (releases: Release[]): Record<string, Release[]> => {
+  return releases.reduce((groups, release) => {
+    const date = new Date(release.release_date);
+    const monthYear = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }).toUpperCase();
+
+    if (!groups[monthYear]) {
+      groups[monthYear] = [];
+    }
+    groups[monthYear].push(release);
+    return groups;
+  }, {} as Record<string, Release[]>);
+};
+
+// =============================================================================
+// MAIN HOOKS
+// =============================================================================
+
+/**
+ * Fetch releases with filters
+ */
+export const useReleases = (options: UseReleasesOptions = {}) => {
+  const { filter = 'all', category = null, search = '' } = options;
+
   return useQuery({
-    queryKey: releaseKeys.list(filters, page),
-    queryFn: () => fetchReleases(filters, page, limit),
+    queryKey: releaseKeys.list(filter, category, search),
+    queryFn: async () => {
+      // Use type assertion to bypass TypeScript until types are regenerated
+      let query = (supabase as any)
+        .from('releases')
+        .select(`
+          *,
+          features:release_features(*)
+        `)
+        .order('release_date', { ascending: false });
+
+      // Apply filters based on status
+      if (filter === 'featured') {
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        query = query
+          .eq('status', 'published')
+          .gte('release_date', thirtyDaysAgo.toISOString().split('T')[0]);
+      } else if (filter === 'recent') {
+        const ninetyDaysAgo = new Date();
+        ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        query = query
+          .eq('status', 'published')
+          .lt('release_date', thirtyDaysAgo.toISOString().split('T')[0])
+          .gte('release_date', ninetyDaysAgo.toISOString().split('T')[0]);
+      } else if (filter === 'archived') {
+        query = query.eq('status', 'archived');
+      } else {
+        // 'all' - show published and archived
+        query = query.in('status', ['published', 'archived']);
+      }
+
+      // Apply category filter
+      if (category) {
+        query = query.eq('category', category);
+      }
+
+      // Apply search filter
+      if (search) {
+        query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
+      }
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+
+      // Add lifecycle_stage to each release
+      return ((data || []) as Release[]).map(release => ({
+        ...release,
+        lifecycle_stage: getReleaseBadgeStatus(release.release_date)
+      }));
+    },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 30 * 60 * 1000, // 30 minutes
   });
-}
-
-/**
- * Fetch featured releases (last 30 days)
- */
-export function useFeaturedReleases() {
-  return useQuery({
-    queryKey: releaseKeys.featured(),
-    queryFn: fetchFeaturedReleases,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 30 * 60 * 1000,
-  });
-}
-
-/**
- * Fetch recent releases (31-90 days)
- */
-export function useRecentReleases() {
-  return useQuery({
-    queryKey: releaseKeys.recent(),
-    queryFn: fetchRecentReleases,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 30 * 60 * 1000,
-  });
-}
-
-/**
- * Fetch archived releases
- */
-export function useArchivedReleases() {
-  return useQuery({
-    queryKey: releaseKeys.archived(),
-    queryFn: fetchArchivedReleases,
-    staleTime: 10 * 60 * 1000, // 10 minutes - archived changes less frequently
-    gcTime: 60 * 60 * 1000, // 1 hour
-  });
-}
-
-// =============================================================================
-// DETAIL HOOKS
-// =============================================================================
+};
 
 /**
  * Fetch a single release by slug
  */
-export function useRelease(slug: string) {
-  const queryClient = useQueryClient();
-
-  const query = useQuery({
+export const useRelease = (slug: string) => {
+  return useQuery({
     queryKey: releaseKeys.detail(slug),
-    queryFn: () => fetchReleaseBySlug(slug),
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from('releases')
+        .select(`
+          *,
+          features:release_features(*)
+        `)
+        .eq('slug', slug)
+        .single();
+
+      if (error) throw error;
+
+      // Increment view count
+      if (data?.id) {
+        await (supabase as any)
+          .from('releases')
+          .update({ view_count: (data.view_count || 0) + 1 })
+          .eq('id', data.id);
+      }
+
+      return {
+        ...data,
+        lifecycle_stage: getReleaseBadgeStatus(data.release_date)
+      } as Release;
+    },
     enabled: !!slug,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
   });
-
-  // Increment view count on successful fetch
-  useEffect(() => {
-    if (query.data && slug) {
-      incrementViewCount(slug).catch(console.error);
-    }
-  }, [query.data, slug]);
-
-  return query;
-}
+};
 
 /**
- * Fetch related releases for a given release
+ * Get count of featured releases (for NewFeaturePill badge)
  */
-export function useRelatedReleases(
-  releaseId: string,
-  category?: ReleaseCategory,
-  limit = 3
-) {
-  return useQuery({
-    queryKey: releaseKeys.related(releaseId, category),
-    queryFn: () => fetchRelatedReleases(releaseId, category, limit),
-    enabled: !!releaseId,
-    staleTime: 10 * 60 * 1000,
-    gcTime: 30 * 60 * 1000,
-  });
-}
-
-// =============================================================================
-// COUNT & UTILITY HOOKS
-// =============================================================================
-
-/**
- * Get count of featured releases (for pill badge)
- */
-export function useFeaturedCount() {
+export const useFeaturedCount = () => {
   return useQuery({
     queryKey: releaseKeys.count(),
-    queryFn: getFeaturedReleasesCount,
-    staleTime: 1 * 60 * 1000, // 1 minute - check frequently for updates
+    queryFn: async () => {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+      const { count, error } = await (supabase as any)
+        .from('releases')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'published')
+        .gte('release_date', thirtyDaysAgo.toISOString().split('T')[0]);
+
+      if (error) throw error;
+      return count || 0;
+    },
+    staleTime: 1 * 60 * 1000, // 1 minute
     gcTime: 5 * 60 * 1000,
     refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
     refetchOnWindowFocus: true,
   });
-}
+};
 
 /**
- * Get all unique tags from releases
+ * Fetch related releases for a given release
  */
-export function useReleaseTags() {
+export const useRelatedReleases = (
+  releaseId: string,
+  category?: ReleaseCategory,
+  limit = 3
+) => {
+  return useQuery({
+    queryKey: releaseKeys.related(releaseId, category),
+    queryFn: async () => {
+      let query = (supabase as any)
+        .from('releases')
+        .select('id, slug, title, subtitle, category, release_date, hero_type, hero_image_url')
+        .neq('id', releaseId)
+        .eq('status', 'published')
+        .order('release_date', { ascending: false })
+        .limit(limit);
+
+      if (category) {
+        query = query.eq('category', category);
+      }
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+      return (data || []) as Release[];
+    },
+    enabled: !!releaseId,
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+  });
+};
+
+/**
+ * Fetch all unique tags from releases
+ */
+export const useReleaseTags = () => {
   return useQuery({
     queryKey: releaseKeys.tags(),
-    queryFn: fetchAllReleaseTags,
-    staleTime: 30 * 60 * 1000, // 30 minutes - tags don't change often
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from('releases')
+        .select('tags')
+        .eq('status', 'published');
+
+      if (error) throw error;
+
+      // Flatten and dedupe tags
+      const allTags = (data || [])
+        .flatMap((r: { tags: string[] | null }) => r.tags || [])
+        .filter((tag: string, index: number, self: string[]) => self.indexOf(tag) === index);
+
+      return allTags as string[];
+    },
+    staleTime: 30 * 60 * 1000,
     gcTime: 60 * 60 * 1000,
   });
-}
+};
 
 /**
  * Search releases by query
  */
-export function useSearchReleases(query: string, limit = 10) {
+export const useSearchReleases = (query: string, limit = 10) => {
   return useQuery({
     queryKey: releaseKeys.search(query),
-    queryFn: () => searchReleases(query, limit),
-    enabled: query.length >= 2, // Only search with 2+ characters
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from('releases')
+        .select('*')
+        .eq('status', 'published')
+        .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
+        .order('release_date', { ascending: false })
+        .limit(limit);
+
+      if (error) throw error;
+      return (data || []) as Release[];
+    },
+    enabled: query.length >= 2,
     staleTime: 2 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
   });
-}
+};
 
 // =============================================================================
 // COMBINED HOOKS
@@ -192,7 +336,7 @@ export function useSearchReleases(query: string, limit = 10) {
 /**
  * Fetch a release with its related releases
  */
-export function useReleaseWithRelated(slug: string) {
+export const useReleaseWithRelated = (slug: string) => {
   const releaseQuery = useRelease(slug);
   const relatedQuery = useRelatedReleases(
     releaseQuery.data?.id || '',
@@ -207,15 +351,15 @@ export function useReleaseWithRelated(slug: string) {
     error: releaseQuery.error,
     refetch: releaseQuery.refetch,
   };
-}
+};
 
 /**
  * Fetch all releases grouped by lifecycle stage
  */
-export function useAllReleasesGrouped() {
-  const featuredQuery = useFeaturedReleases();
-  const recentQuery = useRecentReleases();
-  const archivedQuery = useArchivedReleases();
+export const useAllReleasesGrouped = () => {
+  const featuredQuery = useReleases({ filter: 'featured' });
+  const recentQuery = useReleases({ filter: 'recent' });
+  const archivedQuery = useReleases({ filter: 'archived' });
 
   return {
     featured: featuredQuery.data || [],
@@ -232,61 +376,51 @@ export function useAllReleasesGrouped() {
       archivedQuery.refetch();
     }, [featuredQuery, recentQuery, archivedQuery]),
   };
-}
+};
 
 // =============================================================================
-// PREFETCH HOOKS
+// PREFETCH & UTILITY HOOKS
 // =============================================================================
 
 /**
  * Prefetch release data for faster navigation
  */
-export function usePrefetchRelease() {
+export const usePrefetchRelease = () => {
   const queryClient = useQueryClient();
 
   return useCallback(
     (slug: string) => {
       queryClient.prefetchQuery({
         queryKey: releaseKeys.detail(slug),
-        queryFn: () => fetchReleaseBySlug(slug),
+        queryFn: async () => {
+          const { data, error } = await (supabase as any)
+            .from('releases')
+            .select(`
+              *,
+              features:release_features(*)
+            `)
+            .eq('slug', slug)
+            .single();
+
+          if (error) throw error;
+          return data as Release;
+        },
         staleTime: 5 * 60 * 1000,
       });
     },
     [queryClient]
   );
-}
-
-/**
- * Prefetch releases list for a filter
- */
-export function usePrefetchReleases() {
-  const queryClient = useQueryClient();
-
-  return useCallback(
-    (filters?: ReleaseFilters) => {
-      queryClient.prefetchQuery({
-        queryKey: releaseKeys.list(filters, 1),
-        queryFn: () => fetchReleases(filters, 1, 20),
-        staleTime: 5 * 60 * 1000,
-      });
-    },
-    [queryClient]
-  );
-}
-
-// =============================================================================
-// MUTATION HOOKS (for admin operations)
-// =============================================================================
+};
 
 /**
  * Invalidate all release queries (call after mutations)
  */
-export function useInvalidateReleases() {
+export const useInvalidateReleases = () => {
   const queryClient = useQueryClient();
 
   return useCallback(() => {
     queryClient.invalidateQueries({ queryKey: releaseKeys.all });
   }, [queryClient]);
-}
+};
 
 export default useReleases;

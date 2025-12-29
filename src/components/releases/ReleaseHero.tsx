@@ -1,380 +1,266 @@
-/**
- * ReleaseHero Component
- * Visual generator for release hero sections
- * Supports gradient, image, video, animation, map, chat, network, notification types
- */
-
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 import {
-  MapPin,
-  MessageCircle,
-  Network,
-  Bell,
-  Sparkles,
-  Users,
-  Calendar,
-  HandHeart,
-  Megaphone,
-  Layers,
+  Users, Calendar, Handshake, Briefcase, Megaphone, Settings,
+  MessageSquare, Globe, Bell, Network
 } from 'lucide-react';
-import type { ReleaseHeroProps, ReleaseCategory } from '@/types/releases';
+import type { ReleaseHeroType, ReleaseCategory } from '@/types/releases';
 
-// Category-specific gradient colors
-const CATEGORY_GRADIENTS: Record<ReleaseCategory, string> = {
-  CONNECT: 'from-blue-500 via-blue-400 to-sky-300',
-  CONVENE: 'from-purple-500 via-purple-400 to-violet-300',
-  COLLABORATE: 'from-emerald-500 via-green-400 to-teal-300',
-  CONTRIBUTE: 'from-amber-500 via-yellow-400 to-orange-300',
-  CONVEY: 'from-pink-500 via-rose-400 to-red-300',
-  PLATFORM: 'from-slate-600 via-gray-500 to-zinc-400',
+interface ReleaseHeroProps {
+  heroType: ReleaseHeroType;
+  category: ReleaseCategory;
+  imageUrl?: string | null;
+  videoUrl?: string | null;
+  className?: string;
+}
+
+const categoryColors: Record<ReleaseCategory, string> = {
+  CONNECT: 'from-dna-emerald to-dna-forest',
+  CONVENE: 'from-dna-copper to-dna-sunset',
+  COLLABORATE: 'from-dna-gold to-dna-copper',
+  CONTRIBUTE: 'from-dna-forest to-dna-emerald',
+  CONVEY: 'from-dna-sunset to-dna-ochre',
+  PLATFORM: 'from-slate-500 to-slate-700',
 };
 
-// Category icons for visual overlay
-const CATEGORY_ICONS: Record<ReleaseCategory, React.ReactNode> = {
-  CONNECT: <Users className="w-full h-full" />,
-  CONVENE: <Calendar className="w-full h-full" />,
-  COLLABORATE: <Layers className="w-full h-full" />,
-  CONTRIBUTE: <HandHeart className="w-full h-full" />,
-  CONVEY: <Megaphone className="w-full h-full" />,
-  PLATFORM: <Sparkles className="w-full h-full" />,
+const categoryIcons: Record<ReleaseCategory, React.ReactNode> = {
+  CONNECT: <Users className="w-16 h-16 text-white/80" />,
+  CONVENE: <Calendar className="w-16 h-16 text-white/80" />,
+  COLLABORATE: <Handshake className="w-16 h-16 text-white/80" />,
+  CONTRIBUTE: <Briefcase className="w-16 h-16 text-white/80" />,
+  CONVEY: <Megaphone className="w-16 h-16 text-white/80" />,
+  PLATFORM: <Settings className="w-16 h-16 text-white/80" />,
 };
 
-// Hero type specific icons
-const HERO_TYPE_ICONS: Record<string, React.ReactNode> = {
-  map: <MapPin className="w-full h-full" />,
-  chat: <MessageCircle className="w-full h-full" />,
-  network: <Network className="w-full h-full" />,
-  notification: <Bell className="w-full h-full" />,
-};
+// Kente pattern SVG overlay
+const KentePattern = () => (
+  <svg
+    className="absolute inset-0 w-full h-full opacity-[0.08]"
+    viewBox="0 0 100 100"
+    preserveAspectRatio="none"
+  >
+    <defs>
+      <pattern id="kente-hero" patternUnits="userSpaceOnUse" width="20" height="20">
+        <rect width="10" height="10" fill="white" />
+        <rect x="10" y="10" width="10" height="10" fill="white" />
+      </pattern>
+    </defs>
+    <rect width="100" height="100" fill="url(#kente-hero)" />
+  </svg>
+);
+
+// Animated Map Hero
+const MapHero: React.FC = () => (
+  <div className="relative w-full h-full bg-gradient-to-br from-dna-emerald to-dna-forest flex items-center justify-center overflow-hidden">
+    <KentePattern />
+    <motion.div
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="relative"
+    >
+      <Globe className="w-20 h-20 text-white/70" />
+      {/* Pulsing dots representing regions */}
+      {[0, 1, 2, 3, 4].map((i) => (
+        <motion.div
+          key={i}
+          className="absolute w-3 h-3 bg-dna-gold rounded-full"
+          style={{
+            top: `${20 + Math.sin(i * 1.2) * 30}%`,
+            left: `${30 + Math.cos(i * 1.2) * 35}%`,
+          }}
+          animate={{
+            scale: [1, 1.5, 1],
+            opacity: [0.7, 1, 0.7],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            delay: i * 0.3,
+          }}
+        />
+      ))}
+    </motion.div>
+  </div>
+);
+
+// Animated Chat Hero
+const ChatHero: React.FC = () => (
+  <div className="relative w-full h-full bg-gradient-to-br from-dna-forest to-dna-emerald flex items-center justify-center overflow-hidden">
+    <KentePattern />
+    <div className="flex flex-col gap-2 p-4">
+      <motion.div
+        initial={{ x: -50, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        className="bg-white/20 rounded-xl rounded-bl-none px-3 py-2 max-w-[140px]"
+      >
+        <span className="text-white text-xs">Hello! 👋</span>
+      </motion.div>
+      <motion.div
+        initial={{ x: 50, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="bg-white/30 rounded-xl rounded-br-none px-3 py-2 max-w-[140px] self-end"
+      >
+        <span className="text-white text-xs">Welcome to DNA!</span>
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: [0, 1, 0] }}
+        transition={{ delay: 1, duration: 1.5, repeat: Infinity }}
+        className="flex gap-1 mt-1"
+      >
+        <span className="w-2 h-2 bg-white/50 rounded-full" />
+        <span className="w-2 h-2 bg-white/50 rounded-full" />
+        <span className="w-2 h-2 bg-white/50 rounded-full" />
+      </motion.div>
+    </div>
+  </div>
+);
+
+// Animated Network Hero
+const NetworkHero: React.FC = () => (
+  <div className="relative w-full h-full bg-gradient-to-br from-dna-emerald to-dna-forest flex items-center justify-center overflow-hidden">
+    <KentePattern />
+    <div className="relative">
+      {/* Center node */}
+      <motion.div
+        className="w-12 h-12 bg-dna-gold rounded-full flex items-center justify-center z-10 relative"
+        animate={{ scale: [1, 1.1, 1] }}
+        transition={{ duration: 2, repeat: Infinity }}
+      >
+        <span className="text-xs font-bold text-dna-charcoal">YOU</span>
+      </motion.div>
+      {/* Connection nodes */}
+      {[0, 1, 2, 3, 4, 5].map((i) => {
+        const angle = (i * 60 * Math.PI) / 180;
+        const x = Math.cos(angle) * 50;
+        const y = Math.sin(angle) * 50;
+        return (
+          <React.Fragment key={i}>
+            <motion.div
+              className="absolute w-6 h-6 bg-white/40 rounded-full"
+              style={{ left: x + 3, top: y + 3 }}
+              animate={{ opacity: [0.4, 0.8, 0.4] }}
+              transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}
+            />
+            <motion.div
+              className="absolute w-px bg-white/30"
+              style={{
+                left: 24,
+                top: 24,
+                width: 50,
+                height: 1,
+                transformOrigin: 'left center',
+                transform: `rotate(${i * 60}deg)`,
+              }}
+              animate={{ opacity: [0.2, 0.5, 0.2] }}
+              transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}
+            />
+          </React.Fragment>
+        );
+      })}
+    </div>
+  </div>
+);
+
+// Notification Hero
+const NotificationHero: React.FC = () => (
+  <div className="relative w-full h-full bg-gradient-to-br from-dna-copper to-dna-sunset flex items-center justify-center overflow-hidden">
+    <KentePattern />
+    <div className="flex flex-col gap-2 p-4">
+      {[0, 1, 2].map((i) => (
+        <motion.div
+          key={i}
+          initial={{ x: 100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: i * 0.3, duration: 0.4 }}
+          className="flex items-center gap-2 bg-white/20 backdrop-blur rounded-lg px-3 py-2"
+        >
+          <Bell className="w-4 h-4 text-white" />
+          <span className="text-white text-xs">New notification</span>
+        </motion.div>
+      ))}
+    </div>
+  </div>
+);
+
+// Gradient Hero (default)
+const GradientHero: React.FC<{ category: ReleaseCategory }> = ({ category }) => (
+  <div className={cn(
+    'relative w-full h-full bg-gradient-to-br flex items-center justify-center overflow-hidden',
+    categoryColors[category]
+  )}>
+    <KentePattern />
+    <motion.div
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
+      {categoryIcons[category]}
+    </motion.div>
+  </div>
+);
 
 export const ReleaseHero: React.FC<ReleaseHeroProps> = ({
   heroType,
+  category,
   imageUrl,
   videoUrl,
-  category,
-  title,
   className,
 }) => {
-  // Image hero
-  if (heroType === 'image' && imageUrl) {
-    return (
-      <div className={cn('relative w-full h-full overflow-hidden', className)}>
-        <img
-          src={imageUrl}
-          alt={title}
-          className="w-full h-full object-cover"
-          loading="lazy"
-        />
-        {/* Subtle gradient overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-      </div>
-    );
-  }
-
-  // Video hero
-  if (heroType === 'video' && videoUrl) {
-    return (
-      <div className={cn('relative w-full h-full overflow-hidden', className)}>
-        <video
-          src={videoUrl}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-      </div>
-    );
-  }
-
-  // Animation hero (Lottie-style placeholder with CSS animation)
-  if (heroType === 'animation') {
-    return (
-      <div
-        className={cn(
-          'relative w-full h-full overflow-hidden',
-          'bg-gradient-to-br',
-          CATEGORY_GRADIENTS[category],
-          className
-        )}
-      >
-        {/* Animated background pattern */}
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.3)_0%,transparent_50%)] animate-pulse" />
-          <div
-            className="absolute inset-0 bg-[radial-gradient(circle_at_70%_70%,rgba(255,255,255,0.2)_0%,transparent_40%)] animate-pulse"
-            style={{ animationDelay: '1s' }}
-          />
-        </div>
-
-        {/* Floating particles */}
-        <div className="absolute inset-0 overflow-hidden">
-          {[...Array(5)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-2 h-2 bg-white/40 rounded-full animate-float"
-              style={{
-                left: `${20 + i * 15}%`,
-                top: `${30 + (i % 3) * 20}%`,
-                animationDelay: `${i * 0.5}s`,
-                animationDuration: '3s',
-              }}
+  const renderHero = () => {
+    switch (heroType) {
+      case 'image':
+        if (imageUrl) {
+          return (
+            <img
+              src={imageUrl}
+              alt="Release hero"
+              className="w-full h-full object-cover"
             />
-          ))}
-        </div>
+          );
+        }
+        return <GradientHero category={category} />;
 
-        {/* Center icon */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-16 h-16 text-white/60 animate-pulse">
-            {CATEGORY_ICONS[category]}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Map hero
-  if (heroType === 'map') {
-    return (
-      <div
-        className={cn(
-          'relative w-full h-full overflow-hidden',
-          'bg-gradient-to-br from-emerald-600 to-teal-500',
-          className
-        )}
-      >
-        {/* Map grid pattern */}
-        <div className="absolute inset-0 opacity-20">
-          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern
-                id="grid"
-                width="40"
-                height="40"
-                patternUnits="userSpaceOnUse"
-              >
-                <path
-                  d="M 40 0 L 0 0 0 40"
-                  fill="none"
-                  stroke="white"
-                  strokeWidth="1"
-                />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#grid)" />
-          </svg>
-        </div>
-
-        {/* Location pins */}
-        <div className="absolute inset-0">
-          {[
-            { x: '30%', y: '40%' },
-            { x: '60%', y: '30%' },
-            { x: '45%', y: '60%' },
-            { x: '70%', y: '55%' },
-          ].map((pos, i) => (
-            <div
-              key={i}
-              className="absolute animate-bounce"
-              style={{
-                left: pos.x,
-                top: pos.y,
-                animationDelay: `${i * 0.2}s`,
-                animationDuration: '2s',
-              }}
-            >
-              <MapPin className="w-6 h-6 text-white drop-shadow-lg" />
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  // Chat hero
-  if (heroType === 'chat') {
-    return (
-      <div
-        className={cn(
-          'relative w-full h-full overflow-hidden',
-          'bg-gradient-to-br from-blue-600 to-indigo-500',
-          className
-        )}
-      >
-        {/* Chat bubbles */}
-        <div className="absolute inset-0 flex flex-col items-start justify-center gap-2 p-6">
-          <div className="bg-white/90 rounded-2xl rounded-tl-sm px-4 py-2 shadow-lg animate-slideInLeft">
-            <div className="w-20 h-2 bg-gray-200 rounded" />
-          </div>
-          <div
-            className="bg-white/90 rounded-2xl rounded-tl-sm px-4 py-2 shadow-lg animate-slideInLeft ml-4"
-            style={{ animationDelay: '0.3s' }}
-          >
-            <div className="w-32 h-2 bg-gray-200 rounded" />
-          </div>
-          <div
-            className="bg-blue-400/90 rounded-2xl rounded-tr-sm px-4 py-2 shadow-lg animate-slideInRight self-end"
-            style={{ animationDelay: '0.6s' }}
-          >
-            <div className="w-24 h-2 bg-white/50 rounded" />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Network hero
-  if (heroType === 'network') {
-    return (
-      <div
-        className={cn(
-          'relative w-full h-full overflow-hidden',
-          'bg-gradient-to-br from-violet-600 to-purple-500',
-          className
-        )}
-      >
-        {/* Network nodes and connections */}
-        <svg className="absolute inset-0 w-full h-full opacity-60">
-          {/* Connection lines */}
-          <line
-            x1="20%"
-            y1="30%"
-            x2="50%"
-            y2="50%"
-            stroke="white"
-            strokeWidth="2"
-            className="animate-pulse"
-          />
-          <line
-            x1="50%"
-            y1="50%"
-            x2="80%"
-            y2="35%"
-            stroke="white"
-            strokeWidth="2"
-            className="animate-pulse"
-            style={{ animationDelay: '0.5s' }}
-          />
-          <line
-            x1="50%"
-            y1="50%"
-            x2="70%"
-            y2="70%"
-            stroke="white"
-            strokeWidth="2"
-            className="animate-pulse"
-            style={{ animationDelay: '1s' }}
-          />
-          <line
-            x1="30%"
-            y1="65%"
-            x2="50%"
-            y2="50%"
-            stroke="white"
-            strokeWidth="2"
-            className="animate-pulse"
-            style={{ animationDelay: '1.5s' }}
-          />
-
-          {/* Nodes */}
-          {[
-            { cx: '20%', cy: '30%' },
-            { cx: '50%', cy: '50%' },
-            { cx: '80%', cy: '35%' },
-            { cx: '70%', cy: '70%' },
-            { cx: '30%', cy: '65%' },
-          ].map((node, i) => (
-            <circle
-              key={i}
-              cx={node.cx}
-              cy={node.cy}
-              r="12"
-              fill="white"
-              className="animate-pulse"
-              style={{ animationDelay: `${i * 0.3}s` }}
+      case 'video':
+        if (videoUrl) {
+          return (
+            <video
+              src={videoUrl}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover"
             />
-          ))}
-        </svg>
-      </div>
-    );
-  }
+          );
+        }
+        return <GradientHero category={category} />;
 
-  // Notification hero
-  if (heroType === 'notification') {
-    return (
-      <div
-        className={cn(
-          'relative w-full h-full overflow-hidden',
-          'bg-gradient-to-br from-orange-500 to-red-500',
-          className
-        )}
-      >
-        {/* Notification cards */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-4">
-          {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              className="bg-white/90 rounded-lg px-4 py-2 shadow-lg flex items-center gap-3 animate-slideInRight"
-              style={{
-                animationDelay: `${i * 0.2}s`,
-                transform: `translateX(${i * 10}px)`,
-              }}
-            >
-              <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                <Bell className="w-4 h-4 text-orange-500" />
-              </div>
-              <div className="w-24 h-2 bg-gray-200 rounded" />
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
+      case 'map':
+        return <MapHero />;
 
-  // Default gradient hero
+      case 'chat':
+        return <ChatHero />;
+
+      case 'network':
+        return <NetworkHero />;
+
+      case 'notification':
+        return <NotificationHero />;
+
+      case 'animation':
+      case 'gradient':
+      default:
+        return <GradientHero category={category} />;
+    }
+  };
+
   return (
-    <div
-      className={cn(
-        'relative w-full h-full overflow-hidden',
-        'bg-gradient-to-br',
-        CATEGORY_GRADIENTS[category],
-        className
-      )}
-    >
-      {/* Kente-inspired pattern overlay */}
-      <div className="absolute inset-0 opacity-10">
-        <svg
-          className="w-full h-full"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 100 100"
-          preserveAspectRatio="none"
-        >
-          <defs>
-            <pattern
-              id="kente"
-              width="20"
-              height="20"
-              patternUnits="userSpaceOnUse"
-            >
-              <rect width="10" height="10" fill="white" />
-              <rect x="10" y="10" width="10" height="10" fill="white" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#kente)" />
-        </svg>
-      </div>
-
-      {/* Category icon */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-16 h-16 text-white/30">
-          {CATEGORY_ICONS[category]}
-        </div>
-      </div>
-
-      {/* Subtle shine effect */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent" />
+    <div className={cn('h-[200px] rounded-t-xl overflow-hidden', className)}>
+      {renderHero()}
     </div>
   );
 };

@@ -5,73 +5,57 @@
  */
 
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Sparkles } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Sparkles, ArrowRight } from 'lucide-react';
 import { useFeaturedCount } from '@/hooks/useReleases';
-import type { NewFeaturePillProps } from '@/types/releases';
+import { cn } from '@/lib/utils';
+
+interface NewFeaturePillProps {
+  className?: string;
+}
 
 export const NewFeaturePill: React.FC<NewFeaturePillProps> = ({ className }) => {
+  const navigate = useNavigate();
   const { data: count = 0, isLoading } = useFeaturedCount();
 
-  // Don't render if no featured releases
-  if (!isLoading && count === 0) {
-    return null;
-  }
+  // Don't show if no new features or loading
+  if (isLoading || count === 0) return null;
 
   return (
-    <Link
-      to="/releases?filter=featured"
+    <motion.button
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      onClick={() => navigate('/releases?filter=featured')}
       className={cn(
-        'group relative inline-flex items-center gap-1.5 px-3 py-1.5',
-        'text-sm font-medium rounded-full',
-        'bg-gradient-to-r from-amber-100 to-amber-50',
-        'text-amber-800 border border-amber-200',
-        'hover:from-amber-200 hover:to-amber-100',
-        'hover:border-amber-300 hover:shadow-sm',
-        'transition-all duration-200',
-        'focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2',
+        'relative inline-flex items-center gap-2 px-4 py-2 rounded-full',
+        'bg-gradient-to-r from-dna-emerald to-dna-forest',
+        'text-white text-sm font-semibold',
+        'shadow-lg hover:shadow-xl transition-shadow cursor-pointer',
+        'group overflow-hidden',
         className
       )}
     >
-      {/* Animated pulse ring when there are new features */}
-      {count > 0 && (
-        <span className="absolute -inset-0.5 rounded-full bg-amber-400/20 animate-pulse" />
-      )}
-
-      <Sparkles
-        className={cn(
-          'w-4 h-4 relative',
-          'text-amber-600 group-hover:text-amber-700',
-          count > 0 && 'animate-bounce'
-        )}
-        style={{ animationDuration: '2s' }}
+      {/* Animated pulse background */}
+      <motion.div
+        className="absolute inset-0 bg-white/20 rounded-full"
+        animate={{ scale: [1, 1.5, 1], opacity: [0.3, 0, 0.3] }}
+        transition={{ duration: 2, repeat: Infinity }}
       />
 
-      <span className="relative">What&apos;s New</span>
+      <Sparkles className="w-4 h-4 relative z-10" />
+
+      <span className="relative z-10">What's New</span>
 
       {/* Count badge */}
-      {!isLoading && count > 0 && (
-        <span
-          className={cn(
-            'relative inline-flex items-center justify-center',
-            'min-w-[20px] h-5 px-1.5',
-            'text-xs font-bold rounded-full',
-            'bg-amber-500 text-white',
-            'shadow-sm'
-          )}
-        >
-          {count > 99 ? '99+' : count}
-        </span>
-      )}
+      <span className="relative z-10 bg-white/20 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+        {count}
+      </span>
 
-      {/* Loading state */}
-      {isLoading && (
-        <span className="relative w-5 h-5 flex items-center justify-center">
-          <span className="w-3 h-3 rounded-full bg-amber-400 animate-ping" />
-        </span>
-      )}
-    </Link>
+      <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" />
+    </motion.button>
   );
 };
 
@@ -83,7 +67,7 @@ export const NewFeaturePillCompact: React.FC<NewFeaturePillProps> = ({
 }) => {
   const { data: count = 0, isLoading } = useFeaturedCount();
 
-  if (!isLoading && count === 0) {
+  if (isLoading || count === 0) {
     return null;
   }
 
@@ -93,10 +77,10 @@ export const NewFeaturePillCompact: React.FC<NewFeaturePillProps> = ({
       className={cn(
         'relative inline-flex items-center justify-center',
         'w-8 h-8 rounded-full',
-        'bg-amber-100 text-amber-700',
-        'hover:bg-amber-200',
+        'bg-dna-emerald/20 text-dna-emerald',
+        'hover:bg-dna-emerald/30',
         'transition-colors',
-        'focus:outline-none focus:ring-2 focus:ring-amber-400',
+        'focus:outline-none focus:ring-2 focus:ring-dna-emerald',
         className
       )}
       aria-label={`${count} new features`}
@@ -104,14 +88,14 @@ export const NewFeaturePillCompact: React.FC<NewFeaturePillProps> = ({
       <Sparkles className="w-4 h-4" />
 
       {/* Count indicator */}
-      {!isLoading && count > 0 && (
+      {count > 0 && (
         <span
           className={cn(
             'absolute -top-0.5 -right-0.5',
             'min-w-[16px] h-4 px-1',
             'flex items-center justify-center',
             'text-[10px] font-bold rounded-full',
-            'bg-amber-500 text-white',
+            'bg-dna-emerald text-white',
             'border-2 border-white'
           )}
         >

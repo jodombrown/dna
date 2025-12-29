@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -13,6 +12,7 @@ import {
 } from '@/components/ui/navigation-menu';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import { publicNavItems, aboutUsDropdown } from './navigationConfig';
+import { NewFeaturePill } from '@/components/releases/NewFeaturePill';
 
 const DesktopNavigation = () => {
   const navigate = useNavigate();
@@ -70,6 +70,8 @@ const DesktopNavigation = () => {
           </Button>
         ))}
         
+        {/* New Feature Pill */}
+        <NewFeaturePill />
 
         <Button
           onClick={() => setIsBetaSignupOpen(true)}

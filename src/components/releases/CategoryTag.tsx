@@ -5,34 +5,96 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { CATEGORY_CONFIG, type ReleaseCategory, type CategoryTagProps } from '@/types/releases';
+import { Users, Calendar, Handshake, Briefcase, Megaphone, Settings } from 'lucide-react';
+import type { ReleaseCategory } from '@/types/releases';
+
+interface CategoryConfig {
+  color: string;
+  bgColor: string;
+  borderColor: string;
+  icon: React.ReactNode;
+  label: string;
+}
+
+const categories: Record<ReleaseCategory, CategoryConfig> = {
+  CONNECT: {
+    color: 'text-dna-emerald',
+    bgColor: 'bg-dna-emerald/15',
+    borderColor: 'border-dna-emerald/30',
+    icon: <Users className="w-3.5 h-3.5" />,
+    label: 'Connect',
+  },
+  CONVENE: {
+    color: 'text-dna-copper',
+    bgColor: 'bg-dna-copper/15',
+    borderColor: 'border-dna-copper/30',
+    icon: <Calendar className="w-3.5 h-3.5" />,
+    label: 'Convene',
+  },
+  COLLABORATE: {
+    color: 'text-dna-gold',
+    bgColor: 'bg-dna-gold/15',
+    borderColor: 'border-dna-gold/30',
+    icon: <Handshake className="w-3.5 h-3.5" />,
+    label: 'Collaborate',
+  },
+  CONTRIBUTE: {
+    color: 'text-dna-forest',
+    bgColor: 'bg-dna-forest/15',
+    borderColor: 'border-dna-forest/30',
+    icon: <Briefcase className="w-3.5 h-3.5" />,
+    label: 'Contribute',
+  },
+  CONVEY: {
+    color: 'text-dna-sunset',
+    bgColor: 'bg-dna-sunset/15',
+    borderColor: 'border-dna-sunset/30',
+    icon: <Megaphone className="w-3.5 h-3.5" />,
+    label: 'Convey',
+  },
+  PLATFORM: {
+    color: 'text-slate-600',
+    bgColor: 'bg-slate-100',
+    borderColor: 'border-slate-300',
+    icon: <Settings className="w-3.5 h-3.5" />,
+    label: 'Platform',
+  },
+};
+
+interface CategoryTagProps {
+  category: ReleaseCategory;
+  className?: string;
+  showIcon?: boolean;
+  size?: 'sm' | 'md' | 'lg';
+}
 
 export const CategoryTag: React.FC<CategoryTagProps> = ({
   category,
-  showIcon = true,
-  size = 'md',
   className,
+  showIcon = true,
+  size = 'md'
 }) => {
-  const config = CATEGORY_CONFIG[category];
+  const config = categories[category];
 
   const sizeClasses = {
     sm: 'px-1.5 py-0.5 text-[10px] gap-0.5',
-    md: 'px-2 py-0.5 text-xs gap-1',
-    lg: 'px-3 py-1 text-sm gap-1.5',
+    md: 'px-2.5 py-1 text-xs gap-1.5',
+    lg: 'px-3 py-1.5 text-sm gap-2',
   };
 
   return (
     <span
       className={cn(
-        'inline-flex items-center font-medium rounded-full',
-        config.bgColor,
+        'inline-flex items-center font-medium rounded-full border',
         config.color,
+        config.bgColor,
+        config.borderColor,
         sizeClasses[size],
         className
       )}
     >
-      {showIcon && <span className="flex-shrink-0">{config.icon}</span>}
-      <span>{config.label}</span>
+      {showIcon && config.icon}
+      {config.label}
     </span>
   );
 };
@@ -54,25 +116,27 @@ export const CategoryButton: React.FC<CategoryButtonProps> = ({
   onClick,
   className,
 }) => {
-  const config = CATEGORY_CONFIG[category];
+  const config = categories[category];
 
   return (
     <button
       onClick={onClick}
       className={cn(
         'inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-full transition-all',
-        'border border-transparent',
+        'border',
         'hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2',
         isActive
-          ? cn(config.bgColor, config.color, 'ring-2 ring-offset-2')
-          : cn('bg-gray-100 text-gray-600 hover:bg-gray-200'),
+          ? cn(config.bgColor, config.color, config.borderColor, 'ring-2 ring-offset-2')
+          : cn('bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'),
         className
       )}
     >
-      <span>{config.icon}</span>
+      {config.icon}
       <span>{config.label}</span>
     </button>
   );
 };
+
+export const getCategoryConfig = (category: ReleaseCategory) => categories[category];
 
 export default CategoryTag;
