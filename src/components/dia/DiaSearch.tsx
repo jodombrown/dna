@@ -350,7 +350,7 @@ export function DiaSearch({
   };
 
   const handleHashtagClick = (hashtagName: string) => {
-    navigate(`/explore?hashtag=${encodeURIComponent(hashtagName)}`);
+    navigate(`/dna/hashtag/${encodeURIComponent(hashtagName)}`);
   };
 
   const handleStoryClick = (storyId: string) => {
