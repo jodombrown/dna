@@ -6648,6 +6648,116 @@ export type Database = {
           },
         ]
       }
+      release_features: {
+        Row: {
+          created_at: string | null
+          feature_text: string
+          id: string
+          release_id: string | null
+          sort_order: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          feature_text: string
+          id?: string
+          release_id?: string | null
+          sort_order?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          feature_text?: string
+          id?: string
+          release_id?: string | null
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "release_features_release_id_fkey"
+            columns: ["release_id"]
+            isOneToOne: false
+            referencedRelation: "releases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      releases: {
+        Row: {
+          archived_at: string | null
+          category: string
+          created_at: string | null
+          created_by: string | null
+          cta_link: string | null
+          cta_text: string | null
+          description: string
+          hero_image_url: string | null
+          hero_type: string | null
+          hero_video_url: string | null
+          id: string
+          is_pinned: boolean | null
+          meta_description: string | null
+          meta_title: string | null
+          release_date: string
+          slug: string
+          status: string | null
+          subtitle: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          version: string | null
+          view_count: number | null
+        }
+        Insert: {
+          archived_at?: string | null
+          category: string
+          created_at?: string | null
+          created_by?: string | null
+          cta_link?: string | null
+          cta_text?: string | null
+          description: string
+          hero_image_url?: string | null
+          hero_type?: string | null
+          hero_video_url?: string | null
+          id?: string
+          is_pinned?: boolean | null
+          meta_description?: string | null
+          meta_title?: string | null
+          release_date: string
+          slug: string
+          status?: string | null
+          subtitle?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          version?: string | null
+          view_count?: number | null
+        }
+        Update: {
+          archived_at?: string | null
+          category?: string
+          created_at?: string | null
+          created_by?: string | null
+          cta_link?: string | null
+          cta_text?: string | null
+          description?: string
+          hero_image_url?: string | null
+          hero_type?: string | null
+          hero_video_url?: string | null
+          id?: string
+          is_pinned?: boolean | null
+          meta_description?: string | null
+          meta_title?: string | null
+          release_date?: string
+          slug?: string
+          status?: string | null
+          subtitle?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          version?: string | null
+          view_count?: number | null
+        }
+        Relationships: []
+      }
       reserved_hashtags: {
         Row: {
           can_be_used: boolean | null

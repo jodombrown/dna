@@ -73,6 +73,7 @@ const Contact = lazy(() => import("./pages/Contact"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const UserAgreement = lazy(() => import("./pages/UserAgreement"));
+const ReleasesPage = lazy(() => import("./pages/ReleasesPage"));
 
 // Example pages
 const ConnectExample = lazy(() => import("./pages/ConnectExample"));
@@ -299,6 +300,9 @@ function App() {
               {/* Documentation Routes */}
               <Route path="/documentation/features" element={<FeaturesHub />} />
               <Route path="/documentation/features/:slug" element={<FeatureDetail />} />
+              
+              {/* Releases Page - What's New */}
+              <Route path="/releases" element={<ReleasesPage />} />
               
               {/* Redirect old /dna/me to user's profile */}
               <Route path="/dna/me" element={<Navigate to="/dna/feed" replace />} />
