@@ -62,6 +62,7 @@ interface DiaSearchProps {
   compact?: boolean;
   suggestions?: string[];
   initialQuery?: string;
+  autoSearch?: boolean;
 }
 
 export function DiaSearch({
@@ -69,10 +70,12 @@ export function DiaSearch({
   placeholder = 'Ask DIA about African opportunities, markets, or trends...',
   compact = false,
   suggestions,
-  initialQuery = ''
+  initialQuery = '',
+  autoSearch = false
 }: DiaSearchProps) {
   const navigate = useNavigate();
   const [query, setQuery] = useState(initialQuery);
+  const hasAutoSearched = React.useRef(false);
 
   // Update query when initialQuery changes
   React.useEffect(() => {
@@ -83,6 +86,14 @@ export function DiaSearch({
   const [response, setResponse] = useState<DiaResponse | null>(null);
   const [rateLimited, setRateLimited] = useState(false);
   const [rateLimitInfo, setRateLimitInfo] = useState<{ limit: number; used: number; resets_at: string } | null>(null);
+
+  // Auto-search when triggered from history or insights
+  React.useEffect(() => {
+    if (autoSearch && initialQuery && !hasAutoSearched.current && !rateLimited) {
+      hasAutoSearched.current = true;
+      searchMutation.mutate(initialQuery);
+    }
+  }, [autoSearch, initialQuery, rateLimited]);
 
   const searchMutation = useMutation({
     mutationFn: async (searchQuery: string) => {
