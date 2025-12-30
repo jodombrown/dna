@@ -4,24 +4,56 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Bell, Clock, CheckCircle2, Archive } from 'lucide-react';
-import { useDiaNudges } from '@/hooks/useDiaNudges';
+import { useDiaNudges, DiaNudge } from '@/hooks/useDiaNudges';
 import NudgeCard from '@/components/dia/NudgeCard';
+import { SpaceHealthNudgeCard, isSpaceHealthNudge } from '@/components/collaboration/SpaceHealthNudgeCard';
+import { ArchiveSpaceDialog } from '@/components/collaboration/ArchiveSpaceDialog';
+import { useArchiveSpace } from '@/hooks/useSpaceHealth';
 import { useNavigate } from 'react-router-dom';
 
 const NudgeCenter: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('sent');
+  const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
+  const [archiveSpaceData, setArchiveSpaceData] = useState<{ id: string; name: string } | null>(null);
+
   const { nudges, loading, acceptNudge, dismissNudge, snoozeNudge } = useDiaNudges(
     activeTab === 'sent' ? 'sent' : 'all'
   );
+  const archiveSpace = useArchiveSpace();
 
   const handleAccept = async (nudgeId: string) => {
     const nudge = nudges.find(n => n.id === nudgeId);
     const success = await acceptNudge(nudgeId);
-    
+
     if (success && nudge?.action_url) {
       navigate(nudge.action_url);
     }
+    return success;
+  };
+
+  const handleArchiveFromNudge = (spaceId: string) => {
+    const nudge = nudges.find(n =>
+      n.payload?.space_id === spaceId && isSpaceHealthNudge(n)
+    );
+    if (nudge?.payload) {
+      setArchiveSpaceData({
+        id: nudge.payload.space_id,
+        name: nudge.payload.space_name,
+      });
+      setArchiveDialogOpen(true);
+    }
+  };
+
+  const handleArchiveConfirm = async (summary?: string, notifyMembers?: boolean) => {
+    if (!archiveSpaceData) return;
+    await archiveSpace.mutateAsync({
+      spaceId: archiveSpaceData.id,
+      summary,
+      notifyMembers,
+    });
+    setArchiveDialogOpen(false);
+    setArchiveSpaceData(null);
   };
 
   const sentNudges = nudges.filter(n => n.status === 'sent');
@@ -38,7 +70,7 @@ const NudgeCenter: React.FC = () => {
     }
   };
 
-  const renderNudgeList = (nudgeList: any[], emptyMessage: string) => {
+  const renderNudgeList = (nudgeList: DiaNudge[], emptyMessage: string) => {
     if (loading) {
       return (
         <div className="flex items-center justify-center py-12">
@@ -60,20 +92,33 @@ const NudgeCenter: React.FC = () => {
       <div className="space-y-4">
         {nudgeList.map((nudge) => (
           <div key={nudge.id} className="relative">
-            {nudge.priority && (
-              <Badge
-                variant={getPriorityColor(nudge.priority)}
-                className="absolute -top-2 -right-2 z-10"
-              >
-                {nudge.priority}
-              </Badge>
+            {/* Render space health nudges with special card */}
+            {isSpaceHealthNudge(nudge) ? (
+              <SpaceHealthNudgeCard
+                nudge={nudge}
+                onAccept={handleAccept}
+                onDismiss={dismissNudge}
+                onSnooze={snoozeNudge}
+                onArchive={handleArchiveFromNudge}
+              />
+            ) : (
+              <>
+                {nudge.priority && (
+                  <Badge
+                    variant={getPriorityColor(nudge.priority)}
+                    className="absolute -top-2 -right-2 z-10"
+                  >
+                    {nudge.priority}
+                  </Badge>
+                )}
+                <NudgeCard
+                  nudge={nudge}
+                  onAccept={handleAccept}
+                  onDismiss={dismissNudge}
+                  onSnooze={snoozeNudge}
+                />
+              </>
             )}
-            <NudgeCard
-              nudge={nudge}
-              onAccept={handleAccept}
-              onDismiss={dismissNudge}
-              onSnooze={snoozeNudge}
-            />
           </div>
         ))}
       </div>
@@ -159,6 +204,18 @@ const NudgeCenter: React.FC = () => {
           you maintain connections, discover opportunities, and stay engaged with the DNA community.
         </p>
       </div>
+
+      {/* Archive Space Dialog */}
+      <ArchiveSpaceDialog
+        isOpen={archiveDialogOpen}
+        onClose={() => {
+          setArchiveDialogOpen(false);
+          setArchiveSpaceData(null);
+        }}
+        spaceName={archiveSpaceData?.name || ''}
+        onConfirm={handleArchiveConfirm}
+        isLoading={archiveSpace.isPending}
+      />
     </div>
   );
 };

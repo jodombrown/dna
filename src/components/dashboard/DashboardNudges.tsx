@@ -6,6 +6,7 @@ import { ChevronRight, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useDiaNudges } from '@/hooks/useDiaNudges';
 import NudgeCard from '@/components/dia/NudgeCard';
+import { SpaceHealthNudgeCard, isSpaceHealthNudge } from '@/components/collaboration/SpaceHealthNudgeCard';
 
 const DashboardNudges: React.FC = () => {
   const navigate = useNavigate();
@@ -14,9 +15,20 @@ const DashboardNudges: React.FC = () => {
   const handleAccept = async (nudgeId: string) => {
     const nudge = nudges.find(n => n.id === nudgeId);
     const success = await acceptNudge(nudgeId);
-    
+
     if (success && nudge?.action_url) {
       navigate(nudge.action_url);
+    }
+    return success;
+  };
+
+  const handleArchiveFromNudge = (spaceId: string) => {
+    // Navigate to the space where user can archive from there
+    const nudge = nudges.find(n =>
+      n.payload?.space_id === spaceId && isSpaceHealthNudge(n)
+    );
+    if (nudge?.payload?.space_slug) {
+      navigate(`/dna/collaborate/spaces/${nudge.payload.space_slug}`);
     }
   };
 
@@ -39,21 +51,32 @@ const DashboardNudges: React.FC = () => {
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
-        {topNudges.map((nudge) => (
-          <NudgeCard
-            key={nudge.id}
-            nudge={nudge}
-            onAccept={handleAccept}
-            onDismiss={dismissNudge}
-            onSnooze={snoozeNudge}
-          />
-        ))}
-        
+        {topNudges.map((nudge) =>
+          isSpaceHealthNudge(nudge) ? (
+            <SpaceHealthNudgeCard
+              key={nudge.id}
+              nudge={nudge}
+              onAccept={handleAccept}
+              onDismiss={dismissNudge}
+              onSnooze={snoozeNudge}
+              onArchive={handleArchiveFromNudge}
+            />
+          ) : (
+            <NudgeCard
+              key={nudge.id}
+              nudge={nudge}
+              onAccept={handleAccept}
+              onDismiss={dismissNudge}
+              onSnooze={snoozeNudge}
+            />
+          )
+        )}
+
         {nudges.length > 3 && (
           <div className="text-center pt-2">
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               className="text-muted-foreground hover:text-dna-copper"
               onClick={() => navigate('/dna/nudges')}
             >
