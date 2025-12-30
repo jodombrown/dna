@@ -4,6 +4,34 @@ import { BlockedUser } from '@/types/blocked';
 import { sendNotificationEmail, NOTIFICATION_TYPES } from './notificationService';
 import { getAppUrl, getProfileUrl, APP_PATHS } from '@/lib/config';
 
+/**
+ * Response from get_connection_requests RPC
+ */
+interface ConnectionRequestRpcResponse {
+  connection_id: string;
+  requester_id: string;
+  username: string;
+  full_name: string;
+  avatar_url: string | null;
+  headline: string | null;
+  location: string | null;
+  professional_role: string | null;
+  heritage_status?: string | null;
+  message: string | null;
+  created_at: string;
+}
+
+/**
+ * Response from rpc_adin_recommend_people RPC
+ */
+interface AdinRecommendationResponse {
+  matched_user_id: string;
+  match_score: number;
+  match_reason: string | null;
+  shared_regions: string[] | null;
+  shared_sectors: string[] | null;
+}
+
 export const connectionService = {
   async sendConnectionRequest(receiverId: string, message?: string) {
     const { data: { user } } = await supabase.auth.getUser();
@@ -126,9 +154,10 @@ export const connectionService = {
     });
 
     if (error) throw error;
-    
+
     // Map the RPC response to match ConnectionRequest interface
-    return (data || []).map((item: any) => ({
+    const requests = (data || []) as ConnectionRequestRpcResponse[];
+    return requests.map((item) => ({
       connection_id: item.connection_id,
       id: item.requester_id,
       requester_id: item.requester_id,
@@ -137,7 +166,7 @@ export const connectionService = {
       avatar_url: item.avatar_url,
       headline: item.headline,
       location: item.location,
-      professional_role: item.heritage_status, // Map heritage_status if needed
+      professional_role: item.heritage_status || item.professional_role,
       message: item.message,
       created_at: item.created_at,
     })) as ConnectionRequest[];
@@ -332,8 +361,11 @@ export const connectionService = {
 
     if (!data || !Array.isArray(data)) return [];
 
+    // Cast to proper type
+    const recommendations = data as AdinRecommendationResponse[];
+
     // Fetch profile details for the matched users
-    const userIds = data.map((item: any) => item.matched_user_id).filter(Boolean);
+    const userIds = recommendations.map((item) => item.matched_user_id).filter(Boolean);
     if (userIds.length === 0) return [];
 
     const { data: profiles } = await supabase
@@ -344,7 +376,7 @@ export const connectionService = {
 
     const profileMap = new Map((profiles || []).map(p => [p.id, p]));
 
-    return data.slice(0, limit).map((item: any) => {
+    return recommendations.slice(0, limit).map((item) => {
       const profile = profileMap.get(item.matched_user_id);
       return {
         user_id: item.matched_user_id,
@@ -362,6 +394,6 @@ export const connectionService = {
         same_region: (item.shared_sectors?.length || 0) > 0,
         match_reasons: item.match_reason ? [item.match_reason] : [],
       };
-    }).filter((rec: any) => rec.user_id) as ConnectionRecommendation[];
+    }).filter((rec): rec is ConnectionRecommendation => Boolean(rec.user_id));
   },
 };

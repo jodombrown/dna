@@ -1,6 +1,34 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { CreatePostInput, PostWithAuthor, PostComment, PostLiker } from '@/types/posts';
 import { mentionService } from './mentionService';
+import type { Database } from '@/integrations/supabase/types';
+
+/**
+ * Feed item returned by get_universal_feed RPC
+ */
+interface UniversalFeedItem {
+  id: string;
+  post_id?: string;
+  author_id: string;
+  author_username: string;
+  author_full_name?: string;
+  author_display_name?: string;
+  author_avatar_url: string | null;
+  author_headline?: string | null;
+  content: string;
+  created_at: string;
+  like_count?: number;
+  likes_count?: number;
+  comment_count?: number;
+  comments_count?: number;
+  media_url?: string | null;
+  image_url?: string | null;
+}
+
+/**
+ * Comment row returned from post_comments table
+ */
+type PostCommentRow = Database['public']['Tables']['post_comments']['Row'];
 
 /**
  * Fetch posts using the optimized RPC function
@@ -11,12 +39,12 @@ export async function fetchPosts(): Promise<PostWithAuthor[]> {
   const { data: { user } } = await supabase.auth.getUser();
   const userId = user?.id || '00000000-0000-0000-0000-000000000000';
 
-  const { data, error } = await (supabase.rpc as any)('get_universal_feed', {
+  const { data, error } = await supabase.rpc('get_universal_feed', {
     p_viewer_id: userId,
     p_tab: 'all',
-    p_author_id: null,
-    p_space_id: null,
-    p_event_id: null,
+    p_author_id: undefined,
+    p_space_id: undefined,
+    p_event_id: undefined,
     p_limit: 50,
     p_offset: 0,
     p_ranking_mode: 'latest',
@@ -27,18 +55,19 @@ export async function fetchPosts(): Promise<PostWithAuthor[]> {
   }
 
   // Map UniversalFeedItem to PostWithAuthor
-  return (data || []).map((item: any) => ({
-    post_id: item.post_id,
+  const feedData = (data || []) as UniversalFeedItem[];
+  return feedData.map((item) => ({
+    post_id: item.post_id || item.id,
     author_id: item.author_id,
     content: item.content,
-    post_type: 'text',
+    post_type: 'text' as const,
     created_at: item.created_at,
     author_username: item.author_username,
-    author_full_name: item.author_display_name,
+    author_full_name: item.author_display_name || item.author_full_name || '',
     author_avatar_url: item.author_avatar_url,
-    likes_count: item.like_count,
-    comments_count: item.comment_count,
-    image_url: item.media_url,
+    likes_count: item.like_count ?? item.likes_count ?? 0,
+    comments_count: item.comment_count ?? item.comments_count ?? 0,
+    image_url: item.media_url || item.image_url,
   })) as PostWithAuthor[];
 }
 
@@ -135,7 +164,7 @@ export async function createPost(input: CreatePostInput): Promise<{ id: string }
     ).catch(() => {});
 
     // Process hashtags - extract and create/link them
-    (supabase.rpc as any)('process_post_hashtags', {
+    supabase.rpc('process_post_hashtags', {
       p_content: input.content,
       p_post_id: data.id,
       p_user_id: user.id
@@ -201,7 +230,7 @@ export async function deletePost(postId: string): Promise<void> {
 /**
  * Create a comment on a post
  */
-export async function createComment(postId: string, content: string): Promise<any> {
+export async function createComment(postId: string, content: string): Promise<PostCommentRow> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 
