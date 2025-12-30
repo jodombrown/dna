@@ -177,7 +177,6 @@ const CustomerDiscoveryPhase = lazy(() => import("./pages/CustomerDiscoveryPhase
 const MvpPhase = lazy(() => import("./pages/MvpPhase"));
 const BetaValidationPhase = lazy(() => import("./pages/BetaValidationPhase"));
 const GoToMarketPhase = lazy(() => import("./pages/GoToMarketPhase"));
-const Moderation = lazy(() => import("./pages/admin/Moderation"));
 
 // Partner With DNA pages
 const PartnerWithDna = lazy(() => import("./pages/PartnerWithDna"));
@@ -216,6 +215,18 @@ const AppShell = ({ children }: { children: React.ReactNode }) => (
 const LegacyUsernameRedirect = () => {
   const { username } = useParams();
   return <Navigate to={`/dna/${username}`} replace />;
+};
+
+// Legacy /dna/impact/:id redirect to canonical /dna/contribute/:id
+const LegacyImpactIdRedirect = () => {
+  const { id } = useParams();
+  return <Navigate to={`/dna/contribute/${id}`} replace />;
+};
+
+// Legacy /dna/space/:slug redirect to canonical /dna/collaborate/spaces/:slug
+const LegacySpaceSlugRedirect = () => {
+  const { slug } = useParams();
+  return <Navigate to={`/dna/collaborate/spaces/${slug}`} replace />;
 };
 
 function App() {
@@ -398,7 +409,11 @@ function App() {
                   <CreateEvent />
                 </OnboardingGuard>
               } />
-              <Route path="/dna/convene/events/:id/edit" element={<EditEventPage />} />
+              <Route path="/dna/convene/events/:id/edit" element={
+                <OnboardingGuard>
+                  <EditEventPage />
+                </OnboardingGuard>
+              } />
               <Route path="/dna/convene/events/:id/analytics" element={
                 <OnboardingGuard>
                   <EventAnalytics />
@@ -420,8 +435,16 @@ function App() {
                 </OnboardingGuard>
               } />
               <Route path="/dna/convene/groups/:slug/events" element={<OnboardingGuard><GroupEventsPage /></OnboardingGuard>} />
-              <Route path="/dna/convene/groups/:slug" element={<GroupDetailsPage />} />
-              <Route path="/dna/convene/groups/:slug/settings" element={<GroupSettingsPage />} />
+              <Route path="/dna/convene/groups/:slug" element={
+                <OnboardingGuard>
+                  <GroupDetailsPage />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/convene/groups/:slug/settings" element={
+                <OnboardingGuard>
+                  <GroupSettingsPage />
+                </OnboardingGuard>
+              } />
               
               {/* ========== COLLABORATE PILLAR M1-M5 ========== */}
               <Route path="/dna/collaborate" element={
@@ -517,14 +540,34 @@ function App() {
                   <DnaImpact />
                 </OnboardingGuard>
               } />
-              <Route path="/dna/contribute/:id" element={<OpportunityDetail />} />
+              <Route path="/dna/contribute/:id" element={
+                <OnboardingGuard>
+                  <OpportunityDetail />
+                </OnboardingGuard>
+              } />
               {/* Legacy impact routes - redirect to contribute */}
               <Route path="/dna/impact" element={<Navigate to="/dna/contribute" replace />} />
-              <Route path="/dna/impact/:id" element={<Navigate to="/dna/contribute/:id" replace />} />
-               <Route path="/dna/applications" element={<MyApplications />} />
-               <Route path="/dna/applications/received" element={<ApplicationsReceived />} />
-               <Route path="/dna/spaces" element={<CollaborationSpaces />} />
-               <Route path="/dna/spaces/:id" element={<SpaceDetail />} />
+              <Route path="/dna/impact/:id" element={<LegacyImpactIdRedirect />} />
+               <Route path="/dna/applications" element={
+                <OnboardingGuard>
+                  <MyApplications />
+                </OnboardingGuard>
+              } />
+               <Route path="/dna/applications/received" element={
+                <OnboardingGuard>
+                  <ApplicationsReceived />
+                </OnboardingGuard>
+              } />
+               <Route path="/dna/spaces" element={
+                <OnboardingGuard>
+                  <CollaborationSpaces />
+                </OnboardingGuard>
+              } />
+               <Route path="/dna/spaces/:id" element={
+                <OnboardingGuard>
+                  <SpaceDetail />
+                </OnboardingGuard>
+              } />
                <Route path="/dna/saved" element={
                  <OnboardingGuard>
                    <SavedPostsPage />
@@ -533,7 +576,7 @@ function App() {
                
                 {/* ========== LEGACY ROUTES ========== */}
                {/* Legacy space route - redirect to canonical collaborate route */}
-               <Route path="/dna/space/:slug" element={<Navigate to="/dna/collaborate/spaces/:slug" replace />} />
+               <Route path="/dna/space/:slug" element={<LegacySpaceSlugRedirect />} />
               
               {/* ========== NOTIFICATIONS & NUDGES ========== */}
               <Route path="/dna/notifications" element={
@@ -620,8 +663,7 @@ function App() {
                 <Route path="moderation" element={<ContentModeration />} />
                 <Route path="convey" element={<ConveyAnalytics />} />
               </Route>
-              <Route path="/app/admin/moderation" element={<Moderation />} />
-              
+
               {/* Static pages */}
               
               {/* Phase pages */}

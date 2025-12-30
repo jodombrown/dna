@@ -50,11 +50,11 @@ export default function ProgressStrip() {
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 lg:gap-4">
-      <Item label="Active spaces" value={data?.active_spaces || 0} href="/app/spaces" />
-      <Item label="Pending joins" value={data?.pending_joins || 0} href="/app/spaces" />
-      <Item label="Tasks due 7d" value={data?.tasks_due_7d || 0} href="/app/spaces" />
-      <Item label="Saved opportunities" value={data?.saved_opportunities || 0} href="/app/opportunities" />
-      <Item label="Unread notifications" value={data?.unread_notifications || 0} href="/app/dashboard" />
+      <Item label="Active spaces" value={data?.active_spaces || 0} href="/dna/collaborate/spaces" />
+      <Item label="Pending joins" value={data?.pending_joins || 0} href="/dna/collaborate/spaces" />
+      <Item label="Tasks due 7d" value={data?.tasks_due_7d || 0} href="/dna/collaborate/spaces" />
+      <Item label="Saved opportunities" value={data?.saved_opportunities || 0} href="/dna/contribute/needs" />
+      <Item label="Unread notifications" value={data?.unread_notifications || 0} href="/dna/notifications" />
     </div>
   );
 }
