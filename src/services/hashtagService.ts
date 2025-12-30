@@ -1,4 +1,28 @@
 import { supabase } from '@/integrations/supabase/client';
+import type { SupabaseClient } from '@supabase/supabase-js';
+
+// Helper type for RPC calls that aren't in generated types
+type SupabaseRpc = SupabaseClient['rpc'];
+
+// Interface for raw trending hashtag data from RPC
+interface TrendingHashtagRaw {
+  id?: string;
+  name?: string;
+  tag?: string;
+  display_name?: string;
+  type?: 'community' | 'personal';
+  usage_count?: number;
+  post_count?: number;
+  follower_count?: number;
+  recent_uses?: number;
+  recent_post_count?: number;
+  trending_score?: number;
+}
+
+// Interface for hashtag follower join result
+interface HashtagFollowerJoin {
+  hashtag: Hashtag | null;
+}
 
 // Types
 export interface Hashtag {
@@ -71,7 +95,8 @@ export const hashtagService = {
     }
 
     // Map the database response to our interface
-    return ((data as unknown as any[]) || []).map(item => ({
+    const rawData = (data as unknown as TrendingHashtagRaw[]) || [];
+    return rawData.map(item => ({
       id: item.id || '',
       name: item.name || item.tag || '',
       display_name: item.display_name || item.name || '',
@@ -87,7 +112,7 @@ export const hashtagService = {
    * Get hashtag details
    */
   async getDetails(hashtagName: string, userId?: string): Promise<HashtagDetails | null> {
-    const { data, error } = await (supabase.rpc as any)('get_hashtag_details', {
+    const { data, error } = await (supabase.rpc as SupabaseRpc)('get_hashtag_details', {
       p_hashtag_name: hashtagName,
       p_user_id: userId || null
     });
@@ -109,7 +134,7 @@ export const hashtagService = {
     offset: number = 0,
     sort: 'recent' | 'top' = 'recent'
   ): Promise<HashtagPost[]> {
-    const { data, error } = await (supabase.rpc as any)('get_hashtag_posts', {
+    const { data, error } = await (supabase.rpc as SupabaseRpc)('get_hashtag_posts', {
       p_hashtag_name: hashtagName,
       p_limit: limit,
       p_offset: offset,
@@ -127,7 +152,7 @@ export const hashtagService = {
    * Search hashtags (for autocomplete)
    */
   async search(query: string, limit: number = 10): Promise<Hashtag[]> {
-    const { data, error } = await (supabase.rpc as any)('search_hashtags', {
+    const { data, error } = await (supabase.rpc as SupabaseRpc)('search_hashtags', {
       p_query: query,
       p_limit: limit
     });
@@ -143,7 +168,7 @@ export const hashtagService = {
    * Toggle follow/unfollow a hashtag
    */
   async toggleFollow(hashtagId: string, userId: string): Promise<boolean> {
-    const { data, error } = await (supabase.rpc as any)('toggle_hashtag_follow', {
+    const { data, error } = await (supabase.rpc as SupabaseRpc)('toggle_hashtag_follow', {
       p_hashtag_id: hashtagId,
       p_user_id: userId
     });
@@ -159,7 +184,7 @@ export const hashtagService = {
    * Check if a hashtag is reserved
    */
   async checkReserved(name: string): Promise<ReservedHashtagInfo> {
-    const { data, error } = await (supabase.rpc as any)('is_hashtag_reserved', {
+    const { data, error } = await (supabase.rpc as SupabaseRpc)('is_hashtag_reserved', {
       p_name: name
     });
 
@@ -175,7 +200,8 @@ export const hashtagService = {
    * Get hashtags a user is following
    */
   async getUserFollowedHashtags(userId: string): Promise<Hashtag[]> {
-    const { data, error } = await (supabase.from as any)('hashtag_followers')
+    const { data, error } = await supabase
+      .from('hashtag_followers')
       .select(`
         hashtag:hashtags(*)
       `)
@@ -185,7 +211,8 @@ export const hashtagService = {
       return [];
     }
 
-    return (data?.map((d: any) => d.hashtag).filter(Boolean) || []) as Hashtag[];
+    const results = data as unknown as HashtagFollowerJoin[];
+    return results?.map(d => d.hashtag).filter((h): h is Hashtag => h !== null) || [];
   },
 
   /**

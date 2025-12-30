@@ -1,5 +1,30 @@
 import { supabase } from '@/integrations/supabase/client';
 
+// Metadata types for different search result types
+export interface ProfileMetadata {
+  location?: string | null;
+  role?: string | null;
+}
+
+export interface CommunityMetadata {
+  category?: string | null;
+  member_count?: number | null;
+}
+
+export interface EventMetadata {
+  location?: string | null;
+  date_time?: string | null;
+  event_type?: string | null;
+}
+
+export interface PostMetadata {
+  post_type?: string | null;
+  author?: string | null;
+  community?: string | null;
+}
+
+export type SearchMetadata = ProfileMetadata | CommunityMetadata | EventMetadata | PostMetadata;
+
 export interface SearchResult {
   id: string;
   type: 'profile' | 'community' | 'event' | 'post';
@@ -8,7 +33,7 @@ export interface SearchResult {
   avatar_url?: string;
   image_url?: string;
   created_at?: string;
-  metadata?: any;
+  metadata?: SearchMetadata;
 }
 
 export interface GlobalSearchResult {

@@ -1,5 +1,9 @@
 import { supabase } from '@/integrations/supabase/client';
 import { Professional } from '@/types/search';
+import type { Tables } from '@/integrations/supabase/types';
+
+// Profile type from database
+type ProfileRow = Tables<'profiles'>;
 
 export interface MatchingCriteria {
   skills?: string[];
@@ -88,7 +92,7 @@ class MatchingService {
 
       // Calculate match scores for each professional
       const matches = professionals
-        .map((prof: any) => this.calculateMatchScore(currentUser, prof, criteria))
+        .map((prof) => this.calculateMatchScore(currentUser, prof, criteria))
         .filter(match => match.score > 20) // Filter out very low matches
         .sort((a, b) => b.score - a.score)
         .slice(0, 50); // Return top 50 matches
@@ -102,7 +106,7 @@ class MatchingService {
   /**
    * Calculate comprehensive match score using 14+ criteria
    */
-  private calculateMatchScore(currentUser: any, professional: any, criteria: MatchingCriteria): MatchScore {
+  private calculateMatchScore(currentUser: ProfileRow, professional: ProfileRow, criteria: MatchingCriteria): MatchScore {
     let totalScore = 0;
     const reasons: string[] = [];
     const details = {
@@ -584,7 +588,7 @@ class MatchingService {
   /**
    * Mentorship match - considers both offering and seeking
    */
-  private calculateMentorshipMatch(user: any, prof: any): number {
+  private calculateMentorshipMatch(user: ProfileRow, prof: ProfileRow): number {
     let score = 0;
 
     // Direct mentor/mentee pairing
@@ -725,7 +729,7 @@ class MatchingService {
       if (!profiles) return [];
 
       // Map to Professional type with required fields
-      return profiles.map((p: any): Professional => ({
+      return profiles.map((p): Professional => ({
         id: p.id,
         username: p.username,
         full_name: p.full_name,

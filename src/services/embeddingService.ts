@@ -99,8 +99,21 @@ export async function generateEntityEmbedding(
   try {
     const vector = new Array(VECTOR_DIMENSION).fill(0);
 
+    // Entity data structure for embedding generation
+    interface EntityData {
+      tags?: string[];
+      focus_areas?: string[];
+      intents?: string[];
+      skills?: string[];
+      interests?: string[];
+      event_type?: string;
+      user_role?: string;
+      post_type?: string;
+      type?: string;
+    }
+
     // Get entity data based on type
-    let entityData: any = null;
+    let entityData: EntityData | null = null;
 
     switch (entityType) {
       case 'event':
@@ -264,7 +277,14 @@ export function cosineSimilarity(vec1: number[], vec2: number[]): number {
 
 // Helper functions
 
-function generateProfileBasedVector(profile: any): number[] {
+interface ProfileEmbeddingData {
+  intents?: string[];
+  user_role?: string;
+  skills?: string[];
+  interests?: string[];
+}
+
+function generateProfileBasedVector(profile: ProfileEmbeddingData): number[] {
   const vector = new Array(VECTOR_DIMENSION).fill(0);
   const features: string[] = [];
 

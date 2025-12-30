@@ -16,6 +16,27 @@ import type {
 } from '@/types/feedback';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 
+// Internal types for database results
+interface FeedbackMessageRow {
+  id: string;
+  channel_id: string;
+  sender_id: string;
+  content: string;
+  message_type: string;
+  parent_id: string | null;
+  created_at: string;
+  is_pinned: boolean;
+  is_deleted: boolean;
+  attachments?: FeedbackAttachment[];
+}
+
+interface SenderProfile {
+  id: string;
+  username: string | null;
+  full_name: string | null;
+  avatar_url: string | null;
+}
+
 const MESSAGES_PER_PAGE = 50;
 
 /**
@@ -202,17 +223,19 @@ export const feedbackService = {
     const nextCursor = hasMore ? messages[messages.length - 1]?.created_at : null;
 
     // Fetch sender profiles separately (no FK constraint exists)
-    const senderIds = [...new Set(messages.map((m: any) => m.sender_id))];
+    const typedMessages = messages as FeedbackMessageRow[];
+    const senderIds = [...new Set(typedMessages.map(m => m.sender_id))];
     const { data: profiles } = await supabase
       .from('profiles')
       .select('id, username, full_name, avatar_url')
       .in('id', senderIds);
-    
-    const profileMap = new Map((profiles || []).map((p: any) => [p.id, p]));
+
+    const typedProfiles = (profiles || []) as SenderProfile[];
+    const profileMap = new Map(typedProfiles.map(p => [p.id, p]));
 
     // Fetch reactions for each message and attach sender
     const messagesWithReactions = await Promise.all(
-      messages.map(async (msg: any) => {
+      typedMessages.map(async (msg) => {
         const reactions = await this.getReactions(msg.id);
         return {
           ...msg,
@@ -350,15 +373,17 @@ export const feedbackService = {
     if (!data || data.length === 0) return [];
 
     // Fetch sender profiles separately
-    const senderIds = [...new Set(data.map((m: any) => m.sender_id))];
+    const typedData = data as FeedbackMessageRow[];
+    const senderIds = [...new Set(typedData.map(m => m.sender_id))];
     const { data: profiles } = await supabase
       .from('profiles')
       .select('id, username, full_name, avatar_url')
       .in('id', senderIds);
-    
-    const profileMap = new Map((profiles || []).map((p: any) => [p.id, p]));
 
-    return data.map((msg: any) => ({
+    const typedProfiles = (profiles || []) as SenderProfile[];
+    const profileMap = new Map(typedProfiles.map(p => [p.id, p]));
+
+    return typedData.map((msg) => ({
       ...msg,
       sender: profileMap.get(msg.sender_id) || null,
     })) as unknown as FeedbackMessageWithSender[];

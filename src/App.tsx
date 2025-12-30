@@ -1,7 +1,8 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ViewStateProvider } from "@/contexts/ViewStateContext";
@@ -189,7 +190,7 @@ const RegionHubPage = lazy(() => import("./pages/africa/RegionHubPage"));
 const CountryHubPage = lazy(() => import("./pages/africa/CountryHubPage"));
 
 
-const queryClient = new QueryClient();
+// QueryClient configured in @/lib/queryClient.ts with centralized defaults
 
 // Auth guard component to prevent authenticated users from accessing auth-specific pages only
 const AuthGuard = ({ children, redirectAuth = false }: { children: React.ReactNode; redirectAuth?: boolean }) => {

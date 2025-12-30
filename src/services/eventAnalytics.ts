@@ -8,7 +8,7 @@ export type EventAnalyticsKind =
   | 'payment_failed'
   | 'registration_success';
 
-export async function trackEventAnalytics(eventId: string, kind: EventAnalyticsKind, payload?: Record<string, any>) {
+export async function trackEventAnalytics(eventId: string, kind: EventAnalyticsKind, payload?: Record<string, unknown>) {
   try {
     if (!eventId || !kind) return;
     await supabase.from('event_analytics').insert({

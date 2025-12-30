@@ -35,6 +35,34 @@ export interface ExperimentAssignment {
   assigned_at: Date;
 }
 
+// Internal types for query results with nested relations
+interface VariantAssignmentWithRelations {
+  id: string;
+  variant_id: string;
+  ada_experiment_variants: {
+    id: string;
+    name: string;
+    policy_id: string;
+    allocation: number;
+    ada_policies: AdaPolicy;
+  };
+}
+
+interface VariantStatsRow {
+  variant_id: string;
+  ada_experiment_variants: {
+    name: string;
+  };
+}
+
+interface VariantWithPolicy {
+  id: string;
+  name: string;
+  policy_id: string;
+  allocation: number;
+  ada_policies: AdaPolicy;
+}
+
 /**
  * Experiment Service
  * Handles variant assignment and experiment resolution
@@ -77,7 +105,8 @@ export class ExperimentService {
       .single();
 
     if (existingAssignment) {
-      const variant = (existingAssignment as any).ada_experiment_variants;
+      const typedAssignment = existingAssignment as unknown as VariantAssignmentWithRelations;
+      const variant = typedAssignment.ada_experiment_variants;
       return {
         id: variant.id,
         experiment_id: experimentId,
@@ -176,8 +205,9 @@ export class ExperimentService {
 
     // Count assignments per variant
     const stats: Record<string, { name: string; count: number }> = {};
-    
-    variantStats.forEach((assignment: any) => {
+    const typedStats = variantStats as unknown as VariantStatsRow[];
+
+    typedStats.forEach((assignment) => {
       const variantId = assignment.variant_id;
       const variantName = assignment.ada_experiment_variants.name;
 
@@ -250,17 +280,18 @@ export class ExperimentService {
       return null;
     }
 
+    const typedVariant = selectedVariant as unknown as VariantWithPolicy;
     return {
-      id: selectedVariant.id,
+      id: typedVariant.id,
       experiment_id: experimentId,
-      name: selectedVariant.name,
-      policy_id: selectedVariant.policy_id,
-      policy: (selectedVariant as any).ada_policies,
-      allocation: selectedVariant.allocation,
+      name: typedVariant.name,
+      policy_id: typedVariant.policy_id,
+      policy: typedVariant.ada_policies,
+      allocation: typedVariant.allocation,
     };
   }
 
-  private selectVariantByAllocation(variants: any[]): any {
+  private selectVariantByAllocation(variants: VariantWithPolicy[]): VariantWithPolicy | null {
     // Calculate cumulative weights
     let cumulative = 0;
     const cumulativeWeights = variants.map(v => {
