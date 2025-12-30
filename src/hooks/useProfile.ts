@@ -1,9 +1,19 @@
+/**
+ * useProfile - Current User's Own Profile
+ *
+ * Use this hook to get the authenticated user's own profile data.
+ * Includes realtime subscription for automatic updates.
+ *
+ * For viewing OTHER users' profiles, use useProfileV2 instead.
+ */
+
 import { useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { profilesService } from '@/services/profilesService';
+import { STALE_TIMES } from '@/lib/queryClient';
 
 interface ProfileChannelEntry {
   channel: RealtimeChannel;
@@ -60,7 +70,7 @@ export const useProfile = () => {
       }
     },
     enabled: !!user?.id,
-    staleTime: 5 * 60 * 1000,
+    staleTime: STALE_TIMES.profile,
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
