@@ -2,6 +2,7 @@
 import React from 'react';
 import { TYPOGRAPHY } from '@/lib/typography.config';
 import { Button } from '@/components/ui/button';
+import { config } from '@/lib/config';
 
 const EventPresenterSection: React.FC = () => {
   return (
@@ -11,7 +12,7 @@ const EventPresenterSection: React.FC = () => {
         <Button
           variant="ghost"
           className="p-0 h-auto min-w-[44px] min-h-[44px] hover:opacity-80"
-          onClick={() => window.open('https://diasporanetwork.africa', '_blank')}
+          onClick={() => window.open(config.APP_URL, '_blank')}
         >
           <img 
             src="/lovable-uploads/c6f51307-c7df-4a26-a66e-b99e88b55c53.png" 

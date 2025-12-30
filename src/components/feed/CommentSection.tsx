@@ -14,6 +14,7 @@ import { linkifyContent } from '@/utils/linkifyContent';
 import type { MentionSuggestion } from '@/hooks/useMentionAutocomplete';
 import { sendNotificationEmail, NOTIFICATION_TYPES } from '@/services/notificationService';
 import { mentionService } from '@/services/mentionService';
+import { getPostUrl } from '@/lib/config';
 
 interface CommentSectionProps {
   postId: string;
@@ -65,7 +66,7 @@ export function CommentSection({ postId, postAuthorId }: CommentSectionProps) {
           notification_type: NOTIFICATION_TYPES.COMMENT,
           title: 'New comment on your post',
           message: `${profile?.full_name || 'Someone'} commented: "${content.slice(0, 100)}${content.length > 100 ? '...' : ''}"`,
-          action_url: `https://diasporanetwork.africa/dna/convey/post/${postId}`,
+          action_url: getPostUrl(postId),
           actor_name: profile?.full_name,
           actor_avatar_url: profile?.avatar_url,
         }).catch(() => {

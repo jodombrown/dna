@@ -1,4 +1,5 @@
 import { createEvent, EventAttributes, DateArray } from 'ics';
+import { config } from '@/lib/config';
 
 interface EventData {
   id: string;
@@ -64,7 +65,7 @@ export function generateICSFile(event: EventData): { error?: Error; value?: stri
       name: event.organizer.full_name,
       email: event.organizer.email,
     } : undefined,
-    productId: 'diasporanetwork.africa',
+    productId: config.APP_DOMAIN,
   };
 
   return createEvent(eventAttributes);

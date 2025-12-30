@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { ReactionEmoji } from '@/types/reactions';
 import { useToast } from '@/hooks/use-toast';
 import { sendNotificationEmail, NOTIFICATION_TYPES } from '@/services/notificationService';
+import { getPostUrl } from '@/lib/config';
 
 interface ReactionData {
   emoji: ReactionEmoji;
@@ -85,7 +86,7 @@ export function usePostReactions(postId: string, userId?: string, notificationCo
           notification_type: NOTIFICATION_TYPES.REACTION,
           title: 'Someone reacted to your post',
           message: `${notificationContext.actorName || 'Someone'} reacted ${emoji} to your post`,
-          action_url: `https://diasporanetwork.africa/dna/convey/post/${postId}`,
+          action_url: getPostUrl(postId),
           actor_name: notificationContext.actorName,
           actor_avatar_url: notificationContext.actorAvatarUrl,
         }).catch(err => {

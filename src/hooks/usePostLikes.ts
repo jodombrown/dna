@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { sendNotificationEmail, NOTIFICATION_TYPES } from '@/services/notificationService';
+import { getPostUrl } from '@/lib/config';
 
 interface LikeUser {
   user_id: string;
@@ -103,7 +104,7 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
             notification_type: NOTIFICATION_TYPES.POST_LIKE,
             title: 'Someone liked your post',
             message: `${notificationContext.actorName || 'Someone'} liked your post`,
-            action_url: `https://diasporanetwork.africa/dna/convey/post/${postId}`,
+            action_url: getPostUrl(postId),
             actor_name: notificationContext.actorName,
             actor_avatar_url: notificationContext.actorAvatarUrl,
           }).catch(err => {

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Copy, ExternalLink, X } from 'lucide-react';
 import { Event } from '@/types/search';
 import { useToast } from '@/hooks/use-toast';
+import { getEventUrl } from '@/lib/config';
 
 interface EventNavigationHeaderProps {
   event: Event;
@@ -31,7 +32,7 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
       .replace(/\s+/g, '-')
       .substring(0, 30);
     const eventId = event.id.substring(0, 8);
-    return `https://diasporanetwork.africa/dna/convene/events/${eventSlug}-${eventId}`;
+    return getEventUrl(eventSlug, eventId);
   };
 
   const handleCopyLink = async () => {

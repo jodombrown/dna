@@ -2,6 +2,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { ConnectionStatus, Connection, ConnectionRequest, ConnectionProfile, ConnectionRecommendation } from '@/types/connections';
 import { BlockedUser } from '@/types/blocked';
 import { sendNotificationEmail, NOTIFICATION_TYPES } from './notificationService';
+import { getAppUrl, getProfileUrl, APP_PATHS } from '@/lib/config';
 
 export const connectionService = {
   async sendConnectionRequest(receiverId: string, message?: string) {
@@ -60,7 +61,7 @@ export const connectionService = {
       notification_type: NOTIFICATION_TYPES.CONNECTION_REQUEST,
       title: 'New Connection Request',
       message: message || `${requesterProfile?.full_name || 'Someone'} wants to connect with you on DNA.`,
-      action_url: 'https://diasporanetwork.africa/dna/connect/network',
+      action_url: getAppUrl(APP_PATHS.connect.network),
       actor_name: requesterProfile?.full_name,
       actor_avatar_url: requesterProfile?.avatar_url,
     }).catch(() => {});
@@ -94,7 +95,7 @@ export const connectionService = {
         notification_type: NOTIFICATION_TYPES.CONNECTION_ACCEPTED,
         title: 'Connection Request Accepted',
         message: `${accepterProfile?.full_name || 'Someone'} accepted your connection request. You are now connected!`,
-        action_url: `https://diasporanetwork.africa/u/${accepterProfile?.full_name?.toLowerCase().replace(/\s+/g, '-') || user.id}`,
+        action_url: getProfileUrl(accepterProfile?.full_name || user.id),
         actor_name: accepterProfile?.full_name,
         actor_avatar_url: accepterProfile?.avatar_url,
       }).catch(() => {});
