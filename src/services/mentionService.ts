@@ -49,7 +49,6 @@ export const mentionService = {
       .or(orFilters);
 
     if (error) {
-      console.error('[mentionService] Error resolving usernames:', error);
       return [];
     }
 
@@ -72,19 +71,13 @@ export const mentionService = {
     try {
       const usernames = this.extractMentions(content);
       if (!usernames.length) {
-        console.log('[mentionService] No mentions found in post');
         return;
       }
-
-      console.log('[mentionService] Found mentions in post:', usernames);
 
       const mentionedUsers = await this.resolveUsernames(usernames);
       if (!mentionedUsers.length) {
-        console.log('[mentionService] No matching users found for mentions');
         return;
       }
-
-      console.log('[mentionService] Resolved users:', mentionedUsers.map(u => u.username));
 
       // Create notification for each mentioned user (except the author)
       const usersToNotify = mentionedUsers.filter(user => user.id !== authorId);
@@ -92,9 +85,7 @@ export const mentionService = {
       for (const user of usersToNotify) {
         const preview = content.slice(0, 100);
 
-        console.log('[mentionService] Creating post mention notification for:', user.username);
-
-        const result = await createNotification({
+        await createNotification({
           user_id: user.id,
           type: NOTIFICATION_TYPES.MENTION,
           title: 'You were mentioned in a post',
@@ -108,13 +99,9 @@ export const mentionService = {
             mention_type: 'post',
           },
         });
-
-        console.log('[mentionService] Post mention notification result:', result);
       }
-
-      console.log(`[mentionService] Created ${usersToNotify.length} mention notifications for post ${postId}`);
-    } catch (error) {
-      console.error('[mentionService] Error processing mentions for post:', error);
+    } catch {
+      // Silently ignore mention processing errors
     }
   },
 
@@ -136,19 +123,13 @@ export const mentionService = {
     try {
       const usernames = this.extractMentions(content);
       if (!usernames.length) {
-        console.log('[mentionService] No mentions found in comment');
         return;
       }
-
-      console.log('[mentionService] Found mentions in comment:', usernames);
 
       const mentionedUsers = await this.resolveUsernames(usernames);
       if (!mentionedUsers.length) {
-        console.log('[mentionService] No matching users found for mentions');
         return;
       }
-
-      console.log('[mentionService] Resolved users:', mentionedUsers.map(u => u.username));
 
       // Create notification for each mentioned user (except the author)
       const usersToNotify = mentionedUsers.filter(user => user.id !== authorId);
@@ -156,9 +137,7 @@ export const mentionService = {
       for (const user of usersToNotify) {
         const preview = content.slice(0, 100);
 
-        console.log('[mentionService] Creating comment mention notification for:', user.username);
-
-        const result = await createNotification({
+        await createNotification({
           user_id: user.id,
           type: NOTIFICATION_TYPES.MENTION,
           title: 'You were mentioned in a comment',
@@ -173,13 +152,9 @@ export const mentionService = {
             mention_type: 'comment',
           },
         });
-
-        console.log('[mentionService] Comment mention notification result:', result);
       }
-
-      console.log(`[mentionService] Created ${usersToNotify.length} mention notifications for comment ${commentId}`);
-    } catch (error) {
-      console.error('[mentionService] Error processing mentions for comment:', error);
+    } catch {
+      // Silently ignore mention processing errors
     }
   },
 };

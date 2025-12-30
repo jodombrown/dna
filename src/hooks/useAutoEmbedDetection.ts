@@ -66,7 +66,6 @@ export const useAutoEmbedDetection = () => {
       return embedData;
     }
 
-    console.log('[useAutoEmbedDetection] Fetching preview for:', url);
     setLoading(true);
     lastFetchedUrl.current = url;
 
@@ -76,16 +75,12 @@ export const useAutoEmbedDetection = () => {
         body: { url }
       });
 
-      console.log('[useAutoEmbedDetection] Response:', { data, error });
-
       if (error) {
-        console.error('[useAutoEmbedDetection] Error:', error);
         throw error;
       }
 
       // Check if service returned an error
       if (data?.error) {
-        console.warn('[useAutoEmbedDetection] Service error:', data.error);
         setEmbedData(null);
         return null;
       }
@@ -112,12 +107,9 @@ export const useAutoEmbedDetection = () => {
         is_video: isVideo,
       };
 
-      console.log('[useAutoEmbedDetection] Enriched data:', enrichedData);
       setEmbedData(enrichedData);
       return enrichedData;
-    } catch (error) {
-      console.error('[useAutoEmbedDetection] Fetch error:', error);
-      
+    } catch {
       // Fallback: create basic preview from URL - NO video assumption without API confirmation
       try {
         const urlObj = new URL(url);
@@ -146,14 +138,11 @@ export const useAutoEmbedDetection = () => {
     }
 
     const urls = extractUrls(content);
-    console.log('[useAutoEmbedDetection] Detected URLs:', urls);
-    
+
     if (urls.length > 0) {
       // Use the first URL found - no longer prioritize video URLs since we can't know type until API returns
       const urlToFetch = urls[0];
-      
-      console.log('[useAutoEmbedDetection] Will fetch:', urlToFetch);
-      
+
       // Debounce the fetch to avoid hammering the API while typing
       debounceTimer.current = setTimeout(() => {
         fetchEmbedData(urlToFetch);

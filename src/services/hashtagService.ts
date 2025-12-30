@@ -67,7 +67,6 @@ export const hashtagService = {
       });
 
     if (error) {
-      console.error('Error fetching trending hashtags:', error);
       return [];
     }
 
@@ -94,7 +93,6 @@ export const hashtagService = {
     });
 
     if (error) {
-      console.error('Error fetching hashtag details:', error);
       return null;
     }
 
@@ -119,7 +117,6 @@ export const hashtagService = {
     });
 
     if (error) {
-      console.error('Error fetching hashtag posts:', error);
       return [];
     }
 
@@ -136,7 +133,6 @@ export const hashtagService = {
     });
 
     if (error) {
-      console.error('Error searching hashtags:', error);
       return [];
     }
 
@@ -153,7 +149,6 @@ export const hashtagService = {
     });
 
     if (error) {
-      console.error('Error toggling hashtag follow:', error);
       throw error;
     }
 
@@ -169,7 +164,6 @@ export const hashtagService = {
     });
 
     if (error) {
-      console.error('Error checking reserved hashtag:', error);
       return { is_reserved: false, category: null, reason: null, can_be_used: true };
     }
 
@@ -188,7 +182,6 @@ export const hashtagService = {
       .eq('user_id', userId);
 
     if (error) {
-      console.error('Error fetching followed hashtags:', error);
       return [];
     }
 

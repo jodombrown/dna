@@ -23,7 +23,6 @@ export async function fetchPosts(): Promise<PostWithAuthor[]> {
   });
 
   if (error) {
-    console.error('Error fetching posts:', error);
     throw error;
   }
 
@@ -56,7 +55,6 @@ export async function getPostDetails(postId: string): Promise<PostWithAuthor | n
   });
 
   if (error) {
-    console.error('Error fetching post details:', error);
     throw error;
   }
 
@@ -76,7 +74,6 @@ export async function getPostComments(postId: string): Promise<PostComment[]> {
   });
 
   if (error) {
-    console.error('Error fetching comments:', error);
     throw error;
   }
 
@@ -92,7 +89,6 @@ export async function getPostLikers(postId: string): Promise<PostLiker[]> {
   });
 
   if (error) {
-    console.error('Error fetching likers:', error);
     throw error;
   }
 
@@ -125,7 +121,6 @@ export async function createPost(input: CreatePostInput): Promise<{ id: string }
   }).select('id').single();
 
   if (error) {
-    console.error('Error creating post:', error);
     throw error;
   }
 
@@ -137,14 +132,14 @@ export async function createPost(input: CreatePostInput): Promise<{ id: string }
       data.id,
       user.id,
       authorName
-    ).catch(err => console.error('Failed to process post mentions:', err));
-    
+    ).catch(() => {});
+
     // Process hashtags - extract and create/link them
     (supabase.rpc as any)('process_post_hashtags', {
       p_content: input.content,
       p_post_id: data.id,
       p_user_id: user.id
-    }).catch((err: Error) => console.error('Failed to process post hashtags:', err));
+    }).catch(() => {});
   }
 
   return data;
@@ -163,7 +158,6 @@ export async function likePost(postId: string): Promise<void> {
   });
 
   if (error && error.code !== '23505') { // Ignore duplicate key errors
-    console.error('Error liking post:', error);
     throw error;
   }
 }
@@ -182,7 +176,6 @@ export async function unlikePost(postId: string): Promise<void> {
     .eq('user_id', user.id);
 
   if (error) {
-    console.error('Error unliking post:', error);
     throw error;
   }
 }
@@ -201,7 +194,6 @@ export async function deletePost(postId: string): Promise<void> {
     .eq('author_id', user.id);
 
   if (error) {
-    console.error('Error deleting post:', error);
     throw error;
   }
 }
@@ -231,7 +223,6 @@ export async function createComment(postId: string, content: string): Promise<an
     .single();
 
   if (error) {
-    console.error('Error creating comment:', error);
     throw error;
   }
 
@@ -244,7 +235,7 @@ export async function createComment(postId: string, content: string): Promise<an
       postId,
       user.id,
       authorName
-    ).catch(err => console.error('Failed to process comment mentions:', err));
+    ).catch(() => {});
   }
 
   return data;
@@ -264,7 +255,6 @@ export async function updateComment(commentId: string, content: string): Promise
     .eq('user_id', user.id);
 
   if (error) {
-    console.error('Error updating comment:', error);
     throw error;
   }
 }
@@ -283,7 +273,6 @@ export async function deleteComment(commentId: string): Promise<void> {
     .eq('user_id', user.id);
 
   if (error) {
-    console.error('Error deleting comment:', error);
     throw error;
   }
 }

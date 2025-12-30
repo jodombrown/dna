@@ -96,8 +96,6 @@ export const messageService = {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    console.log('[messageService] Getting or creating conversation with:', otherUserId);
-
     // First, check if conversation already exists (current user could be user_a OR user_b)
     const { data: existingConversation, error: findError } = await supabase
       .from('conversations')
@@ -106,17 +104,14 @@ export const messageService = {
       .maybeSingle();
 
     if (findError) {
-      console.error('[messageService] Error finding conversation:', findError);
       throw findError;
     }
 
     if (existingConversation) {
-      console.log('[messageService] Found existing conversation:', existingConversation.id);
       return { id: existingConversation.id };
     }
 
     // Create new conversation - current user is user_a, other user is user_b
-    console.log('[messageService] Creating new conversation');
     const { data: newConversation, error: createError } = await supabase
       .from('conversations')
       .insert({
@@ -127,11 +122,9 @@ export const messageService = {
       .single();
 
     if (createError) {
-      console.error('[messageService] Error creating conversation:', createError);
       throw createError;
     }
 
-    console.log('[messageService] Created new conversation:', newConversation.id);
     return { id: newConversation.id };
   },
 
@@ -150,7 +143,6 @@ async getConversationDetails(conversationId: string): Promise<ConversationListIt
       .single();
 
     if (error || !conversation) {
-      console.error('[messageService] Error getting conversation:', error);
       return null;
     }
 
@@ -217,7 +209,6 @@ async getConversations(
       .limit(limit);
 
     if (error) {
-      console.error('[messageService] Error getting conversations:', error);
       throw error;
     }
 
@@ -309,8 +300,6 @@ async getConversations(
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    console.log('[messageService] getMessages: Fetching messages for conversation:', conversationId);
-
     // Get messages - query only columns that definitely exist
     // Note: deleted_at may not exist if migration hasn't been applied yet
     const { data: messages, error } = await supabase
@@ -321,11 +310,8 @@ async getConversations(
       .limit(limit);
 
     if (error) {
-      console.error('[messageService] Error getting messages:', error);
       throw error;
     }
-
-    console.log('[messageService] getMessages: Found', messages?.length || 0, 'messages');
 
     if (!messages || messages.length === 0) {
       return [];
@@ -373,8 +359,6 @@ async getConversations(
       throw new Error('Message must have content, attachment, or link preview');
     }
 
-    console.log('[messageService] Sending message to conversation:', conversationId);
-
     // Build payload if there's an attachment or link preview
     const payload: MessagePayload | null = (attachment || linkPreview) ? { 
       attachment, 
@@ -395,7 +379,6 @@ async getConversations(
       .single();
 
     if (error) {
-      console.error('[messageService] Error sending message:', error);
       throw error;
     }
 
@@ -433,13 +416,12 @@ async getConversations(
           action_url: `https://diasporanetwork.africa/dna/messages?conversation=${conversationId}`,
           actor_name: senderProfile?.full_name,
           actor_avatar_url: senderProfile?.avatar_url,
-        }).catch(err => console.error('Failed to send message email:', err));
+        }).catch(() => {});
       }
-    } catch (emailError) {
-      console.error('[messageService] Error sending message email notification:', emailError);
+    } catch {
+      // Ignore email notification errors
     }
 
-    console.log('[messageService] Message sent successfully');
     return data as Message;
   },
 
@@ -449,27 +431,20 @@ async getConversations(
   async markAsRead(conversationId: string): Promise<void> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      console.error('[messageService] markAsRead: Not authenticated');
       throw new Error('Not authenticated');
     }
 
-    console.log('[messageService] markAsRead: Marking messages as read for conversation:', conversationId);
-
     // Mark all messages in this conversation as read (except own messages)
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('messages')
       .update({ read: true })
       .eq('conversation_id', conversationId)
       .eq('read', false) // Only update unread messages
-      .neq('sender_id', user.id)
-      .select('id');
+      .neq('sender_id', user.id);
 
     if (error) {
-      console.error('[messageService] markAsRead: Error updating messages:', error);
       throw error;
     }
-
-    console.log('[messageService] markAsRead: Updated messages:', data?.length || 0);
   },
 
   /**
@@ -709,7 +684,6 @@ async getConversations(
       .single();
 
     if (error) {
-      console.error('Error reporting message:', error);
       throw new Error('Failed to report message');
     }
 
@@ -734,7 +708,6 @@ async getConversations(
       .eq('message_id', messageId);
 
     if (error) {
-      console.error('[messageService] Error getting reactions:', error);
       return [];
     }
 
@@ -773,7 +746,6 @@ async getConversations(
       });
 
     if (error && !error.message?.includes('duplicate')) {
-      console.error('[messageService] Error adding reaction:', error);
       throw error;
     }
   },
@@ -793,7 +765,6 @@ async getConversations(
       .eq('reaction', emoji);
 
     if (error) {
-      console.error('[messageService] Error removing reaction:', error);
       throw error;
     }
   },
@@ -937,18 +908,9 @@ async getConversations(
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    console.log('[messageService] Sending voice message:', {
-      conversationId,
-      blobSize: audioBlob.size,
-      duration,
-      type: audioBlob.type,
-    });
-
     // Upload audio to storage
     const fileName = `voice-${user.id}-${Date.now()}.webm`;
     const filePath = `voice-messages/${conversationId}/${fileName}`;
-
-    console.log('[messageService] Uploading to storage:', filePath);
 
     const { error: uploadError } = await supabase.storage
       .from('messages')
@@ -958,21 +920,16 @@ async getConversations(
       });
 
     if (uploadError) {
-      console.error('[messageService] Error uploading voice message:', uploadError);
       throw new Error(`Failed to upload voice message: ${uploadError.message}`);
     }
-
-    console.log('[messageService] Upload successful, getting public URL');
 
     // Get public URL
     const { data: urlData } = supabase.storage
       .from('messages')
       .getPublicUrl(filePath);
 
-    console.log('[messageService] Public URL:', urlData.publicUrl);
-
     // Send message with voice attachment
-    const result = await this.sendMessage(conversationId, '🎤 Voice message', {
+    return await this.sendMessage(conversationId, '🎤 Voice message', {
       type: 'voice',
       url: urlData.publicUrl,
       filename: fileName,
@@ -980,9 +937,6 @@ async getConversations(
       filesize: audioBlob.size,
       duration: duration,
     });
-
-    console.log('[messageService] Voice message sent successfully:', result.id);
-    return result;
   },
 };
 

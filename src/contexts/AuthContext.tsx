@@ -42,43 +42,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .maybeSingle();
       
       if (error) {
-        console.error('Error fetching profile:', error);
         return;
       }
-      
+
       if (!data) {
         // Profile should have been created by trigger, but if not, wait a bit longer
         // Give the database trigger more time to complete (increased from 100ms)
-        console.log('Profile not found, waiting for trigger to complete...');
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         // Try one more time
         const { data: retryData, error: retryError } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', userId)
           .maybeSingle();
-        
+
         if (retryError) {
-          console.error('Error on retry fetch:', retryError);
           return;
         }
-        
+
         if (retryData) {
           setProfile(retryData);
           return;
         }
-        
-        // If still no profile, the trigger failed - log error but don't try to create manually
-        // The user will need to contact support or the trigger needs to be fixed
-        console.error('Profile creation trigger failed for user:', userId);
-        console.error('Please check database triggers and RLS policies');
+
+        // If still no profile, the trigger failed
         return;
       }
-      
+
       setProfile(data);
-    } catch (error) {
-      console.error('Error fetching profile:', error);
+    } catch {
+      // Silently ignore profile fetch errors
     }
   };
 
@@ -94,8 +88,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        console.log('Auth state changed:', event, session);
+      (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -122,7 +115,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
-          console.error('Error getting session:', error);
           setIsInitialized(true);
           setLoading(false);
           return;
@@ -137,8 +129,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         setIsInitialized(true);
         setLoading(false);
-      } catch (error) {
-        console.error('Network error getting session:', error);
+      } catch {
         setIsInitialized(true);
         setLoading(false);
       }
@@ -165,7 +156,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
       
       if (error) {
-        console.error('Sign up error:', error);
         // Provide more specific error messages
         if (error.message.includes('already registered') || error.message.includes('User already registered')) {
           return { error: { ...error, message: 'This email is already registered. Please sign in instead.' } };
@@ -194,8 +184,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       return { error };
-    } catch (networkError: any) {
-      console.error('Network error during sign up:', networkError);
+    } catch {
       return { 
         error: { 
           message: 'Unable to connect to the server. Please check your internet connection and try again.',
@@ -213,7 +202,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
       
       if (error) {
-        console.error('Sign in error:', error);
         // Provide more specific error messages
         if (error.message.includes('Invalid login credentials')) {
           return { error: { ...error, message: 'Invalid email or password. Please try again.' } };
@@ -227,8 +215,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       return { error, data: { user: data?.user ?? null } };
-    } catch (networkError: any) {
-      console.error('Network error during sign in:', networkError);
+    } catch {
       return { 
         error: { 
           message: 'Unable to connect to the server. Please check your internet connection and try again.',

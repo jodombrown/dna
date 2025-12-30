@@ -35,11 +35,9 @@ export const useRealtimeReactions = ({
   }, [onLikeUpdate]);
 
   useEffect(() => {
-    console.log('Setting up real-time reactions subscriptions...');
-    
     // Create unique channel names to avoid conflicts with feed realtime
     const channelId = `reactions-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
+
     // Subscribe to post reactions
     const reactionsChannel = supabase
       .channel(`realtime-reactions-${channelId}`)
@@ -48,46 +46,37 @@ export const useRealtimeReactions = ({
         schema: "public",
         table: "post_reactions"
       }, (payload) => {
-        console.log('Real-time reaction INSERT:', payload);
         handleReactionChange(payload, 'INSERT');
       })
       .on("postgres_changes", {
-        event: "DELETE", 
+        event: "DELETE",
         schema: "public",
         table: "post_reactions"
       }, (payload) => {
-        console.log('Real-time reaction DELETE:', payload);
         handleReactionChange(payload, 'DELETE');
       })
-      .subscribe((status) => {
-        console.log('Reactions channel status:', status);
-      });
+      .subscribe();
 
     // Subscribe to post likes
     const likesChannel = supabase
       .channel(`realtime-likes-${channelId}`)
       .on("postgres_changes", {
         event: "INSERT",
-        schema: "public", 
+        schema: "public",
         table: "post_likes"
       }, (payload) => {
-        console.log('Real-time like INSERT:', payload);
         handleLikeChange(payload, 'INSERT');
       })
       .on("postgres_changes", {
         event: "DELETE",
         schema: "public",
-        table: "post_likes" 
+        table: "post_likes"
       }, (payload) => {
-        console.log('Real-time like DELETE:', payload);
         handleLikeChange(payload, 'DELETE');
       })
-      .subscribe((status) => {
-        console.log('Likes channel status:', status);
-      });
+      .subscribe();
 
     return () => {
-      console.log('Cleaning up reactions real-time subscriptions');
       supabase.removeChannel(reactionsChannel);
       supabase.removeChannel(likesChannel);
     };
