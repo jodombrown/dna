@@ -279,7 +279,7 @@ export function PostCard({ post }: PostCardProps) {
   const isEdited = post.updated_at && post.updated_at !== post.created_at;
 
   return (
-    <Card className="p-6 space-y-4">
+    <Card className="p-4 sm:p-6 space-y-4">
       {/* Post Header */}
       <div className="flex items-start justify-between">
         <div className="flex gap-3">
@@ -344,7 +344,7 @@ export function PostCard({ post }: PostCardProps) {
 
       {/* Post Actions */}
       <div className="flex items-center justify-between border-t pt-3">
-        <div className="flex gap-6">
+        <div className="flex gap-3 sm:gap-6">
           {/* Reaction Picker */}
           <ReactionPicker onReactionSelect={(emoji) => {
             if (!user) {

@@ -355,7 +355,7 @@ export const CreateEventForm = ({ preselectedGroupId }: CreateEventFormProps = {
                       )}
                     />
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
                         name="location_city"
@@ -443,7 +443,7 @@ export const CreateEventForm = ({ preselectedGroupId }: CreateEventFormProps = {
                 <CardDescription>When will your event take place?</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="start_time"
