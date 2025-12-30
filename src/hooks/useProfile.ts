@@ -1,10 +1,16 @@
 import { useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { profilesService } from '@/services/profilesService';
 
-const profileChannelRegistry = new Map<string, { channel: any; refs: number }>();
+interface ProfileChannelEntry {
+  channel: RealtimeChannel;
+  refs: number;
+}
+
+const profileChannelRegistry = new Map<string, ProfileChannelEntry>();
 
 export const useProfile = () => {
   const { user } = useAuth();

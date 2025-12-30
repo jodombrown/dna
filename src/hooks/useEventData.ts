@@ -28,8 +28,8 @@ export const useEventData = (canManageEvents: boolean) => {
       }
 
       const creatorIds = eventsData?.map(event => event.organizer_id).filter(Boolean) || [];
-      
-      let profilesData = [];
+
+      let profilesData: Array<{ id: string; full_name: string | null; email: string | null }> = [];
       if (creatorIds.length > 0) {
         const { data: profiles, error: profilesError } = await supabase
           .from('profiles')
@@ -38,6 +38,7 @@ export const useEventData = (canManageEvents: boolean) => {
         
         if (!profilesError) {
           profilesData = profiles || [];
+        }
       }
 
       const transformedData: Event[] = (eventsData || []).map(event => {
@@ -52,8 +53,8 @@ export const useEventData = (canManageEvents: boolean) => {
           title: event.title,
           description: event.description || '',
           organizer_id: event.organizer_id,
-          event_type: event.event_type as any,
-          format: event.format as any,
+          event_type: event.event_type as Event['event_type'],
+          format: event.format as Event['format'],
           start_time: event.start_time,
           end_time: event.end_time,
           location_name: event.location_name,
@@ -82,10 +83,11 @@ export const useEventData = (canManageEvents: boolean) => {
       });
 
       setEvents(transformedData);
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
       toast({
         title: "Error",
-        description: `Failed to load events: ${error.message}`,
+        description: `Failed to load events: ${message}`,
         variant: "destructive",
       });
     } finally {

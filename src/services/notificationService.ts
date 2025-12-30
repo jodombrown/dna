@@ -7,7 +7,7 @@ interface CreateNotificationParams {
   title: string;
   message: string;
   link_url?: string;
-  payload?: Record<string, any>;
+  payload?: Record<string, unknown>;
 }
 
 interface NotificationEmailPayload {
@@ -52,13 +52,14 @@ export async function createNotification(params: CreateNotificationParams): Prom
       title: params.title,
       message: params.message,
       action_url: params.link_url ? getAppUrl(params.link_url) : undefined,
-      actor_name: params.payload?.actor_name,
-      actor_avatar_url: params.payload?.actor_avatar_url,
+      actor_name: params.payload?.actor_name as string | undefined,
+      actor_avatar_url: params.payload?.actor_avatar_url as string | undefined,
     }).catch(() => {});
 
     return { success: true, notificationId: notification.id };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return { success: false, error: message };
   }
 }
 
@@ -77,8 +78,9 @@ export async function sendNotificationEmail(payload: NotificationEmailPayload): 
     }
 
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return { success: false, error: message };
   }
 }
 

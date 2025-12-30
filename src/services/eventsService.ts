@@ -1,8 +1,13 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { Event } from '@/types/search';
 
-export const searchEvents = async (searchTerm: string = '', filters: any = {}): Promise<Event[]> => {
+interface EventSearchFilters {
+  type?: string;
+  is_virtual?: boolean;
+  upcoming_only?: boolean;
+}
+
+export const searchEvents = async (searchTerm: string = '', filters: EventSearchFilters = {}): Promise<Event[]> => {
   let query = supabase.from('events').select('*').eq('is_cancelled', false);
   
   if (searchTerm && searchTerm.trim()) {
