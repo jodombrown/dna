@@ -67,6 +67,11 @@ const AdminDashboardLayout = lazy(() => import("./components/admin/AdminDashboar
 const AdminDashboardOverview = lazy(() => import("./pages/admin/AdminDashboardOverview"));
 const AdminRouteGuard = lazy(() => import("./components/admin/AdminRouteGuard").then(m => ({ default: m.AdminRouteGuard })));
 
+// Admin Event Management
+const AdminEventManagement = lazy(() => import("./pages/admin/events/EventManagement"));
+const AdminEventModeration = lazy(() => import("./pages/admin/events/EventModeration"));
+const AdminEventAnalytics = lazy(() => import("./pages/admin/analytics/EventAnalytics"));
+
 // Static pages  
 const About = lazy(() => import("./pages/About"));
 const Install = lazy(() => import("./pages/Install"));
@@ -647,9 +652,13 @@ function App() {
                 <Route path="moderation" element={<ContentModeration />} />
                 <Route path="analytics" element={<EngagementDashboard />} />
                 <Route path="analytics/engagement" element={<EngagementDashboard />} />
+                <Route path="analytics/events" element={<AdminEventAnalytics />} />
                 <Route path="dia" element={<DiaAdminPage />} />
                 {/* Legacy admin route redirect (ADIN was renamed to DIA) */}
                 <Route path="adin" element={<Navigate to="/admin/dia" replace />} />
+                {/* Event Management Routes */}
+                <Route path="events" element={<AdminEventManagement />} />
+                <Route path="events/moderation" element={<AdminEventModeration />} />
               </Route>
 
               {/* Legacy Admin routes */}

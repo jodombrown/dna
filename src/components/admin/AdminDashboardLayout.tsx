@@ -84,8 +84,8 @@ const navigation: NavItem[] = [
     label: 'Events',
     children: [
       { icon: Calendar, label: 'All Events', href: '/admin/events' },
-      { icon: Calendar, label: 'Pending Review', href: '/admin/events/pending' },
-      { icon: Calendar, label: 'Analytics', href: '/admin/events/analytics' }
+      { icon: Calendar, label: 'Moderation', href: '/admin/events/moderation' },
+      { icon: Calendar, label: 'Analytics', href: '/admin/analytics/events' }
     ]
   },
   {
@@ -116,6 +116,7 @@ const navigation: NavItem[] = [
     children: [
       { icon: BarChart3, label: 'User Analytics', href: '/admin/analytics/users' },
       { icon: BarChart3, label: 'Engagement', href: '/admin/analytics/engagement' },
+      { icon: Calendar, label: 'Event Analytics', href: '/admin/analytics/events' },
       { icon: BarChart3, label: 'Growth', href: '/admin/analytics/growth' }
     ]
   },
