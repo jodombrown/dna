@@ -38,7 +38,6 @@ export const ConnectionButton: React.FC<ConnectionButtonProps> = ({
           .maybeSingle();
 
         if (error) {
-          console.error('Error checking connection status:', error);
           return;
         }
 
@@ -51,7 +50,7 @@ export const ConnectionButton: React.FC<ConnectionButtonProps> = ({
           }
         }
       } catch (error) {
-        console.error('Connection status check failed:', error);
+        // Error handled silently
       }
     };
 
@@ -96,11 +95,9 @@ export const ConnectionButton: React.FC<ConnectionButtonProps> = ({
         });
       } catch (analyticsError) {
         // Don't fail the main action if analytics fails
-        console.warn('Analytics logging failed:', analyticsError);
       }
 
     } catch (error: any) {
-      console.error('Connection request failed:', error);
       toast({
         title: "Connection failed",
         description: error.message || "Unable to send connection request. Please try again.",
@@ -130,7 +127,6 @@ export const ConnectionButton: React.FC<ConnectionButtonProps> = ({
       });
 
     } catch (error: any) {
-      console.error('Accept connection failed:', error);
       toast({
         title: "Failed to accept connection",
         description: error.message || "Please try again.",

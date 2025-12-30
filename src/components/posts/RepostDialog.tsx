@@ -41,7 +41,7 @@ export const RepostDialog: React.FC<RepostDialogProps> = ({
       setCommentary('');
       onClose();
     } catch (error) {
-      console.error('Error reposting:', error);
+      // Error is handled by parent component
     } finally {
       setIsSubmitting(false);
     }

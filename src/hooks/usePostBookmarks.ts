@@ -21,7 +21,6 @@ export function usePostBookmarks(postId: string, userId: string) {
         .eq('post_id', postId);
 
       if (error) {
-        console.error('Error fetching bookmark count:', error);
         return { count: 0 };
       }
 
@@ -42,7 +41,6 @@ export function usePostBookmarks(postId: string, userId: string) {
         .maybeSingle();
 
       if (error) {
-        console.error('Error checking bookmark status:', error);
         return { bookmarked: false };
       }
 
@@ -64,7 +62,6 @@ export function usePostBookmarks(postId: string, userId: string) {
           .eq('user_id', userId);
 
         if (error) {
-          console.error('Error removing bookmark:', error);
           throw error;
         }
       } else {
@@ -79,10 +76,8 @@ export function usePostBookmarks(postId: string, userId: string) {
         if (error) {
           // Handle duplicate key error as success (idempotent)
           if (error.code === '23505' || error.message?.includes('duplicate key value')) {
-            console.warn('Bookmark already exists (idempotent):', error);
             return;
           }
-          console.error('Error adding bookmark:', error);
           throw error;
         }
       }
@@ -94,7 +89,6 @@ export function usePostBookmarks(postId: string, userId: string) {
       queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
     },
     onError: (error: any) => {
-      console.error('Error toggling bookmark:', error);
       toast({
         variant: 'default',
         description: 'Could not update bookmark. Please try again.',

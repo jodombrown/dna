@@ -85,7 +85,6 @@ export async function generateUserEmbedding(userId: string): Promise<number[]> {
     // Normalize vector
     return normalizeVector(vector);
   } catch (error) {
-    console.error('Error generating user embedding:', error);
     return new Array(VECTOR_DIMENSION).fill(0);
   }
 }
@@ -188,7 +187,6 @@ export async function generateEntityEmbedding(
 
     return normalizeVector(vector);
   } catch (error) {
-    console.error('Error generating entity embedding:', error);
     return new Array(VECTOR_DIMENSION).fill(0);
   }
 }
@@ -210,7 +208,7 @@ export async function saveUserVector(userId: string, source: 'interactions' | 'p
       onConflict: 'user_id',
     });
   } catch (error) {
-    console.error('Error saving user vector:', error);
+    // Silently fail - vector storage is non-critical
   }
 }
 
@@ -236,7 +234,7 @@ export async function saveEntityVector(
       onConflict: 'entity_type,entity_id',
     });
   } catch (error) {
-    console.error('Error saving entity vector:', error);
+    // Silently fail - vector storage is non-critical
   }
 }
 

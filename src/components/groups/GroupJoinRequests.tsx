@@ -114,7 +114,6 @@ export function GroupJoinRequests({ groupId }: GroupJoinRequestsProps) {
       });
     },
     onError: (error) => {
-      console.error('Request error:', error);
       toast({
         title: 'Error',
         description: 'Failed to process request',

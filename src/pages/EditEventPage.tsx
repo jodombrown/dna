@@ -224,7 +224,6 @@ export default function EditEventPage() {
       navigate(`/dna/convene/events/${id}`);
     },
     onError: (error: Error) => {
-      console.error('Update error:', error);
       toast({
         title: 'Error',
         description: error.message || 'Failed to update event',

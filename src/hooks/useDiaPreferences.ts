@@ -91,13 +91,12 @@ export const useUpdateDiaPreferences = () => {
         description: 'Your notification preferences have been saved.',
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         title: 'Error',
         description: 'Failed to update preferences. Please try again.',
         variant: 'destructive',
       });
-      console.error('Error updating preferences:', error);
     },
   });
 };

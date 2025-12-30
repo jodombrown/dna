@@ -42,7 +42,6 @@ const LeaderboardsByRegion = () => {
       if (error) throw error;
       setLeaderboardData(data || []);
     } catch (error) {
-      console.error('Error fetching leaderboards:', error);
       setLeaderboardData([]);
     } finally {
       setLoading(false);

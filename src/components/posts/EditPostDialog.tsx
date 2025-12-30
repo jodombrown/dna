@@ -51,7 +51,6 @@ export function EditPostDialog({
       onOpenChange(false);
       onSuccess?.();
     } catch (error) {
-      console.error('Error updating post:', error);
       toast.error('Failed to update post');
     } finally {
       setIsSubmitting(false);

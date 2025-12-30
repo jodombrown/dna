@@ -110,8 +110,6 @@ export default function Discover() {
       let rows = data as any[] | null;
 
       if (error) {
-        console.error('Error loading members via RPC discover_members:', error);
-
         // Hotfix fallback: simple profiles query so the page still works
         let q = supabase
           .from('profiles')
@@ -136,7 +134,6 @@ export default function Discover() {
 
         const { data: fbData, error: fbError } = await q;
         if (fbError) {
-          console.error('Fallback profiles query failed:', fbError);
           rows = [];
         } else {
           // Map to expected shape with a default match_score

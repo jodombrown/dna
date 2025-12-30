@@ -60,7 +60,6 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ value, onUploaded }) =>
       onUploaded(url);
       toast({ title: "Uploaded", description: "Profile photo updated." });
     } catch (err: any) {
-      console.error(err);
       toast({ title: "Upload failed", description: err.message || "Try again.", variant: "destructive" });
     } finally {
       setUploading(false);

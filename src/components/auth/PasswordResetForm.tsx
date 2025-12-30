@@ -40,7 +40,6 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ onBackToAuth }) =
       });
 
       if (error) {
-        console.error('Password reset error:', error);
         toast({
           title: "Reset Failed",
           description: error.message || "Failed to send reset email. Please try again.",
@@ -54,7 +53,6 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ onBackToAuth }) =
         });
       }
     } catch (error: any) {
-      console.error('Unexpected password reset error:', error);
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again later.",

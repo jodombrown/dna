@@ -134,26 +134,8 @@ const ProfileV2: React.FC = () => {
     return <PublicProfileLandingView bundle={bundle} />;
   }
 
-  // === DEFENSIVE LOGGING (Development Mode) ===
-  if (import.meta.env.DEV) {
-    console.group(`🧬 ProfileV2 Bundle Debug [${username}]`);
-    console.log('Raw bundle:', bundle);
-    console.log('Bundle keys:', Object.keys(bundle));
-    console.log('Expected structure check:', {
-      'bundle.profile exists': !!bundle.profile,
-      'bundle.tags exists': !!bundle.tags,
-      'bundle.activity exists': !!bundle.activity,
-      'bundle.permissions exists': !!bundle.permissions,
-      'bundle.permissions?.is_owner': bundle.permissions?.is_owner,
-      'bundle.isOwner (flat)': (bundle as any).isOwner,
-      'bundle.visibility exists': !!bundle.visibility,
-      'bundle.completion exists': !!bundle.completion,
-      'bundle.verification_meta exists': !!bundle.verification_meta,
-    });
-    console.log('Profile fields:', bundle.profile ? Object.keys(bundle.profile) : 'MISSING');
-    console.log('full_name value:', bundle.profile?.full_name, '| type:', typeof bundle.profile?.full_name);
-    console.groupEnd();
-  }
+  // === Bundle structure check (Development Mode) ===
+  // Bundle validation happens here in development
 
   // Normalize the bundle - handle both flat RPC response and expected structure
   const profile = bundle.profile;
@@ -181,16 +163,6 @@ const ProfileV2: React.FC = () => {
   const completion = bundle.completion ?? { score: 0, suggested_actions: [] };
   const verification_meta = bundle.verification_meta ?? { tier: 'pending' };
 
-  // === LOG NORMALIZED VALUES (Development Mode) ===
-  if (import.meta.env.DEV) {
-    console.log('🧬 ProfileV2 Normalized Values:', {
-      'permissions.is_owner': permissions.is_owner,
-      'visibility': visibility,
-      'completion.score': completion.score,
-      'verification_meta.tier': verification_meta.tier,
-    });
-  }
-  
   const profileForCompletion = permissions.is_owner && ownerProfile ? ownerProfile : profile;
 
   // Check if this is a private profile (all main sections hidden for non-owner)
@@ -253,7 +225,7 @@ const ProfileV2: React.FC = () => {
         profile={profile}
         permissions={permissions}
         onEdit={() => permissions.is_owner && navigate('/dna/profile/edit')}
-        onConnect={() => console.log('Connect clicked')}
+        onConnect={() => {}}
         onMessage={() => openMessageOverlay(profile.id)}
       />
 

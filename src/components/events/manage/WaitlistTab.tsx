@@ -51,7 +51,6 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ eventId }) => {
         full_name: profilesMap[d.user_id]?.full_name,
       })));
     } catch (e) {
-      console.error(e);
       toast.error('Failed to load waitlist');
     } finally {
       setLoading(false);
@@ -68,7 +67,6 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ eventId }) => {
       if (data) toast.success('Promoted next in waitlist'); else toast.message('No one on waitlist');
       await load();
     } catch (e) {
-      console.error(e);
       toast.error('Failed to promote from waitlist');
     } finally {
       setPromoting(false);
@@ -83,7 +81,6 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ eventId }) => {
       toast.success('User promoted from waitlist');
       await load();
     } catch (e) {
-      console.error(e);
       toast.error('Failed to promote user');
     } finally {
       setPromoting(false);
@@ -101,7 +98,6 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ eventId }) => {
       toast.success('Removed from waitlist');
       await load();
     } catch (e) {
-      console.error(e);
       toast.error('Failed to remove from waitlist');
     }
   };

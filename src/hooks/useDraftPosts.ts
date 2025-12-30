@@ -58,7 +58,6 @@ export const useDraftPosts = () => {
       toast.success('Draft saved');
     },
     onError: (error: any) => {
-      console.error('Error saving draft:', error);
       toast.error('Failed to save draft');
     },
   });
@@ -86,7 +85,6 @@ export const useDraftPosts = () => {
       toast.success('Draft updated');
     },
     onError: (error: any) => {
-      console.error('Error updating draft:', error);
       toast.error('Failed to update draft');
     },
   });
@@ -105,7 +103,6 @@ export const useDraftPosts = () => {
       toast.success('Draft deleted');
     },
     onError: (error: any) => {
-      console.error('Error deleting draft:', error);
       toast.error('Failed to delete draft');
     },
   });

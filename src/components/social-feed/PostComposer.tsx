@@ -252,7 +252,6 @@ export const PostComposer: React.FC<PostComposerProps> = ({
 
       onPostCreated?.();
     } catch (error) {
-      console.error('Error creating post:', error);
       toast({
         title: "Error creating post",
         description: error instanceof Error ? error.message : "Failed to create your post. Please try again.",

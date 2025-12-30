@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { usePresenceHeartbeat } from '@/hooks/usePresence';
 import { ConversationOriginType, OriginMetadata } from '@/types/messaging';
+import { logger } from '@/lib/logger';
 
 interface OpenMessageOverlayParams {
   recipientId: string;
@@ -85,7 +86,7 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
       setCurrentConversationId(conversation.id);
       setIsOverlayOpen(true);
     } catch (error: any) {
-      console.error('Failed to open conversation:', error);
+      logger.error('MessageContext', 'Failed to open conversation', error);
 
       // Handle connection requirement error - now allows message requests
       if (error?.message?.includes('Cannot message')) {

@@ -58,7 +58,6 @@ export const ConnectionRequestCard: React.FC<ConnectionRequestCardProps> = ({
       });
       onRequestHandled?.();
     } catch (error: any) {
-      console.error('Accept error:', error);
       toast({
         title: 'Error accepting request',
         description: error.message || 'Please try again.',
@@ -88,7 +87,6 @@ export const ConnectionRequestCard: React.FC<ConnectionRequestCardProps> = ({
       });
       onRequestHandled?.();
     } catch (error: any) {
-      console.error('Decline error:', error);
       toast({
         title: 'Error declining request',
         description: error.message || 'Please try again.',

@@ -36,7 +36,6 @@ export const seedDataService = {
   // Export data as JSON or CSV - temporarily disabled due to TypeScript issues
   async exportData(format: 'json' | 'csv' = 'json') {
     // TODO: Implement export functionality once TypeScript issues are resolved
-    console.warn('Export functionality temporarily disabled due to TypeScript type issues');
     return {
       profiles: [],
       connections: [],
@@ -47,7 +46,6 @@ export const seedDataService = {
 
   // Clear all seeded data - temporarily disabled
   async clearSeedData() {
-    console.warn('Clear functionality temporarily disabled due to TypeScript type issues');
     return { success: true, message: 'Function temporarily disabled' };
   },
 
@@ -58,7 +56,6 @@ export const seedDataService = {
     posts: any[];
     events: any[];
   }) {
-    console.warn('Import functionality temporarily disabled due to TypeScript type issues');
     return {
       success: true,
       message: 'Function temporarily disabled',

@@ -35,7 +35,7 @@ const FactSheetPage = () => {
           url: window.location.href,
         });
       } catch (err) {
-        console.log('Share failed:', err);
+        // Share failed
       }
     }
   };
@@ -75,7 +75,6 @@ const FactSheetPage = () => {
       setDialogOpen(false);
       setFormData({ name: '', email: '', organization: '', message: '' });
     } catch (error) {
-      console.error('Error sending message:', error);
       toast({
         title: "Failed to send message",
         description: "Please try again later.",

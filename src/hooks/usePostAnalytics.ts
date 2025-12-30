@@ -18,8 +18,8 @@ export const usePostAnalytics = () => {
         p_event_type: eventType,
         p_metadata: metadata || {}
       });
-    } catch (error) {
-      console.error('Error logging post event:', error);
+    } catch {
+      // Silently ignore analytics errors
     }
   }, [user]);
 

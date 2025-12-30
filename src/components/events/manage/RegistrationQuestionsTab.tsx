@@ -40,7 +40,6 @@ const RegistrationQuestionsTab: React.FC<Props> = ({ eventId }) => {
       if (error) throw error;
       setQuestions(data || []);
     } catch (e) {
-      console.error(e);
       toast.error('Failed to load questions');
     } finally {
       setLoading(false);
@@ -71,7 +70,6 @@ const RegistrationQuestionsTab: React.FC<Props> = ({ eventId }) => {
       toast.success('Question added');
       await load();
     } catch (e) {
-      console.error(e);
       toast.error('Failed to add question');
     }
   };
@@ -86,7 +84,6 @@ const RegistrationQuestionsTab: React.FC<Props> = ({ eventId }) => {
       toast.success('Question removed');
       await load();
     } catch (e) {
-      console.error(e);
       toast.error('Failed to remove question');
     }
   };

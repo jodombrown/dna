@@ -34,7 +34,7 @@ const ProfileV2About: React.FC<ProfileV2AboutProps> = ({
       await onUpdate(bioValue);
       setIsEditing(false);
     } catch (error) {
-      console.error('Failed to update bio:', error);
+      // Failed to update bio
     } finally {
       setIsSaving(false);
     }

@@ -75,7 +75,6 @@ export function TaskAttachments({ taskId, spaceId, isLead }: TaskAttachmentsProp
       toast.success('Attachment deleted');
     },
     onError: (error) => {
-      console.error('Delete error:', error);
       toast.error('Failed to delete attachment');
     },
   });
@@ -116,7 +115,6 @@ export function TaskAttachments({ taskId, spaceId, isLead }: TaskAttachmentsProp
       toast.success('Files uploaded successfully');
       e.target.value = '';
     } catch (error) {
-      console.error('Upload error:', error);
       toast.error('Failed to upload files');
     } finally {
       setIsUploading(false);
@@ -140,7 +138,6 @@ export function TaskAttachments({ taskId, spaceId, isLead }: TaskAttachmentsProp
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Download error:', error);
       toast.error('Failed to download file');
     }
   };

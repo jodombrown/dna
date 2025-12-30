@@ -81,7 +81,6 @@ const CommunityModeration = () => {
 
       setCommunities(transformedData);
     } catch (error) {
-      console.error('Error fetching communities:', error);
       toast({
         title: "Error",
         description: "Failed to fetch communities",
@@ -137,7 +136,6 @@ const CommunityModeration = () => {
       setSelectedCommunity(null);
       setModeratorNotes('');
     } catch (error) {
-      console.error('Error updating community:', error);
       toast({
         title: "Error",
         description: "Failed to update community",

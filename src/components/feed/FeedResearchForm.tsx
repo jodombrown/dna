@@ -151,7 +151,6 @@ const FeedResearchForm: React.FC<FeedResearchFormProps> = ({ onSuccess }) => {
       toast.success('Thank you! Your feedback helps us build DNA for the diaspora.');
       onSuccess();
     } catch (error: any) {
-      console.error('Form submission error:', error);
       toast.error('Failed to submit feedback. Please try again.');
     } finally {
       setIsSubmitting(false);

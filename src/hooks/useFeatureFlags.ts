@@ -36,8 +36,7 @@ export const useFeatureFlags = () => {
           // Fallback to defaults if DB fails
           setFlags(DEFAULT_FLAGS);
         }
-      } catch (err) {
-        console.warn('Failed to load feature flags from DB, using defaults:', err);
+      } catch {
         setFlags(DEFAULT_FLAGS);
       } finally {
         setLoading(false);
@@ -78,8 +77,7 @@ export const useFeatureFlag = (flagName: keyof FeatureFlags) => {
         } else {
           setFlags(DEFAULT_FLAGS);
         }
-      } catch (err) {
-        console.warn('Failed to load feature flags from DB, using defaults:', err);
+      } catch {
         setFlags(DEFAULT_FLAGS);
       } finally {
         setLoading(false);

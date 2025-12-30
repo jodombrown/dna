@@ -57,7 +57,7 @@ const ProfileHeroSection = ({
       if (error) throw error;
       setConnectionStatus(data?.status || null);
     } catch (error) {
-      console.error('Error fetching connection status:', error);
+      // Error fetching connection status
     } finally {
       setIsLoadingStatus(false);
     }
@@ -76,7 +76,6 @@ const ProfileHeroSection = ({
       
       navigate(`/dna/messages/${conversationId}`);
     } catch (error) {
-      console.error('Error creating conversation:', error);
       toast({
         title: 'Error',
         description: 'Failed to start conversation',
@@ -103,10 +102,9 @@ const ProfileHeroSection = ({
         title: 'Connection request sent',
         description: `Your request to connect with ${profile.full_name} has been sent.`,
       });
-      
+
       fetchConnectionStatus();
     } catch (error) {
-      console.error('Error sending connection request:', error);
       toast({
         title: 'Error',
         description: 'Failed to send connection request',

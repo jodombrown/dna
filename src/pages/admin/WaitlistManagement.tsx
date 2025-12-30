@@ -57,7 +57,6 @@ export default function WaitlistManagement() {
       if (error) throw error;
       setEntries(data || []);
     } catch (error) {
-      console.error('Error fetching waitlist:', error);
       toast({
         title: 'Error',
         description: 'Failed to load waitlist entries',
@@ -99,7 +98,7 @@ export default function WaitlistManagement() {
         details,
       });
     } catch (error) {
-      console.error('Error logging admin action:', error);
+      // Error logging admin action
     }
   };
 
@@ -128,7 +127,6 @@ export default function WaitlistManagement() {
       setShowReviewDialog(false);
       setAdminNotes('');
     } catch (error) {
-      console.error('Error updating status:', error);
       toast({
         title: 'Error',
         description: 'Failed to update status',
@@ -174,7 +172,6 @@ export default function WaitlistManagement() {
       setSelectedEntries(new Set());
       fetchWaitlist();
     } catch (error) {
-      console.error('Error performing bulk action:', error);
       toast({
         title: 'Error',
         description: 'Failed to perform bulk action',

@@ -8,14 +8,11 @@ export const useDiaPromptTrigger = () => {
       })
 
       if (error) {
-        console.error('Error triggering DIA prompt:', error)
         return { success: false, error }
       }
 
-      console.log('DIA prompt triggered successfully:', data)
       return { success: true, data }
     } catch (error) {
-      console.error('Failed to trigger DIA prompt:', error)
       return { success: false, error }
     }
   }

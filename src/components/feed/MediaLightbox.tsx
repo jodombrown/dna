@@ -31,7 +31,7 @@ export function MediaLightbox({ open, onOpenChange, mediaUrl, alt = 'Media' }: M
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Download failed:', error);
+      // Download failed silently
     }
   };
 

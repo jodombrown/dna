@@ -40,7 +40,6 @@ export async function createFeedPost(options: CreateFeedPostOptions) {
   });
 
   if (error) {
-    console.error('Error creating feed post:', error);
     throw error;
   }
 }
@@ -166,7 +165,6 @@ export async function createStoryPost(params: {
       .single();
 
     if (postError) {
-      console.error('createStoryPost DB error:', postError);
       logHighError(postError, 'composer', 'createStoryPost failed', { params, insertPayload });
       throw postError;
     }
@@ -183,7 +181,7 @@ export async function createStoryPost(params: {
       .single();
 
     if (profileError) {
-      console.error('Failed to fetch author profile:', profileError);
+      // Profile fetch failed - continue without author data
     }
 
     // Map to post shape for return
@@ -253,7 +251,6 @@ export async function createResharePost(params: {
   });
 
   if (error) {
-    console.error('Error creating reshare post:', error);
     throw error;
   }
 }
@@ -309,7 +306,6 @@ export async function createStandardPost(params: {
       .single();
 
     if (postError) {
-      console.error('createStandardPost DB error:', postError);
       logHighError(postError, 'composer', 'createStandardPost failed', { params, insertPayload });
       throw postError;
     }
@@ -326,7 +322,7 @@ export async function createStandardPost(params: {
       .single();
 
     if (profileError) {
-      console.error('Failed to fetch author profile:', profileError);
+      // Profile fetch failed - continue without author data
     }
 
     // Map to PostWithAuthor shape

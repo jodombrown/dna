@@ -76,7 +76,6 @@ export const useTrendingHashtags = (limit: number = 10, days: number = 7) => {
       });
 
       if (error) {
-        console.error('Error fetching trending hashtags:', error);
         return [];
       }
 

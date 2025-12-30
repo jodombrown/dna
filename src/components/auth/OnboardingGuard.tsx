@@ -23,9 +23,8 @@ export const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
         .select('onboarding_completed_at, username')
         .eq('id', user.id)
         .single();
-      
+
       if (error) {
-        console.error('OnboardingGuard profile fetch error:', error);
         return null;
       }
       
@@ -40,7 +39,6 @@ export const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
 
     // If not authenticated, redirect to auth page
     if (!user) {
-      console.log('OnboardingGuard: No user, redirecting to /auth');
       navigate('/auth', { replace: true });
       return;
     }
@@ -49,14 +47,12 @@ export const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
 
     // If onboarding not completed and not already on onboarding page, redirect
     if (!hasCompletedOnboarding && location.pathname !== '/onboarding') {
-      console.log('OnboardingGuard: Onboarding not completed, redirecting to /onboarding');
       navigate('/onboarding', { replace: true });
       return;
     }
 
     // If onboarding completed but trying to access onboarding page, redirect to discover
     if (hasCompletedOnboarding && location.pathname === '/onboarding') {
-      console.log('OnboardingGuard: Onboarding already completed, redirecting to /dna/connect/discover');
       navigate('/dna/connect/discover', { replace: true });
     }
   }, [profile, user, authLoading, profileLoading, navigate, location.pathname]);

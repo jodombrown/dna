@@ -21,9 +21,8 @@ export function usePostViewTracker(postId: string) {
           setSent(true);
           try {
             await supabase.rpc('log_post_view', { p_post_id: postId });
-          } catch (err) {
+          } catch {
             // Silently ignore; analytics shouldn't block UX
-            console.debug('log_post_view failed', err);
           }
         }
       },

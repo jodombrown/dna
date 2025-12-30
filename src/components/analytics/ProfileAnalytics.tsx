@@ -77,7 +77,7 @@ export const ProfileAnalytics: React.FC<ProfileAnalyticsProps> = ({ userId }) =>
 
         setViews(enrichedViews);
       } catch (error) {
-        console.error('Error fetching profile analytics:', error);
+        // Error handling - fail silently
       } finally {
         setLoading(false);
       }

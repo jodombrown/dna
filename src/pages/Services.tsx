@@ -125,7 +125,6 @@ const Services = () => {
   ];
 
   const handleContactProvider = (serviceId: number) => {
-    console.log('Contacting provider for service:', serviceId);
     // Here you would implement the contact logic
   };
 

@@ -61,7 +61,7 @@ const ProfileV2Interests: React.FC<ProfileV2InterestsProps> = ({
       await onUpdate(interestsList);
       setIsEditing(false);
     } catch (error) {
-      console.error('Failed to update interests:', error);
+      // Failed to update interests
     } finally {
       setIsSaving(false);
     }

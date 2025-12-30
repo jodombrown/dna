@@ -53,7 +53,6 @@ export const usePersonalizedFeed = (limit: number = 20) => {
       });
 
       if (error) {
-        console.error('Error fetching personalized feed:', error);
         throw error;
       }
 

@@ -85,7 +85,6 @@ const StepBasics: React.FC<StepBasicsProps> = ({ eventData, updateEventData, onN
         .maybeSingle();
 
       if (error) {
-        console.error('Error creating draft event:', error);
         toast.error('Failed to save draft. Please try again.');
         return;
       }
@@ -98,7 +97,6 @@ const StepBasics: React.FC<StepBasicsProps> = ({ eventData, updateEventData, onN
       toast.success('Draft saved successfully!');
       onNext?.(data.id);
     } catch (error) {
-      console.error('Unexpected error creating draft:', error);
       toast.error('An unexpected error occurred. Please try again.');
     } finally {
       setSaving(false);

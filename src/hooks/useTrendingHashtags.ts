@@ -23,7 +23,6 @@ export function useTrendingHashtags(limit: number = 10) {
       });
 
       if (error) {
-        console.error('Error fetching trending hashtags:', error);
         return [];
       }
 

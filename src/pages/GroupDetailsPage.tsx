@@ -95,7 +95,6 @@ function CommentDialog({ isOpen, onClose, postId, postAuthor }: CommentDialogPro
         title: 'Comment posted!',
       });
     } catch (error) {
-      console.error('Comment error:', error);
       toast({
         title: 'Error',
         description: 'Failed to post comment',
@@ -352,7 +351,6 @@ export default function GroupDetailsPage() {
       });
     },
     onError: (error) => {
-      console.error('Join error:', error);
       toast({
         title: 'Error',
         description: 'Failed to join group',
@@ -409,7 +407,6 @@ export default function GroupDetailsPage() {
       });
     },
     onError: (error) => {
-      console.error('Post error:', error);
       toast({
         title: 'Error',
         description: 'Failed to create post',

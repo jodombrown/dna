@@ -67,7 +67,6 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, connectionI
       const conversation = await messageService.getOrCreateConversation(connection.id);
       navigate(`/dna/messages/${conversation.id}`);
     } catch (error: any) {
-      console.error('Error creating conversation:', error);
       toast({
         title: 'Error',
         description: error.message || 'Failed to start conversation',

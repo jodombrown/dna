@@ -47,7 +47,6 @@ export function usePostRepost() {
       });
     },
     onError: (error: Error) => {
-      console.error('Error sharing post:', error);
       toast({
         title: 'Share failed',
         description: error.message || 'Failed to share post. Please try again.',

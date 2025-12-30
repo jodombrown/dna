@@ -72,8 +72,7 @@ export function usePostBookmark(postId: string, userId?: string) {
           : 'Added to your saved posts',
       });
     },
-    onError: (error) => {
-      console.warn('Failed to update bookmark:', error);
+    onError: () => {
       toast({
         description: 'Could not update bookmark. Please try again.',
         variant: 'destructive',
@@ -108,8 +107,7 @@ export function usePostBookmark(postId: string, userId?: string) {
           : 'Added to pinned saved items',
       });
     },
-    onError: (error) => {
-      console.warn('Failed to update pin:', error);
+    onError: () => {
       toast({
         description: 'Could not update pin. Please try again.',
         variant: 'destructive',

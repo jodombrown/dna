@@ -61,7 +61,6 @@ export const ProfileShareButtons: React.FC<ProfileShareButtonsProps> = ({
         });
       } catch (error) {
         // User cancelled or error occurred
-        console.log('Share cancelled');
       }
     } else {
       // Fallback to copy

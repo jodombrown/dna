@@ -129,7 +129,7 @@ export const VoiceMessageRecorder: React.FC<VoiceMessageRecorderProps> = ({
         setRecordingTime(Math.floor((Date.now() - startTimeRef.current) / 1000));
       }, 1000);
     } catch (err) {
-      console.error('Failed to start recording:', err);
+      // Silent fail for recording errors
     }
   }, [updateWaveform]);
 
@@ -193,32 +193,23 @@ export const VoiceMessageRecorder: React.FC<VoiceMessageRecorderProps> = ({
 
   const sendVoiceMessage = useCallback(async () => {
     if (!audioBlob) {
-      console.error('[VoiceMessageRecorder] No audio blob to send');
       return;
     }
-    
-    console.log('[VoiceMessageRecorder] Sending voice message...', {
-      blobSize: audioBlob.size,
-      duration: recordingTime,
-      type: audioBlob.type,
-    });
-    
+
     setIsSending(true);
     try {
       await onSendVoice(audioBlob, recordingTime);
-      console.log('[VoiceMessageRecorder] Voice message sent successfully');
       setAudioBlob(null);
       setRecordingTime(0);
       setWaveformData([]);
       setIsPlaying(false);
-      
+
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.src = '';
         audioRef.current = null;
       }
     } catch (error) {
-      console.error('[VoiceMessageRecorder] Failed to send voice message:', error);
       // Don't clear the audio so user can retry
     } finally {
       setIsSending(false);

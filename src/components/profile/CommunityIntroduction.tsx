@@ -68,7 +68,6 @@ export const CommunityIntroduction: React.FC<CommunityIntroductionProps> = ({
       mediaRecorder.start();
       setIsRecording(true);
     } catch (error) {
-      console.error('Error starting recording:', error);
       toast({
         title: "Recording Error",
         description: "Could not access microphone/camera. Please check permissions.",
@@ -108,7 +107,6 @@ export const CommunityIntroduction: React.FC<CommunityIntroductionProps> = ({
 
       return publicUrl;
     } catch (error) {
-      console.error('Error uploading media:', error);
       return null;
     }
   };
@@ -165,7 +163,6 @@ export const CommunityIntroduction: React.FC<CommunityIntroductionProps> = ({
 
       onComplete();
     } catch (error) {
-      console.error('Error saving introduction:', error);
       toast({
         title: "Error",
         description: "Failed to save your introduction. Please try again.",

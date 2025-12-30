@@ -34,7 +34,6 @@ const MobileSettingsView = () => {
       await signOut();
       window.location.href = '/';
     } catch (error) {
-      console.error('Delete account failed:', error);
       alert('Failed to delete account. Please try again.');
     } finally {
       setIsDeleting(false);
@@ -63,21 +62,21 @@ const MobileSettingsView = () => {
           description: 'Get notified about messages and updates',
           type: 'toggle',
           value: true,
-          onChange: (value: boolean) => console.log('Push notifications:', value)
+          onChange: (value: boolean) => {}
         },
         { 
           label: 'Email Notifications', 
           description: 'Receive updates via email',
           type: 'toggle',
           value: true,
-          onChange: (value: boolean) => console.log('Email notifications:', value)
+          onChange: (value: boolean) => {}
         },
         { 
           label: 'SMS Notifications', 
           description: 'Get important updates via SMS',
           type: 'toggle',
           value: false,
-          onChange: (value: boolean) => console.log('SMS notifications:', value)
+          onChange: (value: boolean) => {}
         }
       ]
     },
@@ -90,7 +89,7 @@ const MobileSettingsView = () => {
           description: 'Switch to dark theme',
           type: 'toggle',
           value: false,
-          onChange: (value: boolean) => console.log('Dark mode:', value)
+          onChange: (value: boolean) => {}
         },
         { label: 'Language', description: 'English', action: () => {} },
         { label: 'Time Zone', description: 'Auto-detect', action: () => {} }
@@ -122,7 +121,7 @@ const MobileSettingsView = () => {
     try {
       await signOut();
     } catch (error) {
-      console.error('Error signing out:', error);
+      // Error handling in signOut
     }
   };
 

@@ -85,7 +85,6 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
           }
         });
       } catch (emailError) {
-        console.warn('Email notification failed:', emailError);
         // Don't fail the whole process if email fails
       }
 
@@ -100,7 +99,6 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
       onClose();
       setFormData({ fullName: '', email: '', location: '' });
     } catch (error: any) {
-      console.error('Waitlist signup error:', error);
       toast({
         title: "Something went wrong",
         description: "Please try again later or contact support.",

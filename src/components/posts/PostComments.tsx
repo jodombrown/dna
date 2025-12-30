@@ -63,7 +63,6 @@ export function PostComments({ postId, currentUserId }: PostCommentsProps) {
       setNewComment('');
       refetch();
     } catch (error) {
-      console.error('Error posting comment:', error);
       toast({
         title: 'Error',
         description: 'Failed to post comment',

@@ -87,7 +87,6 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
 
       navigate('/dna/messages');
     } catch (error: any) {
-      console.error('Message error:', error);
       toast({
         title: 'Error opening conversation',
         description: error.message || 'Please try again.',
@@ -124,10 +123,9 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
         title: 'Connection removed',
         description: `You are no longer connected with ${connection.full_name}.`,
       });
-      
+
       onConnectionRemoved?.();
     } catch (error: any) {
-      console.error('Remove connection error:', error);
       toast({
         title: 'Error removing connection',
         description: error.message || 'Please try again.',

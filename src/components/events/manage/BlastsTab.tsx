@@ -49,7 +49,6 @@ const BlastsTab: React.FC<BlastsTabProps> = ({ eventId }) => {
       if (error) throw error;
       setBlasts(data || []);
     } catch (error) {
-      console.error('Error fetching blasts:', error);
       toast.error('Failed to load email blasts');
     } finally {
       setLoading(false);
@@ -100,10 +99,9 @@ const BlastsTab: React.FC<BlastsTabProps> = ({ eventId }) => {
       setSegment('all');
       setScheduleType('now');
       setScheduledFor('');
-      
+
       fetchBlasts();
     } catch (error) {
-      console.error('Error sending blast:', error);
       toast.error('Failed to send email blast');
     } finally {
       setSending(false);

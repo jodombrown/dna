@@ -47,7 +47,7 @@ export function ConnectButton({
         if (error) throw error;
         setStatus(data as ConnectionStatus);
       } catch (error) {
-        console.error('Error fetching connection status:', error);
+        // Error handled silently - status remains as 'none'
       } finally {
         setIsLoading(false);
       }

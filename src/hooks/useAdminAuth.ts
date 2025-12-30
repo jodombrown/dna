@@ -53,7 +53,6 @@ export const useAdminAuth = (): UseAdminAuthReturn => {
       const { data, error } = await (supabase as any).rpc('get_current_admin_status');
 
       if (error) {
-        console.error('Error fetching admin status:', error);
         setAdminUser(null);
         return;
       }
@@ -70,8 +69,7 @@ export const useAdminAuth = (): UseAdminAuthReturn => {
       } else {
         setAdminUser(null);
       }
-    } catch (err) {
-      console.error('Admin auth error:', err);
+    } catch {
       setAdminUser(null);
     } finally {
       setIsLoading(false);
@@ -118,7 +116,6 @@ export const useAdminAuth = (): UseAdminAuthReturn => {
       await supabase.auth.signOut();
       setAdminUser(null);
     } catch (error) {
-      console.error('Logout error:', error);
       throw error;
     }
   }, []);

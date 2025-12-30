@@ -43,15 +43,7 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
           params.p_cursor = pageParam;
         }
 
-        if (DEBUG_FEED) {
-          console.log('[DEBUG_FEED] Calling get_universal_feed with params:', params);
-        }
-
         const { data, error } = await (supabase.rpc as any)('get_universal_feed', params);
-
-        if (DEBUG_FEED) {
-          console.log('[DEBUG_FEED] RPC result:', { error, rawData: data });
-        }
 
         if (error) {
           logHighError(error, 'feed', 'get_universal_feed RPC failed', { filters });
@@ -102,32 +94,16 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
           original_created_at: item.original_created_at || null,
         })) as UniversalFeedItem[];
 
-        if (DEBUG_FEED) {
-          console.log('[DEBUG_FEED] Mapped items length:', items.length);
-        }
-
         // Apply client-side postType filter ONLY when explicitly specified (e.g., for Convey hub)
         // Use case-insensitive comparison to handle any database inconsistencies
         const filteredItems = filters.postType
           ? items.filter((item) => item.post_type?.toLowerCase() === filters.postType.toLowerCase())
           : items;
 
-        if (DEBUG_FEED) {
-          console.log('[DEBUG_FEED] Filtered items length:', filteredItems.length, 'postType:', filters.postType);
-        }
-        
         // CRITICAL FIX: Calculate nextOffset from RAW items, not filtered
         // This prevents premature pagination stops when filtering (e.g., Convey stories-only view)
         const currentOffset = typeof pageParam === 'number' ? pageParam : 0;
         const nextOffset = items.length === PAGE_SIZE ? currentOffset + PAGE_SIZE : null;
-
-        if (DEBUG_FEED) {
-          console.log('[DEBUG_FEED] Pagination:', {
-            nextOffset,
-            rawItemsLength: items.length,
-            filteredItemsLength: filteredItems.length,
-          });
-        }
 
         return {
           items: filteredItems,

@@ -86,7 +86,6 @@ export const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onCl
       
       onClose();
     } catch (error) {
-      console.error('Waitlist submission error:', error);
       toast({
         title: "Submission failed",
         description: "There was an error submitting your application. Please try again.",

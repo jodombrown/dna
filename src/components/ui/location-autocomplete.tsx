@@ -88,7 +88,6 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
           setIsOpen(formattedResults.length > 0);
         }
       } catch (error) {
-        console.error('Location search error:', error);
         setResults([]);
       } finally {
         setIsLoading(false);

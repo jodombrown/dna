@@ -38,13 +38,12 @@ export const ProfileViewTracker: React.FC<ProfileViewTrackerProps> = ({
         });
 
         if (error) {
-          console.warn('Failed to record profile view:', error);
           return;
         }
 
         hasTracked.current = true;
       } catch (err) {
-        console.warn('Error tracking profile view:', err);
+        // Fail silently - view tracking is not critical
       }
     };
 

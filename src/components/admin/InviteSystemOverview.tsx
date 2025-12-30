@@ -73,7 +73,6 @@ const InviteSystemOverview = () => {
 
       setInvites(mockInvites);
     } catch (error) {
-      console.error('Error fetching invites:', error);
       toast({
         title: "Error",
         description: "Failed to fetch invites",
@@ -116,7 +115,6 @@ const InviteSystemOverview = () => {
         description: "Invite sent successfully",
       });
     } catch (error) {
-      console.error('Error sending invite:', error);
       toast({
         title: "Error",
         description: "Failed to send invite",
@@ -133,7 +131,6 @@ const InviteSystemOverview = () => {
         description: "Invite resent successfully",
       });
     } catch (error) {
-      console.error('Error resending invite:', error);
       toast({
         title: "Error",
         description: "Failed to resend invite",
@@ -155,7 +152,6 @@ const InviteSystemOverview = () => {
         description: "Invite expired successfully",
       });
     } catch (error) {
-      console.error('Error expiring invite:', error);
       toast({
         title: "Error",
         description: "Failed to expire invite",

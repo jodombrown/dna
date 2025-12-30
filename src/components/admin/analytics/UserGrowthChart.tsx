@@ -88,7 +88,7 @@ const UserGrowthChart = () => {
       });
 
     } catch (error) {
-      console.error('Error fetching user growth data:', error);
+      // Error handled by UI showing empty state
     } finally {
       setLoading(false);
     }

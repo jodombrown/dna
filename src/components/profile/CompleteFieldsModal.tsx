@@ -52,7 +52,6 @@ export function CompleteFieldsModal({ missing, onClose }: { missing: string[]; o
       toast({ title: 'Profile updated', description: 'You can continue your action now.' });
       onClose();
     } catch (e: any) {
-      console.error(e);
       toast({ title: 'Update failed', description: e.message || 'Please try again', variant: 'destructive' });
     } finally {
       setSaving(false);

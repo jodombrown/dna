@@ -84,7 +84,6 @@ export function TaskDependencies({ taskId, spaceId, canEdit }: TaskDependenciesP
       toast.success('Dependency added');
     },
     onError: (error) => {
-      console.error('Add dependency error:', error);
       toast.error('Failed to add dependency');
     },
   });
@@ -104,7 +103,6 @@ export function TaskDependencies({ taskId, spaceId, canEdit }: TaskDependenciesP
       toast.success('Dependency removed');
     },
     onError: (error) => {
-      console.error('Remove dependency error:', error);
       toast.error('Failed to remove dependency');
     },
   });

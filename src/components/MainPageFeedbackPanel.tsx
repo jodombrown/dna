@@ -85,7 +85,6 @@ Feedback Type: ${formData.feedbackType || 'General'}
       });
 
       if (error) {
-        console.error('Supabase function error:', error);
         throw error;
       }
 
@@ -111,7 +110,6 @@ Feedback Type: ${formData.feedbackType || 'General'}
         throw new Error(data?.error || 'Failed to send feedback');
       }
     } catch (error: any) {
-      console.error('Feedback submission error:', error);
       toast.error('Something went wrong. Please try again.');
     } finally {
       setIsSubmitting(false);

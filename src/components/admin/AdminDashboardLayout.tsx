@@ -179,7 +179,7 @@ export const AdminDashboardLayout: React.FC = () => {
           });
         }
       } catch (err) {
-        console.error('Failed to fetch admin user:', err);
+        // Failed to fetch admin user - will show loading state
       }
     };
 
@@ -191,7 +191,7 @@ export const AdminDashboardLayout: React.FC = () => {
           setPendingModeration((stats as any)?.moderation?.pending_flags || 0);
         }
       } catch (err) {
-        console.error('Failed to fetch pending counts:', err);
+        // Failed to fetch pending counts - will use defaults
       }
     };
 
@@ -218,7 +218,6 @@ export const AdminDashboardLayout: React.FC = () => {
 
       navigate('/admin-login', { replace: true });
     } catch (error) {
-      console.error('Logout error:', error);
       toast({
         title: 'Error',
         description: 'Failed to sign out. Please try again.',

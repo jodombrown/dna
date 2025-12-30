@@ -309,7 +309,6 @@ function StoryGalleryUpload({
         toast({ description: `${newUrls.length} image(s) added to gallery` });
       }
     } catch (error) {
-      console.error('Gallery upload error:', error);
       toast({ title: 'Upload failed', description: 'Some images could not be uploaded', variant: 'destructive' });
     } finally {
       setIsUploading(false);
@@ -613,7 +612,6 @@ function MediaUploadButton({
         description: `${isVideo ? 'Video' : 'Image'} uploaded successfully.`,
       });
     } catch (error) {
-      console.error('Upload error:', error);
       toast({
         title: 'Upload failed',
         description: 'We couldn\'t upload that file. Please try again.',
@@ -759,7 +757,6 @@ function StoryImageUpload({
         description: 'Hero image uploaded successfully.',
       });
     } catch (error) {
-      console.error('Upload error:', error);
       toast({
         title: 'Upload failed',
         description: 'We couldn\'t upload that image. Try a smaller JPG or PNG.',

@@ -167,7 +167,6 @@ export const useLiveDashboardCollaborations = () => {
           .order('created_at', { ascending: false });
 
         if (error) {
-          console.error('Error fetching projects:', error);
           toast({
             title: "Error",
             description: "Failed to load collaboration projects",
@@ -209,8 +208,7 @@ export const useLiveDashboardCollaborations = () => {
         }));
 
         setProjects(transformedProjects);
-      } catch (err: any) {
-        console.error('Unexpected error:', err);
+      } catch {
         toast({
           title: "Error",
           description: "An unexpected error occurred",

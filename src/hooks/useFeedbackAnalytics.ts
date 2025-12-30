@@ -30,7 +30,6 @@ export function useFeedbackAnalytics(channelId: string | null, enabled: boolean 
         .is('parent_id', null);
 
       if (error) {
-        console.error('[useFeedbackAnalytics] Error fetching messages:', error);
         return null;
       }
 

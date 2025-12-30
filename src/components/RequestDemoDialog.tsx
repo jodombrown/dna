@@ -93,7 +93,6 @@ const RequestDemoDialog: React.FC<RequestDemoDialogProps> = ({ isOpen, onClose }
       });
       onClose();
     } catch (error) {
-      console.error('Error submitting demo request:', error);
       toast({
         title: 'Submission Failed',
         description: 'Please try again later or contact us directly.',

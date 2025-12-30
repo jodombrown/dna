@@ -141,7 +141,6 @@ export function useStoryEngagement(storyId: string, userId?: string) {
       queryClient.invalidateQueries({ queryKey: ['story-reactions', storyId] });
     },
     onError: (error) => {
-      console.warn('Failed to add reaction:', error);
       toast({ description: 'Could not add reaction. Please try again.' });
     },
   });
@@ -164,7 +163,6 @@ export function useStoryEngagement(storyId: string, userId?: string) {
       queryClient.invalidateQueries({ queryKey: ['story-reactions', storyId] });
     },
     onError: (error) => {
-      console.warn('Failed to remove reaction:', error);
       toast({ description: 'Could not remove reaction. Please try again.' });
     },
   });
@@ -195,7 +193,6 @@ export function useStoryEngagement(storyId: string, userId?: string) {
       });
     },
     onError: (error) => {
-      console.warn('Failed to toggle bookmark:', error);
       toast({ description: 'Could not update bookmark. Please try again.' });
     },
   });
@@ -266,7 +263,7 @@ export function useStoryViewTracker(storyId: string) {
           try {
             await supabase.rpc('log_post_view', { p_post_id: storyId });
           } catch (err) {
-            console.debug('log_post_view failed', err);
+            // Silently ignore view tracking errors
           }
         }
       },

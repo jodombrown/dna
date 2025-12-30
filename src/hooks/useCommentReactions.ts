@@ -60,7 +60,6 @@ export function useCommentReactions(commentId: string, userId?: string) {
       queryClient.invalidateQueries({ queryKey: ['comment-reactions', commentId] });
     },
     onError: (error) => {
-      console.error('Error adding reaction:', error);
       toast.error('Failed to add reaction');
     },
   });
@@ -82,7 +81,6 @@ export function useCommentReactions(commentId: string, userId?: string) {
       queryClient.invalidateQueries({ queryKey: ['comment-reactions', commentId] });
     },
     onError: (error) => {
-      console.error('Error removing reaction:', error);
       toast.error('Failed to remove reaction');
     },
   });

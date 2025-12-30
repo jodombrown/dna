@@ -44,7 +44,6 @@ export const usePostSearch = (
     queryKey: ['post-search', query, filters, user?.id, limit, offset],
     queryFn: async (): Promise<SearchPost[]> => {
       // RPC not yet implemented - return empty for now
-      console.warn('search_posts RPC not yet implemented');
       return [];
     },
     enabled: query.length > 0,

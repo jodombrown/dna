@@ -187,7 +187,6 @@ export function PostCard({
         });
       } catch (error) {
         // User cancelled share
-        console.log('Share cancelled');
       }
     } else {
       // Fallback: copy to clipboard
@@ -217,7 +216,6 @@ export function PostCard({
 
       onUpdate?.();
     } catch (error) {
-      console.error('Error deleting post:', error);
       toast({
         title: 'Error',
         description: 'Failed to delete post',

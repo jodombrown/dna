@@ -50,7 +50,6 @@ export const useBookmarkPost = (postId: string, viewerId: string, initialBookmar
     onError: (error, bookmark) => {
       // Rollback on error
       setIsBookmarked(!bookmark);
-      console.error('Error toggling bookmark:', error);
       toast.error('Failed to update bookmark');
     },
   });

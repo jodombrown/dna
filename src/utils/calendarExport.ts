@@ -77,7 +77,6 @@ export function downloadICSFile(event: EventData) {
   const result = generateICSFile(event);
   
   if (result.error) {
-    console.error('Error generating ICS file:', result.error);
     throw result.error;
   }
 

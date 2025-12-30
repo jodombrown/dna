@@ -43,7 +43,7 @@ const ProfileV2Contributions: React.FC<ProfileV2ContributionsProps> = ({
       await onUpdate(contributionsList);
       setIsEditing(false);
     } catch (error) {
-      console.error('Failed to update contributions:', error);
+      // Failed to update contributions
     } finally {
       setIsSaving(false);
     }

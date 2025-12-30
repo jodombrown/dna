@@ -68,7 +68,9 @@ export function CommentSection({ postId, postAuthorId }: CommentSectionProps) {
           action_url: `https://diasporanetwork.africa/dna/convey/post/${postId}`,
           actor_name: profile?.full_name,
           actor_avatar_url: profile?.avatar_url,
-        }).catch(err => console.error('Failed to send comment notification email:', err));
+        }).catch(() => {
+          // Failed to send notification email
+        });
       }
 
       return data;
@@ -85,7 +87,9 @@ export function CommentSection({ postId, postAuthorId }: CommentSectionProps) {
           postId,
           user!.id,
           profile?.full_name || profile?.username || 'Someone'
-        ).catch(err => console.error('Failed to process comment mentions:', err));
+        ).catch(() => {
+          // Failed to process mentions
+        });
       }
 
       setCommentText('');

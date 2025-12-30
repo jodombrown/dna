@@ -94,7 +94,6 @@ const SimpleEmailForm = () => {
         throw new Error(data?.error || 'Failed to send email');
       }
     } catch (error: any) {
-      console.error('Email submission error:', error);
       toast({
         title: "Error",
         description: getGenericErrorMessage(error),

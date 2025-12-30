@@ -183,17 +183,8 @@ export function FeedbackComposer({
     e?.preventDefault();
 
     if (!content.trim() && pendingAttachments.length === 0) {
-      console.log('[FeedbackComposer] Nothing to send');
       return;
     }
-
-    console.log('[FeedbackComposer] Submitting:', { 
-      channelId, 
-      content: content.trim(), 
-      contentType: determineContentType(),
-      tag: selectedTag,
-      attachments: pendingAttachments.length 
-    });
 
     try {
       setIsSubmitting(true);
@@ -206,8 +197,6 @@ export function FeedbackComposer({
         userTag: selectedTag || undefined,
         parentMessageId: replyTo?.id,
       });
-
-      console.log('[FeedbackComposer] Message result:', message);
 
       // Then upload attachments if any
       for (const attachment of pendingAttachments) {
@@ -228,7 +217,6 @@ export function FeedbackComposer({
       onSuccess?.();
       // Note: Toast is handled by the hook
     } catch (error) {
-      console.error('[FeedbackComposer] Error sending feedback:', error);
       // Note: Error toast is handled by the hook
     } finally {
       setIsSubmitting(false);

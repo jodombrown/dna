@@ -66,7 +66,6 @@ const SearchFeedbackForm: React.FC<SearchFeedbackFormProps> = ({ onClose }) => {
         throw new Error(data?.error || 'Failed to send feedback');
       }
     } catch (error: any) {
-      console.error('Feedback submission error:', error);
       toast.error('Failed to send feedback. Please try again.');
     } finally {
       setIsSubmitting(false);

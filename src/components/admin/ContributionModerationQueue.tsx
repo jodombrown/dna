@@ -71,7 +71,6 @@ const ContributionModerationQueue = () => {
 
       setRequests(transformedData);
     } catch (error) {
-      console.error('Error fetching contribution requests:', error);
       toast({
         title: "Error",
         description: "Failed to fetch contribution requests",
@@ -108,7 +107,6 @@ const ContributionModerationQueue = () => {
       setSelectedRequest(null);
       setReviewNotes('');
     } catch (error) {
-      console.error('Error updating request status:', error);
       toast({
         title: "Error",
         description: "Failed to update request status",

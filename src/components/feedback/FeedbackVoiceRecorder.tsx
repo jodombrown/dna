@@ -76,7 +76,6 @@ export function FeedbackVoiceRecorder({
         });
       }, 1000);
     } catch (err) {
-      console.error('Error starting recording:', err);
       setError('Could not access microphone. Please check permissions.');
     }
   }, [maxDurationSeconds]);

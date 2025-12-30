@@ -22,8 +22,6 @@ export const useMarkOnboardingComplete = () => {
 
       return { success: true };
     } catch (error: any) {
-      console.error('Failed to update onboarding status:', error.message);
-      
       toast({
         title: "Error completing onboarding",
         description: "There was an issue completing your setup. Please try again.",

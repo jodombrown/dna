@@ -17,19 +17,15 @@ export const useEventData = (canManageEvents: boolean) => {
 
     try {
       setLoading(true);
-      console.log('Fetching events...');
-      
+
       const { data: eventsData, error: eventsError } = await supabase
         .from('events')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (eventsError) {
-        console.error('Events fetch error:', eventsError);
         throw eventsError;
       }
-
-      console.log('Events fetched:', eventsData?.length || 0);
 
       const creatorIds = eventsData?.map(event => event.organizer_id).filter(Boolean) || [];
       
@@ -40,11 +36,8 @@ export const useEventData = (canManageEvents: boolean) => {
           .select('id, full_name, email')
           .in('id', creatorIds);
         
-        if (profilesError) {
-          console.error('Error fetching profiles:', profilesError);
-        } else {
+        if (!profilesError) {
           profilesData = profiles || [];
-        }
       }
 
       const transformedData: Event[] = (eventsData || []).map(event => {
@@ -87,11 +80,9 @@ export const useEventData = (canManageEvents: boolean) => {
           } : null
         };
       });
-      
-      console.log('Transformed events:', transformedData.length);
+
       setEvents(transformedData);
     } catch (error: any) {
-      console.error('Error fetching events:', error);
       toast({
         title: "Error",
         description: `Failed to load events: ${error.message}`,

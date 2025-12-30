@@ -136,8 +136,8 @@ export const useCreateSpace = () => {
             imageUrl: space.cover_image || undefined,
           });
         }
-      } catch (error) {
-        console.error('Failed to create feed post for space:', error);
+      } catch {
+        // Silently ignore feed post creation failure
       }
 
       queryClient.invalidateQueries({ queryKey: ['my-spaces'] });

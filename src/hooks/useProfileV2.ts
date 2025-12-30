@@ -25,14 +25,12 @@ export const useProfileV2 = (username: string | undefined) => {
 
         // Return null on error - NEVER throw to avoid ErrorBoundary
         if (error) {
-          console.warn('Profile bundle fetch error:', error.message);
           return null;
         }
 
         return data as unknown as ProfileV2Bundle;
-      } catch (err) {
+      } catch {
         // Catch any unexpected errors - NEVER throw
-        console.warn('Profile bundle unexpected error:', err);
         return null;
       }
     },

@@ -326,9 +326,8 @@ export function DashboardModules({
     <div className="space-y-4">
       {visibleModulesFromPolicy.map((moduleConfig) => {
         const moduleRenderer = MODULE_REGISTRY[moduleConfig.id];
-        
+
         if (!moduleRenderer) {
-          console.warn(`Module ${moduleConfig.id} not found in registry`);
           return null;
         }
 

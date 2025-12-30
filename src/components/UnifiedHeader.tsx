@@ -88,7 +88,6 @@ const UnifiedHeader = () => {
       });
 
       if (error) {
-        console.error('Error checking admin role:', error);
         return false;
       }
 

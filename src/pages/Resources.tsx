@@ -110,7 +110,6 @@ const Resources = () => {
   });
 
   const handleDownload = (resourceId: number) => {
-    console.log('Downloading resource:', resourceId);
     // Here you would implement the download logic
   };
 

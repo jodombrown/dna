@@ -41,7 +41,6 @@ export async function createNotification(params: CreateNotificationParams): Prom
       .single();
 
     if (insertError) {
-      console.error('Error creating notification:', insertError);
       return { success: false, error: insertError.message };
     }
 
@@ -54,11 +53,10 @@ export async function createNotification(params: CreateNotificationParams): Prom
       action_url: params.link_url ? `https://diasporanetwork.africa${params.link_url}` : undefined,
       actor_name: params.payload?.actor_name,
       actor_avatar_url: params.payload?.actor_avatar_url,
-    }).catch(err => console.error('Failed to send notification email:', err));
+    }).catch(() => {});
 
     return { success: true, notificationId: notification.id };
   } catch (error: any) {
-    console.error('Error in createNotification:', error);
     return { success: false, error: error.message };
   }
 }
@@ -74,13 +72,11 @@ export async function sendNotificationEmail(payload: NotificationEmailPayload): 
     });
 
     if (response.error) {
-      console.error('Error sending notification email:', response.error);
       return { success: false, error: response.error.message };
     }
 
     return { success: true };
   } catch (error: any) {
-    console.error('Error invoking send-notification-email:', error);
     return { success: false, error: error.message };
   }
 }

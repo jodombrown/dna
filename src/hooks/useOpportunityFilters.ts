@@ -71,7 +71,6 @@ export const useOpportunityFilters = () => {
       const { data, error } = await query;
 
       if (error) {
-        console.error('Error fetching opportunities:', error);
         throw error;
       }
 

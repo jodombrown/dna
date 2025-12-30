@@ -48,7 +48,6 @@ export function checkRateLimit(userId: string, action: keyof typeof RATE_LIMIT_C
 } {
   const config = RATE_LIMIT_CONFIGS[action];
   if (!config) {
-    console.warn(`No rate limit config for action: ${action}`);
     return { allowed: true, remaining: 999, resetAt: new Date(Date.now() + 3600000) };
   }
 

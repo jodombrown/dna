@@ -22,7 +22,6 @@ export function useUnreadNotificationCount() {
       });
 
       if (error) {
-        console.error('Error fetching unread notification count:', error);
         return 0;
       }
 

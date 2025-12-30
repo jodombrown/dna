@@ -45,7 +45,6 @@ const FeatureTogglesPanel = () => {
       if (error) throw error;
       setFlags(data || []);
     } catch (error) {
-      console.error('Error fetching feature flags:', error);
       toast({
         title: "Error",
         description: "Failed to fetch feature flags",
@@ -86,7 +85,6 @@ const FeatureTogglesPanel = () => {
       setIsCreateDialogOpen(false);
       fetchFeatureFlags();
     } catch (error) {
-      console.error('Error creating feature flag:', error);
       toast({
         title: "Error",
         description: "Failed to create feature flag",
@@ -114,7 +112,6 @@ const FeatureTogglesPanel = () => {
 
       fetchFeatureFlags();
     } catch (error) {
-      console.error('Error toggling feature flag:', error);
       toast({
         title: "Error",
         description: "Failed to toggle feature flag",
@@ -143,7 +140,6 @@ const FeatureTogglesPanel = () => {
 
       fetchFeatureFlags();
     } catch (error) {
-      console.error('Error deleting feature flag:', error);
       toast({
         title: "Error",
         description: "Failed to delete feature flag",

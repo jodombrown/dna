@@ -161,7 +161,7 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
           queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
         })
         .catch((err) => {
-          console.error('[ChatThread] Failed to mark messages as read:', err);
+          // Silent fail for mark as read errors
         });
     }
   }, [conversationId, messages.length, queryClient]);

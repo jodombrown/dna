@@ -48,7 +48,7 @@ export const SmartRecommendations: React.FC<SmartRecommendationsProps> = ({
       });
       setMatchScores(scores);
     } catch (error) {
-      console.error('Error loading recommendations:', error);
+      // Error handled silently - recommendations will remain empty
     } finally {
       setLoading(false);
     }

@@ -94,7 +94,6 @@ export const GlobalProvider: LocationProvider = {
         };
       });
     } catch (error) {
-      console.error('Geocoding search error:', error);
       return [];
     }
   }

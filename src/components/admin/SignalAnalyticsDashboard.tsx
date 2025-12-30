@@ -94,7 +94,7 @@ const SignalAnalyticsDashboard = () => {
       setDailyData(mockDailyData);
 
     } catch (error) {
-      console.error('Error fetching signal analytics:', error);
+      // Error handled by UI showing no data
     } finally {
       setLoading(false);
     }

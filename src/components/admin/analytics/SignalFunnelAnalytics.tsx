@@ -128,7 +128,7 @@ const SignalFunnelAnalytics = () => {
       setTypeData(typeAnalytics);
 
     } catch (error) {
-      console.error('Error fetching signal funnel data:', error);
+      // Error handled by UI showing empty state
     } finally {
       setLoading(false);
     }

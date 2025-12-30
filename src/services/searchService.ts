@@ -40,7 +40,6 @@ export const globalSearch = async (query: string, searchType: string = 'web'): P
     if (error) throw error;
     return data;
   } catch (error) {
-    console.error('Global search failed:', error);
     throw new Error('Failed to perform global search');
   }
 };
@@ -98,7 +97,6 @@ export const aiSearch = async (query: string, userId?: string): Promise<AISearch
     if (error) throw error;
     return data;
   } catch (error) {
-    console.error('AI search failed:', error);
     // Fallback to regular search
     const results = await searchContent(query);
     return {

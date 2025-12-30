@@ -93,7 +93,6 @@ const StepRegistration: React.FC<StepRegistrationProps> = ({
       setQuestions(formattedQuestions);
       updateEventData('registration_questions', formattedQuestions);
     } catch (error) {
-      console.error('Error loading registration questions:', error);
       toast.error('Failed to load existing questions');
     }
   };
@@ -172,7 +171,6 @@ const StepRegistration: React.FC<StepRegistrationProps> = ({
       reset();
       setShowAddForm(false);
     } catch (error) {
-      console.error('Error adding question:', error);
       toast.error('Failed to add question');
     } finally {
       setLoading(false);
@@ -191,7 +189,6 @@ const StepRegistration: React.FC<StepRegistrationProps> = ({
 
         if (error) throw error;
       } catch (error) {
-        console.error('Error removing question:', error);
         toast.error('Failed to remove question');
         return;
       }

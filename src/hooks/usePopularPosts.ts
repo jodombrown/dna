@@ -48,7 +48,6 @@ export const usePopularPosts = (limit: number = 10) => {
       });
 
       if (error) {
-        console.error('Error fetching popular posts:', error);
         return [];
       }
 

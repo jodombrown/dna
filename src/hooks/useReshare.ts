@@ -41,7 +41,6 @@ export function useReshare({
       });
 
       if (error) {
-        console.error('Error checking reshare status:', error);
         return false;
       }
 
@@ -62,7 +61,6 @@ export function useReshare({
       });
 
       if (error) {
-        console.error('Error getting reshare count:', error);
         return 0;
       }
 
@@ -108,7 +106,6 @@ export function useReshare({
           });
         } catch (notifError) {
           // Don't fail the reshare if notification fails
-          console.error('Failed to send reshare notification:', notifError);
         }
       }
 
@@ -127,7 +124,6 @@ export function useReshare({
       onSuccess?.();
     },
     onError: (error: Error) => {
-      console.error('Reshare error:', error);
       toast.error(error.message || 'Failed to share post');
     },
   });
@@ -156,7 +152,6 @@ export function useReshare({
       toast.success('Reshare removed');
     },
     onError: (error: Error) => {
-      console.error('Undo reshare error:', error);
       toast.error('Failed to remove reshare');
     },
   });

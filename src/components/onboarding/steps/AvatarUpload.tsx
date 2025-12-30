@@ -59,13 +59,12 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatarUrl, onAvatarC
         description: "Your profile picture has been uploaded.",
       });
     } catch (error) {
-      console.error('Error uploading avatar:', error);
       toast({
         title: "Upload failed",
         description: "Failed to upload image. Please try again.",
         variant: "destructive"
       });
-      
+
       // Reset preview on error
       setPreviewUrl(currentAvatarUrl || null);
     } finally {

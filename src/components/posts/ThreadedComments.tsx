@@ -82,7 +82,6 @@ export function ThreadedComments({ postId, currentUserId, commentsDisabled = fal
         setExpandedReplies((prev) => new Set([...prev, parentId]));
       }
     } catch (error) {
-      console.error('Error posting comment:', error);
       toast.error('Failed to post comment');
     } finally {
       setIsSubmitting(false);

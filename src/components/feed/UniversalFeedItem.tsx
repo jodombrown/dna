@@ -28,7 +28,6 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
 
   // Defensive guards
   if (!item || !item.post_id || !item.author_id) {
-    console.warn('Invalid feed item:', item);
     return null;
   }
 

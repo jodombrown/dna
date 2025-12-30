@@ -486,7 +486,7 @@ function trackComposerEvent(action: 'open' | 'cancel' | 'switch' | 'submit', mod
       route: window.location.pathname,
     }).then(() => {});
   } catch (err) {
-    console.warn('Failed to track composer event:', err);
+    // Silently ignore analytics tracking errors
   }
 }
 

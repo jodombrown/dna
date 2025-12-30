@@ -18,7 +18,6 @@ const DashboardEventsView: React.FC = () => {
       const data = await searchEvents('', { upcoming_only: true });
       setEvents(data);
     } catch (e) {
-      console.error('Failed to load events', e);
       toast.error('Could not load events. Please try again.');
     } finally {
       setLoading(false);

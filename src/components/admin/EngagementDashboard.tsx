@@ -67,7 +67,7 @@ const EngagementDashboard = () => {
       const logsData = await fetchEngagementLogs();
       setLogs(logsData);
     } catch (error) {
-      console.error('Error fetching engagement data:', error);
+      // Error handled by UI showing empty state
     } finally {
       setLoading(false);
     }
@@ -142,8 +142,7 @@ const EngagementDashboard = () => {
         optOutRate: Number((optedOutUsers / totalProfiles * 100).toFixed(1)) || 3.2
       };
     } catch (error) {
-      console.error('Error fetching metrics:', error);
-      // Return fallback data
+      // Return fallback data on error
       return {
         onboardedCount: 73,
         threeDayReturnRate: 61,
@@ -203,7 +202,6 @@ const EngagementDashboard = () => {
         };
       });
     } catch (error) {
-      console.error('Error fetching engagement logs:', error);
       return [];
     }
   };

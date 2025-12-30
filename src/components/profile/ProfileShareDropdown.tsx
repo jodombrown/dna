@@ -96,7 +96,6 @@ export const ProfileShareDropdown: React.FC<ProfileShareDropdownProps> = ({
       await generateProfilePDF(profile);
       toast.success('Profile PDF downloaded successfully');
     } catch (error) {
-      console.error('Error generating PDF:', error);
       toast.error('Failed to generate PDF');
     } finally {
       setIsDownloading(false);

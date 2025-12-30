@@ -164,7 +164,6 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({
 
       setSuggestions(newSuggestions);
     } catch (error) {
-      console.error('Error fetching suggestions:', error);
       // Fallback to simple text suggestions
       const fallbackSuggestions = popularSearches
         .filter(term => term.toLowerCase().includes(query.toLowerCase()))

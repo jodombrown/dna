@@ -57,7 +57,6 @@ export const useEmbedPreview = () => {
       setEmbedData(data as EmbedMetadata);
       return data as EmbedMetadata;
     } catch (error) {
-      console.error('Embed fetch error:', error);
       toast({
         title: "Embed fetch failed",
         description: "Could not fetch preview for this URL",

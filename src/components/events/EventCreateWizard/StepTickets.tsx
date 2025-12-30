@@ -95,7 +95,6 @@ const StepTickets: React.FC<StepTicketsProps> = ({
       setTickets(formattedTickets);
       updateEventData('ticket_types', formattedTickets);
     } catch (error) {
-      console.error('Error loading tickets:', error);
       toast.error('Failed to load existing tickets');
     }
   };
@@ -140,7 +139,6 @@ const StepTickets: React.FC<StepTicketsProps> = ({
       reset();
       setShowAddForm(false);
     } catch (error) {
-      console.error('Error adding ticket:', error);
       toast.error('Failed to add ticket type');
     } finally {
       setLoading(false);
@@ -159,7 +157,6 @@ const StepTickets: React.FC<StepTicketsProps> = ({
 
         if (error) throw error;
       } catch (error) {
-        console.error('Error removing ticket:', error);
         toast.error('Failed to remove ticket type');
         return;
       }

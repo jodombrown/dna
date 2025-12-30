@@ -39,7 +39,6 @@ export const useMutualConnections = (
       });
 
       if (error) {
-        console.error('Error fetching mutual connections:', error);
         return [];
       }
 

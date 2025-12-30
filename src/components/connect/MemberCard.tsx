@@ -121,7 +121,6 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
         });
       }
     } catch (error: any) {
-      console.error('Connection error:', error);
       toast({
         title: 'Error sending request',
         description: error.message || 'Please try again.',
@@ -156,7 +155,6 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
         navigate(`/dna/messages/${newConv.id}`);
       }
     } catch (error) {
-      console.error('Message error:', error);
       toast({
         title: 'Error',
         description: 'Could not start conversation',

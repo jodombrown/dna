@@ -73,7 +73,6 @@ export const CreateEventModal = ({ open, onClose }: CreateEventModalProps) => {
 
   const uploadImage = async (file: File, folder: string): Promise<string | null> => {
     if (!user) {
-      console.error('User not authenticated');
       return null;
     }
     
@@ -88,7 +87,6 @@ export const CreateEventModal = ({ open, onClose }: CreateEventModalProps) => {
       });
 
     if (uploadError) {
-      console.error('Upload error:', uploadError);
       return null;
     }
 
@@ -169,11 +167,10 @@ export const CreateEventModal = ({ open, onClose }: CreateEventModalProps) => {
       setLogoPreview('');
     },
     onError: (error: any) => {
-      const friendlyMessage = error?.code === '23503' 
+      const friendlyMessage = error?.code === '23503'
         ? 'Please complete your profile before creating events'
         : 'Failed to create event';
       toast.error(friendlyMessage);
-      console.error(error);
     },
   });
 
