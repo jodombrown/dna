@@ -236,10 +236,11 @@ Deno.serve(async (req) => {
 
   } catch (error) {
     console.error('Error in update-event function:', error);
+    const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message || 'An unexpected error occurred',
+        error: errorMessage,
       }),
       {
         status: 400,

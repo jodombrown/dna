@@ -51,28 +51,31 @@ const Auth = () => {
           description: error.message,
           variant: 'destructive',
         });
-      } else {
-        // Fetch user profile to get first name for personalized greeting
-        let firstName = '';
-        if (data?.user?.id) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('first_name, full_name')
-            .eq('id', data.user.id)
-            .maybeSingle();
-          
-          firstName = profile?.first_name || profile?.full_name?.split(' ')[0] || '';
-        }
-        
-        toast({
-          title: firstName ? `Welcome back, ${firstName}!` : 'Welcome back!',
-          description: 'Successfully signed in.',
-        });
-        navigate('/dna/feed');
+        return;
       }
+      
+      // Fetch user profile to get first name for personalized greeting
+      let firstName = '';
+      if (data?.user?.id) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('first_name, full_name')
+          .eq('id', data.user.id)
+          .maybeSingle();
+        
+        firstName = profile?.first_name || profile?.full_name?.split(' ')[0] || '';
+      }
+      
+      toast({
+        title: firstName ? `Welcome back, ${firstName}!` : 'Welcome back!',
+        description: 'Successfully signed in.',
+      });
+      navigate('/dna/feed');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
       toast({
         title: 'Error',
-        description: error.message || 'An unexpected error occurred',
+        description: errorMessage,
         variant: 'destructive',
       });
     } finally {
