@@ -88,7 +88,7 @@ export function EventCard({ event, onRSVP }: EventCardProps) {
     >
       {/* Cover Image */}
       {event.cover_image_url ? (
-        <div className="h-48 overflow-hidden">
+        <div className="h-32 sm:h-48 overflow-hidden">
           <img
             src={event.cover_image_url}
             alt={event.title}
@@ -96,12 +96,12 @@ export function EventCard({ event, onRSVP }: EventCardProps) {
           />
         </div>
       ) : (
-        <div className="h-48 bg-gradient-to-br from-[hsl(151,75%,50%)] to-[hsl(151,75%,35%)] flex items-center justify-center">
-          <Calendar className="h-16 w-16 text-white opacity-50" />
+        <div className="h-32 sm:h-48 bg-gradient-to-br from-[hsl(151,75%,50%)] to-[hsl(151,75%,35%)] flex items-center justify-center">
+          <Calendar className="h-12 w-12 sm:h-16 sm:w-16 text-white opacity-50" />
         </div>
       )}
 
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         {/* Header */}
         <div className="flex items-start gap-3 mb-4">
           <Avatar

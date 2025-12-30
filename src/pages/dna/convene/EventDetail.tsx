@@ -252,9 +252,9 @@ const EventDetail = () => {
 
         {/* Title and Actions */}
         <div className="mb-6">
-          <div className="flex items-start justify-between gap-4 mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2 flex-wrap mb-2">
                 <Badge variant="secondary" className="capitalize">
                   {event.event_type}
                 </Badge>
@@ -263,11 +263,11 @@ const EventDetail = () => {
                 </Badge>
                 {isPastEvent && <Badge variant="secondary">Past Event</Badge>}
               </div>
-              <h1 className="text-4xl font-bold mb-2">{event.title}</h1>
+              <h1 className="text-2xl sm:text-4xl font-bold mb-2">{event.title}</h1>
             </div>
-            
-            <div className="flex gap-2">
-              <AddToCalendarButton 
+
+            <div className="flex gap-2 flex-wrap">
+              <AddToCalendarButton
                 event={event}
                 organizer={event.organizer}
                 variant="outline"

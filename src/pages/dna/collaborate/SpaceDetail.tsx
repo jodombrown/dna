@@ -149,9 +149,9 @@ export default function SpaceDetail() {
 
         {/* Hero Section */}
         <div className="space-y-4">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <h1 className="text-4xl font-bold">{space.name}</h1>
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl sm:text-4xl font-bold break-words">{space.name}</h1>
               {space.tagline && (
                 <p className="text-xl text-muted-foreground mt-2">{space.tagline}</p>
               )}
@@ -282,12 +282,12 @@ export default function SpaceDetail() {
         {/* Tabbed Content */}
         {isMember && (
           <Tabs defaultValue="overview" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="tasks">Tasks</TabsTrigger>
-              <TabsTrigger value="updates">Updates</TabsTrigger>
-              <TabsTrigger value="contribute">Contribute</TabsTrigger>
-              {isLead && <TabsTrigger value="insights">Insights</TabsTrigger>}
+            <TabsList className="w-full flex flex-wrap h-auto gap-1 sm:grid sm:grid-cols-5">
+              <TabsTrigger value="overview" className="flex-1 min-w-[70px] text-xs sm:text-sm">Overview</TabsTrigger>
+              <TabsTrigger value="tasks" className="flex-1 min-w-[70px] text-xs sm:text-sm">Tasks</TabsTrigger>
+              <TabsTrigger value="updates" className="flex-1 min-w-[70px] text-xs sm:text-sm">Updates</TabsTrigger>
+              <TabsTrigger value="contribute" className="flex-1 min-w-[70px] text-xs sm:text-sm">Contribute</TabsTrigger>
+              {isLead && <TabsTrigger value="insights" className="flex-1 min-w-[70px] text-xs sm:text-sm">Insights</TabsTrigger>}
             </TabsList>
 
             <TabsContent value="overview" className="space-y-4">

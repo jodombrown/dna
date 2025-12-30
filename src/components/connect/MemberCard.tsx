@@ -265,11 +265,11 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
 
               {/* Overflow menu - Apple News style "..." */}
               <DropdownMenu>
-                <DropdownMenuTrigger 
-                  className="p-1 rounded-full hover:bg-muted transition-colors"
+                <DropdownMenuTrigger
+                  className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-muted transition-colors"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+                  <MoreHorizontal className="h-5 w-5 text-muted-foreground" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
                   {connectionStatus === 'accepted' ? (

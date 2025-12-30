@@ -24,7 +24,7 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({ item, currentUserId, onUpd
   const navigate = useNavigate();
 
   return (
-    <Card className="p-6 hover:border-primary/20 transition-colors">
+    <Card className="p-4 sm:p-6 hover:border-primary/20 transition-colors">
       {/* Header */}
       <div className="flex items-start gap-3 mb-4">
         <Avatar className="h-10 w-10">
@@ -52,10 +52,10 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({ item, currentUserId, onUpd
         </div>
 
         {item.media_url && (
-          <img 
-            src={item.media_url} 
-            alt={item.space_title || 'Space'} 
-            className="w-full h-48 object-cover rounded-lg"
+          <img
+            src={item.media_url}
+            alt={item.space_title || 'Space'}
+            className="w-full h-32 sm:h-48 object-cover rounded-lg"
           />
         )}
 
