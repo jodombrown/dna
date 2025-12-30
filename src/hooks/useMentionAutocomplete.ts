@@ -33,7 +33,6 @@ export const useMentionAutocomplete = (query: string, enabled: boolean = true) =
         .limit(10);
 
       if (error) {
-        console.error('Error fetching mention suggestions:', error);
         return [];
       }
 

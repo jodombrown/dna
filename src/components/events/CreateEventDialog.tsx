@@ -169,7 +169,6 @@ export function CreateEventDialog({
         allow_guests: false,
       });
     } catch (error) {
-      console.error('Error creating event:', error);
       toast({
         title: 'Error',
         description: 'Failed to create event',

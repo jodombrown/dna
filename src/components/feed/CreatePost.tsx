@@ -46,16 +46,6 @@ export function CreatePost() {
 
   const createPostMutation = useMutation({
     mutationFn: async (postContent: string) => {
-      console.log('CreatePost: inserting post with payload:', {
-        author_id: user!.id,
-        content: postContent,
-        post_type: 'post',
-        privacy_level: 'public',
-        link_url: embedData?.url || null,
-        link_title: embedData?.title || null,
-        link_description: embedData?.author_name || null,
-      });
-
       const { data, error } = await supabase
         .from('posts')
         .insert({
@@ -83,11 +73,9 @@ export function CreatePost() {
         .single();
 
       if (error) {
-        console.error('CreatePost: insert error:', error);
         throw error;
       }
-      
-      console.log('CreatePost: insert successful, data:', data);
+
       return data;
     },
     onSuccess: (data, postContent) => {
@@ -102,7 +90,9 @@ export function CreatePost() {
           data.id,
           user!.id,
           profile?.full_name || profile?.username || 'Someone'
-        ).catch(err => console.error('Failed to process post mentions:', err));
+        ).catch(() => {
+          // Failed to process mentions
+        });
       }
 
       setContent('');
@@ -110,7 +100,6 @@ export function CreatePost() {
       toast.success('Post created successfully!');
     },
     onError: (error: any) => {
-      console.error('CreatePost: mutation error:', error);
       const msg = (error?.message || error?.hint || error?.details || '').toString();
       toast.error(msg ? `Post failed: ${msg}` : 'Post failed. Please try again.');
     },

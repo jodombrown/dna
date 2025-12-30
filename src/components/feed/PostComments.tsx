@@ -62,7 +62,6 @@ export const PostComments: React.FC<PostCommentsProps> = ({
       if (error) throw error;
       setComments(data || []);
     } catch (error) {
-      console.error('Error fetching comments:', error);
       toast.error("Failed to load comments. Please try again.");
     } finally {
       setIsLoading(false);
@@ -115,7 +114,6 @@ export const PostComments: React.FC<PostCommentsProps> = ({
 
       toast.success("Comment posted successfully!");
     } catch (error) {
-      console.error('Error posting comment:', error);
       toast.error("Failed to post comment. Please try again.");
     } finally {
       setIsSubmitting(false);

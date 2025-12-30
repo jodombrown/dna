@@ -31,9 +31,8 @@ const DashboardCenterOpportunities: React.FC<DashboardCenterOpportunitiesProps> 
         .eq('status', 'active')
         .order('created_at', { ascending: false })
         .limit(10);
-      
+
       if (error) {
-        console.error('Error fetching opportunities:', error);
         return [];
       }
       return data || [];

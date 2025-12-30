@@ -71,7 +71,6 @@ export default function OpportunityDetail() {
       queryClient.invalidateQueries({ queryKey: ['contribution-offers', id] });
     },
     onError: (error) => {
-      console.error('Error submitting offer:', error);
       toast.error('Failed to submit offer. Please try again.');
     },
   });

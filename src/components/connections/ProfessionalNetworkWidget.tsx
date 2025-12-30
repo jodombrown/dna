@@ -88,7 +88,7 @@ export const ProfessionalNetworkWidget: React.FC = () => {
         }
 
       } catch (error) {
-        console.error('Error fetching network data:', error);
+        // Error handled silently - widget will show loading state
       } finally {
         setIsLoading(false);
       }

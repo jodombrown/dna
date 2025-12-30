@@ -50,7 +50,6 @@ export const useProfile = () => {
         const data = await profilesService.getCurrentUserProfile(user.id);
         return data;
       } catch (error) {
-        console.error('Error fetching profile:', error);
         throw error;
       }
     },

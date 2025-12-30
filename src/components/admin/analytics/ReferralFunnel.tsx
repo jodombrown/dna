@@ -134,7 +134,7 @@ const ReferralFunnel = () => {
       setTopReferrers(topReferrersList);
 
     } catch (error) {
-      console.error('Error fetching referral data:', error);
+      // Error handled by UI showing empty state
     } finally {
       setLoading(false);
     }

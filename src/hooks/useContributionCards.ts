@@ -69,7 +69,6 @@ export const useContributionCards = () => {
 
       setCards(formattedCards);
     } catch (error) {
-      console.error('Error fetching contribution cards:', error);
       toast({
         title: "Error",
         description: "Failed to load contribution opportunities",
@@ -130,7 +129,6 @@ export const useContributionCards = () => {
 
       return newCard;
     } catch (error) {
-      console.error('Error creating contribution card:', error);
       toast({
         title: "Error",
         description: "Failed to create contribution opportunity",

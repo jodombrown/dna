@@ -50,7 +50,7 @@ export class InteractionLogger {
         await this.flush();
       }
     } catch (error) {
-      console.error('Failed to log interaction:', error);
+      // Silently fail - non-blocking
     }
   }
 
@@ -75,10 +75,10 @@ export class InteractionLogger {
       }));
 
       await supabase.from('user_interactions').insert(interactions);
-      
+
       this.buffer = [];
     } catch (error) {
-      console.error('Failed to flush interactions:', error);
+      // Silently fail - non-blocking
     }
   }
 

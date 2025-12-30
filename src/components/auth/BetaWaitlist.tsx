@@ -76,7 +76,6 @@ export const BetaWaitlist = ({ onBack, open, onOpenChange }: BetaWaitlistProps) 
         if (onOpenChange) onOpenChange(false);
       }
     } catch (error: any) {
-      console.error('Waitlist error:', error);
       toast({
         title: "Error",
         description: error.message || "Failed to join waitlist. Please try again.",

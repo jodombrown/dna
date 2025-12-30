@@ -33,7 +33,6 @@ const DashboardLeftColumn: React.FC<DashboardLeftColumnProps> = ({
         .or(`a.eq.${profile.id},b.eq.${profile.id}`)
         .eq('status', 'accepted');
       if (error) {
-        console.error('Error fetching connections:', error);
         return 0;
       }
       return count || 0;
@@ -52,7 +51,6 @@ const DashboardLeftColumn: React.FC<DashboardLeftColumnProps> = ({
         .eq('user_id', profile.id)
         .eq('status', 'approved');
       if (error) {
-        console.error('Error fetching collaborations:', error);
         return 0;
       }
       return count || 0;

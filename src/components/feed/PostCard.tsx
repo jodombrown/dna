@@ -155,9 +155,8 @@ export function PostCard({ post }: PostCardProps) {
           .delete()
           .eq('post_id', post.id)
           .eq('user_id', user.id);
-        
+
         if (error) {
-          console.error('Unlike error:', error);
           throw error;
         }
       } else {
@@ -170,9 +169,8 @@ export function PostCard({ post }: PostCardProps) {
           const message = (error as any).message || '';
 
           if (code === '23505' || message.includes('duplicate key value')) {
-            console.warn('Like already exists, treating as success:', error);
+            // Like already exists, treating as success
           } else {
-            console.error('Like error:', error);
             throw error;
           }
         }
@@ -184,7 +182,6 @@ export function PostCard({ post }: PostCardProps) {
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
     },
     onError: (error) => {
-      console.error('Like toggle failed:', error);
       toast('Could not update like. Please try again.');
     },
   });
@@ -241,7 +238,6 @@ export function PostCard({ post }: PostCardProps) {
       toast.success('Post reshared successfully!');
     },
     onError: (error) => {
-      console.error('Reshare failed:', error);
       toast.error('Failed to reshare post. Please try again.');
     },
   });
@@ -271,7 +267,6 @@ export function PostCard({ post }: PostCardProps) {
       toast.success('Post updated successfully!');
     },
     onError: (error) => {
-      console.error('Edit failed:', error);
       toast.error('Failed to update post. Please try again.');
     },
   });

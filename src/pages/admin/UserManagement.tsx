@@ -76,7 +76,6 @@ export default function UserManagement() {
         });
       }
     } catch (error) {
-      console.error('Error searching users:', error);
       toast({
         title: 'Error',
         description: 'Failed to search users',
@@ -97,7 +96,7 @@ export default function UserManagement() {
 
       setUserRoles((roles?.map(r => r.role).filter(r => r !== null) as AppRole[]) || []);
     } catch (error) {
-      console.error('Error loading user details:', error);
+      // Error loading user details
     }
   };
 
@@ -149,7 +148,6 @@ export default function UserManagement() {
       setShowEditDialog(false);
       setShowUserDialog(false);
     } catch (error) {
-      console.error('Error updating user:', error);
       toast({
         title: 'Error',
         description: 'Failed to update user profile',
@@ -189,7 +187,6 @@ export default function UserManagement() {
       handleSearch();
       setShowUserDialog(false);
     } catch (error) {
-      console.error('Error toggling verification:', error);
       toast({
         title: 'Error',
         description: 'Failed to update verification status',
@@ -241,7 +238,6 @@ export default function UserManagement() {
       await loadUserDetails(selectedUser.id);
       setSelectedRole('');
     } catch (error) {
-      console.error('Error assigning role:', error);
       toast({
         title: 'Error',
         description: 'Failed to assign role',
@@ -280,7 +276,6 @@ export default function UserManagement() {
 
       await loadUserDetails(selectedUser.id);
     } catch (error) {
-      console.error('Error removing role:', error);
       toast({
         title: 'Error',
         description: 'Failed to remove role',

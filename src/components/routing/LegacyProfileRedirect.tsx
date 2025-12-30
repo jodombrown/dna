@@ -37,7 +37,6 @@ const LegacyProfileRedirect = () => {
           setUsername(data.username);
         }
       } catch (err) {
-        console.error('Error looking up username:', err);
         setNotFound(true);
       } finally {
         setLoading(false);

@@ -141,7 +141,6 @@ export function CreateGroupDialog({
         tags: [],
       });
     } catch (error) {
-      console.error('Error creating group:', error);
       toast({
         title: 'Error',
         description: 'Failed to create group',

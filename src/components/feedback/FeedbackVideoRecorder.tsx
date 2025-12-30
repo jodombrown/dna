@@ -92,7 +92,6 @@ export function FeedbackVideoRecorder({
         });
       }, 1000);
     } catch (err) {
-      console.error('Error starting video recording:', err);
       setError('Could not access camera. Please check permissions.');
     }
   }, [maxDurationSeconds]);

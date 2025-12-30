@@ -43,7 +43,7 @@ export const EditPostDialog = ({
       await onSave(content);
       onClose();
     } catch (error) {
-      console.error('Edit error:', error);
+      // Error handling delegated to parent component
     } finally {
       setIsSaving(false);
     }

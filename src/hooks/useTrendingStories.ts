@@ -40,7 +40,6 @@ export function useTrendingStories(limit: number = 5) {
         .rpc('get_trending_stories', { p_limit: limit });
 
       if (trendingError) {
-        console.error('Error fetching trending scores:', trendingError);
         throw trendingError;
       }
 
@@ -65,7 +64,6 @@ export function useTrendingStories(limit: number = 5) {
         .in('id', postIds);
 
       if (postsError) {
-        console.error('Error fetching post details:', postsError);
         throw postsError;
       }
 
@@ -79,11 +77,6 @@ export function useTrendingStories(limit: number = 5) {
       const profileMap = new Map(
         (profiles || []).map(p => [p.id, p])
       );
-
-      if (postsError) {
-        console.error('Error fetching post details:', postsError);
-        throw postsError;
-      }
 
       // Merge trending scores with post data
       const scoreMap = new Map(

@@ -319,7 +319,6 @@ export function DiaSearch({
           description: 'Please try again.'
         });
       }
-      console.error('DIA search error:', error);
     },
   });
 

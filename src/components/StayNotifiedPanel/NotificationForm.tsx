@@ -70,7 +70,6 @@ const NotificationForm: React.FC<NotificationFormProps> = ({ onClose }) => {
       });
 
       if (error) {
-        console.error('Supabase function error:', error);
         throw error;
       }
 
@@ -82,7 +81,6 @@ const NotificationForm: React.FC<NotificationFormProps> = ({ onClose }) => {
         throw new Error(data?.error || 'Failed to send email');
       }
     } catch (error: any) {
-      console.error('Email submission error:', error);
       toast.error(getGenericErrorMessage(error));
     } finally {
       setIsSubmitting(false);

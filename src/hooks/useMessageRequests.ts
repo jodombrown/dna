@@ -47,7 +47,6 @@ export function useAcceptMessageRequest() {
     mutationFn: async (conversationId: string) => {
       if (!user) throw new Error('Not authenticated');
       // Placeholder - RPC not implemented yet
-      console.log('Accept message request:', conversationId);
       return true;
     },
     onSuccess: () => {
@@ -74,7 +73,6 @@ export function useDeclineMessageRequest() {
     mutationFn: async (conversationId: string) => {
       if (!user) throw new Error('Not authenticated');
       // Placeholder - RPC not implemented yet
-      console.log('Decline message request:', conversationId);
       return true;
     },
     onSuccess: () => {

@@ -16,7 +16,6 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
       });
 
       if (error) {
-        console.error('Error checking admin role:', error);
         return false;
       }
 

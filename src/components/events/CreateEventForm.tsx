@@ -142,7 +142,6 @@ export const CreateEventForm = ({ preselectedGroupId }: CreateEventFormProps = {
       // Navigate to the new event
       navigate(`/dna/convene/events/${result.event.id}`);
     } catch (error: any) {
-      console.error('Error creating event:', error);
       toast({
         title: 'Error',
         description: error.message || 'Failed to create event',

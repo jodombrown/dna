@@ -137,7 +137,6 @@ const ContentModeration = () => {
         })) || []
       );
     } catch (error) {
-      console.error('Error fetching flagged content:', error);
       toast({
         title: "Error",
         description: "Failed to fetch flagged content",
@@ -209,7 +208,6 @@ const ContentModeration = () => {
       setSelectedPost(null);
       setReviewNotes('');
     } catch (error) {
-      console.error('Error moderating post:', error);
       toast({
         title: "Error",
         description: "Failed to moderate post",
@@ -251,7 +249,6 @@ const ContentModeration = () => {
       setSelectedComment(null);
       setReviewNotes('');
     } catch (error) {
-      console.error('Error moderating comment:', error);
       toast({
         title: "Error",
         description: "Failed to moderate comment",
@@ -300,7 +297,6 @@ const ContentModeration = () => {
       setSelectedPostIds(new Set());
       fetchFlaggedContent();
     } catch (error) {
-      console.error('Error bulk moderating posts:', error);
       toast({
         title: "Error",
         description: "Failed to process bulk moderation",
@@ -350,7 +346,6 @@ const ContentModeration = () => {
       setSelectedCommentIds(new Set());
       fetchFlaggedContent();
     } catch (error) {
-      console.error('Error bulk moderating comments:', error);
       toast({
         title: "Error",
         description: "Failed to process bulk moderation",

@@ -56,8 +56,7 @@ export function MediaDropZone({ onMediaInsert, isDragging, setIsDragging }: Medi
 
       setUploadProgress(100);
       return publicUrl;
-    } catch (error) {
-      console.error('Upload error:', error);
+    } catch {
       toast.error('Failed to upload file');
       return null;
     } finally {

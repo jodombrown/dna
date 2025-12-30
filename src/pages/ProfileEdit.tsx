@@ -43,7 +43,6 @@ const ProfileEdit = () => {
   useEffect(() => {
     if (!isLoading && !profile && user && retryCount < 3) {
       const timeout = setTimeout(() => {
-        console.log(`Profile not found, retrying... (attempt ${retryCount + 1})`);
         setRetryCount(prev => prev + 1);
         refetch();
       }, 1000);

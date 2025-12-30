@@ -66,7 +66,6 @@ const GuestsTab: React.FC<GuestsTabProps> = ({ eventId }) => {
 
       setGuests(formattedGuests);
     } catch (error) {
-      console.error('Error fetching guests:', error);
       toast.error('Failed to load guests');
     } finally {
       setLoading(false);
@@ -113,7 +112,6 @@ const GuestsTab: React.FC<GuestsTabProps> = ({ eventId }) => {
       toast.success(`Updated status to ${status}`);
       await fetchGuests();
     } catch (err) {
-      console.error('Update status error:', err);
       toast.error('Failed to update status');
     }
   };
@@ -128,7 +126,6 @@ const GuestsTab: React.FC<GuestsTabProps> = ({ eventId }) => {
       await Promise.all(Array.from(selectedGuests).map(uid => setStatus(uid, 'going')));
       setSelectedGuests(new Set());
     } catch (error) {
-      console.error('Error approving guests:', error);
       toast.error('Failed to approve guests');
     }
   };
@@ -143,7 +140,6 @@ const GuestsTab: React.FC<GuestsTabProps> = ({ eventId }) => {
       await Promise.all(Array.from(selectedGuests).map(uid => setStatus(uid, 'cancelled')));
       setSelectedGuests(new Set());
     } catch (error) {
-      console.error('Error declining guests:', error);
       toast.error('Failed to decline guests');
     }
   };

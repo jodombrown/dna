@@ -85,7 +85,6 @@ export const useAdminStats = (): UseAdminStatsReturn => {
       const { data, error: rpcError } = await (supabase as any).rpc('get_admin_dashboard_stats');
 
       if (rpcError) {
-        console.error('Error fetching stats:', rpcError);
         setError('Failed to fetch dashboard stats');
         return;
       }
@@ -95,7 +94,6 @@ export const useAdminStats = (): UseAdminStatsReturn => {
         setError(null);
       }
     } catch (err) {
-      console.error('Stats fetch error:', err);
       setError('An error occurred while fetching stats');
     }
   }, []);
@@ -107,7 +105,6 @@ export const useAdminStats = (): UseAdminStatsReturn => {
       });
 
       if (rpcError) {
-        console.error('Error fetching growth data:', rpcError);
         return;
       }
 
@@ -115,7 +112,7 @@ export const useAdminStats = (): UseAdminStatsReturn => {
         setUserGrowth(data as unknown as UserGrowthDataPoint[]);
       }
     } catch (err) {
-      console.error('Growth data fetch error:', err);
+      // Silently handle growth data errors
     }
   }, []);
 
@@ -124,7 +121,6 @@ export const useAdminStats = (): UseAdminStatsReturn => {
       const { data, error: rpcError } = await (supabase as any).rpc('get_user_segments_distribution');
 
       if (rpcError) {
-        console.error('Error fetching segments:', rpcError);
         return;
       }
 
@@ -132,7 +128,7 @@ export const useAdminStats = (): UseAdminStatsReturn => {
         setUserSegments(data as unknown as UserSegment[]);
       }
     } catch (err) {
-      console.error('Segments fetch error:', err);
+      // Silently handle segments data errors
     }
   }, []);
 

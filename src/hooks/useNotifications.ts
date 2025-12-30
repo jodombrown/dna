@@ -35,7 +35,6 @@ export function useNotifications(
       });
 
       if (error) {
-        console.error('Error fetching notifications:', error);
         throw error;
       }
 
@@ -54,7 +53,6 @@ export function useNotifications(
       });
 
       if (error) {
-        console.error('Error fetching unread notification count:', error);
         return 0;
       }
 
@@ -224,7 +222,6 @@ export function useNotifications(
         .eq('user_id', user.id);
 
       if (error) {
-        console.error('Error deleting all notifications:', error);
         throw error;
       }
     },
@@ -246,7 +243,6 @@ export function useNotifications(
         .eq('is_read', true);
 
       if (error) {
-        console.error('Error deleting read notifications:', error);
         throw error;
       }
     },

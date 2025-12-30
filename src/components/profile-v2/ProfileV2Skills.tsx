@@ -55,7 +55,7 @@ const ProfileV2Skills: React.FC<ProfileV2SkillsProps> = ({
       await onUpdate(skillsList);
       setIsEditing(false);
     } catch (error) {
-      console.error('Failed to update skills:', error);
+      // Failed to update skills
     } finally {
       setIsSaving(false);
     }

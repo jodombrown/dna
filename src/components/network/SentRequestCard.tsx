@@ -75,7 +75,6 @@ export const SentRequestCard: React.FC<SentRequestCardProps> = ({
       toast.success('Connection request withdrawn');
       onWithdraw();
     } catch (error: any) {
-      console.error('Error withdrawing request:', error);
       toast.error(error.message || 'Failed to withdraw request');
     } finally {
       setIsWithdrawing(false);

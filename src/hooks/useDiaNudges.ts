@@ -45,7 +45,6 @@ export function useDiaNudges(statusFilter?: 'sent' | 'all') {
     const { data, error } = await query;
 
     if (error) {
-      console.error("Error fetching nudges:", error);
       toast({
         title: "Error",
         description: "Failed to load nudges",

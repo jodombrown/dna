@@ -74,7 +74,6 @@ const UsernameManager: React.FC<UsernameManagerProps> = ({
         setSuggestions([]);
       }
     } catch (error) {
-      console.error('Error checking username:', error);
       setIsAvailable(false);
     }
 

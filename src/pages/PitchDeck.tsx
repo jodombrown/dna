@@ -583,7 +583,7 @@ const PitchDeck = () => {
         });
       } catch (err) {
         if ((err as Error).name !== 'AbortError') {
-          console.log('Share failed:', err);
+          // Share failed
         }
       }
     } else {

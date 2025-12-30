@@ -1,8 +1,9 @@
+import { logger } from '@/lib/logger';
 
 export const getGenericErrorMessage = (error: any): string => {
   // Log the actual error for debugging
-  console.error('Error details:', error);
-  
+  logger.error('ErrorHandling', 'Error details', error);
+
   // Return generic messages to avoid exposing system details
   if (error?.code === 'PGRST116') {
     return 'Profile not found. Please try again.';
@@ -28,11 +29,11 @@ export const getGenericErrorMessage = (error: any): string => {
 };
 
 export const logSecurityEvent = (eventType: string, userId?: string, details?: any): void => {
-  console.warn(`Security Event: ${eventType}`, {
+  logger.warn('Security', `Security Event: ${eventType}`, {
     userId,
     timestamp: new Date().toISOString(),
     details
   });
-  
+
   // In production, you might want to send this to a monitoring service
 };

@@ -73,8 +73,7 @@ export const useAdvancedSearch = () => {
       }
 
       setProfessionals(filteredProfessionals);
-    } catch (error) {
-      console.error('Error searching professionals:', error);
+    } catch {
       setProfessionals([]);
     }
   };
@@ -110,8 +109,7 @@ export const useAdvancedSearch = () => {
       }));
 
       setCommunities(transformedCommunities);
-    } catch (error) {
-      console.error('Error searching communities:', error);
+    } catch {
       setCommunities([]);
     }
   };
@@ -163,8 +161,7 @@ export const useAdvancedSearch = () => {
       });
 
       setEvents(transformedEvents);
-    } catch (error) {
-      console.error('Error searching events:', error);
+    } catch {
       setEvents([]);
     }
   };
@@ -182,8 +179,7 @@ export const useAdvancedSearch = () => {
         title: "Search Results",
         description: `Found ${professionals.length} professionals, ${communities.length} communities, and ${events.length} events`,
       });
-    } catch (error) {
-      console.error('Search error:', error);
+    } catch {
       toast({
         title: "Search Error",
         description: "Failed to search. Please try again.",

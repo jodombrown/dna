@@ -31,14 +31,12 @@ export const useAdminActivity = (): UseAdminActivityReturn => {
       });
 
       if (rpcError) {
-        console.error('Error logging activity:', rpcError);
         setError('Failed to log activity');
         return null;
       }
 
       return data as string;
     } catch (err) {
-      console.error('Activity logging error:', err);
       setError('An error occurred while logging activity');
       return null;
     } finally {

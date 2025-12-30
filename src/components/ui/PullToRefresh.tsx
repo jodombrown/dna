@@ -108,7 +108,7 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
       try {
         await onRefresh();
       } catch (error) {
-        console.error('Pull to refresh failed:', error);
+        // Error handling happens in onRefresh
       }
     }
 

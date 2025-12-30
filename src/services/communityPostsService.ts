@@ -8,7 +8,7 @@ const triggerAdinPrompt = async (userId: string, eventType: string) => {
       body: { user_id: userId, event_type: eventType }
     });
   } catch (error) {
-    console.error('Failed to trigger ADIN prompt:', error);
+    // Silently fail - non-blocking
   }
 };
 
@@ -58,7 +58,6 @@ export const fetchCommunityPosts = async (): Promise<CommunityPost[]> => {
     .limit(20);
 
   if (postsError) {
-    console.error('Error fetching community posts:', postsError);
     throw postsError;
   }
 
@@ -113,7 +112,6 @@ export const createCommunityPost = async (postData: CreateCommunityPostData): Pr
     .single();
 
   if (error) {
-    console.error('Error creating community post:', error);
     throw error;
   }
 
@@ -127,7 +125,6 @@ export const createCommunityPost = async (postData: CreateCommunityPostData): Pr
       mediaUrl: postData.media_url,
     });
   } catch (feedError) {
-    console.error('Failed to create feed post for community post:', feedError);
     // Don't fail the request if feed post creation fails
   }
 
@@ -163,7 +160,6 @@ export const getUserCommunities = async (userId: string) => {
     .eq('status', 'approved');
 
   if (error) {
-    console.error('Error fetching user community memberships:', error);
     throw error;
   }
 
@@ -179,7 +175,6 @@ export const getUserCommunities = async (userId: string) => {
     .in('id', communityIds);
 
   if (communitiesError) {
-    console.error('Error fetching communities:', communitiesError);
     throw communitiesError;
   }
 

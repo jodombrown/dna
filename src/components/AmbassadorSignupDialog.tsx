@@ -78,7 +78,6 @@ Availability: ${formData.availability || 'Not provided'}
       });
 
       if (error) {
-        console.error('Supabase function error:', error);
         throw error;
       }
 
@@ -102,7 +101,6 @@ Availability: ${formData.availability || 'Not provided'}
         throw new Error(data?.error || 'Failed to submit ambassador application');
       }
     } catch (error: any) {
-      console.error('Ambassador signup error:', error);
       toast.error('Something went wrong. Please try again.');
     } finally {
       setIsSubmitting(false);

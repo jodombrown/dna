@@ -57,7 +57,6 @@ export const useUploadPostMedia = () => {
 
       return urlData.publicUrl;
     } catch (error) {
-      console.error('Upload error:', error);
       toast({
         title: "Upload Failed",
         description: "Failed to upload image. Please try again.",

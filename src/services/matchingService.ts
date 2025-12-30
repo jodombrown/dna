@@ -95,7 +95,6 @@ class MatchingService {
 
       return matches;
     } catch (error) {
-      console.error('Error finding matches:', error);
       return [];
     }
   }
@@ -753,7 +752,6 @@ class MatchingService {
         updated_at: p.updated_at || p.created_at
       }));
     } catch (error) {
-      console.error('Error getting smart recommendations:', error);
       return [];
     }
   }
@@ -779,7 +777,6 @@ class MatchingService {
 
       return this.findMatches(userId, criteria);
     } catch (error) {
-      console.error('Error finding complementary matches:', error);
       return [];
     }
   }

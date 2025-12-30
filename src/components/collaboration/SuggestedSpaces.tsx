@@ -102,7 +102,7 @@ export function SuggestedSpaces() {
         source: 'suggested_spaces',
       });
     } catch (error) {
-      console.error('Failed to join space:', error);
+      // Error handled by mutation hook
     }
   };
 

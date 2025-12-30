@@ -54,7 +54,6 @@ export const ReshareDialog = ({
       onClose();
     } catch (error) {
       // Error handling is done in parent component
-      console.error('Reshare error:', error);
     } finally {
       setIsResharing(false);
     }

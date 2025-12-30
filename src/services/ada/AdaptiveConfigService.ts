@@ -83,7 +83,6 @@ export class AdaptiveConfigService {
         source: 'fallback',
       };
     } catch (error) {
-      console.error('Error resolving policy:', error);
       return {
         policy: null,
         source: 'fallback',
@@ -109,7 +108,6 @@ export class AdaptiveConfigService {
       .eq('is_active', true);
 
     if (error) {
-      console.error('Error fetching policies:', error);
       return [];
     }
 

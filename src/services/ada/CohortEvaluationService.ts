@@ -82,7 +82,6 @@ export class CohortEvaluationService {
       .rpc('get_user_cohorts', { p_user_id: userId });
 
     if (error) {
-      console.error('Error getting user cohorts:', error);
       return [];
     }
 
@@ -128,7 +127,6 @@ export class CohortEvaluationService {
       .eq('is_active', true);
 
     if (error) {
-      console.error('Error fetching cohorts:', error);
       return [];
     }
 
@@ -146,7 +144,6 @@ export class CohortEvaluationService {
       .gt('expires_at', new Date().toISOString());
 
     if (error) {
-      console.error('Error estimating cohort size:', error);
       return 0;
     }
 
@@ -195,7 +192,7 @@ export class CohortEvaluationService {
       });
 
     if (error) {
-      console.error('Error caching cohort memberships:', error);
+      // Silently fail - caching is non-critical
     }
   }
 }

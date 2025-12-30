@@ -46,13 +46,11 @@ const DnaUserDashboard = () => {
 
         // Return null on error - don't throw, let UI handle gracefully
         if (error) {
-          console.warn('Profile fetch error:', error.message);
           return null;
         }
         return data;
       } catch (err) {
         // Catch any unexpected errors - NEVER throw to avoid ErrorBoundary
-        console.warn('Profile fetch unexpected error:', err);
         return null;
       }
     },

@@ -43,7 +43,6 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
         description: "Event link has been copied to your clipboard.",
       });
     } catch (err) {
-      console.error('Failed to copy to clipboard:', err);
       toast({
         title: "Copy Failed",
         description: "Unable to copy link. Please try again.",

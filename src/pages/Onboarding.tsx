@@ -177,10 +177,6 @@ const Onboarding = () => {
       const { data: completionData, error: completionError } = await supabase
         .rpc('calculate_profile_completion_percentage', { profile_id: user.id });
 
-      if (completionError) {
-        console.error('Error calculating completion:', completionError);
-      }
-
       // Mark onboarding as complete
       const { error: completeError } = await supabase
         .from('profiles')
@@ -213,7 +209,6 @@ const Onboarding = () => {
         navigate('/dna/feed');
       }, 1800);
     } catch (error: any) {
-      console.error('Error completing onboarding:', error);
       toast({
         title: "Error",
         description: error.message || "Failed to complete onboarding. Please try again.",

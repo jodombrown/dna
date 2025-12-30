@@ -121,7 +121,6 @@ const EventCreateWizard: React.FC = () => {
         .single();
 
       if (error) {
-        console.error('Error creating event:', error);
         toast.error('Failed to create event');
         return;
       }
@@ -130,7 +129,6 @@ const EventCreateWizard: React.FC = () => {
       // Phase 1.5: Navigate to events list instead of detail page
       navigate('/dna/convene/events');
     } catch (error) {
-      console.error('Unexpected error:', error);
       toast.error('An unexpected error occurred');
     } finally {
       setSaving(false);

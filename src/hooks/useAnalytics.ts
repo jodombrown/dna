@@ -44,8 +44,8 @@ export function useAnalytics() {
         event_metadata: metadata || null,
         route: route || window.location.pathname,
       });
-    } catch (error) {
-      console.warn('Analytics tracking failed:', error);
+    } catch {
+      // Silently ignore analytics failures
     }
   };
   return { trackEvent };

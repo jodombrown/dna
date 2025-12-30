@@ -38,7 +38,6 @@ export const useLiveContributions = (limit: number = 10) => {
           .limit(limit);
 
         if (fetchError) {
-          console.error('Error fetching contributions:', fetchError);
           setError(fetchError.message);
           toast({
             title: "Error",
@@ -50,7 +49,6 @@ export const useLiveContributions = (limit: number = 10) => {
 
         setContributions(data || []);
       } catch (err: any) {
-        console.error('Unexpected error:', err);
         setError(err.message);
       } finally {
         setLoading(false);

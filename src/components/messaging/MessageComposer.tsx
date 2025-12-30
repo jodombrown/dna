@@ -66,7 +66,6 @@ export function MessageComposer({
       onMessageSent?.();
       textareaRef.current?.focus();
     } catch (error) {
-      console.error('Error sending message:', error);
       toast({
         title: 'Error',
         description: 'Failed to send message',

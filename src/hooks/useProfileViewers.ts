@@ -26,7 +26,6 @@ export function useProfileViewers(profileId: string | null | undefined) {
       });
 
       if (error) {
-        console.error('Error fetching profile viewers:', error);
         return [];
       }
 

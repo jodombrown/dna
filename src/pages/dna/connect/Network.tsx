@@ -62,13 +62,12 @@ export default function Network() {
         .eq('requester_id', user.id)
         .eq('status', 'pending')
         .order('created_at', { ascending: false });
-      
+
       if (connectionsError) {
-        console.error('Error fetching sent requests:', connectionsError);
         setSentRequests([]);
         return;
       }
-      
+
       if (!connections || connections.length === 0) {
         setSentRequests([]);
         return;
@@ -82,11 +81,11 @@ export default function Network() {
         .from('profiles')
         .select('id, full_name, avatar_url, headline')
         .in('id', recipientIds);
-      
+
       if (profilesError) {
-        console.error('Error fetching recipient profiles:', profilesError);
+        // Error fetching recipient profiles
       }
-      
+
       // Create a map for quick lookup
       const profileMap = new Map((profiles || []).map(p => [p.id, p]));
       

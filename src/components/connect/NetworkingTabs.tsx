@@ -15,7 +15,6 @@ const NetworkingTabs = () => {
   const [activeTab, setActiveTab] = useState('professionals');
 
   const handleSearch = () => {
-    console.log('Searching for:', searchTerm);
     // Search logic will be implemented
   };
 

@@ -38,7 +38,6 @@ export const EventRecommendations = () => {
       });
 
       if (error) {
-        console.error('Error fetching recommendations:', error);
         throw error;
       }
 

@@ -160,7 +160,6 @@ const RecommendationsStep: React.FC<RecommendationsStepProps> = ({ data, updateD
       updateData({ onboarding_selections: newSelections });
 
     } catch (error) {
-      console.error('Error saving selection:', error);
       toast({
         title: "Error",
         description: "Failed to save your selection. Please try again.",

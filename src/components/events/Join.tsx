@@ -29,7 +29,6 @@ const Join: React.FC = () => {
         });
 
         if (error) {
-          console.error('Join link error:', error);
           setError(error.message || 'Failed to process join link');
           return;
         }
@@ -46,7 +45,6 @@ const Join: React.FC = () => {
           setError('Invalid or expired join link');
         }
       } catch (err: any) {
-        console.error('Unexpected error:', err);
         setError(err.message || 'An unexpected error occurred');
       } finally {
         setLoading(false);

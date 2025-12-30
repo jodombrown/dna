@@ -93,7 +93,6 @@ const StepLocation: React.FC<StepLocationProps> = ({
           .eq('id', eventId);
 
         if (error) {
-          console.error('Error updating event location:', error);
           toast.error('Failed to save location information');
           return;
         }
@@ -103,7 +102,6 @@ const StepLocation: React.FC<StepLocationProps> = ({
 
       onNext?.();
     } catch (error) {
-      console.error('Unexpected error saving location:', error);
       toast.error('An unexpected error occurred');
     } finally {
       setSaving(false);

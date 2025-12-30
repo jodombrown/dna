@@ -44,9 +44,8 @@ export const useTrackProfileView = ({
             user_agent: navigator.userAgent || null,
           });
         hasTracked.current = true;
-      } catch (error) {
+      } catch {
         // Silently fail - analytics shouldn't break the user experience
-        console.debug('Failed to track profile view:', error);
       }
     };
 

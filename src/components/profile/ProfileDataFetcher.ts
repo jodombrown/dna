@@ -6,7 +6,6 @@ export const useProfileDataFetcher = (profile: any) => {
     try {
       return await profilesService.getUserProjectsAndInitiatives(profile.id);
     } catch (error) {
-      console.error('Error fetching projects and initiatives:', error);
       return {
         projects: [],
         initiatives: [],

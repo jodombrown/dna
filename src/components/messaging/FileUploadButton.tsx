@@ -37,7 +37,6 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = ({
         onFileUploaded(url, file.name);
       }
     } catch (error) {
-      console.error('File upload error:', error);
       toast({
         title: "Upload failed",
         description: "Failed to upload file. Please try again.",

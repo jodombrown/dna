@@ -17,7 +17,6 @@ export async function trackEventAnalytics(eventId: string, kind: EventAnalyticsK
       payload: payload || null,
     });
   } catch (e) {
-    // Non-blocking
-    console.warn('analytics insert failed', e);
+    // Non-blocking - silently fail
   }
 }

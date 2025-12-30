@@ -108,7 +108,7 @@ export function GroupPostComments({ postId, isOpen, onClose }: GroupPostComments
           postId,
           user!.id,
           authorName
-        ).catch(err => console.error('Failed to process group comment mentions:', err));
+        ).catch(() => {});
       }
 
       setNewComment('');
@@ -118,7 +118,6 @@ export function GroupPostComments({ postId, isOpen, onClose }: GroupPostComments
       });
     },
     onError: (error) => {
-      console.error('Comment error:', error);
       toast({
         title: 'Error',
         description: 'Failed to post comment',

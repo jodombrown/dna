@@ -79,7 +79,6 @@ const JoinBetaDialog: React.FC<JoinBetaDialogProps> = ({ isOpen, onClose }) => {
       });
       onClose();
     } catch (error) {
-      console.error('Error submitting beta request:', error);
       toast({
         title: 'Submission Failed',
         description: 'There was an error submitting your request. Please try again.',

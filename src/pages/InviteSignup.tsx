@@ -59,7 +59,6 @@ const InviteSignup = () => {
         }
       }
     } catch (error) {
-      console.error('Error validating invite:', error);
       setInviteValid(false);
     } finally {
       setValidatingInvite(false);
@@ -109,7 +108,6 @@ const InviteSignup = () => {
       // Redirect to dashboard
       navigate('/app/dashboard');
     } catch (error: any) {
-      console.error('Signup error:', error);
       toast({
         title: "Signup Error",
         description: error.message || "Failed to create account",

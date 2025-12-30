@@ -30,7 +30,6 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
         .eq('post_id', postId);
 
       if (error) {
-        console.error('Failed to load post likes:', error);
         return {
           likeCount: 0,
           userHasLiked: false,
@@ -72,7 +71,6 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
           .eq('user_id', userId);
 
         if (error) {
-          console.error('Unlike failed:', error);
           throw error;
         }
       } else {
@@ -92,9 +90,8 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
 
           // Treat unique constraint violations as success (idempotent like)
           if (code === '23505' || message.includes('duplicate key value')) {
-            console.warn('Like already exists, treating as success:', error);
+            // Idempotent - like already exists
           } else {
-            console.error('Like failed:', error);
             throw error;
           }
         }
@@ -109,7 +106,9 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
             action_url: `https://diasporanetwork.africa/dna/convey/post/${postId}`,
             actor_name: notificationContext.actorName,
             actor_avatar_url: notificationContext.actorAvatarUrl,
-          }).catch(err => console.error('Failed to send like notification email:', err));
+          }).catch(err => {
+            // Silently ignore notification email errors
+          });
         }
       }
     },
@@ -120,7 +119,6 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
     },
     onError: (error) => {
       // DNA v1.0 LOCKDOWN: Gentle feedback only, no red banners
-      console.warn('Failed to update like:', error);
       toast({
         description: 'Could not update like. Please try again.',
         variant: 'default',

@@ -82,7 +82,6 @@ export default function CreateSpace() {
         origin_event_id: eventId,
       }));
     } catch (error) {
-      console.error('Error prefilling from event:', error);
       toast.error('Failed to load event details');
     } finally {
       setIsPrefilling(false);
@@ -124,7 +123,6 @@ export default function CreateSpace() {
         origin_group_id: groupId,
       }));
     } catch (error) {
-      console.error('Error prefilling from group:', error);
       toast.error('Failed to load group details');
     } finally {
       setIsPrefilling(false);
@@ -194,10 +192,10 @@ export default function CreateSpace() {
           space_id: result.id,
         });
       }
-      
+
       navigate(`/dna/collaborate/spaces/${result.slug}`);
     } catch (error: any) {
-      console.error('Error creating space:', error);
+      // Error handled by mutation
     } finally {
       setIsCheckingProfile(false);
     }

@@ -51,11 +51,10 @@ export async function trackFeedEvent(event: FeedEvent) {
     });
 
     if (error) {
-      console.error('Error tracking feed event:', error);
+      // Silently fail - analytics are non-blocking
     }
   } catch (err) {
     // Non-blocking - don't throw
-    console.warn('Failed to track feed event:', err);
   }
 }
 

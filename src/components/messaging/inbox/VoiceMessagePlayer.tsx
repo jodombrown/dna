@@ -62,7 +62,6 @@ export const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({
       
       audioContext.close();
     } catch (error) {
-      console.error('Error generating waveform:', error);
       // Fallback to random-ish waveform
       setWaveformData(Array(35).fill(0).map(() => 0.3 + Math.random() * 0.7));
     }
@@ -143,7 +142,7 @@ export const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({
       window.URL.revokeObjectURL(downloadUrl);
       document.body.removeChild(a);
     } catch (error) {
-      console.error('Error downloading voice message:', error);
+      // Silent fail for download errors
     }
   };
 
@@ -171,7 +170,7 @@ export const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({
       setTranscript(data.text);
       setShowTranscript(true);
     } catch (error) {
-      console.error('Error transcribing:', error);
+      // Silent fail for transcription errors
     } finally {
       setIsTranscribing(false);
     }

@@ -86,7 +86,6 @@ export const AdminRouteGuard: React.FC<AdminRouteGuardProps> = ({
         const { data, error: rpcError } = await (supabase as any).rpc('get_current_admin_status');
 
         if (rpcError) {
-          console.error('Error checking admin status:', rpcError);
           setError('Failed to verify admin access');
           setIsLoading(false);
           return;
@@ -105,7 +104,6 @@ export const AdminRouteGuard: React.FC<AdminRouteGuardProps> = ({
           setAdminStatus(null);
         }
       } catch (err) {
-        console.error('Admin access check error:', err);
         setError('An error occurred while verifying access');
       } finally {
         setIsLoading(false);
@@ -136,7 +134,7 @@ export const AdminRouteGuard: React.FC<AdminRouteGuardProps> = ({
       try {
         await (supabase as any).rpc('update_admin_session_activity');
       } catch (err) {
-        console.error('Failed to update session activity:', err);
+        // Silently fail - session activity update is not critical
       }
     };
 

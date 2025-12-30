@@ -66,7 +66,6 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
       setMessageInput('');
     },
     onError: (error) => {
-      console.error('Failed to send message:', error);
       toast({ title: 'Failed to send message', variant: 'destructive' });
     },
   });

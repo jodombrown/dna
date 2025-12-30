@@ -55,7 +55,7 @@ const AdminLogin = () => {
           }
         }
       } catch (error) {
-        console.error('Error checking auth:', error);
+        // Error checking auth
       } finally {
         setIsCheckingAuth(false);
       }
@@ -81,7 +81,6 @@ const AdminLogin = () => {
       });
 
       if (error) {
-        console.error('Email validation error:', error);
         setEmailError('Unable to validate email. Please try again.');
         setEmailValidation(null);
         return;
@@ -103,7 +102,6 @@ const AdminLogin = () => {
         setEmailError('This email is not authorized for admin access.');
       }
     } catch (error) {
-      console.error('Email validation error:', error);
       setEmailError('Unable to validate email. Please try again.');
       setEmailValidation(null);
     } finally {
@@ -151,7 +149,6 @@ const AdminLogin = () => {
         description: 'Check your email for a secure login link.',
       });
     } catch (error: any) {
-      console.error('Magic link error:', error);
       toast({
         title: 'Error',
         description: error.message || 'Failed to send magic link. Please try again.',

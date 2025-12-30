@@ -88,7 +88,9 @@ export function usePostReactions(postId: string, userId?: string, notificationCo
           action_url: `https://diasporanetwork.africa/dna/convey/post/${postId}`,
           actor_name: notificationContext.actorName,
           actor_avatar_url: notificationContext.actorAvatarUrl,
-        }).catch(err => console.error('Failed to send reaction notification email:', err));
+        }).catch(err => {
+          // Silently ignore notification email errors
+        });
       }
     },
     onSuccess: () => {
@@ -96,7 +98,6 @@ export function usePostReactions(postId: string, userId?: string, notificationCo
     },
     onError: (error: any) => {
       // DNA v1.0 LOCKDOWN: Gentle feedback only
-      console.warn('Failed to add reaction:', error);
       toast({
         description: 'Could not add reaction. Please try again.',
         variant: 'default',
@@ -123,7 +124,6 @@ export function usePostReactions(postId: string, userId?: string, notificationCo
     },
     onError: (error: any) => {
       // DNA v1.0 LOCKDOWN: Gentle feedback only
-      console.warn('Failed to remove reaction:', error);
       toast({
         description: 'Could not remove reaction. Please try again.',
         variant: 'default',

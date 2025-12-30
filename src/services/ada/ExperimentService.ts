@@ -114,7 +114,6 @@ export class ExperimentService {
     const { data, error } = await query;
 
     if (error) {
-      console.error('Error fetching eligible experiments:', error);
       return [];
     }
 
@@ -205,7 +204,6 @@ export class ExperimentService {
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Error fetching running experiments:', error);
       return [];
     }
 
@@ -249,7 +247,6 @@ export class ExperimentService {
       });
 
     if (error) {
-      console.error('Error creating experiment assignment:', error);
       return null;
     }
 

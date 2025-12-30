@@ -27,7 +27,6 @@ export const useImageUpload = () => {
         });
 
       if (error) {
-        console.error('Upload error:', error);
         toast({
           title: "Upload Failed",
           description: "Failed to upload image. Please try again.",
@@ -43,7 +42,6 @@ export const useImageUpload = () => {
 
       return urlData.publicUrl;
     } catch (error) {
-      console.error('Unexpected upload error:', error);
       toast({
         title: "Upload Error",
         description: "An unexpected error occurred during upload.",

@@ -29,7 +29,6 @@ export function NetworkFeedWidget({ currentUserId }: NetworkFeedWidgetProps) {
       });
 
       if (error) {
-        console.error('Widget feed error:', error);
         throw error;
       }
 

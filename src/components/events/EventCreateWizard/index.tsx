@@ -142,7 +142,6 @@ const EventCreateWizard: React.FC<EventCreateWizardProps> = ({ onNext }) => {
 
       return true;
     } catch (error) {
-      console.error('Error saving draft:', error);
       toast.error('Failed to save draft');
       return false;
     } finally {
@@ -228,7 +227,6 @@ const EventCreateWizard: React.FC<EventCreateWizardProps> = ({ onNext }) => {
       // Phase 1.5: Navigate to events list instead of slug-based detail page
       navigate('/dna/convene/events');
     } catch (error) {
-      console.error('Error finalizing event:', error);
       toast.error('Failed to create event');
     } finally {
       setSaving(false);

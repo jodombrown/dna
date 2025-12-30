@@ -71,8 +71,8 @@ export function useCreateConveyItem() {
               eventId: item.primary_event_id || undefined,
             });
           }
-        } catch (error) {
-          console.error('Failed to create feed post for story:', error);
+        } catch {
+          // Silently ignore feed post creation failure
         }
       }
 
@@ -143,8 +143,8 @@ export function useUpdateConveyItem() {
               eventId: item.primary_event_id || undefined,
             });
           }
-        } catch (error) {
-          console.error('Failed to create feed post for story:', error);
+        } catch {
+          // Silently ignore feed post creation failure
         }
       }
 

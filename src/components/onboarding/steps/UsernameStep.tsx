@@ -76,7 +76,6 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ data, updateData }) => {
 
       setAiSuggestions(suggestions.suggestions || []);
     } catch (error) {
-      console.error('Error generating AI suggestions:', error);
       // Fallback to manual suggestions
       generateFallbackSuggestions();
     }
@@ -133,7 +132,6 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ data, updateData }) => {
         setManualSuggestions([]);
       }
     } catch (error) {
-      console.error('Error checking username:', error);
       setIsAvailable(null);
       toast({
         title: 'Unable to verify username',

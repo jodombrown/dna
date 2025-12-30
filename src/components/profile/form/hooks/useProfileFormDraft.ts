@@ -45,7 +45,7 @@ export const useProfileFormDraft = ({
           });
         }
       } catch (error) {
-        console.error('Failed to load draft:', error);
+        // Failed to load draft
       }
     }
   }, []);

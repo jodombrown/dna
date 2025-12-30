@@ -135,7 +135,6 @@ export default function GroupSettingsPage() {
       });
     },
     onError: (error: Error) => {
-      console.error('Update error:', error);
       toast({
         title: 'Error',
         description: 'Failed to update settings',

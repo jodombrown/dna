@@ -70,7 +70,6 @@ const WaitlistSlideIn: React.FC<WaitlistSlideInProps> = ({ children }) => {
       setIsOpen(false);
       setFormData({ full_name: '', email: '', location: '' });
     } catch (error: any) {
-      console.error('Waitlist signup error:', error);
       toast({
         title: "Error",
         description: "Failed to join waitlist. Please try again.",

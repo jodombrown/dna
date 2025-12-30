@@ -134,7 +134,6 @@ export default function EventDetailsPage() {
       });
     },
     onError: (error) => {
-      console.error('RSVP error:', error);
       toast({
         title: 'Error',
         description: 'Failed to update RSVP',
@@ -167,7 +166,6 @@ export default function EventDetailsPage() {
       navigate('/dna/convene/events');
     },
     onError: (error) => {
-      console.error('Cancel error:', error);
       toast({
         title: 'Error',
         description: 'Failed to cancel event',

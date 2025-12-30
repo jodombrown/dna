@@ -24,8 +24,7 @@ export const useProfileContent = (profileId: string | undefined) => {
           .order('created_at', { ascending: false })
           .limit(5);
         setUserPosts(posts || []);
-      } catch (error) {
-        console.error('Error fetching posts:', error);
+      } catch {
         setUserPosts([]);
       }
 
@@ -45,8 +44,8 @@ export const useProfileContent = (profileId: string | undefined) => {
 
       setUserEvents(events || []);
       setUserCommunities(communities || []);
-    } catch (error) {
-      console.error('Error fetching user content:', error);
+    } catch {
+      // Silently handle content fetch errors
     }
   };
 

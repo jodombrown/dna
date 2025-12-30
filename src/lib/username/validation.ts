@@ -49,9 +49,8 @@ export async function validateUsername(
     p_username: username,
     p_user_id: currentUserId || null
   });
-  
+
   if (error) {
-    console.error('Error checking username availability:', error);
     return { valid: false, error: 'Error checking username availability' };
   }
   

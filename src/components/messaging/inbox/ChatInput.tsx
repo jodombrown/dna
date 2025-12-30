@@ -125,7 +125,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         });
       }
     } catch (error) {
-      console.error('File upload error:', error);
       toast({
         title: "Upload failed",
         description: "Failed to upload file. Please try again.",

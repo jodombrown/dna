@@ -38,7 +38,6 @@ export const useSystemSettings = (): UseSystemSettingsReturn => {
         .order('setting_key');
 
       if (fetchError) {
-        console.error('Error fetching settings:', fetchError);
         setError('Failed to fetch settings');
         return;
       }
@@ -54,8 +53,7 @@ export const useSystemSettings = (): UseSystemSettingsReturn => {
         setSettings(settingsMap);
         setError(null);
       }
-    } catch (err) {
-      console.error('Settings fetch error:', err);
+    } catch {
       setError('An error occurred while fetching settings');
     } finally {
       setIsLoading(false);
@@ -82,7 +80,6 @@ export const useSystemSettings = (): UseSystemSettingsReturn => {
       });
 
       if (rpcError) {
-        console.error('Error updating setting:', rpcError);
         return false;
       }
 
@@ -96,8 +93,7 @@ export const useSystemSettings = (): UseSystemSettingsReturn => {
       }
 
       return false;
-    } catch (err) {
-      console.error('Setting update error:', err);
+    } catch {
       return false;
     }
   }, []);

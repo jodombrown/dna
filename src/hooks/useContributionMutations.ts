@@ -85,8 +85,8 @@ export function useCreateNeed() {
             spaceId: data.space_id,
           });
         }
-      } catch (error) {
-        console.error('Failed to create feed post for need:', error);
+      } catch {
+        // Silently ignore feed post creation failure
       }
 
       queryClient.invalidateQueries({ queryKey: ['contribution-needs'] });

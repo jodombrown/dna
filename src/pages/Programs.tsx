@@ -73,7 +73,6 @@ const Programs = () => {
     : programs.filter(program => program.category === selectedCategory);
 
   const handleApply = (programId: number) => {
-    console.log('Applying to program:', programId);
     // Here you would implement the application logic
   };
 

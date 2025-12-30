@@ -43,8 +43,6 @@ export const useLiveEvents = (limit: number = 10) => {
           .limit(limit);
 
         if (fetchError) {
-          // TRUST-FIRST: Log but don't toast - this is a widget failure, not critical
-          console.warn('Failed to load events in widget:', fetchError);
           setError(fetchError.message);
           setEvents([]); // Set empty array to allow graceful widget rendering
           return;
@@ -62,7 +60,6 @@ export const useLiveEvents = (limit: number = 10) => {
 
         setEvents(transformedEvents);
       } catch (err: any) {
-        console.warn('Unexpected error loading events:', err);
         setError(err.message);
         setEvents([]);
       } finally {

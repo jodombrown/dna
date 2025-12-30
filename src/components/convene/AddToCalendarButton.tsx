@@ -49,7 +49,6 @@ export const AddToCalendarButton = ({
       downloadICSFile(eventData);
       toast.success('Calendar file downloaded');
     } catch (error) {
-      console.error('Error downloading calendar file:', error);
       toast.error('Failed to download calendar file');
     }
   };

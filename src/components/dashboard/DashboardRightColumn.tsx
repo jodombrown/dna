@@ -43,9 +43,8 @@ const DashboardRightColumn: React.FC<DashboardRightColumnProps> = ({
         .not('onboarding_completed_at', 'is', null)
         .order('created_at', { ascending: false })
         .limit(5);
-      
+
       if (error) {
-        console.error('Error fetching suggestions:', error);
         return [];
       }
       return data || [];

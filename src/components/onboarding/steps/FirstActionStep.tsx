@@ -116,7 +116,6 @@ const FirstActionStep: React.FC<FirstActionStepProps> = ({ data, updateData }) =
       navigate(recommendedAction.route);
 
     } catch (error) {
-      console.error('Error tracking first action:', error);
       toast({
         title: "Welcome to DNA!",
         description: "Let's explore your personalized experience.",
