@@ -37,7 +37,6 @@ export const connectionService = {
       .single();
 
     if (error) {
-      console.error('Connection request error:', error);
       if (error.code === '23505') {
         throw new Error('Connection request already exists');
       } else if (error.code === '42501') {
@@ -64,7 +63,7 @@ export const connectionService = {
       action_url: 'https://diasporanetwork.africa/dna/connect/network',
       actor_name: requesterProfile?.full_name,
       actor_avatar_url: requesterProfile?.avatar_url,
-    }).catch(err => console.error('Failed to send connection request email:', err));
+    }).catch(() => {});
     
     return data;
   },
@@ -98,7 +97,7 @@ export const connectionService = {
         action_url: `https://diasporanetwork.africa/u/${accepterProfile?.full_name?.toLowerCase().replace(/\s+/g, '-') || user.id}`,
         actor_name: accepterProfile?.full_name,
         actor_avatar_url: accepterProfile?.avatar_url,
-      }).catch(err => console.error('Failed to send connection accepted email:', err));
+      }).catch(() => {});
     }
 
     return data;
@@ -163,7 +162,6 @@ export const connectionService = {
       .order('created_at', { ascending: false });
     
     if (connectionsError) {
-      console.error('Error fetching sent requests:', connectionsError);
       return [];
     }
     
@@ -180,9 +178,7 @@ export const connectionService = {
       .select('id, full_name, avatar_url, headline')
       .in('id', recipientIds);
     
-    if (profilesError) {
-      console.error('Error fetching recipient profiles:', profilesError);
-    }
+    // Ignore profile fetch errors - we'll use fallback values
     
     // Create a map for quick lookup
     const profileMap = new Map((profiles || []).map(p => [p.id, p]));
@@ -226,7 +222,6 @@ export const connectionService = {
     });
 
     if (error) {
-      console.error('Error getting connection status:', error);
       return 'none';
     }
 
@@ -297,7 +292,6 @@ export const connectionService = {
     });
 
     if (error) {
-      console.error('Error checking block status:', error);
       return false;
     }
 
@@ -308,18 +302,16 @@ export const connectionService = {
    * Dismiss a connection recommendation
    * User won't see this person in recommendations again
    */
-  async dismissRecommendation(dismissedUserId: string): Promise<void> {
+  async dismissRecommendation(_dismissedUserId: string): Promise<void> {
     // TODO: Implement when dismissed_recommendations table is created
-    console.log('[connectionService] Dismiss recommendation:', dismissedUserId);
-    // For now, just log the action - feature will be fully implemented in Phase 2
+    // For now, no-op - feature will be fully implemented in Phase 2
   },
 
   /**
    * Undismiss a previously dismissed recommendation
    */
-  async undismissRecommendation(dismissedUserId: string): Promise<void> {
+  async undismissRecommendation(_dismissedUserId: string): Promise<void> {
     // TODO: Implement when dismissed_recommendations table is created
-    console.log('[connectionService] Undismiss recommendation:', dismissedUserId);
   },
 
   /**
@@ -334,7 +326,6 @@ export const connectionService = {
     const { data, error } = await supabase.rpc('rpc_adin_recommend_people');
 
     if (error) {
-      console.error('Error getting connection recommendations:', error);
       return [];
     }
 

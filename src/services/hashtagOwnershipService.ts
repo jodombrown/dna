@@ -52,7 +52,6 @@ export const hashtagOwnershipService = {
     });
 
     if (error) {
-      console.error('Error fetching hashtag limits:', error);
       return null;
     }
 
@@ -74,7 +73,6 @@ export const hashtagOwnershipService = {
     });
 
     if (error) {
-      console.error('Error creating personal hashtag:', error);
       return { success: false, hashtag_id: null, error_message: error.message };
     }
 
@@ -92,7 +90,6 @@ export const hashtagOwnershipService = {
     });
 
     if (error) {
-      console.error('Error archiving hashtag:', error);
       return { success: false, error_message: error.message };
     }
 
@@ -110,7 +107,6 @@ export const hashtagOwnershipService = {
     });
 
     if (error) {
-      console.error('Error reactivating hashtag:', error);
       return { success: false, error_message: error.message };
     }
 
@@ -127,7 +123,6 @@ export const hashtagOwnershipService = {
     });
 
     if (error) {
-      console.error('Error fetching owned hashtags:', error);
       return [];
     }
 
@@ -143,7 +138,6 @@ export const hashtagOwnershipService = {
     });
 
     if (error) {
-      console.error('Error fetching pending requests:', error);
       return [];
     }
 
@@ -167,7 +161,6 @@ export const hashtagOwnershipService = {
     });
 
     if (error) {
-      console.error('Error reviewing request:', error);
       return { success: false, error_message: error.message };
     }
 

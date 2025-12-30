@@ -38,7 +38,6 @@ export const feedbackService = {
       .single();
 
     if (error) {
-      console.error('[feedbackService] Error fetching default channel:', error);
       return null;
     }
 
@@ -57,7 +56,6 @@ export const feedbackService = {
       .single();
 
     if (error && error.code !== 'PGRST116') {
-      console.error('[feedbackService] Error fetching membership:', error);
       return null;
     }
 
@@ -87,7 +85,6 @@ export const feedbackService = {
         .single();
 
       if (error) {
-        console.error('[feedbackService] Error creating membership:', error);
         return null;
       }
 
@@ -111,7 +108,6 @@ export const feedbackService = {
       .eq('channel_id', channelId);
 
     if (error) {
-      console.error('[feedbackService] Error opting out:', error);
       return false;
     }
 
@@ -132,7 +128,6 @@ export const feedbackService = {
       .eq('channel_id', channelId);
 
     if (error) {
-      console.error('[feedbackService] Error opting in:', error);
       return false;
     }
 
@@ -199,7 +194,6 @@ export const feedbackService = {
     const { data, error } = await query;
 
     if (error) {
-      console.error('[feedbackService] Error fetching messages:', error);
       return { messages: [], nextCursor: null, hasMore: false };
     }
 
@@ -241,7 +235,6 @@ export const feedbackService = {
   async sendMessage(params: SendMessageParams): Promise<FeedbackMessage | null> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      console.error('[feedbackService] No authenticated user');
       return null;
     }
 
@@ -259,15 +252,12 @@ export const feedbackService = {
       .single();
 
     if (error) {
-      console.error('[feedbackService] Error sending message:', error);
       return null;
     }
 
     // Process @mentions and send notifications
     if (params.content) {
-      this.processMentions(params.content, user.id, data.id).catch(err => {
-        console.error('[feedbackService] Error processing mentions:', err);
-      });
+      this.processMentions(params.content, user.id, data.id).catch(() => {});
     }
 
     return data as FeedbackMessage;
@@ -288,8 +278,6 @@ export const feedbackService = {
     
     if (mentions.length === 0) return;
 
-    console.log('[feedbackService] Found mentions:', mentions);
-
     // Get sender info for the notification
     const { data: senderProfile } = await supabase
       .from('profiles')
@@ -306,16 +294,12 @@ export const feedbackService = {
       .or(orFilters);
 
     if (mentionError) {
-      console.error('[feedbackService] Error looking up mentioned users:', mentionError);
       return;
     }
 
     if (!mentionedUsers || mentionedUsers.length === 0) {
-      console.log('[feedbackService] No matching users found for mentions');
       return;
     }
-
-    console.log('[feedbackService] Found matching users:', mentionedUsers.map(u => u.username));
 
     // Import notification service dynamically to avoid circular dependency
     const { createNotification } = await import('@/services/notificationService');
@@ -324,16 +308,13 @@ export const feedbackService = {
     for (const mentionedUser of mentionedUsers) {
       // Don't notify yourself
       if (mentionedUser.id === senderId) {
-        console.log('[feedbackService] Skipping self-mention for:', mentionedUser.username);
         continue;
       }
 
       const senderName = senderProfile?.full_name || senderProfile?.username || 'Someone';
       const preview = content.slice(0, 50);
 
-      console.log('[feedbackService] Creating mention notification for:', mentionedUser.username);
-      
-      const result = await createNotification({
+      await createNotification({
         user_id: mentionedUser.id,
         type: 'mention',
         title: 'DNA Feedback Hub',
@@ -346,8 +327,6 @@ export const feedbackService = {
           message_id: messageId,
         },
       });
-      
-      console.log('[feedbackService] Notification result:', result);
     }
   },
 
@@ -365,7 +344,6 @@ export const feedbackService = {
       .order('created_at', { ascending: true });
 
     if (error) {
-      console.error('[feedbackService] Error fetching thread:', error);
       return [];
     }
 
@@ -400,7 +378,6 @@ export const feedbackService = {
       .single();
 
     if (error) {
-      console.error('[feedbackService] Error fetching message:', error);
       return null;
     }
 
@@ -439,7 +416,6 @@ export const feedbackService = {
       .upload(fileName, file);
 
     if (uploadError) {
-      console.error('[feedbackService] Error uploading file:', uploadError);
       return null;
     }
 
@@ -462,7 +438,6 @@ export const feedbackService = {
       .single();
 
     if (error) {
-      console.error('[feedbackService] Error creating attachment record:', error);
       return null;
     }
 
@@ -485,7 +460,6 @@ export const feedbackService = {
       .eq('message_id', messageId);
 
     if (error) {
-      console.error('[feedbackService] Error fetching reactions:', error);
       return {};
     }
 
@@ -527,7 +501,6 @@ export const feedbackService = {
       });
 
     if (error) {
-      console.error('[feedbackService] Error adding reaction:', error);
       return false;
     }
 
@@ -549,7 +522,6 @@ export const feedbackService = {
       .eq('emoji', emoji);
 
     if (error) {
-      console.error('[feedbackService] Error removing reaction:', error);
       return false;
     }
 
@@ -566,7 +538,6 @@ export const feedbackService = {
   async isAdmin(): Promise<boolean> {
     const { data, error } = await supabase.rpc('is_feedback_admin');
     if (error) {
-      console.error('[feedbackService] Error checking admin status:', error);
       return false;
     }
     return !!data;
@@ -584,7 +555,6 @@ export const feedbackService = {
       .single();
 
     if (fetchError) {
-      console.error('[feedbackService] Error fetching message for status update:', fetchError);
       return false;
     }
 
@@ -595,7 +565,6 @@ export const feedbackService = {
       .eq('id', messageId);
 
     if (error) {
-      console.error('[feedbackService] Error updating status:', error);
       return false;
     }
 
@@ -611,19 +580,15 @@ export const feedbackService = {
       const statusLabel = statusLabels[status] || status;
       const preview = message.content?.slice(0, 50) || 'your feedback';
       
-      console.log('[feedbackService] Sending status change notification to:', message.sender_id);
-      
       // Import and call notification service
       const { createDNANotification } = await import('@/services/notificationService');
-      const result = await createDNANotification({
+      await createDNANotification({
         user_id: message.sender_id,
         title: 'DNA Feedback Hub',
         message: `Your feedback "${preview}${message.content?.length > 50 ? '...' : ''}" has been marked as ${statusLabel}`,
         link_url: '/dna/feedback',
         feedback_status: status,
       });
-      
-      console.log('[feedbackService] Status change notification result:', result);
     }
 
     return true;
@@ -639,7 +604,6 @@ export const feedbackService = {
       .eq('id', messageId);
 
     if (error) {
-      console.error('[feedbackService] Error updating category:', error);
       return false;
     }
 
@@ -656,7 +620,6 @@ export const feedbackService = {
       .eq('id', messageId);
 
     if (error) {
-      console.error('[feedbackService] Error updating priority:', error);
       return false;
     }
 
@@ -673,7 +636,6 @@ export const feedbackService = {
       .eq('id', messageId);
 
     if (error) {
-      console.error('[feedbackService] Error toggling pin:', error);
       return false;
     }
 
@@ -690,7 +652,6 @@ export const feedbackService = {
       .eq('id', messageId);
 
     if (error) {
-      console.error('[feedbackService] Error toggling highlight:', error);
       return false;
     }
 
@@ -707,7 +668,6 @@ export const feedbackService = {
       .eq('id', messageId);
 
     if (error) {
-      console.error('[feedbackService] Error updating admin notes:', error);
       return false;
     }
 
@@ -725,7 +685,6 @@ export const feedbackService = {
       .eq('id', messageId);
 
     if (error) {
-      console.error('[feedbackService] Error soft-deleting message:', error);
       return false;
     }
 
@@ -746,7 +705,6 @@ export const feedbackService = {
       .createSignedUrl(storagePath, 3600); // 1 hour expiry
 
     if (error) {
-      console.error('[feedbackService] Error getting attachment URL:', error);
       return null;
     }
 
