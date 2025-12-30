@@ -107,10 +107,12 @@ export interface ProfileV2Visibility {
   skills?: 'public' | 'hidden';
   interests?: 'public' | 'hidden';
   activity?: 'public' | 'hidden';
+  events?: 'public' | 'hidden';
   show_about?: boolean;
   show_skills?: boolean;
   show_interests?: boolean;
   show_activity?: boolean;
+  show_events?: boolean;
 }
 
 /**
