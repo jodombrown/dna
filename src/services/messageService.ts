@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { sendNotificationEmail, NOTIFICATION_TYPES } from './notificationService';
+import { getConversationUrl } from '@/lib/config';
 /**
  * Attachment data for messages
  */
@@ -413,7 +414,7 @@ async getConversations(
           notification_type: NOTIFICATION_TYPES.MESSAGE,
           title: 'New Message',
           message: content?.trim() ? `${senderProfile?.full_name || 'Someone'}: "${content.substring(0, 100)}${content.length > 100 ? '...' : ''}"` : `${senderProfile?.full_name || 'Someone'} sent you a message.`,
-          action_url: `https://diasporanetwork.africa/dna/messages?conversation=${conversationId}`,
+          action_url: getConversationUrl(conversationId),
           actor_name: senderProfile?.full_name,
           actor_avatar_url: senderProfile?.avatar_url,
         }).catch(() => {});

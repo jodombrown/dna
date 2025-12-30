@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Linkedin, Link, MessageSquare } from 'lucide-react';
 import { Event } from '@/types/search';
+import { config } from '@/lib/config';
 
 interface EventSocialSectionProps {
   event: Event;
@@ -33,7 +34,7 @@ const EventSocialSection: React.FC<EventSocialSectionProps> = ({ event }) => {
           variant="outline" 
           size="icon" 
           className="hover:bg-dna-emerald/10 hover:border-dna-emerald hover:text-dna-forest transition-colors"
-          onClick={() => window.open('https://diasporanetwork.africa', '_blank')}
+          onClick={() => window.open(config.APP_URL, '_blank')}
         >
           <Link className="w-4 h-4" />
         </Button>

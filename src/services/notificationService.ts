@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { getAppUrl } from '@/lib/config';
 
 interface CreateNotificationParams {
   user_id: string;
@@ -50,7 +51,7 @@ export async function createNotification(params: CreateNotificationParams): Prom
       notification_type: params.type,
       title: params.title,
       message: params.message,
-      action_url: params.link_url ? `https://diasporanetwork.africa${params.link_url}` : undefined,
+      action_url: params.link_url ? getAppUrl(params.link_url) : undefined,
       actor_name: params.payload?.actor_name,
       actor_avatar_url: params.payload?.actor_avatar_url,
     }).catch(() => {});

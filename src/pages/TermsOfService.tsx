@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { config } from '@/lib/config';
 
 const TermsOfService: React.FC = () => {
   const navigate = useNavigate();
@@ -187,8 +188,8 @@ const TermsOfService: React.FC = () => {
                   For questions about these Terms of Service, please contact us:
                 </p>
                 <div className="space-y-2">
-                  <p>Email: <a href="mailto:legal@diasporanetwork.africa" className="text-dna-copper hover:underline">legal@diasporanetwork.africa</a></p>
-                  <p>Website: <a href="https://diasporanetwork.africa" className="text-dna-copper hover:underline">diasporanetwork.africa</a></p>
+                  <p>Email: <a href={`mailto:${config.emails.legal}`} className="text-dna-copper hover:underline">{config.emails.legal}</a></p>
+                  <p>Website: <a href={config.APP_URL} className="text-dna-copper hover:underline">{config.APP_DOMAIN}</a></p>
                 </div>
               </AccordionContent>
             </AccordionItem>

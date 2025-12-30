@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { config } from '@/lib/config';
 
 const PrivacyPolicy: React.FC = () => {
   const navigate = useNavigate();
@@ -226,9 +227,9 @@ const PrivacyPolicy: React.FC = () => {
                   If you have any questions about this Privacy Policy or our data practices, please contact us:
                 </p>
                 <div className="space-y-2">
-                  <p>Email: <a href="mailto:privacy@diasporanetwork.africa" className="text-dna-copper hover:underline">privacy@diasporanetwork.africa</a></p>
-                  <p>Data Protection Officer: <a href="mailto:dpo@diasporanetwork.africa" className="text-dna-copper hover:underline">dpo@diasporanetwork.africa</a></p>
-                  <p>Website: <a href="https://diasporanetwork.africa" className="text-dna-copper hover:underline">diasporanetwork.africa</a></p>
+                  <p>Email: <a href={`mailto:${config.emails.privacy}`} className="text-dna-copper hover:underline">{config.emails.privacy}</a></p>
+                  <p>Data Protection Officer: <a href={`mailto:${config.emails.dpo}`} className="text-dna-copper hover:underline">{config.emails.dpo}</a></p>
+                  <p>Website: <a href={config.APP_URL} className="text-dna-copper hover:underline">{config.APP_DOMAIN}</a></p>
                 </div>
                 <p className="mt-4 text-sm">
                   We are committed to resolving any privacy concerns promptly and transparently.

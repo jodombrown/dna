@@ -1,9 +1,10 @@
 import jsPDF from 'jspdf';
-import { 
-  CONNECTION_TYPE_OPTIONS, 
+import {
+  CONNECTION_TYPE_OPTIONS,
   RETURN_INTENTIONS_OPTIONS,
-  AFRICAN_CAUSES_OPTIONS 
+  AFRICAN_CAUSES_OPTIONS
 } from '@/data/profileOptions';
+import { config } from '@/lib/config';
 
 interface ProfileVisibility {
   about?: 'public' | 'hidden';
@@ -402,7 +403,7 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
   
   doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
-  doc.text('diasporanetwork.africa', sidebarWidth + mainWidth / 2, pageHeight - 5, { align: 'center' });
+  doc.text(config.APP_DOMAIN, sidebarWidth + mainWidth / 2, pageHeight - 5, { align: 'center' });
   
   // Save the PDF
   const fileName = `${(profile.username || profile.display_name || 'profile').replace(/\s+/g, '_')}_DNA_Profile.pdf`;

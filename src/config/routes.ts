@@ -10,6 +10,8 @@
  *   navigate(ROUTES.profile.view(username));
  */
 
+import { config, getAppUrl } from '@/lib/config';
+
 export const ROUTES = {
   // Core routes
   home: '/dna',
@@ -133,17 +135,18 @@ export const ROUTES = {
 
 /**
  * Domain Configuration
+ * Uses centralized config for environment flexibility
  */
 export const DOMAINS = {
-  primary: 'diasporanetwork.africa',
-  url: 'https://diasporanetwork.africa',
+  primary: config.APP_DOMAIN,
+  url: config.APP_URL,
 } as const;
 
 /**
  * Helper to generate full URLs (for sharing, SEO, etc.)
  */
 export const getFullUrl = (path: string): string => {
-  return `${DOMAINS.url}${path}`;
+  return getAppUrl(path);
 };
 
 /**
