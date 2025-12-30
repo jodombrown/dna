@@ -119,10 +119,12 @@ export async function generateEntityEmbedding(
       case 'event':
         const { data: event } = await supabase
           .from('events')
-          .select('title, description, tags, event_type')
+          .select('title, description, event_type')
           .eq('id', entityId)
           .single();
-        entityData = event;
+        if (event) {
+          entityData = { event_type: event.event_type };
+        }
         break;
 
       case 'space':
@@ -147,10 +149,12 @@ export async function generateEntityEmbedding(
       case 'post':
         const { data: post } = await supabase
           .from('posts')
-          .select('content, tags, post_type')
+          .select('content, post_type')
           .eq('id', entityId)
           .single();
-        entityData = post;
+        if (post) {
+          entityData = { post_type: post.post_type };
+        }
         break;
 
       case 'profile':

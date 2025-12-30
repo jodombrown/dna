@@ -376,16 +376,17 @@ export const connectionService = {
 
     const profileMap = new Map((profiles || []).map(p => [p.id, p]));
 
-    return recommendations.slice(0, limit).map((item) => {
+    return recommendations.slice(0, limit).map((item): ConnectionRecommendation | null => {
       const profile = profileMap.get(item.matched_user_id);
+      if (!item.matched_user_id) return null;
       return {
         user_id: item.matched_user_id,
         username: profile?.username || '',
         full_name: profile?.full_name || 'Unknown',
-        avatar_url: profile?.avatar_url || null,
-        headline: profile?.headline || null,
-        location: profile?.location || null,
-        profession: profile?.profession || null,
+        avatar_url: profile?.avatar_url,
+        headline: profile?.headline,
+        location: profile?.location,
+        profession: profile?.profession,
         match_score: Number(item.match_score) || 0,
         shared_skills_count: 0,
         shared_interests_count: 0,
@@ -394,6 +395,6 @@ export const connectionService = {
         same_region: (item.shared_sectors?.length || 0) > 0,
         match_reasons: item.match_reason ? [item.match_reason] : [],
       };
-    }).filter((rec): rec is ConnectionRecommendation => Boolean(rec.user_id));
+    }).filter((rec): rec is ConnectionRecommendation => rec !== null);
   },
 };

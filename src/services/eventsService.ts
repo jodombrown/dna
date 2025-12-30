@@ -16,7 +16,7 @@ export const searchEvents = async (searchTerm: string = '', filters: EventSearch
   }
   
   if (filters.type) {
-    query = query.eq('event_type', filters.type);
+    query = query.eq('event_type', filters.type as any);
   }
   
   if (filters.is_virtual !== undefined) {

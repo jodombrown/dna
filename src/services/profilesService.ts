@@ -55,8 +55,8 @@ export const profilesService = {
 
     if (error) throw error;
 
-    const typedProfiles = profiles as PublicProfile[] | null;
-    const profile = typedProfiles?.find((p) => p.username === username);
+    const typedProfiles = (profiles as unknown as PublicProfile[]) || [];
+    const profile = typedProfiles.find((p) => p.username === username);
     return profile || null;
   },
 

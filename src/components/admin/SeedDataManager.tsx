@@ -125,6 +125,7 @@ export const SeedDataManager = ({ onDataReset }: SeedDataManagerProps = {}) => {
     const defaultSeedData = {
       profiles: [
         {
+          id: crypto.randomUUID(),
           full_name: 'Mary Green',
           email: 'mary35@gmail.com',
           diaspora_identity: 'Repat',
@@ -133,6 +134,7 @@ export const SeedDataManager = ({ onDataReset }: SeedDataManagerProps = {}) => {
           last_seen_at: '2025-07-06 02:03:18'
         },
         {
+          id: crypto.randomUUID(),
           full_name: 'Rebecca Welch',
           email: 'welchrebecca@hotmail.com',
           diaspora_identity: 'Ally',

@@ -241,6 +241,12 @@ export const feedbackService = {
           ...msg,
           sender: profileMap.get(msg.sender_id) || null,
           reactions,
+          category: null as any,
+          status: 'open' as const,
+          priority: null as any,
+          is_highlighted: false,
+          admin_notes: null,
+          updated_at: msg.created_at,
         } as FeedbackMessageWithSender;
       })
     );

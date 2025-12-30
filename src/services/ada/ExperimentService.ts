@@ -261,7 +261,7 @@ export class ExperimentService {
     }
 
     // Weighted random selection based on allocation
-    const selectedVariant = this.selectVariantByAllocation(variants);
+    const selectedVariant = this.selectVariantByAllocation(variants as unknown as VariantWithPolicy[]);
 
     if (!selectedVariant) {
       return null;
