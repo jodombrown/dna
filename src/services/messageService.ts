@@ -1,6 +1,20 @@
 import { supabase } from '@/integrations/supabase/client';
 import { sendNotificationEmail, NOTIFICATION_TYPES } from './notificationService';
 import { getConversationUrl } from '@/lib/config';
+import type { Database, Json } from '@/integrations/supabase/types';
+
+/**
+ * Type for messages table insert, extending with the payload field
+ */
+type MessageInsert = Database['public']['Tables']['messages']['Insert'];
+
+/**
+ * Extended message update type for soft delete functionality
+ * Note: deleted_at column exists in the database but may not be in generated types
+ */
+interface MessageSoftDelete {
+  deleted_at: string;
+}
 /**
  * Attachment data for messages
  */
@@ -366,16 +380,18 @@ async getConversations(
       linkPreview 
     } : null;
 
-    // Cast insert to bypass type checking for payload column
+    // Insert message with properly typed payload
+    const insertData: MessageInsert = {
+      conversation_id: conversationId,
+      sender_id: user.id,
+      content: content?.trim() || '',
+      read: false,
+      payload: payload as Json | null,
+    };
+
     const { data, error } = await supabase
       .from('messages')
-      .insert({
-        conversation_id: conversationId,
-        sender_id: user.id,
-        content: content?.trim() || '',
-        read: false,
-        payload: payload,
-      } as any)
+      .insert(insertData)
       .select()
       .single();
 
@@ -485,9 +501,11 @@ async getConversations(
     if (!user) throw new Error('Not authenticated');
 
     // Soft delete by updating deleted_at timestamp
+    // Note: deleted_at column exists in database but may not be in generated types
+    const softDeleteData: MessageSoftDelete = { deleted_at: new Date().toISOString() };
     const { error } = await supabase
       .from('messages')
-      .update({ deleted_at: new Date().toISOString() } as any)
+      .update(softDeleteData as Database['public']['Tables']['messages']['Update'])
       .eq('id', messageId)
       .eq('sender_id', user.id);
 

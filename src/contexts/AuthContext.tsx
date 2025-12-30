@@ -1,17 +1,50 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, Session } from '@supabase/supabase-js';
+import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+
+/**
+ * User profile data from the profiles table
+ */
+export interface UserProfile {
+  id: string;
+  username: string | null;
+  full_name: string | null;
+  avatar_url: string | null;
+  headline: string | null;
+  bio: string | null;
+  location: string | null;
+  company: string | null;
+  profession: string | null;
+  industry: string | null;
+  created_at: string;
+  updated_at?: string;
+  // Optional fields that may be present
+  current_country?: string | null;
+  current_city?: string | null;
+  country_of_origin?: string | null;
+  diaspora_origin?: string | null;
+  verification_status?: string | null;
+}
+
+/**
+ * Error type for auth operations - matches Supabase AuthError structure
+ */
+export interface AuthOperationError {
+  message: string;
+  name?: string;
+  status?: number;
+}
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  profile: any | null;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any; data?: { user: User | null } }>;
+  profile: UserProfile | null;
+  signUp: (email: string, password: string, fullName: string) => Promise<{ error: AuthError | AuthOperationError | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: AuthError | AuthOperationError | null; data?: { user: User | null } }>;
   signOut: () => Promise<void>;
-  updatePassword: (password: string) => Promise<{ error: any }>;
+  updatePassword: (password: string) => Promise<{ error: AuthError | null }>;
   refreshProfile: () => Promise<void>;
 }
 
@@ -28,7 +61,7 @@ export const useAuth = () => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<any | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
 
