@@ -42,6 +42,7 @@ export const ROUTES = {
     eventDetail: (id: string) => `/dna/convene/events/${id}`,
     eventEdit: (id: string) => `/dna/convene/events/${id}/edit`,
     eventAnalytics: (id: string) => `/dna/convene/events/${id}/analytics`,
+    eventCheckIn: (id: string) => `/dna/convene/events/${id}/check-in`,
     groupDetail: (slug: string) => `/dna/convene/groups/${slug}`,
     groupEvents: (slug: string) => `/dna/convene/groups/${slug}/events`,
     groupSettings: (slug: string) => `/dna/convene/groups/${slug}/settings`,
