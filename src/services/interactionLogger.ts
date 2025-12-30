@@ -10,7 +10,7 @@ export interface LogInteractionParams {
   interactionType: InteractionType;
   contextC?: ContextC;
   weight?: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 /**

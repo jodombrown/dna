@@ -1,4 +1,8 @@
 import { supabase } from '@/integrations/supabase/client';
+import type { SupabaseClient } from '@supabase/supabase-js';
+
+// Helper type for RPC calls that aren't in generated types
+type SupabaseRpc = SupabaseClient['rpc'];
 
 export interface UserHashtagLimits {
   max_hashtags: number;
@@ -47,7 +51,7 @@ export const hashtagOwnershipService = {
    * Get user's hashtag limits and counts
    */
   async getUserLimits(userId: string): Promise<UserHashtagLimits | null> {
-    const { data, error } = await (supabase.rpc as any)('get_user_hashtag_limits', {
+    const { data, error } = await (supabase.rpc as SupabaseRpc)('get_user_hashtag_limits', {
       p_user_id: userId
     });
 
@@ -66,7 +70,7 @@ export const hashtagOwnershipService = {
     tag: string,
     description?: string
   ): Promise<CreateHashtagResult> {
-    const { data, error } = await (supabase.rpc as any)('create_personal_hashtag', {
+    const { data, error } = await (supabase.rpc as SupabaseRpc)('create_personal_hashtag', {
       p_user_id: userId,
       p_tag: tag,
       p_description: description || null
@@ -84,7 +88,7 @@ export const hashtagOwnershipService = {
    * Archive a personal hashtag
    */
   async archiveHashtag(userId: string, hashtagId: string): Promise<ActionResult> {
-    const { data, error } = await (supabase.rpc as any)('archive_personal_hashtag', {
+    const { data, error } = await (supabase.rpc as SupabaseRpc)('archive_personal_hashtag', {
       p_user_id: userId,
       p_hashtag_id: hashtagId
     });
@@ -101,7 +105,7 @@ export const hashtagOwnershipService = {
    * Reactivate an archived hashtag
    */
   async reactivateHashtag(userId: string, hashtagId: string): Promise<ActionResult> {
-    const { data, error } = await (supabase.rpc as any)('reactivate_personal_hashtag', {
+    const { data, error } = await (supabase.rpc as SupabaseRpc)('reactivate_personal_hashtag', {
       p_user_id: userId,
       p_hashtag_id: hashtagId
     });
@@ -118,7 +122,7 @@ export const hashtagOwnershipService = {
    * Get user's owned hashtags
    */
   async getOwnedHashtags(userId: string): Promise<OwnedHashtag[]> {
-    const { data, error } = await (supabase.rpc as any)('get_user_owned_hashtags', {
+    const { data, error } = await (supabase.rpc as SupabaseRpc)('get_user_owned_hashtags', {
       p_user_id: userId
     });
 
@@ -133,7 +137,7 @@ export const hashtagOwnershipService = {
    * Get pending requests for owner
    */
   async getPendingRequests(ownerId: string): Promise<HashtagRequest[]> {
-    const { data, error } = await (supabase.rpc as any)('get_pending_hashtag_requests', {
+    const { data, error } = await (supabase.rpc as SupabaseRpc)('get_pending_hashtag_requests', {
       p_owner_id: ownerId
     });
 
@@ -153,7 +157,7 @@ export const hashtagOwnershipService = {
     approved: boolean,
     note?: string
   ): Promise<ActionResult> {
-    const { data, error } = await (supabase.rpc as any)('review_hashtag_request', {
+    const { data, error } = await (supabase.rpc as SupabaseRpc)('review_hashtag_request', {
       p_owner_id: ownerId,
       p_request_id: requestId,
       p_approved: approved,

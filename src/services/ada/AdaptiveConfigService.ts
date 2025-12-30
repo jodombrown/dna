@@ -14,8 +14,33 @@ export interface AdaPolicy {
   description?: string;
   type: PolicyType;
   scope: PolicyScope;
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   is_active: boolean;
+}
+
+// Internal types for query results with nested relations
+interface ExperimentAssignmentWithRelations {
+  id: string;
+  experiment_id: string;
+  variant_id: string;
+  ada_experiment_variants: {
+    id: string;
+    name: string;
+    policy_id: string;
+    ada_policies: AdaPolicy;
+  };
+  ada_experiments: {
+    id: string;
+    status: string;
+    target_policy_type: string;
+    target_route?: string;
+    start_at?: string;
+    end_at?: string;
+  };
+}
+
+interface CohortResult {
+  cohort_id: string;
 }
 
 export interface PolicyResolution {
@@ -191,9 +216,10 @@ export class AdaptiveConfigService {
       return null;
     }
 
-    const experiment = (assignment as any).ada_experiments;
-    const variant = (assignment as any).ada_experiment_variants;
-    const policy = variant.ada_policies as AdaPolicy;
+    const typedAssignment = assignment as unknown as ExperimentAssignmentWithRelations;
+    const experiment = typedAssignment.ada_experiments;
+    const variant = typedAssignment.ada_experiment_variants;
+    const policy = variant.ada_policies;
 
     // Verify experiment is running and matches criteria
     if (
@@ -232,7 +258,8 @@ export class AdaptiveConfigService {
       return null;
     }
 
-    const cohortIds = cohorts.map((c: any) => c.cohort_id);
+    const typedCohorts = cohorts as CohortResult[];
+    const cohortIds = typedCohorts.map(c => c.cohort_id);
 
     // Find highest priority cohort-specific policy
     const { data: policies } = await supabase

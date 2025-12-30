@@ -3,6 +3,19 @@ import { Tables } from '@/integrations/supabase/types';
 
 export type Profile = Tables<'profiles'>;
 
+// Public profile type returned by RPC functions
+interface PublicProfile {
+  id: string;
+  username: string | null;
+  full_name: string | null;
+  display_name?: string | null;
+  avatar_url?: string | null;
+  headline?: string | null;
+  bio?: string | null;
+  location?: string | null;
+  is_public?: boolean;
+}
+
 export const profilesService = {
   // Get all public profiles with optional filtering
   // Only returns non-sensitive fields (no email, phone, private contact info)
@@ -36,13 +49,14 @@ export const profilesService = {
   },
 
   // Get profile by username using secure function
-  async getProfileByUsername(username: string) {
+  async getProfileByUsername(username: string): Promise<PublicProfile | null> {
     const { data: profiles, error } = await supabase
       .rpc('get_public_profiles', { p_limit: 50 });
-    
+
     if (error) throw error;
-    
-    const profile = profiles?.find((p: any) => p.username === username);
+
+    const typedProfiles = profiles as PublicProfile[] | null;
+    const profile = typedProfiles?.find((p) => p.username === username);
     return profile || null;
   },
 

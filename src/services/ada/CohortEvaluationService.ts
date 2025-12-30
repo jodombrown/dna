@@ -12,7 +12,20 @@ export interface CohortCriteria {
   max_account_age_days?: number;
   dominant_c?: 'Connect' | 'Convene' | 'Collaborate' | 'Contribute' | 'Convey';
   min_weekly_active_days?: number;
-  [key: string]: any;
+  [key: string]: string[] | number | string | undefined;
+}
+
+// Internal types for query results
+interface CohortMembershipRow {
+  cohort_id: string;
+  ada_cohorts: {
+    name: string;
+  };
+}
+
+interface CohortRpcResult {
+  cohort_id: string;
+  cohort_name: string;
 }
 
 export interface Cohort {
@@ -66,9 +79,10 @@ export class CohortEvaluationService {
         .gt('expires_at', new Date().toISOString());
 
       if (cachedMemberships && cachedMemberships.length > 0) {
-        const memberships = cachedMemberships.map(m => ({
+        const typedMemberships = cachedMemberships as unknown as CohortMembershipRow[];
+        const memberships = typedMemberships.map(m => ({
           cohort_id: m.cohort_id,
-          cohort_name: (m as any).ada_cohorts.name,
+          cohort_name: m.ada_cohorts.name,
           computed_at: new Date(),
         }));
 
@@ -89,7 +103,8 @@ export class CohortEvaluationService {
       return [];
     }
 
-    const memberships: CohortMembership[] = cohortResults.map((c: any) => ({
+    const typedResults = cohortResults as CohortRpcResult[];
+    const memberships: CohortMembership[] = typedResults.map((c) => ({
       cohort_id: c.cohort_id,
       cohort_name: c.cohort_name,
       computed_at: new Date(),

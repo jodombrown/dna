@@ -32,6 +32,18 @@ export interface SeedEvent {
   created_at: string;
 }
 
+// Seed data import structure
+export interface SeedDataImport {
+  profiles: SeedUser[];
+  connections: SeedConnection[];
+  posts: SeedPost[];
+  events: SeedEvent[];
+}
+
+// Generic record type for CSV conversion
+type CsvRecord = Record<string, string | number | boolean | null | undefined>;
+type CsvDataset = Record<string, CsvRecord[]>;
+
 export const seedDataService = {
   // Export data as JSON or CSV - temporarily disabled due to TypeScript issues
   async exportData(format: 'json' | 'csv' = 'json') {
@@ -50,12 +62,7 @@ export const seedDataService = {
   },
 
   // Import seed data - temporarily disabled
-  async importSeedData(data: {
-    profiles: any[];
-    connections: any[];
-    posts: any[];
-    events: any[];
-  }) {
+  async importSeedData(data: SeedDataImport) {
     return {
       success: true,
       message: 'Function temporarily disabled',
@@ -69,25 +76,25 @@ export const seedDataService = {
   },
 
   // Helper methods - temporarily disabled
-  async insertSeedProfiles(profiles: any[]) {
+  async insertSeedProfiles(profiles: SeedUser[]) {
     return [];
   },
 
-  async insertSeedConnections(connections: any[]) {
+  async insertSeedConnections(connections: SeedConnection[]) {
     return [];
   },
 
-  async insertSeedPosts(posts: any[]) {
+  async insertSeedPosts(posts: SeedPost[]) {
     return [];
   },
 
-  async insertSeedEvents(events: any[]) {
+  async insertSeedEvents(events: SeedEvent[]) {
     return [];
   },
 
   // Convert data to CSV format
-  convertToCSV(data: any) {
-    const csvData: { [key: string]: string } = {};
+  convertToCSV(data: CsvDataset): Record<string, string> {
+    const csvData: Record<string, string> = {};
 
     Object.keys(data).forEach(table => {
       const rows = data[table];
@@ -99,9 +106,9 @@ export const seedDataService = {
       const headers = Object.keys(rows[0]);
       const csvRows = [
         headers.join(','),
-        ...rows.map((row: any) => 
-          headers.map(header => 
-            JSON.stringify(row[header] || '')
+        ...rows.map((row) =>
+          headers.map(header =>
+            JSON.stringify(row[header] ?? '')
           ).join(',')
         )
       ];
@@ -113,7 +120,7 @@ export const seedDataService = {
   },
 
   // Download data as file
-  downloadData(data: any, filename: string, format: 'json' | 'csv' = 'json') {
+  downloadData(data: CsvDataset | string, filename: string, format: 'json' | 'csv' = 'json') {
     const content = format === 'json' 
       ? JSON.stringify(data, null, 2)
       : typeof data === 'string' ? data : JSON.stringify(data, null, 2);
