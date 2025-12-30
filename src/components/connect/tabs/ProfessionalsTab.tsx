@@ -2,10 +2,11 @@
 import React from 'react';
 import ProfessionalsFilters from './ProfessionalsFilters';
 import ProfessionalListItem from './ProfessionalListItem';
-import { useProfiles } from '@/hooks/useProfiles';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
 import { MockProfessional, mockProfessionals } from './ProfessionalsMockData';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ProfessionalsTabProps {
   searchTerm: string;
@@ -13,9 +14,12 @@ interface ProfessionalsTabProps {
 
 const ProfessionalsTab: React.FC<ProfessionalsTabProps> = ({ searchTerm }) => {
   const { user } = useAuth();
-
-  const { data: profiles, isLoading } = useProfiles({
-    limit: 50,
+  const { data: profiles, isLoading } = useQuery({
+    queryKey: ['professionals'],
+    queryFn: async () => {
+      const { data } = await supabase.from('profiles').select('id, full_name, profession, company, location, avatar_url, skills, bio, headline').limit(50);
+      return data || [];
+    }
   });
 
   // Use mock data if no profiles exist, otherwise transform real profiles
@@ -27,7 +31,7 @@ const ProfessionalsTab: React.FC<ProfessionalsTabProps> = ({ searchTerm }) => {
       title: profile.profession || 'Professional',
       company: profile.company || 'Independent',
       location: profile.location || 'Unknown',
-      origin: profile.region || 'Unknown',
+      origin: 'Unknown',
       avatar: profile.avatar_url || '',
       followers: 0,
       connections: 0,

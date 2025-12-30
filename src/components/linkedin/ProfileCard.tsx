@@ -19,7 +19,7 @@ const ProfileCard = () => {
           <Avatar className="w-16 h-16 border-4 border-white">
             <AvatarImage src={profile?.avatar_url} />
             <AvatarFallback className="bg-dna-mint text-dna-forest text-lg font-semibold">
-              {profile?.display_name?.charAt(0) || profile?.full_name?.charAt(0) || 'U'}
+              {profile?.full_name?.charAt(0) || 'U'}
             </AvatarFallback>
           </Avatar>
         </div>
@@ -27,10 +27,10 @@ const ProfileCard = () => {
 
       <CardContent className="pt-10 pb-4 text-center">
         <h3 className="font-semibold text-gray-900 mb-1">
-          {profile?.display_name || profile?.full_name || 'DNA Member'}
+          {profile?.full_name || 'DNA Member'}
         </h3>
         <p className="text-sm text-gray-600 mb-3">
-          {profile?.current_role || 'Professional'}
+          {profile?.profession || profile?.headline || 'Professional'}
         </p>
         
         <div className="border-t border-gray-200 pt-3 mt-3">
@@ -47,7 +47,7 @@ const ProfileCard = () => {
               <Users className="w-3 h-3 mr-1" />
               <span>Connections</span>
             </div>
-            <span className="font-medium text-dna-forest">{profile?.connections_count || 0}</span>
+            <span className="font-medium text-dna-forest">{profile?.connection_count || 0}</span>
           </div>
         </div>
 

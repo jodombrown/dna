@@ -164,11 +164,15 @@ export async function createPost(input: CreatePostInput): Promise<{ id: string }
     ).catch(() => {});
 
     // Process hashtags - extract and create/link them
-    supabase.rpc('process_post_hashtags', {
-      p_content: input.content,
-      p_post_id: data.id,
-      p_user_id: user.id
-    }).catch(() => {});
+    (async () => {
+      try {
+        await supabase.rpc('process_post_hashtags', {
+          p_content: input.content,
+          p_post_id: data.id,
+          p_user_id: user.id
+        });
+      } catch {}
+    })();
   }
 
   return data;

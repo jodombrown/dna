@@ -32,15 +32,15 @@ const MobileProfileView = () => {
         <div className="flex items-center space-x-4 mb-4">
           <Avatar className="w-20 h-20">
             <AvatarFallback className="bg-dna-emerald text-white text-2xl">
-              {profile?.display_name?.charAt(0) || user?.email?.charAt(0) || 'U'}
+              {profile?.full_name?.charAt(0) || user?.email?.charAt(0) || 'U'}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1">
             <h1 className="text-xl font-bold text-dna-forest">
-              {profile?.display_name || profile?.full_name || user?.email?.split('@')[0] || 'User'}
+              {profile?.full_name || user?.email?.split('@')[0] || 'User'}
             </h1>
             <p className="text-gray-600">
-              {profile?.professional_title || 'DNA Member'}
+              {profile?.profession || profile?.headline || 'DNA Member'}
             </p>
             <div className="flex items-center mt-1 text-gray-500">
               <MapPin className="w-4 h-4 mr-1" />
@@ -119,7 +119,7 @@ const MobileProfileView = () => {
               </div>
               <div className="flex-1">
                 <p className="font-medium text-dna-forest">
-                  {profile?.professional_title || 'Professional Title'}
+                  {profile?.profession || profile?.headline || 'Professional Title'}
                 </p>
                 <p className="text-sm text-gray-600">Current Position</p>
                 <p className="text-xs text-gray-500">2020 - Present</p>
@@ -136,8 +136,8 @@ const MobileProfileView = () => {
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
-            {profile?.skills && profile.skills.length > 0 ? (
-              profile.skills.map((skill, index) => (
+            {profile?.skills && Array.isArray(profile.skills) && profile.skills.length > 0 ? (
+              profile.skills.map((skill: string, index: number) => (
                 <Badge key={index} variant="secondary" className="bg-dna-mint/20 text-dna-forest">
                   {skill}
                 </Badge>

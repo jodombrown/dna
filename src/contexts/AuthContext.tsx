@@ -10,6 +10,9 @@ export interface UserProfile {
   id: string;
   username: string | null;
   full_name: string | null;
+  first_name?: string | null;
+  last_name?: string | null;
+  display_name?: string | null;
   avatar_url: string | null;
   headline: string | null;
   bio: string | null;
@@ -24,7 +27,24 @@ export interface UserProfile {
   current_city?: string | null;
   country_of_origin?: string | null;
   diaspora_origin?: string | null;
+  diaspora_status?: string | null;
   verification_status?: string | null;
+  current_role?: string | null;
+  professional_title?: string | null;
+  professional_role?: string | null;
+  professional_sectors?: string[] | null;
+  skills?: string[] | null;
+  years_experience?: number | null;
+  interests?: string[] | null;
+  my_dna_statement?: string | null;
+  focus_areas?: string[] | null;
+  regional_expertise?: string[] | null;
+  industries?: string[] | null;
+  engagement_intentions?: string[] | null;
+  onboarding_completed_at?: string | null;
+  connections_count?: number | null;
+  connection_count?: number | null;
+  profile_views_count?: number | null;
 }
 
 /**

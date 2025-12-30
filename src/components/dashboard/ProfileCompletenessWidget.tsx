@@ -64,7 +64,7 @@ export const ProfileCompletenessWidget: React.FC<ProfileCompletenessWidgetProps>
     action: () => navigate('/dna/profile/edit'),
   }));
 
-  const engagementScore = Math.min(100, (profile.connections_count || 0) * 10 + completenessScore);
+  const engagementScore = Math.min(100, (profile.connection_count || 0) * 10 + completenessScore);
 
   if (isProfileComplete && engagementScore >= 70) {
     return null; // Hide widget when profile is complete and engagement is good

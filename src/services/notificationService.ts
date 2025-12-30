@@ -29,15 +29,15 @@ export async function createNotification(params: CreateNotificationParams): Prom
     // Insert notification into database
     const { data: notification, error: insertError } = await supabase
       .from('notifications')
-      .insert({
+      .insert([{
         user_id: params.user_id,
         type: params.type,
         title: params.title,
         message: params.message,
         link_url: params.link_url,
-        payload: params.payload || {},
+        payload: params.payload ? JSON.parse(JSON.stringify(params.payload)) : {},
         is_read: false,
-      })
+      }])
       .select('id')
       .single();
 

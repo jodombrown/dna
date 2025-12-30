@@ -11,11 +11,11 @@ export type EventAnalyticsKind =
 export async function trackEventAnalytics(eventId: string, kind: EventAnalyticsKind, payload?: Record<string, unknown>) {
   try {
     if (!eventId || !kind) return;
-    await supabase.from('event_analytics').insert({
+    await supabase.from('event_analytics').insert([{
       event_id: eventId,
       kind,
-      payload: payload || null,
-    });
+      payload: payload ? JSON.parse(JSON.stringify(payload)) : null,
+    }]);
   } catch (e) {
     // Non-blocking - silently fail
   }

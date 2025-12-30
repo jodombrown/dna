@@ -66,12 +66,12 @@ export class InteractionLogger {
 
       const interactions = this.buffer.map(interaction => ({
         user_id: user.id,
-        entity_type: interaction.entityType,
+        entity_type: interaction.entityType as string,
         entity_id: interaction.entityId,
-        interaction_type: interaction.interactionType,
-        context_c: interaction.contextC,
+        interaction_type: interaction.interactionType as string,
+        context_c: interaction.contextC as string,
         weight: interaction.weight || 1.0,
-        metadata: interaction.metadata || {},
+        metadata: interaction.metadata ? JSON.parse(JSON.stringify(interaction.metadata)) : {},
       }));
 
       await supabase.from('user_interactions').insert(interactions);

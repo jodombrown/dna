@@ -302,11 +302,11 @@ class MatchingService {
     // =========================================================================
 
     // Mentor/Investor seeking bonus (+15 each)
-    if (criteria.isLookingForMentor && professional.is_mentor) {
+    if (criteria.isLookingForMentor && (professional as any).is_mentor) {
       totalScore += 15;
       reasons.push('Available mentor');
     }
-    if (criteria.isLookingForInvestor && professional.is_investor) {
+    if (criteria.isLookingForInvestor && (professional as any).is_investor) {
       totalScore += 15;
       reasons.push('Active investor');
     }
@@ -592,8 +592,8 @@ class MatchingService {
     let score = 0;
 
     // Direct mentor/mentee pairing
-    if ((user.is_mentor && prof.seeking_mentorship) ||
-        (user.seeking_mentorship && prof.is_mentor)) {
+    if (((user as any).is_mentor && (prof as any).seeking_mentorship) ||
+        ((user as any).seeking_mentorship && (prof as any).is_mentor)) {
       score += 50;
     }
 
@@ -749,8 +749,8 @@ class MatchingService {
         avatar_url: p.avatar_url,
         skills: p.skills,
         impact_areas: p.impact_areas,
-        is_mentor: p.is_mentor || false,
-        is_investor: p.is_investor || false,
+        is_mentor: (p as any).is_mentor || false,
+        is_investor: (p as any).is_investor || false,
         looking_for_opportunities: p.looking_for_opportunities || false,
         created_at: p.created_at,
         updated_at: p.updated_at || p.created_at
