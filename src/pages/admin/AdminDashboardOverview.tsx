@@ -347,7 +347,7 @@ const AdminDashboardOverview: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-3">
             <Link
-              to="/admin/feedback"
+              to="/admin/dashboard"
               className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
             >
               <div className="flex items-center gap-3">
@@ -371,7 +371,7 @@ const AdminDashboardOverview: React.FC = () => {
               </Badge>
             </Link>
             <Link
-              to="/admin/events/pending"
+              to="/admin/dashboard"
               className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
             >
               <div className="flex items-center gap-3">

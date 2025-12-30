@@ -477,7 +477,7 @@ export const AdminDashboardLayout: React.FC = () => {
                   </p>
                 </div>
                 <DropdownMenuItem asChild>
-                  <Link to="/admin/settings">
+                  <Link to="/admin/dashboard">
                     <Settings className="w-4 h-4 mr-2" />
                     Settings
                   </Link>

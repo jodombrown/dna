@@ -161,7 +161,7 @@ const HubError = ({ error }: any) => (
     <div className="text-center">
       <h1 className="text-2xl font-bold text-red-600 mb-2">Error Loading Country</h1>
       <p className="text-gray-500">{error?.message || 'Something went wrong'}</p>
-      <a href="/africa" className="text-emerald-600 hover:underline mt-4 inline-block">
+      <a href="/" className="text-emerald-600 hover:underline mt-4 inline-block">
         ← Back to Africa
       </a>
     </div>
