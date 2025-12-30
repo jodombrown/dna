@@ -51,7 +51,7 @@ serve(async (req) => {
     // Get event details
     const { data: event, error: eventError } = await supabaseClient
       .from('events')
-      .select('title')
+      .select('title, start_time')
       .eq('id', eventId)
       .single();
 
@@ -73,7 +73,7 @@ serve(async (req) => {
     if (ticketType.sales_end && new Date(ticketType.sales_end) < now) {
       throw new Error('Ticket sales have ended');
     }
-    if (event.date_time && new Date(event.date_time) < now) {
+    if (event.start_time && new Date(event.start_time) < now) {
       throw new Error('Event has already occurred');
     }
 
@@ -122,7 +122,8 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error('Payment creation error:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+    return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
