@@ -1,8 +1,8 @@
 import { supabase } from '@/integrations/supabase/client';
 import { createCommunityFeedPost } from '@/lib/feedWriter';
 
-// Helper function to trigger ADIN prompt
-const triggerAdinPrompt = async (userId: string, eventType: string) => {
+// Helper function to trigger DIA prompt (calls legacy 'trigger-adin-prompt' edge function)
+const triggerDiaPrompt = async (userId: string, eventType: string) => {
   try {
     await supabase.functions.invoke('trigger-adin-prompt', {
       body: { user_id: userId, event_type: eventType }
@@ -128,8 +128,8 @@ export const createCommunityPost = async (postData: CreateCommunityPostData): Pr
     // Don't fail the request if feed post creation fails
   }
 
-  // Trigger ADIN prompt for community post creation
-  triggerAdinPrompt(user.id, 'community_post_created');
+  // Trigger DIA prompt for community post creation
+  triggerDiaPrompt(user.id, 'community_post_created');
 
   // Fetch author and community details
   const [authorResult, communityResult] = await Promise.all([

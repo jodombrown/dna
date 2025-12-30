@@ -67,7 +67,7 @@ export function useConveyAnalytics() {
     await trackEvent(eventName, eventMetadata);
   };
 
-  // Track story engagement for ADIN
+  // Track story engagement for DIA
   const trackStoryEngagement = async (
     userId: string,
     storyId: string,

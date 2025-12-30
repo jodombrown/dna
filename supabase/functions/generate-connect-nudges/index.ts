@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    console.log('Starting ADIN-lite Connect nudge generation...');
+    console.log('Starting DIA Connect nudge generation...');
 
     // Find users who need connection nudges (0 connections, account age >= 3 days)
     const { data: newUserCandidates, error: newUserError } = await supabase.rpc(

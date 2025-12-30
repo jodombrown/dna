@@ -69,7 +69,7 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
       "Permissions adapt — Leads create events, tasks, and needs; Contributors support; Members participate",
       "Privacy settings determine visibility: Public / Private / Invite-only",
       "Activities inside a Space flow out into the CONNECT Feed and CONVEY",
-      "ADIN uses Space activity to personalize recommendations",
+      "DIA uses Space activity to personalize recommendations",
       "Spaces integrate all 5Cs, so members don't have to jump between tools",
       "Tasks, events, needs, and updates are all tied back to a Space, so context is always clear",
       "Spaces grow naturally as more collaborators join or contribute"
@@ -310,11 +310,11 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
     howItWorks: [
       "All events belong to a Space, so context and community are always clear",
       "Organizers choose visibility: Public, Private, or Invite-Only",
-      "ADIN personalizes recommendations, showing you events aligned to your interests",
+      "DIA personalizes recommendations, showing you events aligned to your interests",
       "Event activity flows into the CONNECT Feed, increasing visibility",
       "Event tags and focus areas help discovery, especially across regions",
       "Recaps push into CONVEY, keeping momentum going",
-      "Check-ins matter — they help ADIN improve recommendations over time",
+      "Check-ins matter — they help DIA improve recommendations over time",
     ],
     stepByStep: [
       {
@@ -400,7 +400,7 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
         icon: Megaphone,
       },
       {
-        name: "ADIN",
+        name: "DIA",
         description: "Personalization and relevance engine",
         icon: Users2,
       },
@@ -467,7 +467,7 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
     howItWorks: [
       "Projects live inside Spaces, which gives them structure and community support.",
       "Tasks can be assigned or unassigned, so new contributors can jump in anytime.",
-      "Your activity influences recommendations, helping ADIN surface relevant collaborators.",
+      "Your activity influences recommendations, helping DIA surface relevant collaborators.",
       "Contributions (skills, time, resources) inside a project can unlock badges and recognition.",
       "Progress is transparent, meaning anyone in your space can see where help is needed.",
       "Updates flow into CONVEY, turning your project's work into a story the network can follow.",
@@ -609,7 +609,7 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
       "Needs are attached to Spaces, so context is clear and organized.",
       "Offers can be made by anyone, with safety checks and rate limits to keep things respectful.",
       "Validation unlocks badges, giving contributors recognition from Project Leads.",
-      "ADIN will personalize needs and opportunities, surfacing relevant ways to help.",
+      "DIA will personalize needs and opportunities, surfacing relevant ways to help.",
       "Safety rules protect against spam, misuse, or overwhelming creators with offers.",
       "Impact is visible, helping contributors build reputation and helping Projects stay resourced.",
     ],
@@ -744,7 +744,7 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
       "Updates flow from spaces, events, tasks, and contributions into a unified storytelling layer.",
       "Stories show up in CONNECT feeds, helping people discover new opportunities.",
       "Project activity creates automatic narrative moments, so members don't have to manually document everything.",
-      "ADIN tailors what you see, showing updates most relevant to your interests and history.",
+      "DIA tailors what you see, showing updates most relevant to your interests and history.",
       "Safety rules prevent harmful or misleading content, while reporting tools keep things respectful.",
       "Every update fuels discovery, inspiring members to join spaces, contribute skills, or attend events.",
     ],
@@ -823,7 +823,7 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
         icon: Calendar,
       },
       {
-        name: "ADIN",
+        name: "DIA",
         description: "Helps surface relevant stories, learning, and insights.",
         icon: Users2,
       },
@@ -870,7 +870,7 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
         "Every member. Whether you're new, exploring, or deeply active — the CONNECT Feed helps you see what's happening and where to plug in next.",
     },
     whatItIs:
-      "Most people arrive on DNA with a simple question: 'Where should I focus? What's happening right now?' The CONNECT Feed answers that instantly. It gathers activity from people you follow, spaces you've joined, events related to your interests, projects and tasks you're connected to, contributions across your network, stories from CONVEY, and updates from ADIN recommendations. It's your personalized doorway into opportunity, community, and momentum. If CONNECT is 'who's in the network,' the CONNECT Feed is 'what your network is doing.'",
+      "Most people arrive on DNA with a simple question: 'Where should I focus? What's happening right now?' The CONNECT Feed answers that instantly. It gathers activity from people you follow, spaces you've joined, events related to your interests, projects and tasks you're connected to, contributions across your network, stories from CONVEY, and updates from DIA recommendations. It's your personalized doorway into opportunity, community, and momentum. If CONNECT is 'who's in the network,' the CONNECT Feed is 'what your network is doing.'",
     whatYouCanDo: [
       "See what your network is up to — new connections, updates, events, stories.",
       "Browse recommended content based on interests, skills, and activity.",
@@ -882,7 +882,7 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
       "React and comment, building relationships and visibility.",
     ],
     howItWorks: [
-      "ADIN curates what you see based on your profile, history, and behavior.",
+      "DIA curates what you see based on your profile, history, and behavior.",
       "Content from spaces/events you follow is boosted, so you don't miss key moments.",
       "Posts from people you've connected with float to the top.",
       "New member introductions are shown sparingly, so the feed doesn't become noisy.",
@@ -965,7 +965,7 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
         icon: Users2,
       },
       {
-        name: "ADIN",
+        name: "DIA",
         description: "Personalization in the background.",
         icon: Users2,
       },
@@ -979,7 +979,7 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
       {
         question: "Can I control what I see?",
         answer:
-          "You can follow or unfollow people and spaces at any time. ADIN will adjust what you see.",
+          "You can follow or unfollow people and spaces at any time. DIA will adjust what you see.",
       },
       {
         question: "How often does the feed update?",
@@ -1049,7 +1049,7 @@ One tool. Many possibilities. Always intuitive.`,
     ],
     howItWorks: [
       "It adapts based on context — If you're in a Space → it suggests space-specific items; If you're on an Event → it suggests posting an update or recap; If you're on a Task → it offers progress or attachments",
-      "It pulls from ADIN — The Composer suggests what type of content you might want to create based on your recent actions",
+      "It pulls from DIA — The Composer suggests what type of content you might want to create based on your recent actions",
       "It connects to every pillar — One tool powering content across CONNECT, CONVENE, COLLABORATE, CONTRIBUTE, and CONVEY",
       "It supports safe posting — Visibility controls, content guidelines, and reporting",
       "It uses templates — For needs, events, tasks, and updates — making creation faster",
@@ -1158,7 +1158,7 @@ One tool. Many possibilities. Always intuitive.`,
         icon: FolderOpen,
       },
       {
-        name: "ADIN",
+        name: "DIA",
         description: "Learns from your actions to optimize suggestions",
         icon: Users2,
       },
@@ -1223,7 +1223,7 @@ Together, they power DNA's contribution engine — simple, transparent, and acti
     ],
     howItWorks: [
       "Needs live inside Spaces, so context is always clear",
-      "ADIN recommends contributors, based on skills, interests, or past contributions",
+      "DIA recommends contributors, based on skills, interests, or past contributions",
       "Rate limits prevent spam, keeping the system high-quality",
       "Validation triggers badges, creating reputation and recognition",
       "Needs flow into CONNECT Feed, increasing discovery",
@@ -1317,7 +1317,7 @@ Together, they power DNA's contribution engine — simple, transparent, and acti
         icon: Megaphone,
       },
       {
-        name: "ADIN",
+        name: "DIA",
         description: "Matching and relevance suggestions",
         icon: Users2,
       },
@@ -1390,7 +1390,7 @@ Projects become the organizing brain. Tasks become the heartbeat.`,
       "Projects live inside Spaces, keeping work organized by community or initiative",
       "Tasks can belong to a Space or directly to a Project",
       "Boards update instantly for all team members",
-      "ADIN learns your working patterns, helping recommend collaborators",
+      "DIA learns your working patterns, helping recommend collaborators",
       "Task dependencies prevent misalignment",
       "Analytics help leads see what's moving and what's stuck",
       "Updates flow into the CONNECT Feed, making progress visible",
@@ -1482,7 +1482,7 @@ Projects become the organizing brain. Tasks become the heartbeat.`,
         icon: Users2,
       },
       {
-        name: "ADIN",
+        name: "DIA",
         description: "Relevance and recommendations",
         icon: Users2,
       },
@@ -1562,7 +1562,7 @@ Each part helps the network understand who you are and where you belong.`,
     ],
     howItWorks: [
       "Profile completeness unlocks features (Example: you need 40% to send connection requests)",
-      "ADIN uses your profile to personalize: Connection recommendations, Event suggestions, Space discovery, Needs & contribution opportunities, Content relevance in your feed",
+      "DIA uses your profile to personalize: Connection recommendations, Event suggestions, Space discovery, Needs & contribution opportunities, Content relevance in your feed",
       "Profile views generate insight — You can see who's looked at your profile",
       "Username history is tracked — You have limited changes to maintain identity consistency",
       "Safety tools apply here — You can block users or hide select information",
@@ -1658,7 +1658,7 @@ Each part helps the network understand who you are and where you belong.`,
         icon: FolderOpen,
       },
       {
-        name: "ADIN",
+        name: "DIA",
         description: "Personalization engine",
         icon: Users2,
       },
@@ -1734,7 +1734,7 @@ It's simple, human, and central to the entire DNA experience.`,
       "Message requests protect privacy, giving you control over who can reach you",
       "Safety filters apply, blocking unwanted or inappropriate content",
       "Attachments and links are supported depending on your role and settings",
-      "ADIN improves relevance, suggesting when to reach out (e.g., after you join a Space)",
+      "DIA improves relevance, suggesting when to reach out (e.g., after you join a Space)",
       "Conversation history stays in sync across your devices",
       "Notifications keep you updated, but you can mute conversations anytime",
     ],
@@ -1834,7 +1834,7 @@ It's simple, human, and central to the entire DNA experience.`,
         icon: Megaphone,
       },
       {
-        name: "ADIN",
+        name: "DIA",
         description: "Suggests relevant people to talk to",
         icon: Users2,
       },
@@ -1874,17 +1874,17 @@ It's simple, human, and central to the entire DNA experience.`,
   },
   "adin": {
     hero: {
-      title: "ADIN — African Diaspora Intelligence Network",
+      title: "DIA — Diaspora Intelligence Agent",
       oneLiner:
-        "ADIN is DNA's intelligence engine — the layer that personalizes your experience, connects the dots, and helps the diaspora move with clarity and purpose.",
+        "DIA is DNA's intelligence engine — the layer that personalizes your experience, connects the dots, and helps the diaspora move with clarity and purpose.",
       whoItsFor:
         "Everyone. Members, organizers, contributors, partners, teams — anyone who benefits from smarter discovery, better recommendations, and a more meaningful platform experience.",
     },
     whatItIs: `Most platforms drown people in noise. Endless lists, random content, irrelevant suggestions — the opposite of empowerment.
 
-**ADIN flips that completely.**
+**DIA flips that completely.**
 
-ADIN is the personalization and intelligence system that helps every member see what matters most — people, spaces, events, contributions, and stories aligned with their identity, interests, skills, and goals.
+DIA is the personalization and intelligence system that helps every member see what matters most — people, spaces, events, contributions, and stories aligned with their identity, interests, skills, and goals.
 
 Its purpose is simple:
 - Reduce noise
@@ -1893,7 +1893,7 @@ Its purpose is simple:
 - Strengthen diaspora-wide mobilization
 - Help contributions and collaborations happen faster
 
-ADIN is the connective tissue behind DNA's 5Cs.`,
+DIA is the connective tissue behind DNA's 5Cs.`,
     whatYouCanDo: [
       "Smarter Discovery — Relevant members to connect with, Spaces you'll love, Diaspora communities tied to your identity, Opportunities based on your skills and focus areas",
       "Meaningful Event Recommendations — Events tied to your interests, Gathering suggestions based on who you follow, Cross-regional convenings you wouldn't have found otherwise",
@@ -1904,17 +1904,17 @@ ADIN is the connective tissue behind DNA's 5Cs.`,
     ],
     howItWorks: [
       "Your profile powers your recommendations — Heritage, skills, focus areas, and spaces form your 'identity graph'",
-      "Your activity trains the system — Every Space you join, story you read, event you attend, and need you respond to tells ADIN what you value",
+      "Your activity trains the system — Every Space you join, story you read, event you attend, and need you respond to tells DIA what you value",
       "Your connections shape what you see — The more relationships you build, the more relevant your feed becomes",
       "Your contributions expand your opportunities — People who support others get surfaced more often",
-      "Your engagement guides personalization — ADIN learns quietly — always adapting, never overwhelming",
+      "Your engagement guides personalization — DIA learns quietly — always adapting, never overwhelming",
       "Privacy and safety controls are always respected — Blocked users, private spaces, and sensitive data stay protected",
     ],
     stepByStep: [
       {
         title: "If you're new to DNA",
         steps: [
-          "Fill out your profile — the more you share, the smarter ADIN becomes",
+          "Fill out your profile — the more you share, the smarter DIA becomes",
           "Join one or two Spaces that feel aligned",
           "Attend at least one event",
           "Follow people whose work inspires you",
@@ -1924,7 +1924,7 @@ ADIN is the connective tissue behind DNA's 5Cs.`,
       {
         title: "If you're a builder or organizer",
         steps: [
-          "Keep your Space active — ADIN boosts engaged communities",
+          "Keep your Space active — DIA boosts engaged communities",
           "Post clear tasks for contributors",
           "Tag your needs accurately",
           "Share updates for visibility in CONNECT Feed",
@@ -1946,17 +1946,17 @@ ADIN is the connective tissue behind DNA's 5Cs.`,
       {
         title: "You're a creative in Nairobi",
         description:
-          "ADIN notices you engaging with art and storytelling Spaces. Your feed starts showing you: Creative workshops, Filmmakers in the diaspora, Events in your region, Needs related to design. Soon, you're collaborating across continents.",
+          "DIA notices you engaging with art and storytelling Spaces. Your feed starts showing you: Creative workshops, Filmmakers in the diaspora, Events in your region, Needs related to design. Soon, you're collaborating across continents.",
       },
       {
         title: "You're a founder in Accra",
         description:
-          "ADIN sees your skills, interests, and contributions. Your feed features: Mentors in your industry, Technical collaborators, Startup spaces in the diaspora, Needs that match your expertise. A support ecosystem forms around your project.",
+          "DIA sees your skills, interests, and contributions. Your feed features: Mentors in your industry, Technical collaborators, Startup spaces in the diaspora, Needs that match your expertise. A support ecosystem forms around your project.",
       },
       {
         title: "You're a student in Toronto",
         description:
-          "You explore African heritage topics. ADIN surfaces: Cultural Spaces, Creative events, Stories that match your roots, People who share your background. You slowly find your community.",
+          "You explore African heritage topics. DIA surfaces: Cultural Spaces, Creative events, Stories that match your roots, People who share your background. You slowly find your community.",
       },
     ],
     relatedFeatures: [
@@ -2003,12 +2003,12 @@ ADIN is the connective tissue behind DNA's 5Cs.`,
     ],
     faqs: [
       {
-        question: "Is ADIN an algorithm?",
+        question: "Is DIA an algorithm?",
         answer:
           "Yes, but a transparent one — built to support real mobilization, not vanity metrics.",
       },
       {
-        question: "Does ADIN use my data?",
+        question: "Does DIA use my data?",
         answer:
           "Only with your consent and only to improve your experience. Sensitive or private data is never exposed.",
       },
@@ -2018,16 +2018,16 @@ ADIN is the connective tissue behind DNA's 5Cs.`,
           "Absolutely — you can follow/unfollow, join/leave Spaces, or adjust your profile anytime.",
       },
       {
-        question: "Does ADIN make decisions for me?",
+        question: "Does DIA make decisions for me?",
         answer: "No — it suggests. You choose.",
       },
       {
-        question: "Does ADIN replace human relationships?",
+        question: "Does DIA replace human relationships?",
         answer:
           "No. It amplifies them by removing guesswork and friction.",
       },
       {
-        question: "Will ADIN improve over time?",
+        question: "Will DIA improve over time?",
         answer:
           "Yes — Phase 2 introduces real-time intelligence, experimentation, cohort segmentation, and adaptation.",
       },
@@ -2058,7 +2058,7 @@ It's not about pinging you constantly. It's about helping you stay connected to 
       "Profile — Someone viewed your profile (if enabled), Follow requests, Username / profile change confirmations",
     ],
     howItWorks: [
-      "ADIN prioritizes relevance — You see what aligns with your identity, spaces, and current work",
+      "DIA prioritizes relevance — You see what aligns with your identity, spaces, and current work",
       "DNA groups similar notifications — So you don't get overwhelmed by noise",
       "Notifications respect privacy — Anything from private or invite-only spaces stays protected",
       "Push + in-app system — You get updates inside DNA, with optional email/push alerts",
@@ -2163,7 +2163,7 @@ It's not about pinging you constantly. It's about helping you stay connected to 
         icon: Users2,
       },
       {
-        name: "ADIN",
+        name: "DIA",
         description: "Relevance + prioritization",
         icon: Users2,
       },
@@ -2194,7 +2194,7 @@ It's not about pinging you constantly. It's about helping you stay connected to 
       {
         question: "Do notifications affect recommendations?",
         answer:
-          "Engagement with notifications makes ADIN smarter about what you value.",
+          "Engagement with notifications makes DIA smarter about what you value.",
       },
     ],
   },
@@ -2223,7 +2223,7 @@ Instead of "browsing everything," users explore what matters to them.`,
     howItWorks: [
       "Smart search across multiple data types — Members, spaces, events, needs, tasks, stories — all indexed",
       "Contextual suggestions — If you search 'Ghana,' you might see: Spaces with Ghana focus, Members with Ghanaian heritage, Events happening in Ghana, Stories tagged 'Ghana'",
-      "Personalized ranking — ADIN rearranges results based on: Your profile, spaces, interests, past activity, and contributions",
+      "Personalized ranking — DIA rearranges results based on: Your profile, spaces, interests, past activity, and contributions",
       "Filters for precision — Skills, sector, location, format, tags, experience level, etc.",
       "Trending sections — What's rising across the diaspora — curated, not chaotic",
       "Respectful privacy — Private spaces don't appear in search results; Blocked users are excluded",
@@ -2245,7 +2245,7 @@ Instead of "browsing everything," users explore what matters to them.`,
           "Search by skill — 'developer,' 'writer,' 'data,' 'designer'",
           "Filter by region or experience",
           "Message people directly or invite them into your Space",
-          "Use ADIN's suggested collaborators",
+          "Use DIA's suggested collaborators",
           "Explore Spaces where builders gather",
         ],
       },
@@ -2281,7 +2281,7 @@ Instead of "browsing everything," users explore what matters to them.`,
       {
         title: "You're a founder in Johannesburg",
         description:
-          "You search 'React developer.' ADIN surfaces members in Lagos, Nairobi, and Accra. You message two of them — one joins your MVP project.",
+          "You search 'React developer.' DIA surfaces members in Lagos, Nairobi, and Accra. You message two of them — one joins your MVP project.",
       },
       {
         title: "You're a creative in Toronto",
@@ -2336,7 +2336,7 @@ Instead of "browsing everything," users explore what matters to them.`,
         icon: Users2,
       },
       {
-        name: "ADIN",
+        name: "DIA",
         description: "Ranking and suggestions layer",
         icon: Users2,
       },
@@ -2348,7 +2348,7 @@ Instead of "browsing everything," users explore what matters to them.`,
           "No — only public information. Private spaces and blocked users are excluded.",
       },
       {
-        question: "How does ADIN influence search results?",
+        question: "How does DIA influence search results?",
         answer:
           "It reorders results based on what's relevant to your profile, interests, and past actions.",
       },
@@ -2368,7 +2368,7 @@ Instead of "browsing everything," users explore what matters to them.`,
       {
         question: "Will search improve over time?",
         answer:
-          "Yes — ADIN Phase 2 includes even deeper personalization and context awareness.",
+          "Yes — DIA Phase 2 includes even deeper personalization and context awareness.",
       },
     ],
   },
@@ -2397,7 +2397,7 @@ By the end of onboarding, a new member:
     whatYouCanDo: [
       "Warm Welcome Screen — A simple introduction that answers: What DNA is, what you can do here, and what to expect next",
       "Profile Setup (Identity Foundation) — Complete name, photo, location, diaspora/heritage roots, skills & expertise, focus areas, bio, and optional links",
-      "First Recommendations (Powered by ADIN) — See recommended Spaces, members who share your roots or interests, upcoming events tailored to your region or focus areas",
+      "First Recommendations (Powered by DIA) — See recommended Spaces, members who share your roots or interests, upcoming events tailored to your region or focus areas",
       "Joining First Spaces — Pick 1 community Space, 1 interest Space, and 1 project or initiative to anchor your identity",
       "Your First Connection — Connect with 1–3 people who share heritage, skills, are in the same region, or are active collaborators",
       "Your First Event — RSVP to an upcoming virtual meetup or thematic event to have something to look forward to",
@@ -2405,7 +2405,7 @@ By the end of onboarding, a new member:
       "Home Tour (Optional) — Quick walkthrough of CONNECT Feed, Spaces, Events, Composer, Messages, and Profile",
     ],
     howItWorks: [
-      "ADIN personalizes everything once your profile has enough signal",
+      "DIA personalizes everything once your profile has enough signal",
       "Spaces shape your experience, giving you community from day one",
       "Events nudge you into participation, not passivity",
       "Connect suggestions introduce your first network nodes",
@@ -2453,7 +2453,7 @@ By the end of onboarding, a new member:
       },
       {
         title: "You're a founder in Nairobi",
-        description: "You fill out your skills and project background. ADIN recommends collaborators in Ghana and SA. You join a Startup Space. You post your first need — and get offers within hours.",
+        description: "You fill out your skills and project background. DIA recommends collaborators in Ghana and SA. You join a Startup Space. You post your first need — and get offers within hours.",
       },
       {
         title: "You're a creative in New York",
@@ -2497,7 +2497,7 @@ By the end of onboarding, a new member:
         icon: Megaphone,
       },
       {
-        name: "ADIN",
+        name: "DIA",
         description: "Personalization and recommendations",
         icon: Users2,
       },
@@ -2517,7 +2517,7 @@ By the end of onboarding, a new member:
       },
       {
         question: "Will onboarding change over time?",
-        answer: "Yes — ADIN Phase 2 will adapt onboarding in real time.",
+        answer: "Yes — DIA Phase 2 will adapt onboarding in real time.",
       },
       {
         question: "Can I skip onboarding?",

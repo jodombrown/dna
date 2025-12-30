@@ -129,7 +129,7 @@ export function ConveneRightWidgets() {
         </CardHeader>
         <CardContent>
           <CardDescription className="text-xs">
-            Your personalized event recommendations are powered by ADIN AI, learning from your interests and network.
+            Your personalized event recommendations are powered by DIA, learning from your interests and network.
           </CardDescription>
         </CardContent>
       </Card>

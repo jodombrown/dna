@@ -32,7 +32,7 @@ export function DiaPanel({ className, showHistory = true }: DiaPanelProps) {
             <div>
               <h2 className="text-lg font-semibold">DIA</h2>
               <p className="text-xs font-normal text-muted-foreground">
-                Diaspora Intelligence Assistant
+                Diaspora Intelligence Agent
               </p>
             </div>
           </CardTitle>

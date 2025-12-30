@@ -84,7 +84,7 @@ const PlatformOverview = () => {
           })}
         </div>
 
-        {/* ADIN Section */}
+        {/* DIA Section */}
         <Card className="p-8 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
           <div className="flex items-start gap-4">
             <div className="p-3 rounded-lg bg-primary/10">
@@ -92,10 +92,10 @@ const PlatformOverview = () => {
             </div>
             <div className="flex-1">
               <h3 className="text-2xl font-semibold mb-3 text-foreground">
-                Powered by ADIN
+                Powered by DIA
               </h3>
               <p className="text-muted-foreground leading-relaxed">
-                The African Diaspora Intelligence Network personalizes everything. You see the people, spaces, events, and opportunities that matter most.
+                The Diaspora Intelligence Agent personalizes everything. You see the people, spaces, events, and opportunities that matter most.
               </p>
             </div>
           </div>

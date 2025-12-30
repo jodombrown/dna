@@ -209,19 +209,19 @@ export const features: FeatureSummary[] = [
     status: "live",
     shortTagline: "Stay informed without overwhelm.",
     oneLiner:
-      "Notifications keep you updated on messages, events, contributions, and tasks with smart relevance via ADIN.",
+      "Notifications keep you updated on messages, events, contributions, and tasks with smart relevance via DIA.",
     audience: ["All Users"],
     overviewOrder: 14,
   },
   {
     slug: "adin",
-    name: "ADIN (African Diaspora Intelligence Network)",
+    name: "DIA (Diaspora Intelligence Agent)",
     pillar: "Platform",
     category: "System",
     status: "live",
     shortTagline: "The intelligence engine powering relevance, personalization, and momentum.",
     oneLiner:
-      "ADIN provides smart suggestions, feed ranking, contribution matching, and space and event recommendations.",
+      "DIA provides smart suggestions, feed ranking, contribution matching, and space and event recommendations.",
     audience: ["All Users", "System"],
     overviewOrder: 15,
   },

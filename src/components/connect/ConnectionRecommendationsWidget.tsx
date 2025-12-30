@@ -54,9 +54,9 @@ export const ConnectionRecommendationsWidget = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
 
-  // Use the ADIN algorithm via RPC for smart recommendations
+  // Use the DIA algorithm via RPC for smart recommendations
   const { data: recommendations, isLoading } = useQuery({
-    queryKey: ['adin-connection-recommendations', user?.id],
+    queryKey: ['dia-connection-recommendations', user?.id],
     queryFn: () => connectionService.getConnectionRecommendations(6),
     enabled: !!user?.id,
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
@@ -168,7 +168,7 @@ export const ConnectionRecommendationsWidget = () => {
             <Sparkles className="h-5 w-5 text-dna-emerald" />
             Smart Recommendations
             <Badge variant="outline" className="ml-auto text-xs font-normal">
-              ADIN Powered
+              DIA Powered
             </Badge>
           </CardTitle>
         </CardHeader>

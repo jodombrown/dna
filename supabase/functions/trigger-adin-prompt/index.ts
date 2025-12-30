@@ -30,26 +30,26 @@ serve(async (req) => {
       )
     }
 
-    console.log(`Triggering ADIN prompt for user ${user_id} with event ${event_type}`)
+    console.log(`Triggering DIA prompt for user ${user_id} with event ${event_type}`)
 
-    // Call the trigger_adin_prompt function
+    // Call the trigger_adin_prompt function (legacy DB name)
     const { data, error } = await supabase.rpc('trigger_adin_prompt', {
       target_user_id: user_id,
       event_type: event_type
     })
 
     if (error) {
-      console.error('Error triggering ADIN prompt:', error)
+      console.error('Error triggering DIA prompt:', error)
       return new Response(
         JSON.stringify({ error: error.message }),
-        { 
+        {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
       )
     }
 
-    console.log('ADIN prompt triggered successfully:', data)
+    console.log('DIA prompt triggered successfully:', data)
 
     return new Response(
       JSON.stringify({ success: true, data }),
@@ -59,7 +59,7 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Error in trigger-adin-prompt function:', error)
+    console.error('Error in trigger-adin-prompt (DIA) function:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       { 

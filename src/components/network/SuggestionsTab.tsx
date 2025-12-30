@@ -52,7 +52,7 @@ const SuggestionsTab: React.FC = () => {
 
       if (error) throw error;
 
-      // ADIN: Filter out connected/requested users, show 80%+ match scores
+      // DIA: Filter out connected/requested users, show 80%+ match scores
       const filtered = (data || [])
         .filter((member: any) => {
           return (
