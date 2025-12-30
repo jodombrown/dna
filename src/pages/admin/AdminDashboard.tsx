@@ -72,7 +72,7 @@ export default function AdminDashboard() {
             </p>
             <ul className="list-disc list-inside space-y-2 text-foreground">
               <li><strong>Engagement:</strong> View user engagement metrics and analytics</li>
-              <li><strong>Signals:</strong> Monitor ADIN signals and connection health</li>
+              <li><strong>Signals:</strong> Monitor DIA signals and connection health</li>
             </ul>
           </div>
         </CardContent>

@@ -555,7 +555,7 @@ function App() {
                   <DiaPage />
                 </OnboardingGuard>
               } />
-              {/* Legacy ADIN route redirect */}
+              {/* Legacy route redirect (ADIN was renamed to DIA) */}
               <Route path="/dna/adin" element={<Navigate to="/dna/dia" replace />} />
               {/* ========== ANALYTICS ========== */}
               <Route path="/dna/analytics" element={
@@ -604,7 +604,7 @@ function App() {
                 <Route path="analytics" element={<EngagementDashboard />} />
                 <Route path="analytics/engagement" element={<EngagementDashboard />} />
                 <Route path="dia" element={<DiaAdminPage />} />
-                {/* Legacy ADIN admin route redirect */}
+                {/* Legacy admin route redirect (ADIN was renamed to DIA) */}
                 <Route path="adin" element={<Navigate to="/admin/dia" replace />} />
               </Route>
 

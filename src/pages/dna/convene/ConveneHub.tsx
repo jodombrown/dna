@@ -20,7 +20,7 @@ const ConveneHub = () => {
             {/* Welcome Strip & Quick Actions */}
             <WelcomeStrip />
 
-            {/* For You – Suggested Events (AI/ADIN) */}
+            {/* For You – Suggested Events (DIA-powered) */}
             <EventRecommendations />
 
             {/* Your Upcoming Events (Hosting & Attending) */}

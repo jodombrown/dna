@@ -22,9 +22,9 @@ interface ConnectionRequestRpcResponse {
 }
 
 /**
- * Response from rpc_adin_recommend_people RPC
+ * Response from rpc_adin_recommend_people RPC (legacy DB name, UI uses DIA)
  */
-interface AdinRecommendationResponse {
+interface DiaRecommendationResponse {
   matched_user_id: string;
   match_score: number;
   match_reason: string | null;
@@ -345,7 +345,7 @@ export const connectionService = {
   },
 
   /**
-   * Get smart connection recommendations based on ADIN algorithm
+   * Get smart connection recommendations based on DIA algorithm
    * Uses weighted scoring: skills (25%), interests (25%), heritage (20%), mutual connections (20%), region (10%)
    */
   async getConnectionRecommendations(limit: number = 10): Promise<ConnectionRecommendation[]> {
@@ -362,7 +362,7 @@ export const connectionService = {
     if (!data || !Array.isArray(data)) return [];
 
     // Cast to proper type
-    const recommendations = data as AdinRecommendationResponse[];
+    const recommendations = data as DiaRecommendationResponse[];
 
     // Fetch profile details for the matched users
     const userIds = recommendations.map((item) => item.matched_user_id).filter(Boolean);

@@ -37,7 +37,7 @@ const DnaMe = () => {
           </p>
         </div>
 
-        {/* ADIN Nudges */}
+        {/* DIA Nudges */}
         <ConnectNudges />
 
         <div className="grid lg:grid-cols-3 gap-6 mt-6">

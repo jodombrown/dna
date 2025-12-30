@@ -117,7 +117,7 @@ export const pillarDiaConfigs: Record<string, PillarDiaConfig> = {
   'dia-page': {
     pillar: 'dia-page',
     title: 'DIA',
-    description: 'Diaspora Intelligence Assistant',
+    description: 'Diaspora Intelligence Agent',
     placeholder: 'Ask DIA anything about Africa, the diaspora, or opportunities...',
     suggestions: [
       'What fintech opportunities exist in Kenya?',

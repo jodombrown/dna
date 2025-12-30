@@ -154,7 +154,7 @@ const NudgeCenter: React.FC = () => {
       <div className="mt-6 p-4 bg-muted/50 rounded-lg">
         <h3 className="font-semibold text-sm mb-2">About DIA Nudges</h3>
         <p className="text-sm text-muted-foreground">
-          DIA (Diaspora Intelligence Assistant) is your AI companion that learns from your
+          DIA (Diaspora Intelligence Agent) is your AI companion that learns from your
           activity patterns to provide timely, personalized suggestions. Nudges are designed to help
           you maintain connections, discover opportunities, and stay engaged with the DNA community.
         </p>

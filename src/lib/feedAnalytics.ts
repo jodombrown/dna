@@ -1,8 +1,8 @@
 /**
- * DNA | FEED - ADIN Engagement Analytics
- * 
+ * DNA | FEED - DIA Engagement Analytics
+ *
  * Structured event logging for feed engagement.
- * These events will be consumed by ADIN for personalization and recommendations.
+ * These events will be consumed by DIA for personalization and recommendations.
  */
 
 import { supabase } from '@/integrations/supabase/client';
