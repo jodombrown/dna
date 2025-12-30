@@ -29,6 +29,7 @@ import ProfileV2Interests from '@/components/profile-v2/ProfileV2Interests';
 import ProfileV2Activity from '@/components/profile-v2/ProfileV2Activity';
 import ProfileV2Completion from '@/components/profile-v2/ProfileV2Completion';
 import ProfileV2Verification from '@/components/profile-v2/ProfileV2Verification';
+import ProfileV2Events from '@/components/profile-v2/ProfileV2Events';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { MutualConnectionsWidget } from '@/components/connections/MutualConnectionsWidget';
 import PublicProfileLandingView from '@/components/profile-v2/PublicProfileLandingView';
@@ -264,6 +265,12 @@ const ProfileV2: React.FC = () => {
               visibility={visibility}
               isOwner={permissions.is_owner}
               onUpdate={handleUpdateInterests}
+            />
+
+            <ProfileV2Events
+              profile={profile}
+              visibility={visibility}
+              isOwner={permissions.is_owner}
             />
           </div>
 
