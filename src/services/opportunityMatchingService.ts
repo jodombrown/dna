@@ -260,10 +260,10 @@ class OpportunityMatchingService {
       .from('contribution_offers')
       .select('need_id, contribution_needs(type)')
       .eq('created_by', userId)
-      .in('status', ['accepted', 'completed', 'validated']);
+      .in('status', ['accepted', 'completed']);
 
     // Get user's contribution records
-    const { data: contributions } = await supabase
+    const { data: contributions } = await (supabase as any)
       .from('user_contributions')
       .select('type')
       .eq('user_id', userId);

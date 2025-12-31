@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { Space, SpaceStatus } from '@/types/spaceTypes';
+import { Space, SpaceStatus, SpaceType } from '@/types/spaceTypes';
 
 /**
  * Space Health Status levels
@@ -314,9 +314,10 @@ export const spaceHealthService = {
         if (healthData.status !== 'healthy') {
           spacesNeedingAttention.push({
             ...space,
+            space_type: space.space_type as SpaceType,
             healthData,
             userRole: 'lead',
-          });
+          } as SpaceNeedingAttention);
         }
       } catch (error) {
         // Skip spaces we can't calculate health for
@@ -459,7 +460,7 @@ export const spaceHealthService = {
 
     // Create the nudge
     // Use a placeholder connection_id since space nudges aren't connection-based
-    await supabase
+    await (supabase as any)
       .from('adin_nudges')
       .insert({
         user_id: userId,

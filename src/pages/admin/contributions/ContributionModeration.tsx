@@ -110,7 +110,7 @@ export default function ContributionModeration() {
         const { data: creators } = await supabase
           .from('profiles')
           .select('id, full_name, email')
-          .in('id', creatorIds);
+          .in('id', creatorIds as string[]);
 
         creators?.forEach((c: any) => {
           creatorMap[c.id] = { full_name: c.full_name || 'Unknown', email: c.email || '' };

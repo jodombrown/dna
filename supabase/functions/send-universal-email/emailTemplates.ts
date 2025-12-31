@@ -336,12 +336,13 @@ export const getEmailContent = (formType: string, formData: any): EmailContent =
       };
 
     case 'engagement_reminder':
-      const userTypeGreeting = {
+      const userTypeMap: Record<string, string> = {
         entrepreneur: 'Fellow Builder',
         professional: 'DNA Professional',
         student: 'Future Leader',
         investor: 'Change Maker',
-      }[formData.userType] || 'DNA Member';
+      };
+      const userTypeGreeting = userTypeMap[formData.userType as string] || 'DNA Member';
 
       return {
         subject: formData.subject || 'We Miss You on DNA',

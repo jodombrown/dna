@@ -143,7 +143,6 @@ const ArchivedFeatureDetail: React.FC = () => {
                 imageUrl={release.hero_image_url}
                 videoUrl={release.hero_video_url}
                 category={release.category}
-                title={release.title}
                 className="absolute inset-0"
               />
               {/* Archived overlay */}
@@ -172,7 +171,7 @@ const ArchivedFeatureDetail: React.FC = () => {
             {/* Features */}
             {release.features && release.features.length > 0 && (
               <FeatureList
-                features={release.features}
+                features={release.features.map((f: any) => typeof f === 'string' ? f : f.feature_text)}
                 title="What Was Included"
                 className="mb-10"
               />

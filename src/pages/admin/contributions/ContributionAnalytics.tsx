@@ -237,7 +237,7 @@ export default function ContributionAnalytics() {
         const { data: profiles } = await supabase
           .from('profiles')
           .select('id, full_name, email')
-          .in('id', contributorIds);
+          .in('id', contributorIds as string[]);
 
         profiles?.forEach((p: any) => {
           profileMap[p.id] = { full_name: p.full_name || 'Unknown', email: p.email || '' };

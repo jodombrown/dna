@@ -8,14 +8,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Archive, ArrowLeft, Search } from 'lucide-react';
-import { useArchivedReleases } from '@/hooks/useReleases';
+import { useReleases } from '@/hooks/useReleases';
 import { ReleaseCard } from '@/components/releases';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useState, useMemo } from 'react';
 
 const ArchivedFeaturesIndex: React.FC = () => {
-  const { data: releases, isLoading, error } = useArchivedReleases();
+  const { data: releases, isLoading, error } = useReleases({ filter: 'archived' });
   const [searchQuery, setSearchQuery] = useState('');
 
   // Filter releases by search query

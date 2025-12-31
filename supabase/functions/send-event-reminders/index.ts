@@ -60,7 +60,7 @@ serve(async (req) => {
 
     const { data: upcomingEvents, error: eventsError } = await supabaseClient
       .from('events')
-      .select('id, title, start_time, format, location_name, location_city, meeting_url, organizer_id')
+      .select('id, title, start_time, format, location_name, location_city, meeting_url, organizer_id, group_id')
       .gte('start_time', in24Hours.toISOString())
       .lte('start_time', in26Hours.toISOString())
       .eq('is_cancelled', false);
@@ -128,8 +128,9 @@ serve(async (req) => {
         );
 
         // Filter out users who already got reminders
+        // Note: profiles is a single object from the nested select, not an array
         const attendeesToRemind = attendees.filter(
-          a => !alreadyRemindedUserIds.has(a.user_id) && 
+          (a: any) => !alreadyRemindedUserIds.has(a.user_id) && 
                a.profiles?.email_notifications !== false
         );
 
@@ -149,11 +150,12 @@ serve(async (req) => {
 
         // Get group name if event is part of a group
         let groupName = null;
-        if (event.group_id) {
+        const eventWithGroup = event as any;
+        if (eventWithGroup.group_id) {
           const { data: group } = await supabaseClient
             .from('groups')
             .select('name')
-            .eq('id', event.group_id)
+            .eq('id', eventWithGroup.group_id)
             .single();
           groupName = group?.name;
         }
@@ -226,11 +228,12 @@ serve(async (req) => {
         let emailsSent = 0;
         for (const attendee of attendeesToRemind) {
           try {
+            const profile = attendee.profiles as any;
             // Check if user wants email reminders
-            const emailNotificationsEnabled = attendee.profiles?.email_notifications !== false;
-            const eventRemindersEnabled = attendee.profiles?.notification_preferences?.event_reminders !== false;
+            const emailNotificationsEnabled = profile?.email_notifications !== false;
+            const eventRemindersEnabled = profile?.notification_preferences?.event_reminders !== false;
             
-            if (!emailNotificationsEnabled || !eventRemindersEnabled || !attendee.profiles?.email) {
+            if (!emailNotificationsEnabled || !eventRemindersEnabled || !profile?.email) {
               continue;
             }
 
@@ -246,10 +249,10 @@ serve(async (req) => {
                 meeting_url: event.format === 'virtual' ? event.meeting_url : null,
                 host_name: organizer?.full_name,
                 group_name: groupName,
-                user_name: attendee.profiles.full_name,
+                user_name: profile.full_name,
                 settings_url: `${SUPABASE_URL.replace('.supabase.co', '')}/settings`
               },
-              userEmail: attendee.profiles.email
+              userEmail: profile.email
             };
 
             // Call send-universal-email function
@@ -267,11 +270,11 @@ serve(async (req) => {
 
             if (emailResponse.ok) {
               emailsSent++;
-              console.log(`Email reminder sent to ${attendee.profiles.email} for event ${event.id}`);
+              console.log(`Email reminder sent to ${profile.email} for event ${event.id}`);
             } else {
               const errorText = await emailResponse.text();
-              console.error(`Failed to send email to ${attendee.profiles.email}:`, errorText);
-              errors.push(`Email to ${attendee.profiles.email}: ${errorText}`);
+              console.error(`Failed to send email to ${profile.email}:`, errorText);
+              errors.push(`Email to ${profile.email}: ${errorText}`);
             }
           } catch (emailError) {
             console.error(`Error sending email reminder to user ${attendee.user_id}:`, emailError);

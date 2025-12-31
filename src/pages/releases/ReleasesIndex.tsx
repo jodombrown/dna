@@ -48,14 +48,14 @@ const ReleasesIndex: React.FC = () => {
 
   // Group releases by month
   const groupedReleases = useMemo(() => {
-    if (!data?.releases) return [];
-    return groupReleasesByMonth(data.releases);
-  }, [data?.releases]);
+    if (!data || data.length === 0) return [];
+    return groupReleasesByMonth(data as any);
+  }, [data]);
 
   // Count featured releases
   const featuredCount = useMemo(() => {
-    return data?.releases?.filter(r => r.lifecycle_stage === 'featured').length || 0;
-  }, [data?.releases]);
+    return data?.filter(r => r.lifecycle_stage === 'featured').length || 0;
+  }, [data]);
 
   return (
     <>
@@ -134,7 +134,7 @@ const ReleasesIndex: React.FC = () => {
           )}
 
           {/* Empty State */}
-          {!isLoading && !error && data?.releases?.length === 0 && (
+          {!isLoading && !error && data?.length === 0 && (
             <div className="text-center py-16">
               <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gray-100 mb-6">
                 <Sparkles className="w-10 h-10 text-gray-400" />
@@ -196,9 +196,9 @@ const ReleasesIndex: React.FC = () => {
           )}
 
           {/* Total Count */}
-          {!isLoading && data?.total && data.total > 0 && (
+          {!isLoading && data && data.length > 0 && (
             <div className="mt-12 text-center text-sm text-gray-500">
-              Showing {data.releases.length} of {data.total} releases
+              Showing {data.length} releases
             </div>
           )}
         </div>

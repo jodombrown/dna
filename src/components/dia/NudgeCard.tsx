@@ -25,7 +25,7 @@ type Nudge = {
     space_name?: string;
     [key: string]: any;
   };
-  priority?: 'low' | 'normal' | 'high';
+  priority?: 'low' | 'normal' | 'high' | 'medium';
   [key: string]: any;
 };
 
@@ -106,6 +106,7 @@ const NUDGE_TYPE_CONFIG: Record<string, { label: string; icon: React.ElementType
 const PRIORITY_STYLES: Record<string, string> = {
   high: 'border-l-4 border-l-red-500',
   normal: 'border-l-4 border-l-blue-500',
+  medium: 'border-l-4 border-l-blue-500',
   low: 'border-l-4 border-l-gray-300',
 };
 
