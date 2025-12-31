@@ -1,6 +1,6 @@
 export type DiaPillar = 'connect' | 'convene' | 'collaborate' | 'contribute' | 'convey' | 'dashboard' | 'dia-page';
 
-export type NetworkMatchType = 'profiles' | 'stories' | 'projects' | 'hashtags' | 'events';
+export type NetworkMatchType = 'profiles' | 'stories' | 'projects' | 'hashtags' | 'events' | 'opportunities';
 
 export interface PillarDiaConfig {
   pillar: string;
@@ -16,6 +16,7 @@ export interface PillarDiaConfig {
     projects: number;
     hashtags: number;
     events: number;
+    opportunities: number;
   };
 }
 
@@ -34,8 +35,8 @@ export const pillarDiaConfigs: Record<string, PillarDiaConfig> = {
       'Investment professionals focused on East Africa',
     ],
     systemPromptAddition: 'Focus on professional connections, expertise areas, and diaspora professional communities. Prioritize matching users with relevant professionals in the network.',
-    networkMatchPriority: ['profiles', 'projects', 'events', 'stories'],
-    maxResults: { profiles: 6, stories: 1, projects: 2, hashtags: 0, events: 2 },
+    networkMatchPriority: ['profiles', 'projects', 'events', 'stories', 'opportunities'],
+    maxResults: { profiles: 6, stories: 1, projects: 2, hashtags: 0, events: 2, opportunities: 2 },
   },
   convene: {
     pillar: 'convene',
@@ -49,8 +50,8 @@ export const pillarDiaConfigs: Record<string, PillarDiaConfig> = {
       'Cultural festivals celebrating African heritage',
     ],
     systemPromptAddition: 'Focus on events, conferences, meetups, and gatherings relevant to the African diaspora.',
-    networkMatchPriority: ['events', 'profiles', 'projects', 'stories'],
-    maxResults: { profiles: 2, stories: 1, projects: 2, hashtags: 2, events: 6 },
+    networkMatchPriority: ['events', 'profiles', 'projects', 'stories', 'opportunities'],
+    maxResults: { profiles: 2, stories: 1, projects: 2, hashtags: 2, events: 6, opportunities: 1 },
   },
   collaborate: {
     pillar: 'collaborate',
@@ -64,23 +65,25 @@ export const pillarDiaConfigs: Record<string, PillarDiaConfig> = {
       'Funding trends for African startups',
     ],
     systemPromptAddition: 'Focus on market research, business opportunities, partnerships, and project feasibility.',
-    networkMatchPriority: ['projects', 'profiles', 'events', 'stories'],
-    maxResults: { profiles: 3, stories: 2, projects: 4, hashtags: 2, events: 2 },
+    networkMatchPriority: ['projects', 'opportunities', 'profiles', 'events', 'stories'],
+    maxResults: { profiles: 3, stories: 2, projects: 4, hashtags: 2, events: 2, opportunities: 3 },
   },
   contribute: {
     pillar: 'contribute',
-    title: 'Investment Intelligence',
-    description: 'Research investment opportunities and market trends',
-    placeholder: 'Investment opportunities in...',
+    title: 'Contribution Opportunities',
+    description: 'Find ways to contribute - funding, skills, time, and access',
+    placeholder: 'Find contribution opportunities in...',
     suggestions: [
-      'Real estate investment opportunities in Lagos',
-      'Venture capital trends in African tech',
-      'Impact investment funds focused on Africa',
-      'Diaspora bond programs across Africa',
+      'Projects needing funding in West Africa',
+      'Volunteer opportunities for tech skills',
+      'Mentorship opportunities in fintech',
+      'Ways to contribute to diaspora initiatives',
+      'Open needs for skills sharing',
+      'How can I help African startups?',
     ],
-    systemPromptAddition: 'Focus on investment opportunities, financial trends, ROI data, and wealth building strategies for diaspora investors.',
-    networkMatchPriority: ['projects', 'profiles', 'stories', 'events'],
-    maxResults: { profiles: 3, stories: 2, projects: 4, hashtags: 2, events: 2 },
+    systemPromptAddition: 'Focus on contribution opportunities including funding needs, skill-sharing opportunities, volunteer time, access/networking, and resource sharing. Help users find meaningful ways to contribute to African development and diaspora projects.',
+    networkMatchPriority: ['opportunities', 'projects', 'profiles', 'stories', 'events'],
+    maxResults: { profiles: 2, stories: 1, projects: 3, hashtags: 2, events: 1, opportunities: 5 },
   },
   convey: {
     pillar: 'convey',
@@ -96,8 +99,8 @@ export const pillarDiaConfigs: Record<string, PillarDiaConfig> = {
       'Stories from East African founders',
     ],
     systemPromptAddition: 'Focus on trending topics, content themes, viral stories, and thought leadership in the African diaspora space. Prioritize content discovery and storytelling.',
-    networkMatchPriority: ['stories', 'hashtags', 'profiles', 'events'],
-    maxResults: { profiles: 2, stories: 4, projects: 0, hashtags: 4, events: 1 },
+    networkMatchPriority: ['stories', 'hashtags', 'profiles', 'events', 'opportunities'],
+    maxResults: { profiles: 2, stories: 4, projects: 0, hashtags: 4, events: 1, opportunities: 1 },
   },
   dashboard: {
     pillar: 'dashboard',
@@ -109,10 +112,11 @@ export const pillarDiaConfigs: Record<string, PillarDiaConfig> = {
       'Trending diaspora stories',
       'Find tech professionals',
       'Investment trends in East Africa',
+      'Ways to contribute to African projects',
     ],
-    systemPromptAddition: 'Provide comprehensive intelligence about African opportunities, markets, and the global diaspora network.',
-    networkMatchPriority: ['profiles', 'stories', 'projects', 'hashtags', 'events'],
-    maxResults: { profiles: 3, stories: 2, projects: 2, hashtags: 3, events: 2 },
+    systemPromptAddition: 'Provide comprehensive intelligence about African opportunities, markets, and the global diaspora network. Include contribution opportunities when relevant.',
+    networkMatchPriority: ['profiles', 'stories', 'projects', 'opportunities', 'hashtags', 'events'],
+    maxResults: { profiles: 3, stories: 2, projects: 2, hashtags: 3, events: 2, opportunities: 2 },
   },
   'dia-page': {
     pillar: 'dia-page',
@@ -124,10 +128,11 @@ export const pillarDiaConfigs: Record<string, PillarDiaConfig> = {
       'Find diaspora professionals in renewable energy',
       'Trending stories about African startups',
       'Investment landscape in West Africa',
+      'Contribution opportunities matching my skills',
     ],
-    systemPromptAddition: 'Provide comprehensive intelligence about African opportunities, markets, and the global diaspora network. You have access to the full range of network data.',
-    networkMatchPriority: ['profiles', 'stories', 'projects', 'hashtags', 'events'],
-    maxResults: { profiles: 4, stories: 3, projects: 2, hashtags: 4, events: 3 },
+    systemPromptAddition: 'Provide comprehensive intelligence about African opportunities, markets, and the global diaspora network. You have access to the full range of network data including contribution opportunities.',
+    networkMatchPriority: ['profiles', 'stories', 'opportunities', 'projects', 'hashtags', 'events'],
+    maxResults: { profiles: 4, stories: 3, projects: 2, hashtags: 4, events: 3, opportunities: 3 },
   },
 };
 
