@@ -109,6 +109,7 @@ const EventAnalytics = lazy(() => import("./pages/dna/convene/EventAnalytics"));
 const OrganizerAnalytics = lazy(() => import("./pages/dna/convene/OrganizerAnalytics"));
 const GroupsBrowse = lazy(() => import("./pages/dna/convene/GroupsBrowse"));
 const GroupEventsPage = lazy(() => import("./pages/dna/convene/GroupEventsPage"));
+const EventCheckIn = lazy(() => import("./pages/dna/convene/EventCheckIn"));
 
 // Collaborate M1-M5 pages
 const CollaborateHub = lazy(() => import("./pages/dna/collaborate/CollaborateHub"));
@@ -431,6 +432,11 @@ function App() {
               <Route path="/dna/convene/events/:id/analytics" element={
                 <OnboardingGuard>
                   <EventAnalytics />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/convene/events/:id/check-in" element={
+                <OnboardingGuard>
+                  <EventCheckIn />
                 </OnboardingGuard>
               } />
               <Route path="/dna/convene/my-events" element={

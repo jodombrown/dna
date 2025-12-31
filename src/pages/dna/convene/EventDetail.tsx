@@ -1,13 +1,52 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Calendar, MapPin, Users, ExternalLink, Share2, Clock } from 'lucide-react';
+import { Calendar, MapPin, Users, ExternalLink, Share2, Clock, MoreHorizontal, XCircle, Trash2, Flag, QrCode, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -19,6 +58,14 @@ import { AddToCalendarButton } from '@/components/convene/AddToCalendarButton';
 import { EventSpacesSection } from '@/components/collaboration/EventSpacesSection';
 import { EventActivityFeed } from '@/components/events/EventActivityFeed';
 
+const REPORT_REASONS = [
+  { value: 'spam', label: 'Spam' },
+  { value: 'inappropriate_content', label: 'Inappropriate Content' },
+  { value: 'misleading_information', label: 'Misleading Information' },
+  { value: 'harassment', label: 'Harassment' },
+  { value: 'other', label: 'Other' },
+] as const;
+
 const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -27,6 +74,15 @@ const EventDetail = () => {
   const queryClient = useQueryClient();
   const composer = useUniversalComposer({ eventId: id });
   const [rsvpStatus, setRsvpStatus] = useState<string | null>(null);
+
+  // Cancel/Delete dialog states
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  // Report modal states
+  const [showReportDialog, setShowReportDialog] = useState(false);
+  const [reportReason, setReportReason] = useState<string>('');
+  const [reportDetails, setReportDetails] = useState('');
 
   // Fetch event details
   const { data: eventData, isLoading } = useQuery({
@@ -120,6 +176,135 @@ const EventDetail = () => {
     },
     enabled: !!id,
   });
+
+  // Fetch total registration count (for delete eligibility)
+  const { data: registrationCount = 0 } = useQuery({
+    queryKey: ['event-registration-count', id],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from('event_attendees')
+        .select('*', { count: 'exact', head: true })
+        .eq('event_id', id)
+        .in('status', ['going', 'maybe', 'pending', 'waitlist']);
+
+      if (error) throw error;
+      return count || 0;
+    },
+    enabled: !!id,
+  });
+
+  // Cancel event mutation
+  const cancelEventMutation = useMutation({
+    mutationFn: async () => {
+      if (!user || !id) throw new Error('Not authenticated');
+
+      const { error } = await supabase
+        .from('events')
+        .update({
+          is_cancelled: true,
+          cancellation_reason: 'Cancelled by organizer',
+        })
+        .eq('id', id)
+        .eq('organizer_id', user.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['event-detail', id] });
+      queryClient.invalidateQueries({ queryKey: ['events'] });
+      toast({
+        title: 'Event Cancelled',
+        description: 'Your event has been cancelled. Attendees will be notified.',
+      });
+      setShowCancelDialog(false);
+    },
+    onError: () => {
+      toast({
+        title: 'Error',
+        description: 'Failed to cancel event',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  // Delete event mutation
+  const deleteEventMutation = useMutation({
+    mutationFn: async () => {
+      if (!user || !id) throw new Error('Not authenticated');
+
+      const { error } = await supabase
+        .from('events')
+        .delete()
+        .eq('id', id)
+        .eq('organizer_id', user.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['events'] });
+      toast({
+        title: 'Event Deleted',
+        description: 'Your event has been permanently deleted.',
+      });
+      navigate('/dna/convene/events');
+    },
+    onError: () => {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete event',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  // Report event mutation
+  const reportEventMutation = useMutation({
+    mutationFn: async ({ reason, details }: { reason: string; details: string }) => {
+      if (!user || !id) throw new Error('Not authenticated');
+
+      const { error } = await supabase
+        .from('event_reports')
+        .insert({
+          event_id: id,
+          reported_by: user.id,
+          reason,
+          description: details || null,
+          status: 'pending',
+        });
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Report Submitted',
+        description: 'Thank you for helping keep DNA safe.',
+      });
+      setShowReportDialog(false);
+      setReportReason('');
+      setReportDetails('');
+    },
+    onError: () => {
+      toast({
+        title: 'Error',
+        description: 'Failed to submit report',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const handleReportSubmit = () => {
+    if (!reportReason) {
+      toast({
+        title: 'Error',
+        description: 'Please select a reason for your report',
+        variant: 'destructive',
+      });
+      return;
+    }
+    reportEventMutation.mutate({ reason: reportReason, details: reportDetails });
+  };
+
+  const canDeleteEvent = registrationCount === 0;
 
   // RSVP mutation
   const rsvpMutation = useMutation({
@@ -262,11 +447,14 @@ const EventDetail = () => {
                   {event.format.replace('_', ' ')}
                 </Badge>
                 {isPastEvent && <Badge variant="secondary">Past Event</Badge>}
+                {event.is_cancelled && (
+                  <Badge variant="destructive">Cancelled</Badge>
+                )}
               </div>
               <h1 className="text-2xl sm:text-4xl font-bold mb-2">{event.title}</h1>
             </div>
 
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-2 flex-wrap items-center">
               <AddToCalendarButton
                 event={event}
                 organizer={event.organizer}
@@ -275,10 +463,73 @@ const EventDetail = () => {
               <Button variant="outline" size="icon" onClick={handleShareEvent}>
                 <Share2 className="h-4 w-4" />
               </Button>
-              {isOrganizer && (
-                <Button onClick={() => navigate(`/dna/convene/events/${id}/edit`)}>
-                  Edit Event
-                </Button>
+              {isOrganizer ? (
+                <>
+                  <Button onClick={() => navigate(`/dna/convene/events/${id}/edit`)}>
+                    Edit Event
+                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="icon">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuItem onClick={() => navigate(`/dna/convene/events/${id}/check-in`)}>
+                        <QrCode className="mr-2 h-4 w-4" />
+                        Check-in Attendees
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      {!event.is_cancelled && (
+                        <DropdownMenuItem
+                          onClick={() => setShowCancelDialog(true)}
+                          className="text-amber-600 focus:text-amber-600"
+                        >
+                          <XCircle className="mr-2 h-4 w-4" />
+                          Cancel Event
+                        </DropdownMenuItem>
+                      )}
+                      {canDeleteEvent ? (
+                        <DropdownMenuItem
+                          onClick={() => setShowDeleteDialog(true)}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete Event
+                        </DropdownMenuItem>
+                      ) : (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="relative flex cursor-not-allowed select-none items-center rounded-sm px-2 py-1.5 text-sm opacity-50">
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Delete Event
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Cannot delete events with registrations. Cancel instead.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </>
+              ) : user && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="icon">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem
+                      onClick={() => setShowReportDialog(true)}
+                      className="text-destructive focus:text-destructive"
+                    >
+                      <Flag className="mr-2 h-4 w-4" />
+                      Report Event
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )}
             </div>
           </div>
@@ -515,6 +766,123 @@ const EventDetail = () => {
         onModeChange={composer.switchMode}
         onSubmit={composer.submit}
       />
+
+      {/* Cancel Event Confirmation Dialog */}
+      <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Cancel Event</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to cancel this event? Attendees will be notified.
+              The event will remain visible but marked as cancelled.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep Event</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => cancelEventMutation.mutate()}
+              className="bg-amber-600 hover:bg-amber-700"
+              disabled={cancelEventMutation.isPending}
+            >
+              {cancelEventMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Cancelling...
+                </>
+              ) : (
+                'Cancel Event'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete Event Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Event</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the event
+              and all associated data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteEventMutation.mutate()}
+              className="bg-destructive hover:bg-destructive/90"
+              disabled={deleteEventMutation.isPending}
+            >
+              {deleteEventMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                'Delete Event'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Report Event Modal */}
+      <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Report Event</DialogTitle>
+            <DialogDescription>
+              Help us understand what's wrong with this event.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="report-reason">Reason</Label>
+              <Select value={reportReason} onValueChange={setReportReason}>
+                <SelectTrigger id="report-reason">
+                  <SelectValue placeholder="Select a reason" />
+                </SelectTrigger>
+                <SelectContent>
+                  {REPORT_REASONS.map((reason) => (
+                    <SelectItem key={reason.value} value={reason.value}>
+                      {reason.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="report-details">Additional Details (Optional)</Label>
+              <Textarea
+                id="report-details"
+                placeholder="Provide any additional context..."
+                value={reportDetails}
+                onChange={(e) => setReportDetails(e.target.value)}
+                rows={4}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowReportDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleReportSubmit}
+              disabled={reportEventMutation.isPending || !reportReason}
+            >
+              {reportEventMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                'Submit Report'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </DetailViewLayout>
   );
 };
