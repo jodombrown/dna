@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ConveyItemWithDetails } from '@/types/conveyTypes';
+import { StoryConnectButton } from './StoryAuthorCard';
 
 interface ConveyFeedCardProps {
   item: ConveyItemWithDetails;
@@ -79,13 +80,35 @@ export function ConveyFeedCard({ item }: ConveyFeedCardProps) {
         {/* Author */}
         {item.author && (
           <div className="flex items-center gap-2">
-            <Avatar className="h-5 w-5">
+            <Avatar
+              className="h-5 w-5 cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/dna/${item.author?.username || item.author?.id}`);
+              }}
+            >
               <AvatarImage src={item.author.avatar_url || undefined} />
               <AvatarFallback className="text-xs">
                 {item.author.full_name?.charAt(0) || 'U'}
               </AvatarFallback>
             </Avatar>
-            <span>{item.author.full_name}</span>
+            <span
+              className="cursor-pointer hover:text-primary hover:underline transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/dna/${item.author?.username || item.author?.id}`);
+              }}
+            >
+              {item.author.full_name}
+            </span>
+            {item.author.id && (
+              <div onClick={(e) => e.stopPropagation()}>
+                <StoryConnectButton
+                  authorId={item.author.id}
+                  authorName={item.author.full_name || 'Author'}
+                />
+              </div>
+            )}
           </div>
         )}
 

@@ -6,11 +6,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowLeft, Loader2, ExternalLink, Calendar, Sparkles, BookOpen, MessageCircle, Eye, Share2 } from 'lucide-react';
+import { ArrowLeft, Loader2, ExternalLink, Calendar, Sparkles, BookOpen, MessageCircle, Eye, Share2, UserPlus, Users } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { useStoryEngagement } from '@/hooks/useStoryEngagement';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
+import { StoryAuthorCard } from '@/components/convey/StoryAuthorCard';
+import { ContentConnectionSuggestions } from '@/components/convey/ContentConnectionSuggestions';
 
 // Hook to fetch story by ID from posts table (for post-based stories)
 function useStoryById(id: string | undefined) {
@@ -212,24 +214,22 @@ export default function StoryDetail() {
                 {/* Author & Meta Row */}
                 <div className="flex flex-wrap items-center gap-3 md:gap-4 pb-4 md:pb-6 mb-4 md:mb-6 border-b border-border">
                   {normalizedItem.author && (
-                    <div className="flex items-center gap-2">
-                      <Avatar className="h-9 w-9 md:h-10 md:w-10">
-                        <AvatarImage src={(normalizedItem.author as any)?.avatar_url || undefined} />
-                        <AvatarFallback className="text-sm">
-                          {(normalizedItem.author as any)?.full_name?.charAt(0) || 'U'}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <span className="font-medium text-sm md:text-base block">
-                          {(normalizedItem.author as any)?.full_name}
-                        </span>
-                        {normalizedItem.published_at && (
-                          <span className="text-xs md:text-sm text-muted-foreground">
-                            {formatDistanceToNow(new Date(normalizedItem.published_at), { addSuffix: true })}
-                          </span>
-                        )}
-                      </div>
-                    </div>
+                    <StoryAuthorCard
+                      author={{
+                        id: (normalizedItem.author as any)?.id,
+                        username: (normalizedItem.author as any)?.username,
+                        full_name: (normalizedItem.author as any)?.full_name || 'Unknown Author',
+                        avatar_url: (normalizedItem.author as any)?.avatar_url,
+                        headline: (normalizedItem.author as any)?.headline,
+                      }}
+                      timestamp={normalizedItem.published_at
+                        ? formatDistanceToNow(new Date(normalizedItem.published_at), { addSuffix: true })
+                        : undefined
+                      }
+                      variant="default"
+                      showConnectButton={true}
+                      className="flex-1"
+                    />
                   )}
 
                   {normalizedItem.region && (
@@ -361,6 +361,16 @@ export default function StoryDetail() {
                     </Button>
                   </div>
                 </div>
+              )}
+
+              {/* Content-based connection suggestions */}
+              {storyId && user?.id && (
+                <ContentConnectionSuggestions
+                  storyId={storyId}
+                  userId={user.id}
+                  focusAreas={normalizedItem.focus_areas || []}
+                  limit={5}
+                />
               )}
             </aside>
           </div>

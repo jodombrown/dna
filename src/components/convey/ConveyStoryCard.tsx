@@ -1,13 +1,15 @@
 import { useNavigate } from 'react-router-dom';
-import { MessageCircle, Eye, Bookmark, BookmarkCheck, Share2, Clock, Loader2 } from 'lucide-react';
+import { MessageCircle, Eye, Bookmark, BookmarkCheck, Share2, Clock, Loader2, UserPlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { formatDistanceToNow } from 'date-fns';
 import type { UniversalFeedItem } from '@/types/feed';
 import { useStoryEngagement, useStoryViewTracker } from '@/hooks/useStoryEngagement';
 import { useAuth } from '@/contexts/AuthContext';
 import { ReactionEmoji } from '@/types/reactions';
+import { StoryConnectButton } from './StoryAuthorCard';
 
 interface ConveyStoryCardProps {
   story: UniversalFeedItem;
@@ -187,7 +189,15 @@ export function ConveyStoryCard({
             {story.title || story.content?.substring(0, 80)}...
           </h3>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span>{story.author_display_name}</span>
+            <span
+              className="hover:text-primary hover:underline cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/dna/${story.author_username}`);
+              }}
+            >
+              {story.author_display_name}
+            </span>
             <span>•</span>
             <span>{timeAgo}</span>
           </div>
@@ -231,16 +241,35 @@ export function ConveyStoryCard({
           
           {showAuthor && (
             <div className="flex items-center gap-3 mb-3">
-              <Avatar className="h-8 w-8 border-2 border-white/20">
+              <Avatar
+                className="h-8 w-8 border-2 border-white/20 cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/dna/${story.author_username}`);
+                }}
+              >
                 <AvatarImage src={story.author_avatar_url || undefined} />
                 <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                   {getAuthorInitials(story.author_display_name)}
                 </AvatarFallback>
               </Avatar>
-              <div>
-                <p className="text-sm font-medium text-white">{story.author_display_name}</p>
+              <div className="flex-1">
+                <p
+                  className="text-sm font-medium text-white hover:text-primary cursor-pointer transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/dna/${story.author_username}`);
+                  }}
+                >
+                  {story.author_display_name}
+                </p>
                 <p className="text-xs text-white/60">{timeAgo}</p>
               </div>
+              <StoryConnectButton
+                authorId={story.author_id}
+                authorName={story.author_display_name}
+                className="text-white hover:text-primary"
+              />
             </div>
           )}
           
@@ -309,15 +338,36 @@ export function ConveyStoryCard({
         
         {/* Author Row */}
         {showAuthor && (
-          <div className="flex items-center gap-2 mb-3">
-            <Avatar className="h-7 w-7">
+          <div className="flex items-center gap-2 mb-3 group/author">
+            <Avatar
+              className="h-7 w-7 cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/dna/${story.author_username}`);
+              }}
+            >
               <AvatarImage src={story.author_avatar_url || undefined} />
               <AvatarFallback className="bg-primary/10 text-primary text-xs">
                 {getAuthorInitials(story.author_display_name)}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{story.author_display_name}</p>
+              <p
+                className="text-sm font-medium truncate cursor-pointer hover:text-primary hover:underline transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/dna/${story.author_username}`);
+                }}
+              >
+                {story.author_display_name}
+              </p>
+            </div>
+            {/* Connect button - visible on hover */}
+            <div className="opacity-0 group-hover/author:opacity-100 transition-opacity">
+              <StoryConnectButton
+                authorId={story.author_id}
+                authorName={story.author_display_name}
+              />
             </div>
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <Clock className="h-3 w-3" />

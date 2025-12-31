@@ -3,10 +3,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Sparkles } from 'lucide-react';
+import { FileText, Sparkles, UserPlus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Activity } from '@/types/activity';
 import { formatDistanceToNow } from 'date-fns';
+import { StoryConnectButton } from '@/components/convey/StoryAuthorCard';
 
 interface FeedStoryCardProps {
   activity: Activity;
@@ -49,28 +50,34 @@ export const FeedStoryCard: React.FC<FeedStoryCardProps> = ({ activity }) => {
           
           <div className="flex-1 min-w-0">
             <div className="flex items-start gap-3 mb-3">
-              <Avatar className="h-10 w-10 cursor-pointer" onClick={handleViewProfile}>
+              <Avatar className="h-10 w-10 cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all" onClick={handleViewProfile}>
                 <AvatarImage src={activity.actor_avatar_url} alt={activity.actor_full_name} />
                 <AvatarFallback>
                   {(activity.actor_full_name || 'DN').split(' ').map(n => n[0]).join('').slice(0, 2)}
                 </AvatarFallback>
               </Avatar>
-              
+
               <div className="flex-1">
                 <p className="text-sm">
-                  <span 
-                    className="font-semibold hover:underline cursor-pointer"
+                  <span
+                    className="font-semibold hover:underline hover:text-primary cursor-pointer transition-colors"
                     onClick={handleViewProfile}
                   >
                     {activity.actor_full_name}
                   </span>
                   {' '}published a new {getStoryTypeLabel(storyData.story_type).toLowerCase()}
                 </p>
-                
+
                 <p className="text-xs text-muted-foreground mt-1">
                   {formatDistanceToNow(new Date(activity.created_at), { addSuffix: true })}
                 </p>
               </div>
+
+              {/* Connect with author button */}
+              <StoryConnectButton
+                authorId={activity.actor_id}
+                authorName={activity.actor_full_name || 'Author'}
+              />
             </div>
             
             {/* Story Details */}

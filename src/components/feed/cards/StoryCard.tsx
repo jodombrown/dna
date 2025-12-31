@@ -11,7 +11,7 @@ import { linkifyContent } from '@/utils/linkifyContent';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageCircle, Bookmark, FileText, BookOpen } from 'lucide-react';
+import { Heart, MessageCircle, Bookmark, FileText, BookOpen, UserPlus } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -22,6 +22,7 @@ import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
 import { ThreadedComments } from '@/components/posts/ThreadedComments';
 import { PostMenuOwn } from '@/components/posts/PostMenuOwn';
 import { PostMenuOthers } from '@/components/posts/PostMenuOthers';
+import { StoryConnectButton } from '@/components/convey/StoryAuthorCard';
 
 interface StoryCardProps {
   item: UniversalFeedItem;
@@ -67,7 +68,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
       {/* Header */}
       <div className="flex items-start gap-3 mb-4">
         <Avatar
-          className="h-10 w-10 cursor-pointer flex-shrink-0"
+          className="h-10 w-10 cursor-pointer flex-shrink-0 hover:ring-2 hover:ring-primary/50 transition-all"
           onClick={() => navigate(`/dna/${item.author_username}`)}
         >
           <AvatarImage src={item.author_avatar_url || ''} />
@@ -76,7 +77,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <span
-              className="font-semibold text-sm hover:underline cursor-pointer"
+              className="font-semibold text-sm hover:underline hover:text-primary cursor-pointer transition-colors"
               onClick={() => navigate(`/dna/${item.author_username}`)}
             >
               {item.author_display_name || item.author_username}
@@ -90,7 +91,15 @@ export const StoryCard: React.FC<StoryCardProps> = ({
             {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
           </p>
         </div>
-        
+
+        {/* Connect button for non-owners */}
+        {!isOwner && (
+          <StoryConnectButton
+            authorId={item.author_id}
+            authorName={item.author_display_name || item.author_username || 'Author'}
+          />
+        )}
+
         {/* Post Menu - Own or Others */}
         {isOwner ? (
           <PostMenuOwn
