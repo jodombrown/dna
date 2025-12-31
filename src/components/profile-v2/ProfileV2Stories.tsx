@@ -321,7 +321,7 @@ const ProfileV2Stories: React.FC<ProfileV2StoriesProps> = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => navigate('/dna/convey/stories/new')}
+              onClick={() => navigate('/dna/convey/new')}
             >
               <Plus className="w-4 h-4 mr-2" />
               Write Story
@@ -376,7 +376,7 @@ const ProfileV2Stories: React.FC<ProfileV2StoriesProps> = ({
               isOwner
                 ? 'Share your experiences and journey with the community!'
                 : `${profile.full_name || 'This user'} hasn't published any stories yet.`,
-              { label: 'Write Story', path: '/dna/convey/stories/new' }
+              { label: 'Write Story', path: '/dna/convey/new' }
             )}
           </TabsContent>
 
@@ -388,7 +388,7 @@ const ProfileV2Stories: React.FC<ProfileV2StoriesProps> = ({
               isOwner
                 ? 'Share your impact stories and achievements!'
                 : `${profile.full_name || 'This user'} hasn't shared any impact highlights yet.`,
-              { label: 'Share Impact', path: '/dna/convey/stories/new' }
+              { label: 'Share Impact', path: '/dna/convey/new' }
             )}
           </TabsContent>
         </Tabs>

@@ -204,7 +204,8 @@ export default function CreateStory() {
             onSubmit={async (formData) => {
               createMutation.mutate(formData, {
                 onSuccess: (data) => {
-                  navigate(`/dna/convey/${data.slug || data.id}`);
+                  // Navigate to the story detail page
+                  navigate(`/dna/convey/stories/${data.slug}`);
                 },
               });
             }}

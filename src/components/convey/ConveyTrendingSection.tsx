@@ -22,7 +22,8 @@ const TrendingCard = ({
   const navigate = useNavigate();
   
   const handleClick = () => {
-    navigate(`/dna/convey/stories/${story.id}`);
+    // Use the correct route for posts table stories
+    navigate(`/dna/story/${story.id}`);
   };
   
   const getAuthorInitials = (name: string) => {
@@ -45,7 +46,7 @@ const TrendingCard = ({
       className={cn(
         "relative group cursor-pointer rounded-2xl overflow-hidden",
         "transition-all duration-300 hover:scale-[1.02] hover:shadow-xl",
-        isHero ? "col-span-2 row-span-2 min-h-[320px] md:min-h-[400px]" : "min-h-[180px] md:min-h-[200px]"
+        isHero ? "col-span-2 row-span-1 md:row-span-2 min-h-[240px] md:min-h-[400px]" : "min-h-[160px] md:min-h-[200px]"
       )}
     >
       {/* Background Image */}
@@ -138,7 +139,7 @@ const TrendingCard = ({
 const TrendingSkeleton = ({ isHero = false }: { isHero?: boolean }) => (
   <div className={cn(
     "rounded-2xl bg-muted animate-pulse",
-    isHero ? "col-span-2 row-span-2 min-h-[320px] md:min-h-[400px]" : "min-h-[180px] md:min-h-[200px]"
+    isHero ? "col-span-2 row-span-1 md:row-span-2 min-h-[240px] md:min-h-[400px]" : "min-h-[160px] md:min-h-[200px]"
   )} />
 );
 

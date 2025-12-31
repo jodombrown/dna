@@ -53,21 +53,27 @@ export default function StoryDetail() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  
-  // Try to fetch from convey_items first (legacy slug-based)
-  const { data: conveyItem, isLoading: conveyLoading, error: conveyError } = useConveyItemBySlug(slug);
-  
-  // If not found in convey_items, try posts table (ID-based)
+
+  // Check if the parameter is a UUID (for posts table stories)
   const isUUID = slug && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
-  const { data: postItem, isLoading: postLoading, error: postError } = useStoryById(isUUID ? slug : undefined);
+
+  // For UUID params, redirect to the correct route for posts table stories
+  // This handles backward compatibility with old bookmarked URLs
+  if (isUUID) {
+    navigate(`/dna/story/${slug}`, { replace: true });
+    return null;
+  }
+
+  // Try to fetch from convey_items (legacy slug-based)
+  const { data: conveyItem, isLoading: conveyLoading, error: conveyError } = useConveyItemBySlug(slug);
+
+  // Determine which item to use (only convey_items for slug-based routes)
+  const item = conveyItem;
+  const isLoading = conveyLoading;
+  const hasError = !!conveyError;
   
-  // Determine which item to use
-  const item = conveyItem || postItem;
-  const isLoading = conveyLoading || (isUUID && postLoading);
-  const hasError = conveyError && (!isUUID || postError);
-  
-  // Engagement data for post-based stories
-  const storyId = postItem?.id || conveyItem?.id;
+  // Engagement data for convey_items stories
+  const storyId = conveyItem?.id;
   const {
     reactions,
     commentCount,
@@ -178,11 +184,11 @@ export default function StoryDetail() {
             <article className="lg:col-span-2 bg-card border border-border rounded-xl md:rounded-2xl overflow-hidden">
               {/* Cover Image */}
               {normalizedItem.image_url && (
-                <div className="aspect-video w-full overflow-hidden">
-                  <img 
-                    src={normalizedItem.image_url} 
-                    alt={normalizedItem.title || 'Story cover'} 
-                    className="w-full h-full object-cover"
+                <div className="w-full overflow-hidden bg-muted/30">
+                  <img
+                    src={normalizedItem.image_url}
+                    alt={normalizedItem.title || 'Story cover'}
+                    className="w-full h-auto max-h-[320px] sm:max-h-[480px] object-contain mx-auto"
                   />
                 </div>
               )}

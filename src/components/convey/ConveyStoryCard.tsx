@@ -125,7 +125,8 @@ export function ConveyStoryCard({
   } = useStoryEngagement(story.post_id, user?.id);
   
   const handleClick = () => {
-    navigate(`/dna/convey/stories/${story.post_id}`);
+    // Use the correct route for posts table stories
+    navigate(`/dna/story/${story.post_id}`);
   };
   
   const getAuthorInitials = (name: string) => {
@@ -145,15 +146,14 @@ export function ConveyStoryCard({
   
   const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    const shareUrl = `${window.location.origin}/dna/story/${story.post_id}`;
     if (navigator.share) {
       await navigator.share({
         title: story.title || 'DNA Story',
-        url: `${window.location.origin}/dna/convey/stories/${story.post_id}`,
+        url: shareUrl,
       });
     } else {
-      await navigator.clipboard.writeText(
-        `${window.location.origin}/dna/convey/stories/${story.post_id}`
-      );
+      await navigator.clipboard.writeText(shareUrl);
     }
   };
 
