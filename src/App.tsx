@@ -154,6 +154,9 @@ const MyHashtagsSettings = lazy(() => import("./pages/dna/settings/MyHashtagsSet
 const DiaPreferences = lazy(() => import("./pages/DiaPreferences"));
 const DiaPage = lazy(() => import("./pages/dna/DiaPage"));
 const DiaAdminPage = lazy(() => import("./pages/admin/DiaAdminPage"));
+const SpaceManagement = lazy(() => import("./pages/admin/spaces/SpaceManagement"));
+const SpaceModeration = lazy(() => import("./pages/admin/spaces/SpaceModeration"));
+const CollaborationAnalytics = lazy(() => import("./pages/admin/analytics/CollaborationAnalytics"));
 const NudgeCenter = lazy(() => import("./pages/NudgeCenter"));
 const EventsPage = lazy(() => import("./pages/EventsPage"));
 const EventDetailsPage = lazy(() => import("./pages/EventDetailsPage"));
@@ -650,6 +653,11 @@ function App() {
                 <Route path="dia" element={<DiaAdminPage />} />
                 {/* Legacy admin route redirect (ADIN was renamed to DIA) */}
                 <Route path="adin" element={<Navigate to="/admin/dia" replace />} />
+                {/* Spaces admin routes */}
+                <Route path="spaces" element={<SpaceManagement />} />
+                <Route path="spaces/moderation" element={<SpaceModeration />} />
+                {/* Collaboration Analytics */}
+                <Route path="analytics/collaboration" element={<CollaborationAnalytics />} />
               </Route>
 
               {/* Legacy Admin routes */}
