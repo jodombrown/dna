@@ -20,7 +20,9 @@ import {
   Search,
   Activity,
   ExternalLink,
-  Sparkles
+  Sparkles,
+  Boxes,
+  Flag
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -89,6 +91,14 @@ const navigation: NavItem[] = [
     ]
   },
   {
+    icon: Boxes,
+    label: 'Spaces',
+    children: [
+      { icon: Boxes, label: 'Space Management', href: '/admin/spaces' },
+      { icon: Flag, label: 'Space Moderation', href: '/admin/spaces/moderation' }
+    ]
+  },
+  {
     icon: FolderKanban,
     label: 'Projects',
     href: '/admin/projects'
@@ -116,6 +126,7 @@ const navigation: NavItem[] = [
     children: [
       { icon: BarChart3, label: 'User Analytics', href: '/admin/analytics/users' },
       { icon: BarChart3, label: 'Engagement', href: '/admin/analytics/engagement' },
+      { icon: BarChart3, label: 'Collaboration', href: '/admin/analytics/collaboration' },
       { icon: BarChart3, label: 'Growth', href: '/admin/analytics/growth' }
     ]
   },
