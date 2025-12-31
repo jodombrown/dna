@@ -110,6 +110,7 @@ export interface ProfileV2Visibility {
   events?: 'public' | 'hidden';
   spaces?: 'public' | 'hidden';
   opportunities?: 'public' | 'hidden';
+  stories?: 'public' | 'hidden';
   show_about?: boolean;
   show_skills?: boolean;
   show_interests?: boolean;
@@ -117,6 +118,7 @@ export interface ProfileV2Visibility {
   show_events?: boolean;
   show_spaces?: boolean;
   show_opportunities?: boolean;
+  show_stories?: boolean;
 }
 
 /**

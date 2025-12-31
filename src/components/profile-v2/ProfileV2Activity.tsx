@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Users, Calendar, Activity, BookOpen, ChevronRight, Sparkles } from 'lucide-react';
+import { Users, Calendar, Activity, BookOpen, ChevronRight, Sparkles, PenSquare } from 'lucide-react';
 import { ProfileV2Activity as ActivityType, ProfileV2Visibility } from '@/types/profileV2';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,7 +23,7 @@ const ProfileV2Activity: React.FC<ProfileV2ActivityProps> = ({
     return null;
   }
 
-  const hasActivity = activity.spaces.length > 0 || activity.events.length > 0 || (activity.connections_count ?? 0) > 0;
+  const hasActivity = activity.spaces.length > 0 || activity.events.length > 0 || (activity.connections_count ?? 0) > 0 || (activity.stories_count ?? 0) > 0;
 
   // Hide empty activity for public viewers
   if (!hasActivity && !isOwner) {
@@ -39,17 +39,36 @@ const ProfileV2Activity: React.FC<ProfileV2ActivityProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Connections */}
-        <div className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-              <Users className="w-5 h-5 text-primary" />
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 gap-3">
+          {/* Connections */}
+          <div className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <Users className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+              </div>
+              <span className="font-medium text-xs sm:text-sm">Connections</span>
             </div>
-            <span className="font-medium text-sm sm:text-base">Connections</span>
+            <span className="text-lg sm:text-xl font-bold text-primary">
+              {activity.connections_count ?? 0}
+            </span>
           </div>
-          <span className="text-xl sm:text-2xl font-bold text-primary">
-            {activity.connections_count ?? 0}
-          </span>
+
+          {/* Stories */}
+          <div
+            className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg cursor-pointer hover:bg-secondary/70 transition-colors"
+            onClick={() => navigate('/dna/convey')}
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <PenSquare className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+              </div>
+              <span className="font-medium text-xs sm:text-sm">Stories</span>
+            </div>
+            <span className="text-lg sm:text-xl font-bold text-primary">
+              {activity.stories_count ?? 0}
+            </span>
+          </div>
         </div>
 
         {/* Spaces */}
