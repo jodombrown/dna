@@ -406,7 +406,7 @@ function App() {
               {/* ========== CONVENE PILLAR M1 ========== */}
               <Route path="/dna/convene" element={
                 <OnboardingGuard>
-                  <ComingSoonConvene />
+                  <ConveneHub />
                 </OnboardingGuard>
               } />
               <Route path="/dna/convene/events" element={
@@ -469,7 +469,7 @@ function App() {
               {/* ========== COLLABORATE PILLAR M1-M5 ========== */}
               <Route path="/dna/collaborate" element={
                 <OnboardingGuard>
-                  <ComingSoonCollaborate />
+                  <CollaborateHub />
                 </OnboardingGuard>
               } />
               <Route path="/dna/collaborate/spaces" element={
@@ -506,7 +506,7 @@ function App() {
               {/* ========== CONTRIBUTE PILLAR M1 ========== */}
               <Route path="/dna/contribute" element={
                 <OnboardingGuard>
-                  <ComingSoonContribute />
+                  <ContributeHub />
                 </OnboardingGuard>
               } />
               <Route path="/dna/contribute/needs" element={

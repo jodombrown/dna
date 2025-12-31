@@ -26,8 +26,8 @@ export async function fetchReleases(
   page = 1,
   limit = 20
 ): Promise<{ releases: ReleaseWithDetails[]; total: number }> {
-  // Use the v_all_releases view for complete data
-  let query = supabase
+  // Use the releases table directly with type assertion for views that may not be in types
+  let query = (supabase as any)
     .from('v_all_releases')
     .select('*', { count: 'exact' });
 
@@ -78,7 +78,7 @@ export async function fetchReleases(
  * Fetch featured releases (last 30 days)
  */
 export async function fetchFeaturedReleases(): Promise<ReleaseWithDetails[]> {
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('v_featured_releases')
     .select('*')
     .order('release_date', { ascending: false });
@@ -95,7 +95,7 @@ export async function fetchFeaturedReleases(): Promise<ReleaseWithDetails[]> {
  * Fetch recent releases (31-90 days)
  */
 export async function fetchRecentReleases(): Promise<ReleaseWithDetails[]> {
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('v_recent_releases')
     .select('*')
     .order('release_date', { ascending: false });
@@ -112,7 +112,7 @@ export async function fetchRecentReleases(): Promise<ReleaseWithDetails[]> {
  * Fetch archived releases
  */
 export async function fetchArchivedReleases(): Promise<ReleaseWithDetails[]> {
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('v_archived_releases')
     .select('*')
     .order('release_date', { ascending: false });
@@ -131,7 +131,7 @@ export async function fetchArchivedReleases(): Promise<ReleaseWithDetails[]> {
 export async function fetchReleaseBySlug(
   slug: string
 ): Promise<ReleaseWithDetails | null> {
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('v_all_releases')
     .select('*')
     .eq('slug', slug)
@@ -152,14 +152,14 @@ export async function fetchReleaseBySlug(
  * Get count of featured releases (for pill badge)
  */
 export async function getFeaturedReleasesCount(): Promise<number> {
-  const { data, error } = await supabase.rpc('get_featured_releases_count');
+  const { data, error } = await (supabase as any).rpc('get_featured_releases_count');
 
   if (error) {
     console.error('Error getting featured count:', error);
     return 0;
   }
 
-  return data || 0;
+  return (data as number) || 0;
 }
 
 /**
@@ -170,7 +170,7 @@ export async function fetchRelatedReleases(
   category?: ReleaseCategory,
   limit = 3
 ): Promise<RelatedRelease[]> {
-  const { data, error } = await supabase.rpc('get_related_releases', {
+  const { data, error } = await (supabase as any).rpc('get_related_releases', {
     p_release_id: releaseId,
     p_category: category || null,
     p_limit: limit,
@@ -181,14 +181,14 @@ export async function fetchRelatedReleases(
     return [];
   }
 
-  return (data || []) as RelatedRelease[];
+  return (data as RelatedRelease[]) || [];
 }
 
 /**
  * Increment view count for a release
  */
 export async function incrementViewCount(slug: string): Promise<void> {
-  const { error } = await supabase.rpc('increment_release_view_count', {
+  const { error } = await (supabase as any).rpc('increment_release_view_count', {
     release_slug: slug,
   });
 
@@ -231,7 +231,7 @@ export async function searchReleases(
   query: string,
   limit = 10
 ): Promise<ReleaseWithDetails[]> {
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('v_all_releases')
     .select('*')
     .or(
@@ -427,7 +427,7 @@ export async function addReleaseMedia(
     sort_order?: number;
   }
 ): Promise<void> {
-  const { error } = await supabase.from('release_media').insert({
+  const { error } = await (supabase as any).from('release_media').insert({
     release_id: releaseId,
     ...media,
   });
@@ -442,7 +442,7 @@ export async function addReleaseMedia(
  * Remove media from a release
  */
 export async function removeReleaseMedia(mediaId: string): Promise<void> {
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from('release_media')
     .delete()
     .eq('id', mediaId);
@@ -467,7 +467,7 @@ export async function addChangelogEntry(
     description: string;
   }
 ): Promise<void> {
-  const { error } = await supabase.from('release_changelog').insert({
+  const { error } = await (supabase as any).from('release_changelog').insert({
     release_id: releaseId,
     ...entry,
   });
@@ -482,7 +482,7 @@ export async function addChangelogEntry(
  * Remove changelog entry
  */
 export async function removeChangelogEntry(entryId: string): Promise<void> {
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from('release_changelog')
     .delete()
     .eq('id', entryId);

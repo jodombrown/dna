@@ -146,7 +146,6 @@ const ReleaseDetail: React.FC = () => {
                 imageUrl={release.hero_image_url}
                 videoUrl={release.hero_video_url}
                 category={release.category}
-                title={release.title}
                 className="absolute inset-0"
               />
             </div>
@@ -172,7 +171,7 @@ const ReleaseDetail: React.FC = () => {
 
             {/* Features List */}
             {release.features && release.features.length > 0 && (
-              <FeatureList features={release.features} className="mb-10" />
+              <FeatureList features={release.features.map((f: any) => typeof f === 'string' ? f : f.feature_text)} className="mb-10" />
             )}
 
             {/* CTA Button */}
@@ -188,20 +187,20 @@ const ReleaseDetail: React.FC = () => {
             )}
 
             {/* Media Gallery */}
-            {release.media && release.media.length > 0 && (
+            {(release as any).media && (release as any).media.length > 0 && (
               <section className="mb-12">
                 <h2 className="font-serif text-2xl font-semibold text-gray-900 mb-6">
                   Gallery
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {release.media.map((item) => (
+                  {(release as any).media.map((item: any) => (
                     <div key={item.id} className="rounded-lg overflow-hidden shadow-md">
                       {item.media_type === 'video' ? (
                         <video
                           src={item.url}
                           controls
                           className="w-full"
-                          poster={release.hero_image_url}
+                          poster={release.hero_image_url || undefined}
                         />
                       ) : (
                         <img
@@ -223,13 +222,13 @@ const ReleaseDetail: React.FC = () => {
             )}
 
             {/* Changelog */}
-            {release.changelog && release.changelog.length > 0 && (
+            {(release as any).changelog && (release as any).changelog.length > 0 && (
               <section className="mb-12">
                 <h2 className="font-serif text-2xl font-semibold text-gray-900 mb-6">
                   Changelog
                 </h2>
                 <div className="space-y-4">
-                  {release.changelog.map((entry) => (
+                  {(release as any).changelog.map((entry: any) => (
                     <div
                       key={entry.id}
                       className="flex items-start gap-3 p-4 rounded-lg bg-gray-50"

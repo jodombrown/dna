@@ -10,8 +10,9 @@ import { Sparkles, Clock, Archive } from 'lucide-react';
 
 type BadgeStatus = 'new' | 'recent' | 'archived' | 'featured';
 
-interface StatusBadgeProps {
-  status: BadgeStatus;
+export interface StatusBadgeProps {
+  status?: BadgeStatus;
+  stage?: BadgeStatus;  // Alias for status (for backward compatibility)
   size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
@@ -41,10 +42,13 @@ const statusConfig: Record<BadgeStatus, { label: string; className: string; icon
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({
   status,
+  stage,
   size = 'md',
   className
 }) => {
-  const config = statusConfig[status];
+  // Support both 'status' and 'stage' props
+  const badgeStatus = status || stage || 'recent';
+  const config = statusConfig[badgeStatus];
 
   const sizeClasses = {
     sm: 'px-1.5 py-0.5 text-[9px] gap-0.5',
