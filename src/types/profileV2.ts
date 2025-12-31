@@ -109,12 +109,14 @@ export interface ProfileV2Visibility {
   activity?: 'public' | 'hidden';
   events?: 'public' | 'hidden';
   spaces?: 'public' | 'hidden';
+  opportunities?: 'public' | 'hidden';
   show_about?: boolean;
   show_skills?: boolean;
   show_interests?: boolean;
   show_activity?: boolean;
   show_events?: boolean;
   show_spaces?: boolean;
+  show_opportunities?: boolean;
 }
 
 /**
