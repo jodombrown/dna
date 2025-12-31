@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import {
   Search, Sparkles, Users, Calendar, FolderKanban, Hash,
   ExternalLink, Loader2, AlertCircle, ArrowUpRight, BookOpen,
-  ChevronDown, ChevronUp
+  ChevronDown, ChevronUp, Target
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,6 +19,8 @@ import { NetworkMatchType } from '@/config/dia-pillar-config';
 import DiaProfileCard from './DiaProfileCard';
 import DiaStoryCard from './DiaStoryCard';
 import DiaHashtagChip from './DiaHashtagChip';
+import DiaOpportunityCard from './DiaOpportunityCard';
+import type { ContributionNeedType } from '@/types/contributeTypes';
 
 interface DiaResponse {
   success: boolean;
@@ -68,6 +70,16 @@ interface DiaResponse {
         hashtags: string[];
         cover_image?: string;
       }>;
+      opportunities?: Array<{
+        id: string;
+        title: string;
+        type: ContributionNeedType;
+        space_name?: string;
+        region?: string;
+        focus_areas?: string[];
+        relevance: string;
+        match_score?: number;
+      }>;
     };
     cached: boolean;
   };
@@ -98,6 +110,7 @@ interface DiaSearchProps {
     projects: number;
     hashtags: number;
     events: number;
+    opportunities: number;
   };
 }
 
@@ -231,8 +244,8 @@ export function DiaSearch({
   suggestions,
   initialQuery = '',
   autoSearch = false,
-  networkMatchPriority = ['profiles', 'stories', 'projects', 'hashtags', 'events'],
-  maxResults = { profiles: 3, stories: 2, projects: 2, hashtags: 3, events: 2 }
+  networkMatchPriority = ['profiles', 'stories', 'projects', 'opportunities', 'hashtags', 'events'],
+  maxResults = { profiles: 3, stories: 2, projects: 2, hashtags: 3, events: 2, opportunities: 2 }
 }: DiaSearchProps) {
   const navigate = useNavigate();
   const [query, setQuery] = useState(initialQuery);
@@ -361,7 +374,8 @@ export function DiaSearch({
     response.data.network_matches.events.length > 0 ||
     response.data.network_matches.projects.length > 0 ||
     response.data.network_matches.hashtags.length > 0 ||
-    (response.data.network_matches.stories?.length || 0) > 0
+    (response.data.network_matches.stories?.length || 0) > 0 ||
+    (response.data.network_matches.opportunities?.length || 0) > 0
   );
 
   const isInputDisabled = searchMutation.isPending || rateLimited;
@@ -390,7 +404,7 @@ export function DiaSearch({
   const renderNetworkMatches = () => {
     if (!response?.data?.network_matches) return null;
 
-    const { profiles, events, projects, hashtags, stories = [] } = response.data.network_matches;
+    const { profiles, events, projects, hashtags, stories = [], opportunities = [] } = response.data.network_matches;
     const sections: React.ReactNode[] = [];
 
     for (const matchType of networkMatchPriority) {
@@ -552,6 +566,39 @@ export function DiaSearch({
                         {project.status}
                       </Badge>
                     </button>
+                  ))}
+                </div>
+              </div>
+            );
+          }
+          break;
+
+        case 'opportunities':
+          if (opportunities.length > 0) {
+            const limitedOpportunities = opportunities.slice(0, maxResults.opportunities);
+            sections.push(
+              <div key="opportunities">
+                <p className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+                  <Target className="h-4 w-4" />
+                  Contribution Opportunities
+                </p>
+                <div className={cn(
+                  "grid gap-3",
+                  compact ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+                )}>
+                  {limitedOpportunities.map((opportunity) => (
+                    <DiaOpportunityCard
+                      key={opportunity.id}
+                      id={opportunity.id}
+                      title={opportunity.title}
+                      type={opportunity.type}
+                      spaceName={opportunity.space_name}
+                      region={opportunity.region}
+                      focusAreas={opportunity.focus_areas}
+                      relevance={opportunity.relevance}
+                      matchScore={opportunity.match_score}
+                      compact={compact}
+                    />
                   ))}
                 </div>
               </div>

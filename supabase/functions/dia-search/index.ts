@@ -49,6 +49,15 @@ interface NetworkMatches {
     name: string;
     post_count: number;
   }>;
+  opportunities: Array<{
+    id: string;
+    title: string;
+    type: string;
+    space_name?: string;
+    region?: string;
+    focus_areas?: string[];
+    relevance: string;
+  }>;
 }
 
 // Utility: Normalize query for caching
@@ -153,6 +162,7 @@ async function queryNetworkMatches(
     events: [],
     projects: [],
     hashtags: [],
+    opportunities: [],
   };
 
   if (keywords.length === 0) {
@@ -255,6 +265,39 @@ async function queryNetworkMatches(
         id: h.id,
         name: h.tag,
         post_count: h.usage_count || 0,
+      }));
+    }
+
+    // Query contribution opportunities
+    const opportunityFilters = keywords.flatMap((k) => [
+      `title.ilike.%${k}%`,
+      `description.ilike.%${k}%`,
+      `region.ilike.%${k}%`
+    ]);
+
+    const { data: opportunities, error: opportunityError } = await supabase
+      .from("contribution_needs")
+      .select(`
+        id, title, type, description, region, focus_areas,
+        space:spaces(id, name)
+      `)
+      .in("status", ["open", "in_progress"])
+      .or(opportunityFilters.slice(0, 9).join(","))
+      .order("priority", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(5);
+
+    if (opportunityError) {
+      console.log("Opportunity query error:", opportunityError.message);
+    } else if (opportunities && opportunities.length > 0) {
+      matches.opportunities = opportunities.map((o: any) => ({
+        id: o.id,
+        title: o.title,
+        type: o.type,
+        space_name: o.space?.name,
+        region: o.region,
+        focus_areas: o.focus_areas,
+        relevance: "Topic match",
       }));
     }
   } catch (error) {
@@ -378,7 +421,7 @@ serve(async (req) => {
       response = {
         answer: cachedQuery.perplexity_response.choices[0].message.content,
         citations: cachedQuery.citations || [],
-        network_matches: cachedQuery.network_matches || { profiles: [], events: [], projects: [], hashtags: [] },
+        network_matches: cachedQuery.network_matches || { profiles: [], events: [], projects: [], hashtags: [], opportunities: [] },
         cached: true,
       };
 

@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowRight, DollarSign, Users, Clock, Key, Package } from 'lucide-react';
 import type { ContributionNeedWithSpace } from '@/types/contributeTypes';
 import { TYPOGRAPHY } from '@/lib/typography.config';
+import OpportunityRecommendations from '@/components/contribute/OpportunityRecommendations';
 
 const typeIcons = {
   funding: DollarSign,
@@ -57,6 +58,9 @@ const ContributeHub = () => {
             </Button>
           </div>
         </div>
+
+        {/* Personalized Opportunity Recommendations */}
+        <OpportunityRecommendations maxOpportunities={5} showTrending={true} />
 
         {/* Featured Needs */}
         <section className="mb-12">

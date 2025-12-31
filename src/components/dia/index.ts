@@ -7,4 +7,5 @@ export { DiaContextual } from './DiaContextual';
 export { DiaProfileCard } from './DiaProfileCard';
 export { DiaStoryCard } from './DiaStoryCard';
 export { DiaHashtagChip, DiaHashtagInline } from './DiaHashtagChip';
+export { default as DiaOpportunityCard } from './DiaOpportunityCard';
 export { default as NudgeCard } from './NudgeCard';
