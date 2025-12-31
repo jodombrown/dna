@@ -1,17 +1,29 @@
+/**
+ * StatusBadge Component
+ * Displays lifecycle stage badges for releases (NEW, RECENT, ARCHIVED)
+ * Uses DNA brand colors with icons
+ */
+
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Sparkles, Clock, Archive } from 'lucide-react';
 
-type BadgeStatus = 'new' | 'recent' | 'archived';
+type BadgeStatus = 'new' | 'recent' | 'archived' | 'featured';
 
 interface StatusBadgeProps {
   status: BadgeStatus;
+  size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
 
 const statusConfig: Record<BadgeStatus, { label: string; className: string; icon: React.ReactNode }> = {
   new: {
     label: 'NEW',
+    className: 'bg-dna-gold text-dna-charcoal',
+    icon: <Sparkles className="w-3 h-3" />,
+  },
+  featured: {
+    label: 'FEATURED',
     className: 'bg-dna-gold text-dna-charcoal',
     icon: <Sparkles className="w-3 h-3" />,
   },
@@ -27,19 +39,38 @@ const statusConfig: Record<BadgeStatus, { label: string; className: string; icon
   },
 };
 
-export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className }) => {
+export const StatusBadge: React.FC<StatusBadgeProps> = ({
+  status,
+  size = 'md',
+  className
+}) => {
   const config = statusConfig[status];
-  
+
+  const sizeClasses = {
+    sm: 'px-1.5 py-0.5 text-[9px] gap-0.5',
+    md: 'px-2 py-0.5 text-[10px] gap-1',
+    lg: 'px-2.5 py-1 text-xs gap-1.5',
+  };
+
+  // Adjust icon size based on badge size
+  const iconSize = size === 'sm' ? 'w-2.5 h-2.5' : size === 'lg' ? 'w-4 h-4' : 'w-3 h-3';
+  const IconWithSize = React.cloneElement(config.icon as React.ReactElement, {
+    className: iconSize
+  });
+
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold tracking-wider rounded-md uppercase',
+        'inline-flex items-center font-bold tracking-wider rounded-md uppercase',
         config.className,
+        sizeClasses[size],
         className
       )}
     >
-      {config.icon}
+      {IconWithSize}
       {config.label}
     </span>
   );
 };
+
+export default StatusBadge;

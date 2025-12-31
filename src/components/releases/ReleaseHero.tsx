@@ -1,14 +1,14 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
-import { 
+import {
   Users, Calendar, Handshake, Briefcase, Megaphone, Settings,
-  MessageSquare, Globe, Bell, Network 
+  MessageSquare, Globe, Bell, Network
 } from 'lucide-react';
-import type { HeroType, ReleaseCategory } from '@/hooks/useReleases';
+import type { ReleaseHeroType, ReleaseCategory } from '@/types/releases';
 
 interface ReleaseHeroProps {
-  heroType: HeroType;
+  heroType: ReleaseHeroType;
   category: ReleaseCategory;
   imageUrl?: string | null;
   videoUrl?: string | null;
@@ -17,10 +17,10 @@ interface ReleaseHeroProps {
 
 const categoryColors: Record<ReleaseCategory, string> = {
   CONNECT: 'from-dna-emerald to-dna-forest',
-  CONVENE: 'from-dna-copper to-dna-earth',
+  CONVENE: 'from-dna-copper to-dna-sunset',
   COLLABORATE: 'from-dna-gold to-dna-copper',
-  CONTRIBUTE: 'from-dna-forest to-dna-emerald-dark',
-  CONVEY: 'from-dna-earth to-dna-ochre',
+  CONTRIBUTE: 'from-dna-forest to-dna-emerald',
+  CONVEY: 'from-dna-sunset to-dna-ochre',
   PLATFORM: 'from-slate-500 to-slate-700',
 };
 
@@ -167,7 +167,7 @@ const NetworkHero: React.FC = () => (
 
 // Notification Hero
 const NotificationHero: React.FC = () => (
-  <div className="relative w-full h-full bg-gradient-to-br from-dna-copper to-dna-earth flex items-center justify-center overflow-hidden">
+  <div className="relative w-full h-full bg-gradient-to-br from-dna-copper to-dna-sunset flex items-center justify-center overflow-hidden">
     <KentePattern />
     <div className="flex flex-col gap-2 p-4">
       {[0, 1, 2].map((i) => (
@@ -223,7 +223,7 @@ export const ReleaseHero: React.FC<ReleaseHeroProps> = ({
           );
         }
         return <GradientHero category={category} />;
-      
+
       case 'video':
         if (videoUrl) {
           return (
@@ -238,19 +238,20 @@ export const ReleaseHero: React.FC<ReleaseHeroProps> = ({
           );
         }
         return <GradientHero category={category} />;
-      
+
       case 'map':
         return <MapHero />;
-      
+
       case 'chat':
         return <ChatHero />;
-      
+
       case 'network':
         return <NetworkHero />;
-      
+
       case 'notification':
         return <NotificationHero />;
-      
+
+      case 'animation':
       case 'gradient':
       default:
         return <GradientHero category={category} />;
@@ -263,3 +264,5 @@ export const ReleaseHero: React.FC<ReleaseHeroProps> = ({
     </div>
   );
 };
+
+export default ReleaseHero;
