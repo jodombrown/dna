@@ -12,9 +12,14 @@ import { SpaceMembers } from '@/components/collaboration/SpaceMembers';
 import { SpaceTasks } from '@/components/collaboration/SpaceTasks';
 import { SpaceUpdates } from '@/components/collaboration/SpaceUpdates';
 import { SpaceInsights } from '@/components/collaboration/SpaceInsights';
+import { SpaceHealthBadge } from '@/components/collaboration/SpaceHealthBadge';
+import { SpaceHealthDetailsPanel } from '@/components/collaboration/SpaceHealthDetailsPanel';
+import { CompletionCelebration } from '@/components/collaboration/CompletionCelebration';
+import { ArchiveSpaceDialog } from '@/components/collaboration/ArchiveSpaceDialog';
 import SpaceNeedsSection from '@/components/contribute/SpaceNeedsSection';
+import { useSpaceHealth, useArchiveSpace, useReactivateSpace, useMarkSpaceComplete } from '@/hooks/useSpaceHealth';
 import { supabaseClient } from '@/lib/supabaseHelpers';
-import { Loader2, Settings, ExternalLink, ArrowLeft, Users, BarChart } from 'lucide-react';
+import { Loader2, Settings, ExternalLink, ArrowLeft, Users, BarChart, Activity } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function SpaceDetail() {
@@ -28,6 +33,17 @@ export default function SpaceDetail() {
   const [membership, setMembership] = useState<any>(null);
   const [creator, setCreator] = useState<any>(null);
   const [membershipLoading, setMembershipLoading] = useState(true);
+  const [showHealthDetails, setShowHealthDetails] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false);
+  const [hasSeenCelebration, setHasSeenCelebration] = useState(false);
+
+  // Health monitoring hooks
+  const isLead = membership?.role === 'lead';
+  const { data: healthData, isLoading: healthLoading } = useSpaceHealth(space?.id, isLead);
+  const archiveSpace = useArchiveSpace();
+  const reactivateSpace = useReactivateSpace();
+  const markSpaceComplete = useMarkSpaceComplete();
 
   useEffect(() => {
     async function loadUserData() {
@@ -70,6 +86,19 @@ export default function SpaceDetail() {
     loadCreator();
   }, [space, currentUserId]);
 
+  // Check for completion celebration trigger
+  useEffect(() => {
+    if (
+      healthData?.status === 'complete' &&
+      membership?.role === 'lead' &&
+      !hasSeenCelebration &&
+      space?.status !== 'completed'
+    ) {
+      setShowCelebration(true);
+      setHasSeenCelebration(true);
+    }
+  }, [healthData?.status, membership?.role, hasSeenCelebration, space?.status]);
+
   const handleJoin = async () => {
     if (!space || !currentUserId) return;
     
@@ -79,7 +108,7 @@ export default function SpaceDetail() {
 
   const handleLeave = async () => {
     if (!space || !currentUserId) return;
-    
+
     if (window.confirm('Are you sure you want to leave this space?')) {
       try {
         await leaveSpace.mutateAsync({ spaceId: space.id, userId: currentUserId });
@@ -87,6 +116,36 @@ export default function SpaceDetail() {
       } catch (error: any) {
         // Error is handled by the mutation
       }
+    }
+  };
+
+  const handleArchive = async (summary?: string, notifyMembers?: boolean) => {
+    if (!space) return;
+    await archiveSpace.mutateAsync({
+      spaceId: space.id,
+      summary,
+      notifyMembers,
+    });
+    window.location.reload();
+  };
+
+  const handleReactivate = async () => {
+    if (!space) return;
+    await reactivateSpace.mutateAsync(space.id);
+    window.location.reload();
+  };
+
+  const handleMarkComplete = async () => {
+    if (!space) return;
+    await markSpaceComplete.mutateAsync(space.id);
+    window.location.reload();
+  };
+
+  const handleAddMoreTasks = () => {
+    // Navigate to tasks tab
+    const tabsList = document.querySelector('[value="tasks"]');
+    if (tabsList) {
+      (tabsList as HTMLElement).click();
     }
   };
 
@@ -123,7 +182,6 @@ export default function SpaceDetail() {
   }
 
   const isMember = !!membership;
-  const isLead = membership?.role === 'lead';
 
   return (
     <DetailViewLayout
@@ -156,9 +214,19 @@ export default function SpaceDetail() {
                 <p className="text-xl text-muted-foreground mt-2">{space.tagline}</p>
               )}
             </div>
-            <Badge variant={space.status === 'active' ? 'default' : 'secondary'} className="text-sm shrink-0">
-              {space.status}
-            </Badge>
+            <div className="flex items-center gap-2 shrink-0">
+              <Badge variant={space.status === 'active' ? 'default' : 'secondary'} className="text-sm">
+                {space.status}
+              </Badge>
+              {/* Health Badge for leads */}
+              {isLead && healthData && (
+                <SpaceHealthBadge
+                  healthData={healthData}
+                  showTooltip={true}
+                  onClick={() => setShowHealthDetails(!showHealthDetails)}
+                />
+              )}
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -279,6 +347,18 @@ export default function SpaceDetail() {
           </Card>
         )}
 
+        {/* Health Details Panel - for leads when expanded */}
+        {isLead && showHealthDetails && healthData && (
+          <SpaceHealthDetailsPanel
+            healthData={healthData}
+            spaceStatus={space.status}
+            onArchive={() => setShowArchiveDialog(true)}
+            onReactivate={handleReactivate}
+            onMarkComplete={handleMarkComplete}
+            isLoading={archiveSpace.isPending || reactivateSpace.isPending || markSpaceComplete.isPending}
+          />
+        )}
+
         {/* Tabbed Content */}
         {isMember && (
           <Tabs defaultValue="overview" className="space-y-4">
@@ -351,10 +431,44 @@ export default function SpaceDetail() {
                     <SpaceInsights spaceId={space.id} isLead={isLead} />
                   </CardContent>
                 </Card>
+
+                {/* Health Section in Insights */}
+                {healthData && (
+                  <div className="mt-6">
+                    <SpaceHealthDetailsPanel
+                      healthData={healthData}
+                      spaceStatus={space.status}
+                      onArchive={() => setShowArchiveDialog(true)}
+                      onReactivate={handleReactivate}
+                      onMarkComplete={handleMarkComplete}
+                      isLoading={archiveSpace.isPending || reactivateSpace.isPending || markSpaceComplete.isPending}
+                    />
+                  </div>
+                )}
               </TabsContent>
             )}
           </Tabs>
         )}
+
+        {/* Completion Celebration Dialog */}
+        <CompletionCelebration
+          isOpen={showCelebration}
+          onClose={() => setShowCelebration(false)}
+          spaceName={space.name}
+          onMarkComplete={handleMarkComplete}
+          onAddMoreTasks={handleAddMoreTasks}
+          onKeepOpen={() => setShowCelebration(false)}
+          isLoading={markSpaceComplete.isPending}
+        />
+
+        {/* Archive Space Dialog */}
+        <ArchiveSpaceDialog
+          isOpen={showArchiveDialog}
+          onClose={() => setShowArchiveDialog(false)}
+          spaceName={space.name}
+          onConfirm={handleArchive}
+          isLoading={archiveSpace.isPending}
+        />
       </div>
     </DetailViewLayout>
   );
