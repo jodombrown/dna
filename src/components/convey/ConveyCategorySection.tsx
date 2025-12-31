@@ -126,10 +126,10 @@ export function ConveyDiscussionPrompt({
 // Mini card for sidebar - with proper navigation
 export function ConveyMiniCard({ story }: { story: UniversalFeedItem }) {
   const navigate = useNavigate();
-  
+
   const handleClick = () => {
-    // Use post_id for posts table-based stories
-    navigate(`/dna/convey/stories/${story.post_id}`);
+    // Use the correct route for posts table stories
+    navigate(`/dna/story/${story.post_id}`);
   };
   
   return (

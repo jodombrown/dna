@@ -183,14 +183,14 @@ export default function FeedStoryDetail() {
         </div>
 
         {story.image_url && (
-          <div 
-            className="w-full rounded-xl overflow-hidden mb-6 cursor-pointer group"
+          <div
+            className="w-full rounded-xl overflow-hidden mb-6 cursor-pointer group bg-muted/30"
             onClick={() => setShowImagePreview(true)}
           >
             <img
               src={story.image_url}
               alt={story.title}
-              className="w-full h-auto max-h-[420px] object-cover group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-auto max-h-[320px] sm:max-h-[480px] object-contain mx-auto group-hover:scale-[1.02] transition-transform duration-300"
             />
           </div>
         )}
