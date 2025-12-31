@@ -157,6 +157,9 @@ const DiaAdminPage = lazy(() => import("./pages/admin/DiaAdminPage"));
 const SpaceManagement = lazy(() => import("./pages/admin/spaces/SpaceManagement"));
 const SpaceModeration = lazy(() => import("./pages/admin/spaces/SpaceModeration"));
 const CollaborationAnalytics = lazy(() => import("./pages/admin/analytics/CollaborationAnalytics"));
+const ContributionManagement = lazy(() => import("./pages/admin/contributions/ContributionManagement"));
+const ContributionModeration = lazy(() => import("./pages/admin/contributions/ContributionModeration"));
+const ContributionAnalytics = lazy(() => import("./pages/admin/contributions/ContributionAnalytics"));
 const NudgeCenter = lazy(() => import("./pages/NudgeCenter"));
 const EventsPage = lazy(() => import("./pages/EventsPage"));
 const EventDetailsPage = lazy(() => import("./pages/EventDetailsPage"));
@@ -658,6 +661,11 @@ function App() {
                 <Route path="spaces/moderation" element={<SpaceModeration />} />
                 {/* Collaboration Analytics */}
                 <Route path="analytics/collaboration" element={<CollaborationAnalytics />} />
+                {/* Contribution admin routes */}
+                <Route path="contributions" element={<ContributionManagement />} />
+                <Route path="contributions/moderation" element={<ContributionModeration />} />
+                {/* Contribution Analytics */}
+                <Route path="analytics/contributions" element={<ContributionAnalytics />} />
               </Route>
 
               {/* Legacy Admin routes */}
