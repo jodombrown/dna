@@ -2,8 +2,8 @@
  * DNA | FEED v2.0 - Story Detail (Feed Stories)
  *
  * Full-page reading experience for stories created via Universal Composer.
- * Uses post_id from posts table, not convey_items slug.
- * Uses get_story_by_slug RPC for consistent visibility with feed.
+ * Uses slug or post_id from posts table.
+ * Publicly accessible for external sharing.
  */
 
 import { useState } from 'react';
@@ -26,41 +26,48 @@ export default function FeedStoryDetail() {
   const [showImagePreview, setShowImagePreview] = useState(false);
 
   const { data: story, isLoading, error } = useQuery({
-    queryKey: ['feed-story', slug, user?.id],
+    queryKey: ['feed-story', slug],
     queryFn: async () => {
       if (!slug) throw new Error('No story identifier provided');
 
-      // Use RPC function for consistent visibility with feed
-      // This bypasses RLS and applies the same visibility rules as get_universal_feed
-      const { data, error } = await supabase
-        .rpc('get_story_by_slug', {
-          p_identifier: slug,
-          p_viewer_id: user?.id || null,
-        })
-        .maybeSingle();
+      // Check if slug looks like a UUID (for backward compatibility)
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
+
+      let query = supabase
+        .from('posts')
+        .select(`
+          id,
+          title,
+          subtitle,
+          content,
+          image_url,
+          post_type,
+          created_at,
+          space_id,
+          event_id,
+          author_id,
+          slug,
+          profiles:author_id (
+            username,
+            full_name,
+            avatar_url
+          )
+        `)
+        .in('post_type', ['story', 'reshare', 'post']);
+
+      // Query by slug or UUID
+      if (isUUID) {
+        query = query.eq('id', slug);
+      } else {
+        query = query.eq('slug', slug);
+      }
+
+      const { data, error } = await query.maybeSingle();
 
       if (error) throw error;
       if (!data) throw new Error('Content not found');
 
-      // Transform RPC result to match expected shape
-      return {
-        id: data.id,
-        title: data.title,
-        subtitle: data.subtitle,
-        content: data.content,
-        image_url: data.image_url,
-        post_type: data.post_type,
-        created_at: data.created_at,
-        space_id: data.space_id,
-        event_id: data.event_id,
-        author_id: data.author_id,
-        slug: data.slug,
-        profiles: {
-          username: data.author_username,
-          full_name: data.author_full_name,
-          avatar_url: data.author_avatar_url,
-        },
-      };
+      return data;
     },
     enabled: !!slug,
     retry: 1,
@@ -123,7 +130,7 @@ export default function FeedStoryDetail() {
 
   const isStory = story.post_type === 'story';
 
-  const author = story.profiles as any;
+  const author = story.profiles as { username?: string; full_name?: string; avatar_url?: string } | null;
 
   return (
     <div className="min-h-screen bg-background pb-16 md:pb-0">
@@ -197,14 +204,14 @@ export default function FeedStoryDetail() {
           >
             <img
               src={story.image_url}
-              alt={story.title}
+              alt={story.title || 'Story image'}
               className="w-full h-auto max-h-[320px] sm:max-h-[480px] object-contain mx-auto group-hover:scale-[1.02] transition-transform duration-300"
             />
           </div>
         )}
 
         <div className="space-y-4">
-          {story.content.split('\n\n').map((paragraph, idx) => (
+          {story.content?.split('\n\n').map((paragraph, idx) => (
             <p key={idx} className="text-base md:text-lg text-foreground/90 leading-relaxed whitespace-pre-line">
               {paragraph}
             </p>
@@ -239,7 +246,7 @@ export default function FeedStoryDetail() {
           </button>
           <img
             src={story.image_url}
-            alt={story.title}
+            alt={story.title || 'Story image'}
             className="max-w-full max-h-full object-contain"
             onClick={(e) => e.stopPropagation()}
           />
