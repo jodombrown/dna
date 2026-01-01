@@ -33,8 +33,11 @@ const MobileBottomNav: React.FC = () => {
   const { isMobile } = useMobile();
   const { user, profile, signOut } = useAuth();
   const [showMoreMenu, setShowMoreMenu] = useState(false);
-  const { data: unreadCount = 0 } = useUnreadNotificationCount();
+  const { data: unreadCountFromRPC = 0 } = useUnreadNotificationCount();
   const composer = useUniversalComposer();
+  
+  // Use the RPC count directly - it's the source of truth for unread notifications
+  const unreadCount = unreadCountFromRPC;
 
   // Only show on mobile
   if (!isMobile) return null;

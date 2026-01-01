@@ -41,6 +41,8 @@ export function useNotifications(
       return (data as unknown as Notification[]) || [];
     },
     enabled: !!user,
+    staleTime: 10000, // Consider data stale after 10 seconds to ensure fresher data
+    refetchOnWindowFocus: true, // Refetch when user returns to tab
   });
 
   const { data: unreadCount } = useQuery({
