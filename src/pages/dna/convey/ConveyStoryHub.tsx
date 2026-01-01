@@ -301,9 +301,7 @@ export default function ConveyStoryHub() {
 
       {/* Trending Section - BuzzFeed Style (self-contained with hook) */}
       {activeTab === 'all' && selectedCategory === 'all' && (
-        <ConveyTrendingSection
-          onSeeAll={() => {/* TODO: Navigate to trending page */}}
-        />
+        <ConveyTrendingSection />
       )}
 
       {/* Category Sections when viewing "All" */}
@@ -320,13 +318,6 @@ export default function ConveyStoryHub() {
               onSeeAll={() => setSelectedCategory('impact')}
             />
           )}
-
-          {/* Discussion Prompt */}
-          <ConveyDiscussionPrompt
-            question="What's one lesson from your diaspora journey that others should know?"
-            replyCount={47}
-            onAnswer={() => composer.open('story')}
-          />
 
           {/* Updates Section */}
           {updateStories.length > 0 && (

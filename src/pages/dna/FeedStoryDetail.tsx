@@ -18,6 +18,7 @@ import { ArrowLeft, Loader2, BookOpen, Share2, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from '@/hooks/use-toast';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+import { HashtagText } from '@/components/feed/HashtagText';
 
 export default function FeedStoryDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -224,9 +225,12 @@ export default function FeedStoryDetail() {
 
         <div className="space-y-4">
           {story.content?.split('\n\n').map((paragraph, idx) => (
-            <p key={idx} className="text-base md:text-lg text-foreground/90 leading-relaxed whitespace-pre-line">
-              {paragraph}
-            </p>
+            <HashtagText
+              key={idx}
+              content={paragraph}
+              onHashtagClick={(tag) => navigate(`/dna/hashtag/${encodeURIComponent(tag)}`)}
+              className="text-base md:text-lg text-foreground/90 leading-relaxed whitespace-pre-line block"
+            />
           ))}
         </div>
       </article>
