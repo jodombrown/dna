@@ -53,7 +53,7 @@ export default function FeedStoryDetail() {
             avatar_url
           )
         `)
-        .in('post_type', ['story', 'reshare', 'post']);
+        .in('post_type', ['story', 'update', 'impact', 'reshare', 'post']);
 
       // Query by slug or UUID
       if (isUUID) {

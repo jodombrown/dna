@@ -8,8 +8,8 @@ interface CreateConveyItemData {
   title: string;
   subtitle?: string;
   body: string;
-  visibility?: 'public' | 'members_only';
-  status?: 'draft' | 'published';
+  visibility?: 'public' | 'members_only' | 'space_members_only';
+  status?: 'draft' | 'published' | 'archived';
   space_id?: string;
   event_id?: string;
   image_url?: string;
