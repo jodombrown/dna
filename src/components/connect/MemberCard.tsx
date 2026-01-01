@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   MapPin, 
@@ -217,14 +218,31 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
             {/* Left column: Content */}
             <div className="flex-1 min-w-0 flex flex-col">
               {/* Source badge (like USA TODAY, The Guardian) */}
-              {primaryLabel && (
-                <Badge 
-                  variant="secondary" 
-                  className="w-fit mb-1.5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide bg-primary/10 text-primary border-0"
-                >
-                  {primaryLabel}
-                </Badge>
-              )}
+              <div className="flex items-center gap-2 mb-1.5">
+                {primaryLabel && (
+                  <Badge 
+                    variant="secondary" 
+                    className="w-fit px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide bg-primary/10 text-primary border-0"
+                  >
+                    {primaryLabel}
+                  </Badge>
+                )}
+                {/* Match Score Badge */}
+                {member.match_score > 0 && (
+                  <Badge 
+                    variant="outline" 
+                    className={`w-fit px-2 py-0.5 text-[10px] font-semibold ${
+                      member.match_score >= 80 
+                        ? 'bg-emerald-100 text-emerald-700 border-emerald-200' 
+                        : member.match_score >= 60 
+                          ? 'bg-amber-100 text-amber-700 border-amber-200'
+                          : 'bg-muted text-muted-foreground border-border'
+                    }`}
+                  >
+                    {member.match_score}% Match
+                  </Badge>
+                )}
+              </div>
 
               {/* Headline: Name */}
               <h3 className="font-semibold text-base text-foreground leading-tight mb-1 line-clamp-2">
@@ -236,14 +254,14 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
                 {member.headline || member.profession || 'DNA Community Member'}
               </p>
 
-              {/* Metadata footer like Apple News: "6h ago · Author Name" */}
+              {/* Metadata footer like Apple News: "Location · Mutual connections" */}
               <div className="mt-auto flex items-center gap-1.5 text-xs text-muted-foreground/70">
                 {member.location && <MapPin className="h-3 w-3 shrink-0" />}
                 <span className="truncate">{metadata || 'DNA Member'}</span>
               </div>
             </div>
 
-            {/* Right column: Square avatar + overflow menu */}
+            {/* Right column: Square avatar + actions */}
             <div className="flex flex-col items-end gap-2 shrink-0">
               {/* Square avatar with rounded corners - Apple News style */}
               <Avatar className="h-20 w-20 rounded-xl">
@@ -263,59 +281,82 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
                 </AvatarFallback>
               </Avatar>
 
-              {/* Overflow menu - Apple News style "..." */}
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-muted transition-colors"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <MoreHorizontal className="h-5 w-5 text-muted-foreground" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  {connectionStatus === 'accepted' ? (
-                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleMessage(); }}>
-                      <MessageSquare className="mr-2 h-4 w-4" />
-                      Message
+              {/* Action row: Connect/Status button + overflow menu */}
+              <div className="flex items-center gap-1">
+                {/* Connection Action Button - visible, not hidden in menu */}
+                {connectionStatus === 'accepted' ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 px-3 text-xs text-emerald-600 border-emerald-200 hover:bg-emerald-50"
+                    onClick={(e) => { e.stopPropagation(); handleMessage(); }}
+                  >
+                    <MessageSquare className="h-3.5 w-3.5 mr-1" />
+                    Message
+                  </Button>
+                ) : connectionStatus === 'pending_sent' ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 px-3 text-xs text-muted-foreground border-muted"
+                    disabled
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Check className="h-3.5 w-3.5 mr-1" />
+                    Sent
+                  </Button>
+                ) : connectionStatus === 'pending_received' ? (
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="h-8 px-3 text-xs bg-primary text-primary-foreground"
+                    onClick={(e) => { e.stopPropagation(); navigate('/dna/connect/network?tab=requests'); }}
+                  >
+                    <UserPlus className="h-3.5 w-3.5 mr-1" />
+                    Respond
+                  </Button>
+                ) : (
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="h-8 px-3 text-xs bg-primary hover:bg-primary/90 text-primary-foreground"
+                    onClick={handleConnect}
+                    disabled={isSending}
+                  >
+                    <UserPlus className="h-3.5 w-3.5 mr-1" />
+                    {isSending ? '...' : 'Connect'}
+                  </Button>
+                )}
+
+                {/* Overflow menu for secondary actions */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full hover:bg-muted transition-colors"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-44">
+                    <DropdownMenuItem onClick={handleSave}>
+                      <Bookmark className="mr-2 h-4 w-4" />
+                      Save Profile
                     </DropdownMenuItem>
-                  ) : connectionStatus === 'pending_sent' ? (
-                    <DropdownMenuItem disabled>
-                      <Check className="mr-2 h-4 w-4" />
-                      Request Sent
+                    <DropdownMenuItem onClick={handleShare}>
+                      <Share2 className="mr-2 h-4 w-4" />
+                      Share Profile
                     </DropdownMenuItem>
-                  ) : connectionStatus === 'pending_received' ? (
-                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); navigate('/dna/connect/network?tab=requests'); }}>
-                      <UserPlus className="mr-2 h-4 w-4" />
-                      Respond to Request
-                    </DropdownMenuItem>
-                  ) : (
-                    <DropdownMenuItem 
-                      onClick={handleConnect}
-                      disabled={isSending}
-                    >
-                      <UserPlus className="mr-2 h-4 w-4" />
-                      {isSending ? 'Sending...' : 'Connect'}
-                    </DropdownMenuItem>
-                  )}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSave}>
-                    <Bookmark className="mr-2 h-4 w-4" />
-                    Save Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleShare}>
-                    <Share2 className="mr-2 h-4 w-4" />
-                    Share Profile
-                  </DropdownMenuItem>
-                  {hasMutualConnections && (
-                    <>
-                      <DropdownMenuSeparator />
-                      <div className="px-2 py-1.5 text-xs text-muted-foreground flex items-center gap-1.5">
-                        <Users className="h-3 w-3" />
-                        {mutualCount} mutual connection{mutualCount !== 1 ? 's' : ''}
-                      </div>
-                    </>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    {hasMutualConnections && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <div className="px-2 py-1.5 text-xs text-muted-foreground flex items-center gap-1.5">
+                          <Users className="h-3 w-3" />
+                          {mutualCount} mutual connection{mutualCount !== 1 ? 's' : ''}
+                        </div>
+                      </>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
           </div>
         </div>

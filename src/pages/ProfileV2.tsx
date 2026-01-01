@@ -227,9 +227,39 @@ const ProfileV2: React.FC = () => {
       {/* Hero Section */}
       <ProfileV2Hero
         profile={profile}
-        permissions={permissions}
+        permissions={{
+          ...permissions,
+          can_connect: !permissions.is_owner, // Can connect if not owner
+        }}
         onEdit={() => permissions.is_owner && navigate('/dna/profile/edit')}
-        onConnect={() => {}}
+        onConnect={async () => {
+          if (!user || permissions.is_owner) return;
+          try {
+            const { data, error } = await supabase.functions.invoke('send-connection-request', {
+              body: { target_user_id: profile.id },
+            });
+            if (error) throw error;
+            const result = data as { status: string; message?: string; error?: string };
+            if (result.status === 'pending') {
+              toast({
+                title: 'Connection request sent',
+                description: `Your request to connect with ${profile.full_name} has been sent.`,
+              });
+              queryClient.invalidateQueries({ queryKey: ['profile-v2', username] });
+            } else if (result.status === 'already_connected') {
+              toast({ title: 'Already connected', description: result.message });
+            } else if (result.status === 'already_pending' || result.status === 'request_received') {
+              toast({ title: 'Request pending', description: result.message });
+            } else if (result.status === 'profile_incomplete') {
+              toast({ title: 'Profile Incomplete', description: result.message || 'Complete your profile to send requests.', variant: 'destructive' });
+              navigate('/dna/profile/edit');
+            } else {
+              toast({ title: 'Unable to connect', description: result.error || 'Please try again.', variant: 'destructive' });
+            }
+          } catch (err: any) {
+            toast({ title: 'Error', description: err.message || 'Failed to send request', variant: 'destructive' });
+          }
+        }}
         onMessage={() => openMessageOverlay(profile.id)}
       />
 
