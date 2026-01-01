@@ -41,15 +41,21 @@ export function NotificationList({ onClose }: NotificationListProps) {
   const hasUnread = notifications?.some(n => !n.is_read);
   const hasRead = notifications?.some(n => n.is_read);
 
+  // Calculate actual unread count from the notifications list
+  // This ensures the count shown matches what's displayed, avoiding discrepancies
+  const actualUnreadInList = notifications?.filter(n => !n.is_read).length ?? 0;
+  // Use the higher of RPC count or list count to ensure we don't miss any
+  const displayCount = Math.max(unreadCount ?? 0, actualUnreadInList);
+
   return (
     <div className="flex flex-col h-[500px] max-h-[80vh]">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center gap-2">
           <h3 className="font-semibold text-lg">Notifications</h3>
-          {unreadCount > 0 && (
+          {displayCount > 0 && (
             <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
-              {unreadCount}
+              {displayCount}
             </span>
           )}
         </div>
