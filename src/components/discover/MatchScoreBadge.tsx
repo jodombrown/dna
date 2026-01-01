@@ -111,6 +111,7 @@ export function MatchScoreBadge({
     <Badge
       className={cn(
         config.className,
+        'whitespace-nowrap',
         size === 'sm' && 'text-xs px-2 py-0.5',
         size === 'lg' && 'text-sm px-3 py-1',
         isHighMatch && 'shadow-[0_4px_12px_-2px_rgba(0,0,0,0.4)] cursor-pointer',
