@@ -5,6 +5,8 @@
 
 export type VerificationStatus = 'pending_verification' | 'soft_verified' | 'fully_verified';
 
+export type ConnectionStatus = 'none' | 'pending_sent' | 'pending_received' | 'accepted' | 'declined';
+
 export interface ProfileV2Bundle {
   profile: ProfileV2Data;
   tags: ProfileV2Tags;
@@ -13,6 +15,7 @@ export interface ProfileV2Bundle {
   visibility: ProfileV2Visibility;
   completion: ProfileV2Completion;
   verification_meta: ProfileV2VerificationMeta;
+  connection_status?: ConnectionStatus;
 }
 
 export interface ProfileV2Data {
