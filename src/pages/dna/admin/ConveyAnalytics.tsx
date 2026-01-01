@@ -81,20 +81,23 @@ export default function ConveyAnalytics() {
 
       if (topItemIds.length === 0) return [];
 
-      const { data: items } = await (supabase as any)
-        .from('convey_items')
+      const { data: items } = await supabase
+        .from('posts')
         .select(`
           id,
           slug,
           title,
-          type,
-          published_at,
-          primary_space:spaces!convey_items_primary_space_id_fkey(id, name, slug)
+          post_type,
+          created_at,
+          primary_space:spaces!posts_space_id_fkey(id, name, slug)
         `)
+        .in('post_type', ['story', 'update', 'impact'])
         .in('id', topItemIds);
 
       return items?.map((item: any) => ({
         ...item,
+        type: item.post_type, // Map post_type to type for template compatibility
+        published_at: item.created_at, // Map created_at to published_at
         views: viewCounts[item.id] || 0,
         ctaClicks: ctaCounts[item.id] || 0,
       })).sort((a: any, b: any) => b.views - a.views) || [];
@@ -105,14 +108,16 @@ export default function ConveyAnalytics() {
   const { data: spaceActivity, isLoading: spaceLoading } = useQuery({
     queryKey: ['convey-space-activity', dateRange],
     queryFn: async () => {
-      const { data: items } = await (supabase as any)
-        .from('convey_items')
+      const { data: items } = await supabase
+        .from('posts')
         .select(`
           id,
-          primary_space_id,
-          primary_space:spaces!convey_items_primary_space_id_fkey(id, name, slug)
+          space_id,
+          primary_space:spaces!posts_space_id_fkey(id, name, slug)
         `)
-        .not('primary_space_id', 'is', null);
+        .in('post_type', ['story', 'update', 'impact'])
+        .eq('is_deleted', false)
+        .not('space_id', 'is', null);
 
       if (!items) return [];
 
@@ -153,7 +158,7 @@ export default function ConveyAnalytics() {
       }> = {};
 
       items?.forEach((item: any) => {
-        const spaceId = item.primary_space_id;
+        const spaceId = item.space_id;
         if (!spaceId || !item.primary_space) return;
 
         if (!spaceMap[spaceId]) {
