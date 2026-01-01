@@ -18,17 +18,20 @@ import { toast } from '@/hooks/use-toast';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 
 export default function FeedStoryDetail() {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [showImagePreview, setShowImagePreview] = useState(false);
 
-  const { data: story, isLoading, error } = useQuery({
-    queryKey: ['feed-story', id],
-    queryFn: async () => {
-      if (!id) throw new Error('No story ID provided');
+  // Check if param is a UUID (for backward compatibility)
+  const isUUID = slug && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
 
-      // Try to find as story first, then fallback to any post type
-      const { data, error } = await supabase
+  const { data: story, isLoading, error } = useQuery({
+    queryKey: ['feed-story', slug],
+    queryFn: async () => {
+      if (!slug) throw new Error('No story identifier provided');
+
+      // Build query - search by slug or id (for backward compatibility)
+      let query = supabase
         .from('posts')
         .select(`
           id,
@@ -41,22 +44,30 @@ export default function FeedStoryDetail() {
           space_id,
           event_id,
           author_id,
+          slug,
           profiles:author_id (
             username,
             full_name,
             avatar_url
           )
         `)
-        .eq('id', id)
-        .eq('is_deleted', false)
-        .single();
+        .eq('is_deleted', false);
+
+      // If it's a UUID, search by id; otherwise search by slug
+      if (isUUID) {
+        query = query.eq('id', slug);
+      } else {
+        query = query.eq('slug', slug);
+      }
+
+      const { data, error } = await query.maybeSingle();
 
       if (error) throw error;
       if (!data) throw new Error('Content not found');
       
       return data;
     },
-    enabled: !!id,
+    enabled: !!slug,
   });
 
   const handleShare = () => {

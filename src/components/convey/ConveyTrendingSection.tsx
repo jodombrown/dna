@@ -22,8 +22,8 @@ const TrendingCard = ({
   const navigate = useNavigate();
   
   const handleClick = () => {
-    // Use the correct route for posts table stories
-    navigate(`/dna/story/${story.id}`);
+    // Use slug for readable URLs, fallback to id
+    navigate(`/dna/story/${story.slug || story.id}`);
   };
   
   const getAuthorInitials = (name: string) => {

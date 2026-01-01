@@ -5545,6 +5545,7 @@ export type Database = {
           privacy_level: string
           share_commentary: string | null
           shared_by: string | null
+          slug: string | null
           space_id: string | null
           story_type: string | null
           subtitle: string | null
@@ -5583,6 +5584,7 @@ export type Database = {
           privacy_level?: string
           share_commentary?: string | null
           shared_by?: string | null
+          slug?: string | null
           space_id?: string | null
           story_type?: string | null
           subtitle?: string | null
@@ -5621,6 +5623,7 @@ export type Database = {
           privacy_level?: string
           share_commentary?: string | null
           shared_by?: string | null
+          slug?: string | null
           space_id?: string | null
           story_type?: string | null
           subtitle?: string | null
@@ -8432,6 +8435,7 @@ export type Database = {
       generate_join_token: { Args: never; Returns: string }
       generate_magic_link_token: { Args: never; Returns: string }
       generate_referral_code: { Args: never; Returns: string }
+      generate_slug: { Args: { title: string }; Returns: string }
       generate_username: { Args: { _full_name: string }; Returns: string }
       generate_username_from_name: {
         Args: { full_name: string }
@@ -9313,6 +9317,7 @@ export type Database = {
           original_post_id: string
           post_type: string
           privacy_level: string
+          slug: string
           space_id: string
           subtitle: string
           title: string

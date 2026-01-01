@@ -25,6 +25,7 @@ export interface TrendingStory {
   reaction_count: number;
   comment_count: number;
   bookmark_count: number;
+  slug: string | null;
 }
 
 /**
@@ -59,7 +60,8 @@ export function useTrendingStories(limit: number = 5) {
           story_type,
           image_url,
           author_id,
-          created_at
+          created_at,
+          slug
         `)
         .in('id', postIds);
 
@@ -103,6 +105,7 @@ export function useTrendingStories(limit: number = 5) {
             reaction_count: score?.reaction_count || 0,
             comment_count: score?.comment_count || 0,
             bookmark_count: score?.bookmark_count || 0,
+            slug: (post as any).slug || null,
           };
         })
         // Sort by trending score (maintain RPC order)

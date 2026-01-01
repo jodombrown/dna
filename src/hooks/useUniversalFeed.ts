@@ -46,6 +46,7 @@ interface UniversalFeedRpcItem {
   original_content?: string | null;
   original_image_url?: string | null;
   original_created_at?: string | null;
+  slug?: string | null;
 }
 
 export function useUniversalFeed(filters: FeedFilters) {
@@ -118,6 +119,7 @@ export function useUniversalFeed(filters: FeedFilters) {
           original_content: item.original_content || null,
           original_image_url: item.original_image_url || null,
           original_created_at: item.original_created_at || null,
+          slug: item.slug || null,
         })) as UniversalFeedItem[];
       } catch (err: unknown) {
         logHighError(err, 'feed', 'get_universal_feed threw', { filters });

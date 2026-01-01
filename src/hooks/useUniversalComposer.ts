@@ -175,6 +175,7 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
             original_content: null,
             original_image_url: null,
             original_created_at: null,
+            slug: story.slug || null,
           };
         }
 
@@ -242,6 +243,7 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
             original_content: null,
             original_image_url: null,
             original_created_at: null,
+            slug: post.slug || null,
           };
           break;
         }

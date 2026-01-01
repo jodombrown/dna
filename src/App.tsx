@@ -536,8 +536,8 @@ function App() {
                   <CreateStory />
                 </OnboardingGuard>
               } />
-              {/* Feed Stories - unified post_id based detail view */}
-              <Route path="/dna/story/:id" element={
+              {/* Feed Stories - slug-based detail view (with UUID fallback) */}
+              <Route path="/dna/story/:slug" element={
                 <OnboardingGuard>
                   <FeedStoryDetail />
                 </OnboardingGuard>

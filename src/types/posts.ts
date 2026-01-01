@@ -58,6 +58,7 @@ export interface PostWithAuthor {
   original_content?: string;
   original_image_url?: string;
   original_created_at?: string;
+  slug?: string | null;
 }
 
 export interface PostComment {
