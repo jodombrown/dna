@@ -235,7 +235,7 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
               )}
             </div>
 
-            {/* Mobile Action Buttons */}
+            {/* Mobile Action Buttons - Preserved original simple UI */}
             <div className="flex gap-2 md:hidden pt-2">
               {permissions.is_owner ? (
                 <>
@@ -257,29 +257,10 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                 </>
               ) : (
                 <>
-                  {/* Connection Button - shows different states based on connectionStatus */}
-                  {connectionStatus === 'none' && onConnect && (
+                  {permissions.can_connect && onConnect && (
                     <Button onClick={onConnect} className="flex-1" size="sm">
                       <UserPlus className="w-4 h-4 mr-2" />
                       Connect
-                    </Button>
-                  )}
-                  {connectionStatus === 'pending_sent' && (
-                    <Button variant="outline" className="flex-1" size="sm" disabled>
-                      <Clock className="w-4 h-4 mr-2" />
-                      Request Sent
-                    </Button>
-                  )}
-                  {connectionStatus === 'pending_received' && onAcceptConnection && (
-                    <Button onClick={onAcceptConnection} className="flex-1" size="sm">
-                      <UserCheck className="w-4 h-4 mr-2" />
-                      Accept Request
-                    </Button>
-                  )}
-                  {connectionStatus === 'accepted' && (
-                    <Button variant="outline" className="flex-1" size="sm" disabled>
-                      <Check className="w-4 h-4 mr-2" />
-                      Connected
                     </Button>
                   )}
                   {onMessage && (

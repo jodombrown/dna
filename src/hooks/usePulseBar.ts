@@ -123,7 +123,7 @@ async function fetchConvenePulse(userId: string): Promise<ConvenePulse> {
       )
     `)
     .eq('user_id', userId)
-    .in('status', ['going', 'confirmed'])
+    .in('status', ['going', 'maybe'])
     .gte('events.start_time', now)
     .order('events(start_time)', { ascending: true })
     .limit(5);
