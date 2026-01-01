@@ -258,7 +258,8 @@ function App() {
                       <BaseLayout>
                         <Suspense fallback={<PageLoader />}>
                           <Routes>
-              {/* Legacy /dna/u/:username redirect to canonical profile URL */}
+              {/* Legacy /u/:username and /dna/u/:username redirect to canonical profile URL */}
+              <Route path="/u/:username" element={<LegacyUsernameRedirect />} />
               <Route path="/dna/u/:username" element={<LegacyUsernameRedirect />} />
               <Route path="/post/:postId" element={<PublicPostPage />} />
               
