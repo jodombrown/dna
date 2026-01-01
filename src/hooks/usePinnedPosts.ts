@@ -83,6 +83,7 @@ export function usePinnedPosts(userId: string) {
         original_content: null,
         original_image_url: null,
         original_created_at: null,
+        slug: post.slug || null,
       }));
     },
     enabled: !!userId,

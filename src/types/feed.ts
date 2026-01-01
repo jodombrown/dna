@@ -48,6 +48,7 @@ export interface UniversalFeedItem {
   event_title: string | null;
   created_at: string;
   updated_at: string;
+  slug: string | null;
   like_count: number;
   comment_count: number;
   share_count: number;

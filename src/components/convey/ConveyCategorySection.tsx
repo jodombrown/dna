@@ -128,8 +128,8 @@ export function ConveyMiniCard({ story }: { story: UniversalFeedItem }) {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    // Use the correct route for posts table stories
-    navigate(`/dna/story/${story.post_id}`);
+    // Use slug for readable URLs, fallback to post_id
+    navigate(`/dna/story/${story.slug || story.post_id}`);
   };
   
   return (

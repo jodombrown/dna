@@ -125,8 +125,8 @@ export function ConveyStoryCard({
   } = useStoryEngagement(story.post_id, user?.id);
   
   const handleClick = () => {
-    // Use the correct route for posts table stories
-    navigate(`/dna/story/${story.post_id}`);
+    // Use slug for readable URLs, fallback to post_id
+    navigate(`/dna/story/${story.slug || story.post_id}`);
   };
   
   const getAuthorInitials = (name: string) => {
@@ -146,7 +146,7 @@ export function ConveyStoryCard({
   
   const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    const shareUrl = `${window.location.origin}/dna/story/${story.post_id}`;
+    const shareUrl = `${window.location.origin}/dna/story/${story.slug || story.post_id}`;
     if (navigator.share) {
       await navigator.share({
         title: story.title || 'DNA Story',

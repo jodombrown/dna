@@ -116,7 +116,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
         {/* Title - navigates to full story view */}
         <h3 
           className="text-lg md:text-xl font-semibold leading-tight cursor-pointer hover:text-primary transition-colors"
-          onClick={() => navigate(`/dna/story/${item.post_id}`)}
+          onClick={() => navigate(`/dna/story/${item.slug || item.post_id}`)}
         >
           {item.title || 'Featured Story'}
         </h3>
@@ -132,7 +132,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
         {item.media_url && (
           <div 
             className="w-full h-44 sm:h-48 rounded-lg overflow-hidden cursor-pointer"
-            onClick={() => navigate(`/dna/story/${item.post_id}`)}
+            onClick={() => navigate(`/dna/story/${item.slug || item.post_id}`)}
           >
             <img
               src={item.media_url}

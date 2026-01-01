@@ -91,6 +91,7 @@ export const PopularPostsSection = () => {
           original_content: null,
           original_image_url: null,
           original_created_at: null,
+          slug: null,
         };
 
         return (
