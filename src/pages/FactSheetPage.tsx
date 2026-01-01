@@ -103,15 +103,7 @@ const FactSheetPage = () => {
         </div>
 
         {/* Hero Section */}
-        <div className="text-center mb-12">
-          <div className="inline-block mb-6">
-            <div className="text-7xl md:text-8xl font-bold bg-gradient-to-r from-dna-forest via-dna-emerald to-dna-copper bg-clip-text text-transparent animate-pulse-subtle">
-              DNA
-            </div>
-            <div className="text-sm font-semibold text-muted-foreground tracking-[0.3em] uppercase">
-              Diaspora Network of Africa
-            </div>
-          </div>
+        <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
             Platform Fact Sheet
           </h1>
