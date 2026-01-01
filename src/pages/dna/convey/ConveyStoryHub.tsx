@@ -70,11 +70,12 @@ export default function ConveyStoryHub() {
     rankingMode: 'latest',
   });
 
-  // Filter stories by category (using string comparison for flexibility)
+  // Filter stories by category (using story_type field for story categories)
   const filteredStories = useMemo(() => {
     let result = stories;
     if (selectedCategory !== 'all') {
-      result = result.filter(s => String(s.post_type) === selectedCategory);
+      // Filter by story_type field (which contains 'update', 'impact', 'spotlight', 'photo_essay')
+      result = result.filter(s => s.story_type === selectedCategory);
     }
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
@@ -93,10 +94,10 @@ export default function ConveyStoryHub() {
       .slice(0, 4);
   }, [stories]);
 
-  // Group by category for sections (using string comparison)
-  const impactStories = stories.filter(s => String(s.post_type) === 'impact').slice(0, 3);
-  const spotlightStories = stories.filter(s => String(s.post_type) === 'spotlight').slice(0, 4);
-  const updateStories = stories.filter(s => String(s.post_type) === 'update').slice(0, 4);
+  // Group by story_type for sections
+  const impactStories = stories.filter(s => s.story_type === 'impact').slice(0, 3);
+  const spotlightStories = stories.filter(s => s.story_type === 'spotlight').slice(0, 4);
+  const updateStories = stories.filter(s => s.story_type === 'update').slice(0, 4);
 
   const currentTabOption = tabOptions.find(t => t.id === activeTab) || tabOptions[0];
 

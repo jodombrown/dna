@@ -21,35 +21,49 @@ export const ProfileStoriesSection: React.FC<ProfileStoriesSectionProps> = ({
   const { data: stories, isLoading } = useQuery({
     queryKey: ['profile-stories', userId],
     queryFn: async () => {
+      // Query for stories (post_type = 'story') and legacy types (update, impact, etc.)
       const { data, error } = await supabase
         .from('posts')
         .select(`
           id,
           post_type,
+          story_type,
           title,
           subtitle,
           content,
           created_at,
           slug,
-          space_id,
-          spaces (name)
+          space_id
         `)
         .eq('author_id', userId)
-        .eq('post_type', 'story')
+        .in('post_type', ['story', 'update', 'impact', 'spotlight', 'photo_essay'])
+        .eq('is_deleted', false)
         .order('created_at', { ascending: false })
         .limit(limit);
 
       if (error) throw error;
+      
+      // Fetch space names separately (no FK constraint)
+      const spaceIds = [...new Set((data || []).map(d => d.space_id).filter(Boolean))];
+      let spaceMap = new Map<string, string>();
+      if (spaceIds.length > 0) {
+        const { data: spaces } = await supabase
+          .from('spaces')
+          .select('id, name')
+          .in('id', spaceIds);
+        spaces?.forEach(s => spaceMap.set(s.id, s.name));
+      }
+      
       // Map to expected shape
       return (data || []).map((item: any) => ({
         id: item.id,
-        type: 'story',
+        type: item.story_type || item.post_type || 'story',
         title: item.title,
         subtitle: item.subtitle,
         body: item.content,
         published_at: item.created_at,
         slug: item.slug,
-        spaces: item.spaces,
+        spaceName: item.space_id ? spaceMap.get(item.space_id) : null,
       }));
     },
   });
@@ -115,9 +129,9 @@ export const ProfileStoriesSection: React.FC<ProfileStoriesSectionProps> = ({
                   <Badge className={`text-xs ${getTypeColor(story.type)}`}>
                     {story.type}
                   </Badge>
-                  {story.spaces?.name && (
+                  {story.spaceName && (
                     <Badge variant="outline" className="text-xs">
-                      {story.spaces.name}
+                      {story.spaceName}
                     </Badge>
                   )}
                 </div>

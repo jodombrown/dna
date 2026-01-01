@@ -39,6 +39,7 @@ export interface UniversalFeedItem {
   subtitle: string | null;
   media_url: string | null;
   post_type: FeedItemType;
+  story_type: string | null;
   privacy_level: string;
   linked_entity_type: LinkedEntityType | null;
   linked_entity_id: string | null;
