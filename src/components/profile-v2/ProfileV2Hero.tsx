@@ -1,16 +1,19 @@
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Edit, MapPin, Globe, Briefcase, MessageCircle, UserPlus } from 'lucide-react';
-import { ProfileV2Data, ProfileV2Permissions, VerificationStatus } from '@/types/profileV2';
+import { Edit, MapPin, Globe, Briefcase, MessageCircle, UserPlus, Clock, Check, UserCheck } from 'lucide-react';
+import { ProfileV2Data, ProfileV2Permissions, VerificationStatus, ConnectionStatus } from '@/types/profileV2';
 import { useToast } from '@/hooks/use-toast';
 import { ProfileShareDropdown } from '@/components/profile/ProfileShareDropdown';
 import { BANNER_GRADIENTS, BannerGradientKey } from '@/lib/constants/bannerGradients';
+
 interface ProfileV2HeroProps {
   profile: ProfileV2Data;
   permissions: ProfileV2Permissions;
+  connectionStatus?: ConnectionStatus;
   onEdit?: () => void;
   onConnect?: () => void;
+  onAcceptConnection?: () => void;
   onMessage?: () => void;
 }
 
@@ -47,8 +50,10 @@ const VerificationRing: React.FC<{ status: VerificationStatus; children: React.R
 const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
   profile,
   permissions,
+  connectionStatus = 'none',
   onEdit,
   onConnect,
+  onAcceptConnection,
   onMessage,
 }) => {
   const { toast } = useToast();
@@ -144,10 +149,29 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                 </>
               ) : (
                 <>
-                  {permissions.can_connect && onConnect && (
-                    <Button onClick={onConnect} size="sm">
+                  {/* Connection Button - shows different states based on connectionStatus */}
+                  {connectionStatus === 'none' && onConnect && (
+                    <Button onClick={onConnect} size="sm" className="bg-primary hover:bg-primary/90">
                       <UserPlus className="w-4 h-4 mr-2" />
                       Connect
+                    </Button>
+                  )}
+                  {connectionStatus === 'pending_sent' && (
+                    <Button variant="outline" size="sm" disabled className="text-muted-foreground">
+                      <Clock className="w-4 h-4 mr-2" />
+                      Request Sent
+                    </Button>
+                  )}
+                  {connectionStatus === 'pending_received' && onAcceptConnection && (
+                    <Button onClick={onAcceptConnection} size="sm" className="bg-primary hover:bg-primary/90">
+                      <UserCheck className="w-4 h-4 mr-2" />
+                      Accept Request
+                    </Button>
+                  )}
+                  {connectionStatus === 'accepted' && (
+                    <Button variant="outline" size="sm" disabled className="text-primary border-primary/50">
+                      <Check className="w-4 h-4 mr-2" />
+                      Connected
                     </Button>
                   )}
                   {onMessage && (
@@ -233,13 +257,32 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                 </>
               ) : (
                 <>
-                  {permissions.can_connect && onConnect && (
+                  {/* Connection Button - shows different states based on connectionStatus */}
+                  {connectionStatus === 'none' && onConnect && (
                     <Button onClick={onConnect} className="flex-1" size="sm">
                       <UserPlus className="w-4 h-4 mr-2" />
                       Connect
                     </Button>
                   )}
-              {onMessage && (
+                  {connectionStatus === 'pending_sent' && (
+                    <Button variant="outline" className="flex-1" size="sm" disabled>
+                      <Clock className="w-4 h-4 mr-2" />
+                      Request Sent
+                    </Button>
+                  )}
+                  {connectionStatus === 'pending_received' && onAcceptConnection && (
+                    <Button onClick={onAcceptConnection} className="flex-1" size="sm">
+                      <UserCheck className="w-4 h-4 mr-2" />
+                      Accept Request
+                    </Button>
+                  )}
+                  {connectionStatus === 'accepted' && (
+                    <Button variant="outline" className="flex-1" size="sm" disabled>
+                      <Check className="w-4 h-4 mr-2" />
+                      Connected
+                    </Button>
+                  )}
+                  {onMessage && (
                     <Button onClick={onMessage} variant="outline" className="flex-1" size="sm">
                       <MessageCircle className="w-4 h-4 mr-2" />
                       Message

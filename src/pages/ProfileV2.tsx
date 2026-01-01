@@ -155,6 +155,9 @@ const ProfileV2: React.FC = () => {
     can_create_public_spaces: true,
   };
   
+  // Get connection status from bundle (populated by RPC)
+  const connectionStatus = bundle.connection_status ?? 'none';
+  
   // Ensure visibility has defaults
   const visibility = bundle.visibility ?? {
     about: 'public',
@@ -229,11 +232,12 @@ const ProfileV2: React.FC = () => {
         profile={profile}
         permissions={{
           ...permissions,
-          can_connect: !permissions.is_owner, // Can connect if not owner
+          can_connect: connectionStatus === 'none' && !permissions.is_owner,
         }}
+        connectionStatus={connectionStatus}
         onEdit={() => permissions.is_owner && navigate('/dna/profile/edit')}
         onConnect={async () => {
-          if (!user || permissions.is_owner) return;
+          if (!user || permissions.is_owner || connectionStatus !== 'none') return;
           try {
             const { data, error } = await supabase.functions.invoke('send-connection-request', {
               body: { target_user_id: profile.id },
@@ -258,6 +262,39 @@ const ProfileV2: React.FC = () => {
             }
           } catch (err: any) {
             toast({ title: 'Error', description: err.message || 'Failed to send request', variant: 'destructive' });
+          }
+        }}
+        onAcceptConnection={async () => {
+          if (!user || permissions.is_owner || connectionStatus !== 'pending_received') return;
+          try {
+            // Find and accept the pending connection request
+            const { data: connection } = await supabase
+              .from('connections')
+              .select('id')
+              .eq('requester_id', profile.id)
+              .eq('recipient_id', user.id)
+              .eq('status', 'pending')
+              .single();
+
+            if (!connection) {
+              toast({ title: 'Request not found', variant: 'destructive' });
+              return;
+            }
+
+            const { error } = await supabase
+              .from('connections')
+              .update({ status: 'accepted', updated_at: new Date().toISOString() })
+              .eq('id', connection.id);
+
+            if (error) throw error;
+
+            toast({
+              title: 'Connection accepted',
+              description: `You are now connected with ${profile.full_name}`,
+            });
+            queryClient.invalidateQueries({ queryKey: ['profile-v2', username] });
+          } catch (err: any) {
+            toast({ title: 'Error', description: err.message || 'Failed to accept connection', variant: 'destructive' });
           }
         }}
         onMessage={() => openMessageOverlay(profile.id)}
