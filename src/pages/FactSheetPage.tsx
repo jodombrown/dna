@@ -638,13 +638,8 @@ const FactSheetPage = () => {
 
         {/* Footer */}
         <div className="text-center py-8 text-muted-foreground border-t border-muted/50">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-4">
-            <div className="text-3xl font-bold bg-gradient-to-r from-dna-forest via-dna-emerald to-dna-copper bg-clip-text text-transparent">
-              DNA
-            </div>
-            <div className="text-sm">
-              Diaspora Network of Africa &copy; {new Date().getFullYear()}
-            </div>
+          <div className="text-sm mb-4">
+            Diaspora Network of Africa &copy; {new Date().getFullYear()}
           </div>
           <p className="text-sm text-foreground/60 mb-4">
             Building the infrastructure for systemic change, one connection at a time.
@@ -656,7 +651,7 @@ const FactSheetPage = () => {
             <span className="text-muted-foreground/40">|</span>
             <a href="/about" className="text-dna-copper hover:underline">About DNA</a>
             <span className="text-muted-foreground/40">|</span>
-            <a href="https://www.linkedin.com/company/diaspora-network-africa" target="_blank" rel="noopener noreferrer" className="text-dna-copper hover:underline flex items-center gap-1">
+            <a href="https://www.linkedin.com/company/diasporanetworkafrica" target="_blank" rel="noopener noreferrer" className="text-dna-copper hover:underline flex items-center gap-1">
               LinkedIn <ArrowUpRight className="h-3 w-3" />
             </a>
           </div>
