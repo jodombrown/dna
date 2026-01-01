@@ -17,6 +17,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePulseBar } from '@/hooks/usePulseBar';
+import { useMobile } from '@/hooks/useMobile';
 import { PulseItem } from './PulseItem';
 import { PULSE_CONFIG, type PulseKey } from '@/types/pulse';
 
@@ -41,10 +42,17 @@ function PulseBarSkeleton() {
 
 /**
  * Main PulseBar Component
+ * Desktop-only: Hidden on mobile to preserve mobile UI during desktop development
  */
 export function PulseBar() {
   const { user } = useAuth();
+  const { isMobile } = useMobile();
   const { pulseData, isLoading } = usePulseBar();
+
+  // Don't render on mobile - preserve existing mobile UI
+  if (isMobile) {
+    return null;
+  }
 
   // Don't render for unauthenticated users
   if (!user) {
