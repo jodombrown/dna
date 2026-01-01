@@ -135,7 +135,7 @@ export default function CreateStory() {
 
     // Navigate to the story detail page
     if (result?.slug) {
-      navigate(`/dna/convey/stories/${result.slug}`);
+      navigate(`/dna/story/${result.slug}`);
     } else if (spaceId && space) {
       navigate(`/dna/collaborate/spaces/${space.slug || spaceId}#updates`);
     } else {
@@ -205,7 +205,7 @@ export default function CreateStory() {
               createMutation.mutate(formData, {
                 onSuccess: (data) => {
                   // Navigate to the story detail page
-                  navigate(`/dna/convey/stories/${data.slug}`);
+                  navigate(`/dna/story/${data.slug}`);
                 },
               });
             }}

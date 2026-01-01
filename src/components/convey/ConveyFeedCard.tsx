@@ -46,7 +46,7 @@ export function ConveyFeedCard({ item }: ConveyFeedCardProps) {
 
   return (
     <div
-      onClick={() => navigate(`/dna/convey/stories/${item.slug}`)}
+      onClick={() => navigate(`/dna/story/${item.slug}`)}
       className="bg-card border border-border rounded-lg p-6 hover:border-primary/50 transition-colors cursor-pointer group"
     >
       {/* Header */}
