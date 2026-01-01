@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Download, Share2, Users, Target, Sparkles, TrendingUp, Globe, Heart } from 'lucide-react';
+import { Download, Share2, Users, Target, Sparkles, TrendingUp, Globe, Heart, MapPin, Landmark, Building2, ArrowUpRight, ExternalLink } from 'lucide-react';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -104,20 +104,31 @@ const FactSheetPage = () => {
 
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <div className="inline-block mb-4">
-            <div className="text-6xl font-bold bg-gradient-to-r from-dna-forest via-dna-emerald to-dna-copper bg-clip-text text-transparent">
+          <div className="inline-block mb-6">
+            <div className="text-7xl md:text-8xl font-bold bg-gradient-to-r from-dna-forest via-dna-emerald to-dna-copper bg-clip-text text-transparent animate-pulse-subtle">
               DNA
             </div>
-            <div className="text-sm font-semibold text-muted-foreground tracking-widest">
-              DIASPORA NETWORK OF AFRICA
+            <div className="text-sm font-semibold text-muted-foreground tracking-[0.3em] uppercase">
+              Diaspora Network of Africa
             </div>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
             Platform Fact Sheet
           </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-6">
             Mobilizing the African Diaspora to drive systemic change through innovation and entrepreneurship
           </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <span className="px-4 py-2 bg-dna-emerald/10 text-dna-forest rounded-full text-sm font-medium">
+              350M+ Diasporans
+            </span>
+            <span className="px-4 py-2 bg-dna-copper/10 text-dna-copper rounded-full text-sm font-medium">
+              $100B+ Annual Remittances
+            </span>
+            <span className="px-4 py-2 bg-dna-gold/10 text-dna-gold rounded-full text-sm font-medium">
+              1 Platform
+            </span>
+          </div>
         </div>
 
         <Separator className="mb-12" />
@@ -133,8 +144,36 @@ const FactSheetPage = () => {
               The Global African Diaspora holds extraordinary power - skills honed across continents, networks spanning the globe, knowledge bridging cultures, resources waiting to be channeled, and capital seeking meaningful impact. Yet this power remains <strong>scattered, underutilized, disconnected</strong> from the continent's urgent needs and boundless potential.
             </p>
             <p>
-              The <strong>Diaspora Network of Africa (DNA)</strong> exists to change this. Founded by <a href="https://www.linkedin.com/in/jaunelamarr/" target="_blank" rel="noopener noreferrer" className="text-dna-copper hover:text-dna-gold underline font-semibold">Jaune Odombrown</a>, an ecosystem builder and entrepreneur, we are building the digital mobilization engine that transforms scattered strength into collective power.
+              The <strong>Diaspora Network of Africa (DNA)</strong> exists to change this. We are building the digital mobilization engine that transforms scattered strength into collective power.
             </p>
+          </div>
+        </Card>
+
+        {/* Founder Section */}
+        <Card className="p-8 mb-8 bg-gradient-to-br from-dna-copper/5 via-transparent to-dna-gold/5 border-2 border-dna-copper/20">
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            <div className="flex-shrink-0">
+              <div className="w-32 h-32 rounded-full bg-gradient-to-br from-dna-forest to-dna-emerald flex items-center justify-center text-white text-4xl font-bold shadow-lg">
+                JO
+              </div>
+            </div>
+            <div className="flex-1 text-center md:text-left">
+              <h3 className="text-2xl font-bold text-dna-forest mb-2">Founded by Jaune Odombrown</h3>
+              <p className="text-muted-foreground mb-4">Ecosystem Builder | Entrepreneur | Diaspora Advocate</p>
+              <p className="text-foreground/80 leading-relaxed">
+                Jaune Odombrown is an ecosystem builder and entrepreneur passionate about leveraging technology and community to drive systemic change. With deep roots in both the diaspora and the continent, Jaune founded DNA to bridge the gap between scattered diaspora efforts and Africa's transformative potential.
+              </p>
+              <div className="mt-4">
+                <a
+                  href="https://www.linkedin.com/in/jaunelamarr/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-dna-forest text-white rounded-lg hover:bg-dna-forest/90 transition-colors text-sm font-medium"
+                >
+                  Connect on LinkedIn <ArrowUpRight className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
           </div>
         </Card>
 
@@ -267,35 +306,186 @@ const FactSheetPage = () => {
             <Globe className="h-8 w-8 text-dna-gold" />
             Why It Matters: The Opportunity
           </h2>
-          
+
           <Card className="p-8 bg-gradient-to-br from-dna-forest/10 to-dna-emerald/10 border-2 border-dna-forest/20 mb-6">
             <div className="grid md:grid-cols-3 gap-8 text-center">
               <div>
-                <div className="text-5xl font-bold text-dna-copper mb-2">200M+</div>
+                <div className="text-5xl font-bold text-dna-copper mb-2">350M+</div>
                 <div className="text-sm font-semibold text-muted-foreground">African Diasporans Worldwide</div>
+                <div className="text-xs text-muted-foreground/70 mt-1">The "3rd Largest Country" after China & India</div>
               </div>
               <div>
-                <div className="text-5xl font-bold text-dna-emerald mb-2">$200B+</div>
+                <div className="text-5xl font-bold text-dna-emerald mb-2">$100B+</div>
                 <div className="text-sm font-semibold text-muted-foreground">Annual Diaspora Remittances</div>
+                <div className="text-xs text-muted-foreground/70 mt-1">2x more than all international aid combined</div>
               </div>
               <div>
-                <div className="text-5xl font-bold text-dna-gold mb-2">$3.4T</div>
-                <div className="text-sm font-semibold text-muted-foreground">Africa's GDP by 2030</div>
+                <div className="text-5xl font-bold text-dna-gold mb-2">$500B</div>
+                <div className="text-sm font-semibold text-muted-foreground">Projected Remittances by 2035</div>
+                <div className="text-xs text-muted-foreground/70 mt-1">World Bank projection</div>
               </div>
             </div>
           </Card>
 
           <div className="space-y-4 text-lg text-foreground/90">
             <p>
-              The African diaspora represents one of the world's most underutilized resources for development. With over <strong>200 million people</strong> globally, diasporans possess incredible talent, capital, networks, and expertise.
+              The African diaspora represents one of the world's most underutilized resources for development. With nearly <strong>350 million people</strong> globally, if the diaspora were a country, it would be the <strong>third-largest in the world</strong> - larger than the United States, Indonesia, or Brazil.
             </p>
             <p>
-              However, this potential remains <strong>fragmented and uncoordinated</strong>. DNA solves this by creating the first comprehensive platform that turns individual efforts into collective impact, transforming scattered contributions into systemic change.
+              In 2024, over <strong>$96 billion</strong> flowed into Africa through remittances alone - approximately twice the level of overseas development assistance. This figure is projected to exceed <strong>$100 billion annually</strong>, with potential to reach <strong>$500 billion by 2035</strong> if transfer costs are reduced.
             </p>
             <p>
-              By 2030, Africa is projected to be the world's fastest-growing economic region. DNA positions diasporans to be at the forefront of this transformation, not as observers, but as <strong>architects of Africa's future</strong>.
+              However, this immense potential remains <strong>fragmented and uncoordinated</strong>. DNA solves this by creating the first comprehensive platform that turns individual efforts into collective impact, transforming scattered contributions into systemic change.
             </p>
           </div>
+        </section>
+
+        <Separator className="mb-12 print:hidden" />
+
+        {/* Geographic Distribution */}
+        <section className="mb-12">
+          <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
+            <MapPin className="h-8 w-8 text-dna-copper" />
+            Where the Diaspora Lives
+          </h2>
+
+          <div className="grid md:grid-cols-2 gap-6 mb-6">
+            <Card className="p-6 bg-card/50">
+              <h3 className="text-xl font-bold mb-4 text-dna-forest">Regional Distribution</h3>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-foreground/80">Latin America & Caribbean</span>
+                  <span className="font-bold text-dna-copper">~127 million</span>
+                </div>
+                <div className="w-full bg-muted rounded-full h-2">
+                  <div className="bg-dna-copper h-2 rounded-full" style={{ width: '36%' }}></div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-foreground/80">North America</span>
+                  <span className="font-bold text-dna-emerald">~39 million</span>
+                </div>
+                <div className="w-full bg-muted rounded-full h-2">
+                  <div className="bg-dna-emerald h-2 rounded-full" style={{ width: '11%' }}></div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-foreground/80">Europe</span>
+                  <span className="font-bold text-dna-gold">~4 million</span>
+                </div>
+                <div className="w-full bg-muted rounded-full h-2">
+                  <div className="bg-dna-gold h-2 rounded-full" style={{ width: '1%' }}></div>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-6 bg-card/50">
+              <h3 className="text-xl font-bold mb-4 text-dna-forest">Top Diaspora Populations</h3>
+              <div className="space-y-2 text-foreground/80">
+                <div className="flex justify-between items-center py-2 border-b border-muted">
+                  <span>United States</span>
+                  <span className="font-semibold">#1</span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-muted">
+                  <span>Brazil</span>
+                  <span className="font-semibold">#2</span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-muted">
+                  <span>Haiti</span>
+                  <span className="font-semibold">#3</span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-muted">
+                  <span>Dominican Republic</span>
+                  <span className="font-semibold">#4</span>
+                </div>
+                <div className="flex justify-between items-center py-2">
+                  <span>Jamaica</span>
+                  <span className="font-semibold">#5</span>
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          <Card className="p-6 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10 border-2 border-dna-emerald/20">
+            <h3 className="text-xl font-bold mb-3 text-dna-forest flex items-center gap-2">
+              <Landmark className="h-5 w-5 text-dna-copper" />
+              Top Remittance Recipients (2024)
+            </h3>
+            <div className="grid md:grid-cols-5 gap-4 text-center">
+              <div className="p-3 rounded-lg bg-card/50">
+                <div className="text-2xl font-bold text-dna-copper">$22.7B</div>
+                <div className="text-sm text-muted-foreground">Egypt</div>
+              </div>
+              <div className="p-3 rounded-lg bg-card/50">
+                <div className="text-2xl font-bold text-dna-emerald">$19.8B</div>
+                <div className="text-sm text-muted-foreground">Nigeria</div>
+              </div>
+              <div className="p-3 rounded-lg bg-card/50">
+                <div className="text-2xl font-bold text-dna-gold">$12B</div>
+                <div className="text-sm text-muted-foreground">Morocco</div>
+              </div>
+              <div className="p-3 rounded-lg bg-card/50">
+                <div className="text-2xl font-bold text-dna-copper">$4.6B</div>
+                <div className="text-sm text-muted-foreground">Ghana</div>
+              </div>
+              <div className="p-3 rounded-lg bg-card/50">
+                <div className="text-2xl font-bold text-dna-emerald">$4B+</div>
+                <div className="text-sm text-muted-foreground">Kenya</div>
+              </div>
+            </div>
+          </Card>
+        </section>
+
+        <Separator className="mb-12 print:hidden" />
+
+        {/* Recent Developments */}
+        <section className="mb-12">
+          <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
+            <Building2 className="h-8 w-8 text-dna-emerald" />
+            A Moment of Momentum: Recent Developments
+          </h2>
+
+          <div className="space-y-4">
+            <Card className="p-6 border-l-4 border-l-dna-gold bg-gradient-to-r from-dna-gold/5 to-transparent">
+              <div className="flex items-start gap-4">
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-dna-forest mb-2">Ghana Opens Doors for Diaspora Investment</h3>
+                  <p className="text-foreground/80">
+                    President John Dramani Mahama announced landmark reform of the Ghana Investment Promotion Centre (GIPC) Act, <strong>scrapping the minimum foreign capital requirement</strong> that has long been a barrier for diaspora investment in Ghana.
+                  </p>
+                </div>
+                <span className="text-sm font-semibold text-dna-gold bg-dna-gold/10 px-3 py-1 rounded-full">2025</span>
+              </div>
+            </Card>
+
+            <Card className="p-6 border-l-4 border-l-dna-copper bg-gradient-to-r from-dna-copper/5 to-transparent">
+              <div className="flex items-start gap-4">
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-dna-forest mb-2">Benin Grants Citizenship to Diaspora Descendants</h3>
+                  <p className="text-foreground/80">
+                    On September 2, 2024, Benin enacted Law No. 2024-31, <strong>officially granting citizenship to individuals of sub-Saharan African descent</strong> whose ancestors were forcibly deported during the trans-Atlantic slave trade.
+                  </p>
+                </div>
+                <span className="text-sm font-semibold text-dna-copper bg-dna-copper/10 px-3 py-1 rounded-full">2024</span>
+              </div>
+            </Card>
+
+            <Card className="p-6 border-l-4 border-l-dna-emerald bg-gradient-to-r from-dna-emerald/5 to-transparent">
+              <div className="flex items-start gap-4">
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-dna-forest mb-2">African Union Recognition</h3>
+                  <p className="text-foreground/80">
+                    The African Union defines the diaspora as <strong>"the 6th Region"</strong> - people of African origin living outside the continent who are willing to contribute to Africa's development and the building of the African Union.
+                  </p>
+                </div>
+                <span className="text-sm font-semibold text-dna-emerald bg-dna-emerald/10 px-3 py-1 rounded-full">Ongoing</span>
+              </div>
+            </Card>
+          </div>
+
+          <Card className="p-6 mt-6 bg-gradient-to-br from-dna-forest/10 via-dna-emerald/5 to-dna-gold/10 border-2 border-dna-forest/20">
+            <p className="text-lg text-foreground/90 text-center italic">
+              "The moment is now. African nations are opening their doors. The diaspora is ready to answer the call. <strong>DNA provides the infrastructure to turn this momentum into lasting impact.</strong>"
+            </p>
+          </Card>
         </section>
 
         <Separator className="mb-12 print:hidden" />
@@ -399,14 +589,85 @@ const FactSheetPage = () => {
           </div>
         </section>
 
+        {/* Sources & References */}
+        <section className="mb-12 print:hidden">
+          <Card className="p-6 bg-muted/30 border border-muted">
+            <h3 className="text-lg font-bold mb-4 text-foreground/80 flex items-center gap-2">
+              <ExternalLink className="h-5 w-5" />
+              Sources & References
+            </h3>
+            <div className="grid md:grid-cols-2 gap-4 text-sm text-muted-foreground">
+              <div>
+                <p className="font-semibold text-foreground/70 mb-2">Statistics & Data</p>
+                <ul className="space-y-1">
+                  <li>
+                    <a href="https://remitscope.org/africa/" target="_blank" rel="noopener noreferrer" className="hover:text-dna-copper flex items-center gap-1">
+                      World Bank Remitscope - Africa <ArrowUpRight className="h-3 w-3" />
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://gfrid.org/remittances-from-african-diaspora-grew-in-2023-set-to-exceed-100bn-in-2024/" target="_blank" rel="noopener noreferrer" className="hover:text-dna-copper flex items-center gap-1">
+                      GFRID Remittances Report 2024 <ArrowUpRight className="h-3 w-3" />
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://worldpopulationreview.com/country-rankings/african-diaspora-countries" target="_blank" rel="noopener noreferrer" className="hover:text-dna-copper flex items-center gap-1">
+                      World Population Review - Diaspora <ArrowUpRight className="h-3 w-3" />
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <p className="font-semibold text-foreground/70 mb-2">Additional Resources</p>
+                <ul className="space-y-1">
+                  <li>
+                    <a href="https://au.int/en/diaspora" target="_blank" rel="noopener noreferrer" className="hover:text-dna-copper flex items-center gap-1">
+                      African Union Diaspora Division <ArrowUpRight className="h-3 w-3" />
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://thestateofafricandiaspora.com/" target="_blank" rel="noopener noreferrer" className="hover:text-dna-copper flex items-center gap-1">
+                      State of African Diaspora <ArrowUpRight className="h-3 w-3" />
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://africandiasporanetwork.org/" target="_blank" rel="noopener noreferrer" className="hover:text-dna-copper flex items-center gap-1">
+                      African Diaspora Network <ArrowUpRight className="h-3 w-3" />
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground/60 mt-4">
+              Statistics updated January 2025. Data from World Bank, African Development Bank, GFRID, and other cited sources.
+            </p>
+          </Card>
+        </section>
+
         {/* Footer */}
-        <div className="text-center py-8 text-muted-foreground">
-          <p className="text-sm">
-            Diaspora Network of Africa &copy; {new Date().getFullYear()} | Building the infrastructure for systemic change
+        <div className="text-center py-8 text-muted-foreground border-t border-muted/50">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-4">
+            <div className="text-3xl font-bold bg-gradient-to-r from-dna-forest via-dna-emerald to-dna-copper bg-clip-text text-transparent">
+              DNA
+            </div>
+            <div className="text-sm">
+              Diaspora Network of Africa &copy; {new Date().getFullYear()}
+            </div>
+          </div>
+          <p className="text-sm text-foreground/60 mb-4">
+            Building the infrastructure for systemic change, one connection at a time.
           </p>
-          <p className="text-xs mt-2">
-            Contact: <a href="/contact" className="text-dna-copper hover:underline">Get in Touch</a>
-          </p>
+          <div className="flex flex-wrap justify-center gap-4 text-sm">
+            <a href="/contact" className="text-dna-copper hover:underline">Contact Us</a>
+            <span className="text-muted-foreground/40">|</span>
+            <a href="/partner-with-dna" className="text-dna-copper hover:underline">Partner With Us</a>
+            <span className="text-muted-foreground/40">|</span>
+            <a href="/about" className="text-dna-copper hover:underline">About DNA</a>
+            <span className="text-muted-foreground/40">|</span>
+            <a href="https://www.linkedin.com/company/diaspora-network-africa" target="_blank" rel="noopener noreferrer" className="text-dna-copper hover:underline flex items-center gap-1">
+              LinkedIn <ArrowUpRight className="h-3 w-3" />
+            </a>
+          </div>
         </div>
       </div>
 
