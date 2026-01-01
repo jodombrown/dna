@@ -37,12 +37,16 @@ export function ConveyFeedCard({ item }: ConveyFeedCardProps) {
     }
   };
 
-  const getBodySnippet = (body: string, maxLength: number = 200) => {
+  const getBodySnippet = (text: string | undefined, maxLength: number = 200) => {
+    if (!text) return '';
     // Strip markdown and get plain text
-    const plainText = body.replace(/[#*_\[\]()]/g, '').trim();
+    const plainText = text.replace(/[#*_\[\]()]/g, '').trim();
     if (plainText.length <= maxLength) return plainText;
     return plainText.substring(0, maxLength).trim() + '...';
   };
+
+  // Get content - prefer content field (from posts table), fallback to body
+  const bodyText = item.content || item.body || '';
 
   return (
     <div
@@ -54,9 +58,9 @@ export function ConveyFeedCard({ item }: ConveyFeedCardProps) {
         <Badge variant={getTypeBadgeVariant(item.type)}>
           {getTypeLabel(item.type)}
         </Badge>
-        {item.published_at && (
+        {(item.published_at || item.created_at) && (
           <span className="text-sm text-muted-foreground">
-            {format(new Date(item.published_at), 'MMM d, yyyy')}
+            {format(new Date(item.published_at || item.created_at), 'MMM d, yyyy')}
           </span>
         )}
       </div>
@@ -71,7 +75,7 @@ export function ConveyFeedCard({ item }: ConveyFeedCardProps) {
 
       {/* Body snippet */}
       <p className="text-sm text-foreground/80 mb-4 line-clamp-3">
-        {getBodySnippet(item.body)}
+        {getBodySnippet(bodyText)}
       </p>
 
       {/* Meta info */}

@@ -84,9 +84,9 @@ export function EventStoriesSection({ eventId }: EventStoriesSectionProps) {
                     {item.subtitle}
                   </p>
                 )}
-                {item.published_at && (
+                {(item.published_at || item.created_at) && (
                   <p className="text-xs text-muted-foreground">
-                    {format(new Date(item.published_at), 'MMM d, yyyy')}
+                    {format(new Date(item.published_at || item.created_at), 'MMM d, yyyy')}
                   </p>
                 )}
               </div>

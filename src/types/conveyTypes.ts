@@ -11,6 +11,7 @@ export interface ConveyItem {
   status: ConveyItemStatus;
   visibility: ConveyItemVisibility;
   body: string;
+  content?: string; // Alias for body (from posts table)
   author_id: string;
   primary_space_id: string | null;
   primary_event_id: string | null;
@@ -22,6 +23,10 @@ export interface ConveyItem {
   created_at: string;
   updated_at: string;
   published_at: string | null;
+  // Additional fields from posts table
+  image_url?: string | null;
+  gallery_urls?: string[] | null;
+  story_type?: string | null;
 }
 
 export interface ConveyItemWithDetails extends ConveyItem {
