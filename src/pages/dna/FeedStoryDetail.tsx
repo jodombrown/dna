@@ -1,14 +1,16 @@
 /**
  * DNA | FEED v2.0 - Story Detail (Feed Stories)
- * 
+ *
  * Full-page reading experience for stories created via Universal Composer.
  * Uses post_id from posts table, not convey_items slug.
+ * Uses get_story_by_slug RPC for consistent visibility with feed.
  */
 
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -20,53 +22,45 @@ import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 export default function FeedStoryDetail() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [showImagePreview, setShowImagePreview] = useState(false);
 
-  // Check if param is a UUID (for backward compatibility)
-  const isUUID = slug && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
-
   const { data: story, isLoading, error } = useQuery({
-    queryKey: ['feed-story', slug],
+    queryKey: ['feed-story', slug, user?.id],
     queryFn: async () => {
       if (!slug) throw new Error('No story identifier provided');
 
-      // Build query - search by slug or id (for backward compatibility)
-      // RLS handles visibility - public posts are accessible to all, private to owners/connections
-      let query = supabase
-        .from('posts')
-        .select(`
-          id,
-          title,
-          subtitle,
-          content,
-          image_url,
-          post_type,
-          created_at,
-          space_id,
-          event_id,
-          author_id,
-          slug,
-          profiles:author_id (
-            username,
-            full_name,
-            avatar_url
-          )
-        `)
-        .eq('is_deleted', false);
-
-      // If it's a UUID, search by id; otherwise search by slug
-      if (isUUID) {
-        query = query.eq('id', slug);
-      } else {
-        query = query.eq('slug', slug);
-      }
-
-      const { data, error } = await query.maybeSingle();
+      // Use RPC function for consistent visibility with feed
+      // This bypasses RLS and applies the same visibility rules as get_universal_feed
+      const { data, error } = await supabase
+        .rpc('get_story_by_slug', {
+          p_identifier: slug,
+          p_viewer_id: user?.id || null,
+        })
+        .maybeSingle();
 
       if (error) throw error;
       if (!data) throw new Error('Content not found');
-      
-      return data;
+
+      // Transform RPC result to match expected shape
+      return {
+        id: data.id,
+        title: data.title,
+        subtitle: data.subtitle,
+        content: data.content,
+        image_url: data.image_url,
+        post_type: data.post_type,
+        created_at: data.created_at,
+        space_id: data.space_id,
+        event_id: data.event_id,
+        author_id: data.author_id,
+        slug: data.slug,
+        profiles: {
+          username: data.author_username,
+          full_name: data.author_full_name,
+          avatar_url: data.author_avatar_url,
+        },
+      };
     },
     enabled: !!slug,
     retry: 1,
