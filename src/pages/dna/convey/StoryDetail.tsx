@@ -122,17 +122,17 @@ export default function StoryDetail() {
 
   // Normalize the item structure
   const normalizedItem = item ? {
-    title: 'title' in item ? item.title : '',
-    body: 'body' in item ? item.body : ('content' in item ? item.content : ''),
-    type: 'type' in item ? item.type : ('story_type' in item ? item.story_type : 'story'),
-    subtitle: 'subtitle' in item ? item.subtitle : null,
-    author: 'author' in item ? item.author : ('profiles' in item ? item.profiles : null),
-    published_at: 'published_at' in item ? item.published_at : ('created_at' in item ? item.created_at : null),
-    region: 'region' in item ? item.region : null,
-    focus_areas: 'focus_areas' in item ? item.focus_areas : null,
-    primary_space: 'primary_space' in item ? item.primary_space : null,
-    primary_event: 'primary_event' in item ? item.primary_event : null,
-    image_url: 'image_url' in item ? item.image_url : null,
+    title: (item as any).title || '',
+    body: (item as any).body || (item as any).content || '',
+    type: (item as any).type || (item as any).story_type || 'story',
+    subtitle: (item as any).subtitle || null,
+    author: (item as any).author || (item as any).profiles || null,
+    published_at: (item as any).published_at || (item as any).created_at || null,
+    region: (item as any).region || null,
+    focus_areas: (item as any).focus_areas || null,
+    primary_space: (item as any).primary_space || null,
+    primary_event: (item as any).primary_event || null,
+    image_url: (item as any).image_url || null,
   } : null;
 
   return (
