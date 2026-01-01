@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabaseClient } from '@/lib/supabaseHelpers';
+import { supabase } from '@/integrations/supabase/client';
 import { ConveyItemWithDetails, ConveyFilters } from '@/types/conveyTypes';
 
 interface UseConveyFeedOptions extends ConveyFilters {
@@ -24,7 +24,8 @@ export function useConveyFeed(options: UseConveyFeedOptions = {}) {
   return useQuery({
     queryKey: ['convey-feed', { type, region, focusAreas, onlyMySpaces, page, pageSize }],
     queryFn: async () => {
-      let query = supabaseClient
+      // Build base query for posts
+      let query = supabase
         .from('posts')
         .select(`
           id,
@@ -41,40 +42,22 @@ export function useConveyFeed(options: UseConveyFeedOptions = {}) {
           event_id,
           created_at,
           updated_at,
-          privacy_level,
-          author:profiles!posts_author_id_fkey(
-            id,
-            full_name,
-            avatar_url,
-            region
-          ),
-          primary_space:spaces!posts_space_id_fkey(
-            id,
-            name,
-            tagline,
-            slug,
-            region
-          )
+          privacy_level
         `, { count: 'exact' })
         .eq('is_deleted', false)
         .in('post_type', ['story', 'update', 'impact'])
         .order('created_at', { ascending: false });
 
-      // Apply type filter (maps to post_type or story_type)
+      // Apply type filter
       if (type) {
-        // If filtering by 'story', 'update', 'impact' - these are post_types
         query = query.eq('post_type', type);
       }
 
-      // Apply region filter (via author's region or space's region)
-      // Note: posts table doesn't have region directly, so we filter client-side
-      // or accept that region filtering may need a different approach
-
       // Apply "only my spaces" filter
       if (onlyMySpaces) {
-        const { data: { user } } = await supabaseClient.auth.getUser();
+        const { data: { user } } = await supabase.auth.getUser();
         if (user) {
-          const { data: mySpaces } = await supabaseClient
+          const { data: mySpaces } = await supabase
             .from('space_members')
             .select('space_id')
             .eq('user_id', user.id);
@@ -83,7 +66,6 @@ export function useConveyFeed(options: UseConveyFeedOptions = {}) {
             const spaceIds = mySpaces.map(sm => sm.space_id);
             query = query.in('space_id', spaceIds);
           } else {
-            // User has no spaces, return empty result
             return { data: [], count: 0 };
           }
         }
@@ -94,37 +76,60 @@ export function useConveyFeed(options: UseConveyFeedOptions = {}) {
       const to = from + pageSize - 1;
       query = query.range(from, to);
 
-      const { data, error, count } = await query;
+      const { data: posts, error, count } = await query;
 
       if (error) throw error;
+      if (!posts || posts.length === 0) {
+        return { data: [], count: 0 };
+      }
+
+      // Fetch author profiles separately
+      const authorIds = [...new Set(posts.map(p => p.author_id).filter(Boolean))];
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, full_name, avatar_url')
+        .in('id', authorIds);
+
+      const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+
+      // Fetch spaces separately
+      const spaceIds = [...new Set(posts.map(p => p.space_id).filter(Boolean))];
+      let spaceMap = new Map();
+      if (spaceIds.length > 0) {
+        const { data: spaces } = await supabase
+          .from('spaces')
+          .select('id, name, tagline, slug, region')
+          .in('id', spaceIds);
+        spaceMap = new Map(spaces?.map(s => [s.id, s]) || []);
+      }
 
       // Transform data to match ConveyItemWithDetails interface
-      const transformedData: ConveyItemWithDetails[] = (data || []).map((post: any) => ({
+      const transformedData: ConveyItemWithDetails[] = posts.map((post) => ({
         id: post.id,
-        slug: post.slug || post.id, // Fallback to id if no slug
+        slug: post.slug || post.id,
         title: post.title || '',
         subtitle: post.subtitle,
         type: post.post_type as 'story' | 'update' | 'impact',
         status: 'published' as const,
         visibility: post.privacy_level === 'public' ? 'public' as const : 'members_only' as const,
-        body: post.content, // Map content to body for backward compatibility
-        content: post.content, // Also include as content
+        body: post.content,
+        content: post.content,
         author_id: post.author_id,
         primary_space_id: post.space_id,
         primary_event_id: post.event_id,
         primary_need_id: null,
         primary_offer_id: null,
         primary_badge_id: null,
-        focus_areas: null, // Not on posts table
-        region: post.author?.region || post.primary_space?.region || null,
+        focus_areas: null,
+        region: spaceMap.get(post.space_id)?.region || null,
         created_at: post.created_at,
         updated_at: post.updated_at,
-        published_at: post.created_at, // Use created_at as published_at
+        published_at: post.created_at,
         image_url: post.image_url,
         gallery_urls: post.gallery_urls,
         story_type: post.story_type,
-        author: post.author,
-        primary_space: post.primary_space,
+        author: profileMap.get(post.author_id) || undefined,
+        primary_space: spaceMap.get(post.space_id) || undefined,
       }));
 
       // Apply region filter client-side if specified
@@ -132,7 +137,6 @@ export function useConveyFeed(options: UseConveyFeedOptions = {}) {
       if (region) {
         filteredData = transformedData.filter(item =>
           item.region === region ||
-          item.author?.region === region ||
           item.primary_space?.region === region
         );
       }
@@ -159,7 +163,7 @@ export function useSpaceConveyItems(
     queryFn: async () => {
       if (!spaceId) return [];
 
-      let query = supabaseClient
+      let query = supabase
         .from('posts')
         .select(`
           id,
@@ -175,12 +179,7 @@ export function useSpaceConveyItems(
           space_id,
           event_id,
           created_at,
-          updated_at,
-          author:profiles!posts_author_id_fkey(
-            id,
-            full_name,
-            avatar_url
-          )
+          updated_at
         `)
         .eq('is_deleted', false)
         .eq('space_id', spaceId)
@@ -193,12 +192,21 @@ export function useSpaceConveyItems(
 
       query = query.range(offset, offset + limit - 1);
 
-      const { data, error } = await query;
+      const { data: posts, error } = await query;
 
       if (error) throw error;
+      if (!posts || posts.length === 0) return [];
 
-      // Transform to ConveyItemWithDetails format
-      return (data || []).map((post: any) => ({
+      // Fetch author profiles
+      const authorIds = [...new Set(posts.map(p => p.author_id).filter(Boolean))];
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, full_name, avatar_url')
+        .in('id', authorIds);
+
+      const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+
+      return posts.map((post) => ({
         id: post.id,
         slug: post.slug || post.id,
         title: post.title || '',
@@ -222,7 +230,7 @@ export function useSpaceConveyItems(
         image_url: post.image_url,
         gallery_urls: post.gallery_urls,
         story_type: post.story_type,
-        author: post.author,
+        author: profileMap.get(post.author_id),
       })) as ConveyItemWithDetails[];
     },
     enabled: !!spaceId,
@@ -243,7 +251,7 @@ export function useEventConveyItems(
     queryFn: async () => {
       if (!eventId) return [];
 
-      const { data, error } = await supabaseClient
+      const { data: posts, error } = await supabase
         .from('posts')
         .select(`
           id,
@@ -259,12 +267,7 @@ export function useEventConveyItems(
           space_id,
           event_id,
           created_at,
-          updated_at,
-          author:profiles!posts_author_id_fkey(
-            id,
-            full_name,
-            avatar_url
-          )
+          updated_at
         `)
         .eq('is_deleted', false)
         .eq('event_id', eventId)
@@ -273,9 +276,18 @@ export function useEventConveyItems(
         .limit(limit);
 
       if (error) throw error;
+      if (!posts || posts.length === 0) return [];
 
-      // Transform to ConveyItemWithDetails format
-      return (data || []).map((post: any) => ({
+      // Fetch author profiles
+      const authorIds = [...new Set(posts.map(p => p.author_id).filter(Boolean))];
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, full_name, avatar_url')
+        .in('id', authorIds);
+
+      const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+
+      return posts.map((post) => ({
         id: post.id,
         slug: post.slug || post.id,
         title: post.title || '',
@@ -299,7 +311,7 @@ export function useEventConveyItems(
         image_url: post.image_url,
         gallery_urls: post.gallery_urls,
         story_type: post.story_type,
-        author: post.author,
+        author: profileMap.get(post.author_id),
       })) as ConveyItemWithDetails[];
     },
     enabled: !!eventId,
@@ -318,7 +330,7 @@ export function useConveyItemBySlug(slug: string | undefined) {
       // Check if slug looks like a UUID (for backward compatibility)
       const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
 
-      let query = supabaseClient
+      let query = supabase
         .from('posts')
         .select(`
           id,
@@ -335,26 +347,7 @@ export function useConveyItemBySlug(slug: string | undefined) {
           event_id,
           created_at,
           updated_at,
-          privacy_level,
-          author:profiles!posts_author_id_fkey(
-            id,
-            full_name,
-            avatar_url,
-            region
-          ),
-          primary_space:spaces!posts_space_id_fkey(
-            id,
-            name,
-            tagline,
-            slug,
-            region
-          ),
-          primary_event:events!posts_event_id_fkey(
-            id,
-            title,
-            start_time,
-            format
-          )
+          privacy_level
         `)
         .eq('is_deleted', false)
         .in('post_type', ['story', 'update', 'impact']);
@@ -366,40 +359,72 @@ export function useConveyItemBySlug(slug: string | undefined) {
         query = query.eq('slug', slug);
       }
 
-      const { data, error } = await query.single();
+      const { data: post, error } = await query.single();
 
       if (error) throw error;
+      if (!post) return null;
 
-      if (!data) return null;
+      // Fetch author profile
+      let author = null;
+      if (post.author_id) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('id, full_name, avatar_url')
+          .eq('id', post.author_id)
+          .single();
+        author = profile;
+      }
+
+      // Fetch space if exists
+      let space = null;
+      if (post.space_id) {
+        const { data: spaceData } = await supabase
+          .from('spaces')
+          .select('id, name, tagline, slug, region')
+          .eq('id', post.space_id)
+          .single();
+        space = spaceData;
+      }
+
+      // Fetch event if exists
+      let event = null;
+      if (post.event_id) {
+        const { data: eventData } = await supabase
+          .from('events')
+          .select('id, title, start_time, format')
+          .eq('id', post.event_id)
+          .single();
+        event = eventData;
+      }
 
       // Transform to ConveyItemWithDetails format
       return {
-        id: data.id,
-        slug: data.slug || data.id,
-        title: data.title || '',
-        subtitle: data.subtitle,
-        type: data.post_type as 'story' | 'update' | 'impact',
+        id: post.id,
+        slug: post.slug || post.id,
+        title: post.title || '',
+        subtitle: post.subtitle,
+        type: post.post_type as 'story' | 'update' | 'impact',
         status: 'published' as const,
-        visibility: data.privacy_level === 'public' ? 'public' as const : 'members_only' as const,
-        body: data.content,
-        content: data.content,
-        author_id: data.author_id,
-        primary_space_id: data.space_id,
-        primary_event_id: data.event_id,
+        visibility: post.privacy_level === 'public' ? 'public' as const : 'members_only' as const,
+        body: post.content,
+        content: post.content,
+        author_id: post.author_id,
+        primary_space_id: post.space_id,
+        primary_event_id: post.event_id,
         primary_need_id: null,
         primary_offer_id: null,
         primary_badge_id: null,
         focus_areas: null,
-        region: data.author?.region || data.primary_space?.region || null,
-        created_at: data.created_at,
-        updated_at: data.updated_at,
-        published_at: data.created_at,
-        image_url: data.image_url,
-        gallery_urls: data.gallery_urls,
-        story_type: data.story_type,
-        author: data.author,
-        primary_space: data.primary_space,
-        primary_event: data.primary_event,
+        region: space?.region || null,
+        created_at: post.created_at,
+        updated_at: post.updated_at,
+        published_at: post.created_at,
+        image_url: post.image_url,
+        gallery_urls: post.gallery_urls,
+        story_type: post.story_type,
+        author,
+        primary_space: space,
+        primary_event: event,
       } as ConveyItemWithDetails;
     },
     enabled: !!slug,

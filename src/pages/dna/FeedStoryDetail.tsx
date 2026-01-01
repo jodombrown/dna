@@ -33,6 +33,7 @@ export default function FeedStoryDetail() {
       // Check if slug looks like a UUID (for backward compatibility)
       const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
 
+      // First fetch the post
       let query = supabase
         .from('posts')
         .select(`
@@ -46,13 +47,9 @@ export default function FeedStoryDetail() {
           space_id,
           event_id,
           author_id,
-          slug,
-          profiles:author_id (
-            username,
-            full_name,
-            avatar_url
-          )
+          slug
         `)
+        .eq('is_deleted', false)
         .in('post_type', ['story', 'update', 'impact', 'reshare', 'post']);
 
       // Query by slug or UUID
@@ -62,12 +59,26 @@ export default function FeedStoryDetail() {
         query = query.eq('slug', slug);
       }
 
-      const { data, error } = await query.maybeSingle();
+      const { data: postData, error: postError } = await query.maybeSingle();
 
-      if (error) throw error;
-      if (!data) throw new Error('Content not found');
+      if (postError) throw postError;
+      if (!postData) throw new Error('Content not found');
 
-      return data;
+      // Fetch author profile separately
+      let author = null;
+      if (postData.author_id) {
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('username, full_name, avatar_url')
+          .eq('id', postData.author_id)
+          .single();
+        author = profileData;
+      }
+
+      return {
+        ...postData,
+        author,
+      };
     },
     enabled: !!slug,
     retry: 1,
@@ -130,7 +141,8 @@ export default function FeedStoryDetail() {
 
   const isStory = story.post_type === 'story';
 
-  const author = story.profiles as { username?: string; full_name?: string; avatar_url?: string } | null;
+  // Author comes from the separate query
+  const author = story.author as { username?: string; full_name?: string; avatar_url?: string } | null;
 
   return (
     <div className="min-h-screen bg-background pb-16 md:pb-0">
