@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { AccountDrawer } from '@/components/navigation/AccountDrawer';
 import { FeedbackFAB } from '@/components/feedback/FeedbackFAB';
-import { PulseBar } from '@/components/pulse';
+import { PulseBar, PulseDock } from '@/components/pulse';
 
 interface BaseLayoutProps {
   children: React.ReactNode;
@@ -79,6 +79,8 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
           "min-h-screen w-full max-w-full",
           getAuthGradient(),
           "pt-14 sm:pt-16",
+          // Add bottom padding on mobile to account for PulseDock
+          "pb-20 lg:pb-0",
           "transition-all duration-300 ease-in-out",
           "overflow-x-hidden"
         )}
@@ -88,6 +90,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
         {children}
       </div>
       <FeedbackFAB />
+      <PulseDock />
     </>
   );
 };

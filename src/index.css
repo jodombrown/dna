@@ -604,3 +604,47 @@ html, body {
 .has-bottom-nav {
   padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0));
 }
+
+/* Pulse Dock Animations */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 250ms ease-out forwards;
+}
+
+.animate-slide-down {
+  animation: slide-down 200ms ease-in forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 200ms ease-out forwards;
+}

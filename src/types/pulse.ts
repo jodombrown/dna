@@ -114,3 +114,23 @@ export const PULSE_CONFIG: Record<PulseKey, PulseConfig> = {
     color: 'emerald',
   },
 } as const;
+
+/**
+ * Mobile Navigation Types for Pulse Dock
+ */
+export interface PulseDockNavItem {
+  key: string;
+  label: string;
+  icon: string;
+  href: string | null;
+  isCenter?: boolean;
+  isTrigger?: boolean;
+}
+
+export interface MoreButtonState {
+  hasActivity: boolean;
+  totalCount: number;
+  hasAttention: boolean;
+  hasUrgent: boolean;
+  status: PulseStatus;
+}
