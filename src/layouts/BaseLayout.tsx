@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { AccountDrawer } from '@/components/navigation/AccountDrawer';
 import { FeedbackFAB } from '@/components/feedback/FeedbackFAB';
+import { PulseBar } from '@/components/pulse';
 
 interface BaseLayoutProps {
   children: React.ReactNode;
@@ -72,6 +73,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
     <>
       <UnifiedHeader />
       <AccountDrawer />
+      <PulseBar />
       <div
         className={cn(
           "min-h-screen w-full max-w-full",
