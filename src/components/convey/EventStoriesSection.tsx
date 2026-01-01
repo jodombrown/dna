@@ -68,7 +68,7 @@ export function EventStoriesSection({ eventId }: EventStoriesSectionProps) {
         {items.map((item) => (
           <div
             key={item.id}
-            onClick={() => navigate(`/dna/convey/stories/${item.slug}`)}
+            onClick={() => navigate(`/dna/story/${item.slug}`)}
             className="border-b border-border last:border-0 pb-4 last:pb-0 cursor-pointer hover:bg-muted/30 -mx-2 px-2 rounded transition-colors"
           >
             <div className="flex items-start gap-3">

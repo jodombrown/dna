@@ -262,7 +262,7 @@ export default function ConveyAnalytics() {
                     <div key={story.id} className="flex items-start justify-between border-b pb-4 last:border-0">
                       <div className="flex-1 min-w-0">
                         <Link 
-                          to={`/dna/convey/stories/${story.slug}`}
+                          to={`/dna/story/${story.slug}`}
                           className="font-semibold text-foreground hover:text-primary transition-colors"
                         >
                           {story.title}

@@ -22,25 +22,35 @@ export const ProfileStoriesSection: React.FC<ProfileStoriesSectionProps> = ({
     queryKey: ['profile-stories', userId],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('convey_items' as any)
+        .from('posts')
         .select(`
           id,
-          type,
+          post_type,
           title,
           subtitle,
-          body,
-          published_at,
+          content,
+          created_at,
           slug,
-          primary_space_id,
+          space_id,
           spaces (name)
         `)
         .eq('author_id', userId)
-        .eq('status', 'published')
-        .order('published_at', { ascending: false })
+        .eq('post_type', 'story')
+        .order('created_at', { ascending: false })
         .limit(limit);
 
       if (error) throw error;
-      return data || [];
+      // Map to expected shape
+      return (data || []).map((item: any) => ({
+        id: item.id,
+        type: 'story',
+        title: item.title,
+        subtitle: item.subtitle,
+        body: item.content,
+        published_at: item.created_at,
+        slug: item.slug,
+        spaces: item.spaces,
+      }));
     },
   });
 
@@ -97,7 +107,7 @@ export const ProfileStoriesSection: React.FC<ProfileStoriesSectionProps> = ({
             <div
               key={story.id}
               className="flex items-start justify-between p-3 rounded-lg border hover:bg-accent transition-colors cursor-pointer"
-              onClick={() => navigate(`/dna/convey/stories/${story.slug}`)}
+              onClick={() => navigate(`/dna/story/${story.slug}`)}
             >
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1 flex-wrap">

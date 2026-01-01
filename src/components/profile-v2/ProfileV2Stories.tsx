@@ -73,92 +73,52 @@ const ProfileV2Stories: React.FC<ProfileV2StoriesProps> = ({
   const navigate = useNavigate();
   const profileUserId = profile.id;
 
-  // Query stories authored by the profile user
+  // Query stories authored by the profile user from posts table
   const { data: stories = [], isLoading: storiesLoading } = useQuery({
     queryKey: ['profile-stories', profileUserId, isOwner],
     queryFn: async () => {
-      let query = supabase
-        .from('convey_items' as any)
+      const { data, error } = await supabase
+        .from('posts')
         .select(`
           id,
-          type,
+          post_type,
           title,
           subtitle,
-          body,
-          published_at,
+          content,
+          created_at,
           slug,
-          status,
-          primary_space_id,
+          space_id,
           spaces (id, name, slug)
         `)
         .eq('author_id', profileUserId)
-        .in('type', ['story', 'update'])
-        .order('published_at', { ascending: false, nullsFirst: false });
+        .eq('post_type', 'story')
+        .order('created_at', { ascending: false, nullsFirst: false });
 
-      // For non-owners, only show published stories
-      if (!isOwner) {
-        query = query.eq('status', 'published');
-      }
-
-      const { data, error } = await query;
       if (error) throw error;
 
       return (data || []).map((item: any): StoryDisplayItem => ({
         id: item.id,
-        type: item.type,
+        type: 'story',
         title: item.title,
         subtitle: item.subtitle,
-        body: item.body,
-        published_at: item.published_at,
+        body: item.content,
+        published_at: item.created_at,
         slug: item.slug,
-        status: item.status,
+        status: 'published', // posts table stories are always published
         space: item.spaces,
       }));
     },
     enabled: !!profileUserId,
   });
 
-  // Query impact stories/highlights by the profile user
+  // Query impact stories/highlights - currently empty since posts table doesn't have impact type
+  // This maintains the UI structure for future implementation
   const { data: highlights = [], isLoading: highlightsLoading } = useQuery({
     queryKey: ['profile-highlights', profileUserId, isOwner],
     queryFn: async () => {
-      let query = supabase
-        .from('convey_items' as any)
-        .select(`
-          id,
-          type,
-          title,
-          subtitle,
-          body,
-          published_at,
-          slug,
-          status,
-          primary_space_id,
-          spaces (id, name, slug)
-        `)
-        .eq('author_id', profileUserId)
-        .in('type', ['impact', 'highlight'])
-        .order('published_at', { ascending: false, nullsFirst: false });
-
-      // For non-owners, only show published highlights
-      if (!isOwner) {
-        query = query.eq('status', 'published');
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
-
-      return (data || []).map((item: any): StoryDisplayItem => ({
-        id: item.id,
-        type: item.type,
-        title: item.title,
-        subtitle: item.subtitle,
-        body: item.body,
-        published_at: item.published_at,
-        slug: item.slug,
-        status: item.status,
-        space: item.spaces,
-      }));
+      // Posts table currently only has 'story' post_type for stories
+      // Return empty array - impact highlights can be added when that feature is built
+      return [] as StoryDisplayItem[];
     },
     enabled: !!profileUserId,
   });
@@ -225,7 +185,7 @@ const ProfileV2Stories: React.FC<ProfileV2StoriesProps> = ({
   };
 
   const StoryCard = ({ story }: { story: StoryDisplayItem }) => (
-    <Link to={`/dna/convey/stories/${story.slug}`}>
+    <Link to={`/dna/story/${story.slug}`}>
       <Card className="hover:shadow-lg hover:border-primary/20 transition-all h-full">
         <CardContent className="pt-6 space-y-4">
           <div>
