@@ -536,18 +536,10 @@ function App() {
                   <CreateStory />
                 </OnboardingGuard>
               } />
-              {/* Feed Stories - slug-based detail view (with UUID fallback) */}
-              <Route path="/dna/story/:slug" element={
-                <OnboardingGuard>
-                  <FeedStoryDetail />
-                </OnboardingGuard>
-              } />
-              {/* Convey Items - legacy slug-based detail view */}
-              <Route path="/dna/convey/stories/:slug" element={
-                <OnboardingGuard>
-                  <StoryDetail />
-                </OnboardingGuard>
-              } />
+              {/* Feed Stories - slug-based detail view (public, no auth required) */}
+              <Route path="/dna/story/:slug" element={<FeedStoryDetail />} />
+              {/* Convey Items - legacy slug-based detail view (public, no auth required) */}
+              <Route path="/dna/convey/stories/:slug" element={<StoryDetail />} />
               
               {/* Legacy convene route redirects */}
               <Route path="/dna/events" element={<Navigate to="/dna/convene/events" replace />} />

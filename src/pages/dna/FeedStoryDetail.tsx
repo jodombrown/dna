@@ -31,6 +31,7 @@ export default function FeedStoryDetail() {
       if (!slug) throw new Error('No story identifier provided');
 
       // Build query - search by slug or id (for backward compatibility)
+      // RLS handles visibility - public posts are accessible to all, private to owners/connections
       let query = supabase
         .from('posts')
         .select(`
@@ -68,6 +69,8 @@ export default function FeedStoryDetail() {
       return data;
     },
     enabled: !!slug,
+    retry: 1,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
   const handleShare = () => {
