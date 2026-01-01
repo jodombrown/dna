@@ -185,7 +185,7 @@ function StoryModeFields({
           <SelectTrigger className="bg-background">
             <SelectValue placeholder="Select story type" />
           </SelectTrigger>
-          <SelectContent className="bg-popover z-50">
+          <SelectContent position="item-aligned" className="bg-popover z-[9999]">
             {storyTypeOptions.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 <div className="flex items-center gap-2">
