@@ -62,6 +62,7 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
           subtitle: item.subtitle || null,
           media_url: item.image_url,
           post_type: item.post_type,
+          story_type: item.story_type || null,
           privacy_level: item.privacy_level,
           linked_entity_type: item.linked_entity_type,
           linked_entity_id: item.linked_entity_id,

@@ -50,6 +50,7 @@ export const PopularPostsSection = () => {
         const feedItem: UniversalFeedItem = {
           post_id: post.id,
           post_type: (post.post_type || 'post') as any,
+          story_type: null,
           author_id: post.author_id,
           author_display_name: post.author_name,
           author_username: post.author_username,
