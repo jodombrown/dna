@@ -32,7 +32,7 @@ export function ConveneAspiration({ earlyContent }: ConveneAspirationProps) {
         illustration={<ConveneIllustration className="w-full h-full" />}
         title="CONVENE"
         tagline="Where the Diaspora Gathers"
-        description="From Lagos to London, Atlanta to Accra — DNA events bring our community together for learning, networking, and lasting impact. Virtual summits, city meetups, skill workshops, and investment forums are coming soon."
+        description="From Lagos to London, Atlanta to Accra, DNA events bring our community together for learning, networking, and lasting impact. Virtual summits, city meetups, skill workshops, and investment forums are coming soon."
         primaryCTA={{
           label: 'Notify Me When Events Launch',
           icon: <Bell className="w-4 h-4 mr-2" />,

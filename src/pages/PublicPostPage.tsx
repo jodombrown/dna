@@ -227,7 +227,7 @@ const PublicPostPage = () => {
                 <div className="flex items-center gap-2 text-white min-w-0">
                   <Sparkles className="w-4 h-4 shrink-0" />
                   <span className="text-sm font-medium truncate">
-                    Shared from DNA — Connect with the diaspora
+                    Shared from DNA. Connect with the diaspora
                   </span>
                 </div>
                 <Button
@@ -433,7 +433,7 @@ const PublicPostPage = () => {
           {/* Footer */}
           <footer className="mt-6 pt-4 border-t text-center text-sm text-muted-foreground">
             <p>
-              DNA — Diaspora Network of Africa
+              DNA - Diaspora Network of Africa
             </p>
             <div className="flex items-center justify-center gap-4 mt-2">
               <Link to="/about" className="hover:text-foreground transition-colors">

@@ -59,7 +59,7 @@ const walkthroughSteps: WalkthroughStep[] = [
   {
     id: 'messaging',
     title: 'Messaging',
-    description: 'Have direct conversations with your connections—build relationships that turn into action.',
+    description: 'Have direct conversations with your connections. Build relationships that turn into action.',
     icon: <MessageCircle className="h-12 w-12 text-dna-emerald" />,
     highlight: 'Real conversations, real impact',
     tips: [
@@ -79,20 +79,20 @@ const walkthroughSteps: WalkthroughStep[] = [
       'Create impact stories that inspire and educate',
       'Choose from story templates: Personal Journey, Case Study, Opinion, and more',
       'Browse stories by type, region, and focus areas',
-      'Engage with stories that resonate—your engagement shapes recommendations'
+      'Engage with stories that resonate. Your engagement shapes recommendations'
     ]
   },
   {
     id: 'coming-soon',
     title: 'Coming After Beta',
-    description: 'Three more C\'s are on the way—Convene, Collaborate, and Contribute will complete your DNA experience.',
+    description: 'Three more C\'s are on the way. Convene, Collaborate, and Contribute will complete your DNA experience.',
     icon: <ArrowRight className="h-12 w-12 text-dna-amber" />,
     highlight: 'The best is yet to come',
     tips: [
       'Convene: Discover and host events that bring the diaspora together',
       'Collaborate: Launch projects with distributed teams across the globe',
       'Contribute: Access a purpose-driven marketplace for diaspora commerce',
-      'Each C feeds the next—your beta activity builds momentum for what\'s coming'
+      'Each C feeds the next. Your beta activity builds momentum for what\'s coming'
     ]
   }
 ];

@@ -34,7 +34,7 @@ const PRIMARY_ITEMS: PrimaryItemBase[] = [
   { key: 'connect', label: 'Connect', icon: Users, href: '/dna/connect' },
   { key: 'convene', label: 'Convene', icon: Calendar, href: '/dna/convene' },
   { key: 'feed', label: 'Feed', icon: Home, href: '/dna/feed', isCenter: true },
-  { key: 'collaborate', label: 'Collab', icon: Layers, href: '/dna/collaborate' },
+  { key: 'collaborate', label: 'Collaborate', icon: Layers, href: '/dna/collaborate' },
   { key: 'more', label: 'More', icon: Grid3X3, href: null, isTrigger: true },
 ];
 

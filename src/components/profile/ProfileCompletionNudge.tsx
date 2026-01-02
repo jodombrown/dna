@@ -69,7 +69,7 @@ export const ProfileCompletionNudge: React.FC<ProfileCompletionNudgeProps> = ({
         <span className="flex-1">
           <span className="font-medium">{completenessScore}% complete</span>
           {topMissingField && (
-            <span className="text-muted-foreground"> — Add {topMissingField.label.toLowerCase()} to boost visibility</span>
+            <span className="text-muted-foreground"> - Add {topMissingField.label.toLowerCase()} to boost visibility</span>
           )}
         </span>
         <Button

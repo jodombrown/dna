@@ -96,7 +96,7 @@ const ProfileEditInterests: React.FC<ProfileEditInterestsProps> = ({
     <Card>
       <CardHeader>
         <CardTitle>Interests & Focus Areas</CardTitle>
-        <CardDescription>What you're passionate about — this powers discovery and recommendations</CardDescription>
+        <CardDescription>What you're passionate about. This powers discovery and recommendations</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <TagMultiSelect

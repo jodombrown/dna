@@ -21,7 +21,7 @@ const DiasporaOriginStep: React.FC<DiasporaOriginStepProps> = ({ data, onUpdate,
       <div className="text-center space-y-2 pt-6">
         <h2 className="text-xl sm:text-2xl font-bold text-dna-forest">Your Connection to Africa</h2>
         <p className="text-sm sm:text-base text-muted-foreground">
-          Whether diaspora, continental African, or ally—we welcome all who support African development.
+          Whether diaspora, continental African, or ally, we welcome all who support African development.
         </p>
       </div>
 

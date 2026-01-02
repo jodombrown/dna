@@ -268,7 +268,7 @@ const ProfileV2Connection: React.FC<ProfileV2ConnectionProps> = ({
               className="w-full text-left p-4 rounded-lg border-2 border-dashed border-muted-foreground/20 hover:border-primary/40 transition-colors"
             >
               <p className="text-muted-foreground italic text-sm">
-                🌍 Share how you connect to Africa—whether diaspora, continental, or ally.
+                🌍 Share how you connect to Africa, whether diaspora, continental, or ally.
               </p>
             </button>
           )

@@ -49,7 +49,7 @@ export function DiasporaSection({
           My Connection to Africa
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Whether diaspora, continental African, or ally—tell us how you connect
+          Whether diaspora, continental African, or ally, tell us how you connect
         </p>
       </CardHeader>
       <CardContent className="space-y-6">

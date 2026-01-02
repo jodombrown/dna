@@ -19,7 +19,7 @@ const features = [
   {
     icon: Video,
     title: 'Hybrid Participation',
-    description: 'Join events virtually or in-person—accommodating different time zones and travel realities.'
+    description: 'Join events virtually or in-person, accommodating different time zones and travel realities.'
   },
   {
     icon: Users,
@@ -72,7 +72,7 @@ export default function ComingSoonConvene() {
             </h1>
             
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Gather, learn, and build relationships that become action. From intimate virtual roundtables to major investment symposiums—transform scattered attendance into strategic community building.
+              Gather, learn, and build relationships that become action. From intimate virtual roundtables to major investment symposiums, transform scattered attendance into strategic community building.
             </p>
           </motion.div>
         </div>

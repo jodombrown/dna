@@ -32,7 +32,7 @@ export function CollaborateAspiration({ earlyContent }: CollaborateAspirationPro
         illustration={<CollaborateIllustration className="w-full h-full" />}
         title="COLLABORATE"
         tagline="Build Together, Impact Together"
-        description="Great things happen when the diaspora works together. DNA Spaces bring professionals, creators, and changemakers into shared projects — from startup ventures to community initiatives to creative collaborations."
+        description="Great things happen when the diaspora works together. DNA Spaces bring professionals, creators, and changemakers into shared projects, from startup ventures to community initiatives to creative collaborations."
         primaryCTA={{
           label: 'Notify Me When Spaces Open',
           icon: <Bell className="w-4 h-4 mr-2" />,

@@ -113,7 +113,7 @@ const Install = () => {
             </h1>
             
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-              Join the global African diaspora — descendants, migrants, and allies united 
+              Join the global African diaspora, descendants, migrants, and allies united 
               to build Africa's future. Add DNA to your home screen and be part of the movement.
             </p>
 
@@ -230,7 +230,7 @@ const Install = () => {
               Install on Your Device
             </h2>
             <p className="text-muted-foreground max-w-lg mx-auto">
-              Get the full app experience — add DNA to your home screen in just a few taps.
+              Get the full app experience. Add DNA to your home screen in just a few taps.
             </p>
           </div>
 
@@ -316,8 +316,8 @@ const Install = () => {
               </h2>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  The African Union recognizes the <strong className="text-foreground">Sixth Region</strong> — 
-                  all people of African origin living outside the continent who are willing to contribute 
+                  The African Union recognizes the <strong className="text-foreground">Sixth Region</strong>:
+                  all people of African origin living outside the continent who are willing to contribute
                   to Africa's development.
                 </p>
                 <p>
