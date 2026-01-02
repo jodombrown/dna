@@ -74,6 +74,7 @@ const ProfileV2Stories: React.FC<ProfileV2StoriesProps> = ({
   const profileUserId = profile.id;
 
   // Query stories authored by the profile user from posts table
+  // Note: posts table has no FK to spaces, so we fetch separately
   const { data: stories = [], isLoading: storiesLoading } = useQuery({
     queryKey: ['profile-stories', profileUserId, isOwner],
     queryFn: async () => {
@@ -82,30 +83,45 @@ const ProfileV2Stories: React.FC<ProfileV2StoriesProps> = ({
         .select(`
           id,
           post_type,
+          story_type,
           title,
           subtitle,
           content,
           created_at,
           slug,
-          space_id,
-          spaces (id, name, slug)
+          space_id
         `)
         .eq('author_id', profileUserId)
         .eq('post_type', 'story')
+        .eq('is_deleted', false)
         .order('created_at', { ascending: false, nullsFirst: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching profile stories:', error);
+        throw error;
+      }
+
+      // Fetch space names separately (no FK constraint)
+      const spaceIds = [...new Set((data || []).map(d => d.space_id).filter(Boolean))];
+      let spaceMap = new Map<string, { id: string; name: string; slug: string }>();
+      if (spaceIds.length > 0) {
+        const { data: spaces } = await supabase
+          .from('spaces')
+          .select('id, name, slug')
+          .in('id', spaceIds);
+        spaces?.forEach(s => spaceMap.set(s.id, { id: s.id, name: s.name, slug: s.slug || s.id }));
+      }
 
       return (data || []).map((item: any): StoryDisplayItem => ({
         id: item.id,
-        type: 'story',
-        title: item.title,
+        type: item.story_type || 'story',
+        title: item.title || 'Untitled',
         subtitle: item.subtitle,
         body: item.content,
         published_at: item.created_at,
-        slug: item.slug,
-        status: 'published', // posts table stories are always published
-        space: item.spaces,
+        slug: item.slug || item.id,
+        status: 'published',
+        space: item.space_id ? spaceMap.get(item.space_id) || null : null,
       }));
     },
     enabled: !!profileUserId,
