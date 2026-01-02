@@ -38,7 +38,7 @@ export async function subscribeToHubNotifications(
   signup: NotificationSignup
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from('hub_notification_signups')
       .upsert({
         hub: signup.hub,
@@ -66,7 +66,7 @@ export async function submitHostApplication(
   application: HostApplication
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from('hub_host_applications')
       .insert({
         hub: application.hub,
@@ -99,7 +99,7 @@ export async function checkExistingSignup(
   hub: HubType
 ): Promise<boolean> {
   try {
-    const { data } = await supabase
+    const { data } = await (supabase as any)
       .from('hub_notification_signups')
       .select('id')
       .eq('email', email)
