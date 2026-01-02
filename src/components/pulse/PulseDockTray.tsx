@@ -4,7 +4,6 @@
  * Slides up from the bottom when user taps MORE button.
  * Contains remaining Five C's items (Contribute, Convey) plus
  * DIA, Messages, and utility items (Notifications, Settings, Profile).
- * Uses Focus Mode for Contribute and Convey items.
  */
 
 import React from 'react';
@@ -14,7 +13,6 @@ import { cn } from '@/lib/utils';
 import type { PulseNavigationData } from '@/hooks/usePulseNavigation';
 import type { PulseSection } from '@/types/pulse';
 import { PulseTrayItem } from './PulseTrayItem';
-import { useFocusMode, type FocusModule } from '@/hooks/useFocusMode';
 
 interface PulseDockTrayProps {
   open: boolean;
@@ -35,22 +33,12 @@ const UTILITY_ITEMS = [
   { key: 'profile', label: 'Profile', icon: User, href: '/dna/profile' },
 ] as const;
 
-// Items that should open Focus Mode instead of navigating
-const FOCUS_MODE_ITEMS = ['contribute', 'convey'];
-
 export function PulseDockTray({ open, onClose, pulseNav }: PulseDockTrayProps) {
   const navigate = useNavigate();
-  const { toggleFocus } = useFocusMode();
 
-  const handleItemClick = (item: { key: string; href: string }) => {
-    if (FOCUS_MODE_ITEMS.includes(item.key)) {
-      // Open Focus Mode for Contribute and Convey
-      toggleFocus(item.key as FocusModule);
-      onClose();
-    } else {
-      navigate(item.href);
-      onClose();
-    }
+  const handleNavigation = (href: string) => {
+    navigate(href);
+    onClose();
   };
 
   const getPulseData = (key: string): Partial<PulseSection> | null => {
@@ -127,7 +115,7 @@ export function PulseDockTray({ open, onClose, pulseNav }: PulseDockTrayProps) {
                 key={item.key}
                 item={item}
                 pulseData={getPulseData(item.key)}
-                onClick={() => handleItemClick(item)}
+                onClick={() => handleNavigation(item.href)}
                 variant="pulse"
               />
             ))}
@@ -145,7 +133,7 @@ export function PulseDockTray({ open, onClose, pulseNav }: PulseDockTrayProps) {
                 key={item.key}
                 item={item}
                 pulseData={getPulseData(item.key)}
-                onClick={() => handleItemClick(item)}
+                onClick={() => handleNavigation(item.href)}
                 variant="utility"
               />
             ))}

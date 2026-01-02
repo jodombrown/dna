@@ -2,11 +2,11 @@
  * PulseItem - Individual Pulse Bar Item Component
  *
  * Displays a single C item with indicator, activity dots, micro-text,
- * and hover preview card. Clicking opens Focus Mode panel instead of
- * navigating to the hub page.
+ * and hover preview card.
  */
 
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Users,
   Calendar,
@@ -18,7 +18,6 @@ import {
 import { cn } from '@/lib/utils';
 import type { PulseSection, PulseConfig, PulseStatus } from '@/types/pulse';
 import { PulsePreviewCard } from './PulsePreviewCard';
-import { useFocusMode, type FocusModule } from '@/hooks/useFocusMode';
 
 const ICONS: Record<string, LucideIcon> = {
   Users,
@@ -50,7 +49,6 @@ const INDICATOR_STYLES: Record<PulseStatus, string> = {
 
 export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
   const [showPreview, setShowPreview] = useState(false);
-  const { toggleFocus, activeModule, isOpen } = useFocusMode();
 
   const Icon = ICONS[config.icon] || Users;
   const status: PulseStatus = data?.status || 'dormant';
@@ -61,32 +59,19 @@ export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
   // Calculate activity dots (1-5 based on count)
   const activityLevel = Math.min(Math.max(count, 0), 5);
 
-  // Check if this item's focus panel is currently active
-  const isFocusActive = isOpen && activeModule === pulseKey;
-
-  const handleClick = () => {
-    // Toggle focus mode for this module
-    toggleFocus(pulseKey as FocusModule);
-  };
-
   return (
     <div
       className="relative flex-1 min-w-0"
       onMouseEnter={() => setShowPreview(true)}
       onMouseLeave={() => setShowPreview(false)}
-      data-pulse-item={pulseKey}
     >
-      <button
-        onClick={handleClick}
+      <Link
+        to={config.href}
         className={cn(
-          'w-full flex flex-col items-center p-2 rounded-lg transition-all duration-200',
+          'flex flex-col items-center p-2 rounded-lg transition-all duration-200',
           'hover:shadow-md hover:-translate-y-0.5',
-          'focus:outline-none focus:ring-2 focus:ring-dna-emerald focus:ring-offset-1',
-          STATUS_STYLES[status],
-          isFocusActive && 'ring-2 ring-dna-emerald shadow-md -translate-y-0.5'
+          STATUS_STYLES[status]
         )}
-        aria-expanded={isFocusActive}
-        aria-haspopup="dialog"
       >
         {/* Indicator + Icon + Label Row */}
         <div className="flex items-center gap-1.5 mb-1">
@@ -136,10 +121,10 @@ export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
         <span className="text-xs text-center truncate max-w-full px-1">
           {microText}
         </span>
-      </button>
+      </Link>
 
-      {/* Hover Preview Card - only show when focus panel is not open */}
-      {showPreview && hasItems && !isFocusActive && (
+      {/* Hover Preview Card */}
+      {showPreview && hasItems && (
         <PulsePreviewCard
           label={config.label}
           items={data!.top_items}
