@@ -6,7 +6,6 @@ import { AspirationMode } from '../shared/AspirationMode';
 import { NotifyMeModal } from '../shared/NotifyMeModal';
 import { HostApplicationModal } from '../shared/HostApplicationModal';
 import { ContributeIllustration } from '../shared/HubIllustrations';
-import { useHubMode } from '@/hooks/useHubMode';
 import { Bell, FileEdit } from 'lucide-react';
 
 interface ContributeAspirationProps {
@@ -16,7 +15,6 @@ interface ContributeAspirationProps {
 export function ContributeAspiration({ earlyContent }: ContributeAspirationProps) {
   const [showNotifyModal, setShowNotifyModal] = useState(false);
   const [showHostModal, setShowHostModal] = useState(false);
-  const { contentCount, threshold, progress } = useHubMode('contribute');
 
   const comingSoonFeatures = [
     'Job and contract opportunities',
