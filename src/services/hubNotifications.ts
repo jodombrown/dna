@@ -13,6 +13,8 @@ export interface HubNotificationPreferences {
   topics?: string[];
   skills?: string[];
   professional_domain?: string;
+  notify_by_email?: boolean;
+  notify_by_dia?: boolean;
 }
 
 export interface NotificationSignup {

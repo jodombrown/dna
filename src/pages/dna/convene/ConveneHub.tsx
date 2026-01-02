@@ -18,7 +18,7 @@ export function ConveneHub() {
     queryFn: async () => {
       const { data } = await supabase
         .from('events')
-        .select('id, title, start_time, location, cover_image_url')
+        .select('id, title, start_time, location_name, cover_image_url')
         .eq('is_cancelled', false)
         .eq('is_public', true)
         .gte('start_time', new Date().toISOString())
@@ -51,7 +51,7 @@ export function ConveneHub() {
             items={earlyEvents.map(event => ({
               id: event.id,
               title: event.title,
-              subtitle: event.location || 'Virtual Event',
+              subtitle: event.location_name || 'Virtual Event',
               date: event.start_time,
               image: event.cover_image_url,
               href: `/events/${event.id}`
