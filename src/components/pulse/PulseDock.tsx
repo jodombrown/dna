@@ -14,21 +14,29 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Users, Calendar, Home, Layers, Grid3X3 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { usePulseNavigation } from '@/hooks/usePulseNavigation';
+import { usePulseNavigation, type MoreButtonState } from '@/hooks/usePulseNavigation';
+import type { PulseSection } from '@/types/pulse';
 import { useMobile } from '@/hooks/useMobile';
 import { useAuth } from '@/contexts/AuthContext';
 import { PulseDockItem } from './PulseDockItem';
 import { PulseDockTray } from './PulseDockTray';
 
-const PRIMARY_ITEMS = [
+interface PrimaryItemBase {
+  key: string;
+  label: string;
+  icon: typeof Users;
+  href: string | null;
+  isCenter?: boolean;
+  isTrigger?: boolean;
+}
+
+const PRIMARY_ITEMS: PrimaryItemBase[] = [
   { key: 'connect', label: 'Connect', icon: Users, href: '/dna/connect' },
   { key: 'convene', label: 'Convene', icon: Calendar, href: '/dna/convene' },
   { key: 'feed', label: 'Feed', icon: Home, href: '/dna/feed', isCenter: true },
   { key: 'collaborate', label: 'Collab', icon: Layers, href: '/dna/collaborate' },
   { key: 'more', label: 'More', icon: Grid3X3, href: null, isTrigger: true },
-] as const;
-
-type PrimaryItem = (typeof PRIMARY_ITEMS)[number];
+];
 
 export function PulseDock() {
   const { isMobile } = useMobile();
@@ -41,7 +49,7 @@ export function PulseDock() {
   // Only render on mobile and for authenticated users
   if (!isMobile || !user) return null;
 
-  const handleItemClick = (item: PrimaryItem) => {
+  const handleItemClick = (item: PrimaryItemBase) => {
     if (item.isTrigger) {
       setTrayOpen(true);
     } else if (item.href) {
@@ -54,14 +62,15 @@ export function PulseDock() {
     return location.pathname.startsWith(href);
   };
 
-  const getPulseData = (item: PrimaryItem) => {
+  const getPulseData = (item: PrimaryItemBase): PulseSection | MoreButtonState | null => {
     if (item.key === 'more') {
       return pulseNav.more;
     }
     if (item.key === 'feed') {
       return null;
     }
-    return pulseNav[item.key as keyof typeof pulseNav] || null;
+    const key = item.key as 'connect' | 'convene' | 'collaborate' | 'contribute' | 'convey';
+    return pulseNav[key] || null;
   };
 
   return (
