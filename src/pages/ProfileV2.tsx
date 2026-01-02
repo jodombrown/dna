@@ -411,6 +411,7 @@ const ProfileV2: React.FC = () => {
               activity={activity}
               visibility={visibility}
               isOwner={permissions.is_owner}
+              username={profile?.username || username}
             />
 
             {/* Verification (Owner Only) */}

@@ -9,12 +9,14 @@ interface ProfileV2ActivityProps {
   activity: ActivityType;
   visibility: ProfileV2Visibility;
   isOwner: boolean;
+  username?: string;
 }
 
 const ProfileV2Activity: React.FC<ProfileV2ActivityProps> = ({
   activity,
   visibility,
   isOwner,
+  username,
 }) => {
   const navigate = useNavigate();
 
@@ -42,7 +44,10 @@ const ProfileV2Activity: React.FC<ProfileV2ActivityProps> = ({
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-3">
           {/* Connections */}
-          <div className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg">
+          <div
+            className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg cursor-pointer hover:bg-secondary/70 transition-colors"
+            onClick={() => username ? navigate(`/dna/profile/${username}?tab=connections`) : navigate('/dna/connect')}
+          >
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center">
                 <Users className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
