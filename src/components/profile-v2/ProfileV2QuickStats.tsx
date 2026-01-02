@@ -1,0 +1,122 @@
+/**
+ * ProfileV2QuickStats - Compact Horizontal Stats Row
+ * Replaces verbose DNA Activity with clickable stat badges
+ * Mobile-first responsive design with icons
+ */
+
+import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Users, BookOpen, Calendar, Layers } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { cn } from '@/lib/utils';
+
+interface QuickStatProps {
+  icon: React.ElementType;
+  label: string;
+  count: number;
+  onClick: () => void;
+  color?: string;
+}
+
+const QuickStat: React.FC<QuickStatProps> = ({
+  icon: Icon,
+  label,
+  count,
+  onClick,
+  color = 'text-primary',
+}) => (
+  <button
+    onClick={onClick}
+    className={cn(
+      "flex flex-col items-center gap-1 p-2 sm:p-3 rounded-lg",
+      "bg-secondary/50 hover:bg-secondary transition-colors",
+      "flex-1 min-w-0 cursor-pointer group"
+    )}
+  >
+    <div className="flex items-center gap-1.5">
+      <Icon className={cn("w-4 h-4", color, "group-hover:scale-110 transition-transform")} />
+      <span className={cn(
+        "text-lg sm:text-xl font-bold text-foreground",
+        "group-hover:text-primary transition-colors"
+      )}>
+        {count}
+      </span>
+    </div>
+    <span className="text-[10px] sm:text-xs text-muted-foreground truncate w-full text-center">
+      {label}
+    </span>
+  </button>
+);
+
+interface ProfileV2QuickStatsProps {
+  activity: {
+    connections_count?: number;
+    stories_count?: number;
+    spaces?: any[];
+    events?: any[];
+  };
+  username?: string;
+  isOwner: boolean;
+}
+
+const ProfileV2QuickStats: React.FC<ProfileV2QuickStatsProps> = ({
+  activity,
+  username,
+  isOwner,
+}) => {
+  const navigate = useNavigate();
+
+  const stats = [
+    {
+      icon: Users,
+      label: 'Connections',
+      count: activity.connections_count || 0,
+      onClick: () => username 
+        ? navigate(`/dna/profile/${username}?tab=connections`)
+        : navigate('/dna/connect'),
+      color: 'text-blue-500',
+    },
+    {
+      icon: BookOpen,
+      label: 'Stories',
+      count: activity.stories_count || 0,
+      onClick: () => navigate('/dna/convey'),
+      color: 'text-emerald-500',
+    },
+    {
+      icon: Layers,
+      label: 'Spaces',
+      count: activity.spaces?.length || 0,
+      onClick: () => navigate('/dna/collaborate'),
+      color: 'text-purple-500',
+    },
+    {
+      icon: Calendar,
+      label: 'Events',
+      count: activity.events?.length || 0,
+      onClick: () => navigate('/dna/convene'),
+      color: 'text-amber-500',
+    },
+  ];
+
+  return (
+    <Card className="overflow-hidden border-border/50">
+      <CardContent className="p-3 sm:p-4">
+        <div className="flex gap-2">
+          {stats.map((stat) => (
+            <QuickStat
+              key={stat.label}
+              icon={stat.icon}
+              label={stat.label}
+              count={stat.count}
+              onClick={stat.onClick}
+              color={stat.color}
+            />
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default ProfileV2QuickStats;

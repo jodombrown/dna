@@ -28,8 +28,8 @@ import ProfileV2Skills from '@/components/profile-v2/ProfileV2Skills';
 import ProfileV2Contributions from '@/components/profile-v2/ProfileV2Contributions';
 import ProfileV2Interests from '@/components/profile-v2/ProfileV2Interests';
 import ProfileV2Activity from '@/components/profile-v2/ProfileV2Activity';
-import ProfileV2Completion from '@/components/profile-v2/ProfileV2Completion';
-import ProfileV2Verification from '@/components/profile-v2/ProfileV2Verification';
+import ProfileV2StatusCard from '@/components/profile-v2/ProfileV2StatusCard';
+import ProfileV2QuickStats from '@/components/profile-v2/ProfileV2QuickStats';
 import ProfileV2Events from '@/components/profile-v2/ProfileV2Events';
 import ProfileV2Spaces from '@/components/profile-v2/ProfileV2Spaces';
 import ProfileV2Opportunities from '@/components/profile-v2/ProfileV2Opportunities';
@@ -399,25 +399,21 @@ const ProfileV2: React.FC = () => {
               />
             )}
 
-            {/* Profile Completion (Owner Only) */}
+            {/* Profile Status Card (Owner Only) - Consolidated Progress + Verification */}
             {permissions.is_owner && (
-              <ProfileV2Completion
+              <ProfileV2StatusCard
                 profile={profileForCompletion}
+                verificationTier={derivedVerificationTier}
+                username={profile?.username || username}
               />
             )}
 
-            {/* DNA Activity */}
-            <ProfileV2Activity
+            {/* Quick Stats Row */}
+            <ProfileV2QuickStats
               activity={activity}
-              visibility={visibility}
-              isOwner={permissions.is_owner}
               username={profile?.username || username}
+              isOwner={permissions.is_owner}
             />
-
-            {/* Verification (Owner Only) */}
-            {permissions.is_owner && (
-              <ProfileV2Verification verificationMeta={verification_meta} />
-            )}
           </div>
         </div>
       </div>
