@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useOutletContext } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { MemberCard } from '@/components/connect/MemberCard';
@@ -11,6 +12,7 @@ import { Loader2, Users } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { ProfileCompletionNudge } from '@/components/profile/ProfileCompletionNudge';
+import { useMobile } from '@/hooks/useMobile';
 
 interface FilterState {
   country_of_origin?: string;
@@ -19,6 +21,12 @@ interface FilterState {
   regional_expertise?: string[];
   industries?: string[];
   skills?: string[];
+}
+
+interface DiscoverOutletContext {
+  mobileSearchQuery: string;
+  showMobileFilters: boolean;
+  setShowMobileFilters: (show: boolean) => void;
 }
 
 // Animation variants for staggered cards
@@ -52,14 +60,30 @@ const cardVariants = {
 
 export default function Discover() {
   const { user } = useAuth();
+  const { isMobile } = useMobile();
+  const context = useOutletContext<DiscoverOutletContext>();
+  
   const [members, setMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<FilterState>({});
-  const [searchQuery, setSearchQuery] = useState('');
+  const [desktopSearchQuery, setDesktopSearchQuery] = useState('');
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const { trackEvent } = useAnalytics();
+
+  // Use mobile search from parent context, or desktop local state
+  const searchQuery = isMobile && context?.mobileSearchQuery !== undefined 
+    ? context.mobileSearchQuery 
+    : desktopSearchQuery;
+
+  // Sync mobile filter sheet state from parent
+  useEffect(() => {
+    if (context?.showMobileFilters && isMobile) {
+      setIsFilterSheetOpen(true);
+      context.setShowMobileFilters(false);
+    }
+  }, [context?.showMobileFilters, isMobile]);
 
   // Check for reduced motion preference
   const prefersReducedMotion =
@@ -167,11 +191,11 @@ export default function Discover() {
   };
 
   const handleSearchChange = (value: string) => {
-    setSearchQuery(value);
+    setDesktopSearchQuery(value);
   };
 
   const handleSearchClear = () => {
-    setSearchQuery('');
+    setDesktopSearchQuery('');
   };
 
   if (!user) return null;
@@ -181,20 +205,24 @@ export default function Discover() {
       {/* Profile Completion Nudge */}
       <ProfileCompletionNudge variant="compact" threshold={40} showMissingFields={true} />
 
-      {/* iOS-Style Sticky Search Header */}
-      <DiscoverSearchHeader
-        value={searchQuery}
-        onChange={handleSearchChange}
-        onClear={handleSearchClear}
-        isLoading={loading && members.length > 0}
-      />
+      {/* iOS-Style Sticky Search Header - Desktop only */}
+      <div className="hidden md:block">
+        <DiscoverSearchHeader
+          value={desktopSearchQuery}
+          onChange={(value) => setDesktopSearchQuery(value)}
+          onClear={() => setDesktopSearchQuery('')}
+          isLoading={loading && members.length > 0}
+        />
+      </div>
 
-      {/* Horizontal Filter Pills */}
-      <DiscoverFilterPills
-        filters={filters}
-        onOpenSheet={() => setIsFilterSheetOpen(true)}
-        activeCount={activeFilterCount}
-      />
+      {/* Horizontal Filter Pills - Desktop only */}
+      <div className="hidden md:block">
+        <DiscoverFilterPills
+          filters={filters}
+          onOpenSheet={() => setIsFilterSheetOpen(true)}
+          activeCount={activeFilterCount}
+        />
+      </div>
 
       {/* Filter Bottom Sheet */}
       <DiscoverFilterSheet

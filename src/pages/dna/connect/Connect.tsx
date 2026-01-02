@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
@@ -12,6 +12,7 @@ import { ConnectTabExplainer, ConnectTab } from '@/components/connect/ConnectTab
 import { DiaContextual } from '@/components/dia';
 import { useMobile } from '@/hooks/useMobile';
 import { cn } from '@/lib/utils';
+import { ConnectMobileHeader } from '@/components/connect/ConnectMobileHeader';
 
 const TAB_CONFIG: { value: ConnectTab; icon: React.ElementType; label: string; route: string }[] = [
   { value: 'discover', icon: Users, label: 'Discover', route: '/dna/connect/discover' },
@@ -26,6 +27,10 @@ const Connect = () => {
   const { data: profile, isLoading } = useProfile();
   const { isMobile } = useMobile();
 
+  // Mobile header state
+  const [mobileSearchQuery, setMobileSearchQuery] = useState('');
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
+
   // Determine active tab from current path
   const getActiveTab = (): ConnectTab => {
     if (location.pathname.includes('/discover')) return 'discover';
@@ -35,6 +40,13 @@ const Connect = () => {
   };
 
   const activeTab = getActiveTab();
+
+  const handleMobileTabChange = (tab: ConnectTab) => {
+    const tabConfig = TAB_CONFIG.find(t => t.value === tab);
+    if (tabConfig) {
+      navigate(tabConfig.route);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -52,13 +64,22 @@ const Connect = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
+      {/* Mobile-only Compact Header */}
+      <ConnectMobileHeader
+        activeTab={activeTab}
+        onTabChange={handleMobileTabChange}
+        searchQuery={mobileSearchQuery}
+        onSearchChange={setMobileSearchQuery}
+        onFiltersClick={() => setShowMobileFilters(true)}
+      />
+
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 max-w-7xl">
         {/* Main layout with sidebar */}
         <div className="flex flex-col lg:flex-row lg:gap-8">
           {/* Main content area */}
           <div className="flex-1 min-w-0">
-            {/* Header with Profile Strength */}
-            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-6 lg:mb-8 gap-4">
+            {/* Header with Profile Strength - Desktop only */}
+            <div className="hidden md:flex flex-col lg:flex-row lg:items-start lg:justify-between mb-6 lg:mb-8 gap-4">
               <div className="flex-1 min-w-0">
                 <h1 className={`${TYPOGRAPHY.h1} mb-2`}>
                   Connect
@@ -73,8 +94,8 @@ const Connect = () => {
               </div>
             </div>
 
-            {/* Navigation Tabs - Feed-like layout with icon + text */}
-            <div className="mb-4">
+            {/* Navigation Tabs - Desktop only */}
+            <div className="hidden md:block mb-4">
               <div className="flex items-center justify-between gap-1 p-1 bg-muted/50 rounded-lg">
                 {TAB_CONFIG.map(({ value, icon: Icon, label, route }) => {
                   const isActive = activeTab === value;
@@ -101,12 +122,14 @@ const Connect = () => {
               </div>
             </div>
 
-            {/* Tab Explainer */}
-            <ConnectTabExplainer activeTab={activeTab} />
+            {/* Tab Explainer - Desktop only */}
+            <div className="hidden md:block">
+              <ConnectTabExplainer activeTab={activeTab} />
+            </div>
 
             {/* Tab Content */}
             <div>
-              <Outlet />
+              <Outlet context={{ mobileSearchQuery, showMobileFilters, setShowMobileFilters }} />
             </div>
           </div>
 
