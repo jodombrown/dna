@@ -6,7 +6,6 @@ import { AspirationMode } from '../shared/AspirationMode';
 import { NotifyMeModal } from '../shared/NotifyMeModal';
 import { HostApplicationModal } from '../shared/HostApplicationModal';
 import { ConveyIllustration } from '../shared/HubIllustrations';
-import { useHubMode } from '@/hooks/useHubMode';
 import { Bell, Pencil } from 'lucide-react';
 
 interface ConveyAspirationProps {
@@ -16,7 +15,6 @@ interface ConveyAspirationProps {
 export function ConveyAspiration({ earlyContent }: ConveyAspirationProps) {
   const [showNotifyModal, setShowNotifyModal] = useState(false);
   const [showHostModal, setShowHostModal] = useState(false);
-  const { contentCount, threshold, progress } = useHubMode('convey');
 
   const comingSoonFeatures = [
     'Long-form stories and essays',
