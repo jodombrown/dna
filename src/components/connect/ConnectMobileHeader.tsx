@@ -33,11 +33,11 @@ export function ConnectMobileHeader({
   const { isScrolled } = useScrollPosition(50);
 
   return (
-    <>
+    <div className="md:hidden">
       {/* Default Header - Hidden when scrolled */}
       <div
         className={cn(
-          'md:hidden transition-all duration-200 ease-out bg-background',
+          'transition-all duration-200 ease-out bg-background',
           isScrolled ? 'h-0 opacity-0 overflow-hidden' : 'opacity-100'
         )}
       >
@@ -96,7 +96,7 @@ export function ConnectMobileHeader({
       {/* Sticky Header - Shown when scrolled */}
       <div
         className={cn(
-          'md:hidden fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border shadow-sm transition-all duration-200 ease-out',
+          'fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border shadow-sm transition-all duration-200 ease-out',
           isScrolled
             ? 'translate-y-0 opacity-100'
             : '-translate-y-full opacity-0 pointer-events-none'
@@ -158,10 +158,10 @@ export function ConnectMobileHeader({
       {/* Spacer for sticky header */}
       <div
         className={cn(
-          'md:hidden transition-all duration-200',
+          'transition-all duration-200',
           isScrolled ? 'h-14' : 'h-0'
         )}
       />
-    </>
+    </div>
   );
 }
