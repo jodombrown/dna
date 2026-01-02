@@ -44,6 +44,8 @@ export function NotifyMeModal({
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [format, setFormat] = useState('');
   const [city, setCity] = useState('');
+  const [notifyByEmail, setNotifyByEmail] = useState(true);
+  const [notifyByDia, setNotifyByDia] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -66,6 +68,11 @@ export function NotifyMeModal({
       return;
     }
 
+    if (!notifyByEmail && !notifyByDia) {
+      toast.error('Please select at least one notification method');
+      return;
+    }
+
     setIsSubmitting(true);
 
     const result = await subscribeToHubNotifications({
@@ -75,7 +82,9 @@ export function NotifyMeModal({
       preferences: {
         interests: selectedInterests,
         format,
-        city: city || undefined
+        city: city || undefined,
+        notify_by_email: notifyByEmail,
+        notify_by_dia: notifyByDia
       }
     });
 
@@ -222,11 +231,36 @@ export function NotifyMeModal({
             </div>
           )}
 
+          {/* Notification Preferences */}
+          <div className="space-y-3 pt-4 border-t border-neutral-100">
+            <p className="text-sm font-medium text-neutral-700">How should we notify you?</p>
+
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={notifyByEmail}
+                onChange={(e) => setNotifyByEmail(e.target.checked)}
+                className="w-4 h-4 rounded border-neutral-300 text-dna-emerald focus:ring-dna-emerald"
+              />
+              <span className="text-sm text-neutral-600">Email notifications</span>
+            </label>
+
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={notifyByDia}
+                onChange={(e) => setNotifyByDia(e.target.checked)}
+                className="w-4 h-4 rounded border-neutral-300 text-dna-emerald focus:ring-dna-emerald"
+              />
+              <span className="text-sm text-neutral-600">In-app notifications from DIA</span>
+            </label>
+          </div>
+
           {/* Submit */}
           <Button
             type="submit"
             className="w-full bg-dna-emerald hover:bg-dna-emerald/90"
-            disabled={isSubmitting}
+            disabled={isSubmitting || (!notifyByEmail && !notifyByDia)}
           >
             {isSubmitting ? (
               <>

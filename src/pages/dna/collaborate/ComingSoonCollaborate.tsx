@@ -14,7 +14,7 @@ const features = [
   {
     icon: Target,
     title: 'Launch Projects',
-    description: 'Create projects with clear objectives, timelines, and role requirements—from feasibility studies to joint ventures.'
+    description: 'Create projects with clear objectives, timelines, and role requirements, from feasibility studies to joint ventures.'
   },
   {
     icon: Users,
@@ -24,7 +24,7 @@ const features = [
   {
     icon: Clock,
     title: 'Asynchronous-First',
-    description: 'Tools designed for teams spanning Accra, Atlanta, and Amsterdam—no synchronous coordination burdens.'
+    description: 'Tools designed for teams spanning Accra, Atlanta, and Amsterdam, with no synchronous coordination burdens.'
   },
   {
     icon: CheckCircle2,
@@ -72,7 +72,7 @@ export default function ComingSoonCollaborate() {
             </h1>
             
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Transform conversations into coordinated action. The infrastructure that turns good intentions into completed initiatives—for distributed teams spanning time zones, countries, and contexts.
+              Transform conversations into coordinated action. The infrastructure that turns good intentions into completed initiatives, for distributed teams spanning time zones, countries, and contexts.
             </p>
           </motion.div>
         </div>
@@ -156,7 +156,7 @@ export default function ComingSoonCollaborate() {
                 <div>
                   <h3 className="font-semibold text-foreground mb-2">For Contributors</h3>
                   <p className="text-sm text-muted-foreground">
-                    Discover projects seeking your specific skills and diaspora perspective. Contribute meaningfully without requiring full-time commitment—many diaspora members want to give back but have demanding primary careers. Collaborate enables structured contribution that respects your constraints while building a portfolio that demonstrates your capabilities and commitment.
+                    Discover projects seeking your specific skills and diaspora perspective. Contribute meaningfully without requiring full-time commitment. Many diaspora members want to give back but have demanding primary careers. Collaborate enables structured contribution that respects your constraints while building a portfolio that demonstrates your capabilities and commitment.
                   </p>
                 </div>
               </div>

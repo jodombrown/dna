@@ -108,7 +108,7 @@ const PlatformOverview = () => {
           </h2>
           <div className="prose prose-lg max-w-2xl mx-auto text-muted-foreground">
             <p className="text-lg leading-relaxed">
-              Because the African diaspora is powerful — but disconnected.
+              Because the African diaspora is powerful, but disconnected.
             </p>
             <p className="text-lg leading-relaxed">
               DNA reconnects us.<br />

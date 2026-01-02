@@ -14,7 +14,7 @@ const features = [
   {
     icon: DollarSign,
     title: 'Investment Opportunities',
-    description: 'Discover vetted investment opportunities aligned with your thesis—from startups to established ventures focused on African development.'
+    description: 'Discover vetted investment opportunities aligned with your thesis, from startups to established ventures focused on African development.'
   },
   {
     icon: Handshake,
@@ -29,7 +29,7 @@ const features = [
   {
     icon: Shield,
     title: 'Trust Infrastructure',
-    description: 'Transact with confidence—sellers are verified through DNA community engagement, project completion, and platform reputation.'
+    description: 'Transact with confidence. Sellers are verified through DNA community engagement, project completion, and platform reputation.'
   }
 ];
 
@@ -72,7 +72,7 @@ export default function ComingSoonContribute() {
             </h1>
             
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Exchange value through a purpose-driven marketplace. Infrastructure for the complex, trust-sensitive transactions the diaspora needs—investment, services, partnerships, and commerce designed for cross-border success.
+              Exchange value through a purpose-driven marketplace. Infrastructure for the complex, trust-sensitive transactions the diaspora needs: investment, services, partnerships, and commerce designed for cross-border success.
             </p>
           </motion.div>
         </div>
@@ -156,7 +156,7 @@ export default function ComingSoonContribute() {
                 <div>
                   <h3 className="font-semibold text-foreground mb-2">Your DNA Reputation Powers Trust</h3>
                   <p className="text-sm text-muted-foreground">
-                    Unlike anonymous marketplaces, your Contribute credibility is built on your entire DNA presence—your connections, event participation, project track record, and content engagement. This creates trust signals unavailable anywhere else, reducing friction for cross-border transactions that have historically been too risky or complicated.
+                    Unlike anonymous marketplaces, your Contribute credibility is built on your entire DNA presence: your connections, event participation, project track record, and content engagement. This creates trust signals unavailable anywhere else, reducing friction for cross-border transactions that have historically been too risky or complicated.
                   </p>
                 </div>
               </div>
@@ -185,7 +185,7 @@ export default function ComingSoonContribute() {
                   Build Your Reputation Now
                 </h3>
                 <p className="text-muted-foreground max-w-md mx-auto">
-                  Your activity during beta builds the credibility that will power your marketplace success. Connect, engage, and share—each action contributes to your DNA reputation.
+                  Your activity during beta builds the credibility that will power your marketplace success. Connect, engage, and share. Each action contributes to your DNA reputation.
                 </p>
               </div>
 

@@ -84,15 +84,15 @@ const FEEDBACK_HUB_TOUR_STEPS: TourStep[] = [
         <div className="space-y-2">
           <div className="flex items-center gap-2 p-2 rounded-md bg-muted/50">
             <span className="font-semibold">All</span>
-            <span className="text-muted-foreground">— See all community feedback</span>
+            <span className="text-muted-foreground">- See all community feedback</span>
           </div>
           <div className="flex items-center gap-2 p-2 rounded-md bg-muted/50">
             <span className="font-semibold">My Feedback</span>
-            <span className="text-muted-foreground">— Your submitted feedback</span>
+            <span className="text-muted-foreground">- Your submitted feedback</span>
           </div>
           <div className="flex items-center gap-2 p-2 rounded-md bg-muted/50">
             <span className="font-semibold">Pinned</span>
-            <span className="text-muted-foreground">— Important announcements</span>
+            <span className="text-muted-foreground">- Important announcements</span>
           </div>
         </div>
         <p className="text-muted-foreground">
@@ -136,16 +136,16 @@ const FEEDBACK_HUB_TOUR_STEPS: TourStep[] = [
         <p>Enhance your feedback with:</p>
         <ul className="list-disc pl-4 space-y-1">
           <li>
-            <b>Voice notes</b> — Record audio to explain in detail
+            <b>Voice notes</b> - Record audio to explain in detail
           </li>
           <li>
-            <b>Video recordings</b> — Show exactly what you're experiencing
+            <b>Video recordings</b> - Show exactly what you're experiencing
           </li>
           <li>
-            <b>Screenshots</b> — Attach images for visual context
+            <b>Screenshots</b> - Attach images for visual context
           </li>
           <li>
-            <b>Files</b> — Share relevant documents
+            <b>Files</b> - Share relevant documents
           </li>
         </ul>
         <p className="text-muted-foreground mt-2">
@@ -164,13 +164,13 @@ const FEEDBACK_HUB_TOUR_STEPS: TourStep[] = [
         <p>What happens to your feedback:</p>
         <ul className="list-disc pl-4 space-y-1">
           <li>
-            <b>Status updates</b> — Admins mark feedback as Open, In Progress, or Resolved
+            <b>Status updates</b> - Admins mark feedback as Open, In Progress, or Resolved
           </li>
           <li>
-            <b>Pinned messages</b> — Important updates get pinned for visibility
+            <b>Pinned messages</b> - Important updates get pinned for visibility
           </li>
           <li>
-            <b>Direct replies</b> — Team members respond with questions or updates
+            <b>Direct replies</b> - Team members respond with questions or updates
           </li>
         </ul>
         <p className="text-muted-foreground mt-3">

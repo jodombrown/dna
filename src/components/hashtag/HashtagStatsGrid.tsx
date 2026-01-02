@@ -62,7 +62,7 @@ export function HashtagStatsGrid({ postCount, followerCount, createdAt }: Hashta
       </div>
       <div className="text-center">
         <p className="text-lg sm:text-xl font-bold text-foreground">
-          {createdAt ? formatDate(createdAt) : '—'}
+          {createdAt ? formatDate(createdAt) : '-'}
         </p>
         <p className="text-xs text-muted-foreground">
           Created

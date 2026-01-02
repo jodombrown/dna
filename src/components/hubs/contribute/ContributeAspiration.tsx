@@ -32,7 +32,7 @@ export function ContributeAspiration({ earlyContent }: ContributeAspirationProps
         illustration={<ContributeIllustration className="w-full h-full" />}
         title="CONTRIBUTE"
         tagline="Give What You Have, Get What You Need"
-        description="The diaspora's power lies in what we can exchange — not just money, but time, knowledge, networks, and opportunities. DNA's marketplace connects those who can give with those who need, creating value that stays within our community."
+        description="The diaspora's power lies in what we can exchange: time, knowledge, networks, and opportunities. DNA's marketplace connects those who can give with those who need, creating value that stays within our community."
         primaryCTA={{
           label: 'Notify Me When Marketplace Opens',
           icon: <Bell className="w-4 h-4 mr-2" />,

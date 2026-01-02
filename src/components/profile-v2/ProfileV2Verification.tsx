@@ -31,7 +31,7 @@ const getVerificationConfig = (tier: string | undefined) => {
         bgColor: 'bg-primary/10',
         borderColor: 'border-primary/20',
         badgeColor: 'bg-primary/20 text-primary',
-        description: 'Profile complete — trusted DNA member',
+        description: 'Profile complete - trusted DNA member',
         showBadge: true,
       };
     default:

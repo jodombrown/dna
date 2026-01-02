@@ -129,7 +129,7 @@ const FeedSection = ({ type, feed, hubName }: any) => {
           </div>
         ) : (
           <div className="text-center py-12 text-gray-400">
-            No {type} items yet — be the first to add one!
+            No {type} items yet. Be the first to add one!
           </div>
         )}
       </div>

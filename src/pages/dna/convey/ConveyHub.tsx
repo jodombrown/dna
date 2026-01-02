@@ -53,7 +53,7 @@ export function ConveyHub() {
               subtitle: 'Story',
               date: story.created_at,
               image: story.image_url,
-              href: `/posts/${story.id}`
+              href: `/post/${story.id}`
             }))}
             hub="convey"
           />

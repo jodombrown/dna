@@ -140,7 +140,7 @@ const ProfileEditBasicInfo: React.FC<ProfileEditBasicInfoProps> = ({
             placeholder="Select your current country"
           />
           <p className="text-xs text-muted-foreground mt-1">
-            Where you currently live — helps connect you with nearby diaspora.
+            Where you currently live. Helps connect you with nearby diaspora.
           </p>
         </div>
 
@@ -152,7 +152,7 @@ const ProfileEditBasicInfo: React.FC<ProfileEditBasicInfoProps> = ({
             placeholder="Select your country of origin"
           />
           <p className="text-xs text-muted-foreground mt-1">
-            Your heritage country — this helps connect you with the diaspora community.
+            Your heritage country. This helps connect you with the diaspora community.
           </p>
         </div>
       </CardContent>

@@ -69,7 +69,7 @@ const ProfileEditDiaspora: React.FC<ProfileEditDiasporaProps> = ({
     <Card className="border-l-4 border-l-primary">
       <CardHeader>
         <CardTitle>My Connection to Africa</CardTitle>
-        <CardDescription>Whether diaspora, continental African, or ally—tell us how you connect</CardDescription>
+        <CardDescription>Whether diaspora, continental African, or ally, tell us how you connect</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Connection Type */}
