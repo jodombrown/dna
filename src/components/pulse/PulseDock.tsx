@@ -6,6 +6,7 @@
  * - Center-elevated Feed button
  * - Status indicators for Five C's
  * - Expandable tray via MORE button with Smart Dock pattern
+ * - Focus Mode integration for Five C's items
  *
  * Replaces MobileBottomNav with a Pulse-aware navigation system.
  */
@@ -20,6 +21,7 @@ import { useMobile } from '@/hooks/useMobile';
 import { useAuth } from '@/contexts/AuthContext';
 import { PulseDockItem } from './PulseDockItem';
 import { PulseDockTray } from './PulseDockTray';
+import { useFocusMode, type FocusModule } from '@/hooks/useFocusMode';
 
 interface PrimaryItemBase {
   key: string;
@@ -38,6 +40,9 @@ const PRIMARY_ITEMS: PrimaryItemBase[] = [
   { key: 'more', label: 'More', icon: Grid3X3, href: null, isTrigger: true },
 ];
 
+// Items that should open Focus Mode instead of navigating
+const FOCUS_MODE_ITEMS = ['connect', 'convene', 'collaborate'];
+
 export function PulseDock() {
   const { isMobile } = useMobile();
   const { user } = useAuth();
@@ -45,6 +50,7 @@ export function PulseDock() {
   const pulseNav = usePulseNavigation();
   const location = useLocation();
   const navigate = useNavigate();
+  const { toggleFocus, activeModule, isOpen } = useFocusMode();
 
   // Only render on mobile and for authenticated users
   if (!isMobile || !user) return null;
@@ -52,12 +58,19 @@ export function PulseDock() {
   const handleItemClick = (item: PrimaryItemBase) => {
     if (item.isTrigger) {
       setTrayOpen(true);
+    } else if (FOCUS_MODE_ITEMS.includes(item.key)) {
+      // Open Focus Mode for Connect, Convene, Collaborate
+      toggleFocus(item.key as FocusModule);
     } else if (item.href) {
       navigate(item.href);
     }
   };
 
-  const isActive = (href: string | null) => {
+  const isActive = (href: string | null, itemKey?: string) => {
+    // Check if focus mode is open for this item
+    if (itemKey && FOCUS_MODE_ITEMS.includes(itemKey) && isOpen && activeModule === itemKey) {
+      return true;
+    }
     if (!href) return false;
     return location.pathname.startsWith(href);
   };
@@ -95,7 +108,7 @@ export function PulseDock() {
               key={item.key}
               item={item}
               pulseData={getPulseData(item)}
-              isActive={item.isTrigger ? trayOpen : isActive(item.href)}
+              isActive={item.isTrigger ? trayOpen : isActive(item.href, item.key)}
               onClick={() => handleItemClick(item)}
             />
           ))}

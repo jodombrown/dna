@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ViewStateProvider } from "@/contexts/ViewStateContext";
 import { MessageProvider } from "@/contexts/MessageContext";
 import { AccountDrawerProvider } from "@/contexts/AccountDrawerContext";
+import { FocusModeProvider } from "@/contexts/FocusModeContext";
 import { HelmetProvider } from 'react-helmet-async';
 import BadgeToastListener from '@/components/notifications/BadgeToastListener';
 import BaseLayout from "@/layouts/BaseLayout";
@@ -254,8 +255,9 @@ function App() {
               <AuthProvider>
                 <AccountDrawerProvider>
                   <ViewStateProvider>
-                    <MessageProvider>
-                      <BaseLayout>
+                    <FocusModeProvider>
+                      <MessageProvider>
+                        <BaseLayout>
                         <Suspense fallback={<PageLoader />}>
                           <Routes>
               {/* Legacy /u/:username and /dna/u/:username redirect to canonical profile URL */}
@@ -722,9 +724,10 @@ function App() {
               <Route path="*" element={<NotFound />} />
                 </Routes>
                   </Suspense>
-                <BadgeToastListener />
-              </BaseLayout>
-                </MessageProvider>
+                  <BadgeToastListener />
+                </BaseLayout>
+                  </MessageProvider>
+                </FocusModeProvider>
               </ViewStateProvider>
               </AccountDrawerProvider>
             </AuthProvider>
