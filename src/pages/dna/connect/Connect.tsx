@@ -30,6 +30,7 @@ const Connect = () => {
   // Mobile header state
   const [mobileSearchQuery, setMobileSearchQuery] = useState('');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [activeFilterCount, setActiveFilterCount] = useState(0);
 
   // Determine active tab from current path
   const getActiveTab = (): ConnectTab => {
@@ -71,7 +72,7 @@ const Connect = () => {
         searchQuery={mobileSearchQuery}
         onSearchChange={setMobileSearchQuery}
         onFiltersClick={() => setShowMobileFilters(true)}
-        activeFilterCount={0}
+        activeFilterCount={activeFilterCount}
       />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 max-w-7xl">
@@ -130,7 +131,7 @@ const Connect = () => {
 
             {/* Tab Content */}
             <div>
-              <Outlet context={{ mobileSearchQuery, showMobileFilters, setShowMobileFilters }} />
+              <Outlet context={{ mobileSearchQuery, showMobileFilters, setShowMobileFilters, setActiveFilterCount }} />
             </div>
           </div>
 

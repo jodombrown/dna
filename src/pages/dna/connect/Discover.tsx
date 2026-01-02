@@ -27,6 +27,7 @@ interface DiscoverOutletContext {
   mobileSearchQuery: string;
   showMobileFilters: boolean;
   setShowMobileFilters: (show: boolean) => void;
+  setActiveFilterCount: (count: number) => void;
 }
 
 // Animation variants for staggered cards
@@ -101,6 +102,19 @@ export default function Discover() {
     if (filters.skills?.length) count += filters.skills.length;
     return count;
   }, [filters]);
+
+  // Sync filter count to parent header on mobile
+  useEffect(() => {
+    if (isMobile && context?.setActiveFilterCount) {
+      context.setActiveFilterCount(activeFilterCount);
+    }
+    // Reset filter count when unmounting (switching tabs)
+    return () => {
+      if (context?.setActiveFilterCount) {
+        context.setActiveFilterCount(0);
+      }
+    };
+  }, [activeFilterCount, isMobile, context]);
 
   useEffect(() => {
     if (user) {
