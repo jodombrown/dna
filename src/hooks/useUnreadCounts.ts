@@ -32,7 +32,7 @@ export function useUnreadCounts(): UnreadCounts {
     queryFn: async () => {
       if (!user?.id) return 0;
 
-      const { count, error } = await supabase
+      const { count, error } = await (supabase as any)
         .from('messages')
         .select('*', { count: 'exact', head: true })
         .eq('recipient_id', user.id)
