@@ -18,6 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useProfile } from '@/hooks/useProfile';
+import { ProfileV2VerificationMeta } from '@/types/profileV2';
 
 // Profile v2 Components
 import ProfileV2Hero from '@/components/profile-v2/ProfileV2Hero';
@@ -42,6 +43,9 @@ import { PublicProfileSEO } from '@/components/public-profile';
 
 // Profile view tracking
 import { useTrackProfileView } from '@/hooks/useTrackProfileView';
+
+// Profile completion calculation
+import { calculateProfileCompletionPts } from '@/lib/profileCompletion';
 
 const ProfileV2: React.FC = () => {
   const { username } = useParams<{ username: string }>();
@@ -168,9 +172,31 @@ const ProfileV2: React.FC = () => {
   
   // Ensure completion and verification_meta have defaults
   const completion = bundle.completion ?? { score: 0, suggested_actions: [] };
-  const verification_meta = bundle.verification_meta ?? { tier: 'pending' };
-
+  
+  // Derive verification tier from canonical profile completion score
+  // This ensures the Verification widget is always in sync with the Profile Strength widget
   const profileForCompletion = permissions.is_owner && ownerProfile ? ownerProfile : profile;
+  const completionScore = calculateProfileCompletionPts(profileForCompletion);
+  
+  // Build verification_meta from actual completion score
+  // - 100 pts = soft_verified (auto-verified via profile completion)
+  // - <100 pts = pending
+  // - profile.verification_status can override to 'full' if admin-verified
+  const derivedVerificationTier = ((): 'pending' | 'soft' | 'full' => {
+    const dbStatus = profile?.verification_status;
+    if (dbStatus === 'fully_verified') return 'full';
+    if (completionScore >= 100) return 'soft';
+    return 'pending';
+  })();
+  
+  const verification_meta: ProfileV2VerificationMeta = {
+    tier: derivedVerificationTier,
+    status: derivedVerificationTier === 'full' ? 'fully_verified' : derivedVerificationTier === 'soft' ? 'soft_verified' : 'pending_verification',
+    updated_at: profile?.created_at || null,
+    improvement_suggestions: completionScore < 100 
+      ? ['Complete your profile to 100% to unlock soft verification']
+      : [],
+  };
 
   // Check if this is a private profile (all main sections hidden for non-owner)
   const isPrivateProfile = !permissions.is_owner &&
