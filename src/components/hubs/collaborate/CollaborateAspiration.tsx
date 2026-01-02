@@ -6,7 +6,6 @@ import { AspirationMode } from '../shared/AspirationMode';
 import { NotifyMeModal } from '../shared/NotifyMeModal';
 import { HostApplicationModal } from '../shared/HostApplicationModal';
 import { CollaborateIllustration } from '../shared/HubIllustrations';
-import { useHubMode } from '@/hooks/useHubMode';
 import { Bell, Rocket } from 'lucide-react';
 
 interface CollaborateAspirationProps {
@@ -16,7 +15,6 @@ interface CollaborateAspirationProps {
 export function CollaborateAspiration({ earlyContent }: CollaborateAspirationProps) {
   const [showNotifyModal, setShowNotifyModal] = useState(false);
   const [showHostModal, setShowHostModal] = useState(false);
-  const { contentCount, threshold, progress } = useHubMode('collaborate');
 
   const comingSoonFeatures = [
     'Startup co-founder matching',
