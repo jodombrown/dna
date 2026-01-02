@@ -5,17 +5,19 @@ import { ConnectionRequestCard } from '@/components/connect/ConnectionRequestCar
 import { SentRequestCard } from '@/components/network/SentRequestCard';
 import { ConnectionCard } from '@/components/connect/ConnectionCard';
 import { MemberCard } from '@/components/connect/MemberCard';
+import { ZeroConnectionsState } from '@/components/hubs/connect';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, Users, UserPlus, UserCheck, Search, SlidersHorizontal } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
 export default function Network() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'requests');
   const [requests, setRequests] = useState<any[]>([]);
@@ -289,10 +291,10 @@ export default function Network() {
               {loading.connections ? (
                 <Loader2 className="h-8 w-8 animate-spin mx-auto" />
               ) : connections.length === 0 ? (
-                <Alert>
-                  <UserCheck className="h-4 w-4" />
-                  <AlertDescription>No connections yet.</AlertDescription>
-                </Alert>
+                <ZeroConnectionsState
+                  suggestions={suggestions}
+                  onDiscoverClick={() => navigate('/dna/connect/discover')}
+                />
               ) : filteredConnections.length === 0 ? (
                 <Alert>
                   <Search className="h-4 w-4" />
