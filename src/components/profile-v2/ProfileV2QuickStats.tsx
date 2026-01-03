@@ -9,6 +9,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Users, BookOpen, Calendar, Layers } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface QuickStatProps {
   icon: React.ElementType;
@@ -16,6 +22,7 @@ interface QuickStatProps {
   count: number;
   onClick: () => void;
   color?: string;
+  tooltip?: string;
 }
 
 const QuickStat: React.FC<QuickStatProps> = ({
@@ -24,29 +31,43 @@ const QuickStat: React.FC<QuickStatProps> = ({
   count,
   onClick,
   color = 'text-primary',
-}) => (
-  <button
-    onClick={onClick}
-    className={cn(
-      "flex flex-col items-center gap-1 p-2 sm:p-3 rounded-lg",
-      "bg-secondary/50 hover:bg-secondary transition-colors",
-      "flex-1 min-w-0 cursor-pointer group"
-    )}
-  >
-    <div className="flex items-center gap-1.5">
-      <Icon className={cn("w-4 h-4", color, "group-hover:scale-110 transition-transform")} />
-      <span className={cn(
-        "text-lg sm:text-xl font-bold text-foreground",
-        "group-hover:text-primary transition-colors"
-      )}>
-        {count}
+  tooltip,
+}) => {
+  const content = (
+    <button
+      onClick={onClick}
+      className={cn(
+        "flex flex-col items-center gap-1 p-2 sm:p-3 rounded-lg",
+        "bg-secondary/50 hover:bg-secondary transition-colors",
+        "flex-1 min-w-0 cursor-pointer group"
+      )}
+    >
+      <div className="flex items-center gap-1.5">
+        <Icon className={cn("w-4 h-4", color, "group-hover:scale-110 transition-transform")} />
+        <span className={cn(
+          "text-lg sm:text-xl font-bold text-foreground",
+          "group-hover:text-primary transition-colors"
+        )}>
+          {count}
+        </span>
+      </div>
+      <span className="text-[10px] sm:text-xs text-muted-foreground truncate w-full text-center">
+        {label}
       </span>
-    </div>
-    <span className="text-[10px] sm:text-xs text-muted-foreground truncate w-full text-center">
-      {label}
-    </span>
-  </button>
-);
+    </button>
+  );
+
+  if (!tooltip) return content;
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{content}</TooltipTrigger>
+      <TooltipContent side="bottom" className="max-w-[200px] text-center">
+        <p className="text-xs">{tooltip}</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+};
 
 interface ProfileV2QuickStatsProps {
   activity: {
@@ -75,6 +96,7 @@ const ProfileV2QuickStats: React.FC<ProfileV2QuickStatsProps> = ({
         ? navigate(`/dna/${username}?tab=connections`)
         : navigate('/dna/connect'),
       color: 'text-blue-500',
+      tooltip: "Total connections in this member's network",
     },
     {
       icon: BookOpen,
@@ -100,22 +122,25 @@ const ProfileV2QuickStats: React.FC<ProfileV2QuickStatsProps> = ({
   ];
 
   return (
-    <Card className="overflow-hidden border-border/50">
-      <CardContent className="p-3 sm:p-4">
-        <div className="flex gap-2">
-          {stats.map((stat) => (
-            <QuickStat
-              key={stat.label}
-              icon={stat.icon}
-              label={stat.label}
-              count={stat.count}
-              onClick={stat.onClick}
-              color={stat.color}
-            />
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+    <TooltipProvider>
+      <Card className="overflow-hidden border-border/50">
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex gap-2">
+            {stats.map((stat) => (
+              <QuickStat
+                key={stat.label}
+                icon={stat.icon}
+                label={stat.label}
+                count={stat.count}
+                onClick={stat.onClick}
+                color={stat.color}
+                tooltip={stat.tooltip}
+              />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </TooltipProvider>
   );
 };
 

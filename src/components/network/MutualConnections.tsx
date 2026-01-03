@@ -57,9 +57,16 @@ const MutualConnections: React.FC<MutualConnectionsProps> = ({
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm text-muted-foreground">
-        {mutualConnections.length} mutual {mutualConnections.length === 1 ? 'connection' : 'connections'}
-      </span>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="text-sm text-muted-foreground cursor-help">
+            {mutualConnections.length} mutual {mutualConnections.length === 1 ? 'connection' : 'connections'}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="max-w-[220px] text-center">
+          <p className="text-xs">People you both know — connections you share in common</p>
+        </TooltipContent>
+      </Tooltip>
       <TooltipProvider>
         <div className="flex -space-x-2">
           {displayedConnections.map((connection) => (
