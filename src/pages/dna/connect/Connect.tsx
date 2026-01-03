@@ -65,17 +65,35 @@ const Connect = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
-      {/* Mobile-only Compact Header */}
-      <ConnectMobileHeader
-        activeTab={activeTab}
-        onTabChange={handleMobileTabChange}
-        searchQuery={mobileSearchQuery}
-        onSearchChange={setMobileSearchQuery}
-        onFiltersClick={() => setShowMobileFilters(true)}
-        activeFilterCount={mobileActiveFilterCount}
-      />
+      {/* Hide BaseLayout's UnifiedHeader for mobile connect - matches Feed pattern */}
+      <style>{`
+        body:has([data-mobile-connect="true"]) header[data-unified-header] {
+          display: none !important;
+        }
+        body:has([data-mobile-connect="true"]) > div > div {
+          padding-top: 0 !important;
+        }
+      `}</style>
+      
+      {/* Mobile-only Fixed Header + Tabs Container - matches Feed architecture */}
+      {isMobile && (
+        <div className="fixed top-0 left-0 right-0 z-40 bg-background" data-mobile-connect="true">
+          <ConnectMobileHeader
+            activeTab={activeTab}
+            onTabChange={handleMobileTabChange}
+            searchQuery={mobileSearchQuery}
+            onSearchChange={setMobileSearchQuery}
+            onFiltersClick={() => setShowMobileFilters(true)}
+            activeFilterCount={mobileActiveFilterCount}
+          />
+        </div>
+      )}
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 max-w-7xl">
+      {/* Add top padding to account for fixed header height on mobile */}
+      <div className={cn(
+        "container mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 max-w-7xl",
+        isMobile && "pt-[8rem]" // Account for fixed header + tabs
+      )}>
         {/* Main layout with sidebar */}
         <div className="flex flex-col lg:flex-row lg:gap-8">
           {/* Main content area */}

@@ -42,8 +42,8 @@ export function ConnectMobileHeader({
 
   return (
     <div className="md:hidden">
-      {/* Single Header Row: DNA Logo + Search (with filter) + Notification + Avatar */}
-      <div className="flex items-center h-14 px-3 gap-2 bg-background border-b border-border">
+      {/* Header Row: DNA Logo + Search (with filter) + Notification + Avatar */}
+      <div className="flex items-center h-14 px-3 gap-2 bg-background border-b-0">
         {/* DNA Logo */}
         <img 
           src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
@@ -93,8 +93,8 @@ export function ConnectMobileHeader({
         </div>
       </div>
 
-      {/* Sticky Tab Bar - Matches Feed tab styling */}
-      <div className="sticky top-0 z-40 px-3 py-2 bg-background/95 backdrop-blur-sm border-b border-border">
+      {/* Tab Bar - Matches Feed tab styling (no sticky needed, parent is fixed) */}
+      <div className="px-3 py-2 bg-background border-b border-border">
         <div className="flex items-center justify-between gap-1 p-1 bg-muted/50 rounded-lg">
           {TAB_CONFIG.map(({ value, icon: Icon, label }) => {
             const isActive = activeTab === value;
