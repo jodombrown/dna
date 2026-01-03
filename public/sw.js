@@ -1,8 +1,10 @@
 // DNA Platform Service Worker
 // Provides offline support and caching strategies
 
-const CACHE_NAME = 'dna-cache-v1';
-const RUNTIME_CACHE = 'dna-runtime-v1';
+// Cache version - increment this to force cache refresh on deploy
+const CACHE_VERSION = '2';
+const CACHE_NAME = `dna-cache-v${CACHE_VERSION}`;
+const RUNTIME_CACHE = `dna-runtime-v${CACHE_VERSION}`;
 
 // Static assets to cache on install
 const STATIC_ASSETS = [
@@ -184,7 +186,7 @@ async function staleWhileRevalidate(request) {
   return cachedResponse || fetchPromise;
 }
 
-// Message event - handle skip waiting
+// Message event - handle skip waiting and cache clearing
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
@@ -192,6 +194,31 @@ self.addEventListener('message', (event) => {
 
   if (event.data && event.data.type === 'GET_VERSION') {
     event.ports[0].postMessage({ version: CACHE_NAME });
+  }
+
+  // Clear all caches and reload
+  if (event.data && event.data.type === 'CLEAR_CACHE') {
+    event.waitUntil(
+      caches.keys()
+        .then((cacheNames) => {
+          return Promise.all(
+            cacheNames.map((cacheName) => {
+              console.log('[SW] Force clearing cache:', cacheName);
+              return caches.delete(cacheName);
+            })
+          );
+        })
+        .then(() => {
+          console.log('[SW] All caches cleared');
+          // Notify all clients to reload
+          return self.clients.matchAll();
+        })
+        .then((clients) => {
+          clients.forEach((client) => {
+            client.postMessage({ type: 'CACHE_CLEARED' });
+          });
+        })
+    );
   }
 });
 
