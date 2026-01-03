@@ -1,9 +1,15 @@
 import React from 'react';
-import { Users, Network, MessageCircle, Search, SlidersHorizontal } from 'lucide-react';
+import { Users, Network, MessageCircle, SlidersHorizontal } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useScrollPosition } from '@/hooks/useScrollPosition';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
+import { useAuth } from '@/contexts/AuthContext';
+import { useProfile } from '@/hooks/useProfile';
+import { useAccountDrawer } from '@/contexts/AccountDrawerContext';
 
 export type ConnectTab = 'discover' | 'network' | 'messages';
 
@@ -30,7 +36,11 @@ export function ConnectMobileHeader({
   onFiltersClick,
   activeFilterCount = 0,
 }: ConnectMobileHeaderProps) {
+  const navigate = useNavigate();
   const { isScrolled } = useScrollPosition(50);
+  const { user } = useAuth();
+  const { data: profile } = useProfile();
+  const { open: openAccountDrawer } = useAccountDrawer();
 
   return (
     <div className="md:hidden">
@@ -41,8 +51,59 @@ export function ConnectMobileHeader({
           isScrolled ? 'h-0 opacity-0 overflow-hidden' : 'opacity-100'
         )}
       >
-        {/* Tab Bar with Icon + Text */}
-        <div className="flex border-b border-border">
+        {/* Top Row: DNA Logo + Search + Notification + Avatar (Feed-style) */}
+        <div className="flex items-center justify-between h-14 px-3 gap-2 border-b border-border">
+          {/* DNA Logo */}
+          <img 
+            src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
+            alt="DNA" 
+            className="h-8 w-auto cursor-pointer flex-shrink-0"
+            width={57}
+            height={32}
+            onClick={() => navigate('/dna/feed')}
+          />
+
+          {/* Search Input styled like composer bubble */}
+          <div className="flex-1 relative">
+            <Input
+              type="text"
+              placeholder="Search members..."
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="h-9 rounded-full bg-muted border-0 pl-4 pr-10 text-sm"
+            />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onFiltersClick}
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0"
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              {activeFilterCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary text-primary-foreground text-[10px] flex items-center justify-center font-medium">
+                  {activeFilterCount}
+                </span>
+              )}
+            </Button>
+          </div>
+
+          {/* Right: Notification + Profile */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <NotificationBell />
+            {user && profile && (
+              <Avatar 
+                className="h-8 w-8 cursor-pointer" 
+                onClick={openAccountDrawer}
+              >
+                <AvatarImage src={profile.avatar_url || ''} />
+                <AvatarFallback>{profile.display_name?.[0] || profile.username?.[0] || 'U'}</AvatarFallback>
+              </Avatar>
+            )}
+          </div>
+        </div>
+
+        {/* Tab Bar: Horizontal pills like Feed filter row */}
+        <div className="flex items-center gap-1 px-3 py-2 bg-muted/30">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -51,45 +112,17 @@ export function ConnectMobileHeader({
                 key={tab.id}
                 onClick={() => onTabChange(tab.id)}
                 className={cn(
-                  'flex-1 flex flex-col items-center justify-center py-3 gap-1 transition-colors',
+                  'flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all',
                   isActive
-                    ? 'text-primary border-b-2 border-primary bg-primary/5'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                    ? 'bg-background shadow-sm text-foreground border border-border'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
                 )}
               >
-                <Icon className="w-5 h-5" />
-                <span className="text-xs font-medium">{tab.label}</span>
+                <Icon className="w-4 h-4" />
+                <span>{tab.label}</span>
               </button>
             );
           })}
-        </div>
-
-        {/* Search Row */}
-        <div className="flex items-center gap-2 p-3 bg-muted/30">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search members..."
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-9 h-10 bg-background border-border"
-            />
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onFiltersClick}
-            className="h-10 px-3 border-border relative"
-          >
-            <SlidersHorizontal className="w-4 h-4 mr-1.5" />
-            Filters
-            {activeFilterCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-medium">
-                {activeFilterCount}
-              </span>
-            )}
-          </Button>
         </div>
       </div>
 
@@ -128,13 +161,12 @@ export function ConnectMobileHeader({
 
           {/* Compact Search */}
           <div className="flex-1 relative min-w-0">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
             <Input
               type="text"
               placeholder="Search..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-8 h-8 text-sm bg-muted/50 border-border"
+              className="h-8 text-sm bg-muted/50 border-border rounded-full pl-3 pr-8"
             />
           </div>
 
