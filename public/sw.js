@@ -1,20 +1,26 @@
 // DNA Platform Service Worker
 // Provides offline support and caching strategies
+// 
+// AUTOMATIC CACHE BUSTING: Vite adds unique hashes to JS/CSS bundles on every build.
+// We always fetch fresh HTML (network-first) which references the new hashed assets.
+// This means users AUTOMATICALLY get the latest version on their next visit.
 
-// Cache version - increment this to force cache refresh on deploy
-const CACHE_VERSION = '2';
-const CACHE_NAME = `dna-cache-v${CACHE_VERSION}`;
-const RUNTIME_CACHE = `dna-runtime-v${CACHE_VERSION}`;
+const CACHE_NAME = 'dna-cache-v3';
+const RUNTIME_CACHE = 'dna-runtime-v3';
 
-// Static assets to cache on install
+// Static assets to cache on install (excluding index.html - always fetch fresh)
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
   '/manifest.json',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
   '/icons/apple-touch-icon.png',
   '/favicon.ico',
+];
+
+// Always fetch fresh (network-first) - critical for automatic updates
+const ALWAYS_FRESH_PATTERNS = [
+  /\/index\.html$/,
+  /\/$/,  // Root path
 ];
 
 // Cache-first patterns (for static assets)
@@ -101,9 +107,10 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Use cache-first for static assets
-  if (matchesPattern(url, CACHE_FIRST_PATTERNS)) {
-    event.respondWith(cacheFirst(request));
+  // ALWAYS fetch fresh for HTML and root - this enables automatic updates!
+  // Vite-hashed assets will be new on each build, so fresh HTML = fresh app
+  if (matchesPattern(url, ALWAYS_FRESH_PATTERNS) || request.mode === 'navigate') {
+    event.respondWith(networkFirst(request));
     return;
   }
 
@@ -113,9 +120,9 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Default: stale-while-revalidate for navigation
-  if (request.mode === 'navigate') {
-    event.respondWith(staleWhileRevalidate(request));
+  // Use cache-first for static assets (with Vite hashes, these are unique per build)
+  if (matchesPattern(url, CACHE_FIRST_PATTERNS)) {
+    event.respondWith(cacheFirst(request));
     return;
   }
 
