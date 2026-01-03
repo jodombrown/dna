@@ -150,13 +150,7 @@ const Connect = () => {
         </div>
       </div>
 
-      {/* Mobile: Floating DIA button */}
-      {isMobile && (
-        <DiaContextual
-          pillar="connect"
-          floatingButton
-        />
-      )}
+      {/* DIA floating button removed - feature not fully functional */}
 
       <MobileBottomNav />
     </div>
