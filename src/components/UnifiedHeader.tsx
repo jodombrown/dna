@@ -53,13 +53,21 @@ import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import { publicNavItems, phases, aboutUsDropdown } from './header/navigationConfig';
 import { useUnreadMessageCount } from '@/hooks/useUnreadMessageCount';
 import { useUnreadNotificationCount } from '@/hooks/useUnreadNotificationCount';
+import { useMobile } from '@/hooks/useMobile';
 
 const UnifiedHeader = () => {
   const { user, profile, signOut, loading } = useAuth();
   const { open: openAccountDrawer } = useAccountDrawer();
+  const { isMobile } = useMobile();
   
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Hide UnifiedHeader on mobile for Connect routes (has its own header)
+  const isConnectRoute = location.pathname.includes('/dna/connect');
+  if (isMobile && isConnectRoute) {
+    return null;
+  }
   
   // Conditionally use dashboard context only for authenticated users
   let setActiveView: any = () => {};
