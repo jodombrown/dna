@@ -8,6 +8,8 @@ import { MessageCircle, Globe, Users, Repeat2, Heart, Bookmark } from 'lucide-re
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { useMobile } from '@/hooks/useMobile';
+import { getPostTypeStyles, PostType as BevelPostType } from '@/lib/dna/postTypeColors';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
@@ -226,8 +228,29 @@ export function PostCard({
 
   const isRepost = !!post.original_post_id;
 
+  // Get bevel color based on post type
+  const getBevelType = (): BevelPostType => {
+    if (isRepost) return 'connection';
+    if (post.post_type === 'article') return 'story';
+    if (post.post_type === 'opportunity') return 'opportunity';
+    if (post.post_type === 'spotlight') return 'story';
+    return 'post';
+  };
+  
+  const { isMobile } = useMobile();
+  const bevelStyles = getPostTypeStyles(getBevelType());
+
   return (
-    <Card ref={viewTrackerRef} className="p-6 border-2 border-dna-emerald/40 rounded-xl shadow-[0_2px_12px_-2px_hsl(var(--dna-emerald)/0.15)]">
+    <Card 
+      ref={viewTrackerRef} 
+      className={cn(
+        // Desktop: standard card with shadows
+        "md:p-6 md:border-2 md:border-dna-emerald/40 md:rounded-xl md:shadow-[0_2px_12px_-2px_hsl(var(--dna-emerald)/0.15)]",
+        // Mobile: edge-to-edge with left bevel
+        "p-4 rounded-none border-0 border-l-4 border-b border-border",
+        isMobile && bevelStyles.border
+      )}
+    >
       {/* Repost indicator */}
       {isRepost && (
         <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">

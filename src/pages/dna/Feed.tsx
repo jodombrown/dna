@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useNavigate } from 'react-router-dom';
-import { PenSquare, Sparkles, Users, Newspaper, Settings, TrendingUp, Search, Bookmark } from 'lucide-react';
+import { PenSquare, Sparkles, Users, Newspaper, TrendingUp, Search } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
@@ -21,12 +21,11 @@ import { MobileProfileCompletionBanner } from '@/components/feed/MobileProfileCo
 import { FirstTimeWalkthrough } from '@/components/onboarding/FirstTimeWalkthrough';
 import { FeedTab, RankingMode } from '@/types/feed';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
-import { MobileViewContainer } from '@/components/mobile/MobileViewContainer';
-import { MobileHeader } from '@/components/mobile/MobileHeader';
 import { useQueryClient } from '@tanstack/react-query';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { useMobile } from '@/hooks/useMobile';
+import { MobileFeedHeader } from '@/components/layout/MobileFeedHeader';
 
 const DnaFeed = () => {
   const { user } = useAuth();
@@ -220,7 +219,7 @@ const DnaFeed = () => {
     />
   );
 
-  // Mobile layout with custom header - hide UnifiedHeader
+  // Mobile layout with new collapsing header
   if (isMobile) {
     return (
       <>
@@ -237,53 +236,59 @@ const DnaFeed = () => {
           }
         `}</style>
         <div className="min-h-screen bg-background" data-mobile-feed="true">
-          {/* Fixed header + profile banner + tabs container (mobile feed only) */}
-          <div className="fixed top-0 left-0 right-0 z-40 bg-background">
-            <MobileHeader
-              variant="feed"
-              showSearch={true}
-              onSearchClick={() => setShowSearchDialog(true)}
-              onComposerClick={() => composer.open('post')}
-              className="border-b-0"
-            />
-            {/* Profile completion banner - above tabs */}
-            <MobileProfileCompletionBanner threshold={100} />
-            <div className="px-3 pb-2 pt-1 overflow-x-auto border-b border-border">
+          {/* New Collapsing Mobile Header */}
+          <MobileFeedHeader
+            onComposerOpen={() => composer.open('post')}
+            onSearchOpen={() => setShowSearchDialog(true)}
+          />
+          
+          {/* Profile completion banner */}
+          <MobileProfileCompletionBanner threshold={100} />
+          
+          {/* Feed Tabs - sticky below header */}
+          <div className="sticky top-14 z-30 bg-background border-b border-border">
+            <div className="px-3 py-2 overflow-x-auto">
               <MobileFeedTabs activeTab={activeTab} onTabChange={setActiveTab} />
             </div>
           </div>
 
-          {/* Add top padding to account for fixed header height */}
-          <main className="pb-16 px-3 pt-[9rem] space-y-2">
-            {/* Tab Explainer - shows once per day/login per tab */}
-            <FeedTabExplainer activeTab={activeTab} />
+          {/* Main Content - edge-to-edge cards */}
+          <main className="pb-20">
+            {/* Tab Explainer */}
+            <div className="px-3 py-2">
+              <FeedTabExplainer activeTab={activeTab} />
+            </div>
             
-            {activeTab === 'for_you' ? (
-              <PersonalizedFeed />
-            ) : (
-              <UniversalFeedInfinite
-                viewerId={user.id}
-                tab={activeTab}
-                rankingMode={rankingMode}
-                emptyMessage={
-                  activeTab === 'my_posts'
-                    ? "You haven't posted anything yet"
-                    : activeTab === 'network'
-                    ? "Your connections haven't posted yet"
-                    : 'No posts to show'
-                }
-                emptyAction={
-                  <Button
-                    onClick={() => composer.open('post')}
-                    className="bg-dna-emerald hover:bg-dna-emerald/90 text-white mt-4"
-                  >
-                    <PenSquare className="h-4 w-4 mr-2" />
-                    Create Your First Post
-                  </Button>
-                }
-              />
-            )}
+            {/* Feed - no horizontal padding for edge-to-edge cards */}
+            <div className="space-y-2">
+              {activeTab === 'for_you' ? (
+                <PersonalizedFeed />
+              ) : (
+                <UniversalFeedInfinite
+                  viewerId={user.id}
+                  tab={activeTab}
+                  rankingMode={rankingMode}
+                  emptyMessage={
+                    activeTab === 'my_posts'
+                      ? "You haven't posted anything yet"
+                      : activeTab === 'network'
+                      ? "Your connections haven't posted yet"
+                      : 'No posts to show'
+                  }
+                  emptyAction={
+                    <Button
+                      onClick={() => composer.open('post')}
+                      className="bg-dna-emerald hover:bg-dna-emerald/90 text-white mt-4"
+                    >
+                      <PenSquare className="h-4 w-4 mr-2" />
+                      Create Your First Post
+                    </Button>
+                  }
+                />
+              )}
+            </div>
           </main>
+          
           <MobileBottomNav />
           <UniversalComposer
             isOpen={composer.isOpen}
