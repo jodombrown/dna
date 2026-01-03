@@ -136,6 +136,7 @@ const StoryDetail = lazy(() => import("./pages/dna/convey/StoryDetail"));
 const FeedStoryDetail = lazy(() => import("./pages/dna/FeedStoryDetail"));
 const CreateStory = lazy(() => import("./pages/dna/convey/CreateStory"));
 const ConveyAnalytics = lazy(() => import("./pages/dna/admin/ConveyAnalytics"));
+const UserAdminHub = lazy(() => import("./pages/dna/admin/UserAdminHub"));
 
 // Feature pages
 const Opportunities = lazy(() => import("./pages/Opportunities"));
@@ -272,6 +273,13 @@ function App() {
               {/* Onboarding & Welcome - NOT wrapped with OnboardingGuard */}
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/dna/welcome" element={<Welcome />} />
+              
+              {/* User Admin Hub - personal management for all Five C's */}
+              <Route path="/dna/admin" element={
+                <OnboardingGuard>
+                  <UserAdminHub />
+                </OnboardingGuard>
+              } />
               
               {/* Settings Hub - multiple paths for different sections */}
               <Route path="/dna/settings" element={
@@ -547,12 +555,8 @@ function App() {
               <Route path="/events" element={<Navigate to="/dna/convene/events" replace />} />
               <Route path="/dna/convene-example" element={<Navigate to="/dna/convene" replace />} />
               
-              {/* ========== CONTRIBUTE PILLAR ========== */}
-              <Route path="/dna/contribute" element={
-                <OnboardingGuard>
-                  <DnaImpact />
-                </OnboardingGuard>
-              } />
+              {/* ========== LEGACY CONTRIBUTE/IMPACT ROUTES ========== */}
+              {/* Main /dna/contribute route is defined in CONTRIBUTE PILLAR M1 section above */}
               <Route path="/dna/contribute/:id" element={
                 <OnboardingGuard>
                   <OpportunityDetail />
