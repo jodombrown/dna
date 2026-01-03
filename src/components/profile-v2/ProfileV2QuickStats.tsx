@@ -72,7 +72,7 @@ const ProfileV2QuickStats: React.FC<ProfileV2QuickStatsProps> = ({
       label: 'Connections',
       count: activity.connections_count || 0,
       onClick: () => username 
-        ? navigate(`/dna/profile/${username}?tab=connections`)
+        ? navigate(`/dna/${username}?tab=connections`)
         : navigate('/dna/connect'),
       color: 'text-blue-500',
     },
