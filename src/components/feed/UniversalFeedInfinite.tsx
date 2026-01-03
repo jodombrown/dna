@@ -137,7 +137,7 @@ export const UniversalFeedInfinite: React.FC<UniversalFeedInfiniteProps> = ({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="md:space-y-4 space-y-0">
       {feedItems.map((item) => (
         <UniversalFeedItemComponent
           key={item.post_id}
