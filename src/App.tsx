@@ -350,7 +350,7 @@ function App() {
               {/* ========== CONNECT HUB M2 ========== */}
               <Route path="/dna/connect" element={
                 <OnboardingGuard>
-                  <ConnectLayout />
+                  <Connect />
                 </OnboardingGuard>
               }>
                 <Route index element={<Navigate to="/dna/connect/discover" replace />} />
