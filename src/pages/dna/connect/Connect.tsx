@@ -27,7 +27,7 @@ const Connect = () => {
   const { data: profile, isLoading } = useProfile();
   const { isMobile } = useMobile();
 
-  // Mobile header state
+  // Mobile header state - MUST be before any conditional returns
   const [mobileSearchQuery, setMobileSearchQuery] = useState('');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [mobileActiveFilterCount, setMobileActiveFilterCount] = useState(0);
@@ -49,6 +49,10 @@ const Connect = () => {
     }
   };
 
+  // Calculate completion score with fallback for loading/missing profile
+  const completionScore = profile ? calculateProfileCompletion(profile) : 0;
+
+  // Loading and auth checks AFTER all hooks are called
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -60,8 +64,6 @@ const Connect = () => {
   if (!user || !profile) {
     return null;
   }
-
-  const completionScore = calculateProfileCompletion(profile);
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">

@@ -34,6 +34,7 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const InviteSignup = lazy(() => import("./pages/InviteSignup"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const DnaMe = lazy(() => import("./pages/dna/Me"));
+const MyProfileRedirect = lazy(() => import("./components/routing/MyProfileRedirect"));
 const DnaUserDashboard = lazy(() => import("./pages/dna/Username"));
 const PublicProfile = lazy(() => import("./pages/dna/PublicProfile"));
 const PublicProfilePage = lazy(() => import("./pages/PublicProfilePage"));
@@ -342,6 +343,8 @@ function App() {
 
               {/* Redirect old /dna/me to user's profile */}
               <Route path="/dna/me" element={<Navigate to="/dna/feed" replace />} />
+              {/* /dna/profile redirects to user's own profile using their username */}
+              <Route path="/dna/profile" element={<MyProfileRedirect />} />
               <Route path="/dna/:username" element={<ProfileV2 />} />
               {/* Legacy profile ID redirect - looks up username and redirects */}
               <Route path="/dna/profile/:id" element={
