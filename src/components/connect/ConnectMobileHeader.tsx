@@ -21,10 +21,10 @@ interface ConnectMobileHeaderProps {
   activeFilterCount?: number;
 }
 
-const tabs = [
-  { id: 'discover' as const, label: 'Members', icon: Users },
-  { id: 'network' as const, label: 'Network', icon: Network },
-  { id: 'messages' as const, label: 'Messages', icon: MessageCircle },
+const TAB_CONFIG = [
+  { value: 'discover' as const, icon: Users, label: 'Members' },
+  { value: 'network' as const, icon: Network, label: 'Network' },
+  { value: 'messages' as const, icon: MessageCircle, label: 'Messages' },
 ];
 
 export function ConnectMobileHeader({
@@ -93,27 +93,32 @@ export function ConnectMobileHeader({
         </div>
       </div>
 
-      {/* Sticky Tab Bar */}
-      <div className="sticky top-0 z-40 flex items-center gap-1 px-3 py-2 bg-background/95 backdrop-blur-sm border-b border-border">
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => onTabChange(tab.id)}
-              className={cn(
-                'flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all',
-                isActive
-                  ? 'bg-muted text-foreground border border-border'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-              )}
-            >
-              <Icon className="w-4 h-4" />
-              <span>{tab.label}</span>
-            </button>
-          );
-        })}
+      {/* Sticky Tab Bar - Matches Feed tab styling */}
+      <div className="sticky top-0 z-40 px-3 py-2 bg-background/95 backdrop-blur-sm border-b border-border">
+        <div className="flex items-center justify-between gap-1 p-1 bg-muted/50 rounded-lg">
+          {TAB_CONFIG.map(({ value, icon: Icon, label }) => {
+            const isActive = activeTab === value;
+            
+            return (
+              <button
+                key={value}
+                onClick={() => onTabChange(value)}
+                className={cn(
+                  "flex items-center justify-center gap-1.5 py-2 rounded-md transition-all duration-200",
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  isActive 
+                    ? "bg-background shadow-sm flex-1 px-3" 
+                    : "px-3 text-muted-foreground hover:text-foreground hover:bg-background/50"
+                )}
+              >
+                <Icon className={cn("h-4 w-4 shrink-0", isActive && "text-primary")} />
+                {isActive && (
+                  <span className="text-xs font-medium truncate">{label}</span>
+                )}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

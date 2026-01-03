@@ -24,7 +24,8 @@ import {
   Handshake,
   Heart,
   BookOpen,
-  LogOut
+  LogOut,
+  LayoutDashboard
 } from 'lucide-react';
 
 const MobileBottomNav: React.FC = () => {
@@ -119,6 +120,12 @@ const MobileBottomNav: React.FC = () => {
       path: '/dna/notifications',
       description: 'Activity updates',
       badge: unreadCount > 0 ? unreadCount : undefined
+    },
+    {
+      label: 'Admin',
+      icon: LayoutDashboard,
+      path: '/dna/admin',
+      description: 'Manage your DNA'
     },
     { 
       label: 'Settings', 
