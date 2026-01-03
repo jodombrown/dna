@@ -27,6 +27,10 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   const { viewState, layoutConfig } = useViewState();
   const { user } = useAuth();
   const location = useLocation();
+  
+  // Check if we're on Connect route on mobile (has its own header)
+  const isConnectRoute = location.pathname.includes('/dna/connect');
+  const isMobileViewport = typeof window !== 'undefined' && window.innerWidth < 768;
 
   // Unique gradient for each of the 5 Cs + Feed when logged in
   // All using DNA brand colors: mint, terra, ochre, sunset, purple, copper
@@ -78,7 +82,8 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
         className={cn(
           "min-h-screen w-full max-w-full",
           getAuthGradient(),
-          "pt-14 sm:pt-16",
+          // Remove top padding on mobile for Connect routes (has its own header)
+          isConnectRoute ? "pt-0 md:pt-14 md:sm:pt-16" : "pt-14 sm:pt-16",
           // Add bottom padding on mobile to account for PulseDock
           "pb-20 lg:pb-0",
           "transition-all duration-300 ease-in-out",
