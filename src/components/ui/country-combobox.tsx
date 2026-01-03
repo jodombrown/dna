@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Button } from '@/components/ui/button';
-import { Check, ChevronsUpDown } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Input } from '@/components/ui/input';
+import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { COUNTRIES } from '@/data/countries';
 
@@ -16,84 +14,129 @@ interface CountryComboboxProps {
 export default function CountryCombobox({ 
   value, 
   onValueChange, 
-  placeholder = "Select a country...",
+  placeholder = "Type to search countries...",
   className 
 }: CountryComboboxProps) {
-  const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState('');
+  const [inputValue, setInputValue] = useState(value || '');
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [focusedIndex, setFocusedIndex] = useState(-1);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
 
-  // Find the currently selected country by name (case-insensitive)
-  // Also handle legacy values like "London, United Kingdom" by checking if value contains country name
-  const selectedCountry = COUNTRIES.find((c) => 
-    c.name.toLowerCase() === (value || '').toLowerCase()
-  ) || COUNTRIES.find((c) => 
-    (value || '').toLowerCase().includes(c.name.toLowerCase())
-  );
+  // Sync input with external value
+  useEffect(() => {
+    setInputValue(value || '');
+  }, [value]);
 
-  // CRITICAL FIX: Command component normalizes values to lowercase
-  // We must do case-insensitive lookup to find the original country
-  const handleSelect = (normalizedValue: string) => {
-    const country = COUNTRIES.find(
-      (c) => c.name.toLowerCase() === normalizedValue.toLowerCase()
-    );
+  const filteredCountries = inputValue.trim()
+    ? COUNTRIES.filter(c => 
+        c.name.toLowerCase().includes(inputValue.toLowerCase())
+      ).slice(0, 8)
+    : [];
 
-    if (country) {
-      onValueChange(country.name);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setInputValue(newValue);
+    setShowSuggestions(true);
+    setFocusedIndex(-1);
+    
+    // If user clears input, clear selection
+    if (!newValue.trim()) {
+      onValueChange('');
     }
-    setOpen(false);
-    setSearch('');
   };
 
-  const filteredCountries = search
-    ? COUNTRIES.filter(c => c.name.toLowerCase().includes(search.toLowerCase()))
-    : COUNTRIES;
+  const handleSelect = (countryName: string) => {
+    setInputValue(countryName);
+    onValueChange(countryName);
+    setShowSuggestions(false);
+    setFocusedIndex(-1);
+  };
+
+  const handleClear = () => {
+    setInputValue('');
+    onValueChange('');
+    inputRef.current?.focus();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!showSuggestions || filteredCountries.length === 0) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setFocusedIndex(prev => 
+          prev < filteredCountries.length - 1 ? prev + 1 : 0
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setFocusedIndex(prev => 
+          prev > 0 ? prev - 1 : filteredCountries.length - 1
+        );
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (focusedIndex >= 0 && focusedIndex < filteredCountries.length) {
+          handleSelect(filteredCountries[focusedIndex].name);
+        }
+        break;
+      case 'Escape':
+        setShowSuggestions(false);
+        break;
+    }
+  };
+
+  const handleBlur = () => {
+    // Delay to allow click on suggestion
+    setTimeout(() => setShowSuggestions(false), 150);
+  };
 
   return (
-    <Popover open={open} onOpenChange={setOpen} modal={true}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className={cn("w-full justify-between min-h-[44px] bg-background", className)}
+    <div className={cn("relative w-full", className)}>
+      <div className="relative">
+        <Input
+          ref={inputRef}
+          value={inputValue}
+          onChange={handleInputChange}
+          onFocus={() => inputValue.trim() && setShowSuggestions(true)}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholder}
+          className="min-h-[44px] pr-8 bg-background"
+        />
+        {inputValue && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+      
+      {showSuggestions && filteredCountries.length > 0 && (
+        <ul
+          ref={listRef}
+          className="absolute z-[9999] w-full mt-1 max-h-48 overflow-auto rounded-md border bg-popover shadow-lg"
         >
-          {selectedCountry ? selectedCountry.name : placeholder}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-full p-0 bg-popover border shadow-lg z-[9999]" align="start" sideOffset={4}>
-        <Command shouldFilter={false}>
-          <CommandInput 
-            placeholder="Search countries..." 
-            value={search}
-            onValueChange={setSearch}
-          />
-          <CommandList className="max-h-64 overflow-auto">
-            <CommandEmpty>No country found.</CommandEmpty>
-            <CommandGroup>
-              {filteredCountries.map((country) => {
-                const isSelected = selectedCountry?.code === country.code;
-                return (
-                  <CommandItem
-                    key={country.code}
-                    value={country.name}
-                    onSelect={handleSelect}
-                    className="cursor-pointer"
-                  >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        isSelected ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                    {country.name}
-                  </CommandItem>
-                );
-              })}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+          {filteredCountries.map((country, index) => (
+            <li
+              key={country.code}
+              onClick={() => handleSelect(country.name)}
+              className={cn(
+                "px-3 py-2 cursor-pointer text-sm",
+                index === focusedIndex 
+                  ? "bg-accent text-accent-foreground" 
+                  : "hover:bg-accent hover:text-accent-foreground"
+              )}
+            >
+              {country.name}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
