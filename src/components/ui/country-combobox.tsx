@@ -49,7 +49,7 @@ export default function CountryCombobox({
     : COUNTRIES;
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={setOpen} modal={true}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -61,7 +61,7 @@ export default function CountryCombobox({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full p-0 bg-popover border shadow-lg z-[200]" align="start" sideOffset={4}>
+      <PopoverContent className="w-full p-0 bg-popover border shadow-lg z-[9999]" align="start" sideOffset={4}>
         <Command shouldFilter={false}>
           <CommandInput 
             placeholder="Search countries..." 
