@@ -39,7 +39,7 @@ export default function DiaPage() {
           <span className="text-xs font-medium text-dna-copper bg-dna-copper/10 px-2 py-0.5 rounded-full">Alpha</span>
         </h1>
         <p className="text-muted-foreground max-w-lg mx-auto text-sm sm:text-base px-2">
-          Your AI assistant for Africa and its global diaspora. Get intelligence about markets, opportunities, and connect with your network.
+          Your AI agent for Africa and its global diaspora. Get intelligence about markets, opportunities, and connect with your network.
         </p>
       </div>
 

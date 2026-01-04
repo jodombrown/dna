@@ -105,7 +105,7 @@ export const pillarDiaConfigs: Record<string, PillarDiaConfig> = {
   dashboard: {
     pillar: 'dashboard',
     title: 'DIA',
-    description: 'Your AI assistant for Africa and its global diaspora',
+    description: 'Your AI agent for Africa and its global diaspora',
     placeholder: 'Ask DIA anything about Africa and the diaspora...',
     suggestions: [
       'Fintech opportunities in Nigeria',
