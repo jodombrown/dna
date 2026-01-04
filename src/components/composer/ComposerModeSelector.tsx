@@ -101,39 +101,36 @@ export const ComposerModeSelector = ({
   };
 
   return (
-    <div className="flex flex-wrap gap-2 pb-4 border-b border-border/50 overflow-x-auto">
+    <div className="flex items-center gap-1 pb-4 border-b border-border/50 overflow-x-auto">
       {enabledModes.map((config) => {
         const Icon = config.icon;
         const isActive = currentMode === config.id;
         const disabled = isDisabled(config.id);
 
         return (
-          <Button
+          <button
             key={config.id}
-            variant="ghost"
-            size="sm"
             onClick={() => onModeChange(config.id)}
             disabled={disabled}
             className={cn(
-              // Base styling
-              'flex items-center gap-2 px-4 py-2 h-10 rounded-lg',
-              'transition-all duration-200',
-              // Unselected state
-              !isActive && 'text-muted-foreground hover:text-foreground hover:bg-muted/50',
-              // Selected state with mode color
+              // Base pill styling
+              'flex items-center gap-1.5 px-3 py-2 rounded-full',
+              'text-sm font-medium transition-all duration-200',
+              'border border-transparent',
+              // Unselected state - subtle background
+              !isActive && 'text-muted-foreground hover:text-foreground hover:bg-muted/60',
+              // Selected state - solid mode color with white text
               isActive && [
                 config.bgSelected,
-                'text-white',
-                config.shadowGlow,
-                'hover:opacity-90',
+                'text-white border-transparent',
               ],
               // Disabled state
-              disabled && 'opacity-40 cursor-not-allowed'
+              disabled && 'opacity-40 cursor-not-allowed pointer-events-none'
             )}
           >
             <Icon className="w-4 h-4" />
-            <span className="font-medium">{config.label}</span>
-          </Button>
+            <span>{config.label}</span>
+          </button>
         );
       })}
     </div>
