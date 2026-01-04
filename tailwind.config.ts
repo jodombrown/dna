@@ -171,7 +171,16 @@ export default {
 					success: 'hsl(var(--dna-success))',
 					warning: 'hsl(var(--dna-warning))',
 					error: 'hsl(var(--dna-error))',
-					info: 'hsl(var(--dna-info))'
+					info: 'hsl(var(--dna-info))',
+					
+					// Feed Card Bevel Colors
+					bevel: {
+						post: 'hsl(var(--bevel-post))',
+						story: 'hsl(var(--bevel-story))',
+						event: 'hsl(var(--bevel-event))',
+						space: 'hsl(var(--bevel-space))',
+						opportunity: 'hsl(var(--bevel-opportunity))'
+					}
 				},
 				// Country Flag Colors
 				morocco: {

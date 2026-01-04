@@ -40,10 +40,10 @@ export const COMPOSER_MODE_CONFIG: Record<ComposerMode, ComposerModeConfig> = {
   },
   event: {
     id: 'event',
-    enabled: false,
-    tested: false,
-    optimisticFeedInjection: false,
-    notes: 'TODO: Event creation via edge function does not return post data for optimistic injection',
+    enabled: true,
+    tested: true,
+    optimisticFeedInjection: true,
+    notes: 'Event creation via create-event edge function. Creates event and post atomically.',
   },
   need: {
     id: 'need',
