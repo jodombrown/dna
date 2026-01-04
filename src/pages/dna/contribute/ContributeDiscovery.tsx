@@ -1,200 +1,261 @@
 // src/pages/dna/contribute/ContributeDiscovery.tsx
-// Discovery mode for Contribute hub - full marketplace experience
+// Discovery mode for Contribute hub - full marketplace experience with PRD hub pattern
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { supabaseClient } from '@/lib/supabaseHelpers';
-import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { HandHeart, Plus, Search, Package, Users, Sparkles, DollarSign } from 'lucide-react';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ArrowRight, DollarSign, Users, Clock, Key, Package } from 'lucide-react';
-import type { ContributionNeedWithSpace } from '@/types/contributeTypes';
-import { TYPOGRAPHY } from '@/lib/typography.config';
+
+// New Hub Components
+import {
+  HubHero,
+  HubStatsBar,
+  HubQuickActions,
+  HubDIAPanel,
+  HubActivityFeed,
+  HubSubNav,
+  type HubStat,
+  type QuickAction,
+  type DIARecommendation,
+  type ActivityItem,
+  type SubNavTab,
+} from '@/components/hubs/shared';
+
+// Existing sections
 import OpportunityRecommendations from '@/components/contribute/OpportunityRecommendations';
 
-const typeIcons = {
-  funding: DollarSign,
-  skills: Users,
-  time: Clock,
-  access: Key,
-  resources: Package,
-};
-
 export function ContributeDiscovery() {
-  const { data: featuredNeeds, isLoading } = useQuery({
-    queryKey: ['featured-needs'],
-    queryFn: async () => {
-      const { data, error } = await supabaseClient
-        .from('contribution_needs')
-        .select(`
-          *,
-          space:spaces(id, name, slug, tagline, focus_areas, region)
-        `)
-        .in('status', ['open', 'in_progress'])
-        .order('priority', { ascending: false })
-        .order('created_at', { ascending: false })
-        .limit(6);
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
-      if (error) throw error;
-      return data as ContributionNeedWithSpace[];
+  // Fetch stats
+  const { data: stats, isLoading: statsLoading } = useQuery({
+    queryKey: ['contribute-hub-stats', user?.id],
+    queryFn: async (): Promise<{
+      openNeeds: number;
+      activeOffers: number;
+      myRequests: number;
+      matchesMade: number;
+    }> => {
+      // Open needs count
+      const { count: openNeedsCount } = await supabase
+        .from('contribution_needs')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'open');
+      
+      // Active offers count
+      const { count: activeOffersCount } = await supabase
+        .from('contribution_offers')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'pending');
+      
+      let myRequestsCount = 0;
+      let matchesCount = 0;
+
+      if (user?.id) {
+        // My requests
+        const { count: myCount } = await supabase
+          .from('contribution_needs')
+          .select('id', { count: 'exact', head: true })
+          .eq('created_by', user.id);
+        myRequestsCount = myCount || 0;
+
+        // Matches made (accepted offers)
+        const { count: acceptedCount } = await supabase
+          .from('contribution_offers')
+          .select('id', { count: 'exact', head: true })
+          .eq('status', 'accepted');
+        matchesCount = acceptedCount || 0;
+      }
+
+      return {
+        openNeeds: openNeedsCount || 0,
+        activeOffers: activeOffersCount || 0,
+        myRequests: myRequestsCount,
+        matchesMade: matchesCount,
+      };
     },
+    staleTime: 60000,
   });
 
+  // Fetch recent activity
+  const { data: recentActivity, isLoading: activityLoading } = useQuery({
+    queryKey: ['contribute-recent-activity'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('contribution_needs')
+        .select('id, title, type, status, created_at')
+        .eq('status', 'open')
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      return data || [];
+    },
+    staleTime: 60000,
+  });
+
+  // Hub Stats
+  const hubStats: HubStat[] = [
+    {
+      label: 'Open Needs',
+      value: stats?.openNeeds || 0,
+      icon: Package,
+      onClick: () => navigate('/dna/contribute/needs'),
+    },
+    {
+      label: 'Active Offers',
+      value: stats?.activeOffers || 0,
+      icon: HandHeart,
+      onClick: () => navigate('/dna/contribute/needs'),
+    },
+    {
+      label: 'My Requests',
+      value: stats?.myRequests || 0,
+      icon: Users,
+      onClick: () => navigate('/dna/contribute/needs?filter=mine'),
+    },
+    {
+      label: 'Matches Made',
+      value: stats?.matchesMade || 0,
+      icon: Sparkles,
+    },
+  ];
+
+  // Quick Actions
+  const quickActions: QuickAction[] = [
+    {
+      label: 'Post a Need',
+      description: 'Request help or resources',
+      icon: Plus,
+      onClick: () => navigate('/dna/contribute/needs?action=create'),
+      variant: 'primary',
+    },
+    {
+      label: 'Make an Offer',
+      description: 'Contribute your skills',
+      icon: HandHeart,
+      onClick: () => navigate('/dna/contribute/needs'),
+    },
+    {
+      label: 'Browse Needs',
+      description: 'Find ways to help',
+      icon: Search,
+      onClick: () => navigate('/dna/contribute/needs'),
+    },
+    {
+      label: 'My Activity',
+      description: 'Track contributions',
+      icon: DollarSign,
+      onClick: () => navigate('/dna/contribute/needs?filter=mine'),
+    },
+  ];
+
+  // DIA Recommendations
+  const diaRecommendations: DIARecommendation[] = [
+    {
+      id: 'skills-match',
+      title: 'Needs matching your skills',
+      description: 'Projects looking for expertise you have',
+      reason: 'Based on your profile expertise areas',
+      icon: Sparkles,
+      onClick: () => navigate('/dna/contribute/needs'),
+    },
+    {
+      id: 'network-offers',
+      title: 'Offers from your network',
+      description: 'See what your connections are offering',
+      reason: 'Based on your network connections',
+      icon: Users,
+      onClick: () => navigate('/dna/contribute/needs'),
+    },
+    {
+      id: 'high-impact',
+      title: 'High-impact opportunities',
+      description: 'Priority needs with community backing',
+      reason: 'Based on community engagement and urgency',
+      icon: HandHeart,
+      onClick: () => navigate('/dna/contribute/needs?sort=priority'),
+    },
+  ];
+
+  // Activity Feed items
+  const activityItems: ActivityItem[] = (recentActivity || []).map(need => ({
+    id: need.id,
+    type: 'need',
+    title: need.title,
+    description: need.type || 'Contribution need',
+    timestamp: need.created_at,
+    icon: Package,
+    onClick: () => navigate(`/dna/contribute/needs/${need.id}`),
+  }));
+
+  // Sub Navigation Tabs
+  const subNavTabs: SubNavTab[] = [
+    { label: 'Needs', path: '/dna/contribute/needs' },
+    { label: 'My Activity', path: '/dna/contribute/needs?filter=mine' },
+  ];
+
   return (
-    <div className="min-h-screen bg-background pb-20 md:pb-0">
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 max-w-7xl">
+    <div className="w-full min-h-screen bg-background pb-20 md:pb-0">
+      <div className="container max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 space-y-6">
         {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className={`${TYPOGRAPHY.h1} mb-4`}>
-            Contribute to Africa's Future
-          </h1>
-          <p className={`${TYPOGRAPHY.bodyLarge} text-muted-foreground max-w-3xl mx-auto mb-8`}>
-            Fund, mentor, volunteer, and open doors for projects building across the continent and diaspora
-          </p>
-          <div className="flex gap-4 justify-center flex-wrap">
-            <Button asChild size="lg">
-              <Link to="/dna/contribute/needs">
-                Browse All Needs <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+        <HubHero
+          hub="contribute"
+          icon={HandHeart}
+          title="CONTRIBUTE"
+          tagline="Give What You Can, Get What You Need"
+          primaryAction={{
+            label: 'Post a Need',
+            icon: Plus,
+            onClick: () => navigate('/dna/contribute/needs?action=create'),
+          }}
+          secondaryAction={{
+            label: 'Browse Needs',
+            icon: Search,
+            onClick: () => navigate('/dna/contribute/needs'),
+          }}
+        />
+
+        {/* Stats Bar */}
+        <HubStatsBar stats={hubStats} loading={statsLoading} />
+
+        {/* Sub Navigation */}
+        <HubSubNav tabs={subNavTabs} basePath="/dna/contribute" />
+
+        {/* Two Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
+          {/* Main Content */}
+          <div className="space-y-6">
+            {/* Quick Actions */}
+            <HubQuickActions actions={quickActions} />
+
+            {/* Personalized Recommendations */}
+            <OpportunityRecommendations maxOpportunities={5} showTrending={true} />
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* DIA Panel */}
+            <HubDIAPanel
+              hub="contribute"
+              recommendations={diaRecommendations}
+              onAskDIA={() => navigate('/dna/dia?context=contribute')}
+            />
+
+            {/* Recent Activity */}
+            <HubActivityFeed
+              title="Latest Needs"
+              items={activityItems}
+              loading={activityLoading}
+              onViewAll={() => navigate('/dna/contribute/needs')}
+              emptyMessage="No active needs yet"
+            />
           </div>
         </div>
-
-        {/* Personalized Opportunity Recommendations */}
-        <OpportunityRecommendations maxOpportunities={5} showTrending={true} />
-
-        {/* Featured Needs */}
-        <section className="mb-12">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className={`${TYPOGRAPHY.h2} mb-2`}>Active Needs</h2>
-              <p className={TYPOGRAPHY.body}>
-                Projects and initiatives currently seeking support
-              </p>
-            </div>
-          </div>
-
-          {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <Card key={i} className="animate-pulse">
-                  <CardHeader>
-                    <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
-                    <div className="h-3 bg-muted rounded w-1/2"></div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-20 bg-muted rounded"></div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : featuredNeeds && featuredNeeds.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredNeeds.map((need) => {
-                const Icon = typeIcons[need.type];
-                return (
-                  <Link key={need.id} to={`/dna/contribute/needs/${need.id}`}>
-                    <Card className="h-full hover:shadow-lg transition-shadow">
-                      <CardHeader>
-                        <div className="flex items-start justify-between mb-2">
-                          <Icon className="h-5 w-5 text-primary" />
-                          <div className="flex gap-2">
-                            <Badge variant={need.status === 'open' ? 'default' : 'secondary'}>
-                              {need.status}
-                            </Badge>
-                          </div>
-                        </div>
-                        <CardTitle className="line-clamp-2">{need.title}</CardTitle>
-                        <CardDescription className="line-clamp-1">
-                          {need.space?.name || 'Project'}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
-                          {need.description}
-                        </p>
-                        <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-                          {need.region && (
-                            <Badge variant="outline" className="text-xs">
-                              {need.region}
-                            </Badge>
-                          )}
-                          {need.priority && (
-                            <Badge variant="outline" className="text-xs">
-                              {need.priority} priority
-                            </Badge>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                );
-              })}
-            </div>
-          ) : (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <p className="text-muted-foreground">
-                  No active contribution needs at the moment. Check back soon!
-                </p>
-              </CardContent>
-            </Card>
-          )}
-        </section>
-
-        {/* How It Works */}
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold text-foreground mb-8 text-center">How It Works</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Card>
-              <CardHeader>
-                <DollarSign className="h-8 w-8 text-primary mb-2" />
-                <CardTitle className="text-lg">Fund Projects</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Support initiatives with financial contributions that drive impact
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <Users className="h-8 w-8 text-primary mb-2" />
-                <CardTitle className="text-lg">Share Skills</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Offer your expertise to help projects succeed
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <Clock className="h-8 w-8 text-primary mb-2" />
-                <CardTitle className="text-lg">Volunteer Time</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Dedicate your time to make a real difference
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <Key className="h-8 w-8 text-primary mb-2" />
-                <CardTitle className="text-lg">Open Doors</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Connect projects with opportunities and networks
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-      </main>
+      </div>
       <MobileBottomNav />
     </div>
   );

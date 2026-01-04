@@ -1,183 +1,272 @@
 // src/pages/dna/convey/ConveyDiscovery.tsx
-// Discovery mode for Convey hub - full stories experience
+// Discovery mode for Convey hub - full stories experience with PRD hub pattern
 
-import { useState } from 'react';
-import LayoutController from '@/components/LayoutController';
-import { LeftNav } from '@/components/layout/columns/LeftNav';
-import { RightWidgets } from '@/components/layout/columns/RightWidgets';
-import { useConveyFeed } from '@/hooks/useConveyFeed';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { Megaphone, Plus, BookOpen, PenLine, BarChart3, Users, Sparkles } from 'lucide-react';
+import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+
+// New Hub Components
+import {
+  HubHero,
+  HubStatsBar,
+  HubQuickActions,
+  HubDIAPanel,
+  HubActivityFeed,
+  HubSubNav,
+  type HubStat,
+  type QuickAction,
+  type DIARecommendation,
+  type ActivityItem,
+  type SubNavTab,
+} from '@/components/hubs/shared';
+
+// Existing feed components
 import { ConveyFeedCard } from '@/components/convey/ConveyFeedCard';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
+import { useConveyFeed } from '@/hooks/useConveyFeed';
 import { Loader2 } from 'lucide-react';
-import type { ConveyItemType } from '@/types/conveyTypes';
-import { useConveyAnalytics } from '@/hooks/useConveyAnalytics';
 
 export function ConveyDiscovery() {
-  const { logConveyEvent } = useConveyAnalytics();
-  const [selectedType, setSelectedType] = useState<ConveyItemType | ''>('');
-  const [selectedRegion, setSelectedRegion] = useState('');
-  const [onlyMySpaces, setOnlyMySpaces] = useState(false);
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
-  const { data: items, isLoading, error } = useConveyFeed({
-    type: selectedType || undefined,
-    region: selectedRegion || undefined,
-    onlyMySpaces,
+  // Fetch stats
+  const { data: stats, isLoading: statsLoading } = useQuery({
+    queryKey: ['convey-hub-stats', user?.id],
+    queryFn: async (): Promise<{
+      published: number;
+      myStories: number;
+      totalReach: number;
+      followers: number;
+    }> => {
+      // Published stories count
+      const { count: publishedCount } = await supabase
+        .from('posts')
+        .select('id', { count: 'exact', head: true })
+        .eq('is_deleted', false);
+      
+      let myStoriesCount = 0;
+
+      if (user?.id) {
+        // My stories
+        const { count: myCount } = await supabase
+          .from('posts')
+          .select('id', { count: 'exact', head: true })
+          .eq('author_id', user.id)
+          .eq('is_deleted', false);
+        myStoriesCount = myCount || 0;
+      }
+
+      return {
+        published: publishedCount || 0,
+        myStories: myStoriesCount,
+        totalReach: 0,
+        followers: 0,
+      };
+    },
+    staleTime: 60000,
   });
 
-  // Log filter changes
-  const handleTypeChange = (value: string) => {
-    setSelectedType(value as ConveyItemType | '');
-    logConveyEvent({
-      eventType: 'feed_filtered',
-      metadata: {
-        type: value || null,
-        region: selectedRegion || null,
-        spacesOnly: onlyMySpaces,
-      },
-    });
-  };
+  // Fetch recent stories for activity feed
+  const { data: recentStories, isLoading: activityLoading } = useQuery({
+    queryKey: ['convey-recent-stories'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('posts')
+        .select('id, content, post_type, created_at')
+        .eq('is_deleted', false)
+        .order('created_at', { ascending: false })
+        .limit(5);
 
-  const handleRegionChange = (value: string) => {
-    setSelectedRegion(value);
-    logConveyEvent({
-      eventType: 'feed_filtered',
-      metadata: {
-        type: selectedType || null,
-        region: value || null,
-        spacesOnly: onlyMySpaces,
-      },
-    });
-  };
+      return data || [];
+    },
+    staleTime: 60000,
+  });
 
-  const handleSpacesToggle = (checked: boolean) => {
-    setOnlyMySpaces(checked);
-    logConveyEvent({
-      eventType: 'feed_filtered',
-      metadata: {
-        type: selectedType || null,
-        region: selectedRegion || null,
-        spacesOnly: checked,
-      },
-    });
-  };
+  // Feed for main content
+  const { data: feedItems, isLoading: feedLoading } = useConveyFeed({});
 
-  const centerColumn = (
-    <div className="py-4 lg:py-8 px-4 sm:px-6">
-      {/* Hero Section */}
-      <div className="mb-6 lg:mb-8">
-        <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-3 sm:mb-4">
-          CONVEY
-        </h1>
-        <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">
-          Stories and updates from the DNA community across the African world
-        </p>
-      </div>
+  // Hub Stats
+  const hubStats: HubStat[] = [
+    {
+      label: 'Published Stories',
+      value: stats?.published || 0,
+      icon: BookOpen,
+      onClick: () => navigate('/dna/feed'),
+    },
+    {
+      label: 'My Stories',
+      value: stats?.myStories || 0,
+      icon: PenLine,
+      onClick: () => navigate('/dna/me'),
+    },
+    {
+      label: 'Total Reach',
+      value: stats?.totalReach || 0,
+      icon: BarChart3,
+    },
+    {
+      label: 'Followers',
+      value: stats?.followers || 0,
+      icon: Users,
+    },
+  ];
 
-      {/* Filters */}
-      <div className="mb-6 p-3 sm:p-4 bg-card border border-border rounded-lg">
-        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4">
-          <Select value={selectedType} onValueChange={handleTypeChange}>
-            <SelectTrigger className="w-full sm:w-48">
-              <SelectValue placeholder="All types" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">All types</SelectItem>
-              <SelectItem value="story">Stories</SelectItem>
-              <SelectItem value="update">Updates</SelectItem>
-              <SelectItem value="impact">Impact Stories</SelectItem>
-            </SelectContent>
-          </Select>
+  // Quick Actions
+  const quickActions: QuickAction[] = [
+    {
+      label: 'Write a Story',
+      description: 'Share your experiences',
+      icon: Plus,
+      onClick: () => navigate('/dna/feed?compose=story'),
+      variant: 'primary',
+    },
+    {
+      label: 'Browse Stories',
+      description: 'Read from the community',
+      icon: BookOpen,
+      onClick: () => navigate('/dna/feed'),
+    },
+    {
+      label: 'My Drafts',
+      description: 'Continue writing',
+      icon: PenLine,
+      onClick: () => navigate('/dna/me'),
+    },
+    {
+      label: 'View Analytics',
+      description: 'Track engagement',
+      icon: BarChart3,
+      onClick: () => navigate('/dna/analytics'),
+    },
+  ];
 
-          <Select value={selectedRegion} onValueChange={handleRegionChange}>
-            <SelectTrigger className="w-full sm:w-48">
-              <SelectValue placeholder="All regions" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">All regions</SelectItem>
-              <SelectItem value="East Africa">East Africa</SelectItem>
-              <SelectItem value="West Africa">West Africa</SelectItem>
-              <SelectItem value="Southern Africa">Southern Africa</SelectItem>
-              <SelectItem value="North Africa">North Africa</SelectItem>
-              <SelectItem value="Central Africa">Central Africa</SelectItem>
-              <SelectItem value="Diaspora - North America">Diaspora - North America</SelectItem>
-              <SelectItem value="Diaspora - Europe">Diaspora - Europe</SelectItem>
-              <SelectItem value="Diaspora - Caribbean">Diaspora - Caribbean</SelectItem>
-              <SelectItem value="Diaspora - Asia">Diaspora - Asia</SelectItem>
-            </SelectContent>
-          </Select>
+  // DIA Recommendations
+  const diaRecommendations: DIARecommendation[] = [
+    {
+      id: 'trending-topics',
+      title: 'Trending topics to write about',
+      description: 'What the community is discussing right now',
+      reason: 'Based on current engagement patterns',
+      icon: Sparkles,
+      onClick: () => navigate('/dna/feed'),
+    },
+    {
+      id: 'following-stories',
+      title: 'Stories from people you follow',
+      description: 'Latest content from your network',
+      reason: 'Based on who you follow',
+      icon: Users,
+      onClick: () => navigate('/dna/feed?filter=following'),
+    },
+    {
+      id: 'performing-well',
+      title: 'Content performing well this week',
+      description: 'High-engagement stories and updates',
+      reason: 'Based on likes, comments, and shares',
+      icon: BarChart3,
+      onClick: () => navigate('/dna/feed?sort=trending'),
+    },
+  ];
 
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="my-spaces"
-              checked={onlyMySpaces}
-              onCheckedChange={handleSpacesToggle}
-            />
-            <Label htmlFor="my-spaces" className="cursor-pointer">
-              Only my spaces
-            </Label>
-          </div>
+  // Activity Feed items
+  const activityItems: ActivityItem[] = (recentStories || []).map(story => ({
+    id: story.id,
+    type: 'story',
+    title: story.content?.slice(0, 60) + (story.content?.length > 60 ? '...' : '') || 'Story',
+    description: story.post_type || 'Story',
+    timestamp: story.created_at,
+    icon: BookOpen,
+    onClick: () => navigate(`/dna/feed/${story.id}`),
+  }));
 
-          {(selectedType || selectedRegion || onlyMySpaces) && (
-            <Button
-              variant="ghost"
-              onClick={() => {
-                setSelectedType('');
-                setSelectedRegion('');
-                setOnlyMySpaces(false);
-              }}
-            >
-              Clear filters
-            </Button>
-          )}
-        </div>
-      </div>
-
-      {/* Content */}
-      {isLoading && (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      )}
-
-      {error && (
-        <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6 text-center">
-          <p className="text-destructive">
-            Failed to load stories. Please try again.
-          </p>
-        </div>
-      )}
-
-      {!isLoading && !error && items && (
-        <>
-          {items.data.length === 0 ? (
-            <div className="bg-card border border-border rounded-lg p-12 text-center">
-              <p className="text-lg text-muted-foreground">
-                {selectedType || selectedRegion || onlyMySpaces
-                  ? 'No stories match these filters yet.'
-                  : 'No stories available yet.'}
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {items.data.map((item) => (
-                <ConveyFeedCard key={item.id} item={item} />
-              ))}
-            </div>
-          )}
-        </>
-      )}
-    </div>
-  );
+  // Sub Navigation Tabs
+  const subNavTabs: SubNavTab[] = [
+    { label: 'All Stories', path: '/dna/feed' },
+    { label: 'Following', path: '/dna/feed?filter=following' },
+    { label: 'My Stories', path: '/dna/me' },
+  ];
 
   return (
-    <LayoutController
-      leftColumn={<LeftNav />}
-      centerColumn={centerColumn}
-      rightColumn={<RightWidgets variant="convey" />}
-    />
+    <div className="w-full min-h-screen bg-background pb-20 md:pb-0">
+      <div className="container max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 space-y-6">
+        {/* Hero Section */}
+        <HubHero
+          hub="convey"
+          icon={Megaphone}
+          title="CONVEY"
+          tagline="Amplify the Diaspora Voice"
+          primaryAction={{
+            label: 'Write a Story',
+            icon: Plus,
+            onClick: () => navigate('/dna/feed?compose=story'),
+          }}
+          secondaryAction={{
+            label: 'Browse Stories',
+            icon: BookOpen,
+            onClick: () => navigate('/dna/feed'),
+          }}
+        />
+
+        {/* Stats Bar */}
+        <HubStatsBar stats={hubStats} loading={statsLoading} />
+
+        {/* Sub Navigation */}
+        <HubSubNav tabs={subNavTabs} basePath="/dna/convey" />
+
+        {/* Two Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
+          {/* Main Content */}
+          <div className="space-y-6">
+            {/* Quick Actions */}
+            <HubQuickActions actions={quickActions} />
+
+            {/* Stories Feed */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold text-foreground">Latest Stories</h2>
+              {feedLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+              ) : feedItems && feedItems.data.length > 0 ? (
+                <div className="space-y-4">
+                  {feedItems.data.slice(0, 5).map((item) => (
+                    <ConveyFeedCard key={item.id} item={item} />
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-card border border-border rounded-lg p-12 text-center">
+                  <p className="text-muted-foreground">No stories yet. Be the first to share!</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* DIA Panel */}
+            <HubDIAPanel
+              hub="convey"
+              recommendations={diaRecommendations}
+              onAskDIA={() => navigate('/dna/dia?context=convey')}
+            />
+
+            {/* Recent Activity */}
+            <HubActivityFeed
+              title="Latest Activity"
+              items={activityItems}
+              loading={activityLoading}
+              onViewAll={() => navigate('/dna/feed')}
+              emptyMessage="No stories yet"
+            />
+          </div>
+        </div>
+      </div>
+      <MobileBottomNav />
+    </div>
   );
 }
 
