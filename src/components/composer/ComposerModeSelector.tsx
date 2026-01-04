@@ -92,9 +92,11 @@ export const ComposerModeSelector = ({
 
   // Context-based disabling
   const isDisabled = (modeId: ComposerMode): boolean => {
+    // Don't allow creating another event from an event context
     if (modeId === 'event' && context.eventId) return true;
+    // Don't allow creating another space from a space context
     if (modeId === 'space' && context.spaceId) return true;
-    if (modeId === 'need' && !context.spaceId) return true;
+    // Opportunity mode is always enabled - users can create needs/offers globally
     return false;
   };
 
