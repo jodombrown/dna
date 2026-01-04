@@ -17,7 +17,7 @@ export function usePostBookmarks(postId: string, userId: string) {
     queryFn: async () => {
       const { count, error } = await supabase
         .from('post_bookmarks')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('post_id', postId);
 
       if (error) {

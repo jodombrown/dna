@@ -21,11 +21,11 @@ export default function PlatformHealth() {
       // Waitlist metrics
       const { count: waitlistTotal } = await supabase
         .from('beta_waitlist')
-        .select('id', { count: 'exact', head: true });
+        .select('id', { count: 'exact' });
 
       const { count: waitlistPending } = await supabase
         .from('beta_waitlist')
-        .select('id', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('status', 'pending');
 
       // For now, return placeholder values for user metrics until user_profiles table exists

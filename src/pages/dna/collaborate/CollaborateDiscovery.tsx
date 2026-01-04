@@ -43,7 +43,7 @@ export function CollaborateDiscovery() {
       // Active spaces count
       const { count: activeSpacesCount } = await supabase
         .from('spaces')
-        .select('id', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('status', 'active')
         .eq('visibility', 'public');
       
@@ -55,21 +55,21 @@ export function CollaborateDiscovery() {
         // My spaces (where I'm a member)
         const { count: myCount } = await supabase
           .from('space_members')
-          .select('id', { count: 'exact', head: true })
+          .select('id', { count: 'exact' })
           .eq('user_id', user.id);
         mySpacesCount = myCount || 0;
 
         // Open tasks assigned to me
         const { count: tasksCount } = await supabase
           .from('tasks')
-          .select('id', { count: 'exact', head: true })
+          .select('id', { count: 'exact' })
           .eq('assignee_id', user.id);
         openTasksCount = tasksCount || 0;
 
         // Distinct collaborators (approximation)
         const { count: collabCount } = await supabase
           .from('space_members')
-          .select('id', { count: 'exact', head: true });
+          .select('id', { count: 'exact' });
         collaboratorsCount = Math.min(collabCount || 0, 999);
       }
 

@@ -54,7 +54,7 @@ const NeedDetail = () => {
       // Step 3: Fetch badge count separately
       const { count: badgeCount } = await supabaseClient
         .from('contribution_badges')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('need_id', id as string);
 
       return {
