@@ -39,6 +39,9 @@ export interface ComposerFormData {
   eventEndTime?: string;
   eventType?: 'conference' | 'workshop' | 'meetup' | 'webinar' | 'networking' | 'social' | 'other';
   location?: string;
+  locationCity?: string;
+  locationCountry?: string;
+  meetingUrl?: string;
   format?: 'in_person' | 'virtual' | 'hybrid';
   maxAttendees?: number;
   registrationRequired?: boolean;
@@ -251,7 +254,7 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
         }
 
 
-        case 'event':
+        case 'event': {
           // Combine date and time into ISO timestamp strings
           const startTime = formData.eventDate && formData.eventTime 
             ? `${formData.eventDate}T${formData.eventTime}:00`
@@ -265,6 +268,23 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
               ? `${formData.eventEndDate}T13:00:00`
               : new Date(new Date(startTime).getTime() + 3600000).toISOString(); // +1 hour default
 
+          // Parse location into structured data (expects: "Venue, City, Country" format)
+          const locationParts = (formData.location || '').split(',').map(p => p.trim());
+          const isVirtual = formData.format === 'virtual';
+          const isHybrid = formData.format === 'hybrid';
+          const isInPerson = formData.format === 'in_person' || !formData.format;
+          
+          // For in-person/hybrid: extract city and country from location string
+          let locationCity: string | undefined;
+          let locationCountry: string | undefined;
+          if ((isInPerson || isHybrid) && locationParts.length >= 2) {
+            locationCountry = locationParts[locationParts.length - 1];
+            locationCity = locationParts[locationParts.length - 2];
+          } else if ((isInPerson || isHybrid) && locationParts.length === 1) {
+            locationCity = locationParts[0];
+            locationCountry = 'Unknown';
+          }
+
           const eventPayload = {
             title: formData.title || '',
             description: formData.content,
@@ -273,8 +293,12 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
             start_time: startTime,
             end_time: endTime,
             timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            location_name: formData.format === 'virtual' ? undefined : formData.location,
-            meeting_url: formData.format === 'virtual' ? formData.location : undefined,
+            // Location fields for in-person/hybrid
+            location_name: (isInPerson || isHybrid) ? formData.location : undefined,
+            location_city: locationCity,
+            location_country: locationCountry,
+            // Meeting URL for virtual/hybrid
+            meeting_url: (isVirtual || isHybrid) ? formData.meetingUrl : undefined,
             max_attendees: formData.maxAttendees,
             is_public: true,
             requires_approval: false,
@@ -291,7 +315,11 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
           });
 
           if (response.error) throw response.error;
+          if (response.data && !response.data.success) {
+            throw new Error(response.data.error || 'Failed to create event');
+          }
           break;
+        }
 
         case 'need':
           // Use Supabase client with type casting for contribution_needs
