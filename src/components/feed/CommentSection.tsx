@@ -270,7 +270,7 @@ function CommentItem({ comment }: { comment: any }) {
     queryFn: async () => {
       const { count } = await supabase
         .from('comment_likes' as any)
-        .select('id', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('comment_id', comment.id);
       return count || 0;
     },

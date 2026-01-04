@@ -82,7 +82,7 @@ export function useStoryEngagement(storyId: string, userId?: string) {
     queryFn: async () => {
       const { count, error } = await supabase
         .from('post_comments')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('post_id', storyId)
         .eq('is_deleted', false);
 
@@ -98,7 +98,7 @@ export function useStoryEngagement(storyId: string, userId?: string) {
     queryFn: async () => {
       const { count, error } = await supabase
         .from('post_views')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('post_id', storyId);
 
       if (error) throw error;

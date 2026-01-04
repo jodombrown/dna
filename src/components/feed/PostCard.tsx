@@ -83,7 +83,7 @@ export function PostCard({ post }: PostCardProps) {
     queryFn: async () => {
       const { count } = await supabase
         .from('post_likes')
-        .select('id', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('post_id', post.id);
       return count || 0;
     },
@@ -110,7 +110,7 @@ export function PostCard({ post }: PostCardProps) {
     queryFn: async () => {
       const { count } = await supabase
         .from('post_comments')
-        .select('id', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('post_id', post.id);
       return count || 0;
     },
@@ -122,7 +122,7 @@ export function PostCard({ post }: PostCardProps) {
     queryFn: async () => {
       const { count } = await supabase
         .from('post_shares')
-        .select('id', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('post_id', post.id);
       return count || 0;
     },
