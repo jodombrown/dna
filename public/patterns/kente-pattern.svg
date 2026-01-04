@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60">
+  <defs>
+    <pattern id="kente" patternUnits="userSpaceOnUse" width="60" height="60">
+      <!-- Horizontal strips -->
+      <rect x="0" y="0" width="60" height="10" fill="#4A8D77" fill-opacity="0.06"/>
+      <rect x="0" y="20" width="60" height="10" fill="#4A8D77" fill-opacity="0.04"/>
+      <rect x="0" y="40" width="60" height="10" fill="#4A8D77" fill-opacity="0.06"/>
+      <!-- Vertical accent strips -->
+      <rect x="0" y="0" width="10" height="60" fill="#4A8D77" fill-opacity="0.03"/>
+      <rect x="25" y="0" width="10" height="60" fill="#4A8D77" fill-opacity="0.05"/>
+      <rect x="50" y="0" width="10" height="60" fill="#4A8D77" fill-opacity="0.03"/>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#kente)"/>
+</svg>
