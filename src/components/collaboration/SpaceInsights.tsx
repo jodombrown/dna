@@ -40,21 +40,21 @@ export function SpaceInsights({ spaceId, isLead }: SpaceInsightsProps) {
       // Active members
       const { count: activeMembersCount } = await supabaseClient
         .from('space_members')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('space_id', spaceId)
         .or(`joined_at.gte.${since}`);
 
       // Tasks created
       const { count: tasksCreated } = await supabaseClient
         .from('space_tasks')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('space_id', spaceId)
         .gte('created_at', since);
 
       // Tasks completed
       const { count: tasksCompleted } = await supabaseClient
         .from('space_tasks')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('space_id', spaceId)
         .eq('status', 'done')
         .gte('updated_at', since);
@@ -62,7 +62,7 @@ export function SpaceInsights({ spaceId, isLead }: SpaceInsightsProps) {
       // Updates posted
       const { count: updatesPosted } = await supabaseClient
         .from('space_updates')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('space_id', spaceId)
         .gte('created_at', since);
 
@@ -85,14 +85,14 @@ export function SpaceInsights({ spaceId, isLead }: SpaceInsightsProps) {
       // Total open tasks
       const { count: totalOpen } = await supabaseClient
         .from('space_tasks')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('space_id', spaceId)
         .in('status', ['open', 'in_progress']);
 
       // Overdue tasks
       const { count: totalOverdue } = await supabaseClient
         .from('space_tasks')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('space_id', spaceId)
         .neq('status', 'done')
         .not('due_date', 'is', null)
@@ -149,7 +149,7 @@ export function SpaceInsights({ spaceId, isLead }: SpaceInsightsProps) {
 
         const { count } = await supabaseClient
           .from('space_tasks')
-          .select('*', { count: 'exact', head: true })
+          .select('id', { count: 'exact' })
           .eq('space_id', spaceId)
           .eq('status', 'done')
           .gte('updated_at', weekStart.toISOString())
