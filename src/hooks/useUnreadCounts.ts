@@ -54,7 +54,7 @@ export function useUnreadCounts(): UnreadCounts {
         const lastRead = lastReadMap[convId];
         let query = supabase
           .from('messages')
-          .select('*', { count: 'exact', head: true })
+          .select('id', { count: 'exact' })
           .eq('conversation_id', convId)
           .neq('sender_id', user.id);
         

@@ -125,7 +125,7 @@ export function ConversationsPanel({
       for (const p of participations || []) {
         let query = supabase
           .from('messages')
-          .select('*', { count: 'exact', head: true })
+          .select('id', { count: 'exact' })
           .eq('conversation_id', p.conversation_id)
           .neq('sender_id', user.id);
         
