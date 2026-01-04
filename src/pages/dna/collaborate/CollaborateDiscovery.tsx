@@ -1,145 +1,261 @@
 // src/pages/dna/collaborate/CollaborateDiscovery.tsx
-// Discovery mode for Collaborate hub - full spaces experience
+// Discovery mode for Collaborate hub - full spaces experience with PRD hub pattern
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { useMySpaces } from '@/hooks/useSpaces';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, Sparkles } from 'lucide-react';
-import { SpaceWithMembership } from '@/types/spaceTypes';
-import { SuggestedSpaces } from '@/components/collaboration/SuggestedSpaces';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { Users, Plus, Search, FolderKanban, CheckSquare, UserPlus, Sparkles } from 'lucide-react';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
-import { TYPOGRAPHY } from '@/lib/typography.config';
+
+// New Hub Components
+import {
+  HubHero,
+  HubStatsBar,
+  HubQuickActions,
+  HubDIAPanel,
+  HubActivityFeed,
+  HubSubNav,
+  type HubStat,
+  type QuickAction,
+  type DIARecommendation,
+  type ActivityItem,
+  type SubNavTab,
+} from '@/components/hubs/shared';
+
+// Existing sections
+import { SuggestedSpaces } from '@/components/collaboration/SuggestedSpaces';
 
 export function CollaborateDiscovery() {
   const navigate = useNavigate();
-  const { data: mySpaces, isLoading: mySpacesLoading } = useMySpaces();
+  const { user } = useAuth();
 
-  const renderSpaceCard = (space: SpaceWithMembership) => (
-    <Card
-      key={space.id}
-      className="cursor-pointer hover:border-primary transition-colors"
-      onClick={() => navigate(`/dna/collaborate/spaces/${space.slug}`)}
-    >
-      <CardHeader>
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex-1 min-w-0">
-            <CardTitle className="text-lg truncate">{space.name}</CardTitle>
-            {space.tagline && (
-              <CardDescription className="mt-1 line-clamp-2">{space.tagline}</CardDescription>
-            )}
-          </div>
-          <Badge variant={space.status === 'active' ? 'default' : 'secondary'} className="shrink-0">
-            {space.status}
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-2">
-          {space.focus_areas && space.focus_areas.length > 0 && (
-            <div className="flex flex-wrap gap-1">
-              {space.focus_areas.slice(0, 3).map((area, idx) => (
-                <Badge key={idx} variant="outline" className="text-xs">
-                  {area}
-                </Badge>
-              ))}
-              {space.focus_areas.length > 3 && (
-                <Badge variant="outline" className="text-xs">
-                  +{space.focus_areas.length - 3}
-                </Badge>
-              )}
-            </div>
-          )}
-          {space.region && (
-            <p className="text-sm text-muted-foreground">{space.region}</p>
-          )}
-          {space.user_role && (
-            <Badge variant="secondary" className="text-xs">
-              {space.user_role}
-            </Badge>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  );
+  // Fetch stats
+  const { data: stats, isLoading: statsLoading } = useQuery({
+    queryKey: ['collaborate-hub-stats', user?.id],
+    queryFn: async (): Promise<{
+      activeSpaces: number;
+      mySpaces: number;
+      openTasks: number;
+      collaborators: number;
+    }> => {
+      // Active spaces count
+      const { count: activeSpacesCount } = await supabase
+        .from('spaces')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'active')
+        .eq('visibility', 'public');
+      
+      let mySpacesCount = 0;
+      let openTasksCount = 0;
+      let collaboratorsCount = 0;
+
+      if (user?.id) {
+        // My spaces (where I'm a member)
+        const { count: myCount } = await supabase
+          .from('space_members')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id);
+        mySpacesCount = myCount || 0;
+
+        // Open tasks assigned to me
+        const { count: tasksCount } = await supabase
+          .from('tasks')
+          .select('id', { count: 'exact', head: true })
+          .eq('assignee_id', user.id);
+        openTasksCount = tasksCount || 0;
+
+        // Distinct collaborators (approximation)
+        const { count: collabCount } = await supabase
+          .from('space_members')
+          .select('id', { count: 'exact', head: true });
+        collaboratorsCount = Math.min(collabCount || 0, 999);
+      }
+
+      return {
+        activeSpaces: activeSpacesCount || 0,
+        mySpaces: mySpacesCount,
+        openTasks: openTasksCount,
+        collaborators: collaboratorsCount,
+      };
+    },
+    staleTime: 60000,
+  });
+
+  // Fetch recent activity
+  const { data: recentActivity, isLoading: activityLoading } = useQuery({
+    queryKey: ['collaborate-recent-activity'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('spaces')
+        .select('id, name, slug, tagline, created_at, updated_at')
+        .eq('status', 'active')
+        .eq('visibility', 'public')
+        .order('updated_at', { ascending: false })
+        .limit(5);
+
+      return data || [];
+    },
+    staleTime: 60000,
+  });
+
+  // Hub Stats
+  const hubStats: HubStat[] = [
+    {
+      label: 'Active Spaces',
+      value: stats?.activeSpaces || 0,
+      icon: FolderKanban,
+      onClick: () => navigate('/dna/collaborate/spaces'),
+    },
+    {
+      label: 'My Spaces',
+      value: stats?.mySpaces || 0,
+      icon: Users,
+      onClick: () => navigate('/dna/collaborate/my-spaces'),
+    },
+    {
+      label: 'Open Tasks',
+      value: stats?.openTasks || 0,
+      icon: CheckSquare,
+      onClick: () => navigate('/dna/collaborate/my-spaces'),
+    },
+    {
+      label: 'Collaborators',
+      value: stats?.collaborators || 0,
+      icon: UserPlus,
+    },
+  ];
+
+  // Quick Actions
+  const quickActions: QuickAction[] = [
+    {
+      label: 'Create Space',
+      description: 'Start a new project',
+      icon: Plus,
+      onClick: () => navigate('/dna/collaborate/spaces/new'),
+      variant: 'primary',
+    },
+    {
+      label: 'Browse Spaces',
+      description: 'Join existing projects',
+      icon: Search,
+      onClick: () => navigate('/dna/collaborate/spaces'),
+    },
+    {
+      label: 'My Tasks',
+      description: 'View your assignments',
+      icon: CheckSquare,
+      onClick: () => navigate('/dna/collaborate/my-spaces'),
+    },
+    {
+      label: 'My Spaces',
+      description: 'Spaces you\'re in',
+      icon: FolderKanban,
+      onClick: () => navigate('/dna/collaborate/my-spaces'),
+    },
+  ];
+
+  // DIA Recommendations
+  const diaRecommendations: DIARecommendation[] = [
+    {
+      id: 'skills-match',
+      title: 'Spaces needing your skills',
+      description: 'Projects looking for expertise matching your profile',
+      reason: 'Based on your expertise areas and skills',
+      icon: Sparkles,
+      onClick: () => navigate('/dna/collaborate/spaces'),
+    },
+    {
+      id: 'network-projects',
+      title: 'Your connections\' active projects',
+      description: 'See what people in your network are building',
+      reason: 'Based on your network activity',
+      icon: Users,
+      onClick: () => navigate('/dna/collaborate/spaces'),
+    },
+    {
+      id: 'due-tasks',
+      title: 'Tasks due this week',
+      description: 'Don\'t miss your upcoming deadlines',
+      reason: 'Urgency nudge based on task due dates',
+      icon: CheckSquare,
+      onClick: () => navigate('/dna/collaborate/my-spaces'),
+    },
+  ];
+
+  // Activity Feed items
+  const activityItems: ActivityItem[] = (recentActivity || []).map(space => ({
+    id: space.id,
+    type: 'space',
+    title: space.name,
+    description: space.tagline || 'Collaboration space',
+    timestamp: space.updated_at || space.created_at,
+    icon: FolderKanban,
+    onClick: () => navigate(`/dna/collaborate/spaces/${space.slug}`),
+  }));
+
+  // Sub Navigation Tabs
+  const subNavTabs: SubNavTab[] = [
+    { label: 'All Spaces', path: '/dna/collaborate/spaces' },
+    { label: 'My Spaces', path: '/dna/collaborate/my-spaces' },
+  ];
 
   return (
-    <div className="min-h-screen bg-background pb-20 md:pb-0">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 max-w-7xl space-y-6 lg:space-y-8">
+    <div className="w-full min-h-screen bg-background pb-20 md:pb-0">
+      <div className="container max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 space-y-6">
         {/* Hero Section */}
-        <div className="text-center space-y-4 py-4">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Sparkles className="h-8 w-8 text-primary" />
-            <h1 className={TYPOGRAPHY.h1}>COLLABORATE</h1>
-          </div>
-          <p className={`${TYPOGRAPHY.bodyLarge} text-muted-foreground max-w-2xl mx-auto`}>
-            Turn connections and conversations into real projects. Organize collaborative workspaces where ideas become impact.
-          </p>
+        <HubHero
+          hub="collaborate"
+          icon={Users}
+          title="COLLABORATE"
+          tagline="Build Together, Achieve Together"
+          primaryAction={{
+            label: 'Create Space',
+            icon: Plus,
+            onClick: () => navigate('/dna/collaborate/spaces/new'),
+          }}
+          secondaryAction={{
+            label: 'Find Spaces',
+            icon: Search,
+            onClick: () => navigate('/dna/collaborate/spaces'),
+          }}
+        />
 
-          {/* Quick Actions */}
-          <div className="flex flex-wrap gap-3 justify-center pt-4">
-            <Button size="lg" onClick={() => navigate('/dna/collaborate/spaces/new')}>
-              <Plus className="mr-2 h-4 w-4" />
-              Create Space
-            </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate('/dna/collaborate/spaces')}>
-              <Search className="mr-2 h-4 w-4" />
-              Find Spaces
-            </Button>
-          </div>
-        </div>
+        {/* Stats Bar */}
+        <HubStatsBar stats={hubStats} loading={statsLoading} />
 
-        {/* Suggested Spaces */}
-        <SuggestedSpaces />
+        {/* Sub Navigation */}
+        <HubSubNav tabs={subNavTabs} basePath="/dna/collaborate" />
 
-        {/* My Spaces */}
-        <div className="space-y-6">
-          <h2 className={TYPOGRAPHY.h2}>My Spaces</h2>
+        {/* Two Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
+          {/* Main Content */}
+          <div className="space-y-6">
+            {/* Quick Actions */}
+            <HubQuickActions actions={quickActions} />
 
-          {/* Leading */}
-          <div className="space-y-3">
-            <h3 className="text-lg font-medium text-muted-foreground">Leading</h3>
-            {mySpacesLoading ? (
-              <div className="text-center py-8 text-muted-foreground">Loading your spaces...</div>
-            ) : mySpaces?.leading && mySpaces.leading.length > 0 ? (
-              <div className="grid gap-4 md:grid-cols-2">
-                {mySpaces.leading.map(renderSpaceCard)}
-              </div>
-            ) : (
-              <Card>
-                <CardContent className="text-center py-8">
-                  <p className="text-muted-foreground mb-4">You're not leading any spaces yet.</p>
-                  <Button size="sm" onClick={() => navigate('/dna/collaborate/spaces/new')}>
-                    <Plus className="mr-2 h-3 w-3" />
-                    Create your first space
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
+            {/* Suggested Spaces */}
+            <SuggestedSpaces />
           </div>
 
-          {/* Contributing */}
-          <div className="space-y-3">
-            <h3 className="text-lg font-medium text-muted-foreground">Contributing</h3>
-            {mySpacesLoading ? (
-              <div className="text-center py-8 text-muted-foreground">Loading...</div>
-            ) : mySpaces?.contributing && mySpaces.contributing.length > 0 ? (
-              <div className="grid gap-4 md:grid-cols-2">
-                {mySpaces.contributing.map(renderSpaceCard)}
-              </div>
-            ) : (
-              <Card>
-                <CardContent className="text-center py-8">
-                  <p className="text-muted-foreground mb-4">You're not contributing to any spaces yet.</p>
-                  <Button size="sm" variant="outline" onClick={() => navigate('/dna/collaborate/spaces')}>
-                    <Search className="mr-2 h-3 w-3" />
-                    Explore spaces
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* DIA Panel */}
+            <HubDIAPanel
+              hub="collaborate"
+              recommendations={diaRecommendations}
+              onAskDIA={() => navigate('/dna/dia?context=collaborate')}
+            />
+
+            {/* Recent Activity */}
+            <HubActivityFeed
+              title="Active Spaces"
+              items={activityItems}
+              loading={activityLoading}
+              onViewAll={() => navigate('/dna/collaborate/spaces')}
+              emptyMessage="No active spaces yet"
+            />
           </div>
         </div>
       </div>
