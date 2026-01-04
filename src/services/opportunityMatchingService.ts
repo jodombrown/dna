@@ -149,19 +149,30 @@ class OpportunityMatchingService {
       const userProfile = await this.getUserProfile(userId);
       if (!userProfile) return null;
 
-      const { data: opportunity, error } = await supabase
+      // Two-step fetch: get need first, then space
+      const { data: needData, error: needError } = await supabase
         .from('contribution_needs')
-        .select(`
-          *,
-          space:spaces(id, name, slug, tagline, focus_areas, region)
-        `)
+        .select('*')
         .eq('id', opportunityId)
-        .single();
+        .maybeSingle();
 
-      if (error || !opportunity) return null;
+      if (needError || !needData) return null;
+
+      // Fetch space separately
+      let space = null;
+      if (needData.space_id) {
+        const { data: spaceData } = await supabase
+          .from('spaces')
+          .select('id, name, slug, tagline, focus_areas, region')
+          .eq('id', needData.space_id)
+          .maybeSingle();
+        space = spaceData;
+      }
+
+      const opportunity = { ...needData, space } as ContributionNeedWithSpace;
 
       const contributionHistory = await this.getContributionHistory(userId);
-      return this.calculateMatchScore(userProfile, opportunity as ContributionNeedWithSpace, contributionHistory);
+      return this.calculateMatchScore(userProfile, opportunity, contributionHistory);
     } catch (error) {
       console.error('Error getting match score:', error);
       return null;
@@ -255,12 +266,25 @@ class OpportunityMatchingService {
   }
 
   private async getContributionHistory(userId: string): Promise<ContributionHistory> {
-    // Get user's past contribution offers
+    // Get user's past contribution offers - two-step fetch
     const { data: offers } = await supabase
       .from('contribution_offers')
-      .select('need_id, contribution_needs(type)')
+      .select('need_id')
       .eq('created_by', userId)
       .in('status', ['accepted', 'completed']);
+
+    // Get need types separately if we have offers
+    let needTypes: string[] = [];
+    if (offers && offers.length > 0) {
+      const needIds = [...new Set(offers.map(o => o.need_id).filter(Boolean))];
+      if (needIds.length > 0) {
+        const { data: needs } = await supabase
+          .from('contribution_needs')
+          .select('id, type')
+          .in('id', needIds);
+        needTypes = needs?.map(n => n.type).filter(Boolean) || [];
+      }
+    }
 
     // Get user's contribution records
     const { data: contributions } = await (supabase as any)
@@ -268,14 +292,7 @@ class OpportunityMatchingService {
       .select('type')
       .eq('user_id', userId);
 
-    const types = new Set<string>();
-
-    // Extract contribution types from offers
-    offers?.forEach((offer: any) => {
-      if (offer.contribution_needs?.type) {
-        types.add(offer.contribution_needs.type);
-      }
-    });
+    const types = new Set<string>(needTypes);
 
     // Map general contribution types to contribution need types
     contributions?.forEach((c: any) => {
@@ -292,24 +309,41 @@ class OpportunityMatchingService {
   }
 
   private async getOpenOpportunities(excludeUserId: string): Promise<ContributionNeedWithSpace[]> {
-    const { data, error } = await supabase
+    // Step 1: Fetch needs
+    const { data: needsData, error: needsError } = await supabase
       .from('contribution_needs')
-      .select(`
-        *,
-        space:spaces(id, name, slug, tagline, focus_areas, region)
-      `)
+      .select('*')
       .in('status', ['open', 'in_progress'])
       .neq('created_by', excludeUserId)
       .order('priority', { ascending: false })
       .order('created_at', { ascending: false })
       .limit(50);
 
-    if (error) {
-      console.error('Error fetching opportunities:', error);
+    if (needsError || !needsData || needsData.length === 0) {
+      if (needsError) console.error('Error fetching opportunities:', needsError);
       return [];
     }
 
-    return (data || []) as ContributionNeedWithSpace[];
+    // Step 2: Fetch spaces separately
+    const spaceIds = [...new Set(needsData.map(n => n.space_id).filter(Boolean))];
+    let spacesMap: Record<string, any> = {};
+    
+    if (spaceIds.length > 0) {
+      const { data: spacesData } = await supabase
+        .from('spaces')
+        .select('id, name, slug, tagline, focus_areas, region')
+        .in('id', spaceIds);
+      
+      if (spacesData) {
+        spacesMap = Object.fromEntries(spacesData.map(s => [s.id, s]));
+      }
+    }
+
+    // Step 3: Merge data
+    return needsData.map(need => ({
+      ...need,
+      space: need.space_id ? spacesMap[need.space_id] || null : null,
+    })) as ContributionNeedWithSpace[];
   }
 
   private calculateMatchScore(
@@ -569,23 +603,40 @@ class OpportunityMatchingService {
    * @returns Array of trending opportunities
    */
   async getTrendingOpportunities(limit: number = 5): Promise<ContributionNeedWithSpace[]> {
-    const { data, error } = await supabase
+    // Step 1: Fetch needs
+    const { data: needsData, error: needsError } = await supabase
       .from('contribution_needs')
-      .select(`
-        *,
-        space:spaces(id, name, slug, tagline, focus_areas, region)
-      `)
+      .select('*')
       .eq('status', 'open')
       .eq('priority', 'high')
       .order('created_at', { ascending: false })
       .limit(limit);
 
-    if (error) {
-      console.error('Error fetching trending opportunities:', error);
+    if (needsError || !needsData || needsData.length === 0) {
+      if (needsError) console.error('Error fetching trending opportunities:', needsError);
       return [];
     }
 
-    return (data || []) as ContributionNeedWithSpace[];
+    // Step 2: Fetch spaces separately
+    const spaceIds = [...new Set(needsData.map(n => n.space_id).filter(Boolean))];
+    let spacesMap: Record<string, any> = {};
+    
+    if (spaceIds.length > 0) {
+      const { data: spacesData } = await supabase
+        .from('spaces')
+        .select('id, name, slug, tagline, focus_areas, region')
+        .in('id', spaceIds);
+      
+      if (spacesData) {
+        spacesMap = Object.fromEntries(spacesData.map(s => [s.id, s]));
+      }
+    }
+
+    // Step 3: Merge data
+    return needsData.map(need => ({
+      ...need,
+      space: need.space_id ? spacesMap[need.space_id] || null : null,
+    })) as ContributionNeedWithSpace[];
   }
 
   /**
@@ -606,24 +657,41 @@ class OpportunityMatchingService {
 
     const spaceIds = memberships.map((m) => m.space_id);
 
-    const { data, error } = await supabase
+    // Step 1: Fetch needs
+    const { data: needsData, error: needsError } = await supabase
       .from('contribution_needs')
-      .select(`
-        *,
-        space:spaces(id, name, slug, tagline, focus_areas, region)
-      `)
+      .select('*')
       .in('space_id', spaceIds)
       .in('status', ['open', 'in_progress'])
       .neq('created_by', userId)
       .order('created_at', { ascending: false })
       .limit(10);
 
-    if (error) {
-      console.error('Error fetching network opportunities:', error);
+    if (needsError || !needsData || needsData.length === 0) {
+      if (needsError) console.error('Error fetching network opportunities:', needsError);
       return [];
     }
 
-    return (data || []) as ContributionNeedWithSpace[];
+    // Step 2: Fetch spaces separately
+    const needSpaceIds = [...new Set(needsData.map(n => n.space_id).filter(Boolean))];
+    let spacesMap: Record<string, any> = {};
+    
+    if (needSpaceIds.length > 0) {
+      const { data: spacesData } = await supabase
+        .from('spaces')
+        .select('id, name, slug, tagline, focus_areas, region')
+        .in('id', needSpaceIds);
+      
+      if (spacesData) {
+        spacesMap = Object.fromEntries(spacesData.map(s => [s.id, s]));
+      }
+    }
+
+    // Step 3: Merge data
+    return needsData.map(need => ({
+      ...need,
+      space: need.space_id ? spacesMap[need.space_id] || null : null,
+    })) as ContributionNeedWithSpace[];
   }
 
   /**
@@ -638,19 +706,38 @@ class OpportunityMatchingService {
   ): Promise<Array<ContributionNeedWithSpace & { relevance: string; matchScore?: number }>> {
     const searchTerms = query.toLowerCase().split(/\s+/);
 
-    const { data, error } = await supabase
+    // Step 1: Fetch needs
+    const { data: needsData, error: needsError } = await supabase
       .from('contribution_needs')
-      .select(`
-        *,
-        space:spaces(id, name, slug, tagline, focus_areas, region)
-      `)
+      .select('*')
       .in('status', ['open', 'in_progress'])
       .neq('created_by', userId)
       .limit(20);
 
-    if (error || !data) {
+    if (needsError || !needsData || needsData.length === 0) {
       return [];
     }
+
+    // Step 2: Fetch spaces separately
+    const spaceIds = [...new Set(needsData.map(n => n.space_id).filter(Boolean))];
+    let spacesMap: Record<string, any> = {};
+    
+    if (spaceIds.length > 0) {
+      const { data: spacesData } = await supabase
+        .from('spaces')
+        .select('id, name, slug, tagline, focus_areas, region')
+        .in('id', spaceIds);
+      
+      if (spacesData) {
+        spacesMap = Object.fromEntries(spacesData.map(s => [s.id, s]));
+      }
+    }
+
+    // Step 3: Merge data
+    const data = needsData.map(need => ({
+      ...need,
+      space: need.space_id ? spacesMap[need.space_id] || null : null,
+    }));
 
     // Get user profile for match scoring
     const userProfile = await this.getUserProfile(userId);

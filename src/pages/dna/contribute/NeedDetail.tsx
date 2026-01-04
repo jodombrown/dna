@@ -30,18 +30,38 @@ const NeedDetail = () => {
   const { data: need, isLoading } = useQuery({
     queryKey: ['contribution-need', id],
     queryFn: async () => {
-      const { data, error } = await supabaseClient
+      // Step 1: Fetch the need
+      const { data: needData, error: needError } = await supabaseClient
         .from('contribution_needs')
-        .select(`
-          *,
-          space:spaces(id, name, slug, tagline, description, focus_areas, region, status),
-          badges:contribution_badges(count)
-        `)
+        .select('*')
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
-      return data as ContributionNeedWithSpace & {
+      if (needError) throw needError;
+      if (!needData) return null;
+
+      // Step 2: Fetch the space separately
+      let space = null;
+      if (needData.space_id) {
+        const { data: spaceData } = await supabaseClient
+          .from('spaces')
+          .select('id, name, slug, tagline, description, focus_areas, region, status')
+          .eq('id', needData.space_id)
+          .maybeSingle();
+        space = spaceData;
+      }
+
+      // Step 3: Fetch badge count separately
+      const { count: badgeCount } = await supabaseClient
+        .from('contribution_badges')
+        .select('*', { count: 'exact', head: true })
+        .eq('need_id', id as string);
+
+      return {
+        ...needData,
+        space,
+        badges: [{ count: badgeCount || 0 }],
+      } as ContributionNeedWithSpace & {
         badges: { count: number }[];
       };
     },

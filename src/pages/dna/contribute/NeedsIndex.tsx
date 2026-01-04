@@ -30,12 +30,10 @@ const NeedsIndex = () => {
   const { data: needs, isLoading } = useQuery({
     queryKey: ['contribution-needs', typeFilter, statusFilter, sortBy],
     queryFn: async () => {
+      // Step 1: Build and execute needs query
       let query = supabaseClient
         .from('contribution_needs')
-        .select(`
-          *,
-          space:spaces(id, name, slug, tagline, focus_areas, region)
-        `);
+        .select('*');
 
       // Type filter
       if (typeFilter !== 'all') {
@@ -56,9 +54,30 @@ const NeedsIndex = () => {
         query = query.order('created_at', { ascending: false });
       }
 
-      const { data, error } = await query;
-      if (error) throw error;
-      return data as ContributionNeedWithSpace[];
+      const { data: needsData, error: needsError } = await query;
+      if (needsError) throw needsError;
+      if (!needsData || needsData.length === 0) return [];
+
+      // Step 2: Fetch spaces separately
+      const spaceIds = [...new Set(needsData.map(n => n.space_id).filter(Boolean))];
+      let spacesMap: Record<string, any> = {};
+      
+      if (spaceIds.length > 0) {
+        const { data: spacesData } = await supabaseClient
+          .from('spaces')
+          .select('id, name, slug, tagline, focus_areas, region')
+          .in('id', spaceIds);
+        
+        if (spacesData) {
+          spacesMap = Object.fromEntries(spacesData.map(s => [s.id, s]));
+        }
+      }
+
+      // Step 3: Merge data
+      return needsData.map(need => ({
+        ...need,
+        space: need.space_id ? spacesMap[need.space_id] || null : null,
+      })) as ContributionNeedWithSpace[];
     },
   });
 
