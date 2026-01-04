@@ -282,25 +282,11 @@ class OpportunityMatchingService {
       }
     }
 
-    // Get user's contribution records
-    const { data: contributions } = await (supabase as any)
-      .from('user_contributions')
-      .select('type')
-      .eq('user_id', userId);
-
     const types = new Set<string>(needTypes);
-
-    // Map general contribution types to contribution need types
-    contributions?.forEach((c: any) => {
-      if (c.type === 'initiative' || c.type === 'community') {
-        types.add('skills');
-        types.add('time');
-      }
-    });
 
     return {
       types: Array.from(types),
-      count: (offers?.length || 0) + (contributions?.length || 0),
+      count: offers?.length || 0,
     };
   }
 
