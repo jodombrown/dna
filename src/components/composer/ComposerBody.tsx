@@ -652,84 +652,10 @@ function renderModeFields(
       return <EventModeFields formData={formData} onChange={onChange} />;
 
     case 'need':
-      return (
-        <>
-          <div>
-            <Label>Title *</Label>
-            <Input
-              placeholder="What do you need?"
-              value={formData.title || ''}
-              onChange={(e) => onChange({ title: e.target.value })}
-            />
-          </div>
-          <div>
-            <Label>Type</Label>
-            <Select
-              value={formData.needType || 'expertise'}
-              onValueChange={(value: any) => onChange({ needType: value })}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="funding">Funding</SelectItem>
-                <SelectItem value="expertise">Expertise</SelectItem>
-                <SelectItem value="resources">Resources</SelectItem>
-                <SelectItem value="volunteers">Volunteers</SelectItem>
-                <SelectItem value="partnership">Partnership</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label>Description *</Label>
-            <Textarea
-              placeholder="Describe what you need..."
-              value={formData.content}
-              onChange={(e) => onChange({ content: e.target.value })}
-              className="min-h-[120px] resize-none"
-            />
-          </div>
-        </>
-      );
+      return <OpportunityModeFields formData={formData} onChange={onChange} />;
 
     case 'space':
-      return (
-        <>
-          <div>
-            <Label>Space Name *</Label>
-            <Input
-              placeholder="Name your space or project"
-              value={formData.title || ''}
-              onChange={(e) => onChange({ title: e.target.value })}
-            />
-          </div>
-          <div>
-            <Label>Description *</Label>
-            <Textarea
-              placeholder="What is this space about?"
-              value={formData.content}
-              onChange={(e) => onChange({ content: e.target.value })}
-              className="min-h-[120px] resize-none"
-            />
-          </div>
-          <div>
-            <Label>Visibility</Label>
-            <Select
-              value={formData.visibility || 'public'}
-              onValueChange={(value: any) => onChange({ visibility: value })}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="public">Public</SelectItem>
-                <SelectItem value="private">Private</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <MediaUploadButton label="Space Image" onUpload={(url) => onChange({ mediaUrl: url })} />
-        </>
-      );
+      return <SpaceModeFields formData={formData} onChange={onChange} />;
 
     case 'community':
       return (
@@ -755,6 +681,495 @@ function renderModeFields(
     default:
       return null;
   }
+}
+
+/**
+ * SpaceModeFields - Enhanced space/project creation form per PRD
+ */
+function SpaceModeFields({ 
+  formData, 
+  onChange 
+}: { 
+  formData: ComposerFormData; 
+  onChange: (updates: Partial<ComposerFormData>) => void;
+}) {
+  const spaceTypes = [
+    { value: 'startup', icon: '🚀', label: 'Startup', description: 'Building a new venture' },
+    { value: 'community', icon: '🌍', label: 'Community', description: 'Gathering people together' },
+    { value: 'creative', icon: '🎨', label: 'Creative', description: 'Art, music, content' },
+    { value: 'mentorship', icon: '🎓', label: 'Mentorship', description: 'Teaching & learning' },
+  ];
+
+  const visibilityOptions = [
+    { value: 'public', label: 'Public', description: 'Anyone can discover and request to join' },
+    { value: 'private', label: 'Private', description: 'Only visible to members' },
+    { value: 'invite-only', label: 'Invite Only', description: 'Visible but requires invitation' },
+  ];
+
+  const skillOptions = [
+    'Engineering', 'Design', 'Marketing', 'Finance', 'Operations', 
+    'Legal', 'Sales', 'Product', 'Data', 'Content', 'Community'
+  ];
+
+  const selectedSkills = (formData as any).skillsNeeded || [];
+
+  return (
+    <div className="space-y-4">
+      {/* Space Name */}
+      <div>
+        <Label className="text-sm font-medium">Space Name *</Label>
+        <Input
+          placeholder="What are you building?"
+          value={formData.title || ''}
+          onChange={(e) => onChange({ title: e.target.value })}
+          className="mt-1.5"
+          maxLength={60}
+        />
+      </div>
+
+      {/* Space Type Selector */}
+      <div>
+        <Label className="text-sm font-medium">Space Type *</Label>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">
+          {spaceTypes.map((type) => (
+            <button
+              key={type.value}
+              type="button"
+              onClick={() => onChange({ spaceCategory: type.value })}
+              className={cn(
+                'flex flex-col items-center p-3 rounded-lg border-2 transition-all text-center',
+                formData.spaceCategory === type.value
+                  ? 'border-dna-bevel-space bg-purple-50 dark:bg-purple-500/10'
+                  : 'border-border hover:border-muted-foreground/50'
+              )}
+            >
+              <span className="text-2xl mb-1">{type.icon}</span>
+              <span className="text-sm font-medium">{type.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Description */}
+      <div>
+        <Label className="text-sm font-medium">Description *</Label>
+        <Textarea
+          placeholder="Tell people what this project is about..."
+          value={formData.content}
+          onChange={(e) => onChange({ content: e.target.value })}
+          className="min-h-[100px] resize-none mt-1.5"
+        />
+      </div>
+
+      {/* Cover Image */}
+      <div>
+        <Label className="text-sm font-medium">Cover Image</Label>
+        <SpaceCoverUpload
+          currentImageUrl={formData.mediaUrl}
+          onUpload={(url) => onChange({ mediaUrl: url })}
+          onRemove={() => onChange({ mediaUrl: undefined })}
+        />
+      </div>
+
+      {/* Visibility */}
+      <div>
+        <Label className="text-sm font-medium">Visibility *</Label>
+        <div className="space-y-2 mt-2">
+          {visibilityOptions.map((option) => (
+            <label
+              key={option.value}
+              className={cn(
+                'flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors',
+                formData.visibility === option.value
+                  ? 'border-dna-bevel-space bg-purple-50/50 dark:bg-purple-500/5'
+                  : 'border-border hover:bg-muted/50'
+              )}
+            >
+              <input
+                type="radio"
+                name="visibility"
+                value={option.value}
+                checked={formData.visibility === option.value}
+                onChange={() => onChange({ visibility: option.value as any })}
+                className="mt-1"
+              />
+              <div>
+                <span className="font-medium">{option.label}</span>
+                <p className="text-xs text-muted-foreground">{option.description}</p>
+              </div>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Skills Needed */}
+      <div>
+        <Label className="text-sm font-medium">Skills Needed (optional)</Label>
+        <div className="flex flex-wrap gap-2 mt-2">
+          {skillOptions.map((skill) => (
+            <button
+              key={skill}
+              type="button"
+              onClick={() => {
+                const current = selectedSkills;
+                const updated = current.includes(skill)
+                  ? current.filter((s: string) => s !== skill)
+                  : [...current, skill];
+                onChange({ ...formData, skillsNeeded: updated } as any);
+              }}
+              className={cn(
+                'px-3 py-1.5 rounded-full text-sm border transition-colors',
+                selectedSkills.includes(skill)
+                  ? 'bg-dna-bevel-space text-white border-dna-bevel-space'
+                  : 'border-border hover:border-dna-bevel-space'
+              )}
+            >
+              {skill}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * SpaceCoverUpload - Cover image upload for spaces
+ */
+function SpaceCoverUpload({
+  currentImageUrl,
+  onUpload,
+  onRemove,
+}: {
+  currentImageUrl?: string;
+  onUpload: (url: string) => void;
+  onRemove: () => void;
+}) {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      toast({ title: 'Invalid file type', description: 'Please upload a JPG, PNG, or WebP image', variant: 'destructive' });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: 'File too large', description: 'Image must be under 5MB', variant: 'destructive' });
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const url = await uploadMedia(file, user.id, 'post-media');
+      onUpload(url);
+      toast({ description: 'Cover image uploaded!' });
+    } catch (error) {
+      toast({ title: 'Upload failed', description: 'Please try again', variant: 'destructive' });
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  if (currentImageUrl) {
+    return (
+      <div className="relative mt-2">
+        <img 
+          src={currentImageUrl} 
+          alt="Space cover" 
+          className="w-full h-32 object-cover rounded-lg border"
+        />
+        <Button
+          type="button"
+          size="icon"
+          variant="destructive"
+          className="absolute top-2 right-2 h-8 w-8"
+          onClick={onRemove}
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-2">
+      <div 
+        className="border-2 border-dashed border-purple-300 rounded-lg p-4 text-center cursor-pointer hover:border-purple-400 hover:bg-purple-50/50 transition-colors"
+        onClick={() => fileInputRef.current?.click()}
+      >
+        {isUploading ? (
+          <div className="flex items-center justify-center gap-2">
+            <Loader2 className="h-5 w-5 animate-spin text-purple-500" />
+            <span className="text-sm text-muted-foreground">Uploading...</span>
+          </div>
+        ) : (
+          <>
+            <ImagePlus className="h-6 w-6 mx-auto text-purple-400 mb-1" />
+            <p className="text-sm text-muted-foreground">Upload cover image</p>
+          </>
+        )}
+      </div>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/jpg,image/png,image/webp"
+        className="hidden"
+        onChange={handleFileSelect}
+      />
+    </div>
+  );
+}
+
+/**
+ * OpportunityModeFields - Enhanced need/offer creation form per PRD
+ */
+function OpportunityModeFields({ 
+  formData, 
+  onChange 
+}: { 
+  formData: ComposerFormData; 
+  onChange: (updates: Partial<ComposerFormData>) => void;
+}) {
+  const opportunityType = (formData as any).opportunityType || 'need';
+  const selectedCurrencies: string[] = (formData as any).currencyTypes || [];
+
+  const currencies = [
+    { value: 'money', icon: '💰', label: 'Money', description: 'Financial support' },
+    { value: 'time', icon: '⏰', label: 'Time', description: 'Hours & availability' },
+    { value: 'network', icon: '🤝', label: 'Network', description: 'Connections & intros' },
+    { value: 'knowledge', icon: '📚', label: 'Knowledge', description: 'Skills & expertise' },
+  ];
+
+  const categories = [
+    { value: 'business', label: 'Business' },
+    { value: 'technology', label: 'Technology' },
+    { value: 'education', label: 'Education' },
+    { value: 'creative', label: 'Creative' },
+    { value: 'legal', label: 'Legal' },
+    { value: 'finance', label: 'Finance' },
+    { value: 'marketing', label: 'Marketing' },
+    { value: 'operations', label: 'Operations' },
+    { value: 'other', label: 'Other' },
+  ];
+
+  const locationOptions = [
+    { value: 'remote', label: 'Remote', description: 'Can be done from anywhere' },
+    { value: 'specific', label: 'Specific Location', description: 'Requires physical presence' },
+    { value: 'both', label: 'Both', description: 'Remote and in-person' },
+  ];
+
+  const urgencyOptions = [
+    { value: 'urgent', label: '🔥 Urgent' },
+    { value: 'this-month', label: 'This Month' },
+    { value: 'flexible', label: 'Flexible' },
+  ];
+
+  const toggleCurrency = (currency: string) => {
+    const updated = selectedCurrencies.includes(currency)
+      ? selectedCurrencies.filter((c) => c !== currency)
+      : [...selectedCurrencies, currency];
+    onChange({ ...formData, currencyTypes: updated } as any);
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Need/Offer Toggle */}
+      <div>
+        <Label className="text-sm font-medium">What type of opportunity? *</Label>
+        <div className="grid grid-cols-2 gap-3 mt-2">
+          <button
+            type="button"
+            onClick={() => onChange({ ...formData, opportunityType: 'need' } as any)}
+            className={cn(
+              'flex flex-col items-center p-4 rounded-lg border-2 transition-all',
+              opportunityType === 'need'
+                ? 'border-dna-bevel-opportunity bg-orange-50 dark:bg-orange-500/10'
+                : 'border-border hover:border-muted-foreground/50'
+            )}
+          >
+            <span className="text-2xl mb-1">🙋</span>
+            <span className="font-semibold">I NEED</span>
+            <span className="text-xs text-muted-foreground">Looking for help</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => onChange({ ...formData, opportunityType: 'offer' } as any)}
+            className={cn(
+              'flex flex-col items-center p-4 rounded-lg border-2 transition-all',
+              opportunityType === 'offer'
+                ? 'border-dna-bevel-opportunity bg-orange-50 dark:bg-orange-500/10'
+                : 'border-border hover:border-muted-foreground/50'
+            )}
+          >
+            <span className="text-2xl mb-1">🎁</span>
+            <span className="font-semibold">I'M OFFERING</span>
+            <span className="text-xs text-muted-foreground">Sharing resources</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Title */}
+      <div>
+        <Label className="text-sm font-medium">Title *</Label>
+        <Input
+          placeholder={opportunityType === 'need' ? 'What do you need?' : 'What are you offering?'}
+          value={formData.title || ''}
+          onChange={(e) => onChange({ title: e.target.value })}
+          className="mt-1.5"
+          maxLength={100}
+        />
+      </div>
+
+      {/* Four Currencies Multi-Select */}
+      <div>
+        <Label className="text-sm font-medium">What kind of contribution? * (select all that apply)</Label>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">
+          {currencies.map((currency) => (
+            <button
+              key={currency.value}
+              type="button"
+              onClick={() => toggleCurrency(currency.value)}
+              className={cn(
+                'flex flex-col items-center p-3 rounded-lg border-2 transition-all',
+                selectedCurrencies.includes(currency.value)
+                  ? 'border-dna-bevel-opportunity bg-orange-50 dark:bg-orange-500/10'
+                  : 'border-border hover:border-muted-foreground/50'
+              )}
+            >
+              <span className="text-2xl mb-1">{currency.icon}</span>
+              <span className="text-sm font-medium">{currency.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Description */}
+      <div>
+        <Label className="text-sm font-medium">Description *</Label>
+        <Textarea
+          placeholder={opportunityType === 'need' 
+            ? 'Describe what you need in detail...' 
+            : 'Describe what you\'re offering...'}
+          value={formData.content}
+          onChange={(e) => onChange({ content: e.target.value })}
+          className="min-h-[100px] resize-none mt-1.5"
+        />
+      </div>
+
+      {/* Category */}
+      <div>
+        <Label className="text-sm font-medium">Category *</Label>
+        <Select
+          value={(formData as any).category || ''}
+          onValueChange={(value) => onChange({ ...formData, category: value } as any)}
+        >
+          <SelectTrigger className="mt-1.5">
+            <SelectValue placeholder="Select a category" />
+          </SelectTrigger>
+          <SelectContent>
+            {categories.map((cat) => (
+              <SelectItem key={cat.value} value={cat.value}>
+                {cat.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Location */}
+      <div>
+        <Label className="text-sm font-medium">Location *</Label>
+        <div className="space-y-2 mt-2">
+          {locationOptions.map((option) => (
+            <label
+              key={option.value}
+              className={cn(
+                'flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors',
+                (formData as any).locationType === option.value
+                  ? 'border-dna-bevel-opportunity bg-orange-50/50 dark:bg-orange-500/5'
+                  : 'border-border hover:bg-muted/50'
+              )}
+            >
+              <input
+                type="radio"
+                name="location"
+                value={option.value}
+                checked={(formData as any).locationType === option.value}
+                onChange={() => onChange({ ...formData, locationType: option.value } as any)}
+                className="mt-1"
+              />
+              <div>
+                <span className="font-medium">{option.label}</span>
+                <p className="text-xs text-muted-foreground">{option.description}</p>
+              </div>
+            </label>
+          ))}
+        </div>
+        
+        {/* Location Details (if specific) */}
+        {(formData as any).locationType === 'specific' && (
+          <Input
+            placeholder="Enter location..."
+            value={(formData as any).locationDetails || ''}
+            onChange={(e) => onChange({ ...formData, locationDetails: e.target.value } as any)}
+            className="mt-2"
+          />
+        )}
+      </div>
+
+      {/* Urgency & Deadline */}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label className="text-sm font-medium">Urgency</Label>
+          <Select
+            value={(formData as any).urgency || ''}
+            onValueChange={(value) => onChange({ ...formData, urgency: value } as any)}
+          >
+            <SelectTrigger className="mt-1.5">
+              <SelectValue placeholder="Select urgency" />
+            </SelectTrigger>
+            <SelectContent>
+              {urgencyOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label className="text-sm font-medium">Deadline</Label>
+          <Input
+            type="date"
+            value={(formData as any).deadline || ''}
+            onChange={(e) => onChange({ ...formData, deadline: e.target.value } as any)}
+            className="mt-1.5"
+          />
+        </div>
+      </div>
+
+      {/* Compensation (if Money selected) */}
+      {selectedCurrencies.includes('money') && (
+        <div>
+          <Label className="text-sm font-medium">Compensation</Label>
+          <Input
+            placeholder="e.g., $500, Equity, Grant amount, Negotiable"
+            value={(formData as any).compensation || ''}
+            onChange={(e) => onChange({ ...formData, compensation: e.target.value } as any)}
+            className="mt-1.5"
+          />
+        </div>
+      )}
+    </div>
+  );
 }
 
 function MediaUploadButton({ 

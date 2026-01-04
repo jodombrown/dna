@@ -1,18 +1,21 @@
 /**
  * Space Card for Universal Feed
  * 
- * Displays space/project announcements and updates in the feed.
+ * Displays space/project announcements in the feed with purple bevel.
+ * Uses FeedCardBase for consistent DNA Design System styling.
  */
 
 import React from 'react';
 import { UniversalFeedItem } from '@/types/feed';
-import { Card } from '@/components/ui/card';
+import { FeedCardBase } from './FeedCardBase';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Users, Heart, MessageCircle, Share2, Bookmark } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Users, Rocket, Heart, MessageCircle, Share2, Bookmark, Lock, Globe } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { linkifyContent } from '@/utils/linkifyContent';
+import { cn } from '@/lib/utils';
 
 interface SpaceCardProps {
   item: UniversalFeedItem;
@@ -20,12 +23,40 @@ interface SpaceCardProps {
   onUpdate: () => void;
 }
 
+const spaceTypeConfig = {
+  startup: { icon: '🚀', label: 'Startup', color: 'bg-purple-100 text-purple-700' },
+  community: { icon: '🌍', label: 'Community', color: 'bg-green-100 text-green-700' },
+  creative: { icon: '🎨', label: 'Creative', color: 'bg-pink-100 text-pink-700' },
+  mentorship: { icon: '🎓', label: 'Mentorship', color: 'bg-blue-100 text-blue-700' },
+  default: { icon: '📁', label: 'Project', color: 'bg-gray-100 text-gray-700' },
+};
+
 export const SpaceCard: React.FC<SpaceCardProps> = ({ item, currentUserId, onUpdate }) => {
   const navigate = useNavigate();
+  const spaceType = (item as any).space_type || 'default';
+  const config = spaceTypeConfig[spaceType as keyof typeof spaceTypeConfig] || spaceTypeConfig.default;
+  const visibility = (item as any).visibility || 'public';
 
   return (
-    <Card className="p-4 sm:p-6 hover:border-primary/20 transition-colors">
-      {/* Header */}
+    <FeedCardBase 
+      bevelType="space"
+      onClick={() => item.space_id && navigate(`/dna/collaborate/spaces/${item.space_id}`)}
+    >
+      {/* Header with Badge */}
+      <div className="flex items-center gap-2 mb-3">
+        <Badge variant="outline" className={cn('text-xs font-medium', config.color)}>
+          <Rocket className="h-3 w-3 mr-1" />
+          SPACE · {config.label}
+        </Badge>
+        {visibility === 'private' && (
+          <Badge variant="secondary" className="text-xs">
+            <Lock className="h-3 w-3 mr-1" />
+            Private
+          </Badge>
+        )}
+      </div>
+
+      {/* Author Header */}
       <div className="flex items-start gap-3 mb-4">
         <Avatar className="h-10 w-10">
           <AvatarImage src={item.author_avatar_url || ''} />
@@ -45,9 +76,9 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({ item, currentUserId, onUpd
       {/* Space Content */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-xl font-bold mb-2">{item.space_title}</h3>
+          <h3 className="text-xl font-bold mb-2">{item.space_title || item.title}</h3>
           {item.content && (
-            <p className="text-muted-foreground">{linkifyContent(item.content)}</p>
+            <p className="text-muted-foreground line-clamp-3">{linkifyContent(item.content)}</p>
           )}
         </div>
 
@@ -60,15 +91,24 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({ item, currentUserId, onUpd
         )}
 
         {/* Space Meta */}
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Users className="h-4 w-4" />
-          <span>{item.view_count} members</span>
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <div className="flex items-center gap-1.5">
+            <Users className="h-4 w-4" />
+            <span>{item.view_count || 0} members</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Globe className="h-4 w-4" />
+            <span className="capitalize">{visibility}</span>
+          </div>
         </div>
 
         {/* CTA */}
         <Button 
-          className="w-full"
-          onClick={() => item.space_id && navigate(`/dna/collaborate/spaces/${item.space_id}`)}
+          className="w-full bg-dna-bevel-space hover:bg-dna-bevel-space/90"
+          onClick={(e) => {
+            e.stopPropagation();
+            item.space_id && navigate(`/dna/collaborate/spaces/${item.space_id}`);
+          }}
         >
           View Space
         </Button>
@@ -92,6 +132,6 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({ item, currentUserId, onUpd
           <Bookmark className={`h-4 w-4 ${item.has_bookmarked ? 'fill-current' : ''}`} />
         </Button>
       </div>
-    </Card>
+    </FeedCardBase>
   );
 };
