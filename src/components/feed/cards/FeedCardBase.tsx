@@ -11,7 +11,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-export type FeedCardBevelType = 'post' | 'story' | 'event' | 'space' | 'opportunity' | 'need';
+export type FeedCardBevelType = 'post' | 'story' | 'event' | 'space' | 'opportunity' | 'need' | 'offer';
 
 interface FeedCardBaseProps {
   bevelType: FeedCardBevelType;
@@ -27,6 +27,7 @@ const bevelColorMap: Record<FeedCardBevelType, string> = {
   space: 'border-l-dna-bevel-space',
   opportunity: 'border-l-dna-bevel-opportunity',
   need: 'border-l-dna-bevel-opportunity', // Needs use same color as opportunities
+  offer: 'border-l-dna-bevel-opportunity', // Offers use same color as opportunities
 };
 
 export const FeedCardBase: React.FC<FeedCardBaseProps> = ({
