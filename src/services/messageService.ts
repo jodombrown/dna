@@ -193,7 +193,7 @@ async getConversationDetails(conversationId: string): Promise<ConversationListIt
     if (participant) {
       let query = supabase
         .from('messages')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('conversation_id', conversationId)
         .neq('sender_id', user.id);
       
@@ -299,7 +299,7 @@ async getConversations(
       if (participant) {
         let query = supabase
           .from('messages')
-          .select('*', { count: 'exact', head: true })
+          .select('id', { count: 'exact' })
           .eq('conversation_id', conv.id)
           .neq('sender_id', user.id);
         
