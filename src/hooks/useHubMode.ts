@@ -1,7 +1,9 @@
 // src/hooks/useHubMode.ts
 // Hook for determining hub display mode based on content availability
+// Supports URL parameter override: ?view=hub or ?view=aspiration
 
 import { useQuery } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 export type HubType = 'convene' | 'collaborate' | 'contribute' | 'convey';
@@ -68,6 +70,8 @@ export interface UseHubModeResult {
 }
 
 export function useHubMode(hub: HubType): UseHubModeResult {
+  const [searchParams] = useSearchParams();
+  const viewParam = searchParams.get('view');
   const config = HUB_CONFIGS[hub];
 
   const { data: contentCount = 0, isLoading } = useQuery({
@@ -77,8 +81,13 @@ export function useHubMode(hub: HubType): UseHubModeResult {
     refetchOnWindowFocus: false,
   });
 
+  // URL parameter override: ?view=hub forces discovery, ?view=aspiration forces aspiration
   let mode: HubMode;
-  if (contentCount >= config.threshold) {
+  if (viewParam === 'hub') {
+    mode = 'discovery';
+  } else if (viewParam === 'aspiration') {
+    mode = 'aspiration';
+  } else if (contentCount >= config.threshold) {
     mode = 'discovery';
   } else if (contentCount > 0) {
     mode = 'hybrid';
