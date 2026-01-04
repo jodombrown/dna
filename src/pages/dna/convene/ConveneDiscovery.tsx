@@ -44,7 +44,7 @@ export function ConveneDiscovery() {
         // Upcoming events (public, not cancelled)
         supabase
           .from('events')
-          .select('*', { count: 'exact', head: true })
+          .select('id', { count: 'exact' })
           .eq('is_cancelled', false)
           .eq('is_public', true)
           .gte('start_time', now),
@@ -53,7 +53,7 @@ export function ConveneDiscovery() {
         user?.id
           ? supabase
               .from('event_attendees')
-              .select('*', { count: 'exact', head: true })
+              .select('id', { count: 'exact' })
               .eq('user_id', user.id)
               .eq('status', 'going')
           : Promise.resolve({ count: 0 }),
@@ -62,7 +62,7 @@ export function ConveneDiscovery() {
         user?.id
           ? supabase
               .from('events')
-              .select('*', { count: 'exact', head: true })
+              .select('id', { count: 'exact' })
               .eq('organizer_id', user.id)
               .eq('is_cancelled', false)
           : Promise.resolve({ count: 0 }),
@@ -70,7 +70,7 @@ export function ConveneDiscovery() {
         // This week
         supabase
           .from('events')
-          .select('*', { count: 'exact', head: true })
+          .select('id', { count: 'exact' })
           .eq('is_cancelled', false)
           .eq('is_public', true)
           .gte('start_time', now)

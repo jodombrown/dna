@@ -43,13 +43,13 @@ export function ContributeDiscovery() {
       // Open needs count
       const { count: openNeedsCount } = await supabase
         .from('contribution_needs')
-        .select('id', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('status', 'open');
       
       // Active offers count
       const { count: activeOffersCount } = await supabase
         .from('contribution_offers')
-        .select('id', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('status', 'pending');
       
       let myRequestsCount = 0;
@@ -59,14 +59,14 @@ export function ContributeDiscovery() {
         // My requests
         const { count: myCount } = await supabase
           .from('contribution_needs')
-          .select('id', { count: 'exact', head: true })
+          .select('id', { count: 'exact' })
           .eq('created_by', user.id);
         myRequestsCount = myCount || 0;
 
         // Matches made (accepted offers)
         const { count: acceptedCount } = await supabase
           .from('contribution_offers')
-          .select('id', { count: 'exact', head: true })
+          .select('id', { count: 'exact' })
           .eq('status', 'accepted');
         matchesCount = acceptedCount || 0;
       }

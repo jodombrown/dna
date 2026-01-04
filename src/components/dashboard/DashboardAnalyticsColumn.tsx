@@ -85,7 +85,7 @@ export const DashboardAnalyticsColumn = () => {
       const [connectionsCount, conversationsCount, profile] = await Promise.all([
         supabase
           .from('connections')
-          .select('id', { count: 'exact', head: true })
+          .select('id', { count: 'exact' })
           .or(`user_id.eq.${user?.id},connected_user_id.eq.${user?.id}`)
           .eq('status', 'accepted'),
         supabase.rpc('get_user_conversations', { p_user_id: user?.id }),

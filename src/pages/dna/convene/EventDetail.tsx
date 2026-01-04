@@ -183,7 +183,7 @@ const EventDetail = () => {
     queryFn: async () => {
       const { count, error } = await supabase
         .from('event_attendees')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('event_id', id)
         .in('status', ['going', 'maybe', 'pending', 'waitlist']);
 

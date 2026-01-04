@@ -81,7 +81,7 @@ const EngagementDashboard = () => {
       
       const { count: onboardedCount } = await supabase
         .from('user_engagement_tracking')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('event_type', 'onboarding_completed')
         .gte('created_at', thirtyDaysAgo.toISOString());
 
@@ -101,7 +101,7 @@ const EngagementDashboard = () => {
           
           const { count } = await supabase
             .from('user_engagement_tracking')
-            .select('*', { count: 'exact', head: true })
+            .select('id', { count: 'exact' })
             .eq('user_id', reminder.user_id)
             .eq('event_type', 'platform_returned')
             .gt('created_at', reminder.created_at)
@@ -117,7 +117,7 @@ const EngagementDashboard = () => {
       
       const { count: sevenDayActiveCount } = await supabase
         .from('user_engagement_tracking')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .gte('created_at', sevenDaysAgo.toISOString())
         .in('event_type', ['login', 'profile_view', 'post_create', 'platform_returned']);
 

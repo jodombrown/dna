@@ -44,7 +44,7 @@ const NeedOffersSection = ({ needId, spaceId, isLead }: NeedOffersSectionProps) 
     queryFn: async () => {
       const { count, error } = await supabaseClient
         .from('contribution_offers')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('need_id', needId);
 
       if (error) throw error;

@@ -231,7 +231,7 @@ export const useFeaturedCount = () => {
 
       const { count, error } = await (supabase as any)
         .from('releases')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('status', 'published')
         .gte('release_date', thirtyDaysAgo.toISOString().split('T')[0]);
 

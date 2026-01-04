@@ -8,7 +8,7 @@ export const useEngagementMetrics = () => {
       // Get total users
       const { count: totalUsers } = await supabase
         .from('profiles')
-        .select('*', { count: 'exact', head: true });
+        .select('id', { count: 'exact' });
 
       // Get active users (last 7 days)
       const sevenDaysAgo = new Date();
@@ -22,7 +22,7 @@ export const useEngagementMetrics = () => {
       // Get onboarding completion rate
       const { count: completedOnboarding } = await supabase
         .from('profiles')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .not('onboarding_completed_at', 'is', null);
 
       // Get average engagement score

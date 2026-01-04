@@ -20,7 +20,7 @@ const HUB_CONFIGS: Record<HubType, HubModeConfig> = {
     countQuery: async () => {
       const { count } = await supabase
         .from('events')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('is_cancelled', false)
         .eq('is_public', true)
         .gte('start_time', new Date().toISOString());
@@ -32,7 +32,7 @@ const HUB_CONFIGS: Record<HubType, HubModeConfig> = {
     countQuery: async () => {
       const { count } = await supabase
         .from('spaces')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('visibility', 'public')
         .eq('status', 'active');
       return count || 0;
@@ -43,7 +43,7 @@ const HUB_CONFIGS: Record<HubType, HubModeConfig> = {
     countQuery: async () => {
       const { count } = await supabase
         .from('contribution_needs')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .in('status', ['open', 'in_progress']);
       return count || 0;
     }
@@ -53,7 +53,7 @@ const HUB_CONFIGS: Record<HubType, HubModeConfig> = {
     countQuery: async () => {
       const { count } = await supabase
         .from('posts')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('is_deleted', false)
         .in('post_type', ['story', 'update', 'impact']);
       return count || 0;

@@ -12,7 +12,7 @@ export function usePostShares(postId: string, userId?: string) {
     queryFn: async () => {
       const { count, error } = await supabase
         .from('post_shares')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('post_id', postId);
 
       if (error) throw error;
