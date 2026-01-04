@@ -181,13 +181,29 @@ async getConversationDetails(conversationId: string): Promise<ConversationListIt
       .limit(1)
       .maybeSingle();
 
-    // Get unread count
-    const { count: unreadCount } = await supabase
-      .from('messages')
-      .select('*', { count: 'exact', head: true })
+    // Get unread count using conversation_participants.last_read_at
+    const { data: participant } = await supabase
+      .from('conversation_participants')
+      .select('last_read_at')
       .eq('conversation_id', conversationId)
-      .eq('read', false)
-      .neq('sender_id', user.id);
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    let unreadCount = 0;
+    if (participant) {
+      let query = supabase
+        .from('messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('conversation_id', conversationId)
+        .neq('sender_id', user.id);
+      
+      if (participant.last_read_at) {
+        query = query.gt('created_at', participant.last_read_at);
+      }
+      
+      const { count } = await query;
+      unreadCount = count || 0;
+    }
 
     return {
       conversation_id: conversation.id,
@@ -271,13 +287,29 @@ async getConversations(
         .limit(1)
         .maybeSingle();
 
-      // Get unread count
-      const { count: unreadCount } = await supabase
-        .from('messages')
-        .select('*', { count: 'exact', head: true })
+      // Get unread count using conversation_participants.last_read_at
+      const { data: participant } = await supabase
+        .from('conversation_participants')
+        .select('last_read_at')
         .eq('conversation_id', conv.id)
-        .eq('read', false)
-        .neq('sender_id', user.id);
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      let unreadCount = 0;
+      if (participant) {
+        let query = supabase
+          .from('messages')
+          .select('*', { count: 'exact', head: true })
+          .eq('conversation_id', conv.id)
+          .neq('sender_id', user.id);
+        
+        if (participant.last_read_at) {
+          query = query.gt('created_at', participant.last_read_at);
+        }
+        
+        const { count } = await query;
+        unreadCount = count || 0;
+      }
 
       result.push({
         conversation_id: conv.id,
@@ -443,7 +475,7 @@ async getConversations(
   },
 
   /**
-   * Mark a conversation as read
+   * Mark a conversation as read by updating last_read_at in conversation_participants
    */
   async markAsRead(conversationId: string): Promise<void> {
     const { data: { user } } = await supabase.auth.getUser();
@@ -451,13 +483,16 @@ async getConversations(
       throw new Error('Not authenticated');
     }
 
-    // Mark all messages in this conversation as read (except own messages)
+    // Update last_read_at in conversation_participants
     const { error } = await supabase
-      .from('messages')
-      .update({ read: true })
-      .eq('conversation_id', conversationId)
-      .eq('read', false) // Only update unread messages
-      .neq('sender_id', user.id);
+      .from('conversation_participants')
+      .upsert({
+        conversation_id: conversationId,
+        user_id: user.id,
+        last_read_at: new Date().toISOString(),
+      }, {
+        onConflict: 'conversation_id,user_id'
+      });
 
     if (error) {
       throw error;
@@ -471,25 +506,32 @@ async getConversations(
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return 0;
 
-    // Get all user's conversations
-    const { data: conversations } = await supabase
-      .from('conversations')
-      .select('id')
-      .or(`user_a.eq.${user.id},user_b.eq.${user.id}`);
+    // Get all user's conversation participations with last_read_at
+    const { data: participations } = await supabase
+      .from('conversation_participants')
+      .select('conversation_id, last_read_at')
+      .eq('user_id', user.id);
 
-    if (!conversations || conversations.length === 0) return 0;
+    if (!participations || participations.length === 0) return 0;
 
-    const conversationIds = conversations.map(c => c.id);
+    let totalUnread = 0;
+    
+    for (const p of participations) {
+      let query = supabase
+        .from('messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('conversation_id', p.conversation_id)
+        .neq('sender_id', user.id);
+      
+      if (p.last_read_at) {
+        query = query.gt('created_at', p.last_read_at);
+      }
+      
+      const { count } = await query;
+      totalUnread += count || 0;
+    }
 
-    // Count unread messages in these conversations (not sent by user)
-    const { count } = await supabase
-      .from('messages')
-      .select('*', { count: 'exact', head: true })
-      .in('conversation_id', conversationIds)
-      .eq('read', false)
-      .neq('sender_id', user.id);
-
-    return count || 0;
+    return totalUnread;
   },
 
   /**
