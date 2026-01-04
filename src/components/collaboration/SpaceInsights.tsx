@@ -40,7 +40,7 @@ export function SpaceInsights({ spaceId, isLead }: SpaceInsightsProps) {
       // Active members
       const { count: activeMembersCount } = await supabaseClient
         .from('space_members')
-        .select('id', { count: 'exact' })
+        .select('user_id', { count: 'exact' })
         .eq('space_id', spaceId)
         .or(`joined_at.gte.${since}`);
 

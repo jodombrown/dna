@@ -55,7 +55,7 @@ export function CollaborateDiscovery() {
         // My spaces (where I'm a member)
         const { count: myCount } = await supabase
           .from('space_members')
-          .select('id', { count: 'exact' })
+          .select('space_id', { count: 'exact' })
           .eq('user_id', user.id);
         mySpacesCount = myCount || 0;
 
@@ -69,7 +69,7 @@ export function CollaborateDiscovery() {
         // Distinct collaborators (approximation)
         const { count: collabCount } = await supabase
           .from('space_members')
-          .select('id', { count: 'exact' });
+          .select('user_id', { count: 'exact' });
         collaboratorsCount = Math.min(collabCount || 0, 999);
       }
 
