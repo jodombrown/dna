@@ -41,25 +41,30 @@ function formatRelativeTime(dateString: string): string {
  * Fetch Connect pulse data (pending connections + suggestions)
  */
 async function fetchConnectPulse(userId: string): Promise<ConnectPulse> {
-  // Fetch pending connection requests where user is recipient
-  const { data: pendingRequests, error: requestsError } = await supabase
+  // Fetch pending connection requests where user is recipient (two-step pattern)
+  const { data: pendingRequests } = await supabase
     .from('connections')
-    .select(`
-      id,
-      requester_id,
-      created_at,
-      profiles!connections_requester_id_fkey (
-        id,
-        full_name,
-        display_name,
-        headline,
-        avatar_url
-      )
-    `)
+    .select('id, requester_id, created_at')
     .eq('recipient_id', userId)
     .eq('status', 'pending')
     .order('created_at', { ascending: false })
     .limit(5);
+
+  // Fetch requester profiles separately
+  const requesterIds = (pendingRequests || []).map((r) => r.requester_id);
+  let requesterProfiles: Record<string, any> = {};
+  
+  if (requesterIds.length > 0) {
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, full_name, display_name, headline, avatar_url')
+      .in('id', requesterIds);
+    
+    requesterProfiles = (profiles || []).reduce((acc, p) => {
+      acc[p.id] = p;
+      return acc;
+    }, {} as Record<string, any>);
+  }
 
   // Fetch connection recommendations
   const { data: recommendations } = await supabase
@@ -73,14 +78,17 @@ async function fetchConnectPulse(userId: string): Promise<ConnectPulse> {
   const pending = pendingRequests?.length || 0;
   const suggestions = recommendations?.length || 0;
 
-  const topItems: PulseItem[] = (pendingRequests || []).slice(0, 3).map((req: any) => ({
-    id: req.id,
-    title: req.profiles?.display_name || req.profiles?.full_name || 'Someone',
-    subtitle: req.profiles?.headline || 'wants to connect',
-    avatar_url: req.profiles?.avatar_url,
-    action_url: `/connect/requests`,
-    timestamp: req.created_at,
-  }));
+  const topItems: PulseItem[] = (pendingRequests || []).slice(0, 3).map((req: any) => {
+    const profile = requesterProfiles[req.requester_id];
+    return {
+      id: req.id,
+      title: profile?.display_name || profile?.full_name || 'Someone',
+      subtitle: profile?.headline || 'wants to connect',
+      avatar_url: profile?.avatar_url,
+      action_url: `/connect/requests`,
+      timestamp: req.created_at,
+    };
+  });
 
   let status: ConnectPulse['status'] = 'dormant';
   let microText = 'Grow your network';
@@ -307,22 +315,42 @@ async function fetchConveyPulse(userId: string): Promise<ConveyPulse> {
   const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
   const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
-  // Fetch user's recent posts with engagement counts
+  // Fetch user's recent posts (without FK joins to avoid PostgREST errors)
   const { data: recentPosts } = await supabase
     .from('posts')
-    .select(`
-      id,
-      content,
-      created_at,
-      post_likes (id),
-      post_comments (id),
-      post_reactions (id)
-    `)
+    .select('id, content, created_at')
     .eq('author_id', userId)
     .gte('created_at', oneWeekAgo)
     .eq('is_deleted', false)
     .order('created_at', { ascending: false })
     .limit(10);
+
+  // Fetch engagement counts separately for each post
+  const postIds = (recentPosts || []).map((p) => p.id);
+  let likeCounts: Record<string, number> = {};
+  let commentCounts: Record<string, number> = {};
+
+  if (postIds.length > 0) {
+    // Get likes count per post
+    const { data: likes } = await supabase
+      .from('post_likes')
+      .select('post_id')
+      .in('post_id', postIds);
+    
+    (likes || []).forEach((l: any) => {
+      likeCounts[l.post_id] = (likeCounts[l.post_id] || 0) + 1;
+    });
+
+    // Get comments count per post
+    const { data: comments } = await supabase
+      .from('post_comments')
+      .select('post_id')
+      .in('post_id', postIds);
+    
+    (comments || []).forEach((c: any) => {
+      commentCounts[c.post_id] = (commentCounts[c.post_id] || 0) + 1;
+    });
+  }
 
   // Calculate engagement
   let totalEngagement24h = 0;
@@ -330,10 +358,9 @@ async function fetchConveyPulse(userId: string): Promise<ConveyPulse> {
   let topEngagement = 0;
 
   (recentPosts || []).forEach((post: any) => {
-    const likes = post.post_likes?.length || 0;
-    const comments = post.post_comments?.length || 0;
-    const reactions = post.post_reactions?.length || 0;
-    const engagement = likes + comments + reactions;
+    const likes = likeCounts[post.id] || 0;
+    const comments = commentCounts[post.id] || 0;
+    const engagement = likes + comments;
 
     if (new Date(post.created_at) >= new Date(oneDayAgo)) {
       totalEngagement24h += engagement;
@@ -341,7 +368,7 @@ async function fetchConveyPulse(userId: string): Promise<ConveyPulse> {
 
     if (engagement > topEngagement) {
       topEngagement = engagement;
-      topPost = post;
+      topPost = { ...post, engagement };
     }
   });
 
@@ -350,10 +377,9 @@ async function fetchConveyPulse(userId: string): Promise<ConveyPulse> {
   const topItems: PulseItem[] = (recentPosts || [])
     .slice(0, 3)
     .map((post: any) => {
-      const likes = post.post_likes?.length || 0;
-      const comments = post.post_comments?.length || 0;
-      const reactions = post.post_reactions?.length || 0;
-      const engagement = likes + comments + reactions;
+      const likes = likeCounts[post.id] || 0;
+      const comments = commentCounts[post.id] || 0;
+      const engagement = likes + comments;
       return {
         id: post.id,
         title: post.content?.substring(0, 50) + (post.content?.length > 50 ? '...' : ''),

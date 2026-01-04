@@ -27,23 +27,46 @@ export function useUnreadCounts(): UnreadCounts {
   const queryClient = useQueryClient();
 
   // Fetch unread messages count
+  // Messages table uses conversation_id + sender_id, not recipient_id
+  // We need to find messages where user is a participant but not the sender
   const messagesQuery = useQuery({
     queryKey: [UNREAD_QUERY_KEY, 'messages', user?.id],
     queryFn: async () => {
       if (!user?.id) return 0;
 
-      const { count, error } = await (supabase as any)
-        .from('messages')
-        .select('*', { count: 'exact', head: true })
-        .eq('recipient_id', user.id)
-        .eq('read', false);
+      // Get conversations where user is a participant
+      const { data: participations } = await supabase
+        .from('conversation_participants')
+        .select('conversation_id, last_read_at')
+        .eq('user_id', user.id);
 
-      if (error) {
-        console.error('Error fetching unread messages:', error);
-        return 0;
+      if (!participations || participations.length === 0) return 0;
+
+      const conversationIds = participations.map(p => p.conversation_id);
+      const lastReadMap = participations.reduce((acc, p) => {
+        acc[p.conversation_id] = p.last_read_at;
+        return acc;
+      }, {} as Record<string, string>);
+
+      // Count unread messages (not sent by user, created after last_read_at)
+      let unreadCount = 0;
+      for (const convId of conversationIds) {
+        const lastRead = lastReadMap[convId];
+        let query = supabase
+          .from('messages')
+          .select('*', { count: 'exact', head: true })
+          .eq('conversation_id', convId)
+          .neq('sender_id', user.id);
+        
+        if (lastRead) {
+          query = query.gt('created_at', lastRead);
+        }
+
+        const { count } = await query;
+        unreadCount += count || 0;
       }
 
-      return count || 0;
+      return unreadCount;
     },
     enabled: !!user?.id,
     staleTime: 30000, // 30 seconds
@@ -78,16 +101,15 @@ export function useUnreadCounts(): UnreadCounts {
 
     const instanceId = `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 
-    // Messages subscription
+    // Messages subscription - listen to all message changes (filter by sender later)
     const messagesChannel = supabase
       .channel(`unread-messages-${user.id}-${instanceId}`)
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'INSERT',
           schema: 'public',
           table: 'messages',
-          filter: `recipient_id=eq.${user.id}`,
         },
         () => {
           queryClient.invalidateQueries({ queryKey: [UNREAD_QUERY_KEY, 'messages'] });
