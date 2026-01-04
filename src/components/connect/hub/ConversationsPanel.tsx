@@ -90,17 +90,17 @@ export function ConversationsPanel({
           id,
           user_a,
           user_b,
-          updated_at,
-          messages!inner(content, created_at, sender_id)
+          last_message_at,
+          messages(content, created_at, sender_id)
         `)
         .or(`user_a.eq.${user.id},user_b.eq.${user.id}`)
-        .order('updated_at', { ascending: false })
+        .order('last_message_at', { ascending: false })
         .limit(10);
 
       if (error || !data) return [];
 
       // Fetch other user profiles
-      const otherUserIds = data.map((c) =>
+      const otherUserIds = data.map((c: any) =>
         c.user_a === user.id ? c.user_b : c.user_a
       );
 
@@ -111,16 +111,19 @@ export function ConversationsPanel({
 
       const profileMap = new Map(profiles?.map((p) => [p.id, p]) || []);
 
-      // Get unread counts
-      const { data: unreadData } = await supabase.rpc('get_unread_counts', {
-        p_user_id: user.id,
+      // Get unread counts from messages
+      const { data: unreadData } = await supabase
+        .from('messages')
+        .select('conversation_id')
+        .eq('read', false)
+        .neq('sender_id', user.id);
+
+      const unreadCounts = new Map<string, number>();
+      (unreadData || []).forEach((m: any) => {
+        unreadCounts.set(m.conversation_id, (unreadCounts.get(m.conversation_id) || 0) + 1);
       });
 
-      const unreadMap = new Map(
-        (unreadData || []).map((u: any) => [u.conversation_id, u.unread_count])
-      );
-
-      return data.map((conv) => {
+      return data.map((conv: any) => {
         const otherId = conv.user_a === user.id ? conv.user_b : conv.user_a;
         const profile = profileMap.get(otherId);
         const messages = conv.messages as any[];
@@ -133,9 +136,9 @@ export function ConversationsPanel({
           other_user_avatar: profile?.avatar_url || null,
           other_user_headline: profile?.headline || null,
           last_message: lastMessage?.content || null,
-          last_message_at: lastMessage?.created_at || conv.updated_at,
-          unread_count: unreadMap.get(conv.id) || 0,
-          is_online: false, // Would need presence system
+          last_message_at: lastMessage?.created_at || conv.last_message_at,
+          unread_count: unreadCounts.get(conv.id) || 0,
+          is_online: false,
         };
       });
     },
@@ -151,28 +154,35 @@ export function ConversationsPanel({
 
       const { data, error } = await supabase
         .from('connections')
-        .select(`
-          id,
-          user_a,
-          created_at,
-          profiles!connections_user_a_fkey(id, full_name, avatar_url, headline)
-        `)
-        .eq('user_b', user.id)
+        .select('id, requester_id, created_at')
+        .eq('recipient_id', user.id)
         .eq('status', 'pending')
         .order('created_at', { ascending: false })
         .limit(5);
 
       if (error || !data) return [];
 
-      return data.map((req) => ({
-        id: req.id,
-        user_id: req.user_a,
-        full_name: (req.profiles as any)?.full_name || 'Member',
-        avatar_url: (req.profiles as any)?.avatar_url || null,
-        headline: (req.profiles as any)?.headline || null,
-        mutual_connections: 0, // Would need to calculate
-        created_at: req.created_at,
-      }));
+      // Fetch requester profiles
+      const requesterIds = data.map((r: any) => r.requester_id);
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, full_name, avatar_url, headline')
+        .in('id', requesterIds);
+
+      const profileMap = new Map(profiles?.map((p) => [p.id, p]) || []);
+
+      return data.map((req: any) => {
+        const profile = profileMap.get(req.requester_id);
+        return {
+          id: req.id,
+          user_id: req.requester_id,
+          full_name: profile?.full_name || 'Member',
+          avatar_url: profile?.avatar_url || null,
+          headline: profile?.headline || null,
+          mutual_connections: 0,
+          created_at: req.created_at,
+        };
+      });
     },
     enabled: !!user,
     staleTime: 30000,

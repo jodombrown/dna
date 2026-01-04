@@ -217,55 +217,63 @@ export function DiscoveryFeed({
       // 4. Event Overlap
       const { data: upcomingEvents } = await supabase
         .from('events')
-        .select('id, title, start_date')
-        .gte('start_date', new Date().toISOString())
-        .order('start_date')
+        .select('id, title, start_time')
+        .gte('start_time', new Date().toISOString())
+        .order('start_time')
         .limit(1);
 
       if (upcomingEvents && upcomingEvents.length > 0) {
+        const evt = upcomingEvents[0] as any;
         insights.push({
-          id: 'event-overlap-' + upcomingEvents[0].id,
+          id: 'event-overlap-' + evt.id,
           type: 'event_overlap',
           description:
             "People you've messaged are attending this event. See who's going.",
           event: {
-            id: upcomingEvents[0].id,
-            title: upcomingEvents[0].title,
-            date: upcomingEvents[0].start_date,
+            id: evt.id,
+            title: evt.title,
+            date: evt.start_time,
           },
           count: Math.floor(Math.random() * 15) + 5,
           primaryAction: {
             label: 'View Attendees',
             action: () => {
-              window.location.href = `/dna/convene/events/${upcomingEvents[0].id}`;
+              window.location.href = `/dna/convene/events/${evt.id}`;
             },
           },
         });
       }
 
-      // 5. Contribution Match
+      // 5. Contribution Match - use contribution_needs table
       const { data: needs } = await supabase
-        .from('marketplace_items')
-        .select('id, title, item_type, user_id, profiles(full_name)')
-        .eq('item_type', 'need')
-        .eq('status', 'active')
+        .from('contribution_needs')
+        .select('id, title, type, created_by')
+        .eq('status', 'open')
         .limit(1);
 
       if (needs && needs.length > 0) {
+        const need = needs[0] as any;
+        // Fetch author profile
+        const { data: authorProfile } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', need.created_by)
+          .single();
+
         insights.push({
-          id: 'contrib-match-' + needs[0].id,
+          id: 'contrib-match-' + need.id,
           type: 'contribution_match',
-          description: `${(needs[0] as any).profiles?.full_name || 'A member'} posted a need that matches your expertise.`,
+          description: `${authorProfile?.full_name || 'A member'} posted a need that matches your expertise.`,
           opportunity: {
-            id: needs[0].id,
-            title: needs[0].title,
+            id: need.id,
+            title: need.title,
             type: 'need',
-            author: (needs[0] as any).profiles?.full_name || 'Member',
+            author: authorProfile?.full_name || 'Member',
           },
           primaryAction: {
             label: 'View Need',
             action: () => {
-              window.location.href = `/dna/contribute/needs/${needs[0].id}`;
+              window.location.href = `/dna/contribute/needs/${need.id}`;
             },
           },
         });
@@ -449,7 +457,10 @@ export function DiscoveryFeed({
               {feedItems.map((item) => (
                 <motion.div
                   key={item.key}
-                  variants={itemVariants}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                   layout
                 >
                   {item.type === 'member' ? (

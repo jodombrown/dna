@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -11,8 +10,6 @@ import {
   Send,
   Paperclip,
   MoreHorizontal,
-  Phone,
-  Video,
   Loader2,
   Minimize2,
 } from 'lucide-react';
@@ -33,7 +30,7 @@ interface Message {
   content: string;
   sender_id: string;
   created_at: string;
-  is_read: boolean;
+  read: boolean;
 }
 
 interface ConversationDetails {
@@ -47,11 +44,6 @@ interface ConversationDetails {
 
 /**
  * InlineChat - Expanded chat view for right column
- *
- * PRD Requirements:
- * - Full message history
- * - Input field with attachment options
- * - Clicking outside or minimize button returns to default column proportions
  */
 export function InlineChat({
   conversationId,
@@ -108,15 +100,15 @@ export function InlineChat({
 
       const { data, error } = await supabase
         .from('messages')
-        .select('id, content, sender_id, created_at, is_read')
+        .select('id, content, sender_id, created_at, read')
         .eq('conversation_id', conversationId)
         .order('created_at', { ascending: true });
 
       if (error) return [];
-      return data || [];
+      return (data || []) as Message[];
     },
     enabled: !!conversationId,
-    refetchInterval: 5000, // Poll for new messages
+    refetchInterval: 5000,
   });
 
   // Mark messages as read
@@ -124,17 +116,14 @@ export function InlineChat({
     if (!user || !conversationId || !messages) return;
 
     const unreadMessages = messages.filter(
-      (m) => m.sender_id !== user.id && !m.is_read
+      (m) => m.sender_id !== user.id && !m.read
     );
 
     if (unreadMessages.length > 0) {
       supabase
         .from('messages')
-        .update({ is_read: true })
-        .in(
-          'id',
-          unreadMessages.map((m) => m.id)
-        )
+        .update({ read: true })
+        .in('id', unreadMessages.map((m) => m.id))
         .then(() => {
           queryClient.invalidateQueries({ queryKey: ['conversations-panel'] });
         });
@@ -168,7 +157,7 @@ export function InlineChat({
       // Update conversation timestamp
       await supabase
         .from('conversations')
-        .update({ updated_at: new Date().toISOString() })
+        .update({ last_message_at: new Date().toISOString() })
         .eq('id', conversationId);
 
       return data;

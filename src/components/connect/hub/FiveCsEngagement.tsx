@@ -48,12 +48,6 @@ interface CEngagement {
 
 /**
  * FiveCsEngagement - Badge display showing user's activity across Five C's
- *
- * PRD Requirements:
- * - 🎫 CONVENE - User has upcoming event registrations (click shows event list)
- * - 🤝 COLLABORATE - User is member of active spaces (click shows space list)
- * - 💡 CONTRIBUTE - User has posted needs or offers (click shows opportunity list)
- * - 📝 CONVEY - User has published stories in last 30 days (click navigates to story feed)
  */
 export function FiveCsEngagement({
   userId,
@@ -68,11 +62,10 @@ export function FiveCsEngagement({
     queryFn: async (): Promise<CEngagement> => {
       // Fetch CONVENE (event registrations)
       const { data: eventRegs } = await supabase
-        .from('event_registrations')
-        .select('event_id, events(id, title, start_date)')
+        .from('event_attendees')
+        .select('event_id, events(id, title, start_time)')
         .eq('user_id', userId)
-        .eq('status', 'registered')
-        .gte('events.start_date', new Date().toISOString())
+        .eq('status', 'going')
         .limit(5);
 
       // Fetch COLLABORATE (space memberships)
@@ -80,27 +73,27 @@ export function FiveCsEngagement({
         .from('space_members')
         .select('space_id, spaces(id, name)')
         .eq('user_id', userId)
-        .eq('status', 'active')
         .limit(5);
 
-      // Fetch CONTRIBUTE (marketplace items - needs/offers)
-      const { data: marketplaceItems } = await supabase
-        .from('marketplace_items')
-        .select('id, title, item_type')
-        .eq('user_id', userId)
-        .eq('status', 'active')
+      // Fetch CONTRIBUTE (contribution needs created by user)
+      const { data: contributions } = await supabase
+        .from('contribution_needs')
+        .select('id, title, type')
+        .eq('created_by', userId)
+        .eq('status', 'open')
         .limit(5);
 
-      // Fetch CONVEY (stories in last 30 days)
+      // Fetch CONVEY (posts with post_type = 'story' in last 30 days)
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
       const { data: stories, count: storyCount } = await supabase
-        .from('stories')
+        .from('posts')
         .select('id', { count: 'exact' })
         .eq('author_id', userId)
-        .eq('status', 'published')
-        .gte('published_at', thirtyDaysAgo.toISOString())
+        .eq('post_type', 'story')
+        .eq('is_deleted', false)
+        .gte('created_at', thirtyDaysAgo.toISOString())
         .limit(1);
 
       return {
@@ -109,9 +102,9 @@ export function FiveCsEngagement({
           count: eventRegs?.length ?? 0,
           items:
             eventRegs?.map((r: any) => ({
-              id: r.events?.id,
-              title: r.events?.title,
-              date: r.events?.start_date,
+              id: r.events?.id || r.event_id,
+              title: r.events?.title || 'Event',
+              date: r.events?.start_time,
             })) ?? [],
         },
         collaborate: {
@@ -119,18 +112,18 @@ export function FiveCsEngagement({
           count: spaceMemberships?.length ?? 0,
           items:
             spaceMemberships?.map((s: any) => ({
-              id: s.spaces?.id,
-              name: s.spaces?.name,
+              id: s.spaces?.id || s.space_id,
+              name: s.spaces?.name || 'Space',
             })) ?? [],
         },
         contribute: {
-          active: (marketplaceItems?.length ?? 0) > 0,
-          count: marketplaceItems?.length ?? 0,
+          active: (contributions?.length ?? 0) > 0,
+          count: contributions?.length ?? 0,
           items:
-            marketplaceItems?.map((i: any) => ({
+            contributions?.map((i: any) => ({
               id: i.id,
               title: i.title,
-              type: i.item_type as 'need' | 'offer',
+              type: i.type === 'funding' ? 'need' : 'offer',
             })) ?? [],
         },
         convey: {
