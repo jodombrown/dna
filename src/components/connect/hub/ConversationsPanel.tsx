@@ -111,17 +111,31 @@ export function ConversationsPanel({
 
       const profileMap = new Map(profiles?.map((p) => [p.id, p]) || []);
 
-      // Get unread counts from messages
-      const { data: unreadData } = await supabase
-        .from('messages')
-        .select('conversation_id')
-        .eq('read', false)
-        .neq('sender_id', user.id);
+      // Get unread counts using conversation_participants.last_read_at
+      const conversationIds = data.map((c: any) => c.id);
+      const { data: participations } = await supabase
+        .from('conversation_participants')
+        .select('conversation_id, last_read_at')
+        .eq('user_id', user.id)
+        .in('conversation_id', conversationIds);
 
       const unreadCounts = new Map<string, number>();
-      (unreadData || []).forEach((m: any) => {
-        unreadCounts.set(m.conversation_id, (unreadCounts.get(m.conversation_id) || 0) + 1);
-      });
+      
+      // For each participation, count messages after last_read_at
+      for (const p of participations || []) {
+        let query = supabase
+          .from('messages')
+          .select('*', { count: 'exact', head: true })
+          .eq('conversation_id', p.conversation_id)
+          .neq('sender_id', user.id);
+        
+        if (p.last_read_at) {
+          query = query.gt('created_at', p.last_read_at);
+        }
+        
+        const { count } = await query;
+        unreadCounts.set(p.conversation_id, count || 0);
+      }
 
       return data.map((conv: any) => {
         const otherId = conv.user_a === user.id ? conv.user_b : conv.user_a;
