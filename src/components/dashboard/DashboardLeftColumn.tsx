@@ -29,7 +29,7 @@ const DashboardLeftColumn: React.FC<DashboardLeftColumnProps> = ({
       if (!profile?.id) return 0;
       const { count, error } = await supabase
         .from('connections')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .or(`a.eq.${profile.id},b.eq.${profile.id}`)
         .eq('status', 'accepted');
       if (error) {
@@ -47,7 +47,7 @@ const DashboardLeftColumn: React.FC<DashboardLeftColumnProps> = ({
       if (!profile?.id) return 0;
       const { count, error } = await supabase
         .from('collaboration_memberships')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('user_id', profile.id)
         .eq('status', 'approved');
       if (error) {

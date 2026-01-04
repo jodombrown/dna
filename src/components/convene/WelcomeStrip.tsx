@@ -40,19 +40,19 @@ export const WelcomeStrip = () => {
         // Simple count queries to avoid type inference issues
         const hostingRes = await supabase
           .from('events')
-          .select('id', { count: 'exact', head: true })
+          .select('id', { count: 'exact' })
           .eq('organizer_id', user.id)
           .eq('is_cancelled', false)
           .gte('start_time', now);
 
         const attendingRes = await supabase
           .from('event_attendees')
-          .select('event_id', { count: 'exact', head: true })
+          .select('id', { count: 'exact' })
           .eq('user_id', user.id);
 
         const groupsRes = await supabase
           .from('group_members')
-          .select('group_id', { count: 'exact', head: true })
+          .select('id', { count: 'exact' })
           .eq('user_id', user.id);
 
         const eventsCount = (hostingRes.count || 0) + (attendingRes.count || 0);

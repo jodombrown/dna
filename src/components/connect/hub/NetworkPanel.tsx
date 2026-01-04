@@ -96,7 +96,7 @@ export function NetworkPanel({
       // Get total connections using correct column names
       const { count: totalConnections } = await supabase
         .from('connections')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('status', 'accepted')
         .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
 
@@ -106,7 +106,7 @@ export function NetworkPanel({
 
       const { count: newThisWeek } = await supabase
         .from('connections')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('status', 'accepted')
         .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`)
         .gte('updated_at', weekAgo.toISOString());
@@ -114,7 +114,7 @@ export function NetworkPanel({
       // Get pending requests using correct column name
       const { count: pendingRequests } = await supabase
         .from('connections')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('status', 'pending')
         .eq('recipient_id', user.id);
 
@@ -140,7 +140,7 @@ export function NetworkPanel({
 
       const { count: profileViews } = await supabase
         .from('profile_views')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('profile_id', user.id)
         .gte('viewed_at', weekAgo.toISOString());
 

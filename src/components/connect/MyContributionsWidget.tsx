@@ -19,18 +19,18 @@ export const MyContributionsWidget: React.FC<MyContributionsWidgetProps> = ({ us
       // Fetch contribution-related stats using direct queries
       const { count: paymentsCount } = await supabase
         .from('contribution_cards')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('created_by', userId);
 
       const { count: spacesCount } = await supabase
         .from('collaboration_memberships')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('user_id', userId)
         .eq('status', 'approved');
 
       const { count: eventsCount } = await supabase
         .from('event_attendees')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('user_id', userId)
         .eq('status', 'going');
 

@@ -19,20 +19,20 @@ export function CreateLeadSection() {
       // Check for upcoming events (hosting or attending)
       const { count: eventCount } = await supabase
         .from('event_attendees')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('user_id', user.id)
         .eq('status', 'going');
 
       const { count: hostingCount } = await supabase
         .from('events')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('organizer_id', user.id)
         .gte('start_time', new Date().toISOString());
 
       // Check for group memberships
       const { count: groupCount } = await supabase
         .from('community_memberships')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('user_id', user.id)
         .eq('status', 'active');
 

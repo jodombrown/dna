@@ -9,10 +9,10 @@ export default function AdminDashboard() {
     queryKey: ['admin-stats'],
     queryFn: async () => {
       const [users, posts, spaces, opportunities] = await Promise.all([
-        supabase.from('profiles').select('id', { count: 'exact', head: true }),
-        supabase.from('posts').select('id', { count: 'exact', head: true }),
-        supabase.from('collaboration_spaces').select('id', { count: 'exact', head: true }),
-        supabase.from('opportunities').select('id', { count: 'exact', head: true })
+        supabase.from('profiles').select('id', { count: 'exact' }),
+        supabase.from('posts').select('id', { count: 'exact' }),
+        supabase.from('collaboration_spaces').select('id', { count: 'exact' }),
+        supabase.from('opportunities').select('id', { count: 'exact' })
       ]);
 
       return {

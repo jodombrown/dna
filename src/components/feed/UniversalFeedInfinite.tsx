@@ -66,7 +66,7 @@ export const UniversalFeedInfinite: React.FC<UniversalFeedInfiniteProps> = ({
     queryFn: async () => {
       const { count, error } = await supabase
         .from('connections')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('status', 'accepted')
         .or(`requester_id.eq.${viewerId},recipient_id.eq.${viewerId}`);
 

@@ -45,7 +45,7 @@ export function ConveyDiscovery() {
       // Published stories count
       const { count: publishedCount } = await supabase
         .from('posts')
-        .select('id', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('is_deleted', false);
       
       let myStoriesCount = 0;
@@ -54,7 +54,7 @@ export function ConveyDiscovery() {
         // My stories
         const { count: myCount } = await supabase
           .from('posts')
-          .select('id', { count: 'exact', head: true })
+          .select('id', { count: 'exact' })
           .eq('author_id', user.id)
           .eq('is_deleted', false);
         myStoriesCount = myCount || 0;

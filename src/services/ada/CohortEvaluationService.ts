@@ -154,7 +154,7 @@ export class CohortEvaluationService {
   async estimateCohortSize(cohortId: string): Promise<number> {
     const { count, error } = await supabase
       .from('ada_cohort_memberships')
-      .select('*', { count: 'exact', head: true })
+      .select('id', { count: 'exact' })
       .eq('cohort_id', cohortId)
       .gt('expires_at', new Date().toISOString());
 

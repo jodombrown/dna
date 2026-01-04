@@ -16,7 +16,7 @@ export function useSpaceContributeStats(spaceId: string | undefined) {
       // Get open needs count
       const { count: openNeedsCount } = await supabaseClient
         .from('contribution_needs')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('space_id', spaceId)
         .in('status', ['open', 'in_progress']);
 
@@ -26,14 +26,14 @@ export function useSpaceContributeStats(spaceId: string | undefined) {
       
       const { count: offersCount } = await supabaseClient
         .from('contribution_offers')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('space_id', spaceId)
         .gte('created_at', ninetyDaysAgo.toISOString());
 
       // Get validated contributions count
       const { count: validatedCount } = await supabaseClient
         .from('contribution_badges')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('space_id', spaceId);
 
       return {
@@ -54,7 +54,7 @@ export function useUserContributeStats(userId: string | undefined) {
 
       const { count: validatedCount } = await supabaseClient
         .from('contribution_badges')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact' })
         .eq('user_id', userId);
 
       return {

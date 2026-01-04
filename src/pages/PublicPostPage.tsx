@@ -83,11 +83,11 @@ const PublicPostPage = () => {
       const [likesResult, commentsResult] = await Promise.all([
         supabase
           .from('post_likes')
-          .select('*', { count: 'exact', head: true })
+          .select('id', { count: 'exact' })
           .eq('post_id', postId),
         supabase
           .from('post_comments')
-          .select('*', { count: 'exact', head: true })
+          .select('id', { count: 'exact' })
           .eq('post_id', postId)
           .eq('is_deleted', false),
       ]);
