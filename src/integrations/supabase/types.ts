@@ -2825,11 +2825,13 @@ export type Database = {
       }
       events: {
         Row: {
+          agenda: Json | null
           allow_guests: boolean
           cancellation_reason: string | null
           cover_image_url: string | null
           created_at: string
           description: string
+          dress_code: string | null
           end_time: string
           event_type: Database["public"]["Enums"]["event_type"]
           format: Database["public"]["Enums"]["event_format"]
@@ -2850,16 +2852,20 @@ export type Database = {
           organizer_id: string
           requires_approval: boolean
           start_time: string
+          subtitle: string | null
+          tags: string[] | null
           timezone: string
           title: string
           updated_at: string
         }
         Insert: {
+          agenda?: Json | null
           allow_guests?: boolean
           cancellation_reason?: string | null
           cover_image_url?: string | null
           created_at?: string
           description: string
+          dress_code?: string | null
           end_time: string
           event_type: Database["public"]["Enums"]["event_type"]
           format: Database["public"]["Enums"]["event_format"]
@@ -2880,16 +2886,20 @@ export type Database = {
           organizer_id: string
           requires_approval?: boolean
           start_time: string
+          subtitle?: string | null
+          tags?: string[] | null
           timezone?: string
           title: string
           updated_at?: string
         }
         Update: {
+          agenda?: Json | null
           allow_guests?: boolean
           cancellation_reason?: string | null
           cover_image_url?: string | null
           created_at?: string
           description?: string
+          dress_code?: string | null
           end_time?: string
           event_type?: Database["public"]["Enums"]["event_type"]
           format?: Database["public"]["Enums"]["event_format"]
@@ -2910,6 +2920,8 @@ export type Database = {
           organizer_id?: string
           requires_approval?: boolean
           start_time?: string
+          subtitle?: string | null
+          tags?: string[] | null
           timezone?: string
           title?: string
           updated_at?: string
