@@ -482,24 +482,37 @@ function EventModeFields({
         </div>
       </div>
 
-      {/* Location / Link (conditional) */}
-      <div>
-        <Label className="text-sm font-medium">
-          {formData.format === 'virtual' ? 'Meeting Link *' : 
-           formData.format === 'hybrid' ? 'Location & Meeting Link *' : 
-           'Location *'}
-        </Label>
-        <Input
-          placeholder={
-            formData.format === 'virtual' 
-              ? 'https://zoom.us/j/...' 
-              : 'Event venue address'
-          }
-          value={formData.location || ''}
-          onChange={(e) => onChange({ location: e.target.value })}
-          className="mt-1.5"
-        />
-      </div>
+      {/* Location (for in-person/hybrid) */}
+      {(formData.format === 'in_person' || formData.format === 'hybrid') && (
+        <div>
+          <Label className="text-sm font-medium">Location *</Label>
+          <Input
+            placeholder="Venue name, City, Country"
+            value={formData.location || ''}
+            onChange={(e) => onChange({ location: e.target.value })}
+            className="mt-1.5"
+          />
+          <p className="text-xs text-muted-foreground mt-1">
+            Format: Venue Name, City, Country (e.g., "Tech Hub, Lagos, Nigeria")
+          </p>
+        </div>
+      )}
+
+      {/* Meeting Link (for virtual/hybrid) */}
+      {(formData.format === 'virtual' || formData.format === 'hybrid') && (
+        <div>
+          <Label className="text-sm font-medium">Meeting Link *</Label>
+          <Input
+            placeholder="https://zoom.us/j/... or Google Meet, Teams link"
+            value={formData.meetingUrl || ''}
+            onChange={(e) => onChange({ meetingUrl: e.target.value })}
+            className="mt-1.5"
+          />
+          <p className="text-xs text-muted-foreground mt-1">
+            Supports Zoom, Google Meet, Microsoft Teams, or any URL
+          </p>
+        </div>
+      )}
 
       {/* Description */}
       <div>
