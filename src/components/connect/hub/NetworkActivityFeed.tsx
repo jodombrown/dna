@@ -10,7 +10,6 @@ import {
   FileText,
   Handshake,
   Lightbulb,
-  Users,
   ChevronRight,
   Loader2,
 } from 'lucide-react';
@@ -53,11 +52,6 @@ const ACTIVITY_COLORS = {
 
 /**
  * NetworkActivityFeed - Shows what your connections are doing across all Five C's
- *
- * PRD Requirements:
- * - Mini-feed showing connection activity
- * - Activities: posted a story, joined a project, registered for an event
- * - Links to relevant content
  */
 export function NetworkActivityFeed() {
   const { user } = useAuth();
@@ -72,17 +66,17 @@ export function NetworkActivityFeed() {
       const oneWeekAgo = new Date();
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
-      // Get user's connections
+      // Get user's connections using correct column names
       const { data: connections } = await supabase
         .from('connections')
-        .select('user_a, user_b')
+        .select('requester_id, recipient_id')
         .eq('status', 'accepted')
-        .or(`user_a.eq.${user.id},user_b.eq.${user.id}`);
+        .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
 
       if (!connections || connections.length === 0) return [];
 
-      const connectionIds = connections.map((c) =>
-        c.user_a === user.id ? c.user_b : c.user_a
+      const connectionIds = connections.map((c: any) =>
+        c.requester_id === user.id ? c.recipient_id : c.requester_id
       );
 
       // Fetch connection profiles
@@ -93,18 +87,19 @@ export function NetworkActivityFeed() {
 
       const profileMap = new Map(profiles?.map((p) => [p.id, p]) || []);
 
-      // 1. Stories published by connections
+      // 1. Stories/posts published by connections
       const { data: stories } = await supabase
-        .from('stories')
-        .select('id, title, author_id, published_at')
+        .from('posts')
+        .select('id, title, author_id, created_at')
         .in('author_id', connectionIds)
-        .eq('status', 'published')
-        .gte('published_at', oneWeekAgo.toISOString())
-        .order('published_at', { ascending: false })
+        .eq('post_type', 'story')
+        .eq('is_deleted', false)
+        .gte('created_at', oneWeekAgo.toISOString())
+        .order('created_at', { ascending: false })
         .limit(3);
 
       if (stories) {
-        stories.forEach((story) => {
+        stories.forEach((story: any) => {
           const profile = profileMap.get(story.author_id);
           if (profile) {
             activities.push({
@@ -118,10 +113,10 @@ export function NetworkActivityFeed() {
               action: 'published a story',
               target: {
                 id: story.id,
-                title: story.title,
+                title: story.title || 'Untitled',
                 href: `/dna/convey/stories/${story.id}`,
               },
-              timestamp: story.published_at,
+              timestamp: story.created_at,
             });
           }
         });
@@ -129,18 +124,18 @@ export function NetworkActivityFeed() {
 
       // 2. Event registrations by connections
       const { data: eventRegs } = await supabase
-        .from('event_registrations')
-        .select('id, user_id, event_id, registered_at, events(id, title)')
+        .from('event_attendees')
+        .select('id, user_id, event_id, created_at, events(id, title)')
         .in('user_id', connectionIds)
-        .eq('status', 'registered')
-        .gte('registered_at', oneWeekAgo.toISOString())
-        .order('registered_at', { ascending: false })
+        .eq('status', 'going')
+        .gte('created_at', oneWeekAgo.toISOString())
+        .order('created_at', { ascending: false })
         .limit(3);
 
       if (eventRegs) {
-        eventRegs.forEach((reg) => {
+        eventRegs.forEach((reg: any) => {
           const profile = profileMap.get(reg.user_id);
-          const event = (reg as any).events;
+          const event = reg.events;
           if (profile && event) {
             activities.push({
               id: `event-${reg.id}`,
@@ -156,7 +151,7 @@ export function NetworkActivityFeed() {
                 title: event.title,
                 href: `/dna/convene/events/${event.id}`,
               },
-              timestamp: reg.registered_at,
+              timestamp: reg.created_at,
             });
           }
         });
@@ -165,20 +160,19 @@ export function NetworkActivityFeed() {
       // 3. Space memberships (projects) by connections
       const { data: spaceMemberships } = await supabase
         .from('space_members')
-        .select('id, user_id, space_id, joined_at, spaces(id, name)')
+        .select('space_id, user_id, joined_at, spaces(id, name)')
         .in('user_id', connectionIds)
-        .eq('status', 'active')
         .gte('joined_at', oneWeekAgo.toISOString())
         .order('joined_at', { ascending: false })
         .limit(3);
 
       if (spaceMemberships) {
-        spaceMemberships.forEach((membership) => {
+        spaceMemberships.forEach((membership: any) => {
           const profile = profileMap.get(membership.user_id);
-          const space = (membership as any).spaces;
+          const space = membership.spaces;
           if (profile && space) {
             activities.push({
-              id: `project-${membership.id}`,
+              id: `project-${membership.space_id}-${membership.user_id}`,
               type: 'project',
               user: {
                 id: membership.user_id,
@@ -197,33 +191,33 @@ export function NetworkActivityFeed() {
         });
       }
 
-      // 4. Marketplace items (opportunities) posted by connections
-      const { data: opportunities } = await supabase
-        .from('marketplace_items')
-        .select('id, title, user_id, item_type, created_at')
-        .in('user_id', connectionIds)
-        .eq('status', 'active')
+      // 4. Contribution needs posted by connections
+      const { data: contributions } = await supabase
+        .from('contribution_needs')
+        .select('id, title, created_by, type, created_at')
+        .in('created_by', connectionIds)
+        .eq('status', 'open')
         .gte('created_at', oneWeekAgo.toISOString())
         .order('created_at', { ascending: false })
         .limit(3);
 
-      if (opportunities) {
-        opportunities.forEach((opp) => {
-          const profile = profileMap.get(opp.user_id);
+      if (contributions) {
+        contributions.forEach((opp: any) => {
+          const profile = profileMap.get(opp.created_by);
           if (profile) {
             activities.push({
               id: `opp-${opp.id}`,
               type: 'opportunity',
               user: {
-                id: opp.user_id,
+                id: opp.created_by,
                 name: profile.full_name || 'Member',
                 avatar_url: profile.avatar_url,
               },
-              action: `posted a ${opp.item_type}`,
+              action: `posted a ${opp.type}`,
               target: {
                 id: opp.id,
                 title: opp.title,
-                href: `/dna/contribute/${opp.item_type}s/${opp.id}`,
+                href: `/dna/contribute/needs/${opp.id}`,
               },
               timestamp: opp.created_at,
             });

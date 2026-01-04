@@ -93,12 +93,12 @@ export function NetworkPanel({
     queryFn: async () => {
       if (!user) return null;
 
-      // Get total connections
+      // Get total connections using correct column names
       const { count: totalConnections } = await supabase
         .from('connections')
         .select('*', { count: 'exact', head: true })
         .eq('status', 'accepted')
-        .or(`user_a.eq.${user.id},user_b.eq.${user.id}`);
+        .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
 
       // Get connections from last week (for trend)
       const weekAgo = new Date();
@@ -108,15 +108,15 @@ export function NetworkPanel({
         .from('connections')
         .select('*', { count: 'exact', head: true })
         .eq('status', 'accepted')
-        .or(`user_a.eq.${user.id},user_b.eq.${user.id}`)
+        .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`)
         .gte('updated_at', weekAgo.toISOString());
 
-      // Get pending requests
+      // Get pending requests using correct column name
       const { count: pendingRequests } = await supabase
         .from('connections')
         .select('*', { count: 'exact', head: true })
         .eq('status', 'pending')
-        .eq('user_b', user.id);
+        .eq('recipient_id', user.id);
 
       return {
         total: totalConnections || 0,
@@ -141,7 +141,7 @@ export function NetworkPanel({
       const { count: profileViews } = await supabase
         .from('profile_views')
         .select('*', { count: 'exact', head: true })
-        .eq('viewed_user_id', user.id)
+        .eq('profile_id', user.id)
         .gte('viewed_at', weekAgo.toISOString());
 
       // Get new match notifications (simplified - would need notifications table)
