@@ -66,22 +66,33 @@ export function RecentActivity() {
         });
       }
 
-      // Fetch connection requests sent
+      // Fetch connection requests sent (two-step pattern to avoid FK hint errors)
       const { data: sentConnections } = await supabase
         .from('connections')
-        .select(`
-          id,
-          status,
-          created_at,
-          recipient:profiles!connections_recipient_id_fkey(id, username, full_name, avatar_url)
-        `)
+        .select('id, status, created_at, recipient_id')
         .eq('requester_id', user.id)
         .order('created_at', { ascending: false })
         .limit(5);
 
+      // Fetch recipient profiles separately
+      const recipientIds = (sentConnections || []).map(c => c.recipient_id);
+      let recipientProfiles: Record<string, any> = {};
+      
+      if (recipientIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from('profiles')
+          .select('id, username, full_name, avatar_url')
+          .in('id', recipientIds);
+        
+        recipientProfiles = (profiles || []).reduce((acc, p) => {
+          acc[p.id] = p;
+          return acc;
+        }, {} as Record<string, any>);
+      }
+
       if (sentConnections) {
         sentConnections.forEach(conn => {
-          const recipient = conn.recipient as any;
+          const recipient = recipientProfiles[conn.recipient_id];
           if (recipient) {
             activityItems.push({
               id: `conn-sent-${conn.id}`,
@@ -101,22 +112,34 @@ export function RecentActivity() {
         });
       }
 
-      // Fetch accepted connection requests (where user was recipient)
+      // Fetch accepted connection requests (where user was recipient) - two-step pattern
       const { data: acceptedConnections } = await supabase
         .from('connections')
-        .select(`
-          id,
-          updated_at,
-          requester:profiles!connections_requester_id_fkey(id, username, full_name, avatar_url)
-        `)
+        .select('id, updated_at, requester_id')
         .eq('recipient_id', user.id)
         .eq('status', 'accepted')
         .order('updated_at', { ascending: false })
         .limit(5);
 
+      // Fetch requester profiles separately
+      const requesterIds = (acceptedConnections || []).map(c => c.requester_id);
+      let requesterProfiles: Record<string, any> = {};
+      
+      if (requesterIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from('profiles')
+          .select('id, username, full_name, avatar_url')
+          .in('id', requesterIds);
+        
+        requesterProfiles = (profiles || []).reduce((acc, p) => {
+          acc[p.id] = p;
+          return acc;
+        }, {} as Record<string, any>);
+      }
+
       if (acceptedConnections) {
         acceptedConnections.forEach(conn => {
-          const requester = conn.requester as any;
+          const requester = requesterProfiles[conn.requester_id];
           if (requester) {
             activityItems.push({
               id: `conn-accepted-${conn.id}`,
@@ -134,76 +157,113 @@ export function RecentActivity() {
         });
       }
 
-      // Fetch recent likes on user's posts
-      const { data: likes } = await supabase
-        .from('post_likes')
-        .select(`
-          id,
-          created_at,
-          post_id,
-          user:profiles!post_likes_user_id_fkey(id, username, full_name, avatar_url),
-          post:posts!post_likes_post_id_fkey(id, author_id, content)
-        `)
-        .eq('post.author_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(5);
+      // Fetch recent likes on user's posts (two-step pattern)
+      // First get user's post IDs, then likes on those posts
+      const { data: userPosts } = await supabase
+        .from('posts')
+        .select('id, content')
+        .eq('author_id', user.id)
+        .eq('is_deleted', false)
+        .limit(20);
 
-      if (likes) {
-        likes.forEach(like => {
-          const liker = like.user as any;
-          const post = like.post as any;
-          if (liker && post && liker.id !== user.id) {
-            activityItems.push({
-              id: `like-${like.id}`,
-              type: 'like',
-              title: `${liker.full_name || liker.username} liked your post`,
-              description: post.content?.substring(0, 50) + '...',
-              timestamp: like.created_at,
-              linkTo: `/dna/feed`,
-              icon: <Heart className="h-4 w-4 text-red-500" />,
-              metadata: {
-                avatarUrl: liker.avatar_url,
-                name: liker.full_name || liker.username,
-              },
-            });
-          }
-        });
+      const userPostIds = (userPosts || []).map(p => p.id);
+      const userPostMap = (userPosts || []).reduce((acc, p) => {
+        acc[p.id] = p;
+        return acc;
+      }, {} as Record<string, any>);
+
+      if (userPostIds.length > 0) {
+        const { data: likes } = await supabase
+          .from('post_likes')
+          .select('id, created_at, post_id, user_id')
+          .in('post_id', userPostIds)
+          .order('created_at', { ascending: false })
+          .limit(5);
+
+        // Fetch liker profiles
+        const likerIds = [...new Set((likes || []).map(l => l.user_id))];
+        let likerProfiles: Record<string, any> = {};
+        
+        if (likerIds.length > 0) {
+          const { data: profiles } = await supabase
+            .from('profiles')
+            .select('id, username, full_name, avatar_url')
+            .in('id', likerIds);
+          
+          likerProfiles = (profiles || []).reduce((acc, p) => {
+            acc[p.id] = p;
+            return acc;
+          }, {} as Record<string, any>);
+        }
+
+        if (likes) {
+          likes.forEach(like => {
+            const liker = likerProfiles[like.user_id];
+            const post = userPostMap[like.post_id];
+            if (liker && post && liker.id !== user.id) {
+              activityItems.push({
+                id: `like-${like.id}`,
+                type: 'like',
+                title: `${liker.full_name || liker.username} liked your post`,
+                description: post.content?.substring(0, 50) + '...',
+                timestamp: like.created_at,
+                linkTo: `/dna/feed`,
+                icon: <Heart className="h-4 w-4 text-red-500" />,
+                metadata: {
+                  avatarUrl: liker.avatar_url,
+                  name: liker.full_name || liker.username,
+                },
+              });
+            }
+          });
+        }
       }
 
-      // Fetch recent comments on user's posts
-      const { data: comments } = await supabase
-        .from('post_comments')
-        .select(`
-          id,
-          content,
-          created_at,
-          post_id,
-          author:profiles!post_comments_author_id_fkey(id, username, full_name, avatar_url),
-          post:posts!post_comments_post_id_fkey(id, author_id)
-        `)
-        .eq('post.author_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(5);
+      // Fetch recent comments on user's posts (two-step pattern, reuse userPostIds)
+      if (userPostIds.length > 0) {
+        const { data: comments } = await supabase
+          .from('post_comments')
+          .select('id, content, created_at, post_id, user_id')
+          .in('post_id', userPostIds)
+          .order('created_at', { ascending: false })
+          .limit(5);
 
-      if (comments) {
-        comments.forEach(comment => {
-          const commenter = comment.author as any;
-          if (commenter && commenter.id !== user.id) {
-            activityItems.push({
-              id: `comment-${comment.id}`,
-              type: 'comment',
-              title: `${commenter.full_name || commenter.username} commented on your post`,
-              description: comment.content?.substring(0, 50) + '...',
-              timestamp: comment.created_at,
-              linkTo: `/dna/feed`,
-              icon: <MessageCircle className="h-4 w-4 text-blue-500" />,
-              metadata: {
-                avatarUrl: commenter.avatar_url,
-                name: commenter.full_name || commenter.username,
-              },
-            });
-          }
-        });
+        // Fetch commenter profiles
+        const commenterIds = [...new Set((comments || []).map(c => c.user_id))];
+        let commenterProfiles: Record<string, any> = {};
+        
+        if (commenterIds.length > 0) {
+          const { data: profiles } = await supabase
+            .from('profiles')
+            .select('id, username, full_name, avatar_url')
+            .in('id', commenterIds);
+          
+          commenterProfiles = (profiles || []).reduce((acc, p) => {
+            acc[p.id] = p;
+            return acc;
+          }, {} as Record<string, any>);
+        }
+
+        if (comments) {
+          comments.forEach(comment => {
+            const commenter = commenterProfiles[comment.user_id];
+            if (commenter && commenter.id !== user.id) {
+              activityItems.push({
+                id: `comment-${comment.id}`,
+                type: 'comment',
+                title: `${commenter.full_name || commenter.username} commented on your post`,
+                description: comment.content?.substring(0, 50) + '...',
+                timestamp: comment.created_at,
+                linkTo: `/dna/feed`,
+                icon: <MessageCircle className="h-4 w-4 text-blue-500" />,
+                metadata: {
+                  avatarUrl: commenter.avatar_url,
+                  name: commenter.full_name || commenter.username,
+                },
+              });
+            }
+          });
+        }
       }
 
       // Sort all activities by timestamp (most recent first)
