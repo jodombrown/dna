@@ -12,6 +12,7 @@ import { EventCard } from './cards/EventCard';
 import { SpaceCard } from './cards/SpaceCard';
 import { NeedCard } from './cards/NeedCard';
 import { StoryCard } from './cards/StoryCard';
+import { OpportunityFeedCard } from './cards/OpportunityFeedCard';
 
 interface UniversalFeedItemProps {
   item: UniversalFeedItemType;
@@ -69,8 +70,9 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
       );
     
     case 'need':
+      // Use OpportunityFeedCard for needs/offers with the new design
       return (
-        <NeedCard
+        <OpportunityFeedCard
           item={item}
           currentUserId={currentUserId}
           onUpdate={onUpdate}
