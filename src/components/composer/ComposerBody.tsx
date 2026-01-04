@@ -391,13 +391,48 @@ function EventModeFields({
     { value: 'hybrid', label: 'Hybrid', icon: '🌐', description: 'Both options' },
   ];
 
+  const dressCodeOptions = [
+    { value: 'casual', label: 'Casual' },
+    { value: 'business_casual', label: 'Business Casual' },
+    { value: 'formal', label: 'Formal' },
+    { value: 'traditional', label: 'Traditional' },
+    { value: 'other', label: 'Other' },
+  ];
+
+  // Handle agenda items
+  const agendaItems = formData.agenda || [];
+  const addAgendaItem = () => {
+    onChange({ agenda: [...agendaItems, { time: '', title: '' }] });
+  };
+  const updateAgendaItem = (index: number, field: 'time' | 'title', value: string) => {
+    const updated = [...agendaItems];
+    updated[index] = { ...updated[index], [field]: value };
+    onChange({ agenda: updated });
+  };
+  const removeAgendaItem = (index: number) => {
+    onChange({ agenda: agendaItems.filter((_, i) => i !== index) });
+  };
+
+  // Handle tags
+  const tags = formData.tags || [];
+  const [tagInput, setTagInput] = useState('');
+  const addTag = () => {
+    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
+      onChange({ tags: [...tags, tagInput.trim()] });
+      setTagInput('');
+    }
+  };
+  const removeTag = (tag: string) => {
+    onChange({ tags: tags.filter(t => t !== tag) });
+  };
+
   return (
     <div className="space-y-4">
       {/* Event Title */}
       <div>
         <Label className="text-sm font-medium">Event Title *</Label>
         <Input
-          placeholder="What's your event called?"
+          placeholder="Pan-African Investment Summit 2026"
           value={formData.title || ''}
           onChange={(e) => onChange({ title: e.target.value })}
           className="mt-1.5"
@@ -406,6 +441,18 @@ function EventModeFields({
         <p className="text-xs text-muted-foreground mt-1">
           {(formData.title?.length || 0)}/100 characters
         </p>
+      </div>
+
+      {/* Subtitle */}
+      <div>
+        <Label className="text-sm font-medium">Subtitle (optional)</Label>
+        <Input
+          placeholder="Connecting diaspora investors with opportunities"
+          value={formData.subtitle || ''}
+          onChange={(e) => onChange({ subtitle: e.target.value })}
+          className="mt-1.5"
+          maxLength={150}
+        />
       </div>
 
       {/* Cover Image */}
@@ -421,7 +468,7 @@ function EventModeFields({
       {/* Date & Time Row */}
       <div className="space-y-3">
         <Label className="text-sm font-medium">Date & Time *</Label>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <p className="text-xs text-muted-foreground mb-1">Start</p>
             <div className="flex gap-2">
@@ -435,7 +482,7 @@ function EventModeFields({
                 type="time"
                 value={formData.eventTime || ''}
                 onChange={(e) => onChange({ eventTime: e.target.value })}
-                className="w-28"
+                className="w-24"
               />
             </div>
           </div>
@@ -452,7 +499,7 @@ function EventModeFields({
                 type="time"
                 value={formData.eventEndTime || ''}
                 onChange={(e) => onChange({ eventEndTime: e.target.value })}
-                className="w-28"
+                className="w-24"
               />
             </div>
           </div>
@@ -487,13 +534,13 @@ function EventModeFields({
         <div>
           <Label className="text-sm font-medium">Location *</Label>
           <Input
-            placeholder="Venue name, City, Country"
+            placeholder="Lagos Continental Hotel, Lagos, Nigeria"
             value={formData.location || ''}
             onChange={(e) => onChange({ location: e.target.value })}
             className="mt-1.5"
           />
-          <p className="text-xs text-muted-foreground mt-1">
-            Format: Venue Name, City, Country (e.g., "Tech Hub, Lagos, Nigeria")
+          <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+            <span>ℹ️</span> Format: Venue, City, Country
           </p>
         </div>
       )}
@@ -503,25 +550,32 @@ function EventModeFields({
         <div>
           <Label className="text-sm font-medium">Meeting Link *</Label>
           <Input
-            placeholder="https://zoom.us/j/... or Google Meet, Teams link"
+            placeholder="https://zoom.us/j/123456789"
             value={formData.meetingUrl || ''}
             onChange={(e) => onChange({ meetingUrl: e.target.value })}
             className="mt-1.5"
           />
-          <p className="text-xs text-muted-foreground mt-1">
-            Supports Zoom, Google Meet, Microsoft Teams, or any URL
+          <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+            <span>ℹ️</span> Zoom, Google Meet, Teams, or any URL
           </p>
         </div>
       )}
 
-      {/* Description */}
+      {/* Section Divider */}
+      <div className="flex items-center gap-3 pt-2">
+        <div className="flex-1 h-px bg-border" />
+        <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Event Details</span>
+        <div className="flex-1 h-px bg-border" />
+      </div>
+
+      {/* What to Expect (replaces Description) */}
       <div>
-        <Label className="text-sm font-medium">Description *</Label>
+        <Label className="text-sm font-medium">What to Expect *</Label>
         <Textarea
-          placeholder="Tell people what your event is about, what they'll learn, and why they should attend..."
+          placeholder="What will attendees experience? What will they learn? Why should they attend?"
           value={formData.content}
           onChange={(e) => onChange({ content: e.target.value })}
-          className="min-h-[120px] resize-none mt-1.5"
+          className="min-h-[100px] resize-none mt-1.5"
         />
         <p className="text-xs text-muted-foreground mt-1">
           {formData.content.length < 50 
@@ -531,8 +585,73 @@ function EventModeFields({
         </p>
       </div>
 
-      {/* Optional: Capacity */}
+      {/* Agenda Builder */}
+      <div>
+        <Label className="text-sm font-medium">Agenda (optional)</Label>
+        <div className="space-y-2 mt-2">
+          {agendaItems.map((item, index) => (
+            <div key={index} className="flex gap-2 items-start">
+              <Input
+                type="text"
+                placeholder="6:00 PM"
+                value={item.time}
+                onChange={(e) => updateAgendaItem(index, 'time', e.target.value)}
+                className="w-24 flex-shrink-0"
+              />
+              <Input
+                placeholder="Registration & Networking"
+                value={item.title}
+                onChange={(e) => updateAgendaItem(index, 'title', e.target.value)}
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => removeAgendaItem(index)}
+                className="h-10 w-10 flex-shrink-0 text-muted-foreground hover:text-destructive"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={addAgendaItem}
+            className="w-full border-dashed"
+          >
+            + Add agenda item
+          </Button>
+        </div>
+        {agendaItems.length === 0 && (
+          <p className="text-xs text-muted-foreground mt-2">
+            Example: 6:00 PM - Registration, 6:30 PM - Keynote, 7:30 PM - Q&A
+          </p>
+        )}
+      </div>
+
+      {/* Dress Code & Capacity Row */}
       <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label className="text-sm font-medium">Dress Code (optional)</Label>
+          <Select
+            value={formData.dressCode || ''}
+            onValueChange={(value) => onChange({ dressCode: value })}
+          >
+            <SelectTrigger className="mt-1.5">
+              <SelectValue placeholder="Select..." />
+            </SelectTrigger>
+            <SelectContent>
+              {dressCodeOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div>
           <Label className="text-sm font-medium">Capacity (optional)</Label>
           <Input
@@ -543,6 +662,52 @@ function EventModeFields({
             className="mt-1.5"
             min={1}
           />
+        </div>
+      </div>
+
+      {/* Tags */}
+      <div>
+        <Label className="text-sm font-medium">Tags (optional)</Label>
+        <div className="flex flex-wrap gap-2 mt-2">
+          {tags.map((tag) => (
+            <span
+              key={tag}
+              className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 rounded-full text-sm"
+            >
+              {tag}
+              <button
+                type="button"
+                onClick={() => removeTag(tag)}
+                className="hover:text-amber-600"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </span>
+          ))}
+          <div className="flex gap-1">
+            <Input
+              type="text"
+              placeholder="Add tag..."
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  addTag();
+                }
+              }}
+              className="h-8 w-28 text-sm"
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={addTag}
+              className="h-8 px-2"
+            >
+              +
+            </Button>
+          </div>
         </div>
       </div>
     </div>

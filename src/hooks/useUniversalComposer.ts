@@ -22,6 +22,11 @@ export interface ComposerContext {
   communityId?: string;
 }
 
+export interface AgendaItem {
+  time: string;
+  title: string;
+}
+
 export interface ComposerFormData {
   content: string;
   title?: string;
@@ -45,6 +50,9 @@ export interface ComposerFormData {
   format?: 'in_person' | 'virtual' | 'hybrid';
   maxAttendees?: number;
   registrationRequired?: boolean;
+  agenda?: AgendaItem[];
+  dressCode?: string;
+  tags?: string[];
   // Need specific
   needType?: 'funding' | 'expertise' | 'resources' | 'volunteers' | 'partnership';
   targetAmount?: number;
@@ -54,7 +62,7 @@ export interface ComposerFormData {
   spaceDescription?: string;
   spaceCategory?: string;
   visibility?: 'public' | 'private';
-  // Story specific
+  // Story specific (subtitle is shared with Event)
   subtitle?: string;
   heroImage?: string;
   storyType?: 'impact' | 'update' | 'spotlight' | 'photo_essay';
