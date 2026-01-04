@@ -30,7 +30,8 @@ import {
   Calendar,
   Handshake,
   Heart,
-  BookOpen
+  BookOpen,
+  Plus
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -54,6 +55,8 @@ import { publicNavItems, phases, aboutUsDropdown } from './header/navigationConf
 import { useUnreadMessageCount } from '@/hooks/useUnreadMessageCount';
 import { useUnreadNotificationCount } from '@/hooks/useUnreadNotificationCount';
 import { useMobile } from '@/hooks/useMobile';
+import { useUniversalComposer } from '@/hooks/useUniversalComposer';
+import { UniversalComposer } from '@/components/composer/UniversalComposer';
 
 const UnifiedHeader = () => {
   const { user, profile, signOut, loading } = useAuth();
@@ -83,6 +86,9 @@ const UnifiedHeader = () => {
   
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
+  
+  // Universal Composer hook for global create button
+  const composer = useUniversalComposer();
 
   // Query admin status
   const { data: isAdmin } = useQuery({
@@ -338,6 +344,25 @@ const UnifiedHeader = () => {
                     );
                   })}
                 </div>
+              )}
+              
+              {/* Global Create Button - Opens Universal Composer */}
+              {isAuthenticated && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="sm"
+                      onClick={() => composer.open('post')}
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground gap-1 hidden md:flex"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span className="text-sm font-medium">Create</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Create post, story, event, space, or opportunity</p>
+                  </TooltipContent>
+                </Tooltip>
               )}
               
               {/* Admin Link - Only for admin users */}
@@ -608,6 +633,17 @@ const UnifiedHeader = () => {
       <BetaSignupDialog 
         isOpen={isBetaSignupOpen} 
         onClose={() => setIsBetaSignupOpen(false)} 
+      />
+
+      {/* Universal Composer - Global Create */}
+      <UniversalComposer
+        isOpen={composer.isOpen}
+        mode={composer.mode}
+        context={composer.context}
+        isSubmitting={composer.isSubmitting}
+        onClose={composer.close}
+        onModeChange={composer.switchMode}
+        onSubmit={composer.submit}
       />
     </>
   );
