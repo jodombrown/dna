@@ -122,6 +122,20 @@ html, body {
     --dna-error: 0 100% 40%; /* Crimson for error states */
     --dna-info: 200 50% 45%; /* Ocean for informational states */
 
+    /* Feed Card Bevel Colors (per Design System) */
+    --bevel-post: 160 35% 42%; /* DNA Emerald #4A8D77 */
+    --bevel-story: 173 84% 32%; /* Deep Teal #0D9488 */
+    --bevel-event: 38 92% 50%; /* Warm Amber #F59E0B */
+    --bevel-space: 258 77% 60%; /* Achievement Purple #8B5CF6 */
+    --bevel-opportunity: 25 51% 46%; /* Copper Gold #B87333 */
+
+    /* Card System Tokens */
+    --card-radius: 12px;
+    --card-padding: 20px;
+    --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);
+    --card-shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.10), 0 8px 24px rgba(0, 0, 0, 0.08);
+    --bevel-width: 6px;
+
     /* Country Flag Inspired Colors */
     --morocco-red: 0 100% 50%;
     --morocco-green: 120 100% 25%;

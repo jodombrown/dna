@@ -15,6 +15,7 @@ import { useAutoEmbedDetection } from '@/hooks/useAutoEmbedDetection';
 import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
 import { getStoryTypeOptions, getStoryTypeConfig, type StoryType } from '@/types/storyTypes';
 import { RichTextEditor } from '@/components/convey/RichTextEditor';
+import { cn } from '@/lib/utils';
 
 interface ComposerBodyProps {
   mode: ComposerMode;
@@ -374,6 +375,267 @@ function StoryGalleryUpload({
   );
 }
 
+/**
+ * EventModeFields - Enhanced event creation form per PRD
+ */
+function EventModeFields({ 
+  formData, 
+  onChange 
+}: { 
+  formData: ComposerFormData; 
+  onChange: (updates: Partial<ComposerFormData>) => void;
+}) {
+  const formatOptions = [
+    { value: 'in_person', label: 'In Person', icon: '📍', description: 'Physical location' },
+    { value: 'virtual', label: 'Virtual', icon: '💻', description: 'Online meeting' },
+    { value: 'hybrid', label: 'Hybrid', icon: '🌐', description: 'Both options' },
+  ];
+
+  return (
+    <div className="space-y-4">
+      {/* Event Title */}
+      <div>
+        <Label className="text-sm font-medium">Event Title *</Label>
+        <Input
+          placeholder="What's your event called?"
+          value={formData.title || ''}
+          onChange={(e) => onChange({ title: e.target.value })}
+          className="mt-1.5"
+          maxLength={100}
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          {(formData.title?.length || 0)}/100 characters
+        </p>
+      </div>
+
+      {/* Cover Image */}
+      <div>
+        <Label className="text-sm font-medium">Cover Image</Label>
+        <EventCoverUpload
+          currentImageUrl={formData.mediaUrl}
+          onUpload={(url) => onChange({ mediaUrl: url })}
+          onRemove={() => onChange({ mediaUrl: undefined })}
+        />
+      </div>
+
+      {/* Date & Time Row */}
+      <div className="space-y-3">
+        <Label className="text-sm font-medium">Date & Time *</Label>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <p className="text-xs text-muted-foreground mb-1">Start</p>
+            <div className="flex gap-2">
+              <Input
+                type="date"
+                value={formData.eventDate || ''}
+                onChange={(e) => onChange({ eventDate: e.target.value })}
+                className="flex-1"
+              />
+              <Input
+                type="time"
+                value={formData.eventTime || ''}
+                onChange={(e) => onChange({ eventTime: e.target.value })}
+                className="w-28"
+              />
+            </div>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground mb-1">End</p>
+            <div className="flex gap-2">
+              <Input
+                type="date"
+                value={formData.eventEndDate || ''}
+                onChange={(e) => onChange({ eventEndDate: e.target.value })}
+                className="flex-1"
+              />
+              <Input
+                type="time"
+                value={formData.eventEndTime || ''}
+                onChange={(e) => onChange({ eventEndTime: e.target.value })}
+                className="w-28"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Event Format */}
+      <div>
+        <Label className="text-sm font-medium">Event Type *</Label>
+        <div className="grid grid-cols-3 gap-2 mt-2">
+          {formatOptions.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => onChange({ format: option.value as any })}
+              className={cn(
+                'flex flex-col items-center p-3 rounded-lg border-2 transition-all',
+                formData.format === option.value
+                  ? 'border-amber-500 bg-amber-50 dark:bg-amber-500/10'
+                  : 'border-border hover:border-muted-foreground/50'
+              )}
+            >
+              <span className="text-xl mb-1">{option.icon}</span>
+              <span className="text-sm font-medium">{option.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Location / Link (conditional) */}
+      <div>
+        <Label className="text-sm font-medium">
+          {formData.format === 'virtual' ? 'Meeting Link *' : 
+           formData.format === 'hybrid' ? 'Location & Meeting Link *' : 
+           'Location *'}
+        </Label>
+        <Input
+          placeholder={
+            formData.format === 'virtual' 
+              ? 'https://zoom.us/j/...' 
+              : 'Event venue address'
+          }
+          value={formData.location || ''}
+          onChange={(e) => onChange({ location: e.target.value })}
+          className="mt-1.5"
+        />
+      </div>
+
+      {/* Description */}
+      <div>
+        <Label className="text-sm font-medium">Description *</Label>
+        <Textarea
+          placeholder="Tell people what your event is about, what they'll learn, and why they should attend..."
+          value={formData.content}
+          onChange={(e) => onChange({ content: e.target.value })}
+          className="min-h-[120px] resize-none mt-1.5"
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          {formData.content.length < 50 
+            ? `${formData.content.length}/50 characters minimum`
+            : `${formData.content.length} characters`
+          }
+        </p>
+      </div>
+
+      {/* Optional: Capacity */}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label className="text-sm font-medium">Capacity (optional)</Label>
+          <Input
+            type="number"
+            placeholder="Unlimited"
+            value={formData.maxAttendees || ''}
+            onChange={(e) => onChange({ maxAttendees: e.target.value ? parseInt(e.target.value) : undefined })}
+            className="mt-1.5"
+            min={1}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * EventCoverUpload - Cover image upload for events
+ */
+function EventCoverUpload({
+  currentImageUrl,
+  onUpload,
+  onRemove,
+}: {
+  currentImageUrl?: string;
+  onUpload: (url: string) => void;
+  onRemove: () => void;
+}) {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      toast({ title: 'Invalid file type', description: 'Please upload a JPG, PNG, or WebP image', variant: 'destructive' });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: 'File too large', description: 'Image must be under 5MB', variant: 'destructive' });
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const url = await uploadMedia(file, user.id, 'event-images');
+      onUpload(url);
+      toast({ description: 'Cover image uploaded!' });
+    } catch (error) {
+      toast({ title: 'Upload failed', description: 'Please try again', variant: 'destructive' });
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  if (currentImageUrl) {
+    return (
+      <div className="relative mt-2">
+        <img 
+          src={currentImageUrl} 
+          alt="Event cover" 
+          className="w-full h-40 object-cover rounded-lg border"
+        />
+        <Button
+          type="button"
+          size="icon"
+          variant="destructive"
+          className="absolute top-2 right-2 h-8 w-8"
+          onClick={onRemove}
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-2">
+      <div 
+        className="border-2 border-dashed border-amber-300 rounded-lg p-6 text-center cursor-pointer hover:border-amber-400 hover:bg-amber-50/50 transition-colors"
+        onClick={() => fileInputRef.current?.click()}
+      >
+        {isUploading ? (
+          <div className="flex items-center justify-center gap-2">
+            <Loader2 className="h-5 w-5 animate-spin text-amber-500" />
+            <span className="text-sm text-muted-foreground">Uploading...</span>
+          </div>
+        ) : (
+          <>
+            <ImagePlus className="h-8 w-8 mx-auto text-amber-400 mb-2" />
+            <p className="text-sm text-muted-foreground">
+              Drop image here or click to upload
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Recommended: 16:9 ratio (1200×675)
+            </p>
+          </>
+        )}
+      </div>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/jpg,image/png,image/webp"
+        className="hidden"
+        onChange={handleFileSelect}
+      />
+    </div>
+  );
+}
+
 function renderModeFields(
   mode: ComposerMode,
   formData: ComposerFormData,
@@ -387,70 +649,7 @@ function renderModeFields(
       return <StoryModeFields formData={formData} onChange={onChange} />;
 
     case 'event':
-      return (
-        <>
-          <div>
-            <Label>Event Title *</Label>
-            <Input
-              placeholder="Event name"
-              value={formData.title || ''}
-              onChange={(e) => onChange({ title: e.target.value })}
-            />
-          </div>
-          <div>
-            <Label>Description *</Label>
-            <Textarea
-              placeholder="Event details..."
-              value={formData.content}
-              onChange={(e) => onChange({ content: e.target.value })}
-              className="min-h-[100px] resize-none"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Date *</Label>
-              <Input
-                type="date"
-                value={formData.eventDate || ''}
-                onChange={(e) => onChange({ eventDate: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label>Time *</Label>
-              <Input
-                type="time"
-                value={formData.eventTime || ''}
-                onChange={(e) => onChange({ eventTime: e.target.value })}
-              />
-            </div>
-          </div>
-          <div>
-            <Label>Location</Label>
-            <Input
-              placeholder="Event location or virtual link"
-              value={formData.location || ''}
-              onChange={(e) => onChange({ location: e.target.value })}
-            />
-          </div>
-          <div>
-            <Label>Format</Label>
-            <Select
-              value={formData.format || 'in_person'}
-              onValueChange={(value: any) => onChange({ format: value })}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="in_person">In Person</SelectItem>
-                <SelectItem value="virtual">Virtual</SelectItem>
-                <SelectItem value="hybrid">Hybrid</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <MediaUploadButton label="Cover Image" onUpload={(url) => onChange({ mediaUrl: url })} />
-        </>
-      );
+      return <EventModeFields formData={formData} onChange={onChange} />;
 
     case 'need':
       return (

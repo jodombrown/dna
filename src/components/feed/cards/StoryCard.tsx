@@ -1,14 +1,16 @@
 /**
  * Story Card for Universal Feed
  * 
- * Displays published stories in the feed with title, body preview, and read-more expansion.
- * Includes full engagement features: threaded comments, reactions, owner/others menus.
+ * Design System v1.0 Implementation:
+ * - 6px Deep Teal bevel (#0D9488)
+ * - Displays published stories with title, body preview
+ * - Includes full engagement features
  */
 
 import React, { useState } from 'react';
 import { UniversalFeedItem } from '@/types/feed';
+import { FeedCardBase } from './FeedCardBase';
 import { linkifyContent } from '@/utils/linkifyContent';
-import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Heart, MessageCircle, Bookmark, FileText, BookOpen } from 'lucide-react';
@@ -63,7 +65,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
   const commentsVisible = showComments || localShowComments;
 
   return (
-    <Card className="p-4 sm:p-5 md:p-6 hover:border-dna-gold/50 transition-colors border-2 border-dna-gold/50 rounded-xl shadow-[0_2px_12px_-2px_hsl(var(--dna-gold)/0.18)]">
+    <FeedCardBase bevelType="story">
       {/* Header */}
       <div className="flex items-start gap-3 mb-4">
         <Avatar
@@ -81,7 +83,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
             >
               {item.author_display_name || item.author_username}
             </span>
-            <Badge variant="secondary" className="gap-1">
+            <Badge className="gap-1 bg-teal-500/10 text-teal-600 border-teal-200">
               <FileText className="h-3 w-3" />
               Story
             </Badge>
@@ -115,7 +117,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
       <div className="space-y-3">
         {/* Title - navigates to full story view */}
         <h3 
-          className="text-lg md:text-xl font-semibold leading-tight cursor-pointer hover:text-primary transition-colors"
+          className="text-lg md:text-xl font-semibold font-serif leading-tight cursor-pointer hover:text-teal-600 transition-colors"
           onClick={() => navigate(`/dna/story/${item.slug || item.post_id}`)}
         >
           {item.title || 'Featured Story'}
@@ -142,7 +144,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
           </div>
         )}
 
-        {/* Link Preview - Only shows play button for actual video links */}
+        {/* Link Preview */}
         {item.link_url && (
           <LinkPreviewCard
             data={{
@@ -159,9 +161,9 @@ export const StoryCard: React.FC<StoryCardProps> = ({
           />
         )}
 
-        {/* Body Preview with Paragraph Formatting */}
+        {/* Body Preview */}
         <div className="prose prose-sm max-w-none">
-        {isExpanded ? (
+          {isExpanded ? (
             <div className="text-sm md:text-base text-muted-foreground space-y-3">
               {item.content.split('\n\n').map((paragraph, idx) => (
                 <p key={idx} className="whitespace-pre-line leading-relaxed">
@@ -177,13 +179,13 @@ export const StoryCard: React.FC<StoryCardProps> = ({
           )}
         </div>
 
-        {/* Read Full Story Button - expands in-place */}
+        {/* Read Full Story Button */}
         {needsExpansion && !isExpanded && (
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setIsExpanded(true)}
-            className="text-primary"
+            className="text-teal-600"
           >
             Read Full Story
           </Button>
@@ -193,7 +195,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => setIsExpanded(false)}
-            className="text-primary"
+            className="text-teal-600"
           >
             Show Less
           </Button>
@@ -227,7 +229,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
           <BookOpen
             className={cn(
               'h-4 w-4',
-              userHasLiked ? 'fill-dna-gold text-dna-gold' : 'text-muted-foreground'
+              userHasLiked ? 'fill-teal-500 text-teal-500' : 'text-muted-foreground'
             )}
           />
           <span className="hidden xs:inline">{likeCount > 0 ? likeCount : 'Appreciate'}</span>
@@ -239,7 +241,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
           className="flex items-center gap-2 text-xs sm:text-sm"
           onClick={handleCommentClick}
         >
-          <MessageCircle className={cn('h-4 w-4', commentsVisible && 'text-primary')} />
+          <MessageCircle className={cn('h-4 w-4', commentsVisible && 'text-teal-600')} />
           <span className="hidden xs:inline">{item.comment_count > 0 ? item.comment_count : 'Comment'}</span>
           <span className="xs:hidden">{item.comment_count > 0 ? item.comment_count : ''}</span>
         </Button>
@@ -252,7 +254,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
           <Bookmark
             className={cn(
               'h-4 w-4',
-              userHasBookmarked ? 'fill-current text-primary' : 'text-muted-foreground'
+              userHasBookmarked ? 'fill-current text-teal-600' : 'text-muted-foreground'
             )}
           />
         </Button>
@@ -262,6 +264,6 @@ export const StoryCard: React.FC<StoryCardProps> = ({
       {commentsVisible && (
         <ThreadedComments postId={item.post_id} currentUserId={currentUserId} />
       )}
-    </Card>
+    </FeedCardBase>
   );
 };
