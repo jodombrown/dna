@@ -21,13 +21,13 @@ interface FeedCardBaseProps {
 }
 
 const bevelColorMap: Record<FeedCardBevelType, string> = {
-  post: 'border-l-dna-bevel-post',
-  story: 'border-l-dna-bevel-story',
-  event: 'border-l-dna-bevel-event',
-  space: 'border-l-dna-bevel-space',
-  opportunity: 'border-l-dna-bevel-opportunity',
-  need: 'border-l-dna-bevel-opportunity', // Needs use same color as opportunities
-  offer: 'border-l-dna-bevel-opportunity', // Offers use same color as opportunities
+  post: 'border-dna-bevel-post',
+  story: 'border-dna-bevel-story',
+  event: 'border-dna-bevel-event',
+  space: 'border-dna-bevel-space',
+  opportunity: 'border-dna-bevel-opportunity',
+  need: 'border-dna-bevel-opportunity', // Needs use same color as opportunities
+  offer: 'border-dna-bevel-opportunity', // Offers use same color as opportunities
 };
 
 export const FeedCardBase: React.FC<FeedCardBaseProps> = ({
@@ -40,10 +40,10 @@ export const FeedCardBase: React.FC<FeedCardBaseProps> = ({
     <div
       onClick={onClick}
       className={cn(
-        // Base card styling
-        'bg-card rounded-xl border border-border/50',
-        // 6px left bevel with mode-specific color
-        'border-l-[6px]',
+        // Base card styling with full bevel border
+        'bg-card rounded-xl',
+        // Full 2px border with mode-specific color
+        'border-2',
         bevelColorMap[bevelType],
         // Padding per design system
         'p-5',
