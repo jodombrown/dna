@@ -84,7 +84,6 @@ export function useUnreadCounts(): UnreadCounts {
       });
 
       if (error) {
-        console.error('Error fetching unread notifications:', error);
         return 0;
       }
 

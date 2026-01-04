@@ -96,7 +96,6 @@ export default function ContributionModeration() {
 
       if (error) {
         // Table might not exist yet - show empty state
-        console.log('Reports table may not exist:', error);
         setReports([]);
         setLoading(false);
         return;
@@ -138,8 +137,7 @@ export default function ContributionModeration() {
       }));
 
       setReports(formattedReports);
-    } catch (error) {
-      console.error('Error fetching reports:', error);
+    } catch {
       setReports([]);
     } finally {
       setLoading(false);

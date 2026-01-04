@@ -138,8 +138,7 @@ export default function SpaceModeration() {
       }));
 
       setReports(formattedReports);
-    } catch (error) {
-      console.error('Error fetching reports:', error);
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to fetch space reports. The reports table may not exist yet.',

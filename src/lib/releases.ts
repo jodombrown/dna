@@ -64,7 +64,6 @@ export async function fetchReleases(
   const { data, error, count } = await query;
 
   if (error) {
-    console.error('Error fetching releases:', error);
     throw new Error(`Failed to fetch releases: ${error.message}`);
   }
 
@@ -84,7 +83,6 @@ export async function fetchFeaturedReleases(): Promise<ReleaseWithDetails[]> {
     .order('release_date', { ascending: false });
 
   if (error) {
-    console.error('Error fetching featured releases:', error);
     throw new Error(`Failed to fetch featured releases: ${error.message}`);
   }
 
@@ -101,7 +99,6 @@ export async function fetchRecentReleases(): Promise<ReleaseWithDetails[]> {
     .order('release_date', { ascending: false });
 
   if (error) {
-    console.error('Error fetching recent releases:', error);
     throw new Error(`Failed to fetch recent releases: ${error.message}`);
   }
 
@@ -118,7 +115,6 @@ export async function fetchArchivedReleases(): Promise<ReleaseWithDetails[]> {
     .order('release_date', { ascending: false });
 
   if (error) {
-    console.error('Error fetching archived releases:', error);
     throw new Error(`Failed to fetch archived releases: ${error.message}`);
   }
 
@@ -141,7 +137,6 @@ export async function fetchReleaseBySlug(
     if (error.code === 'PGRST116') {
       return null; // Not found
     }
-    console.error('Error fetching release:', error);
     throw new Error(`Failed to fetch release: ${error.message}`);
   }
 
@@ -155,7 +150,6 @@ export async function getFeaturedReleasesCount(): Promise<number> {
   const { data, error } = await (supabase as any).rpc('get_featured_releases_count');
 
   if (error) {
-    console.error('Error getting featured count:', error);
     return 0;
   }
 
@@ -177,7 +171,6 @@ export async function fetchRelatedReleases(
   });
 
   if (error) {
-    console.error('Error fetching related releases:', error);
     return [];
   }
 
@@ -192,9 +185,7 @@ export async function incrementViewCount(slug: string): Promise<void> {
     release_slug: slug,
   });
 
-  if (error) {
-    console.error('Error incrementing view count:', error);
-  }
+  // Silently ignore view count errors - non-critical
 }
 
 // =============================================================================
@@ -211,7 +202,6 @@ export async function fetchAllReleaseTags(): Promise<string[]> {
     .in('status', ['published', 'archived']);
 
   if (error) {
-    console.error('Error fetching tags:', error);
     return [];
   }
 
@@ -241,7 +231,6 @@ export async function searchReleases(
     .limit(limit);
 
   if (error) {
-    console.error('Error searching releases:', error);
     throw new Error(`Failed to search releases: ${error.message}`);
   }
 
@@ -297,7 +286,6 @@ export async function createRelease(
     .single();
 
   if (releaseError) {
-    console.error('Error creating release:', releaseError);
     throw new Error(`Failed to create release: ${releaseError.message}`);
   }
 
@@ -314,7 +302,6 @@ export async function createRelease(
       .insert(featureInserts);
 
     if (featuresError) {
-      console.error('Error adding features:', featuresError);
       // Don't throw - release was created successfully
     }
   }
@@ -338,7 +325,6 @@ export async function updateRelease(
     .single();
 
   if (releaseError) {
-    console.error('Error updating release:', releaseError);
     throw new Error(`Failed to update release: ${releaseError.message}`);
   }
 
@@ -359,9 +345,7 @@ export async function updateRelease(
         .from('release_features')
         .insert(featureInserts);
 
-      if (featuresError) {
-        console.error('Error updating features:', featuresError);
-      }
+      // Silently ignore feature update errors - release was updated successfully
     }
   }
 
@@ -375,7 +359,6 @@ export async function deleteRelease(id: string): Promise<void> {
   const { error } = await supabase.from('releases').delete().eq('id', id);
 
   if (error) {
-    console.error('Error deleting release:', error);
     throw new Error(`Failed to delete release: ${error.message}`);
   }
 }
@@ -433,7 +416,6 @@ export async function addReleaseMedia(
   });
 
   if (error) {
-    console.error('Error adding media:', error);
     throw new Error(`Failed to add media: ${error.message}`);
   }
 }
@@ -448,7 +430,6 @@ export async function removeReleaseMedia(mediaId: string): Promise<void> {
     .eq('id', mediaId);
 
   if (error) {
-    console.error('Error removing media:', error);
     throw new Error(`Failed to remove media: ${error.message}`);
   }
 }
@@ -473,7 +454,6 @@ export async function addChangelogEntry(
   });
 
   if (error) {
-    console.error('Error adding changelog:', error);
     throw new Error(`Failed to add changelog entry: ${error.message}`);
   }
 }
@@ -488,7 +468,6 @@ export async function removeChangelogEntry(entryId: string): Promise<void> {
     .eq('id', entryId);
 
   if (error) {
-    console.error('Error removing changelog:', error);
     throw new Error(`Failed to remove changelog entry: ${error.message}`);
   }
 }

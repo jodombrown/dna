@@ -319,9 +319,8 @@ export const spaceHealthService = {
             userRole: 'lead',
           } as SpaceNeedingAttention);
         }
-      } catch (error) {
+      } catch {
         // Skip spaces we can't calculate health for
-        console.error(`Failed to calculate health for space ${space.id}:`, error);
       }
     }
 

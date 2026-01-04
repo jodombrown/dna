@@ -147,8 +147,7 @@ export default function ContributionManagement() {
       }));
 
       setNeeds(formattedNeeds);
-    } catch (error) {
-      console.error('Error fetching needs:', error);
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to fetch contribution needs',
