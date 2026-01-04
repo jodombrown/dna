@@ -28,11 +28,11 @@ interface HubHeroProps {
 
 // Cultural pattern backgrounds at 5-8% opacity
 const hubPatterns: Record<HubType, string> = {
-  connect: 'bg-[url("/patterns/kente-subtle.svg")]',
-  convene: 'bg-[url("/patterns/mudcloth-subtle.svg")]',
-  collaborate: 'bg-[url("/patterns/ndebele-subtle.svg")]',
-  contribute: 'bg-[url("/patterns/kente-subtle.svg")]',
-  convey: 'bg-[url("/patterns/mudcloth-subtle.svg")]',
+  connect: 'bg-[url("/patterns/kente-pattern.svg")]',
+  convene: 'bg-[url("/patterns/mudcloth-pattern.svg")]',
+  collaborate: 'bg-[url("/patterns/ndebele-pattern.svg")]',
+  contribute: 'bg-[url("/patterns/kente-pattern.svg")]',
+  convey: 'bg-[url("/patterns/mudcloth-pattern.svg")]',
 };
 
 export function HubHero({
