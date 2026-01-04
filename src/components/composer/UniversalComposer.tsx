@@ -66,19 +66,7 @@ export const UniversalComposer = ({
     return (
       <Sheet open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
         <SheetContent side="right" className="w-full max-w-md sm:max-w-lg">
-          <SheetHeader>
-            <SheetTitle className="text-2xl">
-              Share something with the diaspora
-            </SheetTitle>
-            <div className="flex items-center gap-2 flex-wrap">
-              <p className="text-sm text-muted-foreground">
-                {getSubheader(mode)}
-              </p>
-              {getContextBadge(context)}
-            </div>
-          </SheetHeader>
-
-          <div className="space-y-6 mt-4">
+          <div className="space-y-4 mt-2">
             <ComposerModeSelector
               currentMode={mode}
               onModeChange={onModeChange}
