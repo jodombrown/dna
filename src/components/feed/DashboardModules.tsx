@@ -157,7 +157,7 @@ function OpenNeedsModule({ isCompact, navigate, needs }: any) {
               >
                 <p className="font-medium truncate">{need.title}</p>
                 <p className="text-xs text-muted-foreground">
-                  {need.spaces?.title || 'Project'}
+                  {need.spaces?.name || 'Project'}
                 </p>
               </div>
             ))}
@@ -293,7 +293,7 @@ export function DashboardModules({
     queryFn: async () => {
       const { data } = await supabase
         .from('contribution_needs')
-        .select('*, spaces(title)')
+        .select('*, spaces(name)')
         .eq('status', 'open')
         .limit(3);
       return data || [];

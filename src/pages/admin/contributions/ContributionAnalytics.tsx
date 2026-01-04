@@ -130,7 +130,7 @@ export default function ContributionAnalytics() {
           target_amount,
           currency,
           created_at,
-          space:spaces!contribution_needs_space_id_fkey(title)
+          space:spaces!contribution_needs_space_id_fkey(name)
         `);
 
       if (needsError) throw needsError;
@@ -272,7 +272,7 @@ export default function ContributionAnalytics() {
         .map((n: any) => ({
           id: n.id,
           title: n.title,
-          space_title: n.space?.title || 'Unknown Space',
+          space_title: n.space?.name || 'Unknown Space',
           type: n.type,
           offer_count: offerCountMap[n.id] || 0,
           created_at: n.created_at

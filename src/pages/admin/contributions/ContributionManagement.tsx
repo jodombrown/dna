@@ -109,7 +109,7 @@ export default function ContributionManagement() {
           updated_at,
           created_by,
           space_id,
-          space:spaces!contribution_needs_space_id_fkey(title),
+          space:spaces!contribution_needs_space_id_fkey(name),
           creator:profiles!contribution_needs_created_by_fkey(full_name, email)
         `)
         .order('created_at', { ascending: false });
@@ -140,7 +140,7 @@ export default function ContributionManagement() {
         updated_at: need.updated_at,
         created_by: need.created_by,
         space_id: need.space_id,
-        space_title: need.space?.title || 'Unknown Space',
+        space_title: need.space?.name || 'Unknown Space',
         creator_name: need.creator?.full_name || 'Unknown',
         creator_email: need.creator?.email || '',
         offer_count: offerCountMap[need.id] || 0

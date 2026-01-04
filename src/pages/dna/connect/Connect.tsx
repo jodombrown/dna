@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useMobile } from '@/hooks/useMobile';
@@ -39,6 +39,7 @@ import { ConnectMobileHeader } from '@/components/connect/ConnectMobileHeader';
  */
 const Connect = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
   const { data: profile, isLoading } = useProfile();
   const { isMobile } = useMobile();
@@ -57,7 +58,14 @@ const Connect = () => {
   const [mobileSearchQuery, setMobileSearchQuery] = useState('');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [mobileActiveFilterCount, setMobileActiveFilterCount] = useState(0);
-  const [mobileView, setMobileView] = useState<'network' | 'discover' | 'messages'>('discover');
+  
+  // Determine mobile view from URL path
+  const getMobileViewFromPath = (): 'network' | 'discover' | 'messages' => {
+    if (location.pathname.includes('/network')) return 'network';
+    if (location.pathname.includes('/messages')) return 'messages';
+    return 'discover';
+  };
+  const mobileView = getMobileViewFromPath();
 
   // Handle filter changes from NetworkPanel
   const handleFilterChange = useCallback((newFilters: FilterState) => {
@@ -96,12 +104,14 @@ const Connect = () => {
     setSelectedConversationId(null);
   }, []);
 
-  // Mobile tab change (legacy)
+  // Mobile tab change
   const handleMobileTabChange = (tab: 'discover' | 'network' | 'messages') => {
     if (tab === 'messages') {
       navigate('/dna/messages');
+    } else if (tab === 'network') {
+      navigate('/dna/connect/network');
     } else {
-      setMobileView(tab);
+      navigate('/dna/connect/discover');
     }
   };
 
