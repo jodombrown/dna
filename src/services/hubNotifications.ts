@@ -55,8 +55,7 @@ export async function subscribeToHubNotifications(
     if (error) throw error;
 
     return { success: true };
-  } catch (error) {
-    console.error('Hub notification signup failed:', error);
+  } catch {
     return {
       success: false,
       error: 'Failed to subscribe. Please try again.'
@@ -87,8 +86,7 @@ export async function submitHostApplication(
     if (error) throw error;
 
     return { success: true };
-  } catch (error) {
-    console.error('Host application submission failed:', error);
+  } catch {
     return {
       success: false,
       error: 'Failed to submit application. Please try again.'

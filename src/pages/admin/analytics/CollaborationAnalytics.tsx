@@ -299,8 +299,7 @@ export default function CollaborationAnalytics() {
         }));
       setAtRiskSpaces(atRiskList);
 
-    } catch (error) {
-      console.error('Error fetching analytics:', error);
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to fetch collaboration analytics',

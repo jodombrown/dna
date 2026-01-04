@@ -281,8 +281,7 @@ export default function ContributionAnalytics() {
         .slice(0, 10);
       setHotOpportunities(hotOpportunitiesList);
 
-    } catch (error) {
-      console.error('Error fetching analytics:', error);
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to fetch contribution analytics',

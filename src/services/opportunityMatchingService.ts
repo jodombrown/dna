@@ -104,7 +104,6 @@ class OpportunityMatchingService {
       // Get user profile
       const userProfile = await this.getUserProfile(userId);
       if (!userProfile) {
-        console.warn('User profile not found for matching');
         return [];
       }
 
@@ -132,8 +131,7 @@ class OpportunityMatchingService {
         .filter((opp) => opp.matchScore > 10) // Filter out very low matches
         .sort((a, b) => b.matchScore - a.matchScore)
         .slice(0, 10);
-    } catch (error) {
-      console.error('Error getting matching opportunities:', error);
+    } catch {
       return [];
     }
   }
@@ -173,8 +171,7 @@ class OpportunityMatchingService {
 
       const contributionHistory = await this.getContributionHistory(userId);
       return this.calculateMatchScore(userProfile, opportunity, contributionHistory);
-    } catch (error) {
-      console.error('Error getting match score:', error);
+    } catch {
       return null;
     }
   }
@@ -258,7 +255,6 @@ class OpportunityMatchingService {
       .single();
 
     if (error) {
-      console.error('Error fetching user profile:', error);
       return null;
     }
 
@@ -320,7 +316,6 @@ class OpportunityMatchingService {
       .limit(50);
 
     if (needsError || !needsData || needsData.length === 0) {
-      if (needsError) console.error('Error fetching opportunities:', needsError);
       return [];
     }
 
@@ -613,7 +608,6 @@ class OpportunityMatchingService {
       .limit(limit);
 
     if (needsError || !needsData || needsData.length === 0) {
-      if (needsError) console.error('Error fetching trending opportunities:', needsError);
       return [];
     }
 
@@ -668,7 +662,6 @@ class OpportunityMatchingService {
       .limit(10);
 
     if (needsError || !needsData || needsData.length === 0) {
-      if (needsError) console.error('Error fetching network opportunities:', needsError);
       return [];
     }
 

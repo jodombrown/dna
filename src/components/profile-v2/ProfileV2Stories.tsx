@@ -97,7 +97,6 @@ const ProfileV2Stories: React.FC<ProfileV2StoriesProps> = ({
         .order('created_at', { ascending: false, nullsFirst: false });
 
       if (error) {
-        console.error('Error fetching profile stories:', error);
         throw error;
       }
 
