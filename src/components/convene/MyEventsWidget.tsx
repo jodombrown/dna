@@ -15,16 +15,27 @@ export const MyEventsWidget = () => {
   const { data: myEvents, isLoading } = useQuery({
     queryKey: ['my-events', user?.id],
     queryFn: async () => {
-      const { data } = await supabase
-        .from('events')
-        .select('*')
-        .eq('organizer_id', user!.id)
-        .order('start_time', { ascending: true })
-        .limit(3);
-      
-      return data || [];
+      try {
+        const { data, error } = await supabase
+          .from('events')
+          .select('*')
+          .eq('organizer_id', user!.id)
+          .order('start_time', { ascending: true })
+          .limit(3);
+        
+        if (error) {
+          console.warn('[MyEventsWidget] Error fetching events:', error);
+          return [];
+        }
+        return data || [];
+      } catch (error) {
+        console.warn('[MyEventsWidget] Failed to fetch events:', error);
+        return [];
+      }
     },
     enabled: !!user?.id,
+    retry: 2,
+    retryDelay: 1000,
   });
 
   if (isLoading) {

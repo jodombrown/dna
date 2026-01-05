@@ -33,18 +33,25 @@ export const EventRecommendations = () => {
   const { data: recommendations = [], isLoading, error } = useQuery<RecommendedEvent[]>({
     queryKey: ['event-recommendations', user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke('get-event-recommendations', {
-        body: {}
-      });
+      try {
+        const { data, error } = await supabase.functions.invoke('get-event-recommendations', {
+          body: {}
+        });
 
-      if (error) {
-        throw error;
+        if (error) {
+          console.warn('[EventRecommendations] Edge function error:', error);
+          return [];
+        }
+
+        return data?.recommendations || [];
+      } catch (error) {
+        console.warn('[EventRecommendations] Failed to fetch recommendations:', error);
+        return [];
       }
-
-      return data.recommendations || [];
     },
     enabled: !!user,
-    retry: 1,
+    retry: 2,
+    retryDelay: 1000,
   });
 
   if (!user) return null;

@@ -16,46 +16,67 @@ export function ConveneRightWidgets() {
   const { data: nextEvent } = useQuery({
     queryKey: ['next-event', user?.id],
     queryFn: async () => {
-      if (!user) return null;
-      
-      const now = new Date().toISOString();
-      
-      // Try to find next hosting event
-      const { data: hosting } = await supabase
-        .from('events')
-        .select('id, title, start_time, format')
-        .eq('organizer_id', user.id)
-        .eq('is_cancelled', false)
-        .gte('start_time', now)
-        .order('start_time', { ascending: true })
-        .limit(1)
-        .maybeSingle();
+      try {
+        if (!user) return null;
+        
+        const now = new Date().toISOString();
+        
+        // Try to find next hosting event
+        const { data: hosting, error: hostingError } = await supabase
+          .from('events')
+          .select('id, title, start_time, format')
+          .eq('organizer_id', user.id)
+          .eq('is_cancelled', false)
+          .gte('start_time', now)
+          .order('start_time', { ascending: true })
+          .limit(1)
+          .maybeSingle();
 
-      if (hosting) return { ...hosting, role: 'hosting' };
+        if (hostingError) {
+          console.warn('[ConveneRightWidgets] Error fetching hosting events:', hostingError);
+        }
 
-      // If not hosting, try to find next attending event
-      const { data: attendeeData } = await supabase
-        .from('event_attendees')
-        .select('event_id')
-        .eq('user_id', user.id)
-        .eq('status', 'going')
-        .limit(1);
+        if (hosting) return { ...hosting, role: 'hosting' };
 
-      if (!attendeeData || attendeeData.length === 0) return null;
+        // If not hosting, try to find next attending event
+        const { data: attendeeData, error: attendeeError } = await supabase
+          .from('event_attendees')
+          .select('event_id')
+          .eq('user_id', user.id)
+          .eq('status', 'going')
+          .limit(1);
 
-      const { data: attending } = await supabase
-        .from('events')
-        .select('id, title, start_time, format')
-        .eq('id', attendeeData[0].event_id)
-        .eq('is_cancelled', false)
-        .gte('start_time', now)
-        .order('start_time', { ascending: true })
-        .limit(1)
-        .maybeSingle();
+        if (attendeeError) {
+          console.warn('[ConveneRightWidgets] Error fetching attendee data:', attendeeError);
+          return null;
+        }
 
-      return attending ? { ...attending, role: 'attending' } : null;
+        if (!attendeeData || attendeeData.length === 0) return null;
+
+        const { data: attending, error: attendingError } = await supabase
+          .from('events')
+          .select('id, title, start_time, format')
+          .eq('id', attendeeData[0].event_id)
+          .eq('is_cancelled', false)
+          .gte('start_time', now)
+          .order('start_time', { ascending: true })
+          .limit(1)
+          .maybeSingle();
+
+        if (attendingError) {
+          console.warn('[ConveneRightWidgets] Error fetching attending events:', attendingError);
+          return null;
+        }
+
+        return attending ? { ...attending, role: 'attending' } : null;
+      } catch (error) {
+        console.warn('[ConveneRightWidgets] Failed to fetch next event:', error);
+        return null;
+      }
     },
     enabled: !!user,
+    retry: 2,
+    retryDelay: 1000,
   });
 
   return (

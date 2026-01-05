@@ -12,28 +12,38 @@ export const FlagshipEventsSection = () => {
   const { data: flagshipEvents = [], isLoading } = useQuery({
     queryKey: ['flagship-events'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('events')
-        .select(`
-          id,
-          title,
-          description,
-          start_time,
-          format,
-          event_type,
-          location_city,
-          location_country,
-          cover_image_url
-        `)
-        .eq('is_cancelled', false)
-        .eq('is_flagship', true)
-        .gte('start_time', new Date().toISOString())
-        .order('start_time', { ascending: true })
-        .limit(6);
+      try {
+        const { data, error } = await supabase
+          .from('events')
+          .select(`
+            id,
+            title,
+            description,
+            start_time,
+            format,
+            event_type,
+            location_city,
+            location_country,
+            cover_image_url
+          `)
+          .eq('is_cancelled', false)
+          .eq('is_flagship', true)
+          .gte('start_time', new Date().toISOString())
+          .order('start_time', { ascending: true })
+          .limit(6);
 
-      if (error) throw error;
-      return data || [];
+        if (error) {
+          console.warn('[FlagshipEventsSection] Error fetching events:', error);
+          return [];
+        }
+        return data || [];
+      } catch (error) {
+        console.warn('[FlagshipEventsSection] Failed to fetch events:', error);
+        return [];
+      }
     },
+    retry: 2,
+    retryDelay: 1000,
   });
 
   if (isLoading) {
