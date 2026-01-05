@@ -87,73 +87,103 @@ export function NetworkPanel({
     diasporaLocations: [],
   });
 
-  // Fetch network stats
+  // Fetch network stats with robust error handling
   const { data: networkStats } = useQuery({
     queryKey: ['network-stats', user?.id],
     queryFn: async () => {
-      if (!user) return null;
+      if (!user) return { total: 0, weeklyChange: 0, pendingRequests: 0 };
 
-      // Get total connections using correct column names
-      const { count: totalConnections } = await supabase
-        .from('connections')
-        .select('id', { count: 'exact' })
-        .eq('status', 'accepted')
-        .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
+      try {
+        // Get total connections using correct column names
+        const { count: totalConnections, error: totalError } = await supabase
+          .from('connections')
+          .select('id', { count: 'exact' })
+          .eq('status', 'accepted')
+          .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
 
-      // Get connections from last week (for trend)
-      const weekAgo = new Date();
-      weekAgo.setDate(weekAgo.getDate() - 7);
+        if (totalError) {
+          console.warn('[NetworkPanel] Failed to fetch total connections:', totalError);
+        }
 
-      const { count: newThisWeek } = await supabase
-        .from('connections')
-        .select('id', { count: 'exact' })
-        .eq('status', 'accepted')
-        .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`)
-        .gte('updated_at', weekAgo.toISOString());
+        // Get connections from last week (for trend)
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
 
-      // Get pending requests using correct column name
-      const { count: pendingRequests } = await supabase
-        .from('connections')
-        .select('id', { count: 'exact' })
-        .eq('status', 'pending')
-        .eq('recipient_id', user.id);
+        const { count: newThisWeek, error: weekError } = await supabase
+          .from('connections')
+          .select('id', { count: 'exact' })
+          .eq('status', 'accepted')
+          .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`)
+          .gte('updated_at', weekAgo.toISOString());
 
-      return {
-        total: totalConnections || 0,
-        weeklyChange: newThisWeek || 0,
-        pendingRequests: pendingRequests || 0,
-      };
+        if (weekError) {
+          console.warn('[NetworkPanel] Failed to fetch weekly connections:', weekError);
+        }
+
+        // Get pending requests using correct column name
+        const { count: pendingRequests, error: pendingError } = await supabase
+          .from('connections')
+          .select('id', { count: 'exact' })
+          .eq('status', 'pending')
+          .eq('recipient_id', user.id);
+
+        if (pendingError) {
+          console.warn('[NetworkPanel] Failed to fetch pending requests:', pendingError);
+        }
+
+        return {
+          total: totalConnections || 0,
+          weeklyChange: newThisWeek || 0,
+          pendingRequests: pendingRequests || 0,
+        };
+      } catch (error) {
+        console.warn('[NetworkPanel] Error fetching network stats:', error);
+        return { total: 0, weeklyChange: 0, pendingRequests: 0 };
+      }
     },
     enabled: !!user,
     staleTime: 60000,
+    retry: 2,
+    retryDelay: 1000,
   });
 
-  // Fetch activity summary
+  // Fetch activity summary with robust error handling
   const { data: activitySummary } = useQuery({
     queryKey: ['activity-summary', user?.id],
     queryFn: async () => {
-      if (!user) return null;
+      if (!user) return { profileViews: 0, newMatches: 0 };
 
-      // Get profile views this week
-      const weekAgo = new Date();
-      weekAgo.setDate(weekAgo.getDate() - 7);
+      try {
+        // Get profile views this week
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
 
-      const { count: profileViews } = await supabase
-        .from('profile_views')
-        .select('id', { count: 'exact' })
-        .eq('profile_id', user.id)
-        .gte('viewed_at', weekAgo.toISOString());
+        const { count: profileViews, error } = await supabase
+          .from('profile_views')
+          .select('id', { count: 'exact' })
+          .eq('profile_id', user.id)
+          .gte('viewed_at', weekAgo.toISOString());
 
-      // Get new match notifications (simplified - would need notifications table)
-      const newMatches = 0; // Placeholder
+        if (error) {
+          console.warn('[NetworkPanel] Failed to fetch profile views:', error);
+        }
 
-      return {
-        profileViews: profileViews || 0,
-        newMatches,
-      };
+        // Get new match notifications (simplified - would need notifications table)
+        const newMatches = 0; // Placeholder
+
+        return {
+          profileViews: profileViews || 0,
+          newMatches,
+        };
+      } catch (error) {
+        console.warn('[NetworkPanel] Error fetching activity summary:', error);
+        return { profileViews: 0, newMatches: 0 };
+      }
     },
     enabled: !!user,
     staleTime: 60000,
+    retry: 2,
+    retryDelay: 1000,
   });
 
   const handleSearchChange = (value: string) => {
