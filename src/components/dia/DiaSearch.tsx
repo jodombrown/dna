@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   Search, Sparkles, Users, Calendar, FolderKanban, Hash,
   ExternalLink, Loader2, AlertCircle, ArrowUpRight, BookOpen,
@@ -248,6 +249,7 @@ export function DiaSearch({
   maxResults = { profiles: 3, stories: 2, projects: 2, hashtags: 3, events: 2, opportunities: 2 }
 }: DiaSearchProps) {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [query, setQuery] = useState(initialQuery);
   const hasAutoSearched = React.useRef(false);
   const [showAllSources, setShowAllSources] = useState(false);
@@ -410,8 +412,10 @@ export function DiaSearch({
     for (const matchType of networkMatchPriority) {
       switch (matchType) {
         case 'profiles':
-          if (profiles.length > 0) {
-            const limitedProfiles = profiles.slice(0, maxResults.profiles);
+          // Filter out the current user from network matches
+          const filteredProfiles = profiles.filter(profile => profile.id !== user?.id);
+          if (filteredProfiles.length > 0) {
+            const limitedProfiles = filteredProfiles.slice(0, maxResults.profiles);
             sections.push(
               <div key="profiles">
                 <p className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
