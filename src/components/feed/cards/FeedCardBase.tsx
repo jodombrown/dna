@@ -3,7 +3,7 @@
  * 
  * Applies consistent DNA Design System styling:
  * - 12px border radius
- * - 6px left bevel in mode-specific color
+ * - Full 2px border in mode-specific color
  * - Shadow with hover lift effect
  * - Consistent padding
  */
@@ -20,14 +20,16 @@ interface FeedCardBaseProps {
   onClick?: () => void;
 }
 
-const bevelColorMap: Record<FeedCardBevelType, string> = {
-  post: 'border-dna-bevel-post',
-  story: 'border-dna-bevel-story',
-  event: 'border-dna-bevel-event',
-  space: 'border-dna-bevel-space',
-  opportunity: 'border-dna-bevel-opportunity',
-  need: 'border-dna-bevel-opportunity', // Needs use same color as opportunities
-  offer: 'border-dna-bevel-opportunity', // Offers use same color as opportunities
+// Using inline styles for border colors to ensure they're applied correctly
+// These match the CSS variables defined in index.css
+const bevelColors: Record<FeedCardBevelType, string> = {
+  post: 'hsl(215 16% 47%)',        // Slate #64748B
+  story: 'hsl(173 84% 32%)',       // Deep Teal #0D9488
+  event: 'hsl(38 92% 50%)',        // Warm Amber #F59E0B
+  space: 'hsl(258 77% 60%)',       // Purple #8B5CF6
+  opportunity: 'hsl(25 51% 46%)',  // Copper #B87333
+  need: 'hsl(25 51% 46%)',         // Same as opportunity
+  offer: 'hsl(25 51% 46%)',        // Same as opportunity
 };
 
 export const FeedCardBase: React.FC<FeedCardBaseProps> = ({
@@ -39,12 +41,12 @@ export const FeedCardBase: React.FC<FeedCardBaseProps> = ({
   return (
     <div
       onClick={onClick}
+      style={{ borderColor: bevelColors[bevelType] }}
       className={cn(
-        // Base card styling with full bevel border
+        // Base card styling
         'bg-card rounded-xl',
-        // Full 2px border with mode-specific color
+        // Full 2px border (color applied via inline style)
         'border-2',
-        bevelColorMap[bevelType],
         // Padding per design system
         'p-5',
         // Shadow system
