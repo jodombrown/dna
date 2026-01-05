@@ -2851,6 +2851,7 @@ export type Database = {
           meeting_url: string | null
           organizer_id: string
           requires_approval: boolean
+          slug: string | null
           start_time: string
           subtitle: string | null
           tags: string[] | null
@@ -2885,6 +2886,7 @@ export type Database = {
           meeting_url?: string | null
           organizer_id: string
           requires_approval?: boolean
+          slug?: string | null
           start_time: string
           subtitle?: string | null
           tags?: string[] | null
@@ -2919,6 +2921,7 @@ export type Database = {
           meeting_url?: string | null
           organizer_id?: string
           requires_approval?: boolean
+          slug?: string | null
           start_time?: string
           subtitle?: string | null
           tags?: string[] | null
@@ -8501,6 +8504,10 @@ export type Database = {
       flag_content: {
         Args: { content_id: string; content_type: string; reason: string }
         Returns: undefined
+      }
+      generate_event_slug: {
+        Args: { event_year?: number; title: string }
+        Returns: string
       }
       generate_join_token: { Args: never; Returns: string }
       generate_magic_link_token: { Args: never; Returns: string }

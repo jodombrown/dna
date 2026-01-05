@@ -67,13 +67,17 @@ const REPORT_REASONS = [
 ] as const;
 
 const EventDetail = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id: slugOrId } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const composer = useUniversalComposer({ eventId: id });
   const [rsvpStatus, setRsvpStatus] = useState<string | null>(null);
+  const [resolvedEventId, setResolvedEventId] = useState<string | null>(null);
+  
+  // Use resolved event ID for composer (once we know it)
+  const id = resolvedEventId || slugOrId;
+  const composer = useUniversalComposer({ eventId: id });
 
   // Cancel/Delete dialog states
   const [showCancelDialog, setShowCancelDialog] = useState(false);
@@ -84,18 +88,44 @@ const EventDetail = () => {
   const [reportReason, setReportReason] = useState<string>('');
   const [reportDetails, setReportDetails] = useState('');
 
-  // Fetch event details
-  const { data: eventData, isLoading } = useQuery({
-    queryKey: ['event-detail', id],
-    queryFn: async () => {
-      const { data: event, error } = await supabase
-        .from('events')
-        .select('*')
-        .eq('id', id)
-        .maybeSingle();
+  // Check if param is UUID or slug
+  const isUUID = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
 
-      if (error) throw error;
+  // Fetch event details - support both UUID and slug lookups
+  const { data: eventData, isLoading } = useQuery({
+    queryKey: ['event-detail', slugOrId],
+    queryFn: async () => {
+      let event = null;
+      
+      // Try by UUID first if it looks like one
+      if (slugOrId && isUUID(slugOrId)) {
+        const { data, error } = await supabase
+          .from('events')
+          .select('*')
+          .eq('id', slugOrId)
+          .maybeSingle();
+        if (!error) event = data;
+      }
+      
+      // If not found or not UUID, try by slug
+      if (!event && slugOrId) {
+        const { data, error } = await supabase
+          .from('events')
+          .select('*')
+          .eq('slug', slugOrId)
+          .maybeSingle();
+        if (!error) event = data;
+      }
+
       if (!event) return null;
+      
+      // Store the actual event ID for use elsewhere
+      setResolvedEventId(event.id);
+      
+      // Redirect UUID URLs to slug URLs for SEO
+      if (slugOrId && isUUID(slugOrId) && event.slug) {
+        navigate(`/dna/convene/events/${event.slug}`, { replace: true });
+      }
       
       const eventData: any = event;
       
