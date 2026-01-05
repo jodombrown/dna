@@ -227,7 +227,7 @@ export function PostCard({
   const isRepost = !!post.original_post_id;
 
   return (
-    <Card ref={viewTrackerRef} className="p-6 border-2 border-dna-emerald/40 rounded-xl shadow-[0_2px_12px_-2px_hsl(var(--dna-emerald)/0.15)]">
+    <Card ref={viewTrackerRef} className="p-6 border-2 rounded-xl shadow-[0_2px_12px_-2px_rgba(0,0,0,0.08)]" style={{ borderColor: 'hsl(215 16% 47%)' }}>
       {/* Repost indicator */}
       {isRepost && (
         <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
