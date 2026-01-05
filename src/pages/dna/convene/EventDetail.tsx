@@ -453,10 +453,10 @@ const EventDetail = () => {
         { label: event.title }
       ]}
     >
-      <div className="container max-w-4xl mx-auto px-4 py-8">
-        {/* Hero */}
+      <div className="container max-w-6xl mx-auto px-4 lg:px-6 py-8">
+        {/* Hero - Full Width */}
         {event.cover_image_url && (
-          <div className="aspect-video w-full overflow-hidden rounded-lg mb-8">
+          <div className="aspect-[21/9] w-full overflow-hidden rounded-xl mb-8 shadow-lg">
             <img
               src={event.cover_image_url}
               alt={event.title}
@@ -609,9 +609,9 @@ const EventDetail = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
+          {/* Main Content - ~65% */}
+          <div className="space-y-6">
             {/* Details Card */}
             <Card>
               <CardHeader>
@@ -728,9 +728,9 @@ const EventDetail = () => {
             )}
           </div>
 
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8 space-y-4">
+          {/* Sidebar - 380px fixed */}
+          <div>
+            <div className="sticky top-24 space-y-4">
               {!isPastEvent && !isOrganizer && (
                 <Card>
                   <CardHeader>
