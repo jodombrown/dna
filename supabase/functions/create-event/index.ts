@@ -59,10 +59,10 @@ Deno.serve(async (req) => {
 
     console.log('Creating event for user:', user.id);
 
-    // Fetch user profile to check eligibility
+    // Fetch user profile to check eligibility - use actual profile fields for calculation
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('profile_completion_percentage, user_type')
+      .select('id, user_type, avatar_url, full_name, headline, profession, bio, linkedin_url, skills, focus_areas, interests, country_of_origin, current_country, languages, banner_url, industries')
       .eq('id', user.id)
       .maybeSingle();
 
@@ -75,8 +75,34 @@ Deno.serve(async (req) => {
       throw new Error('Profile not found');
     }
 
-    // Check profile completion requirement
-    const completionPercentage = profile.profile_completion_percentage ?? 0;
+    // Calculate profile completion using the same 5-pillar logic as frontend (max 100 pts)
+    const calculateProfileCompletion = (p: typeof profile): number => {
+      let points = 0;
+      // Pillar 1: Identity (25 pts)
+      if (p.avatar_url) points += 10;
+      if (p.full_name && p.full_name.length >= 2) points += 5;
+      if (p.headline && p.headline.length >= 5) points += 10;
+      // Pillar 2: Professional (20 pts)
+      if (p.profession) points += 5;
+      if (p.bio && p.bio.length >= 50) points += 10;
+      if (p.linkedin_url) points += 5;
+      // Pillar 3: Discovery (30 pts)
+      if (Array.isArray(p.skills) && p.skills.length >= 3) points += 10;
+      if (Array.isArray(p.focus_areas) && p.focus_areas.length >= 2) points += 10;
+      if (Array.isArray(p.interests) && p.interests.length >= 3) points += 10;
+      // Pillar 4: Diaspora Context (15 pts)
+      if (p.country_of_origin) points += 5;
+      if (p.current_country) points += 5;
+      if (Array.isArray(p.languages) && p.languages.length >= 1) points += 5;
+      // Pillar 5: Engagement (10 pts)
+      if (p.banner_url) points += 5;
+      if (Array.isArray(p.industries) && p.industries.length >= 1) points += 5;
+      return Math.min(100, points);
+    };
+
+    const completionPercentage = calculateProfileCompletion(profile);
+    console.log('Profile completion calculated:', completionPercentage, 'for user:', user.id);
+
     if (completionPercentage < 40) {
       return new Response(
         JSON.stringify({
