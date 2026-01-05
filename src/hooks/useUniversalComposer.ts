@@ -312,7 +312,14 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
             requires_approval: false,
             allow_guests: true,
             cover_image_url: formData.mediaUrl,
+            // New structured fields
+            subtitle: formData.subtitle || undefined,
+            agenda: formData.agenda || [],
+            dress_code: formData.dressCode || undefined,
+            tags: formData.tags || [],
           };
+
+          console.log('📤 Submitting event:', eventPayload);
 
           const { data: authData } = await supabase.auth.getSession();
           const response = await supabase.functions.invoke('create-event', {
