@@ -294,17 +294,27 @@ export class AdaptiveConfigService {
   }
 
   private async getGlobalPolicy(type: PolicyType): Promise<AdaPolicy | null> {
-    const { data } = await supabase
-      .from('ada_policies')
-      .select('*')
-      .eq('type', type)
-      .eq('scope', 'global')
-      .eq('is_active', true)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('ada_policies')
+        .select('*')
+        .eq('type', type)
+        .eq('scope', 'global')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
-    return data as AdaPolicy | null;
+      if (error) {
+        console.warn('Could not fetch global policy:', error.message);
+        return null;
+      }
+
+      return data as AdaPolicy | null;
+    } catch (err) {
+      console.warn('Error in getGlobalPolicy:', err);
+      return null;
+    }
   }
 
   /**
