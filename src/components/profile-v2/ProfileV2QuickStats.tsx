@@ -73,6 +73,7 @@ interface ProfileV2QuickStatsProps {
   activity: {
     connections_count?: number;
     stories_count?: number;
+    events_count?: number;
     spaces?: any[];
     events?: any[];
   };
@@ -115,7 +116,7 @@ const ProfileV2QuickStats: React.FC<ProfileV2QuickStatsProps> = ({
     {
       icon: Calendar,
       label: 'Events',
-      count: activity.events?.length || 0,
+      count: activity.events_count ?? activity.events?.length ?? 0,
       onClick: () => navigate('/dna/convene'),
       color: 'text-amber-500',
     },
