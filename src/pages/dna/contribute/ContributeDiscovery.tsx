@@ -31,7 +31,7 @@ export function ContributeDiscovery() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // Fetch stats
+  // Fetch stats with error handling
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['contribute-hub-stats', user?.id],
     queryFn: async (): Promise<{
@@ -40,61 +40,86 @@ export function ContributeDiscovery() {
       myRequests: number;
       matchesMade: number;
     }> => {
-      // Open needs count
-      const { count: openNeedsCount } = await supabase
-        .from('contribution_needs')
-        .select('id', { count: 'exact' })
-        .eq('status', 'open');
-      
-      // Active offers count
-      const { count: activeOffersCount } = await supabase
-        .from('contribution_offers')
-        .select('id', { count: 'exact' })
-        .eq('status', 'pending');
-      
-      let myRequestsCount = 0;
-      let matchesCount = 0;
-
-      if (user?.id) {
-        // My requests
-        const { count: myCount } = await supabase
+      try {
+        // Open needs count
+        const { count: openNeedsCount, error: needsError } = await supabase
           .from('contribution_needs')
-          .select('id', { count: 'exact' })
-          .eq('created_by', user.id);
-        myRequestsCount = myCount || 0;
-
-        // Matches made (accepted offers)
-        const { count: acceptedCount } = await supabase
+          .select('id', { count: 'exact', head: true })
+          .eq('status', 'open');
+        
+        if (needsError) {
+          console.warn('[ContributeDiscovery] Failed to fetch open needs:', needsError);
+        }
+        
+        // Active offers count
+        const { count: activeOffersCount, error: offersError } = await supabase
           .from('contribution_offers')
-          .select('id', { count: 'exact' })
-          .eq('status', 'accepted');
-        matchesCount = acceptedCount || 0;
-      }
+          .select('id', { count: 'exact', head: true })
+          .eq('status', 'pending');
+        
+        if (offersError) {
+          console.warn('[ContributeDiscovery] Failed to fetch active offers:', offersError);
+        }
+        
+        let myRequestsCount = 0;
+        let matchesCount = 0;
 
-      return {
-        openNeeds: openNeedsCount || 0,
-        activeOffers: activeOffersCount || 0,
-        myRequests: myRequestsCount,
-        matchesMade: matchesCount,
-      };
+        if (user?.id) {
+          // My requests
+          const { count: myCount, error: myError } = await supabase
+            .from('contribution_needs')
+            .select('id', { count: 'exact', head: true })
+            .eq('created_by', user.id);
+          if (!myError) myRequestsCount = myCount || 0;
+
+          // Matches made (accepted offers)
+          const { count: acceptedCount, error: acceptedError } = await supabase
+            .from('contribution_offers')
+            .select('id', { count: 'exact', head: true })
+            .eq('status', 'accepted');
+          if (!acceptedError) matchesCount = acceptedCount || 0;
+        }
+
+        return {
+          openNeeds: openNeedsCount || 0,
+          activeOffers: activeOffersCount || 0,
+          myRequests: myRequestsCount,
+          matchesMade: matchesCount,
+        };
+      } catch (error) {
+        console.warn('[ContributeDiscovery] Failed to fetch stats:', error);
+        return { openNeeds: 0, activeOffers: 0, myRequests: 0, matchesMade: 0 };
+      }
     },
     staleTime: 60000,
+    retry: 2,
+    retryDelay: 1000,
   });
 
-  // Fetch recent activity
+  // Fetch recent activity with error handling
   const { data: recentActivity, isLoading: activityLoading } = useQuery({
     queryKey: ['contribute-recent-activity'],
     queryFn: async () => {
-      const { data } = await supabase
-        .from('contribution_needs')
-        .select('id, title, type, status, created_at')
-        .eq('status', 'open')
-        .order('created_at', { ascending: false })
-        .limit(5);
+      try {
+        const { data, error } = await supabase
+          .from('contribution_needs')
+          .select('id, title, type, status, created_at')
+          .eq('status', 'open')
+          .order('created_at', { ascending: false })
+          .limit(5);
 
-      return data || [];
+        if (error) {
+          console.warn('[ContributeDiscovery] Failed to fetch recent activity:', error);
+          return [];
+        }
+        return data || [];
+      } catch (error) {
+        console.warn('[ContributeDiscovery] Error fetching recent activity:', error);
+        return [];
+      }
     },
     staleTime: 60000,
+    retry: 1,
   });
 
   // Hub Stats

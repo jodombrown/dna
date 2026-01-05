@@ -31,7 +31,7 @@ export function CollaborateDiscovery() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // Fetch stats
+  // Fetch stats with error handling
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['collaborate-hub-stats', user?.id],
     queryFn: async (): Promise<{
@@ -40,64 +40,85 @@ export function CollaborateDiscovery() {
       openTasks: number;
       collaborators: number;
     }> => {
-      // Active spaces count
-      const { count: activeSpacesCount } = await supabase
-        .from('spaces')
-        .select('id', { count: 'exact' })
-        .eq('status', 'active')
-        .eq('visibility', 'public');
-      
-      let mySpacesCount = 0;
-      let openTasksCount = 0;
-      let collaboratorsCount = 0;
+      try {
+        // Active spaces count
+        const { count: activeSpacesCount, error: activeError } = await supabase
+          .from('spaces')
+          .select('id', { count: 'exact', head: true })
+          .eq('status', 'active')
+          .eq('visibility', 'public');
+        
+        if (activeError) {
+          console.warn('[CollaborateDiscovery] Failed to fetch active spaces:', activeError);
+        }
+        
+        let mySpacesCount = 0;
+        let openTasksCount = 0;
+        let collaboratorsCount = 0;
 
-      if (user?.id) {
-        // My spaces (where I'm a member)
-        const { count: myCount } = await supabase
-          .from('space_members')
-          .select('space_id', { count: 'exact' })
-          .eq('user_id', user.id);
-        mySpacesCount = myCount || 0;
+        if (user?.id) {
+          // My spaces (where I'm a member)
+          const { count: myCount, error: myError } = await supabase
+            .from('space_members')
+            .select('space_id', { count: 'exact', head: true })
+            .eq('user_id', user.id);
+          if (!myError) mySpacesCount = myCount || 0;
 
-        // Open tasks assigned to me
-        const { count: tasksCount } = await supabase
-          .from('tasks')
-          .select('id', { count: 'exact' })
-          .eq('assignee_id', user.id);
-        openTasksCount = tasksCount || 0;
+          // Open tasks assigned to me
+          const { count: tasksCount, error: tasksError } = await supabase
+            .from('tasks')
+            .select('id', { count: 'exact', head: true })
+            .eq('assignee_id', user.id);
+          if (!tasksError) openTasksCount = tasksCount || 0;
 
-        // Distinct collaborators (approximation)
-        const { count: collabCount } = await supabase
-          .from('space_members')
-          .select('user_id', { count: 'exact' });
-        collaboratorsCount = Math.min(collabCount || 0, 999);
+          // Distinct collaborators (approximation)
+          const { count: collabCount, error: collabError } = await supabase
+            .from('space_members')
+            .select('user_id', { count: 'exact', head: true });
+          if (!collabError) collaboratorsCount = Math.min(collabCount || 0, 999);
+        }
+
+        return {
+          activeSpaces: activeSpacesCount || 0,
+          mySpaces: mySpacesCount,
+          openTasks: openTasksCount,
+          collaborators: collaboratorsCount,
+        };
+      } catch (error) {
+        console.warn('[CollaborateDiscovery] Failed to fetch stats:', error);
+        return { activeSpaces: 0, mySpaces: 0, openTasks: 0, collaborators: 0 };
       }
-
-      return {
-        activeSpaces: activeSpacesCount || 0,
-        mySpaces: mySpacesCount,
-        openTasks: openTasksCount,
-        collaborators: collaboratorsCount,
-      };
     },
     staleTime: 60000,
+    retry: 2,
+    retryDelay: 1000,
   });
 
-  // Fetch recent activity
+  // Fetch recent activity with error handling
   const { data: recentActivity, isLoading: activityLoading } = useQuery({
     queryKey: ['collaborate-recent-activity'],
     queryFn: async () => {
-      const { data } = await supabase
-        .from('spaces')
-        .select('id, name, slug, tagline, created_at, updated_at')
-        .eq('status', 'active')
-        .eq('visibility', 'public')
-        .order('updated_at', { ascending: false })
-        .limit(5);
+      try {
+        const { data, error } = await supabase
+          .from('spaces')
+          .select('id, name, slug, tagline, created_at, updated_at')
+          .eq('status', 'active')
+          .eq('visibility', 'public')
+          .order('updated_at', { ascending: false })
+          .limit(5);
 
-      return data || [];
+        if (error) {
+          console.warn('[CollaborateDiscovery] Failed to fetch recent activity:', error);
+          return [];
+        }
+        return data || [];
+      } catch (error) {
+        console.warn('[CollaborateDiscovery] Error fetching recent activity:', error);
+        return [];
+      }
     },
     staleTime: 60000,
+    retry: 1,
   });
 
   // Hub Stats

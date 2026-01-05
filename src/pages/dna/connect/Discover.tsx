@@ -122,61 +122,80 @@ export default function Discover() {
       setLoading(true);
       const offset = reset ? 0 : page * 20;
 
-      // Primary: call RPC for smart discovery
-      const { data, error } = await supabase.rpc('discover_members', {
-        p_current_user_id: user.id,
-        p_focus_areas: filters.focus_areas || null,
-        p_regional_expertise: filters.regional_expertise || null,
-        p_industries: filters.industries || null,
-        p_country_of_origin: filters.country_of_origin || null,
-        p_location_country: filters.current_country || null,
-        p_skills: filters.skills || null,
-        p_search_query: searchQuery || null,
-        p_sort_by: 'match',
-        p_limit: 20,
-        p_offset: offset,
-      });
+      let rows: any[] = [];
 
-      let rows = data as any[] | null;
+      try {
+        // Primary: call RPC for smart discovery
+        const { data, error } = await supabase.rpc('discover_members', {
+          p_current_user_id: user.id,
+          p_focus_areas: filters.focus_areas || null,
+          p_regional_expertise: filters.regional_expertise || null,
+          p_industries: filters.industries || null,
+          p_country_of_origin: filters.country_of_origin || null,
+          p_location_country: filters.current_country || null,
+          p_skills: filters.skills || null,
+          p_search_query: searchQuery || null,
+          p_sort_by: 'match',
+          p_limit: 20,
+          p_offset: offset,
+        });
 
-      if (error) {
-        // Hotfix fallback: simple profiles query so the page still works
-        let q = supabase
-          .from('profiles')
-          .select('id, full_name, username, avatar_url, headline, profession, location, country_of_origin, current_country, focus_areas, industries, skills, languages, available_for, diaspora_status, regional_expertise, is_mentor, is_investor, updated_at')
-          .neq('id', user.id)
-          .eq('is_public', true);
-
-        // Apply filters (best-effort)
-        if (filters?.focus_areas?.length) q = q.overlaps('focus_areas', filters.focus_areas);
-        if (filters?.regional_expertise?.length) q = q.overlaps('regional_expertise', filters.regional_expertise);
-        if (filters?.industries?.length) q = q.overlaps('industries', filters.industries);
-        if (filters?.skills?.length) q = q.overlaps('skills', filters.skills);
-        if (filters?.country_of_origin) q = q.ilike('country_of_origin', `%${filters.country_of_origin}%`);
-        if (filters?.current_country) q = q.ilike('current_country', `%${filters.current_country}%`);
-        if (searchQuery) {
-          q = q.or(
-            `full_name.ilike.%${searchQuery}%,headline.ilike.%${searchQuery}%,bio.ilike.%${searchQuery}%`
-          );
-        }
-
-        q = q.order('updated_at', { ascending: false }).range(offset, offset + 19);
-
-        const { data: fbData, error: fbError } = await q;
-        if (fbError) {
-          rows = [];
+        if (!error && data) {
+          rows = data as any[];
         } else {
-          // Map to expected shape with a default match_score
-          rows = (fbData || []).map((p: any) => ({ ...p, match_score: 0 }));
+          throw error || new Error('No data returned');
+        }
+      } catch (rpcError) {
+        console.warn('[Discover] RPC failed, using fallback query:', rpcError);
+        // Hotfix fallback: simple profiles query so the page still works
+        try {
+          let q = supabase
+            .from('profiles')
+            .select('id, full_name, username, avatar_url, headline, profession, location, country_of_origin, current_country, focus_areas, industries, skills, languages, available_for, diaspora_status, regional_expertise, is_mentor, is_investor, updated_at')
+            .neq('id', user.id)
+            .eq('is_public', true);
+
+          // Apply filters (best-effort)
+          if (filters?.focus_areas?.length) q = q.overlaps('focus_areas', filters.focus_areas);
+          if (filters?.regional_expertise?.length) q = q.overlaps('regional_expertise', filters.regional_expertise);
+          if (filters?.industries?.length) q = q.overlaps('industries', filters.industries);
+          if (filters?.skills?.length) q = q.overlaps('skills', filters.skills);
+          if (filters?.country_of_origin) q = q.ilike('country_of_origin', `%${filters.country_of_origin}%`);
+          if (filters?.current_country) q = q.ilike('current_country', `%${filters.current_country}%`);
+          if (searchQuery) {
+            q = q.or(
+              `full_name.ilike.%${searchQuery}%,headline.ilike.%${searchQuery}%,bio.ilike.%${searchQuery}%`
+            );
+          }
+
+          q = q.order('updated_at', { ascending: false }).range(offset, offset + 19);
+
+          const { data: fbData, error: fbError } = await q;
+          if (fbError) {
+            console.warn('[Discover] Fallback query also failed:', fbError);
+            rows = [];
+          } else {
+            // Map to expected shape with a default match_score
+            rows = (fbData || []).map((p: any) => ({ ...p, match_score: 0 }));
+          }
+        } catch (fallbackError) {
+          console.warn('[Discover] All queries failed:', fallbackError);
+          rows = [];
         }
       }
 
       if (reset) {
-        setMembers(rows || []);
+        setMembers(rows);
       } else {
-        setMembers(prev => [...prev, ...(rows || [])]);
+        setMembers(prev => [...prev, ...rows]);
       }
-      setHasMore((rows || []).length === 20);
+      setHasMore(rows.length === 20);
+    } catch (error) {
+      console.warn('[Discover] Unexpected error in loadMembers:', error);
+      if (reset) {
+        setMembers([]);
+      }
+      setHasMore(false);
     } finally {
       setLoading(false);
     }

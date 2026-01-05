@@ -1,5 +1,5 @@
 // src/pages/dna/convene/ConveneHub.tsx
-// Mode switch wrapper for Convene hub
+// Mode switch wrapper for Convene hub with error handling
 
 import React from 'react';
 import { useHubMode } from '@/hooks/useHubMode';
@@ -12,21 +12,31 @@ import { supabase } from '@/integrations/supabase/client';
 export function ConveneHub() {
   const { mode, contentCount, isLoading } = useHubMode('convene');
 
-  // Fetch early events for hybrid mode
+  // Fetch early events for hybrid mode with error handling
   const { data: earlyEvents } = useQuery({
     queryKey: ['earlyEvents'],
     queryFn: async () => {
-      const { data } = await supabase
-        .from('events')
-        .select('id, title, start_time, location_name, cover_image_url')
-        .eq('is_cancelled', false)
-        .eq('is_public', true)
-        .gte('start_time', new Date().toISOString())
-        .order('start_time', { ascending: true })
-        .limit(4);
-      return data || [];
+      try {
+        const { data, error } = await supabase
+          .from('events')
+          .select('id, title, start_time, location_name, cover_image_url')
+          .eq('is_cancelled', false)
+          .eq('is_public', true)
+          .gte('start_time', new Date().toISOString())
+          .order('start_time', { ascending: true })
+          .limit(4);
+        if (error) {
+          console.warn('[ConveneHub] Failed to fetch early events:', error);
+          return [];
+        }
+        return data || [];
+      } catch (err) {
+        console.warn('[ConveneHub] Error fetching early events:', err);
+        return [];
+      }
     },
-    enabled: mode === 'hybrid'
+    enabled: mode === 'hybrid',
+    retry: 1,
   });
 
   if (isLoading) {

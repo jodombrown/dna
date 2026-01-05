@@ -14,50 +14,65 @@ interface HubModeConfig {
   countQuery: () => Promise<number>;
 }
 
+// Safe count query wrapper to prevent crashes on mobile
+const safeCountQuery = async (queryFn: () => Promise<{ count: number | null; error: unknown }>): Promise<number> => {
+  try {
+    const result = await queryFn();
+    if (result.error) {
+      console.warn('[useHubMode] Query error, defaulting to 0:', result.error);
+      return 0;
+    }
+    return result.count || 0;
+  } catch (error) {
+    console.warn('[useHubMode] Failed to fetch count, defaulting to 0:', error);
+    return 0;
+  }
+};
+
 const HUB_CONFIGS: Record<HubType, HubModeConfig> = {
   convene: {
     threshold: 3,
-    countQuery: async () => {
-      const { count } = await supabase
+    countQuery: async () => safeCountQuery(async () => {
+      const { count, error } = await supabase
         .from('events')
-        .select('id', { count: 'exact' })
+        .select('id', { count: 'exact', head: true })
         .eq('is_cancelled', false)
         .eq('is_public', true)
         .gte('start_time', new Date().toISOString());
-      return count || 0;
-    }
+      return { count, error };
+    })
   },
   collaborate: {
     threshold: 5,
-    countQuery: async () => {
-      const { count } = await supabase
+    countQuery: async () => safeCountQuery(async () => {
+      const { count, error } = await supabase
         .from('spaces')
-        .select('id', { count: 'exact' })
+        .select('id', { count: 'exact', head: true })
         .eq('visibility', 'public')
         .eq('status', 'active');
-      return count || 0;
-    }
+      return { count, error };
+    })
   },
   contribute: {
     threshold: 10,
-    countQuery: async () => {
-      const { count } = await supabase
+    countQuery: async () => safeCountQuery(async () => {
+      const { count, error } = await supabase
         .from('contribution_needs')
-        .select('id', { count: 'exact' })
+        .select('id', { count: 'exact', head: true })
         .in('status', ['open', 'in_progress']);
-      return count || 0;
-    }
+      return { count, error };
+    })
   },
   convey: {
     threshold: 10,
-    countQuery: async () => {
-      const { count } = await supabase
+    countQuery: async () => safeCountQuery(async () => {
+      const { count, error } = await supabase
         .from('posts')
-        .select('id', { count: 'exact' })
+        .select('id', { count: 'exact', head: true })
         .eq('is_deleted', false)
         .in('post_type', ['story', 'update', 'impact']);
-      return count || 0;
-    }
+      return { count, error };
+    })
   }
 };
 
@@ -74,12 +89,19 @@ export function useHubMode(hub: HubType): UseHubModeResult {
   const viewParam = searchParams.get('view');
   const config = HUB_CONFIGS[hub];
 
-  const { data: contentCount = 0, isLoading } = useQuery({
+  const { data: contentCount = 0, isLoading, error } = useQuery({
     queryKey: ['hubMode', hub],
     queryFn: config.countQuery,
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
+    retry: 2, // Retry twice on failure
+    retryDelay: 1000, // 1 second delay between retries
   });
+
+  // If query failed, log but don't crash - default to aspiration mode
+  if (error) {
+    console.warn(`[useHubMode] Error fetching ${hub} mode, defaulting to aspiration:`, error);
+  }
 
   // URL parameter override: ?view=hub forces discovery, ?view=aspiration forces aspiration
   let mode: HubMode;

@@ -45,8 +45,15 @@ export default function Network() {
     try {
       setLoading(prev => ({ ...prev, requests: true }));
       const { data, error } = await supabase.rpc('get_connection_requests', { user_id: user.id });
-      if (error) throw error;
+      if (error) {
+        console.warn('[Network] Failed to load connection requests:', error);
+        setRequests([]);
+        return;
+      }
       setRequests(data || []);
+    } catch (error) {
+      console.warn('[Network] Error loading requests:', error);
+      setRequests([]);
     } finally {
       setLoading(prev => ({ ...prev, requests: false }));
     }
@@ -121,8 +128,15 @@ export default function Network() {
         limit_count: 50, 
         offset_count: 0 
       });
-      if (error) throw error;
+      if (error) {
+        console.warn('[Network] Failed to load connections:', error);
+        setConnections([]);
+        return;
+      }
       setConnections(data || []);
+    } catch (error) {
+      console.warn('[Network] Error loading connections:', error);
+      setConnections([]);
     } finally {
       setLoading(prev => ({ ...prev, connections: false }));
     }
@@ -133,8 +147,15 @@ export default function Network() {
     try {
       setLoading(prev => ({ ...prev, suggestions: true }));
       const { data, error } = await supabase.rpc('get_suggested_connections', { p_user_id: user.id, p_limit: 10 });
-      if (error) throw error;
+      if (error) {
+        console.warn('[Network] Failed to load suggestions:', error);
+        setSuggestions([]);
+        return;
+      }
       setSuggestions(data || []);
+    } catch (error) {
+      console.warn('[Network] Error loading suggestions:', error);
+      setSuggestions([]);
     } finally {
       setLoading(prev => ({ ...prev, suggestions: false }));
     }
