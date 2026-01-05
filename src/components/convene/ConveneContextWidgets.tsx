@@ -6,9 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Calendar, ArrowRight, Sparkles, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
+import { useUniversalComposer } from '@/hooks/useUniversalComposer';
+import { UniversalComposer } from '@/components/composer/UniversalComposer';
 
 export function ConveneContextWidgets() {
   const navigate = useNavigate();
+  const composer = useUniversalComposer();
 
   // Get next event (hosting or attending)
   const { data: nextEvent } = useQuery({
@@ -163,12 +166,21 @@ export function ConveneContextWidgets() {
           size="sm"
           variant="outline"
           className="w-full"
-          onClick={() => navigate('/dna/convene/events/new')}
+          onClick={() => composer.open('event')}
         >
           <Calendar className="w-3 h-3 mr-2" />
           Host an Event
         </Button>
       </Card>
+      <UniversalComposer
+        isOpen={composer.isOpen}
+        mode={composer.mode}
+        context={composer.context}
+        isSubmitting={composer.isSubmitting}
+        onClose={composer.close}
+        onModeChange={composer.switchMode}
+        onSubmit={composer.submit}
+      />
     </div>
   );
 }

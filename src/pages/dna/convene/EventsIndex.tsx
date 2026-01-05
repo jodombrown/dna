@@ -9,10 +9,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import ModernEventCard from '@/components/connect/ModernEventCard';
+import { useUniversalComposer } from '@/hooks/useUniversalComposer';
+import { UniversalComposer } from '@/components/composer/UniversalComposer';
 
 const EventsIndex = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const composer = useUniversalComposer();
   
   // Initialize filters from URL params
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
@@ -132,7 +135,7 @@ const EventsIndex = () => {
               Discover and join convenings across the diaspora network
             </p>
           </div>
-          <Button onClick={() => navigate('/dna/convene/events/new')}>
+          <Button onClick={() => composer.open('event')}>
             <Calendar className="w-4 h-4 mr-2" />
             Host an Event
           </Button>
@@ -247,7 +250,7 @@ const EventsIndex = () => {
             <p className="text-muted-foreground mb-4">
               Try adjusting your filters or be the first to host an event.
             </p>
-            <Button onClick={() => navigate('/dna/convene/events/new')}>
+            <Button onClick={() => composer.open('event')}>
               Host an Event
             </Button>
           </Card>
@@ -261,13 +264,22 @@ const EventsIndex = () => {
                 <ModernEventCard
                   key={event.id}
                   event={event}
-                  onEventClick={() => navigate(`/dna/convene/events/${event.id}`)}
-                  onRegisterEvent={() => navigate(`/dna/convene/events/${event.id}`)}
+                  onEventClick={() => navigate(`/dna/convene/events/${event.slug || event.id}`)}
+                  onRegisterEvent={() => navigate(`/dna/convene/events/${event.slug || event.id}`)}
                 />
               ))}
             </div>
           </>
         )}
+        <UniversalComposer
+          isOpen={composer.isOpen}
+          mode={composer.mode}
+          context={composer.context}
+          isSubmitting={composer.isSubmitting}
+          onClose={composer.close}
+          onModeChange={composer.switchMode}
+          onSubmit={composer.submit}
+        />
       </div>
     </div>
   );
