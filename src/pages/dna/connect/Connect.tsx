@@ -3,7 +3,6 @@ import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useMobile } from '@/hooks/useMobile';
-import { cn } from '@/lib/utils';
 
 // New Hub Components
 import {
@@ -22,20 +21,8 @@ import { ConnectMobileHeader } from '@/components/connect/ConnectMobileHeader';
 /**
  * Connect Hub - Reimagined Three-Column Architecture
  *
- * PRD: Full-Width Three-Column Layout with Inline DIA Intelligence
- *
- * Desktop (>1024px):
- * - Left (25%): NetworkPanel - Your Network (filters, stats)
- * - Center (50%): DiscoveryFeed - Discovery Feed + DIA Cards
- * - Right (25%): ConversationsPanel - Conversations + Actions
- *
- * When chat is expanded:
- * - Left: 25%
- * - Center: 35%
- * - Right: 40%
- *
- * Tablet (768-1024px): Two columns, messages as slide-over panel
- * Mobile (<768px): Single column with bottom navigation
+ * Desktop (>1024px): Three-column layout with NetworkPanel, DiscoveryFeed, ConversationsPanel
+ * Mobile (<768px): Uses Outlet to render child routes with mobile header
  */
 const Connect = () => {
   const navigate = useNavigate();
@@ -44,7 +31,7 @@ const Connect = () => {
   const { data: profile, isLoading } = useProfile();
   const { isMobile } = useMobile();
 
-  // Hub state
+  // Hub state - always declare all hooks regardless of mobile/desktop
   const [expandedChat, setExpandedChat] = useState(false);
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [filters, setFilters] = useState<FilterState>({
@@ -54,11 +41,11 @@ const Connect = () => {
   });
   const [networkSearchQuery, setNetworkSearchQuery] = useState('');
 
-  // Mobile state (legacy support)
+  // Mobile state
   const [mobileSearchQuery, setMobileSearchQuery] = useState('');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [mobileActiveFilterCount, setMobileActiveFilterCount] = useState(0);
-  
+
   // Determine mobile view from URL path
   const getMobileViewFromPath = (): 'network' | 'discover' | 'messages' => {
     if (location.pathname.includes('/network')) return 'network';
@@ -93,8 +80,6 @@ const Connect = () => {
 
   // Handle message member from discovery feed
   const handleMessageMember = useCallback((memberId: string) => {
-    // This would trigger conversation creation/selection
-    // For now, expand the chat panel
     setExpandedChat(true);
   }, []);
 
@@ -129,22 +114,12 @@ const Connect = () => {
     return null;
   }
 
-  // Mobile view with legacy header
+  // Mobile view - use Outlet for child routes to prevent hook count issues
   if (isMobile) {
     return (
       <div className="min-h-screen bg-background pb-20">
-        {/* Hide BaseLayout's UnifiedHeader for mobile connect */}
-        <style>{`
-          body:has([data-mobile-connect="true"]) header[data-unified-header] {
-            display: none !important;
-          }
-          body:has([data-mobile-connect="true"]) > div > div {
-            padding-top: 0 !important;
-          }
-        `}</style>
-
         {/* Mobile Fixed Header */}
-        <div className="fixed top-0 left-0 right-0 z-40 bg-background" data-mobile-connect="true">
+        <div className="fixed top-0 left-0 right-0 z-40 bg-background">
           <ConnectMobileHeader
             activeTab={mobileView}
             onTabChange={handleMobileTabChange}
@@ -155,27 +130,14 @@ const Connect = () => {
           />
         </div>
 
-        {/* Mobile Content */}
+        {/* Mobile Content - Render child routes via Outlet */}
         <div className="pt-[8rem] px-4">
-          {mobileView === 'network' && (
-            <NetworkPanel
-              onFilterChange={handleFilterChange}
-              onSearchChange={handleNetworkSearch}
-            />
-          )}
-          {mobileView === 'discover' && (
-            <DiscoveryFeed
-              filters={filters}
-              networkSearchQuery={networkSearchQuery}
-              onMessageMember={handleMessageMember}
-            />
-          )}
-          {mobileView === 'messages' && (
-            <ConversationsPanel
-              onSelectConversation={handleSelectConversation}
-              selectedConversationId={selectedConversationId}
-            />
-          )}
+          <Outlet context={{
+            mobileSearchQuery,
+            showMobileFilters,
+            setShowMobileFilters,
+            setMobileActiveFilterCount,
+          }} />
         </div>
 
         <MobileBottomNav />
