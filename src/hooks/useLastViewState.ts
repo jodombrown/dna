@@ -20,17 +20,27 @@ export function useLastViewState() {
     queryFn: async () => {
       if (!user) return null;
 
-      const { data, error } = await supabase
-        .from('user_last_view_state')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from('user_last_view_state')
+          .select('*')
+          .eq('user_id', user.id)
+          .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') throw error;
-      return data as LastViewState | null;
+        // Gracefully handle missing table or RLS issues
+        if (error) {
+          console.warn('Could not fetch last view state:', error.message);
+          return null;
+        }
+        return data as LastViewState | null;
+      } catch (err) {
+        console.warn('Error fetching last view state:', err);
+        return null;
+      }
     },
     enabled: !!user,
     staleTime: Infinity, // Only fetch once per session
+    retry: false, // Don't retry on 406 errors
   });
 
   const updateMutation = useMutation({

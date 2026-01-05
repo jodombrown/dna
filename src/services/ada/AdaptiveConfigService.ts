@@ -187,63 +187,74 @@ export class AdaptiveConfigService {
     type: PolicyType,
     context?: { route?: string; viewState?: string }
   ): Promise<PolicyResolution | null> {
-    // Check if user has an active experiment assignment
-    const { data: assignment } = await supabase
-      .from('ada_experiment_assignments')
-      .select(`
-        id,
-        experiment_id,
-        variant_id,
-        ada_experiment_variants!inner(
+    try {
+      // Check if user has an active experiment assignment
+      const { data: assignment, error } = await supabase
+        .from('ada_experiment_assignments')
+        .select(`
           id,
-          name,
-          policy_id,
-          ada_policies!inner(*)
-        ),
-        ada_experiments!inner(
-          id,
-          status,
-          target_policy_type,
-          target_route,
-          start_at,
-          end_at
-        )
-      `)
-      .eq('user_id', userId)
-      .single();
+          experiment_id,
+          variant_id,
+          ada_experiment_variants!inner(
+            id,
+            name,
+            policy_id,
+            ada_policies!inner(*)
+          ),
+          ada_experiments!inner(
+            id,
+            status,
+            target_policy_type,
+            target_route,
+            start_at,
+            end_at
+          )
+        `)
+        .eq('user_id', userId)
+        .maybeSingle();
 
-    if (!assignment) {
-      return null;
-    }
-
-    const typedAssignment = assignment as unknown as ExperimentAssignmentWithRelations;
-    const experiment = typedAssignment.ada_experiments;
-    const variant = typedAssignment.ada_experiment_variants;
-    const policy = variant.ada_policies;
-
-    // Verify experiment is running and matches criteria
-    if (
-      experiment.status !== 'running' ||
-      experiment.target_policy_type !== type ||
-      (experiment.start_at && new Date(experiment.start_at) > new Date()) ||
-      (experiment.end_at && new Date(experiment.end_at) < new Date())
-    ) {
-      return null;
-    }
-
-    // Check route/context match if specified
-    if (experiment.target_route && context?.route) {
-      if (!context.route.includes(experiment.target_route)) {
+      // Gracefully handle missing table or RLS issues
+      if (error) {
+        console.warn('Could not fetch experiment policy:', error.message);
         return null;
       }
-    }
 
-    return {
-      policy,
-      source: 'experiment',
-      experimentId: experiment.id,
-      variantId: variant.id,
-    };
+      if (!assignment) {
+        return null;
+      }
+
+      const typedAssignment = assignment as unknown as ExperimentAssignmentWithRelations;
+      const experiment = typedAssignment.ada_experiments;
+      const variant = typedAssignment.ada_experiment_variants;
+      const policy = variant.ada_policies;
+
+      // Verify experiment is running and matches criteria
+      if (
+        experiment.status !== 'running' ||
+        experiment.target_policy_type !== type ||
+        (experiment.start_at && new Date(experiment.start_at) > new Date()) ||
+        (experiment.end_at && new Date(experiment.end_at) < new Date())
+      ) {
+        return null;
+      }
+
+      // Check route/context match if specified
+      if (experiment.target_route && context?.route) {
+        if (!context.route.includes(experiment.target_route)) {
+          return null;
+        }
+      }
+
+      return {
+        policy,
+        source: 'experiment',
+        experimentId: experiment.id,
+        variantId: variant.id,
+      };
+    } catch (err) {
+      console.warn('Error in getExperimentPolicy:', err);
+      return null;
+    }
   }
 
   private async getCohortPolicy(

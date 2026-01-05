@@ -198,6 +198,7 @@ const InviteSignup = () => {
               value={formData.password}
               onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
               placeholder="Create a password"
+              autoComplete="new-password"
             />
           </div>
           
