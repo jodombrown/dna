@@ -7,10 +7,13 @@ import { Calendar, MapPin, Users, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
+import { useUniversalComposer } from '@/hooks/useUniversalComposer';
+import { UniversalComposer } from '@/components/composer/UniversalComposer';
 
 export const MyEventsWidget = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const composer = useUniversalComposer();
 
   const { data: myEvents, isLoading } = useQuery({
     queryKey: ['my-events', user?.id],
@@ -43,87 +46,90 @@ export const MyEventsWidget = () => {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-copper-500" />
-            My Events
-          </span>
-          {/* Phase 1.5: Event management dashboard */}
-          {/* <Button 
-            size="sm" 
-            variant="outline"
-            onClick={() => navigate('/dna/convene/my-events')}
-          >
-            Manage
-          </Button> */}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {!myEvents || myEvents.length === 0 ? (
-          <div className="text-center py-6">
-            <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground mb-3">
-              You haven't created any events yet
-            </p>
-            <Button
-              size="sm"
-              className="bg-dna-emerald hover:bg-dna-forest"
-              onClick={() => navigate('/dna/convene/events')}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Create Your First Event
-            </Button>
-          </div>
-        ) : (
-          <>
-            {myEvents.map((event) => (
-              <div
-                key={event.id}
-                className="flex gap-3 p-3 rounded-lg border hover:bg-accent/50 transition-colors cursor-pointer"
-                onClick={() => navigate('/dna/convene/events')}
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <span className="flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-copper-500" />
+              My Events
+            </span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {!myEvents || myEvents.length === 0 ? (
+            <div className="text-center py-6">
+              <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+              <p className="text-sm text-muted-foreground mb-3">
+                You haven't created any events yet
+              </p>
+              <Button
+                size="sm"
+                className="bg-dna-emerald hover:bg-dna-forest"
+                onClick={() => composer.open('event')}
               >
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-semibold text-sm truncate">
-                    {event.title}
-                  </h4>
-                  
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Calendar className="h-3 w-3" />
-                    <span>
-                      {format(new Date(event.start_time), 'MMM d, h:mm a')}
-                    </span>
-                  </div>
-
-                  {(event.location_name || event.location_city) && (
-                    <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
-                      <MapPin className="h-3 w-3" />
-                      <span className="truncate">
-                        {event.location_name || `${event.location_city}${event.location_country ? ', ' + event.location_country : ''}`}
+                <Plus className="h-4 w-4 mr-2" />
+                Create Your First Event
+              </Button>
+            </div>
+          ) : (
+            <>
+              {myEvents.map((event) => (
+                <div
+                  key={event.id}
+                  className="flex gap-3 p-3 rounded-lg border hover:bg-accent/50 transition-colors cursor-pointer"
+                  onClick={() => navigate(`/dna/convene/events/${event.slug || event.id}`)}
+                >
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-semibold text-sm truncate">
+                      {event.title}
+                    </h4>
+                    
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Calendar className="h-3 w-3" />
+                      <span>
+                        {format(new Date(event.start_time), 'MMM d, h:mm a')}
                       </span>
                     </div>
-                  )}
 
-                  <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
-                    <Users className="h-3 w-3" />
-                    <span>0 registered</span>
+                    {(event.location_name || event.location_city) && (
+                      <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
+                        <MapPin className="h-3 w-3" />
+                        <span className="truncate">
+                          {event.location_name || `${event.location_city}${event.location_country ? ', ' + event.location_country : ''}`}
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
+                      <Users className="h-3 w-3" />
+                      <span>0 registered</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
 
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => navigate('/dna/convene/events')}
-            >
-              <Plus className="h-3 w-3 mr-2" />
-              Create New Event
-            </Button>
-          </>
-        )}
-      </CardContent>
-    </Card>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => composer.open('event')}
+              >
+                <Plus className="h-3 w-3 mr-2" />
+                Create New Event
+              </Button>
+            </>
+          )}
+        </CardContent>
+      </Card>
+      <UniversalComposer
+        isOpen={composer.isOpen}
+        mode={composer.mode}
+        context={composer.context}
+        isSubmitting={composer.isSubmitting}
+        onClose={composer.close}
+        onModeChange={composer.switchMode}
+        onSubmit={composer.submit}
+      />
+    </>
   );
 };
