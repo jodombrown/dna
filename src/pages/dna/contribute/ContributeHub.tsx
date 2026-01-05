@@ -1,5 +1,5 @@
 // src/pages/dna/contribute/ContributeHub.tsx
-// Mode switch wrapper for Contribute hub
+// Mode switch wrapper for Contribute hub with error handling
 
 import React from 'react';
 import { useHubMode } from '@/hooks/useHubMode';
@@ -12,19 +12,29 @@ import { supabase } from '@/integrations/supabase/client';
 export function ContributeHub() {
   const { mode, contentCount, isLoading } = useHubMode('contribute');
 
-  // Fetch early opportunities for hybrid mode
+  // Fetch early opportunities for hybrid mode with error handling
   const { data: earlyOpportunities } = useQuery({
     queryKey: ['earlyOpportunities'],
     queryFn: async () => {
-      const { data } = await supabase
-        .from('contribution_needs')
-        .select('id, title, type, created_at')
-        .in('status', ['open', 'in_progress'])
-        .order('created_at', { ascending: false })
-        .limit(4);
-      return data || [];
+      try {
+        const { data, error } = await supabase
+          .from('contribution_needs')
+          .select('id, title, type, created_at')
+          .in('status', ['open', 'in_progress'])
+          .order('created_at', { ascending: false })
+          .limit(4);
+        if (error) {
+          console.warn('[ContributeHub] Failed to fetch early opportunities:', error);
+          return [];
+        }
+        return data || [];
+      } catch (err) {
+        console.warn('[ContributeHub] Error fetching early opportunities:', err);
+        return [];
+      }
     },
-    enabled: mode === 'hybrid'
+    enabled: mode === 'hybrid',
+    retry: 1,
   });
 
   if (isLoading) {

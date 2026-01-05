@@ -1,5 +1,6 @@
 // src/components/hubs/shared/HubModeSwitch.tsx
 // Wrapper component that switches between Aspiration and Discovery modes
+// Includes error handling to prevent mobile crashes
 
 import React from 'react';
 import { useHubMode, HubType } from '@/hooks/useHubMode';
@@ -20,7 +21,19 @@ export function HubModeSwitch({
   hybridComponent,
   loadingComponent
 }: HubModeSwitchProps) {
-  const { mode, isLoading } = useHubMode(hub);
+  let mode: 'aspiration' | 'discovery' | 'hybrid' = 'aspiration';
+  let isLoading = false;
+
+  try {
+    const hubModeResult = useHubMode(hub);
+    mode = hubModeResult.mode;
+    isLoading = hubModeResult.isLoading;
+  } catch (error) {
+    // If useHubMode fails, default to aspiration mode
+    console.warn('[HubModeSwitch] Error in useHubMode, defaulting to aspiration:', error);
+    mode = 'aspiration';
+    isLoading = false;
+  }
 
   if (isLoading) {
     return loadingComponent || (

@@ -32,77 +32,98 @@ export function ConveneDiscovery() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // Fetch stats
+  // Fetch stats with error handling
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['convene-hub-stats', user?.id],
     queryFn: async () => {
-      const now = new Date().toISOString();
-      const weekFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+      try {
+        const now = new Date().toISOString();
+        const weekFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
 
-      // Fetch all counts in parallel
-      const [upcomingResult, myRsvpsResult, myHostingResult, thisWeekResult] = await Promise.all([
-        // Upcoming events (public, not cancelled)
-        supabase
-          .from('events')
-          .select('id', { count: 'exact' })
-          .eq('is_cancelled', false)
-          .eq('is_public', true)
-          .gte('start_time', now),
-        
-        // My RSVPs
-        user?.id
-          ? supabase
-              .from('event_attendees')
-              .select('id', { count: 'exact' })
-              .eq('user_id', user.id)
-              .eq('status', 'going')
-          : Promise.resolve({ count: 0 }),
-        
-        // Events I'm hosting
-        user?.id
-          ? supabase
-              .from('events')
-              .select('id', { count: 'exact' })
-              .eq('organizer_id', user.id)
-              .eq('is_cancelled', false)
-          : Promise.resolve({ count: 0 }),
-        
-        // This week
-        supabase
-          .from('events')
-          .select('id', { count: 'exact' })
-          .eq('is_cancelled', false)
-          .eq('is_public', true)
-          .gte('start_time', now)
-          .lte('start_time', weekFromNow),
-      ]);
+        // Fetch all counts in parallel with individual error handling
+        const [upcomingResult, myRsvpsResult, myHostingResult, thisWeekResult] = await Promise.all([
+          // Upcoming events (public, not cancelled)
+          supabase
+            .from('events')
+            .select('id', { count: 'exact', head: true })
+            .eq('is_cancelled', false)
+            .eq('is_public', true)
+            .gte('start_time', now)
+            .then(r => ({ count: r.error ? 0 : r.count })),
+          
+          // My RSVPs
+          user?.id
+            ? supabase
+                .from('event_attendees')
+                .select('id', { count: 'exact', head: true })
+                .eq('user_id', user.id)
+                .eq('status', 'going')
+                .then(r => ({ count: r.error ? 0 : r.count }))
+            : Promise.resolve({ count: 0 }),
+          
+          // Events I'm hosting
+          user?.id
+            ? supabase
+                .from('events')
+                .select('id', { count: 'exact', head: true })
+                .eq('organizer_id', user.id)
+                .eq('is_cancelled', false)
+                .then(r => ({ count: r.error ? 0 : r.count }))
+            : Promise.resolve({ count: 0 }),
+          
+          // This week
+          supabase
+            .from('events')
+            .select('id', { count: 'exact', head: true })
+            .eq('is_cancelled', false)
+            .eq('is_public', true)
+            .gte('start_time', now)
+            .lte('start_time', weekFromNow)
+            .then(r => ({ count: r.error ? 0 : r.count })),
+        ]);
 
-      return {
-        upcoming: upcomingResult.count || 0,
-        myRsvps: myRsvpsResult.count || 0,
-        hosting: myHostingResult.count || 0,
-        thisWeek: thisWeekResult.count || 0,
-      };
+        return {
+          upcoming: upcomingResult.count || 0,
+          myRsvps: myRsvpsResult.count || 0,
+          hosting: myHostingResult.count || 0,
+          thisWeek: thisWeekResult.count || 0,
+        };
+      } catch (error) {
+        console.warn('[ConveneDiscovery] Failed to fetch stats:', error);
+        return { upcoming: 0, myRsvps: 0, hosting: 0, thisWeek: 0 };
+      }
     },
     staleTime: 60000,
+    retry: 2,
+    retryDelay: 1000,
   });
 
-  // Fetch recent activity
+  // Fetch recent activity with error handling
   const { data: recentActivity, isLoading: activityLoading } = useQuery({
     queryKey: ['convene-recent-activity'],
     queryFn: async () => {
-      const { data } = await supabase
-        .from('events')
-        .select('id, title, start_time, location_name, cover_image_url')
-        .eq('is_cancelled', false)
-        .eq('is_public', true)
-        .gte('start_time', new Date().toISOString())
-        .order('created_at', { ascending: false })
-        .limit(5);
+      try {
+        const { data, error } = await supabase
+          .from('events')
+          .select('id, title, start_time, location_name, cover_image_url')
+          .eq('is_cancelled', false)
+          .eq('is_public', true)
+          .gte('start_time', new Date().toISOString())
+          .order('created_at', { ascending: false })
+          .limit(5);
 
-      return data || [];
+        if (error) {
+          console.warn('[ConveneDiscovery] Failed to fetch recent activity:', error);
+          return [];
+        }
+        return data || [];
+      } catch (error) {
+        console.warn('[ConveneDiscovery] Error fetching recent activity:', error);
+        return [];
+      }
     },
     staleTime: 60000,
+    retry: 1,
   });
 
   // Hub Stats
