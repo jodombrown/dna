@@ -72,217 +72,278 @@ export function DiscoveryFeed({
     queryFn: async ({ pageParam = 0 }) => {
       if (!user) return { members: [], nextPage: null };
 
-      const { data, error } = await supabase.rpc('discover_members', {
-        p_current_user_id: user.id,
-        p_focus_areas: null,
-        p_regional_expertise: filters?.regions?.length ? filters.regions : null,
-        p_industries: null,
-        p_country_of_origin: null,
-        p_location_country: null,
-        p_skills: null,
-        p_search_query: searchQuery || null,
-        p_sort_by: 'match',
-        p_limit: 20,
-        p_offset: pageParam * 20,
-      });
+      try {
+        const { data, error } = await supabase.rpc('discover_members', {
+          p_current_user_id: user.id,
+          p_focus_areas: null,
+          p_regional_expertise: filters?.regions?.length ? filters.regions : null,
+          p_industries: null,
+          p_country_of_origin: null,
+          p_location_country: null,
+          p_skills: null,
+          p_search_query: searchQuery || null,
+          p_sort_by: 'match',
+          p_limit: 20,
+          p_offset: pageParam * 20,
+        });
 
-      if (error) {
-        // Fallback query
-        const { data: fallbackData } = await supabase
-          .from('profiles')
-          .select('*')
-          .neq('id', user.id)
-          .eq('is_public', true)
-          .order('updated_at', { ascending: false })
-          .range(pageParam * 20, pageParam * 20 + 19);
+        if (error) {
+          console.warn('[DiscoveryFeed] RPC failed, using fallback:', error);
+          // Fallback query
+          try {
+            const { data: fallbackData, error: fallbackError } = await supabase
+              .from('profiles')
+              .select('*')
+              .neq('id', user.id)
+              .eq('is_public', true)
+              .order('updated_at', { ascending: false })
+              .range(pageParam * 20, pageParam * 20 + 19);
+
+            if (fallbackError) {
+              console.warn('[DiscoveryFeed] Fallback query also failed:', fallbackError);
+              return { members: [], nextPage: null };
+            }
+
+            return {
+              members: (fallbackData || []).map((p: any) => ({ ...p, match_score: 0 })),
+              nextPage: (fallbackData || []).length === 20 ? pageParam + 1 : null,
+            };
+          } catch (fallbackErr) {
+            console.warn('[DiscoveryFeed] Fallback query error:', fallbackErr);
+            return { members: [], nextPage: null };
+          }
+        }
 
         return {
-          members: (fallbackData || []).map((p: any) => ({ ...p, match_score: 0 })),
-          nextPage: (fallbackData || []).length === 20 ? pageParam + 1 : null,
+          members: data || [],
+          nextPage: (data || []).length === 20 ? pageParam + 1 : null,
         };
+      } catch (error) {
+        console.warn('[DiscoveryFeed] Error fetching members:', error);
+        return { members: [], nextPage: null };
       }
-
-      return {
-        members: data || [],
-        nextPage: (data || []).length === 20 ? pageParam + 1 : null,
-      };
     },
     getNextPageParam: (lastPage) => lastPage.nextPage,
     enabled: !!user,
     staleTime: 60000,
     initialPageParam: 0,
+    retry: 2,
+    retryDelay: 1000,
   });
 
-  // Fetch DIA insights
+  // Fetch DIA insights with robust error handling
   const { data: diaInsights } = useQuery({
     queryKey: ['dia-insights', user?.id],
     queryFn: async (): Promise<DiaInsightData[]> => {
       if (!user) return [];
 
-      const insights: DiaInsightData[] = [];
+      try {
+        const insights: DiaInsightData[] = [];
 
-      // 1. New Arrivals - members who joined this week in user's sector
-      const weekAgo = new Date();
-      weekAgo.setDate(weekAgo.getDate() - 7);
+        // 1. New Arrivals - members who joined this week in user's sector
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
 
-      const { data: newMembers } = await supabase
-        .from('profiles')
-        .select('id, full_name, avatar_url, headline, industries')
-        .neq('id', user.id)
-        .gte('created_at', weekAgo.toISOString())
-        .limit(5);
+        try {
+          const { data: newMembers, error: newMembersError } = await supabase
+            .from('profiles')
+            .select('id, full_name, avatar_url, headline, industries')
+            .neq('id', user.id)
+            .gte('created_at', weekAgo.toISOString())
+            .limit(5);
 
-      if (newMembers && newMembers.length >= 3) {
+          if (newMembersError) {
+            console.warn('[DiscoveryFeed] Failed to fetch new members:', newMembersError);
+          }
+
+          if (newMembers && newMembers.length >= 3) {
+            insights.push({
+              id: 'new-arrivals-' + Date.now(),
+              type: 'new_arrivals',
+              description: `${newMembers.length} new members joined this week`,
+              members: newMembers.map((m) => ({
+                id: m.id,
+                name: m.full_name || 'Member',
+                avatar_url: m.avatar_url,
+                headline: m.headline,
+              })),
+              count: newMembers.length,
+              primaryAction: {
+                label: 'View New Members',
+                action: () => setSearchQuery(''),
+              },
+              secondaryAction: {
+                label: 'Later',
+                action: () => handleDismissDiaCard('new-arrivals-' + Date.now()),
+              },
+            });
+          }
+        } catch (err) {
+          console.warn('[DiscoveryFeed] Error fetching new members:', err);
+        }
+
+        // 2. People You Should Know - random high match recommendation
+        try {
+          const { data: recommendations, error: recError } = await supabase.rpc('discover_members', {
+            p_current_user_id: user.id,
+            p_focus_areas: null,
+            p_regional_expertise: null,
+            p_industries: null,
+            p_country_of_origin: null,
+            p_location_country: null,
+            p_skills: null,
+            p_search_query: null,
+            p_sort_by: 'match',
+            p_limit: 1,
+            p_offset: Math.floor(Math.random() * 10),
+          });
+
+          if (recError) {
+            console.warn('[DiscoveryFeed] Failed to fetch recommendations:', recError);
+          }
+
+          if (recommendations && recommendations.length > 0) {
+            const rec = recommendations[0];
+            insights.push({
+              id: 'pysk-' + rec.id,
+              type: 'people_you_should_know',
+              description: `${rec.full_name} shares your focus on ${rec.focus_areas?.[0] || 'community building'}. You both work in ${rec.industries?.[0] || 'similar industries'}.`,
+              members: [
+                {
+                  id: rec.id,
+                  name: rec.full_name,
+                  avatar_url: rec.avatar_url,
+                  headline: rec.headline,
+                },
+              ],
+              primaryAction: {
+                label: 'Connect',
+                action: () => {
+                  // Would trigger connect action
+                },
+              },
+              secondaryAction: {
+                label: 'Learn More',
+                action: () => {
+                  window.location.href = `/dna/${rec.username}`;
+                },
+              },
+            });
+          }
+        } catch (err) {
+          console.warn('[DiscoveryFeed] Error fetching recommendations:', err);
+        }
+
+        // 3. Network Insight - activity trends
         insights.push({
-          id: 'new-arrivals-' + Date.now(),
-          type: 'new_arrivals',
-          description: `${newMembers.length} new members joined this week`,
-          members: newMembers.map((m) => ({
-            id: m.id,
-            name: m.full_name || 'Member',
-            avatar_url: m.avatar_url,
-            headline: m.headline,
-          })),
-          count: newMembers.length,
-          primaryAction: {
-            label: 'View New Members',
-            action: () => setSearchQuery(''),
-          },
-          secondaryAction: {
-            label: 'Later',
-            action: () => handleDismissDiaCard('new-arrivals-' + Date.now()),
-          },
-        });
-      }
-
-      // 2. People You Should Know - random high match recommendation
-      const { data: recommendations } = await supabase.rpc('discover_members', {
-        p_current_user_id: user.id,
-        p_focus_areas: null,
-        p_regional_expertise: null,
-        p_industries: null,
-        p_country_of_origin: null,
-        p_location_country: null,
-        p_skills: null,
-        p_search_query: null,
-        p_sort_by: 'match',
-        p_limit: 1,
-        p_offset: Math.floor(Math.random() * 10),
-      });
-
-      if (recommendations && recommendations.length > 0) {
-        const rec = recommendations[0];
-        insights.push({
-          id: 'pysk-' + rec.id,
-          type: 'people_you_should_know',
-          description: `${rec.full_name} shares your focus on ${rec.focus_areas?.[0] || 'community building'}. You both work in ${rec.industries?.[0] || 'similar industries'}.`,
-          members: [
-            {
-              id: rec.id,
-              name: rec.full_name,
-              avatar_url: rec.avatar_url,
-              headline: rec.headline,
-            },
-          ],
-          primaryAction: {
-            label: 'Connect',
-            action: () => {
-              // Would trigger connect action
-            },
-          },
-          secondaryAction: {
-            label: 'Learn More',
-            action: () => {
-              window.location.href = `/dna/${rec.username}`;
-            },
-          },
-        });
-      }
-
-      // 3. Network Insight - activity trends
-      insights.push({
-        id: 'network-insight-' + Date.now(),
-        type: 'network_insight',
-        description:
-          'Your connections are more active in COLLABORATE this month. 5 new projects launched.',
-        percentage: 40,
-        primaryAction: {
-          label: 'Explore Projects',
-          action: () => {
-            window.location.href = '/dna/collaborate';
-          },
-        },
-      });
-
-      // 4. Event Overlap
-      const { data: upcomingEvents } = await supabase
-        .from('events')
-        .select('id, title, start_time')
-        .gte('start_time', new Date().toISOString())
-        .order('start_time')
-        .limit(1);
-
-      if (upcomingEvents && upcomingEvents.length > 0) {
-        const evt = upcomingEvents[0] as any;
-        insights.push({
-          id: 'event-overlap-' + evt.id,
-          type: 'event_overlap',
+          id: 'network-insight-' + Date.now(),
+          type: 'network_insight',
           description:
-            "People you've messaged are attending this event. See who's going.",
-          event: {
-            id: evt.id,
-            title: evt.title,
-            date: evt.start_time,
-          },
-          count: Math.floor(Math.random() * 15) + 5,
+            'Your connections are more active in COLLABORATE this month. 5 new projects launched.',
+          percentage: 40,
           primaryAction: {
-            label: 'View Attendees',
+            label: 'Explore Projects',
             action: () => {
-              window.location.href = `/dna/convene/events/${evt.id}`;
+              window.location.href = '/dna/collaborate';
             },
           },
         });
+
+        // 4. Event Overlap
+        try {
+          const { data: upcomingEvents, error: eventsError } = await supabase
+            .from('events')
+            .select('id, title, start_time')
+            .gte('start_time', new Date().toISOString())
+            .order('start_time')
+            .limit(1);
+
+          if (eventsError) {
+            console.warn('[DiscoveryFeed] Failed to fetch upcoming events:', eventsError);
+          }
+
+          if (upcomingEvents && upcomingEvents.length > 0) {
+            const evt = upcomingEvents[0] as any;
+            insights.push({
+              id: 'event-overlap-' + evt.id,
+              type: 'event_overlap',
+              description:
+                "People you've messaged are attending this event. See who's going.",
+              event: {
+                id: evt.id,
+                title: evt.title,
+                date: evt.start_time,
+              },
+              count: Math.floor(Math.random() * 15) + 5,
+              primaryAction: {
+                label: 'View Attendees',
+                action: () => {
+                  window.location.href = `/dna/convene/events/${evt.id}`;
+                },
+              },
+            });
+          }
+        } catch (err) {
+          console.warn('[DiscoveryFeed] Error fetching upcoming events:', err);
+        }
+
+        // 5. Contribution Match - use contribution_needs table
+        try {
+          const { data: needs, error: needsError } = await supabase
+            .from('contribution_needs')
+            .select('id, title, type, created_by')
+            .eq('status', 'open')
+            .limit(1);
+
+          if (needsError) {
+            console.warn('[DiscoveryFeed] Failed to fetch contribution needs:', needsError);
+          }
+
+          if (needs && needs.length > 0) {
+            const need = needs[0] as any;
+            // Fetch author profile
+            const { data: authorProfile, error: authorError } = await supabase
+              .from('profiles')
+              .select('full_name')
+              .eq('id', need.created_by)
+              .maybeSingle();
+
+            if (authorError) {
+              console.warn('[DiscoveryFeed] Failed to fetch author profile:', authorError);
+            }
+
+            insights.push({
+              id: 'contrib-match-' + need.id,
+              type: 'contribution_match',
+              description: `${authorProfile?.full_name || 'A member'} posted a need that matches your expertise.`,
+              opportunity: {
+                id: need.id,
+                title: need.title,
+                type: 'need',
+                author: authorProfile?.full_name || 'Member',
+              },
+              primaryAction: {
+                label: 'View Need',
+                action: () => {
+                  window.location.href = `/dna/contribute/needs/${need.id}`;
+                },
+              },
+            });
+          }
+        } catch (err) {
+          console.warn('[DiscoveryFeed] Error fetching contribution needs:', err);
+        }
+
+        return insights;
+      } catch (error) {
+        console.warn('[DiscoveryFeed] Error fetching DIA insights:', error);
+        return [];
       }
-
-      // 5. Contribution Match - use contribution_needs table
-      const { data: needs } = await supabase
-        .from('contribution_needs')
-        .select('id, title, type, created_by')
-        .eq('status', 'open')
-        .limit(1);
-
-      if (needs && needs.length > 0) {
-        const need = needs[0] as any;
-        // Fetch author profile
-        const { data: authorProfile } = await supabase
-          .from('profiles')
-          .select('full_name')
-          .eq('id', need.created_by)
-          .single();
-
-        insights.push({
-          id: 'contrib-match-' + need.id,
-          type: 'contribution_match',
-          description: `${authorProfile?.full_name || 'A member'} posted a need that matches your expertise.`,
-          opportunity: {
-            id: need.id,
-            title: need.title,
-            type: 'need',
-            author: authorProfile?.full_name || 'Member',
-          },
-          primaryAction: {
-            label: 'View Need',
-            action: () => {
-              window.location.href = `/dna/contribute/needs/${need.id}`;
-            },
-          },
-        });
-      }
-
-      return insights;
     },
     enabled: !!user,
     staleTime: 300000, // 5 minutes
+    retry: 2,
+    retryDelay: 1000,
   });
 
   // Flatten members pages

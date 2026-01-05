@@ -78,128 +78,168 @@ export function ConversationsPanel({
   const [searchQuery, setSearchQuery] = useState('');
   const [processingRequests, setProcessingRequests] = useState<Set<string>>(new Set());
 
-  // Fetch conversations
+  // Fetch conversations with robust error handling
   const { data: conversations, isLoading: conversationsLoading } = useQuery({
     queryKey: ['conversations-panel', user?.id],
     queryFn: async (): Promise<Conversation[]> => {
       if (!user) return [];
 
-      const { data, error } = await supabase
-        .from('conversations')
-        .select(`
-          id,
-          user_a,
-          user_b,
-          last_message_at,
-          messages(content, created_at, sender_id)
-        `)
-        .or(`user_a.eq.${user.id},user_b.eq.${user.id}`)
-        .order('last_message_at', { ascending: false })
-        .limit(10);
+      try {
+        const { data, error } = await supabase
+          .from('conversations')
+          .select(`
+            id,
+            user_a,
+            user_b,
+            last_message_at,
+            messages(content, created_at, sender_id)
+          `)
+          .or(`user_a.eq.${user.id},user_b.eq.${user.id}`)
+          .order('last_message_at', { ascending: false })
+          .limit(10);
 
-      if (error || !data) return [];
-
-      // Fetch other user profiles
-      const otherUserIds = data.map((c: any) =>
-        c.user_a === user.id ? c.user_b : c.user_a
-      );
-
-      const { data: profiles } = await supabase
-        .from('profiles')
-        .select('id, full_name, avatar_url, headline')
-        .in('id', otherUserIds);
-
-      const profileMap = new Map(profiles?.map((p) => [p.id, p]) || []);
-
-      // Get unread counts using conversation_participants.last_read_at
-      const conversationIds = data.map((c: any) => c.id);
-      const { data: participations } = await supabase
-        .from('conversation_participants')
-        .select('conversation_id, last_read_at')
-        .eq('user_id', user.id)
-        .in('conversation_id', conversationIds);
-
-      const unreadCounts = new Map<string, number>();
-      
-      // For each participation, count messages after last_read_at
-      for (const p of participations || []) {
-        let query = supabase
-          .from('messages')
-          .select('id', { count: 'exact' })
-          .eq('conversation_id', p.conversation_id)
-          .neq('sender_id', user.id);
-        
-        if (p.last_read_at) {
-          query = query.gt('created_at', p.last_read_at);
+        if (error || !data) {
+          console.warn('[ConversationsPanel] Failed to fetch conversations:', error);
+          return [];
         }
+
+        // Fetch other user profiles
+        const otherUserIds = data.map((c: any) =>
+          c.user_a === user.id ? c.user_b : c.user_a
+        );
+
+        const { data: profiles, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, full_name, avatar_url, headline')
+          .in('id', otherUserIds);
+
+        if (profilesError) {
+          console.warn('[ConversationsPanel] Failed to fetch profiles:', profilesError);
+        }
+
+        const profileMap = new Map(profiles?.map((p) => [p.id, p]) || []);
+
+        // Get unread counts using conversation_participants.last_read_at
+        const conversationIds = data.map((c: any) => c.id);
+        const { data: participations, error: participationsError } = await supabase
+          .from('conversation_participants')
+          .select('conversation_id, last_read_at')
+          .eq('user_id', user.id)
+          .in('conversation_id', conversationIds);
+
+        if (participationsError) {
+          console.warn('[ConversationsPanel] Failed to fetch participations:', participationsError);
+        }
+
+        const unreadCounts = new Map<string, number>();
         
-        const { count } = await query;
-        unreadCounts.set(p.conversation_id, count || 0);
+        // For each participation, count messages after last_read_at
+        for (const p of participations || []) {
+          try {
+            let query = supabase
+              .from('messages')
+              .select('id', { count: 'exact' })
+              .eq('conversation_id', p.conversation_id)
+              .neq('sender_id', user.id);
+            
+            if (p.last_read_at) {
+              query = query.gt('created_at', p.last_read_at);
+            }
+            
+            const { count, error: countError } = await query;
+            if (countError) {
+              console.warn('[ConversationsPanel] Failed to count unread:', countError);
+            }
+            unreadCounts.set(p.conversation_id, count || 0);
+          } catch (countErr) {
+            console.warn('[ConversationsPanel] Error counting unread:', countErr);
+            unreadCounts.set(p.conversation_id, 0);
+          }
+        }
+
+        return data.map((conv: any) => {
+          const otherId = conv.user_a === user.id ? conv.user_b : conv.user_a;
+          const profile = profileMap.get(otherId);
+          const messages = conv.messages as any[];
+          const lastMessage = messages?.[messages.length - 1];
+
+          return {
+            id: conv.id,
+            other_user_id: otherId,
+            other_user_name: profile?.full_name || 'Member',
+            other_user_avatar: profile?.avatar_url || null,
+            other_user_headline: profile?.headline || null,
+            last_message: lastMessage?.content || null,
+            last_message_at: lastMessage?.created_at || conv.last_message_at,
+            unread_count: unreadCounts.get(conv.id) || 0,
+            is_online: false,
+          };
+        });
+      } catch (error) {
+        console.warn('[ConversationsPanel] Error fetching conversations:', error);
+        return [];
       }
-
-      return data.map((conv: any) => {
-        const otherId = conv.user_a === user.id ? conv.user_b : conv.user_a;
-        const profile = profileMap.get(otherId);
-        const messages = conv.messages as any[];
-        const lastMessage = messages?.[messages.length - 1];
-
-        return {
-          id: conv.id,
-          other_user_id: otherId,
-          other_user_name: profile?.full_name || 'Member',
-          other_user_avatar: profile?.avatar_url || null,
-          other_user_headline: profile?.headline || null,
-          last_message: lastMessage?.content || null,
-          last_message_at: lastMessage?.created_at || conv.last_message_at,
-          unread_count: unreadCounts.get(conv.id) || 0,
-          is_online: false,
-        };
-      });
     },
     enabled: !!user,
     staleTime: 30000,
+    retry: 2,
+    retryDelay: 1000,
   });
 
-  // Fetch connection requests
+  // Fetch connection requests with robust error handling
   const { data: connectionRequests, refetch: refetchRequests } = useQuery({
     queryKey: ['connection-requests-panel', user?.id],
     queryFn: async (): Promise<ConnectionRequest[]> => {
       if (!user) return [];
 
-      const { data, error } = await supabase
-        .from('connections')
-        .select('id, requester_id, created_at')
-        .eq('recipient_id', user.id)
-        .eq('status', 'pending')
-        .order('created_at', { ascending: false })
-        .limit(5);
+      try {
+        const { data, error } = await supabase
+          .from('connections')
+          .select('id, requester_id, created_at')
+          .eq('recipient_id', user.id)
+          .eq('status', 'pending')
+          .order('created_at', { ascending: false })
+          .limit(5);
 
-      if (error || !data) return [];
+        if (error || !data) {
+          console.warn('[ConversationsPanel] Failed to fetch connection requests:', error);
+          return [];
+        }
 
-      // Fetch requester profiles
-      const requesterIds = data.map((r: any) => r.requester_id);
-      const { data: profiles } = await supabase
-        .from('profiles')
-        .select('id, full_name, avatar_url, headline')
-        .in('id', requesterIds);
+        // Fetch requester profiles
+        const requesterIds = data.map((r: any) => r.requester_id);
+        const { data: profiles, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, full_name, avatar_url, headline')
+          .in('id', requesterIds);
 
-      const profileMap = new Map(profiles?.map((p) => [p.id, p]) || []);
+        if (profilesError) {
+          console.warn('[ConversationsPanel] Failed to fetch requester profiles:', profilesError);
+        }
 
-      return data.map((req: any) => {
-        const profile = profileMap.get(req.requester_id);
-        return {
-          id: req.id,
-          user_id: req.requester_id,
-          full_name: profile?.full_name || 'Member',
-          avatar_url: profile?.avatar_url || null,
-          headline: profile?.headline || null,
-          mutual_connections: 0,
-          created_at: req.created_at,
-        };
-      });
+        const profileMap = new Map(profiles?.map((p) => [p.id, p]) || []);
+
+        return data.map((req: any) => {
+          const profile = profileMap.get(req.requester_id);
+          return {
+            id: req.id,
+            user_id: req.requester_id,
+            full_name: profile?.full_name || 'Member',
+            avatar_url: profile?.avatar_url || null,
+            headline: profile?.headline || null,
+            mutual_connections: 0,
+            created_at: req.created_at,
+          };
+        });
+      } catch (error) {
+        console.warn('[ConversationsPanel] Error fetching connection requests:', error);
+        return [];
+      }
     },
     enabled: !!user,
     staleTime: 30000,
+    retry: 2,
+    retryDelay: 1000,
   });
 
   // Filter conversations by search
