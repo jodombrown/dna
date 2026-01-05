@@ -5,13 +5,14 @@ import { ProfileStrengthCard } from '@/components/profile/ProfileStrengthCard';
 import { Users, Network, MessageCircle } from 'lucide-react';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { calculateProfileCompletionPts } from '@/lib/profileCompletion';
+import { ConnectTabExplainer, ConnectTab } from './ConnectTabExplainer';
 
 export const ConnectLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { data: profile } = useProfile();
 
-  const currentPath = location.pathname.split('/').pop() || 'discover';
+  const currentPath = (location.pathname.split('/').pop() || 'discover') as ConnectTab;
 
   const handleTabChange = (value: string) => {
     navigate(`/dna/connect/${value}`);
@@ -57,8 +58,11 @@ export const ConnectLayout = () => {
                   <span className="hidden sm:inline">Messages</span>
                 </TabsTrigger>
               </TabsList>
-            </Tabs>
+          </Tabs>
           </div>
+
+          {/* Tab Explainer */}
+          <ConnectTabExplainer activeTab={currentPath} />
 
           {/* Content */}
           <Outlet />
