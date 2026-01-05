@@ -187,6 +187,15 @@ Deno.serve(async (req) => {
 
     console.log('Validation passed, creating event...');
 
+    // Generate SEO-friendly slug from title
+    const eventYear = new Date(eventData.start_time).getFullYear();
+    const { data: slugResult } = await supabase.rpc('generate_event_slug', {
+      title: eventData.title,
+      event_year: eventYear
+    });
+    const eventSlug = slugResult || null;
+    console.log('Generated slug:', eventSlug);
+
     // Create event with all fields including new structured fields
     console.log('Event payload:', JSON.stringify(eventData, null, 2));
     
@@ -213,6 +222,8 @@ Deno.serve(async (req) => {
         allow_guests: eventData.allow_guests !== false,
         cover_image_url: eventData.cover_image_url || null,
         is_cancelled: false,
+        // SEO slug
+        slug: eventSlug,
         // New structured fields
         subtitle: eventData.subtitle || null,
         agenda: eventData.agenda || [],
