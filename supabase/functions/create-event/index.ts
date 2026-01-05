@@ -1,6 +1,11 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.9';
 import { corsHeaders } from '../_shared/cors.ts';
 
+interface AgendaItem {
+  time: string;
+  title: string;
+}
+
 interface CreateEventRequest {
   title: string;
   description: string;
@@ -20,6 +25,11 @@ interface CreateEventRequest {
   requires_approval?: boolean;
   allow_guests?: boolean;
   cover_image_url?: string;
+  // New structured fields
+  subtitle?: string;
+  agenda?: AgendaItem[];
+  dress_code?: string;
+  tags?: string[];
 }
 
 Deno.serve(async (req) => {
@@ -151,7 +161,9 @@ Deno.serve(async (req) => {
 
     console.log('Validation passed, creating event...');
 
-    // Create event
+    // Create event with all fields including new structured fields
+    console.log('Event payload:', JSON.stringify(eventData, null, 2));
+    
     const { data: event, error: insertError } = await supabase
       .from('events')
       .insert({
@@ -175,6 +187,11 @@ Deno.serve(async (req) => {
         allow_guests: eventData.allow_guests !== false,
         cover_image_url: eventData.cover_image_url || null,
         is_cancelled: false,
+        // New structured fields
+        subtitle: eventData.subtitle || null,
+        agenda: eventData.agenda || [],
+        dress_code: eventData.dress_code || null,
+        tags: eventData.tags || [],
       })
       .select()
       .single();
