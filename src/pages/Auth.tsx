@@ -201,6 +201,7 @@ const Auth = () => {
                 onChange={(e) => setSignInPassword(e.target.value)}
                 required
                 disabled={isSignInLoading}
+                autoComplete="current-password"
                 className="pr-10"
               />
               <button
@@ -287,6 +288,7 @@ const Auth = () => {
                     onChange={(e) => setSignUpPassword(e.target.value)}
                     required
                     disabled={isSignUpLoading}
+                    autoComplete="new-password"
                     minLength={8}
                     className="pr-10"
                   />

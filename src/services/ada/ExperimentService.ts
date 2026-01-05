@@ -86,39 +86,50 @@ export class ExperimentService {
     userId: string,
     experimentId: string
   ): Promise<ExperimentVariant | null> {
-    // Check for existing assignment
-    const { data: existingAssignment } = await supabase
-      .from('ada_experiment_assignments')
-      .select(`
-        id,
-        variant_id,
-        ada_experiment_variants!inner(
+    try {
+      // Check for existing assignment
+      const { data: existingAssignment, error } = await supabase
+        .from('ada_experiment_assignments')
+        .select(`
           id,
-          name,
-          policy_id,
-          allocation,
-          ada_policies!inner(*)
-        )
-      `)
-      .eq('user_id', userId)
-      .eq('experiment_id', experimentId)
-      .single();
+          variant_id,
+          ada_experiment_variants!inner(
+            id,
+            name,
+            policy_id,
+            allocation,
+            ada_policies!inner(*)
+          )
+        `)
+        .eq('user_id', userId)
+        .eq('experiment_id', experimentId)
+        .maybeSingle();
 
-    if (existingAssignment) {
-      const typedAssignment = existingAssignment as unknown as VariantAssignmentWithRelations;
-      const variant = typedAssignment.ada_experiment_variants;
-      return {
-        id: variant.id,
-        experiment_id: experimentId,
-        name: variant.name,
-        policy_id: variant.policy_id,
-        policy: variant.ada_policies,
-        allocation: variant.allocation,
-      };
+      // Gracefully handle missing table or RLS issues
+      if (error) {
+        console.warn('Could not fetch experiment assignment:', error.message);
+        return null;
+      }
+
+      if (existingAssignment) {
+        const typedAssignment = existingAssignment as unknown as VariantAssignmentWithRelations;
+        const variant = typedAssignment.ada_experiment_variants;
+        return {
+          id: variant.id,
+          experiment_id: experimentId,
+          name: variant.name,
+          policy_id: variant.policy_id,
+          policy: variant.ada_policies,
+          allocation: variant.allocation,
+        };
+      }
+
+      // No assignment yet - create one
+      return this.assignUserToVariant(userId, experimentId);
+    } catch (err) {
+      console.warn('Error in getVariantForUser:', err);
+      return null;
     }
-
-    // No assignment yet - create one
-    return this.assignUserToVariant(userId, experimentId);
   }
 
   /**

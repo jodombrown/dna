@@ -251,6 +251,7 @@ export default function AccountSettings() {
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   placeholder="Enter current password"
+                  autoComplete="current-password"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
                   Required to verify your identity
@@ -265,6 +266,7 @@ export default function AccountSettings() {
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Enter new password"
                   minLength={8}
+                  autoComplete="new-password"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
                   Must be at least 8 characters
@@ -278,6 +280,7 @@ export default function AccountSettings() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirm new password"
+                  autoComplete="new-password"
                 />
               </div>
               <Button type="submit" disabled={passwordLoading || !currentPassword || !newPassword || !confirmPassword}>
