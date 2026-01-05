@@ -329,7 +329,26 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
             },
           });
 
-          if (response.error) throw response.error;
+          // Handle edge function errors - extract the actual error message from response
+          if (response.error) {
+            // Try to parse the error context for more details
+            const errorContext = response.error.context;
+            let errorMessage = 'Failed to create event';
+            
+            try {
+              if (errorContext && typeof errorContext.json === 'function') {
+                const errorBody = await errorContext.json();
+                if (errorBody?.error) {
+                  errorMessage = errorBody.error;
+                }
+              }
+            } catch {
+              // Use default message if parsing fails
+            }
+            
+            throw new Error(errorMessage);
+          }
+          
           if (response.data && !response.data.success) {
             throw new Error(response.data.error || 'Failed to create event');
           }
