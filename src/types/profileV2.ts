@@ -93,6 +93,7 @@ export interface ProfileV2Activity {
     event_date: string;
   }>;
   connections_count?: number;
+  events_count?: number;
   stories_count?: number;
   contributions_count?: number;
 }
