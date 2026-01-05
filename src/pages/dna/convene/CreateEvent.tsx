@@ -1,86 +1,52 @@
-import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Calendar, ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useUniversalComposer } from '@/hooks/useUniversalComposer';
+import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import LayoutController from '@/components/LayoutController';
 import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
-import { CreateEventForm } from '@/components/events/CreateEventForm';
-import { useAuth } from '@/contexts/AuthContext';
-import { calculateProfileCompletionPts } from '@/lib/profileCompletion';
 
+/**
+ * CreateEvent - Redirect to Universal Composer
+ * 
+ * This page now redirects to open the Universal Composer in Event mode.
+ * All event creation should go through the unified composer.
+ */
 const CreateEvent = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { user, profile, loading } = useAuth();
+  const composer = useUniversalComposer();
 
-  // Get preselected group ID from navigation state
-  const preselectedGroupId = location.state?.groupId;
+  useEffect(() => {
+    // Open composer in event mode immediately
+    composer.open('event');
+  }, []);
 
-  // Use canonical profile completion calculation
-  const completionPercentage = calculateProfileCompletionPts(profile);
-  const canCreateEvent = completionPercentage >= 40;
-
-  if (loading) {
-    return (
-      <LayoutController
-        leftColumn={<LeftNav />}
-        centerColumn={
-          <div className="container max-w-4xl mx-auto px-4 py-8">
-            <p className="text-center text-muted-foreground">Loading...</p>
-          </div>
-        }
-        rightColumn={<RightWidgets variant="convene" />}
-      />
-    );
-  }
+  // Handle close - navigate back to convene hub
+  const handleClose = () => {
+    composer.close();
+    navigate('/dna/convene');
+  };
 
   return (
     <LayoutController
       leftColumn={<LeftNav />}
       centerColumn={
         <div className="container max-w-4xl mx-auto px-4 py-8">
-          <div className="mb-6">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate('/dna/convene')}
-              className="mb-4"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Convene
-            </Button>
-            
-            <div className="flex items-center gap-3 mb-2">
-              <Calendar className="h-8 w-8" />
-              <h1 className="text-4xl font-bold">Create Event</h1>
-            </div>
-            <p className="text-muted-foreground text-lg">
-              Bring the diaspora together around a shared experience
-            </p>
-          </div>
-
-          {!canCreateEvent ? (
-            <Alert className="border-warning">
-              <AlertDescription>
-                Your profile must be at least 40% complete to create events. 
-                You're currently at {completionPercentage}%.
-                <Button 
-                  variant="link" 
-                  className="px-1"
-                  onClick={() => navigate('/dna/profile/edit')}
-                >
-                  Complete your profile
-                </Button>
-              </AlertDescription>
-            </Alert>
-          ) : (
-            <CreateEventForm preselectedGroupId={preselectedGroupId} />
-          )}
+          <p className="text-center text-muted-foreground">Opening event composer...</p>
         </div>
       }
       rightColumn={<RightWidgets variant="convene" />}
-    />
+    >
+      <UniversalComposer
+        isOpen={composer.isOpen}
+        mode={composer.mode}
+        context={composer.context}
+        isSubmitting={composer.isSubmitting}
+        onClose={handleClose}
+        onModeChange={composer.switchMode}
+        onSubmit={composer.submit}
+      />
+    </LayoutController>
   );
 };
 
