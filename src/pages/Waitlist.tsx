@@ -164,7 +164,6 @@ const Waitlist = () => {
               {/* Left: Content */}
               <div className="text-center lg:text-left">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
-                  <Sparkles className="h-4 w-4" />
                   <span>Building Together</span>
                 </div>
 
@@ -322,21 +321,6 @@ const Waitlist = () => {
                   )}
                 </div>
 
-                {/* Social proof */}
-                <div className="mt-6 text-center">
-                  <p className="text-sm text-muted-foreground">
-                    Join thousands already on the waitlist
-                  </p>
-                  <div className="flex items-center justify-center gap-1 mt-2">
-                    {[...Array(5)].map((_, i) => (
-                      <div 
-                        key={i} 
-                        className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-background -ml-2 first:ml-0"
-                      />
-                    ))}
-                    <span className="text-sm font-medium text-foreground ml-2">+2,400</span>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
