@@ -830,40 +830,140 @@ export const getEmailContent = (formType: string, formData: any): EmailContent =
       };
 
     case 'waitlist':
+    case 'waitlist_signup':
       return {
-        subject: "New Waitlist Signup - DNA Platform",
+        subject: "🌍 New Waitlist Signup - DNA Platform",
         adminHtml: `
-          <h2>New Waitlist Signup</h2>
-          <p><strong>Name:</strong> ${formData.name}</p>
-          <p><strong>Email:</strong> ${formData.email}</p>
-          ${formData.location ? `<p><strong>Location:</strong> ${formData.location}</p>` : ''}
-          ${formData.role ? `<p><strong>Role:</strong> ${formData.role}</p>` : ''}
-          <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <style>
+              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              .header { background: linear-gradient(135deg, #1a4d2e 0%, #2d7a4f 100%); color: white; padding: 25px; border-radius: 8px 8px 0 0; text-align: center; }
+              .content { background: #f9fafb; padding: 25px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px; }
+              .field { margin: 15px 0; padding: 15px; background: white; border-radius: 6px; border-left: 4px solid #2d7a4f; }
+              .label { font-weight: 600; color: #1a4d2e; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+              .value { margin-top: 5px; font-size: 16px; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1 style="margin: 0; font-size: 24px;">🎉 New Waitlist Signup</h1>
+                <p style="margin: 10px 0 0 0; opacity: 0.9;">Someone wants to join DNA!</p>
+              </div>
+              <div class="content">
+                <div class="field">
+                  <div class="label">Full Name</div>
+                  <div class="value">${formData.name || formData.full_name}</div>
+                </div>
+                <div class="field">
+                  <div class="label">Email Address</div>
+                  <div class="value"><a href="mailto:${formData.email}">${formData.email}</a></div>
+                </div>
+                ${formData.location ? `
+                <div class="field">
+                  <div class="label">Location</div>
+                  <div class="value">${formData.location}</div>
+                </div>
+                ` : ''}
+                <div class="field">
+                  <div class="label">Signed Up At</div>
+                  <div class="value">${new Date().toLocaleString()}</div>
+                </div>
+                <p style="margin-top: 20px; padding: 15px; background: #fef3c7; border-radius: 6px; font-size: 14px;">
+                  <strong>Action:</strong> This user has been added to the waitlist. They will receive a confirmation email automatically.
+                </p>
+              </div>
+            </div>
+          </body>
+          </html>
         `,
-        userSubject: "Welcome to the DNA Waitlist!",
+        userSubject: "🌍 Welcome to the DNA Waitlist!",
         userHtml: `
-          <h1>Thank you for joining the DNA waitlist!</h1>
-          <p>Hi ${formData.name},</p>
-          <p>We're thrilled to have you on our waitlist for the Diaspora Network of Africa platform.</p>
-          
-          <p><strong>What happens next:</strong></p>
-          <ul>
-            <li>You'll be among the first to know when we launch</li>
-            <li>We'll keep you updated on our progress</li>
-            <li>You'll receive priority access when we open beta testing</li>
-            <li>We'll share exclusive updates about the platform development</li>
-          </ul>
-          
-          <p>In the meantime, stay connected with us:</p>
-          <ul>
-            <li>Follow our journey on social media</li>
-            <li>Share DNA with others who might be interested</li>
-            <li>Reply to this email if you have any questions</li>
-          </ul>
-          
-          <p>Thank you for believing in our vision to connect and mobilize the African diaspora!</p>
-          
-          <p>Best regards,<br>The DNA Team</p>
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+              .container { max-width: 600px; margin: 0 auto; }
+              .header { background: linear-gradient(135deg, #1a4d2e 0%, #2d7a4f 100%); color: white; padding: 40px 30px; text-align: center; }
+              .content { padding: 30px; background: #ffffff; }
+              .feature { display: flex; align-items: flex-start; margin: 20px 0; padding: 15px; background: #f9fafb; border-radius: 8px; }
+              .feature-icon { width: 40px; height: 40px; background: #e6f4ea; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0; }
+              .footer { background: #1a4d2e; color: white; padding: 25px; text-align: center; }
+              .cta-button { display: inline-block; background: #d4af37; color: #1a4d2e; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 20px 0; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1 style="margin: 0; font-size: 28px;">Welcome to DNA! 🌍</h1>
+                <p style="margin: 15px 0 0 0; font-size: 16px; opacity: 0.9;">Diaspora Network of Africa</p>
+              </div>
+              
+              <div class="content">
+                <p style="font-size: 18px; margin-bottom: 25px;">Hi <strong>${formData.name || formData.full_name}</strong>,</p>
+                
+                <p>We're thrilled to have you on our waitlist for DNA – the platform building the bridge between the global African diaspora and the continent's transformation.</p>
+                
+                <div style="background: linear-gradient(135deg, #f0fdf4 0%, #fef3c7 100%); padding: 20px; border-radius: 12px; margin: 25px 0; border-left: 4px solid #2d7a4f;">
+                  <h3 style="margin: 0 0 15px 0; color: #1a4d2e;">🎯 What happens next?</h3>
+                  <ul style="margin: 0; padding-left: 20px;">
+                    <li style="margin: 8px 0;">You'll be among the <strong>first</strong> to know when we launch</li>
+                    <li style="margin: 8px 0;">We'll keep you updated on our progress</li>
+                    <li style="margin: 8px 0;">You'll receive <strong>priority access</strong> when we open beta</li>
+                    <li style="margin: 8px 0;">Exclusive updates about platform development</li>
+                  </ul>
+                </div>
+                
+                <h3 style="color: #1a4d2e; margin-top: 30px;">🌟 DNA is building:</h3>
+                
+                <div style="margin: 20px 0;">
+                  <div style="padding: 15px; background: #f9fafb; border-radius: 8px; margin: 10px 0;">
+                    <strong>Connect</strong> – Professional networking for diaspora members
+                  </div>
+                  <div style="padding: 15px; background: #f9fafb; border-radius: 8px; margin: 10px 0;">
+                    <strong>Convene</strong> – Events bringing our community together
+                  </div>
+                  <div style="padding: 15px; background: #f9fafb; border-radius: 8px; margin: 10px 0;">
+                    <strong>Collaborate</strong> – Projects driving African development
+                  </div>
+                  <div style="padding: 15px; background: #f9fafb; border-radius: 8px; margin: 10px 0;">
+                    <strong>Contribute</strong> – Marketplace for skills, capital & knowledge
+                  </div>
+                  <div style="padding: 15px; background: #f9fafb; border-radius: 8px; margin: 10px 0;">
+                    <strong>Convey</strong> – Stories sharing diaspora experiences
+                  </div>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="https://diasporanetwork.africa" class="cta-button" style="display: inline-block; background: #d4af37; color: #1a4d2e; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                    Explore DNA →
+                  </a>
+                </div>
+                
+                <p style="color: #666; font-size: 14px;">
+                  Have questions? Just reply to this email – we'd love to hear from you.
+                </p>
+              </div>
+              
+              <div class="footer">
+                <p style="margin: 0; font-size: 14px;">Thank you for believing in our vision!</p>
+                <p style="margin: 15px 0 0 0; font-size: 12px; opacity: 0.8;">
+                  <em>The diaspora is ready. Africa is calling. The time is now.</em>
+                </p>
+                <p style="margin: 15px 0 0 0; font-size: 12px; opacity: 0.7;">
+                  Diaspora Network of Africa | Ubuntu · Sankofa · Excellence
+                </p>
+              </div>
+            </div>
+          </body>
+          </html>
         `
       };
 
