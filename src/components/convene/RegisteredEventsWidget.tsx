@@ -15,27 +15,38 @@ export const RegisteredEventsWidget = () => {
   const { data: registeredEvents, isLoading } = useQuery({
     queryKey: ['registered-events', user?.id],
     queryFn: async () => {
-      const { data } = await supabase
-        .from('event_registrations')
-        .select(`
-          *,
-          events:event_id (
-            id,
-            title,
-            date_time,
-            location,
-            attendee_count,
-            is_virtual
-          )
-        `)
-        .eq('user_id', user!.id)
-        .eq('status', 'going')
-        .order('registered_at', { ascending: false })
-        .limit(3);
-      
-      return data || [];
+      try {
+        const { data, error } = await supabase
+          .from('event_registrations')
+          .select(`
+            *,
+            events:event_id (
+              id,
+              title,
+              date_time,
+              location,
+              attendee_count,
+              is_virtual
+            )
+          `)
+          .eq('user_id', user!.id)
+          .eq('status', 'going')
+          .order('registered_at', { ascending: false })
+          .limit(3);
+        
+        if (error) {
+          console.warn('[RegisteredEventsWidget] Error fetching events:', error);
+          return [];
+        }
+        return data || [];
+      } catch (error) {
+        console.warn('[RegisteredEventsWidget] Failed to fetch events:', error);
+        return [];
+      }
     },
     enabled: !!user?.id,
+    retry: 2,
+    retryDelay: 1000,
   });
 
   if (isLoading) {

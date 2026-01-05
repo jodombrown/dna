@@ -22,40 +22,13 @@ export const UpcomingEventsSection = () => {
   const { data: myEvents, isLoading } = useQuery<MyEventsData>({
     queryKey: ['my-upcoming-events', user?.id],
     queryFn: async () => {
-      if (!user) return { hosting: [], attending: [] };
-      
-      const now = new Date().toISOString();
-      
-      // Fetch hosting events
-      const { data: hosting } = await supabase
-        .from('events')
-        .select(`
-          id,
-          title,
-          start_time,
-          format,
-          event_type,
-          location_city,
-          location_country,
-          organizer_id
-        `)
-        .eq('organizer_id', user.id)
-        .eq('is_cancelled', false)
-        .gte('start_time', now)
-        .order('start_time', { ascending: true })
-        .limit(5);
-
-      // Fetch attending events
-      const { data: attendeeData } = await supabase
-        .from('event_attendees')
-        .select('event_id, status')
-        .eq('user_id', user.id)
-        .in('status', ['going', 'maybe']);
-
-      let attending = [];
-      if (attendeeData && attendeeData.length > 0) {
-        const eventIds = attendeeData.map(a => a.event_id);
-        const { data: events } = await supabase
+      try {
+        if (!user) return { hosting: [], attending: [] };
+        
+        const now = new Date().toISOString();
+        
+        // Fetch hosting events
+        const { data: hosting, error: hostingError } = await supabase
           .from('events')
           .select(`
             id,
@@ -67,24 +40,70 @@ export const UpcomingEventsSection = () => {
             location_country,
             organizer_id
           `)
-          .in('id', eventIds)
+          .eq('organizer_id', user.id)
           .eq('is_cancelled', false)
           .gte('start_time', now)
           .order('start_time', { ascending: true })
           .limit(5);
 
-        attending = events?.map(event => ({
-          ...event,
-          rsvp_status: attendeeData.find(a => a.event_id === event.id)?.status
-        })) || [];
-      }
+        if (hostingError) {
+          console.warn('[UpcomingEventsSection] Failed to fetch hosting events:', hostingError);
+        }
 
-      return {
-        hosting: hosting || [],
-        attending: attending || []
-      };
+        // Fetch attending events
+        const { data: attendeeData, error: attendeeError } = await supabase
+          .from('event_attendees')
+          .select('event_id, status')
+          .eq('user_id', user.id)
+          .in('status', ['going', 'maybe']);
+
+        if (attendeeError) {
+          console.warn('[UpcomingEventsSection] Failed to fetch attendee data:', attendeeError);
+        }
+
+        let attending: any[] = [];
+        if (attendeeData && attendeeData.length > 0) {
+          const eventIds = attendeeData.map(a => a.event_id);
+          const { data: events, error: eventsError } = await supabase
+            .from('events')
+            .select(`
+              id,
+              title,
+              start_time,
+              format,
+              event_type,
+              location_city,
+              location_country,
+              organizer_id
+            `)
+            .in('id', eventIds)
+            .eq('is_cancelled', false)
+            .gte('start_time', now)
+            .order('start_time', { ascending: true })
+            .limit(5);
+
+          if (eventsError) {
+            console.warn('[UpcomingEventsSection] Failed to fetch attending events:', eventsError);
+          }
+
+          attending = events?.map(event => ({
+            ...event,
+            rsvp_status: attendeeData.find(a => a.event_id === event.id)?.status
+          })) || [];
+        }
+
+        return {
+          hosting: hosting || [],
+          attending: attending || []
+        };
+      } catch (error) {
+        console.warn('[UpcomingEventsSection] Failed to fetch events:', error);
+        return { hosting: [], attending: [] };
+      }
     },
     enabled: !!user,
+    retry: 2,
+    retryDelay: 1000,
   });
 
   const displayEvents = activeTab === 'hosting' ? (myEvents?.hosting || []) : (myEvents?.attending || []);

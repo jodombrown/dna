@@ -12,12 +12,19 @@ export function useMatchingOpportunities() {
   return useQuery({
     queryKey: ['matching-opportunities', user?.id],
     queryFn: async () => {
-      if (!user?.id) return [];
-      return opportunityMatchingService.getMatchingOpportunities(user.id);
+      try {
+        if (!user?.id) return [];
+        return await opportunityMatchingService.getMatchingOpportunities(user.id);
+      } catch (error) {
+        console.warn('[useMatchingOpportunities] Failed to fetch:', error);
+        return [];
+      }
     },
     enabled: !!user?.id,
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
+    retry: 2,
+    retryDelay: 1000,
   });
 }
 
@@ -30,11 +37,18 @@ export function useOpportunityMatchScore(opportunityId: string | undefined) {
   return useQuery({
     queryKey: ['opportunity-match-score', user?.id, opportunityId],
     queryFn: async () => {
-      if (!user?.id || !opportunityId) return null;
-      return opportunityMatchingService.getMatchScore(user.id, opportunityId);
+      try {
+        if (!user?.id || !opportunityId) return null;
+        return await opportunityMatchingService.getMatchScore(user.id, opportunityId);
+      } catch (error) {
+        console.warn('[useOpportunityMatchScore] Failed to fetch:', error);
+        return null;
+      }
     },
     enabled: !!user?.id && !!opportunityId,
     staleTime: 10 * 60 * 1000, // 10 minutes
+    retry: 2,
+    retryDelay: 1000,
   });
 }
 
@@ -44,8 +58,17 @@ export function useOpportunityMatchScore(opportunityId: string | undefined) {
 export function useTrendingOpportunities(limit: number = 5) {
   return useQuery({
     queryKey: ['trending-opportunities', limit],
-    queryFn: () => opportunityMatchingService.getTrendingOpportunities(limit),
+    queryFn: async () => {
+      try {
+        return await opportunityMatchingService.getTrendingOpportunities(limit);
+      } catch (error) {
+        console.warn('[useTrendingOpportunities] Failed to fetch:', error);
+        return [];
+      }
+    },
     staleTime: 5 * 60 * 1000,
+    retry: 2,
+    retryDelay: 1000,
   });
 }
 
@@ -58,11 +81,18 @@ export function useNetworkOpportunities() {
   return useQuery({
     queryKey: ['network-opportunities', user?.id],
     queryFn: async () => {
-      if (!user?.id) return [];
-      return opportunityMatchingService.getNetworkOpportunities(user.id);
+      try {
+        if (!user?.id) return [];
+        return await opportunityMatchingService.getNetworkOpportunities(user.id);
+      } catch (error) {
+        console.warn('[useNetworkOpportunities] Failed to fetch:', error);
+        return [];
+      }
     },
     enabled: !!user?.id,
     staleTime: 5 * 60 * 1000,
+    retry: 2,
+    retryDelay: 1000,
   });
 }
 
