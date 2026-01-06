@@ -36,12 +36,12 @@ const GuestsTab: React.FC<GuestsTabProps> = ({ eventId }) => {
     try {
       // Pull registrations with status for this event
       const { data: regs, error: regErr } = await supabase
-        .from('event_orders')
+        .from('event_attendees')
         .select('user_id, status, created_at')
         .eq('event_id', eventId);
       if (regErr) throw regErr;
 
-      const userIds = (regs || []).map(r => r.user_id);
+      const userIds = (regs || []).map((r: any) => r.user_id);
       let profilesMap: Record<string, { username: string; full_name: string }> = {};
       if (userIds.length > 0) {
         const { data: profiles, error: profErr } = await supabase

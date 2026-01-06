@@ -68,7 +68,7 @@ export const EventRecommendationsWidget = () => {
     queryKey: ['user-event-registrations', user?.id],
     queryFn: async () => {
       const { data } = await supabase
-        .from('event_orders')
+        .from('event_attendees')
         .select('event_id')
         .eq('user_id', user!.id);
       return data?.map(r => r.event_id) || [];
@@ -100,7 +100,7 @@ export const EventRecommendationsWidget = () => {
 
       // Fetch event registrations for social proof
       const { data: allRegistrations } = await supabase
-        .from('event_orders')
+        .from('event_attendees')
         .select('event_id, user_id')
         .in('event_id', candidates.map(e => e.id));
 

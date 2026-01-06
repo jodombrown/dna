@@ -14,8 +14,8 @@ const InsightsTab: React.FC<InsightsTabProps> = ({ eventId }) => {
   useEffect(() => {
     (async () => {
       const { data: r } = await supabase
-        .from('event_orders')
-        .select('created_at, price_paid_cents')
+        .from('event_attendees')
+        .select('created_at')
         .eq('event_id', eventId);
       setRegs(r || []);
       const { data: a } = await supabase
@@ -27,12 +27,11 @@ const InsightsTab: React.FC<InsightsTabProps> = ({ eventId }) => {
   }, [eventId]);
 
   const byDay = useMemo(() => {
-    const map = new Map<string, { date: string; registrations: number; revenue: number }>();
+    const map = new Map<string, { date: string; registrations: number }>();
     for (const r of regs) {
       const d = fmtDate(r.created_at);
-      const item = map.get(d) || { date: d, registrations: 0, revenue: 0 };
+      const item = map.get(d) || { date: d, registrations: 0 };
       item.registrations += 1;
-      item.revenue += (r.price_paid_cents || 0) / 100;
       map.set(d, item);
     }
     return Array.from(map.values()).sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime());
@@ -68,17 +67,10 @@ const InsightsTab: React.FC<InsightsTabProps> = ({ eventId }) => {
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Revenue by day (USD)</CardTitle></CardHeader>
-        <CardContent style={{ height: 240 }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={byDay}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} />
-            </LineChart>
-          </ResponsiveContainer>
+        <CardHeader><CardTitle>Total Registrations</CardTitle></CardHeader>
+        <CardContent>
+          <div className="text-3xl font-bold">{regs.length}</div>
+          <p className="text-sm text-muted-foreground">Total attendees registered</p>
         </CardContent>
       </Card>
 

@@ -2306,8 +2306,11 @@ export type Database = {
           checked_in_at: string | null
           created_at: string
           event_id: string
+          guest_name: string | null
           id: string
+          qr_code_token: string | null
           response_note: string | null
+          source: string | null
           status: Database["public"]["Enums"]["rsvp_status"]
           updated_at: string
           user_id: string
@@ -2317,8 +2320,11 @@ export type Database = {
           checked_in_at?: string | null
           created_at?: string
           event_id: string
+          guest_name?: string | null
           id?: string
+          qr_code_token?: string | null
           response_note?: string | null
+          source?: string | null
           status?: Database["public"]["Enums"]["rsvp_status"]
           updated_at?: string
           user_id: string
@@ -2328,8 +2334,11 @@ export type Database = {
           checked_in_at?: string | null
           created_at?: string
           event_id?: string
+          guest_name?: string | null
           id?: string
+          qr_code_token?: string | null
           response_note?: string | null
+          source?: string | null
           status?: Database["public"]["Enums"]["rsvp_status"]
           updated_at?: string
           user_id?: string
@@ -2442,6 +2451,56 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "event_comments_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_promo_codes: {
+        Row: {
+          code: string
+          created_at: string | null
+          current_uses: number | null
+          discount_type: string
+          discount_value: number
+          event_id: string
+          id: string
+          is_active: boolean | null
+          max_uses: number | null
+          valid_from: string | null
+          valid_until: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          current_uses?: number | null
+          discount_type: string
+          discount_value: number
+          event_id: string
+          id?: string
+          is_active?: boolean | null
+          max_uses?: number | null
+          valid_from?: string | null
+          valid_until?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          current_uses?: number | null
+          discount_type?: string
+          discount_value?: number
+          event_id?: string
+          id?: string
+          is_active?: boolean | null
+          max_uses?: number | null
+          valid_from?: string | null
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_promo_codes_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
@@ -2673,6 +2732,44 @@ export type Database = {
           },
         ]
       }
+      event_roles: {
+        Row: {
+          created_at: string | null
+          event_id: string
+          id: string
+          permissions: Json | null
+          role: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          event_id: string
+          id?: string
+          permissions?: Json | null
+          role: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          event_id?: string
+          id?: string
+          permissions?: Json | null
+          role?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_roles_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_ticket_holds: {
         Row: {
           created_at: string
@@ -2791,6 +2888,65 @@ export type Database = {
           },
         ]
       }
+      event_tickets: {
+        Row: {
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          event_id: string
+          id: string
+          is_active: boolean | null
+          name: string
+          price_cents: number
+          quantity_sold: number | null
+          quantity_total: number | null
+          sale_end: string | null
+          sale_start: string | null
+          sort_order: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          event_id: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          price_cents?: number
+          quantity_sold?: number | null
+          quantity_total?: number | null
+          sale_end?: string | null
+          sale_start?: string | null
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          event_id?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          price_cents?: number
+          quantity_sold?: number | null
+          quantity_total?: number | null
+          sale_end?: string | null
+          sale_start?: string | null
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_tickets_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_waitlist: {
         Row: {
           created_at: string
@@ -2851,13 +3007,17 @@ export type Database = {
           meeting_url: string | null
           organizer_id: string
           requires_approval: boolean
+          short_description: string | null
           slug: string | null
+          speakers: Json | null
           start_time: string
+          status: string | null
           subtitle: string | null
           tags: string[] | null
           timezone: string
           title: string
           updated_at: string
+          visibility: string | null
         }
         Insert: {
           agenda?: Json | null
@@ -2886,13 +3046,17 @@ export type Database = {
           meeting_url?: string | null
           organizer_id: string
           requires_approval?: boolean
+          short_description?: string | null
           slug?: string | null
+          speakers?: Json | null
           start_time: string
+          status?: string | null
           subtitle?: string | null
           tags?: string[] | null
           timezone?: string
           title: string
           updated_at?: string
+          visibility?: string | null
         }
         Update: {
           agenda?: Json | null
@@ -2921,13 +3085,17 @@ export type Database = {
           meeting_url?: string | null
           organizer_id?: string
           requires_approval?: boolean
+          short_description?: string | null
           slug?: string | null
+          speakers?: Json | null
           start_time?: string
+          status?: string | null
           subtitle?: string | null
           tags?: string[] | null
           timezone?: string
           title?: string
           updated_at?: string
+          visibility?: string | null
         }
         Relationships: [
           {
@@ -5152,6 +5320,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      platform_fees: {
+        Row: {
+          applies_to: string | null
+          created_at: string | null
+          fee_type: string
+          id: string
+          is_active: boolean | null
+          max_amount: number | null
+          min_amount: number | null
+          name: string
+          value: number
+        }
+        Insert: {
+          applies_to?: string | null
+          created_at?: string | null
+          fee_type: string
+          id?: string
+          is_active?: boolean | null
+          max_amount?: number | null
+          min_amount?: number | null
+          name: string
+          value: number
+        }
+        Update: {
+          applies_to?: string | null
+          created_at?: string | null
+          fee_type?: string
+          id?: string
+          is_active?: boolean | null
+          max_amount?: number | null
+          min_amount?: number | null
+          name?: string
+          value?: number
+        }
+        Relationships: []
       }
       political_digest: {
         Row: {
@@ -8293,6 +8497,10 @@ export type Database = {
         Args: { target_user_id: string }
         Returns: undefined
       }
+      check_event_permission: {
+        Args: { p_event_id: string; p_permission: string; p_user_id: string }
+        Returns: boolean
+      }
       check_rate_limit: {
         Args: {
           _ip_address: unknown
@@ -8513,6 +8721,7 @@ export type Database = {
       generate_magic_link_token: { Args: never; Returns: string }
       generate_referral_code: { Args: never; Returns: string }
       generate_slug: { Args: { title: string }; Returns: string }
+      generate_ticket_number: { Args: never; Returns: string }
       generate_username: { Args: { _full_name: string }; Returns: string }
       generate_username_from_name: {
         Args: { full_name: string }
@@ -10164,6 +10373,15 @@ export type Database = {
       validate_prelaunch_access: {
         Args: { user_email: string }
         Returns: boolean
+      }
+      validate_promo_code: {
+        Args: { p_code: string; p_event_id: string }
+        Returns: {
+          discount_type: string
+          discount_value: number
+          error_message: string
+          is_valid: boolean
+        }[]
       }
     }
     Enums: {
