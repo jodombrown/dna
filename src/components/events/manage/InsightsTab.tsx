@@ -14,8 +14,8 @@ const InsightsTab: React.FC<InsightsTabProps> = ({ eventId }) => {
   useEffect(() => {
     (async () => {
       const { data: r } = await supabase
-        .from('event_registrations')
-        .select('registered_at, price_paid_cents')
+        .from('event_orders')
+        .select('created_at, price_paid_cents')
         .eq('event_id', eventId);
       setRegs(r || []);
       const { data: a } = await supabase
@@ -29,7 +29,7 @@ const InsightsTab: React.FC<InsightsTabProps> = ({ eventId }) => {
   const byDay = useMemo(() => {
     const map = new Map<string, { date: string; registrations: number; revenue: number }>();
     for (const r of regs) {
-      const d = fmtDate(r.registered_at);
+      const d = fmtDate(r.created_at);
       const item = map.get(d) || { date: d, registrations: 0, revenue: 0 };
       item.registrations += 1;
       item.revenue += (r.price_paid_cents || 0) / 100;

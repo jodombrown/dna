@@ -36,8 +36,8 @@ const GuestsTab: React.FC<GuestsTabProps> = ({ eventId }) => {
     try {
       // Pull registrations with status for this event
       const { data: regs, error: regErr } = await supabase
-        .from('event_registrations')
-        .select('user_id, status, registered_at')
+        .from('event_orders')
+        .select('user_id, status, created_at')
         .eq('event_id', eventId);
       if (regErr) throw regErr;
 
@@ -60,7 +60,7 @@ const GuestsTab: React.FC<GuestsTabProps> = ({ eventId }) => {
         user_id: r.user_id,
         username: profilesMap[r.user_id]?.username || 'unknown',
         full_name: profilesMap[r.user_id]?.full_name || 'Unknown',
-        registered_at: r.registered_at,
+        registered_at: r.created_at,
         status: (r.status as Guest['status']) || 'going',
       }));
 

@@ -17,7 +17,7 @@ export const RegisteredEventsWidget = () => {
     queryFn: async () => {
       try {
         const { data, error } = await supabase
-          .from('event_registrations')
+          .from('event_orders')
           .select(`
             *,
             events:event_id (
@@ -31,7 +31,7 @@ export const RegisteredEventsWidget = () => {
           `)
           .eq('user_id', user!.id)
           .eq('status', 'going')
-          .order('registered_at', { ascending: false })
+          .order('created_at', { ascending: false })
           .limit(3);
         
         if (error) {

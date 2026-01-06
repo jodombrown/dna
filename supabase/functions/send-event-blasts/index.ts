@@ -82,7 +82,7 @@ serve(async (req) => {
           : segType === 'confirmed' ? ['going']
           : [segType];
         const { data: regsList, error: regsListErr } = await supabase
-          .from('event_registrations')
+          .from('event_orders')
           .select('user_id, status')
           .eq('event_id', blast.event_id)
           .in('status', statuses);
