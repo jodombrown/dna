@@ -66,24 +66,6 @@ const UnifiedHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Hide UnifiedHeader on mobile for Connect routes (has its own header)
-  const isConnectRoute = location.pathname.includes('/dna/connect');
-  if (isMobile && isConnectRoute) {
-    return null;
-  }
-  
-  // Conditionally use dashboard context only for authenticated users
-  let setActiveView: any = () => {};
-  let activeView: any = 'dashboard';
-  
-  try {
-    const dashboard = useDashboard();
-    setActiveView = dashboard.setActiveView;
-    activeView = dashboard.activeView;
-  } catch (error) {
-    // DashboardProvider not available (marketing pages)
-  }
-  
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
   
@@ -115,6 +97,25 @@ const UnifiedHeader = () => {
 
   // Query unread message count
   const { data: unreadMessageCount = 0 } = useUnreadMessageCount();
+  
+  // Conditionally use dashboard context only for authenticated users
+  let setActiveView: any = () => {};
+  let activeView: any = 'dashboard';
+  
+  try {
+    const dashboard = useDashboard();
+    setActiveView = dashboard.setActiveView;
+    activeView = dashboard.activeView;
+  } catch (error) {
+    // DashboardProvider not available (marketing pages)
+  }
+  
+  // Hide UnifiedHeader on mobile for Connect routes (has its own header)
+  // IMPORTANT: This check must be AFTER all hooks to prevent "fewer hooks" error
+  const isConnectRoute = location.pathname.includes('/dna/connect');
+  if (isMobile && isConnectRoute) {
+    return null;
+  }
 
   const isAuthenticated = !!user;
   
