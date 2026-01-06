@@ -189,6 +189,7 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
             original_created_at: null,
             slug: story.slug || null,
           };
+          break;
         }
 
         case 'post': {
