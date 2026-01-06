@@ -35,6 +35,8 @@ import { linkifyContent } from '@/utils/linkifyContent';
 import { usePostLikes } from '@/hooks/usePostLikes';
 import { usePostBookmarks } from '@/hooks/usePostBookmarks';
 import { cn } from '@/lib/utils';
+import { PostMenuOwn } from '@/components/posts/PostMenuOwn';
+import { PostMenuOthers } from '@/components/posts/PostMenuOthers';
 
 interface AgendaItem {
   time: string;
@@ -64,6 +66,8 @@ export const EventCard: React.FC<EventCardProps> = ({ item, currentUserId, onUpd
   const navigate = useNavigate();
   const [showFullContent, setShowFullContent] = useState(false);
   const [showFullAgenda, setShowFullAgenda] = useState(false);
+  
+  const isOwnEvent = item.author_id === currentUserId;
   
   const { likeCount, userHasLiked, toggleLike } = usePostLikes(item.post_id, currentUserId);
   const { bookmarkCount, userHasBookmarked, toggleBookmark } = usePostBookmarks(item.post_id, currentUserId);
@@ -140,6 +144,27 @@ export const EventCard: React.FC<EventCardProps> = ({ item, currentUserId, onUpd
             {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
           </p>
         </div>
+        
+        {/* Three-dot Menu */}
+        {isOwnEvent ? (
+          <PostMenuOwn
+            postId={item.post_id}
+            authorId={item.author_id}
+            currentUserId={currentUserId}
+            content={item.content || ''}
+            isPinned={!!item.pinned_at}
+            commentsDisabled={!!item.comments_disabled}
+            onUpdate={onUpdate}
+          />
+        ) : (
+          <PostMenuOthers
+            postId={item.post_id}
+            authorId={item.author_id}
+            authorName={item.author_display_name || item.author_username || 'User'}
+            currentUserId={currentUserId}
+            onUpdate={onUpdate}
+          />
+        )}
       </div>
 
       {/* Cover Image with Date Badge */}
