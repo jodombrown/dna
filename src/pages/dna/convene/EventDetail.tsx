@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Calendar, MapPin, Users, ExternalLink, Share2, Clock, MoreHorizontal, XCircle, Trash2, Flag, QrCode, Loader2 } from 'lucide-react';
+import { Calendar, MapPin, Users, ExternalLink, Share2, Clock, MoreHorizontal, XCircle, Trash2, Flag, QrCode, Loader2, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -495,8 +495,12 @@ const EventDetail = () => {
               </Button>
               {isOrganizer ? (
                 <>
-                  <Button onClick={() => navigate(`/dna/convene/events/${id}/edit`)}>
-                    Edit Event
+                  <Button onClick={() => navigate(`/dna/convene/events/${id}/manage`)}>
+                    <Settings className="h-4 w-4 mr-2" />
+                    Manage
+                  </Button>
+                  <Button variant="outline" onClick={() => navigate(`/dna/convene/events/${id}/edit`)}>
+                    Edit
                   </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
