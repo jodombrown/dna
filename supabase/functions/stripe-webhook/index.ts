@@ -51,7 +51,7 @@ serve(async (req) => {
 
         // Idempotency: if already linked, exit
         const { data: existing, error: queryErr } = await supabaseService
-          .from("event_registrations")
+          .from("event_orders")
           .select("id")
           .eq("stripe_session_id", session.id)
           .maybeSingle();
@@ -91,11 +91,11 @@ serve(async (req) => {
 
         // Find latest registration for this user/event
         const { data: regRow } = await supabaseService
-          .from("event_registrations")
+          .from("event_orders")
           .select("id")
           .eq("event_id", eventId)
           .eq("user_id", profileId)
-          .order("registered_at", { ascending: false })
+          .order("created_at", { ascending: false })
           .limit(1)
           .maybeSingle();
 
@@ -103,7 +103,7 @@ serve(async (req) => {
 
         if (regId) {
           const { error: updErr } = await supabaseService
-            .from("event_registrations")
+            .from("event_orders")
             .update({
               ticket_type_id: ticketTypeId ?? null,
               price_paid_cents: session.amount_total ?? null,
@@ -116,7 +116,7 @@ serve(async (req) => {
           if (updErr) console.error("Update registration error:", updErr);
         } else {
           // As a fallback, create a minimal row (trusted key bypasses RLS)
-          const { error: insErr } = await supabaseService.from("event_registrations").insert({
+          const { error: insErr } = await supabaseService.from("event_orders").insert({
             event_id: eventId,
             user_id: profileId,
             ticket_type_id: ticketTypeId ?? null,
