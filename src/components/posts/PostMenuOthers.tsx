@@ -38,19 +38,23 @@ export function PostMenuOthers({
   } = usePostActions(postId, authorId, currentUserId);
 
   const handleHide = () => {
-    hidePost.mutate();
-    onUpdate?.();
+    hidePost.mutate(undefined, {
+      onSuccess: () => onUpdate?.(),
+    });
   };
 
   const handleMuteToggle = () => {
     if (isMuted) {
-      unmuteAuthor.mutate();
+      unmuteAuthor.mutate(undefined, {
+        onSuccess: () => onUpdate?.(),
+      });
     } else {
       if (confirm(`Are you sure you want to mute ${authorName}? You won't see their posts in your feed.`)) {
-        muteAuthor.mutate();
+        muteAuthor.mutate(undefined, {
+          onSuccess: () => onUpdate?.(),
+        });
       }
     }
-    onUpdate?.();
   };
 
   return (
