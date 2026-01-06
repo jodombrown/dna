@@ -41,8 +41,9 @@ export function PostMenuOwn({
 
   const handleDelete = () => {
     if (confirm('Are you sure you want to delete this post? This cannot be undone.')) {
-      deletePost.mutate();
-      onUpdate?.();
+      deletePost.mutate(undefined, {
+        onSuccess: () => onUpdate?.(),
+      });
     }
   };
 
