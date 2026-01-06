@@ -42,7 +42,7 @@ const Convene = () => {
 
       // Insert registration
       const { error } = await supabase
-        .from('event_orders')
+        .from('event_attendees')
         .insert({
           event_id: selectedEvent.id,
           user_id: user.id,

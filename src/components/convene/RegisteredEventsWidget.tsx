@@ -17,16 +17,16 @@ export const RegisteredEventsWidget = () => {
     queryFn: async () => {
       try {
         const { data, error } = await supabase
-          .from('event_orders')
+          .from('event_attendees')
           .select(`
             *,
             events:event_id (
               id,
               title,
-              date_time,
-              location,
-              attendee_count,
-              is_virtual
+              start_time,
+              location_name,
+              location_city,
+              format
             )
           `)
           .eq('user_id', user!.id)
@@ -78,9 +78,12 @@ export const RegisteredEventsWidget = () => {
           </div>
         ) : (
           <>
-            {registeredEvents.map((registration) => {
-              const event = registration.events as any;
+            {registeredEvents.map((registration: any) => {
+              const event = registration.events;
               if (!event) return null;
+              const isVirtual = event.format === 'virtual' || event.format === 'hybrid';
+              const location = event.location_name || event.location_city || '';
+              const dateTime = event.start_time;
               
               return (
                 <div
@@ -93,7 +96,7 @@ export const RegisteredEventsWidget = () => {
                       <h4 className="font-semibold text-sm truncate">
                         {event.title}
                       </h4>
-                      {event.is_virtual && (
+                      {isVirtual && (
                         <Badge variant="secondary" className="text-xs shrink-0">Virtual</Badge>
                       )}
                     </div>
@@ -101,14 +104,14 @@ export const RegisteredEventsWidget = () => {
                     <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
                       <Calendar className="h-3 w-3" />
                       <span>
-                        {format(new Date(event.date_time), 'MMM d, h:mm a')}
+                        {dateTime ? format(new Date(dateTime), 'MMM d, h:mm a') : 'TBD'}
                       </span>
                     </div>
 
-                    {event.location && (
+                    {location && (
                       <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
                         <MapPin className="h-3 w-3" />
-                        <span className="truncate">{event.location}</span>
+                        <span className="truncate">{location}</span>
                       </div>
                     )}
 
