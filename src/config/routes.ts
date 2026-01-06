@@ -43,6 +43,15 @@ export const ROUTES = {
     eventEdit: (id: string) => `/dna/convene/events/${id}/edit`,
     eventAnalytics: (id: string) => `/dna/convene/events/${id}/analytics`,
     eventCheckIn: (id: string) => `/dna/convene/events/${id}/check-in`,
+    // Event Management Console
+    eventManage: (id: string) => `/dna/convene/events/${id}/manage`,
+    eventManageAttendees: (id: string) => `/dna/convene/events/${id}/manage/attendees`,
+    eventManageCheckIn: (id: string) => `/dna/convene/events/${id}/manage/check-in`,
+    eventManageCommunications: (id: string) => `/dna/convene/events/${id}/manage/communications`,
+    eventManageAnalytics: (id: string) => `/dna/convene/events/${id}/manage/analytics`,
+    eventManageTeam: (id: string) => `/dna/convene/events/${id}/manage/team`,
+    eventManageSettings: (id: string) => `/dna/convene/events/${id}/manage/settings`,
+    // Groups
     groupDetail: (slug: string) => `/dna/convene/groups/${slug}`,
     groupEvents: (slug: string) => `/dna/convene/groups/${slug}/events`,
     groupSettings: (slug: string) => `/dna/convene/groups/${slug}/settings`,

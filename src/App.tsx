@@ -113,6 +113,16 @@ const GroupsBrowse = lazy(() => import("./pages/dna/convene/GroupsBrowse"));
 const GroupEventsPage = lazy(() => import("./pages/dna/convene/GroupEventsPage"));
 const EventCheckIn = lazy(() => import("./pages/dna/convene/EventCheckIn"));
 
+// Event Management Console
+const EventManagementLayout = lazy(() => import("./components/convene/management/EventManagementLayout"));
+const OverviewDashboard = lazy(() => import("./components/convene/management/overview/OverviewDashboard"));
+const AttendeeManagement = lazy(() => import("./components/convene/management/attendees/AttendeeManagement"));
+const ManagementCheckInDashboard = lazy(() => import("./components/convene/management/checkin/CheckInDashboard"));
+const CommunicationsHub = lazy(() => import("./components/convene/management/communications/CommunicationsHub"));
+const ManagementAnalyticsDashboard = lazy(() => import("./components/convene/management/analytics/AnalyticsDashboard"));
+const TeamManager = lazy(() => import("./components/convene/management/team/TeamManager"));
+const EventSettingsPage = lazy(() => import("./components/convene/management/settings/EventSettingsPage"));
+
 // Collaborate M1-M5 pages
 const CollaborateHub = lazy(() => import("./pages/dna/collaborate/CollaborateHub"));
 const ComingSoonCollaborate = lazy(() => import("./pages/dna/collaborate/ComingSoonCollaborate"));
@@ -457,6 +467,22 @@ function App() {
                   <EventCheckIn />
                 </OnboardingGuard>
               } />
+
+              {/* Event Management Console Routes */}
+              <Route path="/dna/convene/events/:eventId/manage" element={
+                <OnboardingGuard>
+                  <EventManagementLayout />
+                </OnboardingGuard>
+              }>
+                <Route index element={<OverviewDashboard />} />
+                <Route path="attendees" element={<AttendeeManagement />} />
+                <Route path="check-in" element={<ManagementCheckInDashboard />} />
+                <Route path="communications" element={<CommunicationsHub />} />
+                <Route path="analytics" element={<ManagementAnalyticsDashboard />} />
+                <Route path="team" element={<TeamManager />} />
+                <Route path="settings" element={<EventSettingsPage />} />
+              </Route>
+
               <Route path="/dna/convene/my-events" element={
                 <OnboardingGuard>
                   <MyEvents />
