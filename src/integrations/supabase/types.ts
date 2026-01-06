@@ -2406,7 +2406,7 @@ export type Database = {
             foreignKeyName: "event_checkins_registration_id_fkey"
             columns: ["registration_id"]
             isOneToOne: true
-            referencedRelation: "event_orders"
+            referencedRelation: "event_registrations"
             referencedColumns: ["id"]
           },
         ]
@@ -2490,7 +2490,7 @@ export type Database = {
           },
         ]
       }
-      event_orders: {
+      event_registrations: {
         Row: {
           answers: Json | null
           cancelled_at: string | null
@@ -2500,30 +2500,12 @@ export type Database = {
           join_token: string | null
           notes: string | null
           price_paid_cents: number | null
-          created_at: string
+          registered_at: string
           status: string
           stripe_payment_intent_id: string | null
           stripe_session_id: string | null
           ticket_type_id: string | null
           user_id: string
-          order_number: string | null
-          purchaser_name: string | null
-          purchaser_phone: string | null
-          subtotal_cents: number | null
-          discount_cents: number
-          platform_fee_cents: number
-          tax_cents: number
-          total_cents: number | null
-          promo_code_id: string | null
-          promo_code_used: string | null
-          payment_status: string
-          payment_method: string | null
-          stripe_checkout_session_id: string | null
-          stripe_charge_id: string | null
-          stripe_receipt_url: string | null
-          refunded_cents: number
-          refund_reason: string | null
-          refunded_at: string | null
         }
         Insert: {
           answers?: Json | null
@@ -2534,30 +2516,12 @@ export type Database = {
           join_token?: string | null
           notes?: string | null
           price_paid_cents?: number | null
-          created_at?: string
+          registered_at?: string
           status?: string
           stripe_payment_intent_id?: string | null
           stripe_session_id?: string | null
           ticket_type_id?: string | null
           user_id: string
-          order_number?: string | null
-          purchaser_name?: string | null
-          purchaser_phone?: string | null
-          subtotal_cents?: number | null
-          discount_cents?: number
-          platform_fee_cents?: number
-          tax_cents?: number
-          total_cents?: number | null
-          promo_code_id?: string | null
-          promo_code_used?: string | null
-          payment_status?: string
-          payment_method?: string | null
-          stripe_checkout_session_id?: string | null
-          stripe_charge_id?: string | null
-          stripe_receipt_url?: string | null
-          refunded_cents?: number
-          refund_reason?: string | null
-          refunded_at?: string | null
         }
         Update: {
           answers?: Json | null
@@ -2568,41 +2532,23 @@ export type Database = {
           join_token?: string | null
           notes?: string | null
           price_paid_cents?: number | null
-          created_at?: string
+          registered_at?: string
           status?: string
           stripe_payment_intent_id?: string | null
           stripe_session_id?: string | null
           ticket_type_id?: string | null
           user_id?: string
-          order_number?: string | null
-          purchaser_name?: string | null
-          purchaser_phone?: string | null
-          subtotal_cents?: number | null
-          discount_cents?: number
-          platform_fee_cents?: number
-          tax_cents?: number
-          total_cents?: number | null
-          promo_code_id?: string | null
-          promo_code_used?: string | null
-          payment_status?: string
-          payment_method?: string | null
-          stripe_checkout_session_id?: string | null
-          stripe_charge_id?: string | null
-          stripe_receipt_url?: string | null
-          refunded_cents?: number
-          refund_reason?: string | null
-          refunded_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "event_orders_event_id_fkey"
+            foreignKeyName: "event_registrations_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events_old"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "event_orders_ticket_type_id_fkey"
+            foreignKeyName: "event_registrations_ticket_type_id_fkey"
             columns: ["ticket_type_id"]
             isOneToOne: false
             referencedRelation: "event_ticket_types"
