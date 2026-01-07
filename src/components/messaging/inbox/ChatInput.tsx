@@ -143,7 +143,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   return (
-    <div className="border-t border-border bg-card">
+    <div className="border-t border-border/50 bg-[#f0f0f0] dark:bg-zinc-900">
       {/* Link Preview - shown before sending */}
       {linkPreview && !attachment && (
         <div className="px-3 pt-3">
@@ -243,7 +243,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 className={cn(
                   "min-h-[44px] max-h-[120px] resize-none",
                   "text-base md:text-sm", // 16px on mobile to prevent iOS zoom
-                  "bg-muted/50 border-0 focus-visible:ring-1 rounded-2xl py-3 px-4"
+                  "bg-white dark:bg-zinc-800 border-0 focus-visible:ring-1 focus-visible:ring-primary/30 rounded-3xl py-3 px-4 shadow-sm"
                 )}
               />
             </div>

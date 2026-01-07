@@ -252,12 +252,12 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
         onDeleteConversation={() => deleteConversationMutation.mutate()}
       />
 
-      {/* Messages */}
+      {/* Messages - WhatsApp-style background */}
       <div 
         ref={containerRef}
-        className="flex-1 overflow-y-auto"
+        className="flex-1 overflow-y-auto bg-[#e5ddd5] dark:bg-zinc-900"
         style={{ 
-          backgroundImage: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.03"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
+          backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'412\' height=\'732\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cdefs%3E%3Cpattern id=\'wa\' patternUnits=\'userSpaceOnUse\' width=\'70\' height=\'70\'%3E%3Cpath d=\'M35 35m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0\' fill=\'%23cdc9c3\' fill-opacity=\'0.4\'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width=\'100%25\' height=\'100%25\' fill=\'url(%23wa)\'/%3E%3C/svg%3E")',
         }}
       >
         {isLoading ? (
