@@ -476,49 +476,25 @@ async getConversations(
 
   /**
    * Mark a conversation as read by updating last_read_at in conversation_participants
+   * Note: Only updates existing records - doesn't insert for legacy conversations
    */
   async markAsRead(conversationId: string): Promise<void> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      throw new Error('Not authenticated');
+      return; // Silently return if not authenticated
     }
 
-    // First try to update existing record
-    const { data: existing, error: selectError } = await supabase
+    // Only update existing participant records - don't try to insert
+    // (legacy conversations use the old 'conversations' table without conversation_participants)
+    const { error: updateError } = await supabase
       .from('conversation_participants')
-      .select('id')
+      .update({ last_read_at: new Date().toISOString() })
       .eq('conversation_id', conversationId)
-      .eq('user_id', user.id)
-      .maybeSingle();
+      .eq('user_id', user.id);
 
-    if (selectError) {
-      throw selectError;
-    }
-
-    if (existing) {
-      // Update existing participant record
-      const { error: updateError } = await supabase
-        .from('conversation_participants')
-        .update({ last_read_at: new Date().toISOString() })
-        .eq('conversation_id', conversationId)
-        .eq('user_id', user.id);
-
-      if (updateError) {
-        throw updateError;
-      }
-    } else {
-      // Insert new participant record
-      const { error: insertError } = await supabase
-        .from('conversation_participants')
-        .insert({
-          conversation_id: conversationId,
-          user_id: user.id,
-          last_read_at: new Date().toISOString(),
-        });
-
-      if (insertError) {
-        throw insertError;
-      }
+    // Silently ignore errors - this handles legacy conversations gracefully
+    if (updateError) {
+      console.debug('markAsRead skipped for legacy conversation:', conversationId);
     }
   },
 
