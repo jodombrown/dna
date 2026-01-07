@@ -164,7 +164,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
       </div>
 
       {/* Message Bubble - DNA branded styling */}
-      <div className="flex flex-col gap-0.5 max-w-[88%] sm:max-w-[75%]">
+      <div className="flex flex-col gap-0.5 max-w-[95%] sm:max-w-[70%]">
         <div className={cn(
           "rounded-xl px-3 py-1.5",
           // DNA branded colors: Emerald tint for sent, warm cream for received
