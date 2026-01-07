@@ -384,9 +384,9 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
                         scale: 0.8, 
                         filter: 'blur(4px)',
                       }}
-                      exit={{ opacity: 0, scale: 0.8 }}
-                      transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] } as const}
-                      className="relative group"
+                      transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                      className="relative group overflow-hidden"
+                      style={{ height: 0, padding: 0, margin: 0 }}
                     />
                   );
                 }
@@ -396,13 +396,12 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
                     key={conversation.conversation_id}
                     layout
                     initial={{ opacity: 1, scale: 1 }}
-                    animate={{ opacity: 1, scale: 1 }}
                     exit={{ 
                       opacity: 0, 
                       scale: 0.8, 
                       filter: 'blur(4px)',
                     }}
-                    transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] } as const}
+                    transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                     className={cn(
                       'relative group',
                       selectedConversationId === conversation.conversation_id && 'bg-accent'
