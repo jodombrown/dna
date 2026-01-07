@@ -45,9 +45,9 @@ export function useFeedbackMessages(
   // Flatten all pages into a single array
   const messages = data?.pages.flatMap((page) => page.messages) ?? [];
 
-  // Subscribe to real-time updates
+  // Subscribe to real-time updates - only when ready
   useEffect(() => {
-    if (!channelId) return;
+    if (!channelId || !isReady) return;
 
     const newMsgChannel = feedbackService.subscribeToMessages(channelId, () => {
       // Refetch to get the new message with sender info
@@ -62,7 +62,7 @@ export function useFeedbackMessages(
       feedbackService.unsubscribe(newMsgChannel);
       feedbackService.unsubscribe(updateChannel);
     };
-  }, [channelId, queryClient]);
+  }, [channelId, isReady, queryClient]);
 
   return {
     messages,
