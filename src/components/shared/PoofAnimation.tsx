@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { ReactNode } from 'react';
 
-interface PoofAnimationProps {
+interface CollapseAnimationProps {
   children: ReactNode;
   isVisible: boolean;
   onExitComplete?: () => void;
@@ -9,45 +9,48 @@ interface PoofAnimationProps {
 }
 
 /**
- * PoofAnimation - Wraps content with a subtle "poof" exit animation
+ * CollapseAnimation - Wraps content with a collapse + fade exit animation
  * 
  * Usage:
  * const [isVisible, setIsVisible] = useState(true);
  * 
  * const handleDelete = () => {
- *   setIsVisible(false); // Triggers poof animation
+ *   setIsVisible(false); // Triggers collapse animation
  * };
  * 
- * <PoofAnimation 
+ * <CollapseAnimation 
  *   isVisible={isVisible} 
  *   onExitComplete={() => actualDeleteLogic()}
  * >
  *   <YourContent />
- * </PoofAnimation>
+ * </CollapseAnimation>
  */
 export function PoofAnimation({ 
   children, 
   isVisible, 
   onExitComplete,
   className = ''
-}: PoofAnimationProps) {
+}: CollapseAnimationProps) {
   return (
     <AnimatePresence mode="popLayout" onExitComplete={onExitComplete}>
       {isVisible && (
         <motion.div
           className={className}
-          initial={{ opacity: 1, scale: 1 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 1, height: 'auto' }}
+          animate={{ opacity: 1, height: 'auto' }}
           exit={{
             opacity: 0,
-            scale: 0.8,
-            filter: 'blur(4px)',
-            transition: {
-              duration: 0.25,
-              ease: [0.4, 0, 0.2, 1]
-            }
+            height: 0,
+            marginTop: 0,
+            marginBottom: 0,
+            paddingTop: 0,
+            paddingBottom: 0,
           }}
-          layout
+          transition={{
+            duration: 0.25,
+            ease: [0.4, 0, 0.2, 1],
+          }}
+          style={{ overflow: 'hidden' }}
         >
           {children}
         </motion.div>
@@ -57,7 +60,8 @@ export function PoofAnimation({
 }
 
 /**
- * usePoofDelete - Hook for managing poof delete animations
+ * usePoofDelete - Hook for managing collapse delete animations
+ * (Name kept for backwards compatibility)
  * 
  * Usage:
  * const { visibleItems, triggerPoof } = usePoofDelete(items, 'id');
