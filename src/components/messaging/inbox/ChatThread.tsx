@@ -252,12 +252,14 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
         onDeleteConversation={() => deleteConversationMutation.mutate()}
       />
 
-      {/* Messages - WhatsApp-style background */}
+      {/* Messages - DNA Afro-centric background with Mudcloth pattern */}
       <div 
         ref={containerRef}
-        className="flex-1 overflow-y-auto bg-[#e5ddd5] dark:bg-zinc-900"
+        className="flex-1 overflow-y-auto bg-[#f5f2ed] dark:bg-zinc-900"
         style={{ 
-          backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'412\' height=\'732\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cdefs%3E%3Cpattern id=\'wa\' patternUnits=\'userSpaceOnUse\' width=\'70\' height=\'70\'%3E%3Cpath d=\'M35 35m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0\' fill=\'%23cdc9c3\' fill-opacity=\'0.4\'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width=\'100%25\' height=\'100%25\' fill=\'url(%23wa)\'/%3E%3C/svg%3E")',
+          backgroundImage: 'url("/patterns/mudcloth-pattern.svg")',
+          backgroundSize: '200px',
+          backgroundRepeat: 'repeat',
         }}
       >
         {isLoading ? (

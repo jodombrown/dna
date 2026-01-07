@@ -38,7 +38,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   const navigate = useNavigate();
 
   return (
-    <div className="flex items-center gap-2 px-2 py-2 border-b border-border/50 bg-[#075e54] dark:bg-zinc-900">
+    <div className="flex items-center gap-2 px-2 py-2 border-b border-border/50 bg-[#4A8D77] dark:bg-[#3a7261]">
       {/* Back Button */}
       <Button variant="ghost" size="icon" onClick={onBack} className="h-9 w-9 text-white hover:bg-white/10">
         <ArrowLeft className="h-5 w-5" />
