@@ -10,11 +10,8 @@ import { cn } from '@/lib/utils';
 
 import { 
   Home,
-  Users, 
-  MessageSquare, 
   MessageCircle,
   Bell,
-  Search,
   User,
   LogOut,
   Menu,
@@ -25,13 +22,9 @@ import {
   Lightbulb,
   TestTube,
   Rocket,
-  Briefcase,
   Shield,
-  Calendar,
-  Handshake,
-  Heart,
-  BookOpen,
-  Plus
+  Plus,
+  Search
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -185,14 +178,8 @@ const UnifiedHeader = () => {
   }
   const currentPath = location.pathname;
 
-  // 5C Framework Navigation - PRIMARY for authenticated users
-  const fiveCNavigation = [
-    { title: 'Connect', pillar: 'connect', icon: Users, path: '/dna/connect', description: 'Build your network', badge: 0 },
-    { title: 'Convene', pillar: 'convene', icon: Calendar, path: '/dna/convene', description: 'Join events & gatherings', badge: 0 },
-    { title: 'Collaborate', pillar: 'collaborate', icon: Handshake, path: '/dna/collaborate', description: 'Work together on projects', badge: 0 },
-    { title: 'Contribute', pillar: 'contribute', icon: Heart, path: '/dna/contribute', description: 'Give back & support', badge: 0 },
-    { title: 'Convey', pillar: 'convey', icon: BookOpen, path: '/dna/convey', description: 'Share your story', badge: 0 },
-  ];
+  // NOTE: 5C Framework Navigation removed from header - PulseBar is now the primary navigation
+  // This consolidation reduces confusion from duplicate navigation elements
 
   // Utility navigation - SECONDARY
   const utilityNavigation = [
@@ -274,42 +261,7 @@ const UnifiedHeader = () => {
 
             {/* Right section - Navigation and Profile */}
             <div className="flex items-center space-x-4">
-              {/* Desktop Navigation - 5C Framework PRIMARY */}
-              {isAuthenticated && (
-                <nav className="hidden lg:flex items-center space-x-1 border-r pr-4 mr-4">
-                  {fiveCNavigation.map((item) => {
-                    const Icon = item.icon;
-                    const isActivePillar = location.pathname.includes(item.path);
-                    return (
-                      <Tooltip key={item.pillar}>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => navigate(item.path)}
-                            className={cn(
-                              "flex flex-col items-center gap-1 h-auto py-2 px-3 relative group",
-                              isActivePillar 
-                                ? 'bg-primary/10 text-primary' 
-                                : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
-                            )}
-                          >
-                            <Icon className="w-5 h-5" />
-                            <span className="text-xs font-medium">{item.title}</span>
-                            {isActivePillar && (
-                              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-0.5 bg-primary rounded-full" />
-                            )}
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom">
-                          <p className="font-medium">{item.title}</p>
-                          <p className="text-xs text-muted-foreground">{item.description}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    );
-                  })}
-                </nav>
-              )}
+              {/* 5C Navigation removed - PulseBar is now the primary Five C's navigation */}
 
               {/* Desktop Utility Navigation - SECONDARY */}
               {isAuthenticated && (
