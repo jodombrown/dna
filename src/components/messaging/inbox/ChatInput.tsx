@@ -143,7 +143,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   return (
-    <div className="border-t border-border/50 bg-[#f0f0f0] dark:bg-zinc-900">
+    <div className="border-t border-border/30 bg-[#f5f2ed] dark:bg-zinc-900">
       {/* Link Preview - shown before sending */}
       {linkPreview && !attachment && (
         <div className="px-3 pt-3">

@@ -163,14 +163,14 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
         />
       </div>
 
-      {/* Message Bubble - WhatsApp-inspired styling */}
+      {/* Message Bubble - DNA branded styling */}
       <div className="flex flex-col gap-0.5 max-w-[88%] sm:max-w-[75%]">
         <div className={cn(
           "rounded-xl px-3 py-1.5",
-          // WhatsApp-inspired colors: light green for sent, white for received
+          // DNA branded colors: Emerald tint for sent, warm cream for received
           isOwn 
-            ? "bg-[#dcf8c6] dark:bg-emerald-800/80 text-foreground dark:text-white rounded-br-sm shadow-sm" 
-            : "bg-white dark:bg-zinc-800 text-foreground rounded-bl-sm shadow-sm"
+            ? "bg-[#d4e8e0] dark:bg-emerald-800/80 text-foreground dark:text-white rounded-br-sm shadow-sm" 
+            : "bg-white dark:bg-zinc-800 text-foreground rounded-bl-sm shadow-sm border border-[#e8e0d4]/50"
         )}>
           {/* Voice Message Player */}
           {isVoiceMessage && attachment?.url ? (
