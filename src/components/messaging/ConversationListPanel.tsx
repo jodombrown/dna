@@ -22,7 +22,7 @@ import { MessageRequestCard } from './MessageRequestBanner';
 import { useMessageRequests } from '@/hooks/useMessageRequests';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import { messageService } from '@/services/messageService';
+import { messageService, deleteConversation } from '@/services/messageService';
 
 interface ConversationListPanelProps {
   conversations?: ConversationListItem[];
@@ -121,6 +121,17 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
   // Pin/unpin - simplified (just toast for now, needs RPC)
   const handleTogglePin = (conversationId: string, currentlyPinned: boolean) => {
     toast({ title: currentlyPinned ? 'Unpinned' : 'Pinned', description: 'Feature coming soon' });
+  };
+
+  // Delete a conversation
+  const handleDelete = async (conversationId: string) => {
+    try {
+      await deleteConversation(conversationId);
+      toast({ title: 'Conversation deleted' });
+      onRefresh?.();
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to delete conversation', variant: 'destructive' });
+    }
   };
 
   const getInitials = (name: string) => {
@@ -504,7 +515,13 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
                         </>
                       )}
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem className="text-destructive">
+                      <DropdownMenuItem 
+                        className="text-destructive"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(conversation.conversation_id);
+                        }}
+                      >
                         <Trash2 className="h-4 w-4 mr-2" />
                         Delete
                       </DropdownMenuItem>

@@ -62,7 +62,7 @@ import { useIsMobile } from '@/hooks/useMobile';
 interface Attendee {
   id: string;
   user_id: string;
-  status: 'going' | 'maybe' | 'pending' | 'waitlist' | 'not_going' | 'cancelled';
+  status: string;
   checked_in: boolean;
   checked_in_at: string | null;
   created_at: string;
@@ -226,7 +226,7 @@ const AttendeeManagement: React.FC = () => {
     mutationFn: async ({ attendeeId, status }: { attendeeId: string; status: string }) => {
       const { error } = await supabase
         .from('event_attendees')
-        .update({ status })
+        .update({ status: status as 'going' | 'maybe' | 'not_going' | 'pending' | 'waitlist' })
         .eq('id', attendeeId);
       if (error) throw error;
     },

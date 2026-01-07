@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { messageService } from '@/services/messageService';
 import { useParams } from 'react-router-dom';
 import { useMobile } from '@/hooks/useMobile';
@@ -11,7 +11,6 @@ import { LayoutTransitionLoader } from '@/components/LayoutTransitionLoader';
 
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import MessagesBreadcrumb from '@/components/messaging/MessagesBreadcrumb';
-
 /**
  * DnaMessages - Canonical Messages route (/dna/messages)
  * 
@@ -22,8 +21,15 @@ import MessagesBreadcrumb from '@/components/messaging/MessagesBreadcrumb';
 const DnaMessages = () => {
   const { conversationId } = useParams();
   const { isMobile } = useMobile();
+  const queryClient = useQueryClient();
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(conversationId || null);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Proper refresh function that invalidates both query keys
+  const handleRefresh = () => {
+    queryClient.invalidateQueries({ queryKey: ['conversations'] });
+    queryClient.invalidateQueries({ queryKey: ['conversations-archived'] });
+  };
 
   // Fetch conversations
   const { data: conversations, isLoading, refetch } = useQuery({
@@ -82,7 +88,7 @@ const DnaMessages = () => {
             onSelectConversation={setSelectedConversationId}
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
-            onRefresh={() => { refetch(); }}
+            onRefresh={handleRefresh}
           />
         </div>
         <MobileBottomNav />
@@ -106,7 +112,7 @@ const DnaMessages = () => {
             onSelectConversation={setSelectedConversationId}
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
-            onRefresh={() => { refetch(); }}
+            onRefresh={handleRefresh}
           />
         }
         right={
