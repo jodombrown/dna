@@ -49,6 +49,7 @@ import { useUnreadMessageCount } from '@/hooks/useUnreadMessageCount';
 import { useUnreadNotificationCount } from '@/hooks/useUnreadNotificationCount';
 import { useMobile } from '@/hooks/useMobile';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
+import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 
 const UnifiedHeader = () => {
@@ -104,9 +105,12 @@ const UnifiedHeader = () => {
   }
   
   // Hide UnifiedHeader on mobile for Connect routes (has its own header)
+  // Also hide when header visibility is set to hidden (e.g., during mobile chat)
   // IMPORTANT: This check must be AFTER all hooks to prevent "fewer hooks" error
   const isConnectRoute = location.pathname.includes('/dna/connect');
-  if (isMobile && isConnectRoute) {
+  const { isHeaderHidden } = useHeaderVisibility();
+  
+  if (isMobile && (isConnectRoute || isHeaderHidden)) {
     return null;
   }
 
