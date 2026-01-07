@@ -252,15 +252,10 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
         onDeleteConversation={() => deleteConversationMutation.mutate()}
       />
 
-      {/* Messages - DNA Afro-centric background with Mudcloth pattern */}
+      {/* Messages */}
       <div 
         ref={containerRef}
-        className="flex-1 overflow-y-auto bg-[#f5f2ed] dark:bg-zinc-900"
-        style={{ 
-          backgroundImage: 'url("/patterns/mudcloth-pattern.svg")',
-          backgroundSize: '200px',
-          backgroundRepeat: 'repeat',
-        }}
+        className="flex-1 overflow-y-auto bg-white dark:bg-zinc-900"
       >
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
