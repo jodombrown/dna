@@ -483,19 +483,42 @@ async getConversations(
       throw new Error('Not authenticated');
     }
 
-    // Update last_read_at in conversation_participants
-    const { error } = await supabase
+    // First try to update existing record
+    const { data: existing, error: selectError } = await supabase
       .from('conversation_participants')
-      .upsert({
-        conversation_id: conversationId,
-        user_id: user.id,
-        last_read_at: new Date().toISOString(),
-      }, {
-        onConflict: 'conversation_id,user_id'
-      });
+      .select('id')
+      .eq('conversation_id', conversationId)
+      .eq('user_id', user.id)
+      .maybeSingle();
 
-    if (error) {
-      throw error;
+    if (selectError) {
+      throw selectError;
+    }
+
+    if (existing) {
+      // Update existing participant record
+      const { error: updateError } = await supabase
+        .from('conversation_participants')
+        .update({ last_read_at: new Date().toISOString() })
+        .eq('conversation_id', conversationId)
+        .eq('user_id', user.id);
+
+      if (updateError) {
+        throw updateError;
+      }
+    } else {
+      // Insert new participant record
+      const { error: insertError } = await supabase
+        .from('conversation_participants')
+        .insert({
+          conversation_id: conversationId,
+          user_id: user.id,
+          last_read_at: new Date().toISOString(),
+        });
+
+      if (insertError) {
+        throw insertError;
+      }
     }
   },
 
