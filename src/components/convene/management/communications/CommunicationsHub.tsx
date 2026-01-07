@@ -66,7 +66,6 @@ interface EmailBlast {
   scheduled_for: string | null;
   sent_at: string | null;
   segment: any;
-  created_at: string;
 }
 
 interface SegmentOption {
@@ -251,10 +250,8 @@ const CommunicationsHub: React.FC = () => {
         user_id: userId,
         type: 'event',
         title: notifTitle,
-        body: notifBody,
-        entity_type: 'event',
-        entity_id: event.id,
-        action_url: `/dna/convene/events/${event.slug || event.id}`,
+        message: notifBody,
+        link_url: `/dna/convene/events/${event.slug || event.id}`,
       }));
 
       const { error } = await supabase
