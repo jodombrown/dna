@@ -107,7 +107,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   if (message.is_deleted) {
     return (
       <div className={cn(
-        "flex gap-2 px-4 py-1",
+        "flex gap-2 px-2 sm:px-4 py-1",
         isOwn ? "flex-row-reverse" : "flex-row"
       )}>
         {!isOwn && showAvatar && <div className="w-8 h-8" />}
@@ -128,7 +128,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
 
   return (
     <div className={cn(
-      "group flex gap-2 px-4 py-1",
+      "group flex gap-2 px-2 sm:px-4 py-1",
       isOwn ? "flex-row-reverse" : "flex-row"
     )}>
       {/* Avatar - Only for other user */}
@@ -164,7 +164,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
       </div>
 
       {/* Message Bubble */}
-      <div className="flex flex-col gap-1 max-w-[70%]">
+      <div className="flex flex-col gap-1 max-w-[85%] sm:max-w-[70%]">
         <div className={cn(
           "rounded-lg px-3 py-2",
           // Deeper 3D shadow effect
