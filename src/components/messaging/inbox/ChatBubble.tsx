@@ -107,15 +107,15 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   if (message.is_deleted) {
     return (
       <div className={cn(
-        "flex gap-2 px-2 sm:px-4 py-1",
+        "flex gap-1.5 px-2 sm:px-3 py-0.5",
         isOwn ? "flex-row-reverse" : "flex-row"
       )}>
-        {!isOwn && showAvatar && <div className="w-8 h-8" />}
-        {!isOwn && !showAvatar && <div className="w-8" />}
-        <div className="max-w-[70%]">
+        {!isOwn && showAvatar && <div className="w-7 h-7" />}
+        {!isOwn && !showAvatar && <div className="w-7" />}
+        <div className="max-w-[88%] sm:max-w-[75%]">
           <div className={cn(
-            "rounded-lg px-3 py-2 bg-muted",
-            isOwn ? "rounded-tr-[2px]" : "rounded-tl-[2px]"
+            "rounded-xl px-3 py-2 bg-muted",
+            isOwn ? "rounded-br-sm" : "rounded-bl-sm"
           )}>
             <p className="text-sm text-muted-foreground italic">
               This message was deleted
@@ -128,19 +128,19 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
 
   return (
     <div className={cn(
-      "group flex gap-2 px-2 sm:px-4 py-1",
+      "group flex gap-1.5 px-2 sm:px-3 py-0.5",
       isOwn ? "flex-row-reverse" : "flex-row"
     )}>
-      {/* Avatar - Only for other user */}
+      {/* Avatar - Only for other user, smaller on mobile */}
       {!isOwn && showAvatar && (
-        <Avatar className="h-8 w-8 flex-shrink-0">
+        <Avatar className="h-7 w-7 flex-shrink-0">
           <AvatarImage src={message.sender_avatar_url} />
-          <AvatarFallback className="bg-muted text-muted-foreground text-xs">
+          <AvatarFallback className="bg-muted text-muted-foreground text-[10px]">
             {message.sender_full_name?.charAt(0) || '?'}
           </AvatarFallback>
         </Avatar>
       )}
-      {!isOwn && !showAvatar && <div className="w-8" />}
+      {!isOwn && !showAvatar && <div className="w-7" />}
 
       {/* Message Actions Menu - appears on hover */}
       <div className={cn(
@@ -163,14 +163,14 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
         />
       </div>
 
-      {/* Message Bubble */}
-      <div className="flex flex-col gap-1 max-w-[85%] sm:max-w-[70%]">
+      {/* Message Bubble - WhatsApp-inspired styling */}
+      <div className="flex flex-col gap-0.5 max-w-[88%] sm:max-w-[75%]">
         <div className={cn(
-          "rounded-lg px-3 py-2",
-          // Deeper 3D shadow effect
+          "rounded-xl px-3 py-1.5",
+          // WhatsApp-inspired colors: light green for sent, white for received
           isOwn 
-            ? "bg-gradient-to-br from-emerald-600 to-emerald-700 text-white rounded-tr-[2px] shadow-[0_2px_8px_rgba(5,150,105,0.4),0_4px_16px_rgba(5,150,105,0.2)]" 
-            : "bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/40 dark:to-orange-900/40 text-foreground rounded-tl-[2px] shadow-[0_2px_8px_rgba(217,119,6,0.2),0_4px_16px_rgba(217,119,6,0.1)]"
+            ? "bg-[#dcf8c6] dark:bg-emerald-800/80 text-foreground dark:text-white rounded-br-sm shadow-sm" 
+            : "bg-white dark:bg-zinc-800 text-foreground rounded-bl-sm shadow-sm"
         )}>
           {/* Voice Message Player */}
           {isVoiceMessage && attachment?.url ? (
@@ -198,22 +198,19 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
             </>
           )}
 
-          {/* Timestamp and read receipt */}
+          {/* Timestamp and read receipt - WhatsApp style inline */}
           <div className={cn(
-            "flex items-center gap-1 mt-1",
-            isOwn ? "justify-end" : "justify-start"
+            "flex items-center gap-1 mt-0.5",
+            "justify-end"
           )}>
-            <span className={cn(
-              "text-[10px]",
-              isOwn ? "text-white/70" : "text-muted-foreground"
-            )}>
+            <span className="text-[10px] text-muted-foreground/70">
               {formatTime(message.created_at)}
             </span>
             {isOwn && (
               message.is_read ? (
-                <CheckCheck className="h-3 w-3 text-blue-300" />
+                <CheckCheck className="h-3.5 w-3.5 text-blue-500" />
               ) : (
-                <Check className="h-3 w-3 text-white/70" />
+                <Check className="h-3.5 w-3.5 text-muted-foreground/60" />
               )
             )}
           </div>
