@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { messageService } from '@/services/messageService';
 import { useParams } from 'react-router-dom';
@@ -8,7 +8,7 @@ import ConversationListPanel from '@/components/messaging/ConversationListPanel'
 import { ChatThread } from '@/components/messaging/inbox/ChatThread';
 import EmptyConversationState from '@/components/messaging/EmptyConversationState';
 import { LayoutTransitionLoader } from '@/components/LayoutTransitionLoader';
-
+import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import MessagesBreadcrumb from '@/components/messaging/MessagesBreadcrumb';
 /**
@@ -24,6 +24,23 @@ const DnaMessages = () => {
   const queryClient = useQueryClient();
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(conversationId || null);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Get header visibility controls
+  const { hideHeader, showHeader } = useHeaderVisibility();
+
+  // Manage header visibility based on mobile chat state
+  useEffect(() => {
+    if (isMobile && selectedConversationId) {
+      hideHeader();
+    } else {
+      showHeader();
+    }
+    
+    // Cleanup: show header when leaving the page
+    return () => {
+      showHeader();
+    };
+  }, [isMobile, selectedConversationId, hideHeader, showHeader]);
 
   // Proper refresh function that invalidates both query keys
   const handleRefresh = () => {
@@ -57,13 +74,13 @@ const DnaMessages = () => {
     full_name: selectedConversation.other_user_full_name || 'Unknown User',
     avatar_url: selectedConversation.other_user_avatar_url || '',
   } : null;
-
+  
   // Mobile: Show only conversation list or thread, not both
   if (isMobile) {
     if (selectedConversationId && otherUser) {
-      // WhatsApp-style: Chat takes full screen, flush top to bottom
+      // WhatsApp-style: Chat takes full screen, no header padding needed
       return (
-        <div className="fixed inset-0 flex flex-col bg-background pt-14 pb-16">
+        <div className="fixed inset-0 flex flex-col bg-background pb-16">
           <div className="flex-1 overflow-hidden">
             <ChatThread 
               conversationId={selectedConversationId}
