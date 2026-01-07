@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Loader2, Search, Plus, MoreVertical, Pin, BellOff, Trash2, Archive, ArchiveRestore, Check, Settings } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ConversationListItem, InboxTab } from '@/types/messaging';
 import InboxTabs from './InboxTabs';
 import PresenceIndicator from './PresenceIndicator';
@@ -61,45 +62,64 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
   archivedConversations = [],
 }) => {
   const [activeTab, setActiveTab] = useState<InboxTab>('focused');
+  const [removingIds, setRemovingIds] = useState<Set<string>>(new Set());
   const { toast } = useToast();
   const { requests, requestCount, isLoading: requestsLoading } = useMessageRequests();
 
-  // Archive a conversation
-  const handleArchive = async (conversationId: string) => {
-    try {
-      await messageService.archiveConversation(conversationId);
-      toast({ 
-        title: 'Conversation archived', 
-        description: 'You can find it in the Archived tab',
-        action: (
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={async () => {
-              await messageService.unarchiveConversation(conversationId);
-              onRefresh?.();
-              toast({ title: 'Conversation restored' });
-            }}
-          >
-            Undo
-          </Button>
-        ),
+  // Poof animation helper - triggers animation then runs callback
+  const triggerPoof = useCallback((id: string, callback: () => Promise<void>) => {
+    setRemovingIds(prev => new Set(prev).add(id));
+    // Wait for animation to complete before running callback
+    setTimeout(async () => {
+      await callback();
+      setRemovingIds(prev => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
       });
-      onRefresh?.();
-    } catch (error) {
-      toast({ title: 'Error', description: 'Failed to archive conversation', variant: 'destructive' });
-    }
+    }, 250);
+  }, []);
+
+  // Archive a conversation with poof animation
+  const handleArchive = (conversationId: string) => {
+    triggerPoof(conversationId, async () => {
+      try {
+        await messageService.archiveConversation(conversationId);
+        toast({ 
+          title: 'Conversation archived', 
+          description: 'You can find it in the Archived tab',
+          action: (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={async () => {
+                await messageService.unarchiveConversation(conversationId);
+                onRefresh?.();
+                toast({ title: 'Conversation restored' });
+              }}
+            >
+              Undo
+            </Button>
+          ),
+        });
+        onRefresh?.();
+      } catch (error) {
+        toast({ title: 'Error', description: 'Failed to archive conversation', variant: 'destructive' });
+      }
+    });
   };
 
-  // Unarchive a conversation
-  const handleUnarchive = async (conversationId: string) => {
-    try {
-      await messageService.unarchiveConversation(conversationId);
-      toast({ title: 'Conversation restored', description: 'Moved back to Focused' });
-      onRefresh?.();
-    } catch (error) {
-      toast({ title: 'Error', description: 'Failed to restore conversation', variant: 'destructive' });
-    }
+  // Unarchive a conversation with poof animation
+  const handleUnarchive = (conversationId: string) => {
+    triggerPoof(conversationId, async () => {
+      try {
+        await messageService.unarchiveConversation(conversationId);
+        toast({ title: 'Conversation restored', description: 'Moved back to Focused' });
+        onRefresh?.();
+      } catch (error) {
+        toast({ title: 'Error', description: 'Failed to restore conversation', variant: 'destructive' });
+      }
+    });
   };
 
   // Mute/unmute
@@ -123,15 +143,17 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
     toast({ title: currentlyPinned ? 'Unpinned' : 'Pinned', description: 'Feature coming soon' });
   };
 
-  // Delete a conversation
-  const handleDelete = async (conversationId: string) => {
-    try {
-      await deleteConversation(conversationId);
-      toast({ title: 'Conversation deleted' });
-      onRefresh?.();
-    } catch (error) {
-      toast({ title: 'Error', description: 'Failed to delete conversation', variant: 'destructive' });
-    }
+  // Delete a conversation with poof animation
+  const handleDelete = (conversationId: string) => {
+    triggerPoof(conversationId, async () => {
+      try {
+        await deleteConversation(conversationId);
+        toast({ title: 'Conversation deleted' });
+        onRefresh?.();
+      } catch (error) {
+        toast({ title: 'Error', description: 'Failed to delete conversation', variant: 'destructive' });
+      }
+    });
   };
 
   const getInitials = (name: string) => {
@@ -345,19 +367,47 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
           </div>
         ) : (
           <div className="divide-y">
-            {filteredConversations.map((conversation) => {
-              const hasUnread = conversation.unread_count > 0;
-              const isOnline = onlineUsers.includes(conversation.other_user_id || '');
-              const isArchived = activeTab === 'archived';
+            <AnimatePresence mode="popLayout">
+              {filteredConversations.map((conversation) => {
+                const hasUnread = conversation.unread_count > 0;
+                const isOnline = onlineUsers.includes(conversation.other_user_id || '');
+                const isArchived = activeTab === 'archived';
+                const isRemoving = removingIds.has(conversation.conversation_id);
 
-              return (
-                <div
-                  key={conversation.conversation_id}
-                  className={cn(
-                    'relative group',
-                    selectedConversationId === conversation.conversation_id && 'bg-accent'
-                  )}
-                >
+                if (isRemoving) {
+                  return (
+                    <motion.div
+                      key={conversation.conversation_id}
+                      initial={{ opacity: 1, scale: 1 }}
+                      animate={{ 
+                        opacity: 0, 
+                        scale: 0.8, 
+                        filter: 'blur(4px)',
+                      }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] } as const}
+                      className="relative group"
+                    />
+                  );
+                }
+
+                return (
+                  <motion.div
+                    key={conversation.conversation_id}
+                    layout
+                    initial={{ opacity: 1, scale: 1 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ 
+                      opacity: 0, 
+                      scale: 0.8, 
+                      filter: 'blur(4px)',
+                    }}
+                    transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] } as const}
+                    className={cn(
+                      'relative group',
+                      selectedConversationId === conversation.conversation_id && 'bg-accent'
+                    )}
+                  >
                   <button
                     onClick={() => onSelectConversation(conversation.conversation_id)}
                     className="w-full p-4 pr-12 hover:bg-accent transition-colors text-left"
@@ -527,9 +577,10 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                </div>
+                </motion.div>
               );
             })}
+            </AnimatePresence>
           </div>
         )}
       </ScrollArea>
