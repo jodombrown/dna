@@ -240,23 +240,8 @@ Deno.serve(async (req) => {
 
     console.log('Event created successfully:', event.id);
 
-    // Create feed post for the event
-    try {
-      await supabase.from('posts').insert({
-        author_id: user.id,
-        post_type: 'event',
-        content: `Created an event: ${event.title}`,
-        linked_entity_type: 'event',
-        linked_entity_id: event.id,
-        event_id: event.id,
-        space_id: event.space_id,
-        image_url: event.cover_image_url,
-        privacy_level: 'public',
-      });
-    } catch (feedError) {
-      console.error('Failed to create feed post for event:', feedError);
-      // Don't fail the request if feed post creation fails
-    }
+    // Note: Feed post is automatically created by database trigger (trg_create_event_feed_post)
+    // No need to manually insert here - the trigger ensures consistency across all event creation paths
 
     // Track event creation in analytics
     await supabase.from('analytics_events').insert({
