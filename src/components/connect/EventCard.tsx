@@ -147,7 +147,8 @@ const EventCard: React.FC<EventCardProps> = ({
   return (
     <>
       <Card
-        className="hover:shadow-lg transition-all cursor-pointer overflow-hidden group rounded-2xl border border-border"
+        className="hover:shadow-lg transition-all cursor-pointer overflow-hidden group rounded-xl border-2"
+        style={{ borderColor: 'hsl(38 92% 50%)' }}
         onClick={onClick}
         tabIndex={0}
         role="button"

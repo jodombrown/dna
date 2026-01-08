@@ -53,7 +53,8 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
 
   return (
     <Card 
-      className="group cursor-pointer overflow-hidden bg-card hover:shadow-lg transition-all duration-300 w-full h-full flex flex-col rounded-2xl border border-border"
+      className="group cursor-pointer overflow-hidden bg-card hover:shadow-lg transition-all duration-300 w-full h-full flex flex-col rounded-xl border-2"
+      style={{ borderColor: 'hsl(38 92% 50%)' }}
       onClick={() => onEventClick(event)}
     >
       {/* Cover Image - 2:1 aspect ratio */}

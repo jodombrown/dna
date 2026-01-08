@@ -101,7 +101,8 @@ export const EventCard: React.FC<EventCardProps> = ({ item, currentUserId, onUpd
 
   return (
     <div 
-      className="bg-card hover:shadow-lg transition-all overflow-hidden cursor-pointer group rounded-2xl border border-border"
+      className="bg-card hover:shadow-lg transition-all overflow-hidden cursor-pointer group rounded-xl border-2"
+      style={{ borderColor: 'hsl(38 92% 50%)' }}
       onClick={() => item.event_id && navigate(`/dna/convene/events/${item.event_id}`)}
     >
       {/* Cover Image - Full width, 2:1 aspect ratio */}

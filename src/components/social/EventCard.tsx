@@ -34,7 +34,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, showInFeed = false }) => {
   const LocationIcon = event.is_virtual ? Video : MapPin;
 
   return (
-    <Card className="hover:shadow-lg transition-all cursor-pointer overflow-hidden group rounded-2xl border border-border">
+    <Card className="hover:shadow-lg transition-all cursor-pointer overflow-hidden group rounded-xl border-2" style={{ borderColor: 'hsl(38 92% 50%)' }}>
       {/* Cover Image - 2:1 aspect ratio */}
       {event.cover_image_url ? (
         <div className="aspect-[2/1] overflow-hidden">
