@@ -17,6 +17,7 @@ export const FlagshipEventsSection = () => {
           .from('events')
           .select(`
             id,
+            slug,
             title,
             description,
             start_time,
@@ -84,7 +85,7 @@ export const FlagshipEventsSection = () => {
           <Card
             key={event.id}
             className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
-            onClick={() => navigate(`/dna/convene/events/${event.id}`)}
+            onClick={() => navigate(`/dna/convene/events/${event.slug || event.id}`)}
           >
             {event.cover_image_url ? (
               <div className="relative h-32 overflow-hidden">

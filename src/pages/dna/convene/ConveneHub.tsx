@@ -19,7 +19,7 @@ export function ConveneHub() {
       try {
         const { data, error } = await supabase
           .from('events')
-          .select('id, title, start_time, location_name, cover_image_url')
+          .select('id, slug, title, start_time, location_name, cover_image_url')
           .eq('is_cancelled', false)
           .eq('is_public', true)
           .gte('start_time', new Date().toISOString())
@@ -64,7 +64,7 @@ export function ConveneHub() {
               subtitle: event.location_name || 'Virtual Event',
               date: event.start_time,
               image: event.cover_image_url,
-              href: `/events/${event.id}`
+              href: `/dna/convene/events/${event.slug || event.id}`
             }))}
             hub="convene"
           />

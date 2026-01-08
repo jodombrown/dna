@@ -105,7 +105,7 @@ export function ConveneDiscovery() {
       try {
         const { data, error } = await supabase
           .from('events')
-          .select('id, title, start_time, location_name, cover_image_url')
+          .select('id, slug, title, start_time, location_name, cover_image_url')
           .eq('is_cancelled', false)
           .eq('is_public', true)
           .gte('start_time', new Date().toISOString())
@@ -220,7 +220,7 @@ export function ConveneDiscovery() {
     timestamp: event.start_time,
     avatar: event.cover_image_url,
     icon: Calendar,
-    onClick: () => navigate(`/dna/convene/events/${event.id}`),
+    onClick: () => navigate(`/dna/convene/events/${event.slug || event.id}`),
   }));
 
   // Sub Navigation Tabs

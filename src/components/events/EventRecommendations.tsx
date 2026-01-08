@@ -136,7 +136,7 @@ export const EventRecommendations = () => {
           <Card 
             key={event.id} 
             className="hover:shadow-lg transition-shadow cursor-pointer"
-            onClick={() => navigate(`/dna/convene/events/${event.id}`)}
+            onClick={() => navigate(`/dna/convene/events/${(event as any).slug || event.id}`)}
           >
             <CardHeader>
               <div className="flex items-start justify-between gap-4">

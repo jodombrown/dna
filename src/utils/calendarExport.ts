@@ -3,6 +3,7 @@ import { config } from '@/lib/config';
 
 interface EventData {
   id: string;
+  slug?: string;
   title: string;
   description?: string;
   start_time: string;
@@ -43,10 +44,12 @@ export function generateICSFile(event: EventData): { error?: Error; value?: stri
         .filter(Boolean)
         .join(', ') || 'Location TBA';
 
+  const eventUrl = `${window.location.origin}/dna/convene/events/${event.slug || event.id}`;
+  
   const description = [
     event.description || '',
     event.format === 'virtual' && event.meeting_url ? `\nJoin here: ${event.meeting_url}` : '',
-    `\nView on DNA Platform: ${window.location.origin}/dna/convene/events/${event.id}`,
+    `\nView on DNA Platform: ${eventUrl}`,
   ]
     .filter(Boolean)
     .join('\n')
@@ -58,7 +61,7 @@ export function generateICSFile(event: EventData): { error?: Error; value?: stri
     title: event.title,
     description,
     location,
-    url: `${window.location.origin}/dna/convene/events/${event.id}`,
+    url: eventUrl,
     status: 'CONFIRMED',
     busyStatus: 'BUSY',
     organizer: event.organizer ? {
@@ -113,7 +116,7 @@ export function getGoogleCalendarUrl(event: EventData): string {
   const details = [
     event.description || '',
     event.format === 'virtual' && event.meeting_url ? `Join: ${event.meeting_url}` : '',
-    `View on DNA: ${window.location.origin}/dna/convene/events/${event.id}`,
+    `View on DNA: ${window.location.origin}/dna/convene/events/${event.slug || event.id}`,
   ]
     .filter(Boolean)
     .join('\n');
@@ -145,7 +148,7 @@ export function getOutlookCalendarUrl(event: EventData): string {
   const body = [
     event.description || '',
     event.format === 'virtual' && event.meeting_url ? `Join: ${event.meeting_url}` : '',
-    `View on DNA: ${window.location.origin}/dna/convene/events/${event.id}`,
+    `View on DNA: ${window.location.origin}/dna/convene/events/${event.slug || event.id}`,
   ]
     .filter(Boolean)
     .join('\n');
@@ -179,7 +182,7 @@ export function getOffice365CalendarUrl(event: EventData): string {
   const body = [
     event.description || '',
     event.format === 'virtual' && event.meeting_url ? `Join: ${event.meeting_url}` : '',
-    `View on DNA: ${window.location.origin}/dna/convene/events/${event.id}`,
+    `View on DNA: ${window.location.origin}/dna/convene/events/${event.slug || event.id}`,
   ]
     .filter(Boolean)
     .join('\n');

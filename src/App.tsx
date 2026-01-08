@@ -39,6 +39,7 @@ const DnaUserDashboard = lazy(() => import("./pages/dna/Username"));
 const PublicProfile = lazy(() => import("./pages/dna/PublicProfile"));
 const PublicProfilePage = lazy(() => import("./pages/PublicProfilePage"));
 const LegacyProfileRedirect = lazy(() => import("./components/routing/LegacyProfileRedirect"));
+const LegacyEventRedirect = lazy(() => import("./components/routing/LegacyEventRedirect"));
 const PublicPostPage = lazy(() => import("./pages/PublicPostPage"));
 const ProfileV2 = lazy(() => import("./pages/ProfileV2"));
 const SavedPostsPage = lazy(() => import("./pages/SavedPostsPage"));
@@ -588,6 +589,7 @@ function App() {
               {/* Legacy convene route redirects */}
               <Route path="/dna/events" element={<Navigate to="/dna/convene/events" replace />} />
               <Route path="/events" element={<Navigate to="/dna/convene/events" replace />} />
+              <Route path="/events/:id" element={<LegacyEventRedirect />} />
               <Route path="/dna/convene-example" element={<Navigate to="/dna/convene" replace />} />
               
               {/* ========== LEGACY CONTRIBUTE/IMPACT ROUTES ========== */}

@@ -171,7 +171,7 @@ export function YourCommunitiesSection() {
                   <div
                     key={event.id}
                     className="pl-6 py-2 border-l-2 border-dna-emerald/30 hover:border-dna-emerald transition-colors cursor-pointer"
-                    onClick={() => navigate(`/dna/convene/events/${event.id}`)}
+                    onClick={() => navigate(`/dna/convene/events/${(event as any).slug || event.id}`)}
                   >
                     <div className="text-sm font-medium">{event.title}</div>
                     <div className="text-xs text-muted-foreground">
