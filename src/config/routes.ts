@@ -18,6 +18,10 @@ export const ROUTES = {
   feed: '/dna/feed',
   saved: '/dna/saved',
 
+  // Public shareable routes (no auth required)
+  publicPost: (postId: string) => `/post/${postId}`,
+  publicEvent: (slugOrId: string) => `/event/${slugOrId}`,
+
   // Authentication
   auth: '/auth',
   onboarding: '/onboarding',

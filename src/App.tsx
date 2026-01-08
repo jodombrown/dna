@@ -41,6 +41,7 @@ const PublicProfilePage = lazy(() => import("./pages/PublicProfilePage"));
 const LegacyProfileRedirect = lazy(() => import("./components/routing/LegacyProfileRedirect"));
 const LegacyEventRedirect = lazy(() => import("./components/routing/LegacyEventRedirect"));
 const PublicPostPage = lazy(() => import("./pages/PublicPostPage"));
+const PublicEventPage = lazy(() => import("./pages/PublicEventPage"));
 const ProfileV2 = lazy(() => import("./pages/ProfileV2"));
 const SavedPostsPage = lazy(() => import("./pages/SavedPostsPage"));
 const DnaNetwork = lazy(() => import("./pages/dna/Network"));
@@ -276,6 +277,7 @@ function App() {
               <Route path="/u/:username" element={<LegacyUsernameRedirect />} />
               <Route path="/dna/u/:username" element={<LegacyUsernameRedirect />} />
               <Route path="/post/:postId" element={<PublicPostPage />} />
+              <Route path="/event/:slugOrId" element={<PublicEventPage />} />
               
               {/* Core authentication */}
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />

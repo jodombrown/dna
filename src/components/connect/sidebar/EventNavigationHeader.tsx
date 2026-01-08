@@ -26,13 +26,10 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
   const { toast } = useToast();
 
   const generateEventLink = (event: Event) => {
-    // Generate a DNA-style event link similar to Luma's format
-    const eventSlug = event.title.toLowerCase()
-      .replace(/[^a-z0-9\s]/g, '')
-      .replace(/\s+/g, '-')
-      .substring(0, 30);
-    const eventId = event.id.substring(0, 8);
-    return getEventUrl(eventSlug, eventId);
+    // Use the event's slug if available, otherwise fall back to ID
+    // This generates a public shareable URL at /event/:slugOrId
+    const slugOrId = (event as any).slug || event.id;
+    return getEventUrl(slugOrId);
   };
 
   const handleCopyLink = async () => {
@@ -53,10 +50,9 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
   };
 
   const handleEventPageClick = () => {
-    toast({
-      title: "Feature Coming Soon",
-      description: "In our MVP, this will take you to a dedicated event page with comprehensive details, networking opportunities, and enhanced interaction features.",
-    });
+    // Navigate to the public event page
+    const slugOrId = (event as any).slug || event.id;
+    window.open(`/event/${slugOrId}`, '_blank');
   };
 
   return (
