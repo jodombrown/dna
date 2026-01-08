@@ -64,8 +64,6 @@ interface EventCardProps {
 
 export const EventCard: React.FC<EventCardProps> = ({ item, currentUserId, onUpdate }) => {
   const navigate = useNavigate();
-  const [showFullContent, setShowFullContent] = useState(false);
-  const [showFullAgenda, setShowFullAgenda] = useState(false);
   
   const isOwnEvent = item.author_id === currentUserId;
   
@@ -75,276 +73,145 @@ export const EventCard: React.FC<EventCardProps> = ({ item, currentUserId, onUpd
   // Parse event dates
   const startDate = item.start_time ? parseISO(item.start_time) : (item.created_at ? parseISO(item.created_at) : null);
   const endDate = item.end_time ? parseISO(item.end_time) : null;
-  const monthShort = startDate ? format(startDate, 'MMM').toUpperCase() : 'TBD';
+  const monthAbbrev = startDate ? format(startDate, 'MMM').toUpperCase() : 'TBD';
   const dayNumber = startDate ? format(startDate, 'd') : '--';
+  const dayOfWeek = startDate ? format(startDate, 'EEEE') : '';
+  const fullDate = startDate ? format(startDate, 'MMMM d, yyyy') : 'Date TBD';
+  const timeRange = startDate 
+    ? `${format(startDate, 'h:mm a')}${endDate ? ` - ${format(endDate, 'h:mm a')}` : ''}`
+    : '';
 
-  // Format helpers
-  const getFormatLabel = () => {
-    switch (item.format) {
-      case 'virtual': return 'Virtual';
-      case 'hybrid': return 'Hybrid';
-      default: return 'In Person';
-    }
-  };
-
-  const getFormatIcon = () => {
-    switch (item.format) {
-      case 'virtual': return <Video className="h-3 w-3" />;
-      case 'hybrid': return <><MapPin className="h-3 w-3" /><Video className="h-3 w-3" /></>;
-      default: return <MapPin className="h-3 w-3" />;
-    }
-  };
-
-  // Build location string
+  // Location info
   const locationString = [item.location_name, item.location_city, item.location_country]
     .filter(Boolean)
     .join(', ');
 
-  // Agenda display
-  const agenda = item.agenda || [];
-  const visibleAgenda = showFullAgenda ? agenda : agenda.slice(0, 3);
-  const hasMoreAgenda = agenda.length > 3;
+  const getLocationInfo = () => {
+    if (item.format === 'virtual') {
+      return { icon: Video, text: 'Virtual Event', subtext: item.meeting_url ? 'Online' : null };
+    }
+    if (item.format === 'hybrid') {
+      return { icon: Video, text: locationString || 'Hybrid Event', subtext: 'In-person & Online' };
+    }
+    return { icon: MapPin, text: locationString || 'Location TBD', subtext: null };
+  };
 
-  // Content truncation
-  const contentTruncated = item.content && item.content.length > 200;
-  const displayContent = showFullContent ? item.content : item.content?.slice(0, 200);
-
-  // Tags
-  const tags = item.tags || [];
+  const locationInfo = getLocationInfo();
+  const attendeeCount = item.view_count || 0;
 
   return (
-    <FeedCardBase bevelType="event">
-      {/* Header */}
-      <div className="flex items-start gap-3 mb-4">
-        <Avatar 
-          className="h-10 w-10 cursor-pointer flex-shrink-0"
-          onClick={() => navigate(`/dna/${item.author_username}`)}
-        >
-          <AvatarImage src={item.author_avatar_url || ''} />
-          <AvatarFallback>{item.author_display_name?.[0] || 'U'}</AvatarFallback>
-        </Avatar>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span 
-              className="font-semibold hover:underline cursor-pointer"
-              onClick={() => navigate(`/dna/${item.author_username}`)}
-            >
-              {item.author_display_name || item.author_username}
-            </span>
-            <Badge className="gap-1 bg-amber-500/10 text-amber-600 border-amber-200">
-              <Calendar className="h-3 w-3" />
-              Event
-            </Badge>
-            <Badge variant="outline" className="gap-1 text-xs">
-              {getFormatIcon()}
-              {getFormatLabel()}
-            </Badge>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
-          </p>
+    <div 
+      className="bg-card hover:shadow-lg transition-all overflow-hidden cursor-pointer group rounded-2xl border border-border"
+      onClick={() => item.event_id && navigate(`/dna/convene/events/${item.event_id}`)}
+    >
+      {/* Cover Image - Full width, 2:1 aspect ratio */}
+      {item.media_url ? (
+        <div className="aspect-[2/1] overflow-hidden relative">
+          <img
+            src={item.media_url}
+            alt={item.event_title || 'Event'}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
         </div>
-        
-        {/* Three-dot Menu */}
-        {isOwnEvent ? (
-          <PostMenuOwn
-            postId={item.post_id}
-            authorId={item.author_id}
-            currentUserId={currentUserId}
-            content={item.content || ''}
-            isPinned={!!item.pinned_at}
-            commentsDisabled={!!item.comments_disabled}
-            onUpdate={onUpdate}
-          />
-        ) : (
-          <PostMenuOthers
-            postId={item.post_id}
-            authorId={item.author_id}
-            authorName={item.author_display_name || item.author_username || 'User'}
-            currentUserId={currentUserId}
-            onUpdate={onUpdate}
-          />
-        )}
-      </div>
-
-      {/* Cover Image with Date Badge */}
-      {item.media_url && (
-        <div 
-          className="relative w-full aspect-video rounded-lg overflow-hidden mb-4 cursor-pointer"
-          onClick={() => item.event_id && navigate(`/dna/convene/events/${item.event_id}`)}
-        >
-          <img 
-            src={item.media_url} 
-            alt={item.event_title || 'Event'} 
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-          />
-          {/* Date Badge Overlay */}
-          <div className="absolute bottom-3 left-3 bg-white rounded-lg shadow-lg px-3 py-2 text-center min-w-[60px]">
-            <p className="text-xs font-bold text-amber-600">{monthShort}</p>
-            <p className="text-xl font-bold text-foreground leading-tight">{dayNumber}</p>
-          </div>
+      ) : (
+        <div className="aspect-[2/1] bg-gradient-to-br from-primary/60 via-primary to-primary/80 flex items-center justify-center relative">
+          <Calendar className="h-20 w-20 text-primary-foreground/20" />
         </div>
       )}
 
-      {/* Event Title & Subtitle */}
-      <div className="space-y-2 mb-4">
-        <h3 
-          className="text-xl font-bold cursor-pointer hover:text-amber-600 transition-colors"
-          onClick={() => item.event_id && navigate(`/dna/convene/events/${item.event_id}`)}
-        >
+      <div className="p-4 sm:p-5">
+        {/* Event Title - Large & Bold, Luma-style */}
+        <h3 className="font-bold text-xl sm:text-2xl leading-tight mb-4 line-clamp-2 text-foreground">
           {item.event_title || item.title || 'Upcoming Event'}
         </h3>
-        {item.subtitle && (
-          <p className="text-muted-foreground text-sm">{item.subtitle}</p>
-        )}
-      </div>
 
-      {/* Event Details Box */}
-      <div className="bg-muted/50 rounded-lg p-4 mb-4 space-y-2">
-        {/* Date & Time */}
-        <div className="flex items-center gap-2 text-sm">
-          <Clock className="h-4 w-4 text-amber-500 flex-shrink-0" />
-          <span>
-            {startDate ? format(startDate, 'MMM d, yyyy') : 'Date TBD'}
-            {startDate && ` · ${format(startDate, 'h:mm a')}`}
-            {endDate && ` - ${format(endDate, 'h:mm a')}`}
+        {/* Host info - Subtle, beneath title */}
+        <div 
+          className="flex items-center gap-2 mb-4 cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/dna/${item.author_username}`);
+          }}
+        >
+          <Avatar className="h-6 w-6">
+            <AvatarImage src={item.author_avatar_url || ''} alt={item.author_display_name || ''} />
+            <AvatarFallback className="text-[10px] bg-muted text-muted-foreground">
+              {(item.author_display_name || 'DN').split(' ').map(n => n[0]).join('').slice(0, 2)}
+            </AvatarFallback>
+          </Avatar>
+          <span className="text-sm text-muted-foreground">
+            {item.author_display_name || item.author_username}
           </span>
         </div>
 
-        {/* Location (for in-person/hybrid) */}
-        {locationString && (item.format === 'in_person' || item.format === 'hybrid') && (
-          <div className="flex items-center gap-2 text-sm">
-            <MapPin className="h-4 w-4 text-amber-500 flex-shrink-0" />
-            <span>{locationString}</span>
+        {/* Date & Time - Luma-style with calendar icon box */}
+        {startDate && (
+          <div className="flex items-center gap-3 mb-3">
+            <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg overflow-hidden bg-background flex flex-col items-center justify-center">
+              <span className="text-[10px] font-semibold text-primary uppercase leading-none">
+                {monthAbbrev}
+              </span>
+              <span className="text-lg font-bold leading-none mt-0.5">
+                {dayNumber}
+              </span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-sm text-foreground">{dayOfWeek}, {fullDate}</p>
+              <p className="text-sm text-muted-foreground">{timeRange}</p>
+            </div>
           </div>
         )}
 
-        {/* Meeting Link (for virtual/hybrid) */}
-        {item.meeting_url && (item.format === 'virtual' || item.format === 'hybrid') && (
-          <div className="flex items-center gap-2 text-sm">
-            <Video className="h-4 w-4 text-amber-500 flex-shrink-0" />
-            <a 
-              href={item.meeting_url} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-primary hover:underline flex items-center gap-1"
-            >
-              Join Online <ExternalLink className="h-3 w-3" />
-            </a>
-          </div>
-        )}
-
-        {/* Dress Code */}
-        {item.dress_code && (
-          <div className="flex items-center gap-2 text-sm">
-            <Shirt className="h-4 w-4 text-amber-500 flex-shrink-0" />
-            <span>{item.dress_code}</span>
-          </div>
-        )}
-
-        {/* Capacity */}
-        <div className="flex items-center gap-2 text-sm">
-          <Users className="h-4 w-4 text-amber-500 flex-shrink-0" />
-          <span>
-            {item.view_count || 0} interested
-            {item.max_attendees && ` · ${item.max_attendees} spots`}
-          </span>
-        </div>
-      </div>
-
-      {/* What to Expect */}
-      {item.content && (
-        <div className="mb-4">
-          <h4 className="font-semibold text-sm mb-2">What to Expect</h4>
-          <p className="text-muted-foreground text-sm">
-            {linkifyContent(displayContent || '')}
-            {contentTruncated && !showFullContent && '...'}
-          </p>
-          {contentTruncated && (
-            <button 
-              className="text-primary text-sm mt-1 hover:underline"
-              onClick={() => setShowFullContent(!showFullContent)}
-            >
-              {showFullContent ? 'Show less' : 'Read more'}
-            </button>
-          )}
-        </div>
-      )}
-
-      {/* Agenda */}
-      {agenda.length > 0 && (
-        <div className="mb-4">
-          <h4 className="font-semibold text-sm mb-2">Agenda</h4>
-          <ul className="space-y-1.5">
-            {visibleAgenda.map((agendaItem, index) => (
-              <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
-                <span className="text-amber-600 font-medium min-w-[60px]">{agendaItem.time}</span>
-                <span>{agendaItem.title}</span>
-              </li>
-            ))}
-          </ul>
-          {hasMoreAgenda && (
-            <button 
-              className="text-primary text-sm mt-2 hover:underline flex items-center gap-1"
-              onClick={() => setShowFullAgenda(!showFullAgenda)}
-            >
-              {showFullAgenda ? (
-                <>Show less <ChevronUp className="h-3 w-3" /></>
-              ) : (
-                <>+{agenda.length - 3} more <ChevronDown className="h-3 w-3" /></>
+        {/* Location - Luma-style with icon */}
+        {locationInfo && (
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg bg-background flex items-center justify-center">
+              <locationInfo.icon className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground truncate">{locationInfo.text}</p>
+              {locationInfo.subtext && (
+                <p className="text-sm text-muted-foreground truncate">{locationInfo.subtext}</p>
               )}
-            </button>
+            </div>
+          </div>
+        )}
+
+        {/* Footer: Attendees + Action Menu */}
+        <div className="flex items-center justify-between pt-2">
+          {attendeeCount > 0 ? (
+            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+              <Users className="h-4 w-4" />
+              <span>{attendeeCount} going</span>
+            </div>
+          ) : (
+            <span className="text-sm text-muted-foreground">Be the first to register</span>
           )}
+
+          {/* Three-dot Menu */}
+          <div onClick={(e) => e.stopPropagation()}>
+            {isOwnEvent ? (
+              <PostMenuOwn
+                postId={item.post_id}
+                authorId={item.author_id}
+                currentUserId={currentUserId}
+                content={item.content || ''}
+                isPinned={!!item.pinned_at}
+                commentsDisabled={!!item.comments_disabled}
+                onUpdate={onUpdate}
+              />
+            ) : (
+              <PostMenuOthers
+                postId={item.post_id}
+                authorId={item.author_id}
+                authorName={item.author_display_name || item.author_username || 'User'}
+                currentUserId={currentUserId}
+                onUpdate={onUpdate}
+              />
+            )}
+          </div>
         </div>
-      )}
-
-      {/* Tags */}
-      {tags.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-4">
-          {tags.map((tag, index) => (
-            <Badge key={index} variant="secondary" className="text-xs">
-              #{tag}
-            </Badge>
-          ))}
-        </div>
-      )}
-
-      {/* RSVP CTA */}
-      <Button 
-        className="w-full bg-amber-500 hover:bg-amber-600 text-white mb-4"
-        onClick={() => item.event_id && navigate(`/dna/convene/events/${item.event_id}`)}
-      >
-        💚 RSVP Now
-      </Button>
-
-      {/* Engagement Footer */}
-      <div className="flex items-center gap-4 pt-4 border-t">
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="flex items-center gap-2"
-          onClick={() => toggleLike()}
-        >
-          <Heart className={cn('h-4 w-4', userHasLiked && 'fill-red-500 text-red-500')} />
-          <span>{likeCount}</span>
-        </Button>
-        <Button variant="ghost" size="sm" className="flex items-center gap-2">
-          <MessageCircle className="h-4 w-4" />
-          <span>{item.comment_count}</span>
-        </Button>
-        <Button variant="ghost" size="sm" className="flex items-center gap-2">
-          <Share2 className="h-4 w-4" />
-          <span>{item.share_count}</span>
-        </Button>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="ml-auto"
-          onClick={() => toggleBookmark()}
-        >
-          <Bookmark className={cn('h-4 w-4', userHasBookmarked && 'fill-current text-primary')} />
-        </Button>
       </div>
-    </FeedCardBase>
+    </div>
   );
 };
