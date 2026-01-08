@@ -3,6 +3,7 @@ import { KenteBorder } from '../KenteBorder';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { cn } from '@/lib/utils';
 import { Search, Bell, BarChart3, Target } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface DemoDIAProps {
   id: string;
@@ -38,108 +39,119 @@ export const DemoDIA = forwardRef<HTMLElement, DemoDIAProps>(
       <section 
         ref={ref}
         id={id}
-        className="min-h-screen py-16 md:py-20"
-        style={{ background: '#0D1117' }}
+        className="min-h-screen py-16 md:py-20 bg-white"
       >
         <div className="max-w-[1200px] mx-auto px-4 md:px-6">
-          <div 
-            ref={animationRef}
-            className={cn(
-              "transition-all duration-800 ease-out",
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            )}
-          >
+          <div ref={animationRef}>
             {/* Kente Border */}
-            <KenteBorder width="80px" height="3px" className="mb-8" />
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6 } as const}
+            >
+              <KenteBorder width="80px" height="3px" className="mb-8" />
+            </motion.div>
 
             {/* Two Column Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               {/* Left - Explanation */}
-              <div>
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                animate={isVisible ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.1 } as const}
+              >
                 <h2 
-                  className="font-display font-semibold mb-2"
+                  className="font-cormorant font-semibold text-dna-dark mb-2"
                   style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
                 >
-                  Meet <span className="text-[#4A8D77]">DIA</span>
+                  Meet <span className="text-dna-emerald">DIA</span>
                 </h2>
-                <p className="font-body text-white/50 text-lg mb-6">
+                <p className="font-outfit text-dna-gray text-lg mb-6">
                   Diaspora Intelligence Agent
                 </p>
 
-                <p className="font-body text-white/70 leading-relaxed mb-6">
+                <p className="font-outfit text-dna-dark/70 leading-relaxed mb-6">
                   DIA is DNA's intelligence layer—woven through every C, anticipating needs, 
                   surfacing opportunities, and keeping the diaspora coordinated.
                 </p>
 
-                <p className="font-body text-[#4A8D77] italic mb-8">
+                <p className="font-outfit text-dna-emerald italic mb-8">
                   Not an assistant that waits for commands. An agent that operates with intention.
                 </p>
 
                 {/* Features */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {DIA_FEATURES.map((feature, index) => (
-                    <div 
+                    <motion.div 
                       key={index}
                       className="flex items-start gap-3"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={isVisible ? { opacity: 1, y: 0 } : {}}
+                      transition={{ duration: 0.4, delay: 0.3 + index * 0.1 } as const}
                     >
-                      <div className="w-10 h-10 rounded-lg bg-[#4A8D77]/10 flex items-center justify-center flex-shrink-0">
-                        <feature.icon className="w-5 h-5 text-[#4A8D77]" />
+                      <div className="w-10 h-10 rounded-lg bg-dna-emerald/10 flex items-center justify-center flex-shrink-0">
+                        <feature.icon className="w-5 h-5 text-dna-emerald" />
                       </div>
                       <div>
-                        <h4 className="font-body font-medium text-white/90 text-sm">
+                        <h4 className="font-outfit font-medium text-dna-dark text-sm">
                           {feature.label}
                         </h4>
-                        <p className="font-body text-white/50 text-xs">
+                        <p className="font-outfit text-dna-gray text-xs">
                           {feature.description}
                         </p>
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
 
               {/* Right - Chat Mockup */}
-              <div className="bg-[#131920] border border-white/10 rounded-xl p-4 md:p-6">
+              <motion.div 
+                className="bg-dna-pearl border border-dna-light-gray rounded-xl p-4 md:p-6 shadow-sm"
+                initial={{ opacity: 0, x: 30 }}
+                animate={isVisible ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.2 } as const}
+              >
                 {/* DIA Avatar Header */}
-                <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
+                <div className="flex items-center gap-3 mb-6 pb-4 border-b border-dna-light-gray">
                   <div 
-                    className="w-12 h-12 rounded-full flex items-center justify-center text-xl"
-                    style={{
-                      background: 'linear-gradient(135deg, #4A8D77 0%, #3D5A80 100%)',
-                    }}
+                    className="w-12 h-12 rounded-full flex items-center justify-center text-xl bg-gradient-to-br from-dna-emerald to-dna-royal"
                   >
                     🧠
                   </div>
                   <div>
-                    <h4 className="font-body font-medium text-white">DIA</h4>
-                    <p className="font-body text-white/50 text-xs">Diaspora Intelligence Agent</p>
+                    <h4 className="font-outfit font-medium text-dna-dark">DIA</h4>
+                    <p className="font-outfit text-dna-gray text-xs">Diaspora Intelligence Agent</p>
                   </div>
                 </div>
 
                 {/* Chat Messages */}
                 <div className="space-y-4">
                   {CHAT_MESSAGES.map((msg, index) => (
-                    <div 
+                    <motion.div 
                       key={index}
                       className={cn(
                         "max-w-[85%]",
                         msg.from === 'user' ? "ml-auto" : ""
                       )}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={isVisible ? { opacity: 1, y: 0 } : {}}
+                      transition={{ duration: 0.4, delay: 0.5 + index * 0.15 } as const}
                     >
                       <div 
                         className={cn(
-                          "p-3 rounded-2xl font-body text-sm leading-relaxed",
+                          "p-3 rounded-2xl font-outfit text-sm leading-relaxed",
                           msg.from === 'dia' 
-                            ? "bg-[#4A8D77]/20 rounded-bl-sm text-white/90" 
-                            : "bg-white/10 rounded-br-sm text-white/80"
+                            ? "bg-dna-emerald/15 rounded-bl-sm text-dna-dark" 
+                            : "bg-dna-light-gray rounded-br-sm text-dna-dark/80"
                         )}
                       >
                         {msg.message}
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>

@@ -3,6 +3,7 @@ import { KenteBorder } from '../KenteBorder';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { cn } from '@/lib/utils';
 import { Link2, Calendar, ClipboardList, DollarSign } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface DemoProblemProps {
   id: string;
@@ -39,70 +40,81 @@ export const DemoProblem = forwardRef<HTMLElement, DemoProblemProps>(
       <section 
         ref={ref}
         id={id}
-        className="min-h-screen py-16 md:py-20 flex items-center"
-        style={{ background: '#131920' }}
+        className="min-h-screen py-16 md:py-20 flex items-center bg-dna-pearl"
       >
         <div className="max-w-[1200px] mx-auto px-4 md:px-6">
-          <div 
-            ref={animationRef}
-            className={cn(
-              "transition-all duration-800 ease-out",
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            )}
-          >
+          <div ref={animationRef}>
             {/* Kente Border */}
-            <KenteBorder width="80px" height="3px" centered={false} className="mb-8" />
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6 } as const}
+            >
+              <KenteBorder width="80px" height="3px" centered={false} className="mb-8" />
+            </motion.div>
 
             {/* Headline */}
-            <h2 
-              className="font-display font-semibold mb-6"
+            <motion.h2 
+              className="font-cormorant font-semibold text-dna-dark mb-6"
               style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.1 } as const}
             >
-              Scattered Potential. <span className="text-[#E07A5F]">Fragmented Power.</span>
-            </h2>
+              Scattered Potential. <span className="text-dna-terra">Fragmented Power.</span>
+            </motion.h2>
 
             {/* Supporting Text */}
-            <p className="font-body font-light text-white/70 max-w-2xl mb-12 leading-relaxed text-base md:text-lg">
+            <motion.p 
+              className="font-outfit font-light text-dna-gray max-w-2xl mb-12 leading-relaxed text-base md:text-lg"
+              initial={{ opacity: 0, y: 30 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.2 } as const}
+            >
               Today, diaspora potential is trapped in disconnected silos. Ideas die in DMs. 
               Connections fade after events. Projects stall without accountability. 
               Contributions can't find their targets.
-            </p>
+            </motion.p>
 
             {/* Problem Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {PROBLEM_CARDS.map((card, index) => (
-                <div 
+                <motion.div 
                   key={index}
-                  className={cn(
-                    "bg-[#0D1117] border border-white/10 rounded-xl p-6 transition-all duration-500",
-                    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-                  )}
-                  style={{ transitionDelay: `${index * 100}ms` }}
+                  className="bg-white border border-dna-light-gray rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={isVisible ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.5, delay: 0.3 + index * 0.1 } as const}
                 >
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-[#E07A5F]/10 flex items-center justify-center flex-shrink-0">
-                      <card.icon className="w-6 h-6 text-[#E07A5F]" />
+                    <div className="w-12 h-12 rounded-lg bg-dna-terra/10 flex items-center justify-center flex-shrink-0">
+                      <card.icon className="w-6 h-6 text-dna-terra" />
                     </div>
                     <div>
-                      <h3 className="font-display font-medium text-lg md:text-xl mb-2">
+                      <h3 className="font-cormorant font-semibold text-dna-dark text-lg md:text-xl mb-2">
                         {card.title}
                       </h3>
-                      <p className="font-body text-white/60 text-sm md:text-base leading-relaxed">
+                      <p className="font-outfit text-dna-gray text-sm md:text-base leading-relaxed">
                         {card.description}
                       </p>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
 
             {/* Quote */}
-            <blockquote className="mt-12 border-l-2 border-[#E07A5F] pl-6">
-              <p className="font-body italic text-white/70 text-base md:text-lg">
+            <motion.blockquote 
+              className="mt-12 border-l-4 border-dna-terra pl-6"
+              initial={{ opacity: 0, y: 30 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.7 } as const}
+            >
+              <p className="font-outfit italic text-dna-gray text-base md:text-lg">
                 "The diaspora has more PhDs, more capital, more expertise than ever before. 
                 What we lack is coordination."
               </p>
-            </blockquote>
+            </motion.blockquote>
           </div>
         </div>
       </section>
