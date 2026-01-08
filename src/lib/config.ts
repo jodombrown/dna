@@ -87,13 +87,21 @@ export const getProfileUrl = (usernameOrId: string): string => {
 };
 
 /**
- * Generate an event share URL
- * @param eventSlug - Event slug
- * @param eventId - Event ID
- * @returns Full event URL
+ * Generate an event share URL (public, shareable with non-members)
+ * @param slugOrId - Event slug or ID
+ * @returns Full public event URL for external sharing
  */
-export const getEventUrl = (eventSlug: string, eventId: string): string => {
-  return getAppUrl(`/dna/convene/events/${eventSlug}-${eventId}`);
+export const getEventUrl = (slugOrId: string): string => {
+  return getAppUrl(`/event/${slugOrId}`);
+};
+
+/**
+ * Generate an internal event URL (for authenticated DNA users)
+ * @param slugOrId - Event slug or ID
+ * @returns Internal event URL within DNA platform
+ */
+export const getInternalEventUrl = (slugOrId: string): string => {
+  return getAppUrl(`/dna/convene/events/${slugOrId}`);
 };
 
 /**
