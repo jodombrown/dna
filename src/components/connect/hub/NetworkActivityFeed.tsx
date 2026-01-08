@@ -125,7 +125,7 @@ export function NetworkActivityFeed() {
       // 2. Event registrations by connections
       const { data: eventRegs } = await supabase
         .from('event_attendees')
-        .select('id, user_id, event_id, created_at, events(id, title)')
+        .select('id, user_id, event_id, created_at, events(id, slug, title)')
         .in('user_id', connectionIds)
         .eq('status', 'going')
         .gte('created_at', oneWeekAgo.toISOString())
@@ -149,7 +149,7 @@ export function NetworkActivityFeed() {
               target: {
                 id: event.id,
                 title: event.title,
-                href: `/dna/convene/events/${event.id}`,
+                href: `/dna/convene/events/${event.slug || event.id}`,
               },
               timestamp: reg.created_at,
             });

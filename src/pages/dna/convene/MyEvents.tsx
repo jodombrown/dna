@@ -137,7 +137,7 @@ const MyEvents = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => navigate(`/dna/convene/events/${event.id}`)}
+                onClick={() => navigate(`/dna/convene/events/${event.slug || event.id}`)}
               >
                 <Eye className="h-4 w-4 mr-2" />
                 View
@@ -147,7 +147,7 @@ const MyEvents = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => navigate(`/dna/convene/events/${event.id}/analytics`)}
+                    onClick={() => navigate(`/dna/convene/events/${event.slug || event.id}/analytics`)}
                   >
                     <BarChart3 className="h-4 w-4 mr-2" />
                     Analytics
@@ -156,7 +156,7 @@ const MyEvents = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => navigate(`/dna/convene/events/${event.id}/edit`)}
+                      onClick={() => navigate(`/dna/convene/events/${event.slug || event.id}/edit`)}
                     >
                       <Edit className="h-4 w-4 mr-2" />
                       Edit
