@@ -59,13 +59,18 @@ import { useEventManagement } from '../EventManagementLayout';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 
+interface BlastSegment {
+  type?: string;
+  status?: string;
+}
+
 interface EmailBlast {
   id: string;
   subject: string;
   body_markdown: string;
   scheduled_for: string | null;
   sent_at: string | null;
-  segment: any;
+  segment: BlastSegment | null;
 }
 
 interface SegmentOption {
@@ -272,7 +277,7 @@ const CommunicationsHub: React.FC = () => {
       setNotifSegment('all');
       setSendPush(false);
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
         title: 'Error',
         description: error.message || 'Failed to send notifications.',

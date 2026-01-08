@@ -20,6 +20,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/useMobile';
 import { format } from 'date-fns';
+import { Event as ConveneEvent } from '@/types/eventTypes';
 
 interface NavItem {
   label: string;
@@ -39,7 +40,7 @@ const navItems: NavItem[] = [
 ];
 
 export interface EventManagementContextType {
-  event: any;
+  event: ConveneEvent;
   userRole: string;
   isOrganizer: boolean;
   refetchEvent: () => void;

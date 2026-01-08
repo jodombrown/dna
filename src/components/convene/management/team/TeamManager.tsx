@@ -226,7 +226,7 @@ const TeamManager: React.FC = () => {
       setInviteRole('manager');
       setInviteMessage('');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
         title: 'Error',
         description: error.message || 'Failed to add team member.',
