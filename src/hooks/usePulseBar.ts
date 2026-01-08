@@ -385,7 +385,7 @@ async function fetchConveyPulse(userId: string): Promise<ConveyPulse> {
         id: post.id,
         title: post.content?.substring(0, 50) + (post.content?.length > 50 ? '...' : ''),
         subtitle: `${engagement} engagements`,
-        action_url: `/convey/posts/${post.id}`,
+        action_url: `/dna/convey/posts/${post.id}`,
         timestamp: post.created_at,
       };
     });
