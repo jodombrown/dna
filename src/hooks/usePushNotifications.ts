@@ -100,26 +100,15 @@ export function usePushNotifications() {
       // Wait for service worker to be ready
       await navigator.serviceWorker.ready;
 
-      // Get VAPID public key from environment or use placeholder
-      const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY as string | undefined;
+      // VAPID public key - hardcoded for browser use
+      const vapidPublicKey = 'BNPuO_ci8_-gGo8JjgqBguQBdktTqBL5AN3RbGtz-lwMs7PXeHcZiFGjsgJkdDsHEC1m79Q4D2C_nBZ2bTN38OA';
       
-      if (!vapidPublicKey) {
-        console.warn('VAPID public key not configured');
-      }
-
-      // Subscribe to push
-      let subscription: PushSubscription | null = null;
-      
-      if (vapidPublicKey) {
-        const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey);
-        subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: applicationServerKey.buffer as ArrayBuffer,
-        });
-      } else {
-        // Check for existing subscription
-        subscription = await registration.pushManager.getSubscription();
-      }
+      // Subscribe to push with VAPID key
+      const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey);
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: applicationServerKey.buffer as ArrayBuffer,
+      });
 
       // Store subscription in database via edge function
       if (subscription) {
