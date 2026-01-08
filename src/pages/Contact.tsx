@@ -24,6 +24,8 @@ import {
   Sparkles
  } from 'lucide-react';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
+import { PageSEO } from '@/components/seo/PageSEO';
+import { config } from '@/lib/config';
 
 const Contact = () => {
   useScrollToTop();
@@ -120,8 +122,33 @@ const Contact = () => {
     }
   };
 
+  const contactSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    name: 'Contact DNA',
+    description: 'Get in touch with the Diaspora Network of Africa team.',
+    mainEntity: {
+      '@type': 'Organization',
+      name: 'Diaspora Network of Africa',
+      email: config.emails.support,
+      url: config.APP_URL,
+    },
+  };
+
   return (
     <div className="min-h-screen bg-white">
+      <PageSEO
+        title="Contact DNA: Partner With the African Diaspora Network"
+        description="Connect with DNA for partnerships, community building, or platform feedback. Join our WhatsApp community or email us to advance Africa's development together."
+        keywords={[
+          'contact diaspora network',
+          'DNA partnership',
+          'african diaspora contact',
+          'collaborate with DNA',
+        ]}
+        canonicalPath="/contact"
+        structuredData={contactSchema}
+      />
       <UnifiedHeader />
       
       {/* Hero Section */}

@@ -4,12 +4,19 @@ import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { config } from '@/lib/config';
+import { PageSEO } from '@/components/seo/PageSEO';
 
 const PrivacyPolicy: React.FC = () => {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-dna-sage to-dna-forest">
+      <PageSEO
+        title="Privacy Policy | DNA Platform"
+        description="How DNA protects and handles your personal information. Learn about data collection, security, and your privacy rights on the Diaspora Network of Africa."
+        canonicalPath="/privacy-policy"
+        noIndex={false}
+      />
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="mb-8">

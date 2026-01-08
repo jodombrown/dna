@@ -12,6 +12,7 @@ import { Tabs } from '@/components/ui/tabs';
 import PageSpecificSurvey from '@/components/survey/PageSpecificSurvey';
 import { mockProfessionals } from '@/components/connect/tabs/ProfessionalsMockData';
 import { demoCommunities, demoEvents } from '@/data/demoSearchData';
+import { PageSEO } from '@/components/seo/PageSEO';
 
 const ConnectExample = () => {
   useScrollToTop();
@@ -92,6 +93,12 @@ const handleApplyPreset = (preset: { searchTerm: string; tab?: string; filters?:
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <PageSEO
+        title="Connect: Network with African Diaspora Professionals"
+        description="Build your professional network with 200M+ African diaspora members worldwide. Find mentors, investors, and collaborators across industries and continents."
+        keywords={['african professional network', 'diaspora networking', 'african mentors', 'diaspora investors']}
+        canonicalPath="/connect"
+      />
       <PrototypeNotice />
       
       <main className="max-w-[1600px] mx-auto px-6 sm:px-8 lg:px-12 py-6 sm:py-8 pt-20">

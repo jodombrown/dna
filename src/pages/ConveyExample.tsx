@@ -20,6 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { PageSEO } from '@/components/seo/PageSEO';
 
 const ConveyExample = () => {
   useScrollToTop();
@@ -46,6 +47,19 @@ const ConveyExample = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <PageSEO
+        title="Convey: African Diaspora Stories of Impact & Innovation"
+        description="Share and discover inspiring stories from the African diaspora. DiasporaDaily features impact stories, innovation breakthroughs, and transformation across Africa."
+        keywords={[
+          'african diaspora stories',
+          'africa success stories',
+          'diaspora innovation',
+          'african entrepreneurs stories',
+          'africa impact stories',
+          'diaspora daily news',
+        ]}
+        canonicalPath="/convey"
+      />
       <UnifiedHeader />
       
       {/* Masthead */}

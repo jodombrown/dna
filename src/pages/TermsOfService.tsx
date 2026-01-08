@@ -4,12 +4,19 @@ import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { config } from '@/lib/config';
+import { PageSEO } from '@/components/seo/PageSEO';
 
 const TermsOfService: React.FC = () => {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-dna-sage to-dna-forest">
+      <PageSEO
+        title="Terms of Service | DNA Platform"
+        description="Terms and conditions for using the Diaspora Network of Africa platform. Guidelines for professional networking and collaboration."
+        canonicalPath="/terms-of-service"
+        noIndex={false}
+      />
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="mb-8">

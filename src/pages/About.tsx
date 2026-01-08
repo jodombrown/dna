@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UnifiedHeader from '@/components/UnifiedHeader';
@@ -10,6 +9,8 @@ import { Users, Globe, Lightbulb, Heart, Target, Zap, Quote, Linkedin } from 'lu
 import JoinDNADialog from '@/components/auth/JoinDNADialog';
 import SurveyDialog from '@/components/survey/SurveyDialog';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
+import { PageSEO, getOrganizationSchema } from '@/components/seo/PageSEO';
+import { config } from '@/lib/config';
 
 const About = () => {
   useScrollToTop();
@@ -26,8 +27,34 @@ const About = () => {
     setIsSurveyOpen(true);
   };
 
+  const founderSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Jaûne L. Odombrown',
+    jobTitle: 'Founder & CEO',
+    worksFor: {
+      '@type': 'Organization',
+      name: 'Diaspora Network of Africa',
+    },
+    url: 'https://www.linkedin.com/in/jaunelamarr/',
+  };
+
   return (
     <div className="min-h-screen bg-white">
+      <PageSEO
+        title="About DNA: Our Mission to Unite the African Diaspora"
+        description="DNA empowers 200M+ African diaspora members to connect, collaborate, and contribute to Africa's sustainable development. Meet our founder and learn our mission."
+        keywords={[
+          'about diaspora network africa',
+          'african diaspora mission',
+          'DNA platform',
+          'Jaune Odombrown',
+          'diaspora unity',
+          'africa development mission',
+        ]}
+        canonicalPath="/about"
+        structuredData={[getOrganizationSchema(), founderSchema]}
+      />
       <UnifiedHeader />
       
       {/* Hero Section */}
