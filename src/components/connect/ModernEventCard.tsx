@@ -34,18 +34,21 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
     ? `${format(parsedDate, 'h:mm a')}${endDate ? ` - ${format(endDate, 'h:mm a')}` : ''}`
     : '';
 
-  // Location info
+  // Location info - hide if not available
   const getLocationInfo = () => {
     if (event.format === 'virtual' || event.is_virtual) {
       return { icon: Video, text: 'Virtual Event', subtext: null };
     }
     if (event.format === 'hybrid') {
-      return { icon: Globe, text: 'Hybrid Event', subtext: event.location || event.location_city };
+      const location = event.location || event.location_city || event.location_name;
+      return { icon: Globe, text: 'Hybrid Event', subtext: location || null };
     }
-    if (event.location_city && event.location_country) {
-      return { icon: MapPin, text: `${event.location_city}, ${event.location_country}`, subtext: null };
+    // Build location from available fields
+    const locationParts = [event.location, event.location_name, event.location_city, event.location_country].filter(Boolean);
+    if (locationParts.length === 0) {
+      return null; // Hide section entirely
     }
-    return { icon: MapPin, text: event.location || event.location_name || 'Location TBA', subtext: null };
+    return { icon: MapPin, text: locationParts[0], subtext: locationParts.slice(1).join(', ') || null };
   };
 
   const locationInfo = getLocationInfo();
@@ -120,18 +123,20 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
           </div>
         )}
 
-        {/* Location - Luma-style with icon */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg bg-background flex items-center justify-center">
-            <locationInfo.icon className="h-5 w-5 text-muted-foreground" />
+        {/* Location - Only show if available */}
+        {locationInfo && (
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg bg-background flex items-center justify-center">
+              <locationInfo.icon className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground truncate">{locationInfo.text}</p>
+              {locationInfo.subtext && (
+                <p className="text-sm text-muted-foreground truncate">{locationInfo.subtext}</p>
+              )}
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-foreground truncate">{locationInfo.text}</p>
-            {locationInfo.subtext && (
-              <p className="text-sm text-muted-foreground truncate">{locationInfo.subtext}</p>
-            )}
-          </div>
-        </div>
+        )}
 
         {/* Spacer */}
         <div className="flex-1" />

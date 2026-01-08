@@ -1,18 +1,23 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, MapPin, Clock, Users, Video } from 'lucide-react';
+import { Calendar, MapPin, Users, Video, Globe } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface EventData {
   id: string;
   title: string;
-  date_time: string | null;
-  location: string | null;
+  date_time?: string | null;
+  start_time?: string | null;
+  location?: string | null;
+  location_name?: string | null;
+  location_city?: string | null;
+  location_country?: string | null;
   description: string | null;
   tags: string[] | null;
   created_at: string;
   is_virtual?: boolean;
+  format?: 'in_person' | 'virtual' | 'hybrid';
   attendee_count?: number;
   cover_image_url?: string;
 }
@@ -23,15 +28,49 @@ interface EventCardProps {
 }
 
 const EventCard: React.FC<EventCardProps> = ({ event, showInFeed = false }) => {
-  const parsedDate = event.date_time ? new Date(event.date_time) : null;
+  const eventDate = event.start_time || event.date_time;
+  const parsedDate = eventDate ? new Date(eventDate) : null;
   const monthAbbrev = parsedDate ? format(parsedDate, 'MMM').toUpperCase() : '';
   const dayNumber = parsedDate ? format(parsedDate, 'd') : '';
   const dayOfWeek = parsedDate ? format(parsedDate, 'EEEE') : '';
-  const fullDate = parsedDate ? format(parsedDate, 'MMMM d, yyyy') : 'Date TBD';
+  const fullDate = parsedDate ? format(parsedDate, 'MMMM d, yyyy') : '';
   const timeStr = parsedDate ? format(parsedDate, 'h:mm a') : '';
 
   const attendeeCount = event.attendee_count ?? 0;
-  const LocationIcon = event.is_virtual ? Video : MapPin;
+  
+  // Get location info - hide if not available
+  const getLocationInfo = () => {
+    const isVirtual = event.is_virtual || event.format === 'virtual';
+    const isHybrid = event.format === 'hybrid';
+    
+    if (isVirtual) {
+      return { icon: Video, text: 'Virtual Event' };
+    }
+    if (isHybrid) {
+      const location = event.location || event.location_name || event.location_city;
+      return { icon: Globe, text: location ? `Hybrid · ${location}` : 'Hybrid Event' };
+    }
+    
+    // Build location string from available fields
+    const locationParts = [
+      event.location,
+      event.location_name,
+      event.location_city,
+      event.location_country
+    ].filter(Boolean);
+    
+    if (locationParts.length === 0) {
+      return null; // Don't show location section at all
+    }
+    
+    // Use the most specific location available
+    const displayLocation = event.location || event.location_name || 
+      [event.location_city, event.location_country].filter(Boolean).join(', ');
+    
+    return { icon: MapPin, text: displayLocation };
+  };
+
+  const locationInfo = getLocationInfo();
 
   return (
     <Card className="hover:shadow-lg transition-all cursor-pointer overflow-hidden group rounded-xl border-2" style={{ borderColor: 'hsl(38 92% 50%)' }}>
@@ -45,8 +84,8 @@ const EventCard: React.FC<EventCardProps> = ({ event, showInFeed = false }) => {
           />
         </div>
       ) : (
-        <div className="aspect-[2/1] bg-gradient-to-br from-primary/60 via-primary to-primary/80 flex items-center justify-center">
-          <Calendar className="h-16 w-16 text-primary-foreground/20" />
+        <div className="aspect-[2/1] bg-gradient-to-br from-amber-500/60 via-amber-600 to-amber-700/80 flex items-center justify-center">
+          <Calendar className="h-16 w-16 text-white/20" />
         </div>
       )}
 
@@ -74,15 +113,15 @@ const EventCard: React.FC<EventCardProps> = ({ event, showInFeed = false }) => {
           </div>
         )}
 
-        {/* Location - Luma-style */}
-        {event.location && (
+        {/* Location - Only show if available */}
+        {locationInfo && (
           <div className="flex items-center gap-3 mb-4">
             <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg bg-background flex items-center justify-center">
-              <LocationIcon className="h-5 w-5 text-muted-foreground" />
+              <locationInfo.icon className="h-5 w-5 text-muted-foreground" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-foreground truncate">
-                {event.is_virtual ? 'Virtual Event' : event.location}
+                {locationInfo.text}
               </p>
             </div>
           </div>
@@ -107,7 +146,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, showInFeed = false }) => {
               <span>{attendeeCount} going</span>
             </div>
           ) : (
-            <span className="text-sm text-muted-foreground">Be the first to register</span>
+            <span className="text-sm text-primary font-medium">Be the first to register</span>
           )}
         </div>
       </div>
