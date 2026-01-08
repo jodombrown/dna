@@ -316,13 +316,14 @@ async function fetchConveyPulse(userId: string): Promise<ConveyPulse> {
   const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
   const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
-  // Fetch user's recent posts (without FK joins to avoid PostgREST errors)
+  // Fetch user's recent posts - only stories/posts, not event-generated posts
   const { data: recentPosts } = await supabase
     .from('posts')
-    .select('id, content, created_at')
+    .select('id, content, created_at, post_type')
     .eq('author_id', userId)
     .gte('created_at', oneWeekAgo)
     .eq('is_deleted', false)
+    .in('post_type', ['post', 'story', 'reshare', 'update', 'impact'])
     .order('created_at', { ascending: false })
     .limit(10);
 
