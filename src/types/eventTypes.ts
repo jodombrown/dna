@@ -25,6 +25,7 @@ export interface Event {
   is_cancelled?: boolean;
   cancellation_reason?: string | null;
   cover_image_url?: string | null;
+  slug?: string | null;
   
   // Legacy fields (keeping for backward compatibility)
   date_time?: string;

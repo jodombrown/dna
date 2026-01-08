@@ -654,7 +654,7 @@ const CheckInDashboard: React.FC = () => {
             <p className="text-center text-muted-foreground py-4">No check-ins yet</p>
           ) : (
             <div className="space-y-3">
-              {recentCheckIns.map((checkIn: any) => (
+              {recentCheckIns.map((checkIn: AttendeeWithProfile) => (
                 <div key={checkIn.id} className="flex items-center gap-3">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={checkIn.profile?.avatar_url || ''} />
