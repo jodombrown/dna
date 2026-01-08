@@ -49,6 +49,7 @@ const INDICATOR_STYLES: Record<PulseStatus, string> = {
 
 export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
   const [showPreview, setShowPreview] = useState(false);
+  const hideTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   const Icon = ICONS[config.icon] || Users;
   const status: PulseStatus = data?.status || 'dormant';
@@ -59,11 +60,35 @@ export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
   // Calculate activity dots (1-5 based on count)
   const activityLevel = Math.min(Math.max(count, 0), 5);
 
+  const handleMouseEnter = () => {
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
+    }
+    setShowPreview(true);
+  };
+
+  const handleMouseLeave = () => {
+    // Delay hiding to allow mouse to move to preview card
+    hideTimeoutRef.current = setTimeout(() => {
+      setShowPreview(false);
+    }, 150);
+  };
+
+  // Cleanup timeout on unmount
+  React.useEffect(() => {
+    return () => {
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div
       className="relative flex-1 min-w-0"
-      onMouseEnter={() => setShowPreview(true)}
-      onMouseLeave={() => setShowPreview(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <Link
         to={config.href}
