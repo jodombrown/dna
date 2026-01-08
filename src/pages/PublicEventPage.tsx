@@ -310,7 +310,7 @@ const PublicEventPage = () => {
       <div className="min-h-screen bg-background">
         <UnifiedHeader />
 
-        {/* Animated CTA Banner for non-logged-in users */}
+        {/* Animated CTA Banner for non-logged-in users - becomes sticky after animation */}
         <AnimatePresence>
           {!isLoggedIn && showBanner && (
             <motion.div
@@ -318,7 +318,7 @@ const PublicEventPage = () => {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -30, opacity: 0 }}
               transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-              className="bg-gradient-to-r from-dna-forest via-dna-emerald to-dna-forest mt-3 mx-4 sm:mx-auto sm:max-w-3xl rounded-lg shadow-md"
+              className="sticky top-0 z-40 bg-gradient-to-r from-dna-forest via-dna-emerald to-dna-forest mt-2 mx-4 sm:mx-auto sm:max-w-3xl rounded-lg shadow-md"
             >
               <div className="px-4 py-2.5 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2 text-white min-w-0">
