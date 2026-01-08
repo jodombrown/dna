@@ -662,3 +662,15 @@ html, body {
 .animate-fade-in {
   animation: fade-in 200ms ease-out forwards;
 }
+
+/* Kente Pattern Flow Animation for Demo Page */
+@keyframes kente-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-kente-flow {
+  background-size: 200% 200%;
+  animation: kente-flow 8s ease-in-out infinite;
+}

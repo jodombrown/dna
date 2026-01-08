@@ -91,6 +91,7 @@ const FeaturedCalendarsPage = lazy(() => import("./pages/FeaturedCalendarsPage")
 const LocalEventsPage = lazy(() => import("./pages/LocalEventsPage"));
 const FactSheetPage = lazy(() => import("./pages/FactSheetPage"));
 const PitchDeck = lazy(() => import("./pages/PitchDeck"));
+const Demo = lazy(() => import("./pages/Demo"));
 const FeaturesHub = lazy(() => import("./pages/documentation/FeaturesHub"));
 const FeatureDetail = lazy(() => import("./pages/documentation/FeatureDetail"));
 
@@ -282,6 +283,7 @@ function App() {
               {/* Core authentication */}
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
               <Route path="/waitlist" element={<Waitlist />} />
+              <Route path="/demo" element={<Demo />} />
               <Route path="/install" element={<Install />} />
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
               <Route path="/reset-password" element={<AuthGuard redirectAuth><ResetPassword /></AuthGuard>} />
