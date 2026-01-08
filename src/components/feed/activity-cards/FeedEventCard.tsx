@@ -139,43 +139,90 @@ export const FeedEventCard: React.FC<FeedEventCardProps> = ({ activity }) => {
   return (
     <>
       <Card 
-        className="hover:shadow-lg transition-all overflow-hidden cursor-pointer group"
-        style={{ border: '2px solid hsl(38, 92%, 50%)', borderRadius: '12px' }}
+        className="hover:shadow-lg transition-all overflow-hidden cursor-pointer group bg-card"
+        style={{ borderRadius: '16px' }}
         onClick={handleViewEvent}
       >
-        {/* Cover Image */}
+        {/* Cover Image - Full width, larger */}
         {eventData.cover_image_url ? (
-          <div className="h-40 sm:h-48 overflow-hidden relative">
+          <div className="aspect-[2/1] overflow-hidden relative">
             <img
               src={eventData.cover_image_url}
               alt={eventData.event_title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
           </div>
         ) : (
-          <div className="h-32 sm:h-40 bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 flex items-center justify-center relative">
-            <Calendar className="h-16 w-16 text-white/30" />
+          <div className="aspect-[2/1] bg-gradient-to-br from-emerald-400 via-emerald-500 to-emerald-600 flex items-center justify-center relative">
+            <Calendar className="h-20 w-20 text-white/20" />
           </div>
         )}
 
-        <div className="p-4">
-          {/* Top row: Host info + Actions */}
-          <div className="flex items-center justify-between mb-3">
-            <div 
-              className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={handleViewProfile}
-            >
-              <Avatar className="h-7 w-7">
-                <AvatarImage src={activity.actor_avatar_url} alt={activity.actor_full_name} />
-                <AvatarFallback className="text-xs bg-amber-100 text-amber-700">
-                  {(activity.actor_full_name || 'DN').split(' ').map(n => n[0]).join('').slice(0, 2)}
-                </AvatarFallback>
-              </Avatar>
-              <span className="text-sm text-muted-foreground">
-                Hosted by <span className="font-medium text-foreground">{activity.actor_full_name}</span>
-              </span>
+        <div className="p-4 sm:p-5">
+          {/* Event Title - Large & Bold, Luma-style */}
+          <h3 className="font-bold text-xl sm:text-2xl leading-tight mb-4 line-clamp-2 text-foreground">
+            {eventData.event_title}
+          </h3>
+
+          {/* Host info - Subtle, beneath title */}
+          <div 
+            className="flex items-center gap-2 mb-4 cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={handleViewProfile}
+          >
+            <Avatar className="h-6 w-6">
+              <AvatarImage src={activity.actor_avatar_url} alt={activity.actor_full_name} />
+              <AvatarFallback className="text-[10px] bg-muted text-muted-foreground">
+                {(activity.actor_full_name || 'DN').split(' ').map(n => n[0]).join('').slice(0, 2)}
+              </AvatarFallback>
+            </Avatar>
+            <span className="text-sm text-muted-foreground">
+              {activity.actor_full_name}
+            </span>
+          </div>
+
+          {/* Date & Time - Luma-style with calendar icon box */}
+          {eventDate && (
+            <div className="flex items-center gap-3 mb-3">
+              <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg overflow-hidden bg-background flex flex-col items-center justify-center">
+                <span className="text-[10px] font-semibold text-primary uppercase leading-none">
+                  {monthAbbrev}
+                </span>
+                <span className="text-lg font-bold leading-none mt-0.5">
+                  {dayNumber}
+                </span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-sm text-foreground">{dayOfWeek}, {fullDate}</p>
+                <p className="text-sm text-muted-foreground">{timeRange}</p>
+              </div>
             </div>
+          )}
+
+          {/* Location - Luma-style with icon */}
+          {locationInfo && (
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg bg-background flex items-center justify-center">
+                <locationInfo.icon className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-foreground truncate">{locationInfo.text}</p>
+                {locationInfo.subtext && (
+                  <p className="text-sm text-muted-foreground truncate">{locationInfo.subtext}</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Footer: Attendees only when > 0 + Action Menu */}
+          <div className="flex items-center justify-between">
+            {attendeeCount > 0 ? (
+              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <Users className="h-4 w-4" />
+                <span>{attendeeCount} going</span>
+              </div>
+            ) : (
+              <span className="text-sm text-muted-foreground">Be the first to register</span>
+            )}
 
             {/* Action Menu */}
             <DropdownMenu>
@@ -217,71 +264,6 @@ export const FeedEventCard: React.FC<FeedEventCardProps> = ({ activity }) => {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-
-          {/* Event Title - Prominent */}
-          <h3 className="font-bold text-lg sm:text-xl leading-tight mb-3 line-clamp-2 group-hover:text-amber-600 transition-colors">
-            {eventData.event_title}
-          </h3>
-
-          {/* Date & Time - Luma-style calendar box */}
-          {eventDate && (
-            <div className="flex items-start gap-3 mb-3">
-              <div className="flex-shrink-0 w-12 text-center border border-border rounded-lg overflow-hidden bg-background">
-                <div className="bg-amber-500 text-white text-[10px] font-semibold py-0.5">
-                  {monthAbbrev}
-                </div>
-                <div className="text-lg font-bold py-1">
-                  {dayNumber}
-                </div>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm">{dayOfWeek}, {fullDate}</p>
-                <p className="text-sm text-muted-foreground">{timeRange}</p>
-              </div>
-            </div>
-          )}
-
-          {/* Location */}
-          {locationInfo && (
-            <div className="flex items-start gap-3 mb-3">
-              <div className="flex-shrink-0 w-12 flex justify-center pt-0.5">
-                <locationInfo.icon className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{locationInfo.text}</p>
-                {locationInfo.subtext && (
-                  <p className="text-sm text-muted-foreground truncate">{locationInfo.subtext}</p>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Footer: Badges + Attendees (only show if > 0) */}
-          <div className="flex items-center justify-between pt-2 border-t border-border/50">
-            <div className="flex items-center gap-2">
-              {getFormatBadge()}
-              <span className="text-xs text-muted-foreground">
-                {formatDistanceToNow(new Date(activity.created_at), { addSuffix: true })}
-              </span>
-            </div>
-            
-            {/* Only show attendee count when meaningful (> 0) */}
-            {attendeeCount > 0 && (
-              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                <Users className="h-4 w-4" />
-                <span>{attendeeCount} {attendeeCount === 1 ? 'going' : 'going'}</span>
-              </div>
-            )}
-          </div>
-
-          {/* CTA Button */}
-          <Button
-            className="w-full mt-3 font-semibold"
-            style={{ backgroundColor: 'hsl(38, 92%, 50%)', color: 'white' }}
-            onClick={(e) => { e.stopPropagation(); handleViewEvent(); }}
-          >
-            View Event
-          </Button>
         </div>
       </Card>
 
