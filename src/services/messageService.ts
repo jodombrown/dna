@@ -437,7 +437,7 @@ async getConversations(
       .update({ last_message_at: new Date().toISOString() })
       .eq('id', conversationId);
 
-    // Send email notification to recipient (async, don't block)
+    // Send notifications to recipient (async, don't block)
     try {
       // Get conversation to find recipient
       const { data: conversation } = await supabase
@@ -456,19 +456,56 @@ async getConversations(
           .eq('id', user.id)
           .single();
 
-        // Send email notification (async)
+        const senderName = senderProfile?.full_name || 'Someone';
+        const messagePreview = content?.trim() 
+          ? `${senderName}: "${content.substring(0, 100)}${content.length > 100 ? '...' : ''}"`
+          : `${senderName} sent you a message.`;
+        const actionUrl = getConversationUrl(conversationId);
+
+        // 1. Create in-app notification
+        supabase
+          .from('notifications')
+          .insert({
+            user_id: recipientId,
+            type: 'new_message',
+            title: 'New Message',
+            message: messagePreview,
+            link_url: actionUrl,
+            is_read: false,
+            payload: {
+              sender_id: user.id,
+              sender_name: senderName,
+              sender_avatar: senderProfile?.avatar_url,
+              conversation_id: conversationId,
+            },
+          })
+          .then(() => {});
+
+        // 2. Send email notification
         sendNotificationEmail({
           user_id: recipientId,
           notification_type: NOTIFICATION_TYPES.MESSAGE,
           title: 'New Message',
-          message: content?.trim() ? `${senderProfile?.full_name || 'Someone'}: "${content.substring(0, 100)}${content.length > 100 ? '...' : ''}"` : `${senderProfile?.full_name || 'Someone'} sent you a message.`,
-          action_url: getConversationUrl(conversationId),
-          actor_name: senderProfile?.full_name,
+          message: messagePreview,
+          action_url: actionUrl,
+          actor_name: senderName,
           actor_avatar_url: senderProfile?.avatar_url,
+        }).catch(() => {});
+
+        // 3. Send push notification
+        supabase.functions.invoke('send-push-notification', {
+          body: {
+            user_id: recipientId,
+            title: `Message from ${senderName}`,
+            message: messagePreview,
+            type: 'message',
+            action_url: actionUrl,
+            actor_avatar_url: senderProfile?.avatar_url,
+          }
         }).catch(() => {});
       }
     } catch {
-      // Ignore email notification errors
+      // Ignore notification errors
     }
 
     return data as Message;
