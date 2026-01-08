@@ -55,12 +55,27 @@ export default function EditEventPage() {
     enabled: !!slugOrId,
   });
 
-  // Update resolved ID when we get it
+  // Redirect UUID URLs to slug URLs for SEO + update resolved ID
   useEffect(() => {
     if (eventId) {
       setResolvedEventId(eventId);
+      
+      // Fetch slug if we navigated with UUID
+      const isUUIDUrl = slugOrId && isUUID(slugOrId);
+      if (isUUIDUrl) {
+        supabase
+          .from('events')
+          .select('slug')
+          .eq('id', eventId)
+          .single()
+          .then(({ data }) => {
+            if (data?.slug) {
+              navigate(`/dna/convene/events/${data.slug}/edit`, { replace: true });
+            }
+          });
+      }
     }
-  }, [eventId]);
+  }, [eventId, slugOrId, navigate]);
 
   // Fetch event details using the resolved UUID
   const { data: event, isLoading: isLoadingEvent } = useQuery({
@@ -194,8 +209,25 @@ export default function EditEventPage() {
         throw new Error('Hybrid events require both location and meeting URL');
       }
 
-      // Parse location components
-      const locationParts = formData.location?.split(',').map(s => s.trim()) || [];
+      // Use locationData if available, otherwise parse from string
+      let locationName = null;
+      let locationCity = null;
+      let locationCountry = null;
+      let locationLat = null;
+      let locationLng = null;
+
+      if (formData.locationData && formData.locationData.displayName) {
+        locationName = formData.locationData.venueName || null;
+        locationCity = formData.locationData.city || null;
+        locationCountry = formData.locationData.country || null;
+        locationLat = formData.locationData.lat || null;
+        locationLng = formData.locationData.lng || null;
+      } else if (formData.location) {
+        const locationParts = formData.location.split(',').map(s => s.trim());
+        locationName = locationParts[0] || null;
+        locationCity = locationParts[1] || null;
+        locationCountry = locationParts[2] || null;
+      }
 
       const { error } = await supabase
         .from('events')
@@ -203,9 +235,11 @@ export default function EditEventPage() {
           title: formData.title,
           description: formData.description,
           format: formData.format,
-          location_name: locationParts[0] || null,
-          location_city: locationParts[1] || null,
-          location_country: locationParts[2] || null,
+          location_name: locationName,
+          location_city: locationCity,
+          location_country: locationCountry,
+          location_lat: locationLat,
+          location_lng: locationLng,
           meeting_url: formData.meetingUrl || null,
           start_time,
           end_time,
