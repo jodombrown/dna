@@ -31,8 +31,11 @@ Allow: /auth
 Disallow: /app/admin
 Disallow: /api/
 
-# Sitemap location
+# Static sitemap (fallback)
 Sitemap: https://diasporanetwork.africa/sitemap.xml
+
+# Dynamic sitemap (preferred - includes events, profiles, posts)
+Sitemap: https://diasporanetwork.africa/api/sitemap
 
 # Crawl-delay for polite crawling
 Crawl-delay: 1
