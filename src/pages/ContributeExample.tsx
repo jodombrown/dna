@@ -1,4 +1,3 @@
-
 import React from 'react';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import ContributePrototypeNotice from '@/components/contribute/ContributePrototypeNotice';
@@ -13,6 +12,7 @@ import PageSpecificSurvey from '@/components/survey/PageSpecificSurvey';
 import Footer from '@/components/Footer';
 import { useContributeLogic } from '@/hooks/useContributeLogic';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
+import { PageSEO } from '@/components/seo/PageSEO';
 // Mobile page navigation removed - handled by global system
 
 const ContributeExample = () => {
@@ -36,6 +36,19 @@ const ContributeExample = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <PageSEO
+        title="Contribute: Invest in Africa's Future with the Diaspora"
+        description="Make lasting impact through skills volunteering, investment opportunities, and knowledge transfer. Join the diaspora marketplace driving Africa's development."
+        keywords={[
+          'invest in africa',
+          'diaspora investment',
+          'africa development fund',
+          'skills volunteering africa',
+          'diaspora remittances',
+          'africa impact investment',
+        ]}
+        canonicalPath="/contribute"
+      />
       <UnifiedHeader />
 
       <ContributePrototypeNotice />

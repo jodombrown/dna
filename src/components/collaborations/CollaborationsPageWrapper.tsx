@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
@@ -12,6 +11,7 @@ import PageSpecificSurvey from '@/components/survey/PageSpecificSurvey';
 import { useEnhancedCollaborations } from '@/hooks/useEnhancedCollaborations';
 import { useToast } from '@/hooks/use-toast';
 import { CollaborationProject } from '@/types/collaborationTypes';
+import { PageSEO } from '@/components/seo/PageSEO';
 
 const CollaborationsPageWrapper = () => {
   const {
@@ -97,6 +97,18 @@ const CollaborationsPageWrapper = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      <PageSEO
+        title="Collaborate: Join African Diaspora Projects & Initiatives"
+        description="Co-create solutions for Africa's challenges. Join collaboration spaces where diaspora expertise meets continental insight to build impactful projects."
+        keywords={[
+          'african diaspora collaboration',
+          'africa projects',
+          'diaspora initiatives',
+          'pan-african projects',
+          'africa innovation',
+        ]}
+        canonicalPath="/collaborate"
+      />
       <UnifiedHeader />
       <CollaborationsPrototypeNotice />
       

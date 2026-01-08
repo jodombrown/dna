@@ -24,6 +24,7 @@ import FeedbackPanel from '@/components/FeedbackPanel';
 import PageSpecificSurvey from '@/components/survey/PageSpecificSurvey';
 import { useConveneLogic } from '@/hooks/useConveneLogic';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
+import { PageSEO } from '@/components/seo/PageSEO';
 
 const ConveneExample = () => {
   useScrollToTop();
@@ -146,6 +147,19 @@ const ConveneExample = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <PageSEO
+        title="Convene: African Diaspora Events & Gatherings"
+        description="Discover events connecting the African diaspora worldwide. Tech summits, investment forums, cultural celebrations, and professional networking across Africa and beyond."
+        keywords={[
+          'african diaspora events',
+          'pan-african conferences',
+          'diaspora networking events',
+          'african tech summit',
+          'diaspora investment forum',
+          'african cultural events',
+        ]}
+        canonicalPath="/convene"
+      />
       <UnifiedHeader />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">

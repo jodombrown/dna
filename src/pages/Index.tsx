@@ -6,6 +6,7 @@ import { useScrollToTop } from '@/hooks/useScrollToTop';
 import PrototypeBanner from '@/components/PrototypeBanner';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWaitlistPopup } from '@/hooks/useWaitlistPopup';
+import { PageSEO, getOrganizationSchema, getWebsiteSchema } from '@/components/seo/PageSEO';
 
 // Lazy load below-the-fold components to improve TTI
 const PlatformFeatureShowcase = lazy(() => import('@/components/PlatformFeatureShowcase'));
@@ -30,8 +31,27 @@ const Index = () => {
     }
   }, [user, loading, navigate]);
 
+  // Combined structured data for homepage
+  const structuredData = [getOrganizationSchema(), getWebsiteSchema()];
+
   return (
     <div className="min-h-screen bg-white">
+      <PageSEO
+        title="DNA: Connect the African Diaspora to Drive Africa's Growth"
+        description="Join 200M+ diaspora members on DNA, the platform for African professionals to connect, collaborate, and contribute to Africa's economic transformation."
+        keywords={[
+          'african diaspora platform',
+          'diaspora networking',
+          'africa investment',
+          'african professionals network',
+          'pan-african community',
+          'diaspora collaboration',
+          'africa economic development',
+          'african entrepreneurs',
+        ]}
+        canonicalPath="/"
+        structuredData={structuredData}
+      />
 
       {/* Prototype Banner */}
       <PrototypeBanner />

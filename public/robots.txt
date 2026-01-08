@@ -1,14 +1,54 @@
-User-agent: Googlebot
+# Diaspora Network of Africa (DNA) - robots.txt
+# https://diasporanetwork.africa
+
+User-agent: *
 Allow: /
 
-User-agent: Bingbot
-Allow: /
+# Core marketing pages
+Allow: /about
+Allow: /contact
+Allow: /fact-sheet
+Allow: /connect
+Allow: /convene
+Allow: /collaborate
+Allow: /contribute
+Allow: /convey
 
+# Public content
+Allow: /post/
+Allow: /event/
+Allow: /releases
+Allow: /dna/
+
+# Legal pages
+Allow: /terms-of-service
+Allow: /privacy-policy
+
+# Authentication (allow for indexing login page)
+Allow: /auth
+
+# Disallow internal API and admin routes
+Disallow: /app/admin
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://diasporanetwork.africa/sitemap.xml
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1
+
+# Social media crawlers
 User-agent: Twitterbot
 Allow: /
 
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+User-agent: Slackbot
 Allow: /
