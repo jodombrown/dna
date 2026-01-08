@@ -125,6 +125,7 @@ async function fetchConvenePulse(userId: string): Promise<ConvenePulse> {
       status,
       events!inner (
         id,
+        slug,
         title,
         start_time,
         cover_image_url
@@ -144,7 +145,7 @@ async function fetchConvenePulse(userId: string): Promise<ConvenePulse> {
     title: att.events.title,
     subtitle: formatRelativeTime(att.events.start_time),
     avatar_url: att.events.cover_image_url,
-    action_url: `/convene/events/${att.events.id}`,
+    action_url: `/dna/convene/events/${att.events.slug || att.events.id}`,
     timestamp: att.events.start_time,
   }));
 
