@@ -309,9 +309,6 @@ const PublicEventPage = () => {
 
       <div className="min-h-screen bg-background">
         <UnifiedHeader />
-        
-        {/* Spacer for fixed header */}
-        <div className="h-16" />
 
         {/* Animated CTA Banner for non-logged-in users */}
         <AnimatePresence>
@@ -554,8 +551,8 @@ const PublicEventPage = () => {
                     <div>
                       <h3 className="font-bold text-lg mb-2">What is DNA?</h3>
                       <p className="text-muted-foreground text-sm leading-relaxed">
-                        DNA (Diaspora Network of Africa) is the premier platform connecting the global African diaspora — 
-                        200M+ professionals, entrepreneurs, and changemakers worldwide — with each other and with Africa. 
+                        DNA (Diaspora Network of Africa) is the premier platform connecting the global African diaspora: 
+                        200M+ professionals, entrepreneurs, and changemakers worldwide, with each other and with Africa. 
                         We bring together people who want to build meaningful connections, collaborate on impactful projects, 
                         and contribute to Africa's economic transformation.
                       </p>
