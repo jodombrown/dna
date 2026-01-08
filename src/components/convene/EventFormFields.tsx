@@ -9,6 +9,7 @@ import { ImagePlus, X, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { uploadMedia } from '@/lib/uploadMedia';
+import { EventLocationAutocomplete, LocationData } from '@/components/location/EventLocationAutocomplete';
 
 export interface EventFormData {
   title: string;
@@ -20,6 +21,7 @@ export interface EventFormData {
   eventEndDate: string;
   eventEndTime: string;
   location?: string;
+  locationData?: LocationData;
   meetingUrl?: string;
   coverImageUrl?: string;
   dressCode?: string;
@@ -183,14 +185,19 @@ export function EventFormFields({ formData, onChange }: EventFormFieldsProps) {
       {(formData.format === 'in_person' || formData.format === 'hybrid') && (
         <div>
           <Label className="text-sm font-medium">Location *</Label>
-          <Input
-            placeholder="Lagos Continental Hotel, Lagos, Nigeria"
-            value={formData.location || ''}
-            onChange={(e) => onChange({ location: e.target.value })}
+          <EventLocationAutocomplete
+            value={formData.locationData || formData.location || ''}
+            onChange={(locationData) => {
+              onChange({
+                location: locationData.displayName,
+                locationData: locationData,
+              });
+            }}
+            placeholder="Search for a venue or address..."
             className="mt-1.5"
           />
           <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-            <span>ℹ️</span> Format: Venue, City, Country
+            <span>ℹ️</span> Start typing to search for venues, addresses, or cities
           </p>
         </div>
       )}
@@ -225,7 +232,7 @@ export function EventFormFields({ formData, onChange }: EventFormFieldsProps) {
           placeholder="What will attendees experience? What will they learn? Why should they attend?"
           value={formData.description}
           onChange={(e) => onChange({ description: e.target.value })}
-          className="min-h-[100px] resize-none mt-1.5"
+          className="min-h-[100px] resize-y mt-1.5"
         />
         <p className="text-xs text-muted-foreground mt-1">
           {formData.description.length < 50 

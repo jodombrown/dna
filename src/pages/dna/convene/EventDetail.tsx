@@ -57,6 +57,7 @@ import { formatDistanceToNow, format } from 'date-fns';
 import { AddToCalendarButton } from '@/components/convene/AddToCalendarButton';
 import { EventSpacesSection } from '@/components/collaboration/EventSpacesSection';
 import { EventActivityFeed } from '@/components/events/EventActivityFeed';
+import { EventLocationMap } from '@/components/convene/EventLocationMap';
 
 const REPORT_REASONS = [
   { value: 'spam', label: 'Spam' },
@@ -782,6 +783,18 @@ const EventDetail = () => {
                     </Button>
                   </CardContent>
                 </Card>
+              )}
+
+              {/* Location Map for in-person/hybrid events */}
+              {(event.format === 'in_person' || event.format === 'hybrid') && (
+                <EventLocationMap
+                  locationName={event.location_name}
+                  locationAddress={event.location_address}
+                  city={event.location_city}
+                  country={event.location_country}
+                  lat={event.location_lat}
+                  lng={event.location_lng}
+                />
               )}
 
               {/* Event Spaces Section */}
