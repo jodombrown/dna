@@ -20,16 +20,16 @@ export function DemoNavDots({ sections, activeSection, onNavigate }: DemoNavDots
               onClick={() => onNavigate(index)}
               className={cn(
                 "w-3 h-3 md:w-3.5 md:h-3.5 rounded-full transition-all duration-300 ease-out",
-                "hover:scale-125 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4A8D77] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0D1117]",
+                "hover:scale-125 focus:outline-none focus-visible:ring-2 focus-visible:ring-dna-emerald focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                 activeSection === index
-                  ? "bg-[#4A8D77] scale-130 shadow-[0_0_8px_rgba(74,141,119,0.5)]"
-                  : "bg-white/30 hover:bg-white/50"
+                  ? "bg-dna-emerald scale-130 shadow-[0_0_8px_hsl(var(--dna-emerald)/0.5)]"
+                  : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
               )}
               aria-label={`Navigate to ${label}`}
               aria-current={activeSection === index ? 'true' : undefined}
             />
           </TooltipTrigger>
-          <TooltipContent side="left" className="bg-[#131920] text-[#E6EDF3] border-white/10">
+          <TooltipContent side="left" className="bg-background text-foreground border-border">
             {label}
           </TooltipContent>
         </Tooltip>
