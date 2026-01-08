@@ -28,6 +28,11 @@ import {
   Video,
   Globe,
   Ticket,
+  Handshake,
+  CalendarDays,
+  UsersRound,
+  Heart,
+  MessageSquare,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Helmet } from 'react-helmet-async';
@@ -342,16 +347,26 @@ const PublicEventPage = () => {
         <div className="container max-w-3xl mx-auto px-4 py-6">
           {/* Cover Image */}
           {event.cover_image_url && (
-            <div className="aspect-[2.5/1] w-full overflow-hidden rounded-2xl mb-6">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6 } as const}
+              className="aspect-[2.5/1] w-full overflow-hidden rounded-2xl mb-6"
+            >
               <img
                 src={event.cover_image_url}
                 alt={eventTitle}
                 className="w-full h-full object-cover"
               />
-            </div>
+            </motion.div>
           )}
 
           {/* Event Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 } as const}
+          >
           <Card className="overflow-hidden mb-4">
             <CardContent className="p-4 sm:p-6">
               {/* Status Badges */}
@@ -482,19 +497,26 @@ const PublicEventPage = () => {
               )}
             </CardContent>
           </Card>
+          </motion.div>
 
           {/* Event Description */}
           {(event.description || event.short_description) && (
-            <Card className="mb-4">
-              <CardContent className="p-4 sm:p-6">
-                <h2 className="font-semibold mb-3">About This Event</h2>
-                <div className="prose prose-sm max-w-none text-muted-foreground">
-                  <p className="whitespace-pre-wrap">
-                    {event.description || event.short_description}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 } as const}
+            >
+              <Card className="mb-4">
+                <CardContent className="p-4 sm:p-6">
+                  <h2 className="font-semibold mb-3">About This Event</h2>
+                  <div className="prose prose-sm max-w-none text-muted-foreground">
+                    <p className="whitespace-pre-wrap">
+                      {event.description || event.short_description}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           )}
 
           {/* Virtual Event Join Link - only for logged-in attendees */}
@@ -516,43 +538,121 @@ const PublicEventPage = () => {
             </Card>
           )}
 
+          {/* What is DNA? Section - for non-logged-in users */}
+          {!isLoggedIn && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 } as const}
+            >
+              <Card className="mb-4 border-dna-emerald/20 bg-gradient-to-br from-dna-emerald/5 to-transparent">
+                <CardContent className="p-5 sm:p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="shrink-0 w-12 h-12 rounded-xl bg-dna-emerald/10 flex items-center justify-center">
+                      <Globe className="w-6 h-6 text-dna-emerald" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-lg mb-2">What is DNA?</h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        DNA (Diaspora Network of Africa) is the premier platform connecting the global African diaspora — 
+                        200M+ professionals, entrepreneurs, and changemakers worldwide — with each other and with Africa. 
+                        We bring together people who want to build meaningful connections, collaborate on impactful projects, 
+                        and contribute to Africa's economic transformation.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+
+          {/* Why Join DNA? - Five C's Benefits Block for non-logged-in users */}
+          {!isLoggedIn && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 } as const}
+            >
+              <Card className="mb-4">
+                <CardContent className="p-5 sm:p-6">
+                  <h3 className="font-bold text-lg mb-4 text-center">Why Join DNA?</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+                    {[
+                      { icon: Handshake, label: 'Connect', desc: 'Build your network' },
+                      { icon: CalendarDays, label: 'Convene', desc: 'Attend events' },
+                      { icon: UsersRound, label: 'Collaborate', desc: 'Join projects' },
+                      { icon: Heart, label: 'Contribute', desc: 'Make an impact' },
+                      { icon: MessageSquare, label: 'Convey', desc: 'Share your story' },
+                    ].map((item, index) => (
+                      <motion.div
+                        key={item.label}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ 
+                          duration: 0.3, 
+                          delay: 0.5 + index * 0.1,
+                          type: "spring",
+                          stiffness: 400,
+                          damping: 30
+                        } as const}
+                        className="flex flex-col items-center text-center p-3 rounded-xl hover:bg-muted/50 transition-colors"
+                      >
+                        <div className="w-10 h-10 rounded-full bg-dna-emerald/10 flex items-center justify-center mb-2">
+                          <item.icon className="w-5 h-5 text-dna-emerald" />
+                        </div>
+                        <span className="font-semibold text-sm">{item.label}</span>
+                        <span className="text-xs text-muted-foreground">{item.desc}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+
           {/* CTA Card for non-logged-in users */}
           {!isLoggedIn && (
-            <Card className="mt-4 bg-gradient-to-r from-dna-forest to-dna-emerald text-white overflow-hidden">
-              <CardContent className="py-5 px-5">
-                <div className="flex flex-col items-center gap-4 text-center">
-                  <div>
-                    <h2 className="text-lg font-bold mb-1">
-                      Join DNA to Attend This Event
-                    </h2>
-                    <p className="text-white/80 text-sm">
-                      Connect with the global African diaspora. RSVP to events, meet incredible people, and grow your network.
-                    </p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 } as const}
+            >
+              <Card className="mt-4 bg-gradient-to-r from-dna-forest to-dna-emerald text-white overflow-hidden">
+                <CardContent className="py-5 px-5">
+                  <div className="flex flex-col items-center gap-4 text-center">
+                    <div>
+                      <h2 className="text-lg font-bold mb-1">
+                        Join DNA to Attend This Event
+                      </h2>
+                      <p className="text-white/80 text-sm">
+                        Connect with the global African diaspora. RSVP to events, meet incredible people, and grow your network.
+                      </p>
+                    </div>
+                    <div className="flex gap-3">
+                      <Button 
+                        size="sm" 
+                        className="bg-dna-copper hover:bg-dna-gold text-white"
+                        asChild
+                      >
+                        <Link to={`/auth?mode=signup&redirect=/event/${event.slug || event.id}`}>
+                          Create Your Free Account
+                        </Link>
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="secondary"
+                        className="bg-white text-dna-forest hover:bg-white/90"
+                        asChild
+                      >
+                        <Link to={`/auth?mode=signin&redirect=/event/${event.slug || event.id}`}>
+                          Sign In
+                        </Link>
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex gap-3">
-                    <Button 
-                      size="sm" 
-                      className="bg-dna-copper hover:bg-dna-gold text-white"
-                      asChild
-                    >
-                      <Link to={`/auth?mode=signup&redirect=/event/${event.slug || event.id}`}>
-                        Create Your Free Account
-                      </Link>
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="secondary"
-                      className="bg-white text-dna-forest hover:bg-white/90"
-                      asChild
-                    >
-                      <Link to={`/auth?mode=signin&redirect=/event/${event.slug || event.id}`}>
-                        Sign In
-                      </Link>
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </motion.div>
           )}
 
           {/* Already logged in - Show quick link to full event page */}
