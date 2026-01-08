@@ -63,7 +63,8 @@ export function EventCard({ event, onRSVP }: EventCardProps) {
 
   return (
     <Card 
-      className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group rounded-2xl border border-border"
+      className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group rounded-xl border-2"
+      style={{ borderColor: 'hsl(38 92% 50%)' }}
       onClick={() => navigate(`/dna/convene/events/${event.event_id}`)}
     >
       {/* Cover Image - 2:1 aspect ratio */}
