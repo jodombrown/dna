@@ -86,31 +86,31 @@ export const PULSE_CONFIG: Record<PulseKey, PulseConfig> = {
   connect: {
     label: 'CONNECT',
     icon: 'Users',
-    href: '/connect',
+    href: '/dna/connect',
     color: 'emerald',
   },
   convene: {
     label: 'CONVENE',
     icon: 'Calendar',
-    href: '/convene',
+    href: '/dna/convene',
     color: 'emerald',
   },
   collaborate: {
     label: 'COLLABORATE',
     icon: 'Layers',
-    href: '/collaborate',
+    href: '/dna/collaborate',
     color: 'emerald',
   },
   contribute: {
     label: 'CONTRIBUTE',
     icon: 'Gift',
-    href: '/contribute',
+    href: '/dna/contribute',
     color: 'emerald',
   },
   convey: {
     label: 'CONVEY',
     icon: 'Megaphone',
-    href: '/convey',
+    href: '/dna/convey',
     color: 'emerald',
   },
 } as const;
