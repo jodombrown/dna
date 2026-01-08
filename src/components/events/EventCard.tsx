@@ -34,171 +34,133 @@ export function EventCard({ event, onRSVP }: EventCardProps) {
       .slice(0, 2);
   };
 
-  const getEventTypeColor = () => {
-    const colors = {
-      conference: 'bg-purple-100 text-purple-700 border-purple-200',
-      workshop: 'bg-blue-100 text-blue-700 border-blue-200',
-      meetup: 'bg-green-100 text-green-700 border-green-200',
-      webinar: 'bg-orange-100 text-orange-700 border-orange-200',
-      networking: 'bg-pink-100 text-pink-700 border-pink-200',
-      social: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-      other: 'bg-gray-100 text-gray-700 border-gray-200',
-    };
-    return colors[event.event_type] || colors.other;
-  };
+  // Parse dates
+  const startDate = new Date(event.start_time);
+  const endDate = new Date(event.end_time);
+  const monthAbbrev = format(startDate, 'MMM').toUpperCase();
+  const dayNumber = format(startDate, 'd');
+  const dayOfWeek = format(startDate, 'EEEE');
+  const fullDate = format(startDate, 'MMMM d, yyyy');
+  const timeRange = `${format(startDate, 'h:mm a')} - ${format(endDate, 'h:mm a')}`;
 
-  const getFormatIcon = () => {
-    switch (event.format) {
-      case 'virtual':
-        return <Video className="h-4 w-4" />;
-      case 'in_person':
-        return <MapPin className="h-4 w-4" />;
-      case 'hybrid':
-        return <Globe className="h-4 w-4" />;
-    }
-  };
-
-  const formatEventDate = () => {
-    const start = new Date(event.start_time);
-    return format(start, 'MMM dd, yyyy');
-  };
-
-  const formatEventTime = () => {
-    const start = new Date(event.start_time);
-    const end = new Date(event.end_time);
-    return `${format(start, 'h:mm a')} - ${format(end, 'h:mm a')}`;
-  };
-
-  const getLocation = () => {
+  // Location info
+  const getLocationInfo = () => {
     if (event.format === 'virtual') {
-      return 'Virtual Event';
+      return { icon: Video, text: 'Virtual Event', subtext: null };
     }
-    if (event.location_city && event.location_country) {
-      return `${event.location_city}, ${event.location_country}`;
+    if (event.format === 'hybrid') {
+      return { icon: Globe, text: event.location_city || 'Hybrid Event', subtext: 'In-person & Online' };
     }
-    return event.location_name || 'Location TBA';
+    const locationText = event.location_city && event.location_country 
+      ? `${event.location_city}, ${event.location_country}`
+      : event.location_name || 'Location TBA';
+    return { icon: MapPin, text: locationText, subtext: null };
   };
 
-  const isFull = event.max_attendees && event.attendee_count >= event.max_attendees;
+  const locationInfo = getLocationInfo();
+  const attendeeCount = event.attendee_count || 0;
+  const isFull = event.max_attendees && attendeeCount >= event.max_attendees;
 
   return (
     <Card 
-      className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+      className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group rounded-2xl border border-border"
       onClick={() => navigate(`/dna/convene/events/${event.event_id}`)}
     >
-      {/* Cover Image */}
+      {/* Cover Image - 2:1 aspect ratio */}
       {event.cover_image_url ? (
-        <div className="h-32 sm:h-48 overflow-hidden">
+        <div className="aspect-[2/1] overflow-hidden">
           <img
             src={event.cover_image_url}
             alt={event.title}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         </div>
       ) : (
-        <div className="h-32 sm:h-48 bg-gradient-to-br from-[hsl(151,75%,50%)] to-[hsl(151,75%,35%)] flex items-center justify-center">
-          <Calendar className="h-12 w-12 sm:h-16 sm:w-16 text-white opacity-50" />
+        <div className="aspect-[2/1] bg-gradient-to-br from-primary/60 via-primary to-primary/80 flex items-center justify-center">
+          <Calendar className="h-16 w-16 text-primary-foreground/20" />
         </div>
       )}
 
-      <div className="p-4 sm:p-6">
-        {/* Header */}
-        <div className="flex items-start gap-3 mb-4">
-          <Avatar
-            className="h-10 w-10 cursor-pointer"
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`/dna/${event.organizer_username}`);
-            }}
-          >
+      <div className="p-4 sm:p-5">
+        {/* Event Title - Large & Bold */}
+        <h3 className="font-bold text-xl leading-tight mb-4 line-clamp-2 text-foreground">
+          {event.title}
+        </h3>
+
+        {/* Host info */}
+        <div 
+          className="flex items-center gap-2 mb-4 cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/dna/${event.organizer_username}`);
+          }}
+        >
+          <Avatar className="h-6 w-6">
             <AvatarImage src={event.organizer_avatar_url} alt={event.organizer_full_name} />
-            <AvatarFallback className="bg-[hsl(151,75%,50%)] text-white text-sm">
+            <AvatarFallback className="text-[10px] bg-muted text-muted-foreground">
               {getInitials(event.organizer_full_name)}
             </AvatarFallback>
           </Avatar>
+          <span className="text-sm text-muted-foreground">
+            {event.organizer_full_name}
+          </span>
+        </div>
 
+        {/* Date & Time - Luma-style with calendar box */}
+        <div className="flex items-center gap-3 mb-3">
+          <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg bg-background flex flex-col items-center justify-center">
+            <span className="text-[10px] font-semibold text-primary uppercase leading-none">
+              {monthAbbrev}
+            </span>
+            <span className="text-lg font-bold leading-none mt-0.5">
+              {dayNumber}
+            </span>
+          </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap mb-1">
-              <Badge variant="outline" className={cn('text-xs', getEventTypeColor())}>
-                {event.event_type}
-              </Badge>
-              <Badge variant="outline" className="text-xs">
-                {getFormatIcon()}
-                <span className="ml-1 capitalize">{event.format}</span>
-              </Badge>
-            </div>
-            <h3 className="font-semibold text-lg line-clamp-2 mb-1">
-              {event.title}
-            </h3>
-            <p
-              className="text-sm text-muted-foreground hover:text-[hsl(151,75%,50%)] transition-colors"
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(`/dna/${event.organizer_username}`);
-              }}
-            >
-              by {event.organizer_full_name}
-            </p>
+            <p className="font-medium text-sm text-foreground">{dayOfWeek}, {fullDate}</p>
+            <p className="text-sm text-muted-foreground">{timeRange}</p>
           </div>
         </div>
 
-        {/* Description */}
-        <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-          {event.description}
-        </p>
-
-        {/* Event Details */}
-        <div className="space-y-2 mb-4">
-          <div className="flex items-center gap-2 text-sm">
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span>{formatEventDate()}</span>
+        {/* Location - Luma-style with icon */}
+        <div className="flex items-center gap-3 mb-4">
+          <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg bg-background flex items-center justify-center">
+            <locationInfo.icon className="h-5 w-5 text-muted-foreground" />
           </div>
-          <div className="flex items-center gap-2 text-sm">
-            <Clock className="h-4 w-4 text-muted-foreground" />
-            <span>{formatEventTime()}</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm">
-            {getFormatIcon()}
-            <span className="truncate">{getLocation()}</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm">
-            <Users className="h-4 w-4 text-muted-foreground" />
-            <span>
-              {event.attendee_count} {event.attendee_count === 1 ? 'attendee' : 'attendees'}
-              {event.max_attendees && ` / ${event.max_attendees}`}
-            </span>
-            {isFull && (
-              <Badge variant="secondary" className="text-xs">Full</Badge>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-foreground truncate">{locationInfo.text}</p>
+            {locationInfo.subtext && (
+              <p className="text-sm text-muted-foreground truncate">{locationInfo.subtext}</p>
             )}
           </div>
         </div>
 
-        {/* RSVP Status / Actions */}
-        <div className="flex gap-2">
+        {/* Footer: Attendees + Status */}
+        <div className="flex items-center justify-between pt-2">
+          {attendeeCount > 0 ? (
+            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+              <Users className="h-4 w-4" />
+              <span>
+                {attendeeCount} going
+                {isFull && <Badge variant="secondary" className="ml-2 text-xs">Full</Badge>}
+              </span>
+            </div>
+          ) : (
+            <span className="text-sm text-muted-foreground">Be the first to register</span>
+          )}
+
+          {/* RSVP Status */}
           {event.user_rsvp_status === 'going' ? (
-            <Badge className="bg-[hsl(151,75%,50%)] hover:bg-[hsl(151,75%,40%)] flex-1 justify-center py-2">
-              <CheckCircle2 className="h-4 w-4 mr-2" />
-              You're Going
+            <Badge className="bg-primary hover:bg-primary/90">
+              <CheckCircle2 className="h-3 w-3 mr-1" />
+              Going
             </Badge>
           ) : event.user_rsvp_status === 'maybe' ? (
-            <Badge variant="outline" className="flex-1 justify-center py-2">
-              <HelpCircle className="h-4 w-4 mr-2" />
+            <Badge variant="outline">
+              <HelpCircle className="h-3 w-3 mr-1" />
               Maybe
             </Badge>
-          ) : (
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex-1"
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(`/dna/convene/events/${event.event_id}`);
-              }}
-            >
-              View Details
-            </Button>
-          )}
-          {event.is_organizer && (
+          ) : event.is_organizer ? (
             <Button
               variant="outline"
               size="sm"
@@ -209,7 +171,7 @@ export function EventCard({ event, onRSVP }: EventCardProps) {
             >
               Manage
             </Button>
-          )}
+          ) : null}
         </div>
       </div>
     </Card>

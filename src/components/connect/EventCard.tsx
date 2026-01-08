@@ -3,7 +3,8 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, Users as UsersIcon, Image as ImageIcon } from 'lucide-react';
+import { Calendar, MapPin, Users as UsersIcon, Image as ImageIcon, Video, Globe } from 'lucide-react';
+import { format } from 'date-fns';
 import { Event } from '@/types/search';
 import ConnectDialogs from './ConnectDialogs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -118,100 +119,134 @@ const EventCard: React.FC<EventCardProps> = ({
     }
   };
 
-  const eventLogo = getEventLogo(event.title, event.type);
-  const eventBanner = event.banner_url || getEventBanner(event.title, event.type);
-  const creatorImage = event.creator_profile?.avatar_url || getEventCreatorImage(event.title);
+  const eventBanner = event.banner_url || event.cover_image_url;
+  const eventDate = event.start_time || event.date_time;
+  const parsedDate = eventDate ? new Date(eventDate) : null;
+  
+  // Date formatting
+  const monthAbbrev = parsedDate ? format(parsedDate, 'MMM').toUpperCase() : '';
+  const dayNumber = parsedDate ? format(parsedDate, 'd') : '';
+  const dayOfWeek = parsedDate ? format(parsedDate, 'EEEE') : '';
+  const fullDate = parsedDate ? format(parsedDate, 'MMMM d, yyyy') : 'Date TBD';
+  const timeRange = parsedDate ? format(parsedDate, 'h:mm a') : '';
+
+  // Location info
+  const getLocationInfo = () => {
+    if (event.is_virtual || event.format === 'virtual') {
+      return { icon: Video, text: 'Virtual Event', subtext: null };
+    }
+    if (event.format === 'hybrid') {
+      return { icon: Globe, text: 'Hybrid Event', subtext: event.location };
+    }
+    return { icon: MapPin, text: event.location || 'Location TBA', subtext: null };
+  };
+
+  const locationInfo = getLocationInfo();
+  const attendeeCount = event.attendee_count ?? 0;
 
   return (
     <>
       <Card
-        className="hover:shadow-lg transition-shadow cursor-pointer p-0 flex flex-col overflow-hidden"
+        className="hover:shadow-lg transition-all cursor-pointer overflow-hidden group rounded-2xl border border-border"
         onClick={onClick}
         tabIndex={0}
         role="button"
         aria-label={`View event: ${event.title}`}
       >
-        {/* Banner image */}
-        <div
-          className="h-32 sm:h-40 w-full bg-gray-200 relative group"
-          style={{ backgroundColor: "#f4f6f4" }}
-        >
-          <img
-            src={eventBanner}
-            alt={`${event.title} banner`}
-            className="w-full h-full object-cover object-center transition-transform group-hover:scale-105 duration-300"
-            loading="lazy"
-          />
-          {/* Creator avatar bottom-right on banner - clickable */}
+        {/* Cover Image - 2:1 aspect ratio */}
+        {eventBanner ? (
+          <div className="aspect-[2/1] overflow-hidden">
+            <img
+              src={eventBanner}
+              alt={event.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              loading="lazy"
+            />
+          </div>
+        ) : (
+          <div className="aspect-[2/1] bg-gradient-to-br from-primary/60 via-primary to-primary/80 flex items-center justify-center">
+            <Calendar className="h-16 w-16 text-primary-foreground/20" />
+          </div>
+        )}
+
+        <div className="p-4 sm:p-5">
+          {/* Event Title - Large & Bold */}
+          <h3 className="font-bold text-xl leading-tight mb-4 line-clamp-2 text-foreground">
+            {event.title}
+          </h3>
+
+          {/* Host info */}
           {event.creator_profile && (
             <button
-              className="absolute bottom-2 right-2 rounded-full shadow border-2 border-white bg-white/90 hover:bg-dna-emerald/80 transition-all flex items-center gap-2 px-2 py-0.5 z-20"
-              onClick={e => {
+              className="flex items-center gap-2 mb-4 hover:opacity-80 transition-opacity"
+              onClick={(e) => {
                 e.stopPropagation();
                 navigate(ROUTES.profile.view(event.creator_profile.username || event.creator_profile.id));
               }}
-              title={`View profile: ${event.creator_profile.full_name}`}
-              aria-label="View event creator profile"
-              tabIndex={0}
-              type="button"
             >
-              <Avatar className="w-7 h-7">
-                <AvatarImage src={creatorImage} alt={event.creator_profile.full_name} />
-                <AvatarFallback className="bg-dna-copper text-white">
-                  <ImageIcon className="w-3.5 h-3.5" />
+              <Avatar className="h-6 w-6">
+                <AvatarImage src={event.creator_profile.avatar_url} alt={event.creator_profile.full_name} />
+                <AvatarFallback className="text-[10px] bg-muted text-muted-foreground">
+                  {(event.creator_profile.full_name || 'DN').split(' ').map(n => n[0]).join('') || 'DN'}
                 </AvatarFallback>
               </Avatar>
-              <span className="text-xs font-medium text-dna-forest opacity-90 max-w-[6em] truncate">{event.creator_profile.full_name}</span>
+              <span className="text-sm text-muted-foreground truncate max-w-[150px]">
+                {event.creator_profile.full_name}
+              </span>
             </button>
           )}
 
-          {/* Event logo avatar - overlap bottom left */}
-          <div className="absolute bottom-0 left-3 -mb-6 z-10">
-            <Avatar className="w-16 h-16 ring-4 ring-white shadow-lg bg-white">
-              <AvatarImage
-                src={eventLogo}
-                alt={`${event.title} logo`}
-                className="object-cover"
-              />
-              <AvatarFallback className="bg-dna-copper text-white">
-                <ImageIcon className="w-6 h-6" />
-              </AvatarFallback>
-            </Avatar>
+          {/* Date & Time - Luma-style with calendar box */}
+          {parsedDate && (
+            <div className="flex items-center gap-3 mb-3">
+              <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg bg-background flex flex-col items-center justify-center">
+                <span className="text-[10px] font-semibold text-primary uppercase leading-none">
+                  {monthAbbrev}
+                </span>
+                <span className="text-lg font-bold leading-none mt-0.5">
+                  {dayNumber}
+                </span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-sm text-foreground">{dayOfWeek}, {fullDate}</p>
+                <p className="text-sm text-muted-foreground">{timeRange}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Location - Luma-style with icon */}
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg bg-background flex items-center justify-center">
+              <locationInfo.icon className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground truncate">{locationInfo.text}</p>
+              {locationInfo.subtext && (
+                <p className="text-sm text-muted-foreground truncate">{locationInfo.subtext}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Footer: Attendees + RSVP */}
+          <div className="flex items-center justify-between pt-2">
+            {attendeeCount > 0 ? (
+              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <UsersIcon className="h-4 w-4" />
+                <span>{attendeeCount} going</span>
+              </div>
+            ) : (
+              <span className="text-sm text-muted-foreground">Be the first to register</span>
+            )}
+
+            <Button
+              size="sm"
+              className="bg-primary hover:bg-primary/90"
+              onClick={handleRegisterClick}
+            >
+              RSVP
+            </Button>
           </div>
         </div>
-        {/* Card content - titled/info, padding top for avatar overlap */}
-        <CardHeader className="pt-8 pb-2">
-          <CardTitle className="text-base font-semibold">{event.title}</CardTitle>
-          <div className="flex gap-2 flex-wrap mt-1">
-            <Badge variant="outline">{event.type}</Badge>
-            {event.is_virtual && (
-              <Badge variant="secondary" className="cursor-default">Virtual</Badge>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="text-gray-600 text-sm mb-3 line-clamp-2">{event.description}</div>
-          <div className="space-y-2 mb-4">
-            <div className="flex items-center gap-2 text-xs text-gray-500">
-              <Calendar className="w-4 h-4" />
-              {event.date_time ? new Date(event.date_time).toLocaleString() : 'TBD'}
-            </div>
-            <div className="flex items-center gap-2 text-xs text-gray-500">
-              <MapPin className="w-4 h-4" />
-              {event.location}
-            </div>
-            <div className="flex items-center gap-2 text-xs text-gray-500">
-              <UsersIcon className="w-4 h-4" />
-              {event.attendee_count ?? 0} attending
-            </div>
-          </div>
-          <Button
-            className="w-full bg-dna-emerald hover:bg-dna-forest text-white"
-            onClick={handleRegisterClick}
-          >
-            Register
-          </Button>
-        </CardContent>
       </Card>
 
       <ConnectDialogs
