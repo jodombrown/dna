@@ -41,6 +41,7 @@ import { format, formatDistanceToNow } from 'date-fns';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { motion, AnimatePresence } from 'framer-motion';
 import { config } from '@/lib/config';
+import { getEventSchema } from '@/components/seo/PageSEO';
 
 const PublicEventPage = () => {
   const { slugOrId } = useParams<{ slugOrId: string }>();
@@ -289,22 +290,51 @@ const PublicEventPage = () => {
   // SEO description
   const seoDescription = event.short_description || event.description?.slice(0, 160) || `${eventTitle} hosted by ${hostName} on DNA`;
 
+  // Generate Event structured data for Google rich results
+  const eventStructuredData = getEventSchema({
+    name: eventTitle,
+    description: seoDescription,
+    startDate: event.start_time,
+    endDate: event.end_time,
+    location: locationDisplay || undefined,
+    isVirtual: event.format === 'virtual',
+    image: event.cover_image_url,
+    organizer: hostName,
+    url: `${config.APP_URL}/event/${event.slug || event.id}`,
+  });
+
+  const canonicalUrl = `${config.APP_URL}/event/${event.slug || event.id}`;
+  const ogImage = event.cover_image_url || `${config.APP_URL}/og-image.png`;
+
   return (
     <>
-      {/* SEO Meta Tags - Critical for link previews */}
+      {/* SEO Meta Tags - Critical for link previews & Google rich results */}
       <Helmet>
-        <title>{eventTitle} | DNA Event</title>
+        <title>{eventTitle} | African Diaspora Event | DNA</title>
         <meta name="description" content={seoDescription} />
-        <meta property="og:title" content={eventTitle} />
+        <meta name="keywords" content={`african diaspora event, ${event.event_type || 'community'}, ${event.location_city || 'global'}, african professionals, diaspora networking`} />
+        <link rel="canonical" href={canonicalUrl} />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content={`${eventTitle} | DNA Event`} />
         <meta property="og:description" content={seoDescription} />
-        <meta property="og:image" content={event.cover_image_url || '/og-image.png'} />
-        <meta property="og:url" content={`${config.APP_URL}/event/${event.slug || event.id}`} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:url" content={canonicalUrl} />
         <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="DNA - Diaspora Network of Africa" />
-        <meta name="twitter:card" content={event.cover_image_url ? 'summary_large_image' : 'summary'} />
-        <meta name="twitter:title" content={eventTitle} />
+        <meta property="og:site_name" content="Diaspora Network of Africa" />
+        <meta property="og:locale" content="en_US" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${eventTitle} | DNA Event`} />
         <meta name="twitter:description" content={seoDescription} />
-        <meta name="twitter:image" content={event.cover_image_url || '/og-image.png'} />
+        <meta name="twitter:image" content={ogImage} />
+        <meta name="twitter:site" content="@diasporanetwork" />
+
+        {/* Event Schema structured data for Google rich results */}
+        <script type="application/ld+json">
+          {JSON.stringify(eventStructuredData)}
+        </script>
       </Helmet>
 
       <div className="min-h-screen bg-background">
