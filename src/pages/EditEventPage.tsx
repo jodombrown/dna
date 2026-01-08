@@ -2,25 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { EventWithOrganizer, EventType, EventFormat } from '@/types/events';
+import { Label } from '@/components/ui/label';
+import { EventFormFields, EventFormData } from '@/components/convene/EventFormFields';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Save } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 
 // Helper to check if a string is a UUID
 const isUUID = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
@@ -33,6 +23,13 @@ export default function EditEventPage() {
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [resolvedEventId, setResolvedEventId] = useState<string | null>(null);
+
+  // Settings state (separate from the main form)
+  const [settings, setSettings] = useState({
+    is_public: true,
+    requires_approval: false,
+    allow_guests: false,
+  });
 
   // First resolve slug to UUID if needed
   const { data: eventId, isLoading: isResolvingId } = useQuery({
@@ -53,15 +50,13 @@ export default function EditEventPage() {
         .maybeSingle();
       
       if (error || !data) return null;
-      
-      // Redirect to slug URL if we were given UUID
       return data.id;
     },
     enabled: !!slugOrId,
   });
 
   // Update resolved ID when we get it
-  React.useEffect(() => {
+  useEffect(() => {
     if (eventId) {
       setResolvedEventId(eventId);
     }
@@ -79,72 +74,28 @@ export default function EditEventPage() {
       });
 
       if (error) throw error;
-      
-      // Map RPC response to EventWithOrganizer type
-      const eventData = data?.[0];
-      if (!eventData) return undefined;
-      
-      return {
-        id: eventData.event_id,
-        organizer_id: eventData.organizer_id,
-        title: eventData.title,
-        description: eventData.description,
-        event_type: eventData.event_type,
-        format: eventData.format,
-        location_name: eventData.location_name,
-        location_address: eventData.location_address,
-        location_city: eventData.location_city,
-        location_country: eventData.location_country,
-        location_lat: eventData.location_lat,
-        location_lng: eventData.location_lng,
-        meeting_url: eventData.meeting_url,
-        meeting_platform: eventData.meeting_platform,
-        start_time: eventData.start_time,
-        end_time: eventData.end_time,
-        timezone: eventData.timezone,
-        max_attendees: eventData.max_attendees,
-        cover_image_url: eventData.cover_image_url,
-        is_public: eventData.is_public,
-        requires_approval: eventData.requires_approval,
-        allow_guests: eventData.allow_guests,
-        is_cancelled: eventData.is_cancelled,
-        cancellation_reason: eventData.cancellation_reason,
-        created_at: eventData.created_at,
-        updated_at: eventData.updated_at,
-        organizer_username: eventData.organizer_username,
-        organizer_full_name: eventData.organizer_full_name,
-        organizer_avatar_url: eventData.organizer_avatar_url,
-        organizer_headline: eventData.organizer_headline,
-        attendee_count: Number(eventData.attendee_count),
-        going_count: Number(eventData.going_count),
-        maybe_count: Number(eventData.maybe_count),
-        user_rsvp_status: eventData.user_rsvp_status,
-        is_organizer: eventData.is_organizer,
-        can_edit: eventData.can_edit,
-      } as EventWithOrganizer;
+      return data?.[0] || null;
     },
     enabled: !!resolvedEventId && !!user,
   });
 
-  const [formData, setFormData] = useState({
+  // Form data matching EventFormFields interface
+  const [formData, setFormData] = useState<EventFormData>({
     title: '',
+    subtitle: '',
     description: '',
-    event_type: 'meetup' as EventType,
-    format: 'in_person' as EventFormat,
-    location_name: '',
-    location_address: '',
-    location_city: '',
-    location_country: '',
-    meeting_url: '',
-    meeting_platform: '',
-    start_time: '',
-    end_time: '',
-    timezone: '',
-    max_attendees: undefined as number | undefined,
-    cover_image_url: '',
-    is_public: true,
-    requires_approval: false,
-    allow_guests: false,
+    format: 'in_person',
+    eventDate: '',
+    eventTime: '',
+    eventEndDate: '',
+    eventEndTime: '',
+    location: '',
+    meetingUrl: '',
+    coverImageUrl: '',
+    dressCode: '',
+    maxAttendees: undefined,
+    tags: [],
+    agenda: [],
   });
 
   // Populate form when event loads
@@ -161,90 +112,108 @@ export default function EditEventPage() {
         return;
       }
 
-      // Format datetime for input fields
-      const formatDateTimeLocal = (dateString: string) => {
-        const date = new Date(dateString);
-        return format(date, "yyyy-MM-dd'T'HH:mm");
-      };
+      // Parse start datetime
+      const startDate = parseISO(event.start_time);
+      const endDate = parseISO(event.end_time);
+
+      // Build location string from components
+      const locationParts = [
+        event.location_name,
+        event.location_city,
+        event.location_country
+      ].filter(Boolean);
 
       setFormData({
-        title: event.title,
-        description: event.description,
-        event_type: event.event_type,
-        format: event.format,
-        location_name: event.location_name || '',
-        location_address: event.location_address || '',
-        location_city: event.location_city || '',
-        location_country: event.location_country || '',
-        meeting_url: event.meeting_url || '',
-        meeting_platform: event.meeting_platform || '',
-        start_time: formatDateTimeLocal(event.start_time),
-        end_time: formatDateTimeLocal(event.end_time),
-        timezone: event.timezone,
-        max_attendees: event.max_attendees || undefined,
-        cover_image_url: event.cover_image_url || '',
-        is_public: event.is_public,
-        requires_approval: event.requires_approval,
-        allow_guests: event.allow_guests,
+        title: event.title || '',
+        subtitle: '',
+        description: event.description || '',
+        format: (event.format as 'in_person' | 'virtual' | 'hybrid') || 'in_person',
+        eventDate: format(startDate, 'yyyy-MM-dd'),
+        eventTime: format(startDate, 'HH:mm'),
+        eventEndDate: format(endDate, 'yyyy-MM-dd'),
+        eventEndTime: format(endDate, 'HH:mm'),
+        location: locationParts.join(', '),
+        meetingUrl: event.meeting_url || '',
+        coverImageUrl: event.cover_image_url || '',
+        maxAttendees: event.max_attendees || undefined,
+        tags: [],
+        agenda: [],
+      });
+
+      setSettings({
+        is_public: event.is_public ?? true,
+        requires_approval: event.requires_approval ?? false,
+        allow_guests: event.allow_guests ?? false,
       });
     }
   }, [event, user, slugOrId, navigate, toast]);
+
+  const handleFormChange = (updates: Partial<EventFormData>) => {
+    setFormData(prev => ({ ...prev, ...updates }));
+  };
 
   const updateEventMutation = useMutation({
     mutationFn: async () => {
       if (!resolvedEventId || !user) throw new Error('Not authenticated');
 
       // Validation
-      if (!formData.title.trim() || !formData.description.trim()) {
-        throw new Error('Title and description are required');
+      if (!formData.title.trim()) {
+        throw new Error('Event title is required');
       }
 
-      if (!formData.start_time || !formData.end_time) {
-        throw new Error('Start and end times are required');
+      if (!formData.description.trim() || formData.description.length < 50) {
+        throw new Error('Description must be at least 50 characters');
       }
 
-      if (new Date(formData.end_time) <= new Date(formData.start_time)) {
+      if (!formData.eventDate || !formData.eventTime) {
+        throw new Error('Start date and time are required');
+      }
+
+      if (!formData.eventEndDate || !formData.eventEndTime) {
+        throw new Error('End date and time are required');
+      }
+
+      // Build timestamps
+      const start_time = new Date(`${formData.eventDate}T${formData.eventTime}`).toISOString();
+      const end_time = new Date(`${formData.eventEndDate}T${formData.eventEndTime}`).toISOString();
+
+      if (new Date(end_time) <= new Date(start_time)) {
         throw new Error('End time must be after start time');
       }
 
       // Format validation
-      if (formData.format === 'virtual' && !formData.meeting_url) {
+      if (formData.format === 'virtual' && !formData.meetingUrl) {
         throw new Error('Virtual events require a meeting URL');
       }
 
-      if (formData.format === 'in_person' && !formData.location_name) {
+      if (formData.format === 'in_person' && !formData.location) {
         throw new Error('In-person events require a location');
       }
 
-      if (formData.format === 'hybrid' && (!formData.meeting_url || !formData.location_name)) {
+      if (formData.format === 'hybrid' && (!formData.meetingUrl || !formData.location)) {
         throw new Error('Hybrid events require both location and meeting URL');
       }
 
-      // Convert datetime-local to ISO timestamps
-      const start_time = new Date(formData.start_time).toISOString();
-      const end_time = new Date(formData.end_time).toISOString();
+      // Parse location components
+      const locationParts = formData.location?.split(',').map(s => s.trim()) || [];
 
       const { error } = await supabase
         .from('events')
         .update({
           title: formData.title,
           description: formData.description,
-          event_type: formData.event_type,
           format: formData.format,
-          location_name: formData.location_name || null,
-          location_address: formData.location_address || null,
-          location_city: formData.location_city || null,
-          location_country: formData.location_country || null,
-          meeting_url: formData.meeting_url || null,
-          meeting_platform: formData.meeting_platform || null,
+          location_name: locationParts[0] || null,
+          location_city: locationParts[1] || null,
+          location_country: locationParts[2] || null,
+          meeting_url: formData.meetingUrl || null,
           start_time,
           end_time,
-          timezone: formData.timezone,
-          max_attendees: formData.max_attendees || null,
-          cover_image_url: formData.cover_image_url || null,
-          is_public: formData.is_public,
-          requires_approval: formData.requires_approval,
-          allow_guests: formData.allow_guests,
+          max_attendees: formData.maxAttendees || null,
+          cover_image_url: formData.coverImageUrl || null,
+          is_public: settings.is_public,
+          requires_approval: settings.requires_approval,
+          allow_guests: settings.allow_guests,
         })
         .eq('id', resolvedEventId)
         .eq('organizer_id', user.id);
@@ -261,6 +230,7 @@ export default function EditEventPage() {
       navigate(`/dna/convene/events/${slugOrId}`);
     },
     onError: (error: Error) => {
+      setIsSubmitting(false);
       toast({
         title: 'Error',
         description: error.message || 'Failed to update event',
@@ -277,7 +247,7 @@ export default function EditEventPage() {
   if (isResolvingId || isLoadingEvent) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center py-12 text-muted-foreground">
             Loading event...
           </div>
@@ -289,7 +259,7 @@ export default function EditEventPage() {
   if (!event) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center py-12">
             <h2 className="text-2xl font-bold mb-2">Event not found</h2>
             <Button onClick={() => navigate('/dna/convene/events')}>
@@ -303,7 +273,7 @@ export default function EditEventPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <Button
@@ -314,263 +284,78 @@ export default function EditEventPage() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex-1">
-            <h1 className="text-3xl font-bold">Edit Event</h1>
-            <p className="text-muted-foreground mt-1">
+            <h1 className="text-2xl font-bold">Edit Event</h1>
+            <p className="text-sm text-muted-foreground">
               Update your event details
             </p>
           </div>
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting || updateEventMutation.isPending}
-            className="bg-dna-emerald hover:bg-dna-forest text-white"
+            className="bg-amber-500 hover:bg-amber-600 text-white"
           >
             <Save className="h-4 w-4 mr-2" />
             {isSubmitting ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>
 
+        {/* Main Form - Same structure as composer */}
         <Card className="p-6">
-          <Tabs defaultValue="basics" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="basics">Basics</TabsTrigger>
-              <TabsTrigger value="details">Details</TabsTrigger>
-              <TabsTrigger value="settings">Settings</TabsTrigger>
-            </TabsList>
+          <EventFormFields
+            formData={formData}
+            onChange={handleFormChange}
+          />
 
-            {/* BASICS TAB */}
-            <TabsContent value="basics" className="space-y-4 mt-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Event Title *</Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  maxLength={200}
-                />
-              </div>
+          {/* Settings Section - Separated with divider */}
+          <div className="flex items-center gap-3 pt-6 mt-6">
+            <div className="flex-1 h-px bg-border" />
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Event Settings</span>
+            <div className="flex-1 h-px bg-border" />
+          </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="description">Description *</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={6}
-                  maxLength={5000}
-                />
-                <p className="text-xs text-muted-foreground text-right">
-                  {formData.description.length}/5000
+          <div className="space-y-4 mt-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <Label htmlFor="is-public" className="text-sm font-medium">Public Event</Label>
+                <p className="text-xs text-muted-foreground">
+                  Anyone can discover and view this event
                 </p>
               </div>
+              <Switch
+                id="is-public"
+                checked={settings.is_public}
+                onCheckedChange={(checked) => setSettings(s => ({ ...s, is_public: checked }))}
+              />
+            </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="event-type">Event Type *</Label>
-                  <Select
-                    value={formData.event_type}
-                    onValueChange={(value) => setFormData({ ...formData, event_type: value as EventType })}
-                  >
-                    <SelectTrigger id="event-type">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="conference">Conference</SelectItem>
-                      <SelectItem value="workshop">Workshop</SelectItem>
-                      <SelectItem value="meetup">Meetup</SelectItem>
-                      <SelectItem value="webinar">Webinar</SelectItem>
-                      <SelectItem value="networking">Networking</SelectItem>
-                      <SelectItem value="social">Social</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="format">Format *</Label>
-                  <Select
-                    value={formData.format}
-                    onValueChange={(value) => setFormData({ ...formData, format: value as EventFormat })}
-                  >
-                    <SelectTrigger id="format">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="in_person">In Person</SelectItem>
-                      <SelectItem value="virtual">Virtual</SelectItem>
-                      <SelectItem value="hybrid">Hybrid</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <Label htmlFor="requires-approval" className="text-sm font-medium">Require Approval</Label>
+                <p className="text-xs text-muted-foreground">
+                  You'll approve each attendee before they can join
+                </p>
               </div>
+              <Switch
+                id="requires-approval"
+                checked={settings.requires_approval}
+                onCheckedChange={(checked) => setSettings(s => ({ ...s, requires_approval: checked }))}
+              />
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="cover-image">Cover Image URL (Optional)</Label>
-                <Input
-                  id="cover-image"
-                  type="url"
-                  placeholder="https://example.com/image.jpg"
-                  value={formData.cover_image_url}
-                  onChange={(e) => setFormData({ ...formData, cover_image_url: e.target.value })}
-                />
+            <div className="flex items-center justify-between">
+              <div>
+                <Label htmlFor="allow-guests" className="text-sm font-medium">Allow Guests</Label>
+                <p className="text-xs text-muted-foreground">
+                  Attendees can bring guests
+                </p>
               </div>
-            </TabsContent>
-
-            {/* DETAILS TAB */}
-            <TabsContent value="details" className="space-y-4 mt-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="start-time">Start Date & Time *</Label>
-                  <Input
-                    id="start-time"
-                    type="datetime-local"
-                    value={formData.start_time}
-                    onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="end-time">End Date & Time *</Label>
-                  <Input
-                    id="end-time"
-                    type="datetime-local"
-                    value={formData.end_time}
-                    onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              {(formData.format === 'in_person' || formData.format === 'hybrid') && (
-                <>
-                  <div className="space-y-2">
-                    <Label htmlFor="location-name">Location Name *</Label>
-                    <Input
-                      id="location-name"
-                      placeholder="e.g., WeWork Lagos"
-                      value={formData.location_name}
-                      onChange={(e) => setFormData({ ...formData, location_name: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="location-address">Address</Label>
-                    <Input
-                      id="location-address"
-                      placeholder="Street address"
-                      value={formData.location_address}
-                      onChange={(e) => setFormData({ ...formData, location_address: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="city">City</Label>
-                      <Input
-                        id="city"
-                        placeholder="e.g., Lagos"
-                        value={formData.location_city}
-                        onChange={(e) => setFormData({ ...formData, location_city: e.target.value })}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="country">Country</Label>
-                      <Input
-                        id="country"
-                        placeholder="e.g., Nigeria"
-                        value={formData.location_country}
-                        onChange={(e) => setFormData({ ...formData, location_country: e.target.value })}
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {(formData.format === 'virtual' || formData.format === 'hybrid') && (
-                <>
-                  <div className="space-y-2">
-                    <Label htmlFor="meeting-url">Meeting URL *</Label>
-                    <Input
-                      id="meeting-url"
-                      type="url"
-                      placeholder="e.g., https://zoom.us/j/123456789"
-                      value={formData.meeting_url}
-                      onChange={(e) => setFormData({ ...formData, meeting_url: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="meeting-platform">Platform (Optional)</Label>
-                    <Input
-                      id="meeting-platform"
-                      placeholder="e.g., Zoom, Google Meet, Teams"
-                      value={formData.meeting_platform}
-                      onChange={(e) => setFormData({ ...formData, meeting_platform: e.target.value })}
-                    />
-                  </div>
-                </>
-              )}
-
-              <div className="space-y-2">
-                <Label htmlFor="max-attendees">Max Attendees (Optional)</Label>
-                <Input
-                  id="max-attendees"
-                  type="number"
-                  min="1"
-                  placeholder="Leave empty for unlimited"
-                  value={formData.max_attendees || ''}
-                  onChange={(e) => setFormData({ 
-                    ...formData, 
-                    max_attendees: e.target.value ? parseInt(e.target.value) : undefined 
-                  })}
-                />
-              </div>
-            </TabsContent>
-
-            {/* SETTINGS TAB */}
-            <TabsContent value="settings" className="space-y-4 mt-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="is-public">Public Event</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Anyone can discover and view this event
-                  </p>
-                </div>
-                <Switch
-                  id="is-public"
-                  checked={formData.is_public}
-                  onCheckedChange={(checked) => setFormData({ ...formData, is_public: checked })}
-                />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="requires-approval">Require Approval</Label>
-                  <p className="text-sm text-muted-foreground">
-                    You'll approve each attendee before they can join
-                  </p>
-                </div>
-                <Switch
-                  id="requires-approval"
-                  checked={formData.requires_approval}
-                  onCheckedChange={(checked) => setFormData({ ...formData, requires_approval: checked })}
-                />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="allow-guests">Allow Guests</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Attendees can bring guests
-                  </p>
-                </div>
-                <Switch
-                  id="allow-guests"
-                  checked={formData.allow_guests}
-                  onCheckedChange={(checked) => setFormData({ ...formData, allow_guests: checked })}
-                />
-              </div>
-            </TabsContent>
-          </Tabs>
+              <Switch
+                id="allow-guests"
+                checked={settings.allow_guests}
+                onCheckedChange={(checked) => setSettings(s => ({ ...s, allow_guests: checked }))}
+              />
+            </div>
+          </div>
         </Card>
 
         {/* Action Buttons */}
@@ -585,7 +370,7 @@ export default function EditEventPage() {
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting || updateEventMutation.isPending}
-            className="bg-dna-emerald hover:bg-dna-forest text-white"
+            className="bg-amber-500 hover:bg-amber-600 text-white"
           >
             <Save className="h-4 w-4 mr-2" />
             {isSubmitting ? 'Saving...' : 'Save Changes'}
