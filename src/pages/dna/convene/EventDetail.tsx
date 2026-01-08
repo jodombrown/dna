@@ -52,7 +52,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
-import DetailViewLayout from '@/layouts/DetailViewLayout';
+// DetailViewLayout removed - using custom clean layout
 import { formatDistanceToNow, format } from 'date-fns';
 import { AddToCalendarButton } from '@/components/convene/AddToCalendarButton';
 import { EventSpacesSection } from '@/components/collaboration/EventSpacesSection';
@@ -401,26 +401,38 @@ const EventDetail = () => {
 
   if (isLoading) {
     return (
-      <DetailViewLayout
-        title="Loading..."
-        backPath="/dna/convene/events"
-        backLabel="Back to Events"
-      >
-        <div className="container max-w-4xl mx-auto px-4 py-8">
-          <p className="text-center text-muted-foreground">Loading event...</p>
+      <div className="min-h-screen bg-background">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <button
+            onClick={() => navigate('/dna/convene/events')}
+            className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6"
+          >
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to Events
+          </button>
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
         </div>
-      </DetailViewLayout>
+      </div>
     );
   }
 
   if (!event) {
     return (
-      <DetailViewLayout
-        title="Event Not Found"
-        backPath="/dna/convene/events"
-        backLabel="Back to Events"
-      >
-        <div className="container max-w-4xl mx-auto px-4 py-8">
+      <div className="min-h-screen bg-background">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <button
+            onClick={() => navigate('/dna/convene/events')}
+            className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6"
+          >
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to Events
+          </button>
           <Card>
             <CardContent className="py-12 text-center">
               <p className="text-muted-foreground">Event not found</p>
@@ -434,7 +446,7 @@ const EventDetail = () => {
             </CardContent>
           </Card>
         </div>
-      </DetailViewLayout>
+      </div>
     );
   }
 
@@ -443,20 +455,23 @@ const EventDetail = () => {
   const currentRsvp = userRsvp?.status;
 
   return (
-    <DetailViewLayout
-      title={event.title}
-      backPath="/dna/convene/events"
-      backLabel="Back to Events"
-      breadcrumbs={[
-        { label: 'Home', path: '/dna/feed' },
-        { label: 'Convene', path: '/dna/convene/events' },
-        { label: event.title }
-      ]}
-    >
-      <div className="container max-w-6xl mx-auto px-4 lg:px-6 py-8">
-        {/* Hero - Full Width */}
+    <div className="min-h-screen bg-background">
+      {/* Clean Event Detail Layout - No DetailViewLayout wrapper for full control */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Back Navigation */}
+        <button
+          onClick={() => navigate('/dna/convene/events')}
+          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors"
+        >
+          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to Events
+        </button>
+
+        {/* Hero Image - Full Width with proper aspect ratio */}
         {event.cover_image_url && (
-          <div className="aspect-[21/9] w-full overflow-hidden rounded-xl mb-8 shadow-lg">
+          <div className="aspect-[2.5/1] w-full overflow-hidden rounded-2xl mb-8">
             <img
               src={event.cover_image_url}
               alt={event.title}
@@ -466,7 +481,7 @@ const EventDetail = () => {
         )}
 
         {/* Title and Actions */}
-        <div className="mb-6">
+        <div className="mb-8">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
             <div className="flex-1">
               <div className="flex items-center gap-2 flex-wrap mb-2">
@@ -917,7 +932,7 @@ const EventDetail = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </DetailViewLayout>
+    </div>
   );
 };
 export default EventDetail;

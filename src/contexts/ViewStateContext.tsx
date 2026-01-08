@@ -52,6 +52,31 @@ const routeToViewState = (pathname: string): ViewState => {
     return 'DASHBOARD_HOME';
   }
   
+  // FOCUS_DETAIL_MODE for specific detail pages - check first!
+  // Event detail pages (e.g., /dna/convene/events/some-event-slug)
+  if (pathname.match(/\/dna\/convene\/events\/[^/]+$/) && 
+      !pathname.endsWith('/new') && 
+      !pathname.endsWith('/events')) {
+    return 'FOCUS_DETAIL_MODE';
+  }
+  
+  // Space detail pages
+  if (pathname.match(/\/dna\/collaborate\/spaces\/[^/]+$/) &&
+      !pathname.endsWith('/new')) {
+    return 'FOCUS_DETAIL_MODE';
+  }
+  
+  // Story detail pages  
+  if (pathname.match(/\/dna\/convey\/stories\/[^/]+$/)) {
+    return 'FOCUS_DETAIL_MODE';
+  }
+  
+  // Profile pages (e.g., /dna/username)
+  if (pathname.match(/^\/dna\/[^/]+$/) && 
+      !['feed', 'connect', 'convene', 'collaborate', 'contribute', 'convey', 'messages', 'settings', 'admin'].some(p => pathname === `/dna/${p}`)) {
+    return 'FOCUS_DETAIL_MODE';
+  }
+  
   // CONNECT_MODE
   if (pathname.startsWith('/dna/connect') || 
       pathname.startsWith('/dna/network') || 
@@ -59,44 +84,35 @@ const routeToViewState = (pathname: string): ViewState => {
     return 'CONNECT_MODE';
   }
   
-  // CONVENE_MODE
+  // CONVENE_MODE (hub pages, not detail pages)
   if (pathname.startsWith('/dna/events') || 
       pathname.startsWith('/dna/convene')) {
     return 'CONVENE_MODE';
   }
   
   // MESSAGES_MODE
-  // Canonical route: /dna/messages
-  // Legacy /dna/connect/messages redirects here (handled in App.tsx routing)
   if (pathname.startsWith('/dna/messages') || pathname.startsWith('/dna/connect/messages')) {
     return 'MESSAGES_MODE';
   }
   
-  // COLLABORATE_MODE (future)
+  // COLLABORATE_MODE
   if (pathname.startsWith('/dna/collaborate') || 
       pathname.startsWith('/dna/projects')) {
     return 'COLLABORATE_MODE';
   }
   
-  // CONTRIBUTE_MODE (future)
+  // CONTRIBUTE_MODE
   if (pathname.startsWith('/dna/contribute') || 
       pathname.startsWith('/dna/opportunities') ||
       pathname.startsWith('/dna/impact')) {
     return 'CONTRIBUTE_MODE';
   }
   
-  // CONVEY_MODE (future)
+  // CONVEY_MODE
   if (pathname.startsWith('/dna/convey') || 
       pathname.startsWith('/dna/daily') || 
       pathname.startsWith('/dna/stories')) {
     return 'CONVEY_MODE';
-  }
-  
-  // FOCUS_DETAIL_MODE for specific item views
-  if (pathname.match(/\/dna\/\w+\/[^/]+$/) && 
-      !pathname.includes('/me') && 
-      !pathname.includes('/feed')) {
-    return 'FOCUS_DETAIL_MODE';
   }
   
   // Default fallback
