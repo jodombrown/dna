@@ -30,6 +30,8 @@ export default {
 			fontFamily: {
 				sans: ['Inter', 'sans-serif'],
 				serif: ['Lora', 'serif'],
+				display: ['Cormorant Garamond', 'serif'],
+				body: ['Outfit', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
