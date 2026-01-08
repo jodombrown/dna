@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -22,22 +22,59 @@ import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Save } from 'lucide-react';
 import { format } from 'date-fns';
 
+// Helper to check if a string is a UUID
+const isUUID = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+
 export default function EditEventPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id: slugOrId } = useParams<{ id: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [resolvedEventId, setResolvedEventId] = useState<string | null>(null);
 
-  // Fetch event details
-  const { data: event, isLoading } = useQuery({
-    queryKey: ['event-details', id, user?.id],
+  // First resolve slug to UUID if needed
+  const { data: eventId, isLoading: isResolvingId } = useQuery({
+    queryKey: ['resolve-event-id', slugOrId],
     queryFn: async () => {
-      if (!id || !user) return null;
+      if (!slugOrId) return null;
+      
+      // If it's already a UUID, use it directly
+      if (isUUID(slugOrId)) {
+        return slugOrId;
+      }
+      
+      // Otherwise, look up by slug
+      const { data, error } = await supabase
+        .from('events')
+        .select('id, slug')
+        .eq('slug', slugOrId)
+        .maybeSingle();
+      
+      if (error || !data) return null;
+      
+      // Redirect to slug URL if we were given UUID
+      return data.id;
+    },
+    enabled: !!slugOrId,
+  });
+
+  // Update resolved ID when we get it
+  React.useEffect(() => {
+    if (eventId) {
+      setResolvedEventId(eventId);
+    }
+  }, [eventId]);
+
+  // Fetch event details using the resolved UUID
+  const { data: event, isLoading: isLoadingEvent } = useQuery({
+    queryKey: ['event-details', resolvedEventId, user?.id],
+    queryFn: async () => {
+      if (!resolvedEventId || !user) return null;
 
       const { data, error } = await supabase.rpc('get_event_details', {
-        p_event_id: id,
+        p_event_id: resolvedEventId,
         p_user_id: user.id,
       });
 
@@ -86,7 +123,7 @@ export default function EditEventPage() {
         can_edit: eventData.can_edit,
       } as EventWithOrganizer;
     },
-    enabled: !!id && !!user,
+    enabled: !!resolvedEventId && !!user,
   });
 
   const [formData, setFormData] = useState({
@@ -120,7 +157,7 @@ export default function EditEventPage() {
           description: 'Only the organizer can edit this event',
           variant: 'destructive',
         });
-        navigate(`/dna/convene/events/${id}`);
+        navigate(`/dna/convene/events/${slugOrId}`);
         return;
       }
 
@@ -151,11 +188,11 @@ export default function EditEventPage() {
         allow_guests: event.allow_guests,
       });
     }
-  }, [event, user, id, navigate, toast]);
+  }, [event, user, slugOrId, navigate, toast]);
 
   const updateEventMutation = useMutation({
     mutationFn: async () => {
-      if (!id || !user) throw new Error('Not authenticated');
+      if (!resolvedEventId || !user) throw new Error('Not authenticated');
 
       // Validation
       if (!formData.title.trim() || !formData.description.trim()) {
@@ -209,19 +246,19 @@ export default function EditEventPage() {
           requires_approval: formData.requires_approval,
           allow_guests: formData.allow_guests,
         })
-        .eq('id', id)
+        .eq('id', resolvedEventId)
         .eq('organizer_id', user.id);
 
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['event-details', id] });
+      queryClient.invalidateQueries({ queryKey: ['event-details', resolvedEventId] });
       queryClient.invalidateQueries({ queryKey: ['events'] });
       toast({
         title: 'Event updated!',
         description: 'Your changes have been saved',
       });
-      navigate(`/dna/convene/events/${id}`);
+      navigate(`/dna/convene/events/${slugOrId}`);
     },
     onError: (error: Error) => {
       toast({
@@ -237,7 +274,7 @@ export default function EditEventPage() {
     updateEventMutation.mutate();
   };
 
-  if (isLoading) {
+  if (isResolvingId || isLoadingEvent) {
     return (
       <div className="min-h-screen bg-background">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -272,7 +309,7 @@ export default function EditEventPage() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate(`/dna/convene/events/${id}`)}
+            onClick={() => navigate(`/dna/convene/events/${slugOrId}`)}
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -540,7 +577,7 @@ export default function EditEventPage() {
         <div className="flex justify-end gap-4 mt-6">
           <Button
             variant="outline"
-            onClick={() => navigate(`/dna/convene/events/${id}`)}
+            onClick={() => navigate(`/dna/convene/events/${slugOrId}`)}
             disabled={isSubmitting}
           >
             Cancel

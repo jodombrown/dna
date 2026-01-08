@@ -8869,8 +8869,8 @@ export type Database = {
           description: string
           end_time: string
           event_id: string
-          event_type: Database["public"]["Enums"]["event_type"]
-          format: Database["public"]["Enums"]["event_format"]
+          event_type: string
+          format: string
           going_count: number
           is_cancelled: boolean
           is_organizer: boolean
@@ -8895,7 +8895,7 @@ export type Database = {
           timezone: string
           title: string
           updated_at: string
-          user_rsvp_status: Database["public"]["Enums"]["rsvp_status"]
+          user_rsvp_status: string
         }[]
       }
       get_events: {
