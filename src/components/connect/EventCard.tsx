@@ -130,15 +130,21 @@ const EventCard: React.FC<EventCardProps> = ({
   const fullDate = parsedDate ? format(parsedDate, 'MMMM d, yyyy') : 'Date TBD';
   const timeRange = parsedDate ? format(parsedDate, 'h:mm a') : '';
 
-  // Location info
+  // Location info - hide if not available
   const getLocationInfo = () => {
     if (event.is_virtual || event.format === 'virtual') {
       return { icon: Video, text: 'Virtual Event', subtext: null };
     }
     if (event.format === 'hybrid') {
-      return { icon: Globe, text: 'Hybrid Event', subtext: event.location };
+      const location = event.location || event.location_city || event.location_name;
+      return { icon: Globe, text: 'Hybrid Event', subtext: location || null };
     }
-    return { icon: MapPin, text: event.location || 'Location TBA', subtext: null };
+    // Build location from available fields
+    const locationParts = [event.location, event.location_name, event.location_city, event.location_country].filter(Boolean);
+    if (locationParts.length === 0) {
+      return null; // Hide section entirely
+    }
+    return { icon: MapPin, text: locationParts[0], subtext: null };
   };
 
   const locationInfo = getLocationInfo();
@@ -215,18 +221,20 @@ const EventCard: React.FC<EventCardProps> = ({
             </div>
           )}
 
-          {/* Location - Luma-style with icon */}
-          <div className="flex items-center gap-3 mb-4">
-            <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg bg-background flex items-center justify-center">
-              <locationInfo.icon className="h-5 w-5 text-muted-foreground" />
+          {/* Location - Only show if available */}
+          {locationInfo && (
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg bg-background flex items-center justify-center">
+                <locationInfo.icon className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-foreground truncate">{locationInfo.text}</p>
+                {locationInfo.subtext && (
+                  <p className="text-sm text-muted-foreground truncate">{locationInfo.subtext}</p>
+                )}
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate">{locationInfo.text}</p>
-              {locationInfo.subtext && (
-                <p className="text-sm text-muted-foreground truncate">{locationInfo.subtext}</p>
-              )}
-            </div>
-          </div>
+          )}
 
           {/* Footer: Attendees + RSVP */}
           <div className="flex items-center justify-between pt-2">

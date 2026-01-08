@@ -43,18 +43,21 @@ export function EventCard({ event, onRSVP }: EventCardProps) {
   const fullDate = format(startDate, 'MMMM d, yyyy');
   const timeRange = `${format(startDate, 'h:mm a')} - ${format(endDate, 'h:mm a')}`;
 
-  // Location info
+  // Location info - hide if not available
   const getLocationInfo = () => {
     if (event.format === 'virtual') {
       return { icon: Video, text: 'Virtual Event', subtext: null };
     }
     if (event.format === 'hybrid') {
-      return { icon: Globe, text: event.location_city || 'Hybrid Event', subtext: 'In-person & Online' };
+      const location = event.location_city || event.location_name;
+      return { icon: Globe, text: 'Hybrid Event', subtext: location || null };
     }
-    const locationText = event.location_city && event.location_country 
-      ? `${event.location_city}, ${event.location_country}`
-      : event.location_name || 'Location TBA';
-    return { icon: MapPin, text: locationText, subtext: null };
+    // Build location from available fields
+    const locationParts = [event.location_name, event.location_city, event.location_country].filter(Boolean);
+    if (locationParts.length === 0) {
+      return null; // Hide section entirely
+    }
+    return { icon: MapPin, text: locationParts[0], subtext: locationParts.slice(1).join(', ') || null };
   };
 
   const locationInfo = getLocationInfo();
@@ -123,18 +126,20 @@ export function EventCard({ event, onRSVP }: EventCardProps) {
           </div>
         </div>
 
-        {/* Location - Luma-style with icon */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg bg-background flex items-center justify-center">
-            <locationInfo.icon className="h-5 w-5 text-muted-foreground" />
+        {/* Location - Only show if available */}
+        {locationInfo && (
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg bg-background flex items-center justify-center">
+              <locationInfo.icon className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground truncate">{locationInfo.text}</p>
+              {locationInfo.subtext && (
+                <p className="text-sm text-muted-foreground truncate">{locationInfo.subtext}</p>
+              )}
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-foreground truncate">{locationInfo.text}</p>
-            {locationInfo.subtext && (
-              <p className="text-sm text-muted-foreground truncate">{locationInfo.subtext}</p>
-            )}
-          </div>
-        </div>
+        )}
 
         {/* Footer: Attendees + Status */}
         <div className="flex items-center justify-between pt-2">

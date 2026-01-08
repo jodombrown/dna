@@ -31,6 +31,11 @@ export interface FeedEventDetails {
   organizer_name?: string;
   organizer_avatar?: string;
   attendee_count: number;
+  // Additional fields for expanded section
+  is_free: boolean;
+  ticket_price_cents: number | null;
+  speakers: Array<{ name: string; title?: string; image_url?: string }> | null;
+  tags: string[] | null;
 }
 
 export function useEventDetailsForFeed(eventId: string | null) {
@@ -41,7 +46,7 @@ export function useEventDetailsForFeed(eventId: string | null) {
     queryFn: async (): Promise<FeedEventDetails | null> => {
       if (!eventId) return null;
 
-      // Fetch event details
+      // Fetch event details with all needed fields
       const { data: event, error } = await supabase
         .from('events')
         .select(`
@@ -62,7 +67,8 @@ export function useEventDetailsForFeed(eventId: string | null) {
           max_attendees,
           event_type,
           slug,
-          organizer_id
+          organizer_id,
+          speakers
         `)
         .eq('id', eventId)
         .single();
@@ -85,11 +91,32 @@ export function useEventDetailsForFeed(eventId: string | null) {
         .eq('event_id', eventId)
         .eq('status', 'going');
 
+      // Check for ticket types to determine if free
+      const { data: ticketTypes } = await supabase
+        .from('event_ticket_types')
+        .select('price_cents')
+        .eq('event_id', eventId)
+        .order('price_cents', { ascending: true })
+        .limit(1);
+
+      const lowestPrice = ticketTypes?.[0]?.price_cents ?? 0;
+      const isFree = lowestPrice === 0;
+
+      // Parse speakers JSON safely
+      let parsedSpeakers = null;
+      if (event.speakers && Array.isArray(event.speakers)) {
+        parsedSpeakers = event.speakers as Array<{ name: string; title?: string; image_url?: string }>;
+      }
+
       return {
         ...event,
         organizer_name: organizer?.full_name || undefined,
         organizer_avatar: organizer?.avatar_url || undefined,
         attendee_count: count || 0,
+        is_free: isFree,
+        ticket_price_cents: isFree ? null : lowestPrice,
+        speakers: parsedSpeakers,
+        tags: null, // No tags column yet
       } as FeedEventDetails;
     },
   });
