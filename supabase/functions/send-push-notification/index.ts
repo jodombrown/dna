@@ -119,6 +119,14 @@ const handler = async (req: Request): Promise<Response> => {
     let successCount = 0;
     const failedSubscriptionIds: string[] = [];
 
+    // Get VAPID keys for proper web push signing
+    const vapidPublicKey = Deno.env.get("VAPID_PUBLIC_KEY");
+    const vapidPrivateKey = Deno.env.get("VAPID_PRIVATE_KEY");
+
+    if (!vapidPublicKey || !vapidPrivateKey) {
+      console.warn("VAPID keys not configured - push notifications may not work");
+    }
+
     // Send to all subscriptions
     for (const subscription of subscriptions) {
       try {
@@ -132,25 +140,35 @@ const handler = async (req: Request): Promise<Response> => {
           continue;
         }
 
-        // Simple POST to the push endpoint
-        // Note: Full Web Push requires VAPID signing which needs crypto
-        // This works for testing and some push services
+        // Build headers for Web Push
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json',
+          'TTL': '86400',
+        };
+
+        // Add VAPID authorization if keys are available
+        if (vapidPublicKey && vapidPrivateKey && pushSubscription.keys) {
+          // For full VAPID signing, we add the public key
+          // Note: Full JWT signing would require additional crypto libraries
+          headers['Crypto-Key'] = `p256ecdsa=${vapidPublicKey}`;
+        }
+
         const response = await fetch(pushSubscription.endpoint, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'TTL': '86400',
-          },
+          headers,
           body: payload,
         });
         
         if (response.ok || response.status === 201) {
           successCount++;
+          console.log(`Push sent successfully to endpoint`);
         } else if (response.status === 410 || response.status === 404) {
           // Subscription expired or invalid
           failedSubscriptionIds.push(subscription.id);
+          console.log(`Subscription expired: ${subscription.id}`);
         } else {
-          console.log(`Push to ${pushSubscription.endpoint} returned ${response.status}`);
+          const responseText = await response.text();
+          console.log(`Push returned ${response.status}: ${responseText}`);
         }
       } catch (pushError) {
         console.error("Error sending to subscription:", pushError);
