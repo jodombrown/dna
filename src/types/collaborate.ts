@@ -162,3 +162,21 @@ export interface SpaceActivity {
     avatar_url?: string;
   };
 }
+
+// Nudge types
+export type NudgeTone = 'gentle' | 'checkin' | 'urgent';
+export type NudgeType = 'manual' | 'stalled' | 'overdue';
+
+export interface Nudge {
+  id: string;
+  space_id: string;
+  task_id?: string;
+  target_user_id: string;
+  sent_by: string;
+  type: NudgeType;
+  tone: NudgeTone;
+  message: string;
+  sent_at: string;
+  acknowledged_at?: string;
+  created_at: string;
+}
