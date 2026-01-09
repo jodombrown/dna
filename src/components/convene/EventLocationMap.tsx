@@ -47,19 +47,21 @@ export function EventLocationMap({
 
   const getGoogleMapsUrl = () => {
     if (hasCoordinates) {
-      return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+      // Use @lat,lng,zoom format for direct coordinates
+      return `https://www.google.com/maps/@${lat},${lng},17z`;
     }
     // Fallback to searching by name
     const searchQuery = [locationName, locationAddress, city, country].filter(Boolean).join(', ');
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}`;
+    return `https://www.google.com/maps/place/${encodeURIComponent(searchQuery)}`;
   };
 
   const getAppleMapsUrl = () => {
     if (hasCoordinates) {
-      return `https://maps.apple.com/?ll=${lat},${lng}&q=${encodeURIComponent(locationName || 'Event Location')}`;
+      // Use sll (start latitude/longitude) parameter with daddr for directions-compatible link
+      return `https://maps.apple.com/?sll=${lat},${lng}&z=17&q=${encodeURIComponent(locationName || city || 'Event Location')}`;
     }
     const searchQuery = [locationName, locationAddress, city, country].filter(Boolean).join(', ');
-    return `https://maps.apple.com/?q=${encodeURIComponent(searchQuery)}`;
+    return `https://maps.apple.com/?address=${encodeURIComponent(searchQuery)}`;
   };
 
   if (!locationName && !city && !hasCoordinates) {
