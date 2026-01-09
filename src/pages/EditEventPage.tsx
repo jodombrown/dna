@@ -104,6 +104,7 @@ export default function EditEventPage() {
     eventTime: '',
     eventEndDate: '',
     eventEndTime: '',
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     location: '',
     meetingUrl: '',
     coverImageUrl: '',
@@ -147,6 +148,7 @@ export default function EditEventPage() {
         eventTime: format(startDate, 'HH:mm'),
         eventEndDate: format(endDate, 'yyyy-MM-dd'),
         eventEndTime: format(endDate, 'HH:mm'),
+        timezone: event.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
         location: locationParts.join(', '),
         meetingUrl: event.meeting_url || '',
         coverImageUrl: event.cover_image_url || '',
@@ -248,6 +250,7 @@ export default function EditEventPage() {
           is_public: settings.is_public,
           requires_approval: settings.requires_approval,
           allow_guests: settings.allow_guests,
+          timezone: formData.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
         })
         .eq('id', resolvedEventId)
         .eq('organizer_id', user.id);

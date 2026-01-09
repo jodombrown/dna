@@ -504,6 +504,55 @@ function EventModeFields({
             </div>
           </div>
         </div>
+
+        {/* Timezone Selector */}
+        <div className="mt-3">
+          <Label className="text-xs text-muted-foreground mb-1 block">Timezone</Label>
+          <Select
+            value={formData.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone}
+            onValueChange={(value) => onChange({ timezone: value })}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select timezone" />
+            </SelectTrigger>
+            <SelectContent className="max-h-[300px]">
+              {/* Africa - prioritized */}
+              <SelectItem value="Africa/Lagos">Lagos, Nigeria (WAT)</SelectItem>
+              <SelectItem value="Africa/Nairobi">Nairobi, Kenya (EAT)</SelectItem>
+              <SelectItem value="Africa/Johannesburg">Johannesburg, South Africa (SAST)</SelectItem>
+              <SelectItem value="Africa/Cairo">Cairo, Egypt (EET)</SelectItem>
+              <SelectItem value="Africa/Accra">Accra, Ghana (GMT)</SelectItem>
+              <SelectItem value="Africa/Casablanca">Casablanca, Morocco (WET)</SelectItem>
+              <SelectItem value="Africa/Addis_Ababa">Addis Ababa, Ethiopia (EAT)</SelectItem>
+              <SelectItem value="Africa/Dakar">Dakar, Senegal (GMT)</SelectItem>
+              <SelectItem value="Africa/Kigali">Kigali, Rwanda (CAT)</SelectItem>
+              <SelectItem value="Africa/Kinshasa">Kinshasa, DRC (WAT)</SelectItem>
+              {/* Americas */}
+              <SelectItem value="America/New_York">New York (EST/EDT)</SelectItem>
+              <SelectItem value="America/Chicago">Chicago (CST/CDT)</SelectItem>
+              <SelectItem value="America/Denver">Denver (MST/MDT)</SelectItem>
+              <SelectItem value="America/Los_Angeles">Los Angeles (PST/PDT)</SelectItem>
+              <SelectItem value="America/Toronto">Toronto (EST/EDT)</SelectItem>
+              <SelectItem value="America/Sao_Paulo">São Paulo (BRT)</SelectItem>
+              <SelectItem value="America/Mexico_City">Mexico City (CST)</SelectItem>
+              {/* Europe */}
+              <SelectItem value="Europe/London">London (GMT/BST)</SelectItem>
+              <SelectItem value="Europe/Paris">Paris (CET/CEST)</SelectItem>
+              <SelectItem value="Europe/Berlin">Berlin (CET/CEST)</SelectItem>
+              <SelectItem value="Europe/Amsterdam">Amsterdam (CET/CEST)</SelectItem>
+              {/* Middle East / Asia */}
+              <SelectItem value="Asia/Dubai">Dubai (GST)</SelectItem>
+              <SelectItem value="Asia/Singapore">Singapore (SGT)</SelectItem>
+              <SelectItem value="Asia/Tokyo">Tokyo (JST)</SelectItem>
+              {/* Caribbean */}
+              <SelectItem value="America/Jamaica">Jamaica (EST)</SelectItem>
+              <SelectItem value="America/Port_of_Spain">Trinidad & Tobago (AST)</SelectItem>
+              <SelectItem value="America/Barbados">Barbados (AST)</SelectItem>
+              {/* UTC */}
+              <SelectItem value="UTC">UTC (Coordinated Universal Time)</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Event Format */}
