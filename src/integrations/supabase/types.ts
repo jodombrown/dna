@@ -4822,6 +4822,63 @@ export type Database = {
         }
         Relationships: []
       }
+      nudges: {
+        Row: {
+          acknowledged_at: string | null
+          created_at: string | null
+          id: string
+          message: string
+          sent_at: string | null
+          sent_by: string | null
+          space_id: string
+          target_user_id: string
+          task_id: string | null
+          tone: string | null
+          type: string | null
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          created_at?: string | null
+          id?: string
+          message: string
+          sent_at?: string | null
+          sent_by?: string | null
+          space_id: string
+          target_user_id: string
+          task_id?: string | null
+          tone?: string | null
+          type?: string | null
+        }
+        Update: {
+          acknowledged_at?: string | null
+          created_at?: string | null
+          id?: string
+          message?: string
+          sent_at?: string | null
+          sent_by?: string | null
+          space_id?: string
+          target_user_id?: string
+          task_id?: string | null
+          tone?: string | null
+          type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nudges_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nudges_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       opportunities: {
         Row: {
           created_at: string
@@ -7221,6 +7278,47 @@ export type Database = {
         }
         Relationships: []
       }
+      space_activity_log: {
+        Row: {
+          action_type: string
+          created_at: string | null
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          metadata: Json | null
+          space_id: string
+          user_id: string | null
+        }
+        Insert: {
+          action_type: string
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          metadata?: Json | null
+          space_id: string
+          user_id?: string | null
+        }
+        Update: {
+          action_type?: string
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          metadata?: Json | null
+          space_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "space_activity_log_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       space_attachments: {
         Row: {
           attached_to_id: string
@@ -7290,6 +7388,50 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "space_members_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      space_roles: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_lead: boolean | null
+          order_index: number | null
+          permissions: Json | null
+          required_skills: string[] | null
+          space_id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_lead?: boolean | null
+          order_index?: number | null
+          permissions?: Json | null
+          required_skills?: string[] | null
+          space_id: string
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_lead?: boolean | null
+          order_index?: number | null
+          permissions?: Json | null
+          required_skills?: string[] | null
+          space_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "space_roles_space_id_fkey"
             columns: ["space_id"]
             isOneToOne: false
             referencedRelation: "spaces"
@@ -7376,6 +7518,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      space_templates: {
+        Row: {
+          category: string
+          created_at: string | null
+          default_initiatives: Json | null
+          default_roles: Json | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          suggested_milestones: Json | null
+          tier_availability: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          default_initiatives?: Json | null
+          default_roles?: Json | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          suggested_milestones?: Json | null
+          tier_availability?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          default_initiatives?: Json | null
+          default_roles?: Json | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          suggested_milestones?: Json | null
+          tier_availability?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       space_updates: {
         Row: {
