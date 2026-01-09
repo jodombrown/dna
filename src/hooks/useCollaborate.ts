@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { supabaseClient } from '@/lib/supabaseHelpers';
 import { toast } from 'sonner';
-import type { SpaceTemplate, CreateSpaceInput, SpaceTemplateRole, SpaceTemplateInitiative, Space, SpaceMember, SpaceRole, Initiative, SpaceTask, SpaceActivity } from '@/types/collaborate';
+import type { SpaceTemplate, CreateSpaceInput, SpaceTemplateRole, SpaceTemplateInitiative, Space, SpaceMember, SpaceRole, Initiative, SpaceTask, SpaceActivity, TaskStatus } from '@/types/collaborate';
 
 export function useSpaceTemplates() {
   return useQuery({
@@ -299,5 +299,60 @@ export function useSpaceActivity(spaceId: string, limit = 20) {
       })) as unknown as SpaceActivity[];
     },
     enabled: !!spaceId,
+  });
+}
+
+// Update a task
+export function useUpdateTask() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, updates }: { id: string; updates: Partial<{ title: string; description: string; status: TaskStatus; due_date: string; assignee_id: string; priority: string }> }) => {
+      const { error } = await supabase
+        .from('space_tasks')
+        .update({ ...updates, updated_at: new Date().toISOString() })
+        .eq('id', id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['space-tasks'] });
+    },
+    onError: (error) => {
+      toast.error('Failed to update task', { description: error.message });
+    },
+  });
+}
+
+// Create a task
+export function useCreateTask() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { space_id: string; title: string; description?: string; status?: TaskStatus; due_date?: string; assignee_id?: string; priority?: string }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const { error } = await supabase
+        .from('space_tasks')
+        .insert([{
+          space_id: input.space_id,
+          title: input.title,
+          description: input.description,
+          status: input.status || 'open',
+          due_date: input.due_date,
+          assignee_id: input.assignee_id,
+          created_by: user.id,
+        }]);
+
+      if (error) throw error;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['space-tasks', variables.space_id] });
+      toast.success('Task created!');
+    },
+    onError: (error) => {
+      toast.error('Failed to create task', { description: error.message });
+    },
   });
 }

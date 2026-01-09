@@ -120,15 +120,19 @@ export interface Initiative {
   updated_at: string;
 }
 
-// Space task
+// Task status enum (matches DB enum: open, in_progress, done)
+export type TaskStatus = 'open' | 'in_progress' | 'done';
+
+// Space task (alias Task for components)
 export interface SpaceTask {
   id: string;
   space_id: string;
   title: string;
   description?: string;
   assignee_id?: string;
-  status: 'open' | 'in_progress' | 'done';
+  status: TaskStatus;
   due_date?: string;
+  priority?: 'low' | 'medium' | 'high';
   created_by: string;
   created_at: string;
   updated_at: string;
@@ -138,6 +142,9 @@ export interface SpaceTask {
     avatar_url?: string;
   };
 }
+
+// Alias for cleaner component usage
+export type Task = SpaceTask;
 
 // Space activity
 export interface SpaceActivity {
