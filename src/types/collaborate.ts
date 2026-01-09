@@ -45,3 +45,113 @@ export interface CreateSpaceInput {
 export interface CreateSpaceFromTemplateInput extends CreateSpaceInput {
   templateId: string;
 }
+
+// Space entity
+export interface Space {
+  id: string;
+  slug?: string;
+  name: string;
+  tagline?: string;
+  description?: string;
+  space_type?: string;
+  status: string;
+  visibility: string;
+  focus_areas?: string[];
+  region?: string;
+  created_by: string;
+  template_id?: string;
+  privacy_level?: PrivacyLevel;
+  cover_image_url?: string;
+  source_type?: string;
+  source_id?: string;
+  created_at: string;
+  updated_at: string;
+  last_activity_at?: string;
+}
+
+// Space member
+export interface SpaceMember {
+  id: string;
+  space_id: string;
+  user_id: string;
+  role?: string;
+  role_id?: string;
+  status: string;
+  joined_at: string;
+  invited_by?: string;
+  user?: {
+    id: string;
+    full_name: string;
+    username?: string;
+    avatar_url?: string;
+  };
+  role_info?: SpaceRole;
+}
+
+// Space role
+export interface SpaceRole {
+  id: string;
+  space_id: string;
+  title: string;
+  description?: string;
+  required_skills?: string[];
+  permissions?: Record<string, boolean>;
+  is_lead: boolean;
+  order_index: number;
+  created_at: string;
+}
+
+// Initiative
+export interface Initiative {
+  id: string;
+  space_id: string;
+  title: string;
+  description?: string;
+  impact_area?: string;
+  status: string;
+  target_date?: string;
+  started_at?: string;
+  completed_at?: string;
+  completion_metrics?: Record<string, unknown>;
+  order_index: number;
+  creator_id?: string;
+  created_by?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// Space task
+export interface SpaceTask {
+  id: string;
+  space_id: string;
+  title: string;
+  description?: string;
+  assignee_id?: string;
+  status: 'open' | 'in_progress' | 'done';
+  due_date?: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  assignee?: {
+    id: string;
+    full_name: string;
+    avatar_url?: string;
+  };
+}
+
+// Space activity
+export interface SpaceActivity {
+  id: string;
+  space_id: string;
+  user_id: string;
+  action_type: string;
+  entity_type?: string;
+  entity_id?: string;
+  metadata?: Record<string, unknown>;
+  created_at: string;
+  user?: {
+    id: string;
+    full_name: string;
+    avatar_url?: string;
+  };
+}
