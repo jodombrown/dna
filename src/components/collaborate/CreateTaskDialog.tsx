@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,9 +17,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Loader2 } from 'lucide-react';
-import { useCreateTask } from '@/hooks/useCollaborate';
-import type { TaskStatus } from '@/types/collaborate';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { CalendarIcon, Loader2 } from 'lucide-react';
+import { 
+  useCreateTask, 
+  useSpaceMembers,
+} from '@/hooks/useCollaborate';
+import type { TaskStatus, TaskPriority } from '@/types/collaborate';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 interface CreateTaskDialogProps {
   open: boolean;
@@ -27,129 +40,226 @@ interface CreateTaskDialogProps {
   defaultStatus?: TaskStatus;
 }
 
-export function CreateTaskDialog({ open, onOpenChange, spaceId, defaultStatus = 'open' }: CreateTaskDialogProps) {
+const PRIORITY_OPTIONS: { value: TaskPriority; label: string; color: string }[] = [
+  { value: 'low', label: 'Low', color: 'text-muted-foreground' },
+  { value: 'medium', label: 'Medium', color: 'text-blue-500' },
+  { value: 'high', label: 'High', color: 'text-destructive' },
+];
+
+const STATUS_OPTIONS: { value: TaskStatus; label: string }[] = [
+  { value: 'open', label: 'To Do' },
+  { value: 'in_progress', label: 'In Progress' },
+  { value: 'done', label: 'Done' },
+];
+
+export function CreateTaskDialog({
+  open,
+  onOpenChange,
+  spaceId,
+  defaultStatus = 'open',
+}: CreateTaskDialogProps) {
   const createTask = useCreateTask();
+  const { data: members } = useSpaceMembers(spaceId);
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     status: defaultStatus,
-    due_date: '',
-    priority: 'medium' as 'low' | 'medium' | 'high',
+    priority: 'medium' as TaskPriority,
+    due_date: undefined as Date | undefined,
+    assignee_id: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.title.trim()) return;
+  // Reset form when dialog opens
+  useEffect(() => {
+    if (open) {
+      setFormData({
+        title: '',
+        description: '',
+        status: defaultStatus,
+        priority: 'medium',
+        due_date: undefined,
+        assignee_id: '',
+      });
+    }
+  }, [open, defaultStatus]);
 
-    createTask.mutate(
-      {
+  const handleSubmit = async () => {
+    try {
+      await createTask.mutateAsync({
         space_id: spaceId,
         title: formData.title,
         description: formData.description || undefined,
         status: formData.status,
-        due_date: formData.due_date || undefined,
+        due_date: formData.due_date?.toISOString().split('T')[0],
+        assignee_id: formData.assignee_id || undefined,
         priority: formData.priority,
-      },
-      {
-        onSuccess: () => {
-          onOpenChange(false);
-          setFormData({ title: '', description: '', status: defaultStatus, due_date: '', priority: 'medium' });
-        },
-      }
-    );
+      });
+
+      onOpenChange(false);
+    } catch (error) {
+      console.error('Failed to create task:', error);
+    }
   };
+
+  const canSubmit = formData.title.trim().length >= 3;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>Create Task</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-4 py-4">
+          {/* Title */}
           <div>
-            <Label htmlFor="title">Title *</Label>
+            <Label htmlFor="task-title">Title *</Label>
             <Input
-              id="title"
+              id="task-title"
+              placeholder="What needs to be done?"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              placeholder="What needs to be done?"
               className="mt-1"
             />
           </div>
 
+          {/* Description */}
           <div>
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="task-description">Description</Label>
             <Textarea
-              id="description"
+              id="task-description"
+              placeholder="Add more details about this task..."
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Add more details..."
-              className="mt-1 min-h-[80px]"
+              className="mt-1 min-h-[60px]"
             />
           </div>
 
+          {/* Two columns: Status & Priority */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label>Status</Label>
-              <Select 
-                value={formData.status} 
-                onValueChange={(v) => setFormData({ ...formData, status: v as TaskStatus })}
+              <Select
+                value={formData.status}
+                onValueChange={(value) => setFormData({ ...formData, status: value as TaskStatus })}
               >
                 <SelectTrigger className="mt-1">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="open">To Do</SelectItem>
-                  <SelectItem value="in_progress">In Progress</SelectItem>
-                  <SelectItem value="done">Done</SelectItem>
+                  {STATUS_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
 
             <div>
               <Label>Priority</Label>
-              <Select 
-                value={formData.priority} 
-                onValueChange={(v) => setFormData({ ...formData, priority: v as 'low' | 'medium' | 'high' })}
+              <Select
+                value={formData.priority}
+                onValueChange={(value) => setFormData({ ...formData, priority: value as TaskPriority })}
               >
                 <SelectTrigger className="mt-1">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="low">Low</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
+                  {PRIORITY_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      <span className={option.color}>{option.label}</span>
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
 
+          {/* Due Date */}
           <div>
-            <Label htmlFor="due_date">Due Date</Label>
-            <Input
-              id="due_date"
-              type="date"
-              value={formData.due_date}
-              onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
-              className="mt-1"
-            />
+            <Label>Due Date</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    'w-full justify-start text-left font-normal mt-1',
+                    !formData.due_date && 'text-muted-foreground'
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {formData.due_date
+                    ? format(formData.due_date, 'PPP')
+                    : 'Select a due date'}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={formData.due_date}
+                  onSelect={(date) => setFormData({ ...formData, due_date: date })}
+                  initialFocus
+                  className="p-3 pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
           </div>
 
-          <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
-            </Button>
-            <Button 
-              type="submit" 
-              disabled={!formData.title.trim() || createTask.isPending}
-              className="bg-primary hover:bg-primary/90"
+          {/* Assignee */}
+          <div>
+            <Label>Assign To</Label>
+            <Select
+              value={formData.assignee_id}
+              onValueChange={(value) => setFormData({ ...formData, assignee_id: value })}
             >
-              {createTask.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              Create Task
-            </Button>
+              <SelectTrigger className="mt-1">
+                <SelectValue placeholder="Select a team member" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Unassigned</SelectItem>
+                {members?.map((member) => (
+                  <SelectItem key={member.user_id} value={member.user_id}>
+                    <div className="flex items-center gap-2">
+                      <Avatar className="w-5 h-5">
+                        <AvatarImage src={member.user?.avatar_url || ''} />
+                        <AvatarFallback className="text-xs">
+                          {member.user?.full_name?.charAt(0) || '?'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span>{member.user?.full_name || 'Unknown'}</span>
+                      {member.role_info && (
+                        <span className="text-xs text-muted-foreground">
+                          ({member.role_info.title})
+                        </span>
+                      )}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-        </form>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            disabled={!canSubmit || createTask.isPending}
+          >
+            {createTask.isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Creating...
+              </>
+            ) : (
+              'Create Task'
+            )}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

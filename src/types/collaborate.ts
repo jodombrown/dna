@@ -139,6 +139,9 @@ export interface Initiative {
 // Task status enum (matches DB enum: open, in_progress, done)
 export type TaskStatus = 'open' | 'in_progress' | 'done';
 
+// Task priority (not in DB, used for UI display)
+export type TaskPriority = 'low' | 'medium' | 'high';
+
 // Space task (alias Task for components)
 export interface SpaceTask {
   id: string;
