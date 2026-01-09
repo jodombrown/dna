@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Calendar, MapPin, Users, ExternalLink, Share2, Clock, MoreHorizontal, XCircle, Trash2, Flag, QrCode, Loader2, Settings } from 'lucide-react';
+import { Calendar, MapPin, Users, ExternalLink, Share2, Clock, MoreHorizontal, XCircle, Trash2, Flag, QrCode, Loader2, Settings, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
+import UnifiedHeader from '@/components/UnifiedHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -75,6 +77,17 @@ const EventDetail = () => {
   const queryClient = useQueryClient();
   const [rsvpStatus, setRsvpStatus] = useState<string | null>(null);
   const [resolvedEventId, setResolvedEventId] = useState<string | null>(null);
+  const [showBanner, setShowBanner] = useState(false);
+  
+  const isLoggedIn = !!user;
+  
+  // Animate banner in after a short delay for non-logged-in users
+  useEffect(() => {
+    if (!isLoggedIn) {
+      const timer = setTimeout(() => setShowBanner(true), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoggedIn]);
   
   // Use resolved event ID for composer (once we know it)
   const id = resolvedEventId || slugOrId;
@@ -457,6 +470,38 @@ const EventDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <UnifiedHeader />
+      
+      {/* Sticky CTA Banner for non-logged-in users */}
+      {!isLoggedIn && showBanner && (
+        <div className="sticky top-0 z-40 px-4 sm:px-0 pt-2">
+          <motion.div
+            initial={{ y: -30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+            className="bg-gradient-to-r from-dna-forest via-dna-emerald to-dna-forest sm:mx-auto sm:max-w-3xl rounded-lg shadow-md"
+          >
+            <div className="px-4 py-2.5 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-white min-w-0">
+                <Sparkles className="w-4 h-4 shrink-0" />
+                <span className="text-sm font-medium truncate">
+                  You're invited! Join DNA to attend this event
+                </span>
+              </div>
+              <Button
+                size="sm"
+                className="bg-white text-dna-forest hover:bg-white/90 shrink-0 h-7 text-xs px-3"
+                asChild
+              >
+                <Link to={`/auth?mode=signup&redirect=/dna/convene/events/${slugOrId}`}>
+                  Join DNA Free
+                </Link>
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+      
       {/* Clean Event Detail Layout - No DetailViewLayout wrapper for full control */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Back Navigation */}
