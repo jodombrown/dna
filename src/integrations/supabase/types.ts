@@ -4377,33 +4377,65 @@ export type Database = {
       }
       initiatives: {
         Row: {
+          completed_at: string | null
+          completion_metrics: Json | null
           created_at: string | null
+          created_by: string | null
           creator_id: string
           description: string | null
           id: string
           impact_area: string | null
+          order_index: number | null
+          space_id: string | null
+          started_at: string | null
+          status: string | null
+          target_date: string | null
           title: string
           updated_at: string | null
         }
         Insert: {
+          completed_at?: string | null
+          completion_metrics?: Json | null
           created_at?: string | null
+          created_by?: string | null
           creator_id: string
           description?: string | null
           id?: string
           impact_area?: string | null
+          order_index?: number | null
+          space_id?: string | null
+          started_at?: string | null
+          status?: string | null
+          target_date?: string | null
           title: string
           updated_at?: string | null
         }
         Update: {
+          completed_at?: string | null
+          completion_metrics?: Json | null
           created_at?: string | null
+          created_by?: string | null
           creator_id?: string
           description?: string | null
           id?: string
           impact_area?: string | null
+          order_index?: number | null
+          space_id?: string | null
+          started_at?: string | null
+          status?: string | null
+          target_date?: string | null
           title?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "initiatives_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       innovation_data: {
         Row: {
@@ -4615,39 +4647,62 @@ export type Database = {
       }
       milestones: {
         Row: {
+          celebration_shared: boolean | null
+          completion_date: string | null
           created_at: string
           created_by: string
           description: string | null
           due_date: string | null
           id: string
+          initiative_id: string | null
+          order_index: number | null
           space_id: string
           status: string
+          target_date: string | null
           title: string
           updated_at: string
         }
         Insert: {
+          celebration_shared?: boolean | null
+          completion_date?: string | null
           created_at?: string
           created_by: string
           description?: string | null
           due_date?: string | null
           id?: string
+          initiative_id?: string | null
+          order_index?: number | null
           space_id: string
           status?: string
+          target_date?: string | null
           title: string
           updated_at?: string
         }
         Update: {
+          celebration_shared?: boolean | null
+          completion_date?: string | null
           created_at?: string
           created_by?: string
           description?: string | null
           due_date?: string | null
           id?: string
+          initiative_id?: string | null
+          order_index?: number | null
           space_id?: string
           status?: string
+          target_date?: string | null
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "milestones_initiative_id_fkey"
+            columns: ["initiative_id"]
+            isOneToOne: false
+            referencedRelation: "initiatives"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       monthly_reports: {
         Row: {
@@ -7368,24 +7423,43 @@ export type Database = {
       }
       space_members: {
         Row: {
+          id: string | null
+          invited_by: string | null
           joined_at: string
           role: string
+          role_id: string | null
           space_id: string
+          status: string | null
           user_id: string
         }
         Insert: {
+          id?: string | null
+          invited_by?: string | null
           joined_at?: string
           role?: string
+          role_id?: string | null
           space_id: string
+          status?: string | null
           user_id: string
         }
         Update: {
+          id?: string | null
+          invited_by?: string | null
           joined_at?: string
           role?: string
+          role_id?: string | null
           space_id?: string
+          status?: string | null
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "space_members_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "space_roles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "space_members_space_id_fkey"
             columns: ["space_id"]
@@ -7601,53 +7675,77 @@ export type Database = {
       }
       spaces: {
         Row: {
+          completion_summary: Json | null
+          cover_image_url: string | null
           created_at: string
           created_by: string
           description: string | null
           focus_areas: string[] | null
           id: string
+          last_activity_at: string | null
           name: string
           origin_event_id: string | null
           origin_group_id: string | null
+          privacy_level: string | null
           region: string | null
           slug: string
+          source_id: string | null
+          source_type: string | null
           space_type: string
+          stall_threshold_days: number | null
           status: string
           tagline: string | null
+          template_id: string | null
           updated_at: string
           visibility: string
         }
         Insert: {
+          completion_summary?: Json | null
+          cover_image_url?: string | null
           created_at?: string
           created_by: string
           description?: string | null
           focus_areas?: string[] | null
           id?: string
+          last_activity_at?: string | null
           name: string
           origin_event_id?: string | null
           origin_group_id?: string | null
+          privacy_level?: string | null
           region?: string | null
           slug: string
+          source_id?: string | null
+          source_type?: string | null
           space_type: string
+          stall_threshold_days?: number | null
           status?: string
           tagline?: string | null
+          template_id?: string | null
           updated_at?: string
           visibility?: string
         }
         Update: {
+          completion_summary?: Json | null
+          cover_image_url?: string | null
           created_at?: string
           created_by?: string
           description?: string | null
           focus_areas?: string[] | null
           id?: string
+          last_activity_at?: string | null
           name?: string
           origin_event_id?: string | null
           origin_group_id?: string | null
+          privacy_level?: string | null
           region?: string | null
           slug?: string
+          source_id?: string | null
+          source_type?: string | null
           space_type?: string
+          stall_threshold_days?: number | null
           status?: string
           tagline?: string | null
+          template_id?: string | null
           updated_at?: string
           visibility?: string
         }
@@ -7664,6 +7762,13 @@ export type Database = {
             columns: ["origin_group_id"]
             isOneToOne: false
             referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spaces_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "space_templates"
             referencedColumns: ["id"]
           },
         ]
@@ -7705,12 +7810,20 @@ export type Database = {
       }
       tasks: {
         Row: {
+          assigned_by: string | null
+          assigned_to: string | null
           assignee_id: string | null
+          completed_at: string | null
           created_at: string
           created_by: string
           description: string | null
           due_date: string | null
           id: string
+          initiative_id: string | null
+          last_nudge_at: string | null
+          milestone_id: string | null
+          nudge_count: number | null
+          order_index: number | null
           priority: string
           space_id: string
           status: string
@@ -7718,12 +7831,20 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          assigned_by?: string | null
+          assigned_to?: string | null
           assignee_id?: string | null
+          completed_at?: string | null
           created_at?: string
           created_by: string
           description?: string | null
           due_date?: string | null
           id?: string
+          initiative_id?: string | null
+          last_nudge_at?: string | null
+          milestone_id?: string | null
+          nudge_count?: number | null
+          order_index?: number | null
           priority?: string
           space_id: string
           status?: string
@@ -7731,19 +7852,42 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          assigned_by?: string | null
+          assigned_to?: string | null
           assignee_id?: string | null
+          completed_at?: string | null
           created_at?: string
           created_by?: string
           description?: string | null
           due_date?: string | null
           id?: string
+          initiative_id?: string | null
+          last_nudge_at?: string | null
+          milestone_id?: string | null
+          nudge_count?: number | null
+          order_index?: number | null
           priority?: string
           space_id?: string
           status?: string
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tasks_initiative_id_fkey"
+            columns: ["initiative_id"]
+            isOneToOne: false
+            referencedRelation: "initiatives"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_milestone_id_fkey"
+            columns: ["milestone_id"]
+            isOneToOne: false
+            referencedRelation: "milestones"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_adin_profile: {
         Row: {
