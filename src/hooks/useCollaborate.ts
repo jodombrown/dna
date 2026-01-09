@@ -357,6 +357,99 @@ export function useCreateTask() {
   });
 }
 
+// Create an initiative
+export function useCreateInitiative() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { 
+      space_id: string; 
+      title: string; 
+      description?: string; 
+      target_date?: string;
+      impact_area?: string;
+    }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const { data, error } = await supabase
+        .from('initiatives')
+        .insert({
+          space_id: input.space_id,
+          title: input.title,
+          description: input.description || null,
+          target_date: input.target_date || null,
+          impact_area: input.impact_area || null,
+          status: 'active',
+          creator_id: user.id,
+          created_by: user.id,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data as Initiative;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['space-initiatives', variables.space_id] });
+      toast.success('Initiative created!');
+    },
+    onError: (error) => {
+      toast.error('Failed to create initiative', { description: error.message });
+    },
+  });
+}
+
+// Create a milestone
+export function useCreateMilestone() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { 
+      initiative_id: string; 
+      title: string; 
+      target_date?: string;
+      description?: string;
+    }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      // Get initiative to find space_id
+      const { data: initiative, error: initError } = await supabase
+        .from('initiatives')
+        .select('space_id')
+        .eq('id', input.initiative_id)
+        .single();
+
+      if (initError) throw initError;
+      if (!initiative?.space_id) throw new Error('Initiative not found');
+
+      const { data, error } = await supabase
+        .from('milestones')
+        .insert({
+          initiative_id: input.initiative_id,
+          space_id: initiative.space_id,
+          title: input.title,
+          target_date: input.target_date || null,
+          description: input.description || null,
+          status: 'pending',
+          created_by: user.id,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['space-initiatives'] });
+    },
+    onError: (error) => {
+      toast.error('Failed to create milestone', { description: error.message });
+    },
+  });
+}
+
 // Send a nudge
 export function useSendNudge() {
   const queryClient = useQueryClient();
