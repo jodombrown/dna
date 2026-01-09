@@ -1,5 +1,7 @@
 export type PrivacyLevel = 'public' | 'private' | 'invite_only';
 
+export type TemplateCategory = 'learning' | 'investment' | 'community' | 'advocacy' | 'professional';
+
 export interface SpaceTemplateRole {
   title: string;
   description?: string;
