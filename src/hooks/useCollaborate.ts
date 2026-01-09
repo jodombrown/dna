@@ -1,0 +1,155 @@
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { supabaseClient } from '@/lib/supabaseHelpers';
+import { toast } from 'sonner';
+import type { SpaceTemplate, CreateSpaceInput, SpaceTemplateRole, SpaceTemplateInitiative } from '@/types/collaborate';
+
+export function useSpaceTemplates() {
+  return useQuery({
+    queryKey: ['space-templates'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('space_templates')
+        .select('*')
+        .eq('is_active', true)
+        .order('name');
+
+      if (error) throw error;
+      
+      // Map the data to match our SpaceTemplate type - cast through unknown for Json fields
+      return (data || []).map((t) => ({
+        ...t,
+        default_roles: (t.default_roles as unknown) as SpaceTemplateRole[] | null,
+        default_initiatives: (t.default_initiatives as unknown) as SpaceTemplateInitiative[] | null,
+        suggested_milestones: (t.suggested_milestones as unknown) as SpaceTemplate['suggested_milestones'],
+      })) as SpaceTemplate[];
+    },
+  });
+}
+
+export function useCreateSpaceFromTemplate() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ templateId, input }: { templateId: string; input: CreateSpaceInput }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      // Get template data
+      const { data: template, error: templateError } = await supabase
+        .from('space_templates')
+        .select('*')
+        .eq('id', templateId)
+        .single();
+
+      if (templateError) throw templateError;
+
+      // Create space with template - use supabaseClient for new columns not yet in types
+      const { data: space, error: spaceError } = await supabaseClient
+        .from('spaces')
+        .insert({
+          name: input.name,
+          description: input.description || template.description,
+          template_id: templateId,
+          privacy_level: input.privacy_level || 'public',
+          source_type: input.source_type || 'organic',
+          source_id: input.source_id,
+          created_by: user.id,
+          status: 'active',
+          visibility: input.privacy_level === 'private' ? 'invite_only' : 'public',
+        })
+        .select()
+        .single();
+
+      if (spaceError) throw spaceError;
+
+      // Create default roles from template
+      const defaultRoles = (template.default_roles as unknown) as SpaceTemplateRole[] | null;
+      if (defaultRoles && defaultRoles.length > 0) {
+        const roles = defaultRoles.map((role) => ({
+          space_id: space.id,
+          title: role.title,
+          description: role.description || null,
+          is_lead: role.is_lead || false,
+          permissions: role.permissions || [],
+        }));
+
+        const { error: rolesError } = await supabase
+          .from('space_roles')
+          .insert(roles);
+
+        if (rolesError) {
+          console.error('Failed to create roles:', rolesError);
+        }
+      }
+
+      // Create default initiatives from template
+      const defaultInitiatives = (template.default_initiatives as unknown) as SpaceTemplateInitiative[] | null;
+      if (defaultInitiatives && defaultInitiatives.length > 0) {
+        const initiatives = defaultInitiatives.map((init) => ({
+          space_id: space.id,
+          title: init.title,
+          description: init.description || null,
+          status: 'active',
+          creator_id: user.id,
+        }));
+
+        const { error: initError } = await supabase
+          .from('initiatives')
+          .insert(initiatives);
+
+        if (initError) {
+          console.error('Failed to create initiatives:', initError);
+        }
+      }
+
+      return space;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-spaces'] });
+      queryClient.invalidateQueries({ queryKey: ['public-spaces'] });
+      toast.success('Space created successfully!');
+    },
+    onError: (error) => {
+      toast.error('Failed to create space', { description: error.message });
+    },
+  });
+}
+
+export function useCreateSpace() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: CreateSpaceInput) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      // Use supabaseClient for new columns not yet in generated types
+      const { data: space, error } = await supabaseClient
+        .from('spaces')
+        .insert({
+          name: input.name,
+          description: input.description,
+          privacy_level: input.privacy_level || 'public',
+          source_type: input.source_type || 'organic',
+          source_id: input.source_id,
+          created_by: user.id,
+          status: 'active',
+          visibility: input.privacy_level === 'private' ? 'invite_only' : 'public',
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return space;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-spaces'] });
+      queryClient.invalidateQueries({ queryKey: ['public-spaces'] });
+      toast.success('Space created successfully!');
+    },
+    onError: (error) => {
+      toast.error('Failed to create space', { description: error.message });
+    },
+  });
+}
