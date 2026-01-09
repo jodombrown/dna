@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 import { KenteBorder } from '../KenteBorder';
 import { StatBox } from '../StatBox';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
-import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 interface DemoOpeningProps {
   id: string;
@@ -28,85 +28,93 @@ export const DemoOpening = forwardRef<HTMLElement, DemoOpeningProps>(
 
         <div 
           ref={animationRef}
-          className={cn(
-            "max-w-[1200px] mx-auto px-4 md:px-6 text-center transition-all duration-1000 ease-out",
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-12"
-          )}
+          className="max-w-[1200px] mx-auto px-4 md:px-6 text-center"
         >
           {/* Kente Border */}
-          <div className={cn(
-            "transition-all duration-700 delay-100",
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-8"
-          )}>
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+            transition={{ duration: 0.7, delay: 0.1 } as const}
+          >
             <KenteBorder width="120px" height="4px" className="mb-10" />
-          </div>
+          </motion.div>
 
           {/* Main Headline */}
-          <h1 
-            className={cn(
-              "font-display font-semibold mb-8 leading-tight text-foreground transition-all duration-700 delay-200",
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-8"
-            )}
+          <motion.h1 
+            className="font-cormorant font-semibold mb-8 leading-tight text-foreground"
             style={{ fontSize: 'clamp(32px, 8vw, 72px)' }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.7, delay: 0.2 } as const}
           >
             What if <span className="text-dna-emerald">200 million people</span> moved as one?
-          </h1>
+          </motion.h1>
 
           {/* Subheadline */}
-          <p 
-            className={cn(
-              "font-body font-light text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed transition-all duration-700 delay-300",
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-8"
-            )}
+          <motion.p 
+            className="font-outfit text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed"
             style={{ fontSize: 'clamp(18px, 3vw, 24px)' }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.7, delay: 0.3 } as const}
           >
-            The African diaspora is the world's most untapped economic force.<br />
-            Scattered across continents. Connected by heritage.<br />
+            The African diaspora is the world's most untapped economic force.
+            <br />
+            Scattered across continents. Connected by heritage.
+            <br />
             Ready to build together.
-          </p>
+          </motion.p>
 
           {/* Statistics Row */}
-          <div className={cn(
-            "flex flex-wrap justify-center gap-8 md:gap-16 mb-12 transition-all duration-700 delay-400",
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-8"
-          )}>
+          <motion.div 
+            className="flex flex-wrap justify-center gap-8 md:gap-16 mb-12"
+            initial={{ opacity: 0, y: 30 }}
+            animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.7, delay: 0.4 } as const}
+          >
             <StatBox value="200M+" label="Global Diaspora" />
             <StatBox value="$800B" label="Annual Remittances" />
             <StatBox value="54" label="African Nations" />
-          </div>
+          </motion.div>
 
           {/* Brand Box */}
-          <div className={cn(
-            "inline-block transition-all duration-700 delay-500",
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-8"
-          )}>
-            <div className="text-2xl md:text-3xl font-display font-semibold text-dna-emerald mb-2">
+          <motion.div 
+            className="inline-block"
+            initial={{ opacity: 0, y: 30 }}
+            animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.7, delay: 0.5 } as const}
+          >
+            <div className="text-2xl md:text-3xl font-cormorant font-semibold text-dna-emerald mb-2">
               DNA
             </div>
-            <div className="text-sm md:text-base text-muted-foreground font-body">
+            <div className="text-sm md:text-base text-muted-foreground font-outfit">
               Diaspora Network of Africa
             </div>
-          </div>
+          </motion.div>
 
           {/* Tagline */}
-          <p className={cn(
-            "text-muted-foreground font-body text-sm md:text-base mt-8 italic transition-all duration-700 delay-600",
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-8"
-          )}>
+          <motion.p 
+            className="text-muted-foreground font-outfit text-sm md:text-base mt-8 italic"
+            initial={{ opacity: 0, y: 30 }}
+            animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.7, delay: 0.6 } as const}
+          >
             The Operating System for the Global African Diaspora
-          </p>
+          </motion.p>
         </div>
 
         {/* Scroll indicator */}
-        <div className={cn(
-          "absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 transition-all duration-700 delay-700",
-          isVisible ? "opacity-100" : "opacity-0"
-        )}>
-          <span className="text-xs text-muted-foreground font-body">Scroll to explore</span>
+        <motion.div 
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+          initial={{ opacity: 0 }}
+          animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: 0.7, delay: 0.8 } as const}
+        >
+          <span className="text-xs text-muted-foreground font-outfit">Scroll to explore</span>
           <div className="w-6 h-10 rounded-full border-2 border-dna-emerald/30 flex justify-center pt-2">
             <div className="w-1.5 h-3 bg-dna-emerald rounded-full animate-bounce" />
           </div>
-        </div>
+        </motion.div>
       </section>
     );
   }

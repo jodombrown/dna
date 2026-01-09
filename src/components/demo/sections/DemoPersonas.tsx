@@ -7,20 +7,12 @@ interface DemoPersonasProps {
   id: string;
 }
 
-const C_COLORS: Record<string, string> = {
-  CONNECT: 'hsl(var(--dna-emerald))',
-  CONVENE: 'hsl(var(--dna-terra))',
-  COLLABORATE: 'hsl(var(--dna-royal))',
-  CONTRIBUTE: 'hsl(var(--dna-purple))',
-  CONVEY: 'hsl(var(--dna-ochre))',
-};
-
-const C_BG_CLASSES: Record<string, string> = {
-  CONNECT: 'bg-dna-emerald/15',
-  CONVENE: 'bg-dna-terra/15',
-  COLLABORATE: 'bg-dna-royal/15',
-  CONTRIBUTE: 'bg-dna-purple/15',
-  CONVEY: 'bg-dna-ochre/15',
+const C_STYLES: Record<string, { bg: string; text: string }> = {
+  CONNECT: { bg: 'bg-dna-emerald/10', text: 'text-dna-emerald' },
+  CONVENE: { bg: 'bg-dna-terra/10', text: 'text-dna-terra' },
+  COLLABORATE: { bg: 'bg-dna-ocean/10', text: 'text-dna-ocean' },
+  CONTRIBUTE: { bg: 'bg-dna-purple/10', text: 'text-dna-purple' },
+  CONVEY: { bg: 'bg-dna-ochre/10', text: 'text-dna-ochre' },
 };
 
 const PERSONAS = [
@@ -55,7 +47,7 @@ const PERSONAS = [
     primaryCs: ['CONNECT', 'CONVENE', 'CONTRIBUTE'],
   },
   {
-    name: 'The Student/Early Career',
+    name: 'The Student',
     description: 'Young diaspora building professional identity and seeking mentorship from established professionals.',
     needs: ['Find mentors', 'Join learning communities', 'Build portfolio of contributions'],
     primaryCs: ['CONNECT', 'COLLABORATE', 'CONVEY'],
@@ -77,7 +69,7 @@ export const DemoPersonas = forwardRef<HTMLElement, DemoPersonasProps>(
             {/* Kente Border */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6 } as const}
             >
               <KenteBorder width="80px" height="3px" className="mb-8" />
@@ -85,10 +77,10 @@ export const DemoPersonas = forwardRef<HTMLElement, DemoPersonasProps>(
 
             {/* Headline */}
             <motion.h2 
-              className="font-cormorant font-semibold text-center text-dna-dark mb-4"
+              className="font-cormorant font-semibold text-center text-foreground mb-4"
               style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
               initial={{ opacity: 0, y: 30 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.6, delay: 0.1 } as const}
             >
               The <span className="text-dna-emerald">DNA Community</span>
@@ -96,12 +88,12 @@ export const DemoPersonas = forwardRef<HTMLElement, DemoPersonasProps>(
 
             {/* Supporting Text */}
             <motion.p 
-              className="font-outfit font-light text-dna-gray text-center max-w-2xl mx-auto mb-12 leading-relaxed text-base md:text-lg"
+              className="font-outfit text-muted-foreground text-center max-w-2xl mx-auto mb-12 leading-relaxed text-base md:text-lg"
               initial={{ opacity: 0, y: 30 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.6, delay: 0.2 } as const}
             >
-              DNA serves the full spectrum of diaspora engagement—from early-career professionals 
+              DNA serves the full spectrum of diaspora engagement, from early-career professionals 
               to seasoned investors, from event organizers to returnees.
             </motion.p>
 
@@ -110,9 +102,9 @@ export const DemoPersonas = forwardRef<HTMLElement, DemoPersonasProps>(
               {PERSONAS.map((persona, index) => (
                 <motion.div 
                   key={persona.name}
-                  className="bg-white border border-dna-light-gray rounded-xl p-6 hover:-translate-y-2 hover:shadow-lg transition-all duration-300"
+                  className="bg-background border border-border rounded-xl p-6 hover:-translate-y-1 hover:shadow-lg transition-all duration-300"
                   initial={{ opacity: 0, y: 40 }}
-                  animate={isVisible ? { opacity: 1, y: 0 } : {}}
+                  animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
                   transition={{ duration: 0.5, delay: 0.3 + index * 0.1 } as const}
                 >
                   {/* Persona Name */}
@@ -121,18 +113,18 @@ export const DemoPersonas = forwardRef<HTMLElement, DemoPersonasProps>(
                   </h3>
 
                   {/* Description */}
-                  <p className="font-outfit text-dna-dark/70 text-sm leading-relaxed mb-4">
+                  <p className="font-outfit text-foreground/80 text-sm leading-relaxed mb-4">
                     {persona.description}
                   </p>
 
                   {/* Key Needs */}
                   <div className="mb-4">
-                    <h4 className="font-outfit text-dna-gray text-xs uppercase tracking-wider mb-2">
+                    <h4 className="font-outfit text-muted-foreground text-xs uppercase tracking-wider mb-2">
                       Key Needs
                     </h4>
                     <ul className="space-y-1">
                       {persona.needs.map((need, needIndex) => (
-                        <li key={needIndex} className="font-outfit text-dna-dark/60 text-sm flex items-start gap-2">
+                        <li key={needIndex} className="font-outfit text-foreground/70 text-sm flex items-start gap-2">
                           <span className="text-dna-emerald">•</span>
                           {need}
                         </li>
@@ -142,19 +134,21 @@ export const DemoPersonas = forwardRef<HTMLElement, DemoPersonasProps>(
 
                   {/* Primary C's */}
                   <div>
-                    <h4 className="font-outfit text-dna-gray text-xs uppercase tracking-wider mb-2">
+                    <h4 className="font-outfit text-muted-foreground text-xs uppercase tracking-wider mb-2">
                       Primary C's
                     </h4>
                     <div className="flex flex-wrap gap-2">
-                      {persona.primaryCs.map((c) => (
-                        <span 
-                          key={c}
-                          className={`px-2 py-1 rounded-full text-xs font-outfit font-medium ${C_BG_CLASSES[c]}`}
-                          style={{ color: C_COLORS[c] }}
-                        >
-                          {c}
-                        </span>
-                      ))}
+                      {persona.primaryCs.map((c) => {
+                        const styles = C_STYLES[c];
+                        return (
+                          <span 
+                            key={c}
+                            className={`px-2 py-1 rounded-full text-xs font-outfit font-medium ${styles.bg} ${styles.text}`}
+                          >
+                            {c}
+                          </span>
+                        );
+                      })}
                     </div>
                   </div>
                 </motion.div>
