@@ -42,10 +42,13 @@ export interface ComposerFormData {
   eventTime?: string;
   eventEndDate?: string;
   eventEndTime?: string;
+  timezone?: string;
   eventType?: 'conference' | 'workshop' | 'meetup' | 'webinar' | 'networking' | 'social' | 'other';
   location?: string;
   locationCity?: string;
   locationCountry?: string;
+  locationLat?: number;
+  locationLng?: number;
   meetingUrl?: string;
   format?: 'in_person' | 'virtual' | 'hybrid';
   maxAttendees?: number;
@@ -301,7 +304,7 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
             format: formData.format || 'in_person',
             start_time: startTime,
             end_time: endTime,
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            timezone: formData.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
             // Location fields for in-person/hybrid
             location_name: (isInPerson || isHybrid) ? formData.location : undefined,
             location_city: locationCity,

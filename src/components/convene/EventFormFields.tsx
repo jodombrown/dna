@@ -20,6 +20,7 @@ export interface EventFormData {
   eventTime: string;
   eventEndDate: string;
   eventEndTime: string;
+  timezone?: string;
   location?: string;
   locationData?: LocationData;
   meetingUrl?: string;
@@ -29,6 +30,44 @@ export interface EventFormData {
   tags?: string[];
   agenda?: Array<{ time: string; title: string }>;
 }
+
+// Common timezones with Africa prioritized for DNA platform
+const timezoneOptions = [
+  // Africa
+  { value: 'Africa/Lagos', label: 'Lagos, Nigeria (WAT)' },
+  { value: 'Africa/Nairobi', label: 'Nairobi, Kenya (EAT)' },
+  { value: 'Africa/Johannesburg', label: 'Johannesburg, South Africa (SAST)' },
+  { value: 'Africa/Cairo', label: 'Cairo, Egypt (EET)' },
+  { value: 'Africa/Accra', label: 'Accra, Ghana (GMT)' },
+  { value: 'Africa/Casablanca', label: 'Casablanca, Morocco (WET)' },
+  { value: 'Africa/Addis_Ababa', label: 'Addis Ababa, Ethiopia (EAT)' },
+  { value: 'Africa/Dakar', label: 'Dakar, Senegal (GMT)' },
+  { value: 'Africa/Kigali', label: 'Kigali, Rwanda (CAT)' },
+  { value: 'Africa/Kinshasa', label: 'Kinshasa, DRC (WAT)' },
+  // Americas
+  { value: 'America/New_York', label: 'New York (EST/EDT)' },
+  { value: 'America/Chicago', label: 'Chicago (CST/CDT)' },
+  { value: 'America/Denver', label: 'Denver (MST/MDT)' },
+  { value: 'America/Los_Angeles', label: 'Los Angeles (PST/PDT)' },
+  { value: 'America/Toronto', label: 'Toronto (EST/EDT)' },
+  { value: 'America/Sao_Paulo', label: 'São Paulo (BRT)' },
+  { value: 'America/Mexico_City', label: 'Mexico City (CST)' },
+  // Europe
+  { value: 'Europe/London', label: 'London (GMT/BST)' },
+  { value: 'Europe/Paris', label: 'Paris (CET/CEST)' },
+  { value: 'Europe/Berlin', label: 'Berlin (CET/CEST)' },
+  { value: 'Europe/Amsterdam', label: 'Amsterdam (CET/CEST)' },
+  // Middle East / Asia
+  { value: 'Asia/Dubai', label: 'Dubai (GST)' },
+  { value: 'Asia/Singapore', label: 'Singapore (SGT)' },
+  { value: 'Asia/Tokyo', label: 'Tokyo (JST)' },
+  // Caribbean
+  { value: 'America/Jamaica', label: 'Jamaica (EST)' },
+  { value: 'America/Port_of_Spain', label: 'Trinidad & Tobago (AST)' },
+  { value: 'America/Barbados', label: 'Barbados (AST)' },
+  // UTC
+  { value: 'UTC', label: 'UTC (Coordinated Universal Time)' },
+];
 
 interface EventFormFieldsProps {
   formData: EventFormData;
@@ -155,6 +194,26 @@ export function EventFormFields({ formData, onChange }: EventFormFieldsProps) {
               />
             </div>
           </div>
+        </div>
+
+        {/* Timezone Selector */}
+        <div className="mt-3">
+          <Label className="text-xs text-muted-foreground mb-1 block">Timezone</Label>
+          <Select
+            value={formData.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone}
+            onValueChange={(value) => onChange({ timezone: value })}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select timezone" />
+            </SelectTrigger>
+            <SelectContent className="max-h-[300px]">
+              {timezoneOptions.map((tz) => (
+                <SelectItem key={tz.value} value={tz.value}>
+                  {tz.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
