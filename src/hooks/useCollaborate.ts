@@ -450,6 +450,41 @@ export function useCreateMilestone() {
   });
 }
 
+// Invite a member to a space
+export function useInviteMember() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { 
+      spaceId: string; 
+      userId: string; 
+      roleId?: string;
+    }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const { error } = await supabase
+        .from('space_members')
+        .insert({
+          space_id: input.spaceId,
+          user_id: input.userId,
+          role_id: input.roleId || null,
+          status: 'active',
+          invited_by: user.id,
+        });
+
+      if (error) throw error;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['space-members', variables.spaceId] });
+      toast.success('Member invited!');
+    },
+    onError: (error) => {
+      toast.error('Failed to invite member', { description: error.message });
+    },
+  });
+}
+
 // Send a nudge
 export function useSendNudge() {
   const queryClient = useQueryClient();
