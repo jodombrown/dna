@@ -447,11 +447,8 @@ function App() {
                   <EventsIndex />
                 </OnboardingGuard>
               } />
-              <Route path="/dna/convene/events/:id" element={
-                <OnboardingGuard>
-                  <EventDetail />
-                </OnboardingGuard>
-              } />
+              {/* Event detail is public - no auth required for viewing */}
+              <Route path="/dna/convene/events/:id" element={<EventDetail />} />
               <Route path="/dna/convene/events/new" element={
                 <OnboardingGuard>
                   <CreateEvent />
