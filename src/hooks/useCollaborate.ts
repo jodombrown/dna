@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { supabaseClient } from '@/lib/supabaseHelpers';
 import { toast } from 'sonner';
-import type { SpaceTemplate, CreateSpaceInput, SpaceTemplateRole, SpaceTemplateInitiative, Space, SpaceMember, SpaceRole, Initiative, SpaceTask, SpaceActivity, TaskStatus } from '@/types/collaborate';
+import type { SpaceTemplate, CreateSpaceInput, SpaceTemplateRole, SpaceTemplateInitiative, Space, SpaceMember, SpaceRole, Initiative, SpaceTask, SpaceActivity, TaskStatus, NudgeTone, NudgeType } from '@/types/collaborate';
 
 export function useSpaceTemplates() {
   return useQuery({
@@ -353,6 +353,46 @@ export function useCreateTask() {
     },
     onError: (error) => {
       toast.error('Failed to create task', { description: error.message });
+    },
+  });
+}
+
+// Send a nudge
+export function useSendNudge() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { 
+      space_id: string; 
+      task_id?: string; 
+      target_user_id: string; 
+      type: NudgeType; 
+      tone: NudgeTone; 
+      message: string 
+    }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const { error } = await supabase
+        .from('nudges')
+        .insert([{
+          space_id: input.space_id,
+          task_id: input.task_id,
+          target_user_id: input.target_user_id,
+          sent_by: user.id,
+          type: input.type,
+          tone: input.tone,
+          message: input.message,
+          sent_at: new Date().toISOString(),
+        }]);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success('Nudge sent!');
+    },
+    onError: (error) => {
+      toast.error('Failed to send nudge', { description: error.message });
     },
   });
 }
