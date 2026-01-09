@@ -1,55 +1,78 @@
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Target, Calendar } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Target, Calendar, CheckCircle2 } from 'lucide-react';
+import type { Initiative, InitiativeStatus } from '@/types/collaborate';
 import { format } from 'date-fns';
-import type { Initiative } from '@/types/collaborate';
 import { cn } from '@/lib/utils';
 
 interface InitiativeCardProps {
   initiative: Initiative;
 }
 
+const STATUS_STYLES: Record<InitiativeStatus, string> = {
+  planning: 'bg-muted text-muted-foreground',
+  active: 'bg-primary/10 text-primary',
+  completed: 'bg-green-500/10 text-green-700 dark:text-green-400',
+  abandoned: 'bg-destructive/10 text-destructive',
+};
+
 export function InitiativeCard({ initiative }: InitiativeCardProps) {
-  const statusColors: Record<string, string> = {
-    active: 'border-green-500 bg-green-50 text-green-700',
-    paused: 'border-yellow-500 bg-yellow-50 text-yellow-700',
-    completed: 'border-blue-500 bg-blue-50 text-blue-700',
-    cancelled: 'border-gray-500 bg-gray-50 text-gray-700',
-  };
+  const completedTasks = initiative.completed_task_count || 0;
+  const totalTasks = initiative.task_count || 0;
+  const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="hover:shadow-md transition-shadow cursor-pointer">
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-2">
             <Target className="w-4 h-4 text-primary" />
             <CardTitle className="text-base">{initiative.title}</CardTitle>
           </div>
-          <Badge 
-            variant="outline" 
-            className={cn('text-xs', statusColors[initiative.status] || statusColors.active)}
-          >
+          <Badge className={cn('text-xs', STATUS_STYLES[initiative.status])}>
             {initiative.status}
           </Badge>
         </div>
       </CardHeader>
       <CardContent>
         {initiative.description && (
-          <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+          <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
             {initiative.description}
           </p>
         )}
-        <div className="flex items-center gap-4 text-xs text-muted-foreground">
-          {initiative.impact_area && (
-            <span className="bg-muted px-2 py-0.5 rounded">{initiative.impact_area}</span>
-          )}
-          {initiative.target_date && (
+        
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span className="flex items-center gap-1">
-              <Calendar className="w-3 h-3" />
-              {format(new Date(initiative.target_date), 'MMM d, yyyy')}
+              <CheckCircle2 className="w-3 h-3" />
+              {completedTasks} / {totalTasks} tasks
             </span>
-          )}
+            {initiative.target_date && (
+              <span className="flex items-center gap-1">
+                <Calendar className="w-3 h-3" />
+                {format(new Date(initiative.target_date), 'MMM d')}
+              </span>
+            )}
+          </div>
+          <Progress value={progress} className="h-1.5" />
         </div>
+
+        {initiative.milestones && initiative.milestones.length > 0 && (
+          <div className="flex gap-1 mt-3">
+            {initiative.milestones.slice(0, 4).map((milestone) => (
+              <div
+                key={milestone.id}
+                className={cn(
+                  'w-2 h-2 rounded-full',
+                  milestone.status === 'completed' ? 'bg-green-500' :
+                  milestone.status === 'missed' ? 'bg-destructive' : 'bg-muted-foreground/30'
+                )}
+                title={milestone.title}
+              />
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

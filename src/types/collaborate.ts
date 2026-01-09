@@ -103,6 +103,16 @@ export interface SpaceRole {
   created_at: string;
 }
 
+// Initiative status type
+export type InitiativeStatus = 'planning' | 'active' | 'completed' | 'abandoned';
+
+// Initiative milestone (for inline display)
+export interface InitiativeMilestone {
+  id: string;
+  title: string;
+  status: 'pending' | 'completed' | 'missed';
+}
+
 // Initiative
 export interface Initiative {
   id: string;
@@ -110,7 +120,7 @@ export interface Initiative {
   title: string;
   description?: string;
   impact_area?: string;
-  status: string;
+  status: InitiativeStatus;
   target_date?: string;
   started_at?: string;
   completed_at?: string;
@@ -120,6 +130,10 @@ export interface Initiative {
   created_by?: string;
   created_at: string;
   updated_at: string;
+  // Computed/joined fields
+  task_count?: number;
+  completed_task_count?: number;
+  milestones?: InitiativeMilestone[];
 }
 
 // Task status enum (matches DB enum: open, in_progress, done)
