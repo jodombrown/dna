@@ -3,6 +3,7 @@ import { KenteBorder } from '../KenteBorder';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { cn } from '@/lib/utils';
 import { Users, Calendar, Layers, Gift, PenTool } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface DemoInterconnectionProps {
   id: string;
@@ -55,43 +56,53 @@ export const DemoInterconnection = forwardRef<HTMLElement, DemoInterconnectionPr
       >
         <div className="max-w-[1200px] mx-auto px-4 md:px-6">
           {/* Header */}
-          <div 
-            ref={headerRef}
-            className={cn(
-              "text-center mb-12 transition-all duration-700",
-              headerVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-12"
-            )}
-          >
-            <KenteBorder width="80px" height="3px" className="mb-8" />
+          <div ref={headerRef}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={headerVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6 } as const}
+            >
+              <KenteBorder width="80px" height="3px" className="mb-8" />
+            </motion.div>
 
-            <h2 
-              className="font-display font-semibold text-foreground mb-4"
+            <motion.h2 
+              className="font-cormorant font-semibold text-foreground mb-4 text-center"
               style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={headerVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              transition={{ duration: 0.6, delay: 0.1 } as const}
             >
               Not Five Features. <span className="text-dna-emerald">One System.</span>
-            </h2>
+            </motion.h2>
 
-            <p className="font-body font-light text-muted-foreground max-w-2xl mx-auto leading-relaxed text-base md:text-lg">
+            <motion.p 
+              className="font-outfit text-muted-foreground max-w-2xl mx-auto leading-relaxed text-base md:text-lg mb-12 text-center"
+              initial={{ opacity: 0, y: 30 }}
+              animate={headerVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              transition={{ duration: 0.6, delay: 0.2 } as const}
+            >
               DNA's magic is in the connections between the Five C's. Each action in one dimension 
               creates value in others. This is what makes DNA an operating system, not just an app.
-            </p>
+            </motion.p>
           </div>
 
           {/* Two Column Layout */}
           <div 
             ref={contentRef}
-            className={cn(
-              "grid grid-cols-1 lg:grid-cols-2 gap-12 items-center transition-all duration-700 delay-200",
-              contentVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-8"
-            )}
+            className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
           >
             {/* Visualization */}
-            <div className="relative aspect-square max-w-md mx-auto w-full">
+            <motion.div 
+              className="relative aspect-square max-w-md mx-auto w-full"
+              initial={{ opacity: 0, y: 30 }}
+              animate={contentVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              transition={{ duration: 0.6, delay: 0.3 } as const}
+            >
               {/* Center DNA Hub */}
               <div 
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center z-10 bg-gradient-to-br from-dna-emerald to-dna-forest shadow-lg"
               >
-                <span className="font-display font-bold text-white text-lg md:text-xl">DNA</span>
+                <span className="font-cormorant font-bold text-white text-lg md:text-xl">DNA</span>
               </div>
 
               {/* C Nodes */}
@@ -127,7 +138,7 @@ export const DemoInterconnection = forwardRef<HTMLElement, DemoInterconnectionPr
                     >
                       <span className={styles.text}>{C_ICONS[c.name]}</span>
                     </div>
-                    <div className={cn("text-center text-xs font-body mt-1 font-medium", styles.text)}>
+                    <div className={cn("text-center text-xs font-outfit mt-1 font-medium", styles.text)}>
                       {c.name}
                     </div>
                   </div>
@@ -155,7 +166,7 @@ export const DemoInterconnection = forwardRef<HTMLElement, DemoInterconnectionPr
                   );
                 })}
               </svg>
-            </div>
+            </motion.div>
 
             {/* Connection Examples */}
             <div className="space-y-3">
@@ -164,14 +175,12 @@ export const DemoInterconnection = forwardRef<HTMLElement, DemoInterconnectionPr
                 const toStyles = C_STYLES[conn.to];
                 
                 return (
-                  <div 
+                  <motion.div 
                     key={index}
-                    className={cn(
-                      "bg-background border border-border rounded-lg p-4 flex items-start gap-4 transition-all duration-500",
-                      "hover:shadow-md hover:border-dna-emerald/30",
-                      contentVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
-                    )}
-                    style={{ transitionDelay: contentVisible ? `${300 + index * 100}ms` : '0ms' }}
+                    className="bg-background border border-border rounded-lg p-4 flex items-start gap-4 hover:shadow-md hover:border-dna-emerald/30 transition-all"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={contentVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                    transition={{ duration: 0.5, delay: 0.4 + index * 0.1 } as const}
                   >
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <span className={cn("w-8 h-8 rounded-full flex items-center justify-center", fromStyles.bg)}>
@@ -182,31 +191,31 @@ export const DemoInterconnection = forwardRef<HTMLElement, DemoInterconnectionPr
                         <span className={toStyles.text}>{C_ICONS[conn.to]}</span>
                       </span>
                     </div>
-                    <p className="font-body text-muted-foreground text-sm leading-relaxed">
+                    <p className="font-outfit text-foreground/80 text-sm leading-relaxed">
                       {conn.description}
                     </p>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
           </div>
 
           {/* Flywheel Box */}
-          <div 
-            className={cn(
-              "mt-12 p-6 rounded-xl border bg-dna-emerald/5 border-dna-emerald/20 transition-all duration-700 delay-500",
-              contentVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-8"
-            )}
+          <motion.div 
+            className="mt-12 p-6 rounded-xl border bg-dna-emerald/5 border-dna-emerald/20"
+            initial={{ opacity: 0, y: 30 }}
+            animate={contentVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.6, delay: 1 } as const}
           >
-            <h3 className="font-display font-semibold text-dna-emerald text-lg mb-2">
+            <h3 className="font-cormorant font-semibold text-dna-emerald text-lg mb-2">
               The Flywheel Effect
             </h3>
-            <p className="font-body text-muted-foreground text-sm md:text-base leading-relaxed">
+            <p className="font-outfit text-foreground/80 text-sm md:text-base leading-relaxed">
               Every connection made leads to events discovered. Events spark collaborations. 
               Collaborations generate contributions. Contributions become stories. 
               Stories attract new connections.
             </p>
-          </div>
+          </motion.div>
         </div>
       </section>
     );

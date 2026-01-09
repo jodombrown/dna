@@ -55,10 +55,10 @@ export const DemoProblem = forwardRef<HTMLElement, DemoProblemProps>(
 
             {/* Headline */}
             <motion.h2 
-              className="font-cormorant font-semibold text-dna-dark mb-6"
+              className="font-cormorant font-semibold text-foreground mb-6"
               style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
               initial={{ opacity: 0, y: 30 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.6, delay: 0.1 } as const}
             >
               Scattered Potential. <span className="text-dna-terra">Fragmented Power.</span>
@@ -66,14 +66,14 @@ export const DemoProblem = forwardRef<HTMLElement, DemoProblemProps>(
 
             {/* Supporting Text */}
             <motion.p 
-              className="font-outfit font-light text-dna-gray max-w-2xl mb-12 leading-relaxed text-base md:text-lg"
+              className="font-outfit text-muted-foreground max-w-2xl mb-12 leading-relaxed text-base md:text-lg"
               initial={{ opacity: 0, y: 30 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.6, delay: 0.2 } as const}
             >
               Today, diaspora potential is trapped in disconnected silos. Ideas die in DMs. 
               Connections fade after events. Projects stall without accountability. 
-              Contributions can't find their targets.
+              Contributions cannot find their targets.
             </motion.p>
 
             {/* Problem Cards Grid */}
@@ -81,20 +81,20 @@ export const DemoProblem = forwardRef<HTMLElement, DemoProblemProps>(
               {PROBLEM_CARDS.map((card, index) => (
                 <motion.div 
                   key={index}
-                  className="bg-white border border-dna-light-gray rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
+                  className="bg-background border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
                   initial={{ opacity: 0, y: 40 }}
-                  animate={isVisible ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 0.3 + index * 0.1 } as const}
+                  animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+                  transition={{ duration: 0.5, delay: 0.3 + index * 0.15 } as const}
                 >
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-lg bg-dna-terra/10 flex items-center justify-center flex-shrink-0">
                       <card.icon className="w-6 h-6 text-dna-terra" />
                     </div>
                     <div>
-                      <h3 className="font-cormorant font-semibold text-dna-dark text-lg md:text-xl mb-2">
+                      <h3 className="font-cormorant font-semibold text-foreground text-lg md:text-xl mb-2">
                         {card.title}
                       </h3>
-                      <p className="font-outfit text-dna-gray text-sm md:text-base leading-relaxed">
+                      <p className="font-outfit text-muted-foreground text-sm md:text-base leading-relaxed">
                         {card.description}
                       </p>
                     </div>
@@ -105,12 +105,12 @@ export const DemoProblem = forwardRef<HTMLElement, DemoProblemProps>(
 
             {/* Quote */}
             <motion.blockquote 
-              className="mt-12 border-l-4 border-dna-terra pl-6"
+              className="mt-12 border-l-4 border-dna-emerald pl-6"
               initial={{ opacity: 0, y: 30 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.6, delay: 0.7 } as const}
             >
-              <p className="font-outfit italic text-dna-gray text-base md:text-lg">
+              <p className="font-outfit italic text-foreground text-base md:text-lg">
                 "The diaspora has more PhDs, more capital, more expertise than ever before. 
                 What we lack is coordination."
               </p>
