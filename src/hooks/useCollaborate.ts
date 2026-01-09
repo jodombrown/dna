@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { supabaseClient } from '@/lib/supabaseHelpers';
 import { toast } from 'sonner';
-import type { SpaceTemplate, CreateSpaceInput, SpaceTemplateRole, SpaceTemplateInitiative } from '@/types/collaborate';
+import type { SpaceTemplate, CreateSpaceInput, SpaceTemplateRole, SpaceTemplateInitiative, Space, SpaceMember, SpaceRole, Initiative, SpaceTask, SpaceActivity } from '@/types/collaborate';
 
 export function useSpaceTemplates() {
   return useQuery({
@@ -151,5 +151,153 @@ export function useCreateSpace() {
     onError: (error) => {
       toast.error('Failed to create space', { description: error.message });
     },
+  });
+}
+
+// Get single space
+export function useSpace(spaceId: string) {
+  return useQuery({
+    queryKey: ['space', spaceId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('spaces')
+        .select('*')
+        .eq('id', spaceId)
+        .single();
+
+      if (error) throw error;
+      return data as Space;
+    },
+    enabled: !!spaceId,
+  });
+}
+
+// Get space members with user and role info
+export function useSpaceMembers(spaceId: string) {
+  return useQuery({
+    queryKey: ['space-members', spaceId],
+    queryFn: async () => {
+      const { data: members, error } = await supabase
+        .from('space_members')
+        .select('*, role_info:space_roles(id, title, is_lead)')
+        .eq('space_id', spaceId)
+        .eq('status', 'active');
+
+      if (error) throw error;
+
+      // Fetch user profiles separately
+      const userIds = members?.map(m => m.user_id) || [];
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, full_name, username, avatar_url')
+        .in('id', userIds);
+
+      const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+      
+      return (members || []).map(m => ({
+        ...m,
+        user: profileMap.get(m.user_id),
+      })) as unknown as SpaceMember[];
+    },
+    enabled: !!spaceId,
+  });
+}
+
+// Get space roles
+export function useSpaceRoles(spaceId: string) {
+  return useQuery({
+    queryKey: ['space-roles', spaceId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('space_roles')
+        .select('*')
+        .eq('space_id', spaceId)
+        .order('order_index');
+
+      if (error) throw error;
+      return data as SpaceRole[];
+    },
+    enabled: !!spaceId,
+  });
+}
+
+// Get space initiatives
+export function useSpaceInitiatives(spaceId: string) {
+  return useQuery({
+    queryKey: ['space-initiatives', spaceId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('initiatives')
+        .select('*')
+        .eq('space_id', spaceId)
+        .order('order_index');
+
+      if (error) throw error;
+      return data as Initiative[];
+    },
+    enabled: !!spaceId,
+  });
+}
+
+// Get space tasks
+export function useSpaceTasks(spaceId: string) {
+  return useQuery({
+    queryKey: ['space-tasks', spaceId],
+    queryFn: async () => {
+      const { data: tasks, error } = await supabase
+        .from('space_tasks')
+        .select('*')
+        .eq('space_id', spaceId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      // Fetch assignee profiles separately
+      const assigneeIds = tasks?.filter(t => t.assignee_id).map(t => t.assignee_id!) || [];
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, full_name, avatar_url')
+        .in('id', assigneeIds);
+
+      const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+      
+      return (tasks || []).map(t => ({
+        ...t,
+        assignee: t.assignee_id ? profileMap.get(t.assignee_id) : undefined,
+      })) as unknown as SpaceTask[];
+    },
+    enabled: !!spaceId,
+  });
+}
+
+// Get space activity log
+export function useSpaceActivity(spaceId: string, limit = 20) {
+  return useQuery({
+    queryKey: ['space-activity', spaceId],
+    queryFn: async () => {
+      const { data: activities, error } = await supabase
+        .from('space_activity_log')
+        .select('*')
+        .eq('space_id', spaceId)
+        .order('created_at', { ascending: false })
+        .limit(limit);
+
+      if (error) throw error;
+
+      // Fetch user profiles separately
+      const userIds = activities?.map(a => a.user_id).filter(Boolean) || [];
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, full_name, avatar_url')
+        .in('id', userIds);
+
+      const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+      
+      return (activities || []).map(a => ({
+        ...a,
+        user: a.user_id ? profileMap.get(a.user_id) : undefined,
+      })) as unknown as SpaceActivity[];
+    },
+    enabled: !!spaceId,
   });
 }
