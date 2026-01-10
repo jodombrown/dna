@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Bell, Mail, MessageSquare, Heart, AtSign, Users, Calendar, BookOpen, Loader2, ArrowLeft } from 'lucide-react';
+import { Bell, Mail, MessageSquare, Heart, AtSign, Users, Calendar, BookOpen, Loader2, ArrowLeft, Smartphone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useDiaPreferences, useUpdateDiaPreferences } from '@/hooks/useDiaPreferences';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { usePushNotifications } from '@/hooks/usePushNotifications';
 
 interface NotificationToggleProps {
   id: string;
@@ -43,6 +44,14 @@ export default function NotificationSettingsPage() {
   const navigate = useNavigate();
   const { data: preferences, isLoading } = useDiaPreferences();
   const updatePreferences = useUpdateDiaPreferences();
+  const { 
+    isSupported: pushSupported, 
+    isSubscribed: pushSubscribed, 
+    isLoading: pushLoading, 
+    permission: pushPermission,
+    subscribe: subscribeToPush, 
+    unsubscribe: unsubscribeFromPush 
+  } = usePushNotifications();
 
   const handleToggle = (field: string, value: boolean) => {
     updatePreferences.mutate({ [field]: value });
@@ -50,6 +59,14 @@ export default function NotificationSettingsPage() {
 
   const handleFrequencyChange = (value: string) => {
     updatePreferences.mutate({ notification_frequency: value as 'never' | 'low' | 'normal' | 'high' });
+  };
+
+  const handlePushToggle = async (enabled: boolean) => {
+    if (enabled) {
+      await subscribeToPush();
+    } else {
+      await unsubscribeFromPush();
+    }
   };
 
   if (isLoading) {
@@ -212,6 +229,40 @@ export default function NotificationSettingsPage() {
               disabled={updatePreferences.isPending || !emailEnabled}
             />
           </div>
+        </Card>
+
+        {/* Push Notifications - Phone/Device */}
+        <Card className="p-6 mt-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Smartphone className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Push Notifications</h3>
+                <p className="text-sm text-muted-foreground">
+                  {!pushSupported 
+                    ? 'Not supported in this browser'
+                    : pushSubscribed 
+                      ? 'Receiving notifications on this device' 
+                      : pushPermission === 'denied'
+                        ? 'Permission denied. Enable in browser settings.'
+                        : 'Get notified on your phone or device'
+                  }
+                </p>
+              </div>
+            </div>
+            <Switch
+              checked={pushSubscribed}
+              onCheckedChange={handlePushToggle}
+              disabled={pushLoading || !pushSupported || pushPermission === 'denied'}
+            />
+          </div>
+          {pushSupported && !pushSubscribed && pushPermission !== 'denied' && (
+            <p className="text-xs text-muted-foreground mt-3 pl-15">
+              Enable to receive instant notifications when you get messages, connection requests, or event updates.
+            </p>
+          )}
         </Card>
 
         {/* In-App Notifications */}
