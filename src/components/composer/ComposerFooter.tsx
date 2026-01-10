@@ -6,6 +6,7 @@ interface ComposerFooterProps {
   mode: ComposerMode;
   isSubmitting: boolean;
   isValid: boolean;
+  validationMessage?: string | null;
   onCancel: () => void;
   onSubmit: () => void;
 }
@@ -14,22 +15,32 @@ export const ComposerFooter = ({
   mode,
   isSubmitting,
   isValid,
+  validationMessage,
   onCancel,
   onSubmit,
 }: ComposerFooterProps) => {
   return (
-    <div className="flex items-center justify-between pt-4 border-t">
-      <Button variant="ghost" onClick={onCancel} disabled={isSubmitting}>
-        Cancel
-      </Button>
+    <div className="space-y-2 pt-4 border-t">
+      {/* Validation message */}
+      {!isValid && validationMessage && (
+        <p className="text-sm text-amber-600 dark:text-amber-400 text-center">
+          {validationMessage}
+        </p>
+      )}
       
-      <Button 
-        onClick={onSubmit} 
-        disabled={!isValid || isSubmitting}
-      >
-        {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-        {getSubmitLabel(mode, isSubmitting)}
-      </Button>
+      <div className="flex items-center justify-between">
+        <Button variant="ghost" onClick={onCancel} disabled={isSubmitting}>
+          Cancel
+        </Button>
+        
+        <Button 
+          onClick={onSubmit} 
+          disabled={!isValid || isSubmitting}
+        >
+          {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+          {getSubmitLabel(mode, isSubmitting)}
+        </Button>
+      </div>
     </div>
   );
 };

@@ -43,23 +43,35 @@ export const UniversalComposer = ({
     setFormData(prev => ({ ...prev, ...updates }));
   };
 
-  const isValid = () => {
-    if (!formData.content.trim()) return false;
-    
+  const getValidationMessage = (): string | null => {
     switch (mode) {
       case 'event':
-        return !!formData.title && !!formData.eventDate;
+        if (!formData.title || formData.title.length < 10) return 'Event title must be at least 10 characters';
+        if (!formData.eventDate) return 'Please select an event date';
+        if (!formData.content || formData.content.length < 50) return 'Description must be at least 50 characters';
+        if ((formData.format === 'in_person' || !formData.format) && !formData.location) return 'Please add a location for in-person events';
+        if ((formData.format === 'virtual' || formData.format === 'hybrid') && !formData.meetingUrl) return 'Please add a meeting link';
+        return null;
       case 'need':
-        return !!formData.title && !!context.spaceId;
+        if (!formData.title) return 'Please add a title';
+        if (!context.spaceId) return 'Needs must be created within a Space';
+        if (!formData.content.trim()) return 'Please add a description';
+        return null;
       case 'space':
-        return !!formData.title;
+        if (!formData.title) return 'Please add a space title';
+        if (!formData.content.trim()) return 'Please add a description';
+        return null;
       case 'story':
-        // Story-specific validation: title required, content >= 400 chars
-        return !!formData.title?.trim() && formData.content.length >= 400;
+        if (!formData.title?.trim()) return 'Story title is required';
+        if (formData.content.length < 400) return `Story needs ${400 - formData.content.length} more characters`;
+        return null;
       default:
-        return true;
+        if (!formData.content.trim()) return 'Please write something';
+        return null;
     }
   };
+
+  const isValid = () => getValidationMessage() === null;
 
   // Mobile: slide-in sheet from the right
   if (isMobile) {
@@ -84,6 +96,7 @@ export const UniversalComposer = ({
               mode={mode}
               isSubmitting={isSubmitting}
               isValid={isValid()}
+              validationMessage={getValidationMessage()}
               onCancel={onClose}
               onSubmit={handleSubmit}
             />
@@ -128,6 +141,7 @@ export const UniversalComposer = ({
             mode={mode}
             isSubmitting={isSubmitting}
             isValid={isValid()}
+            validationMessage={getValidationMessage()}
             onCancel={onClose}
             onSubmit={handleSubmit}
           />
