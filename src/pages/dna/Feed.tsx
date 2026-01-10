@@ -1,17 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { useNavigate } from 'react-router-dom';
-import { PenSquare, Sparkles, Users, Newspaper, Settings, TrendingUp, Search, Bookmark } from 'lucide-react';
+// Navigation handled by child components
+import { PenSquare, Sparkles, Users, Newspaper, TrendingUp, Search } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ProfileCompletionNudge } from '@/components/profile/ProfileCompletionNudge';
-import LayoutController from '@/components/LayoutController';
-import { useDashboardPreferences } from '@/hooks/useDashboardPreferences';
-import { DashboardModules } from '@/components/feed/DashboardModules';
 import { UniversalFeedInfinite } from '@/components/feed/UniversalFeedInfinite';
 import { PersonalizedFeed } from '@/components/feed/PersonalizedFeed';
 import { SearchDialog } from '@/components/feed/SearchDialog';
@@ -19,11 +16,12 @@ import { MobileFeedTabs } from '@/components/feed/MobileFeedTabs';
 import { FeedTabExplainer } from '@/components/feed/FeedTabExplainer';
 import { MobileProfileCompletionBanner } from '@/components/feed/MobileProfileCompletionBanner';
 import { FirstTimeWalkthrough } from '@/components/onboarding/FirstTimeWalkthrough';
+import { FeedProfileCard } from '@/components/feed/FeedProfileCard';
+import { FeedQuickLinks } from '@/components/feed/FeedQuickLinks';
+import { FeedRightSidebar } from '@/components/feed/FeedRightSidebar';
 import { FeedTab, RankingMode } from '@/types/feed';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
-import { MobileViewContainer } from '@/components/mobile/MobileViewContainer';
 import { MobileHeader } from '@/components/mobile/MobileHeader';
-import { useQueryClient } from '@tanstack/react-query';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { useMobile } from '@/hooks/useMobile';
@@ -31,15 +29,12 @@ import { useMobile } from '@/hooks/useMobile';
 const DnaFeed = () => {
   const { user } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  
   const [activeTab, setActiveTab] = useState<FeedTab>('all');
   const [rankingMode, setRankingMode] = useState<RankingMode>('latest');
   const [showSearchDialog, setShowSearchDialog] = useState(false);
-  const { preferences, isLoading: prefsLoading } = useDashboardPreferences();
   const composer = useUniversalComposer();
   const { isMobile } = useMobile();
-
 
   if (profileLoading) {
     return (
@@ -53,172 +48,6 @@ const DnaFeed = () => {
     return null;
   }
 
-  // Left Column: Hidden for Feed Header Cleanup v1
-  const leftColumn = null;
-
-  // Center Column: Main Feed
-  const centerColumn = (
-    <div className="space-y-2">
-      {!isMobile && <ProfileCompletionNudge variant="banner" threshold={40} />}
-      
-      {!isMobile && (
-        <>
-          {/* Compact Feed Header */}
-          <div className="flex items-center justify-between py-1">
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-semibold">Feed</h1>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowSearchDialog(true)}
-                className="h-8 w-8 p-0"
-              >
-                <Search className="h-4 w-4" />
-              </Button>
-            </div>
-            <Tabs value={rankingMode} onValueChange={(v) => setRankingMode(v as RankingMode)} className="w-auto">
-              <TabsList className="h-8">
-                <TabsTrigger value="top" className="flex items-center gap-1.5 text-xs px-2">
-                  <TrendingUp className="h-3 w-3" />
-                  <span className="hidden sm:inline">Top</span>
-                </TabsTrigger>
-                <TabsTrigger value="latest" className="flex items-center gap-1.5 text-xs px-2">
-                  <Sparkles className="h-3 w-3" />
-                  <span className="hidden sm:inline">Latest</span>
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
-
-          {/* Compact Create Post Card */}
-          <Card 
-            className="p-2.5 cursor-pointer hover:border-primary/50 transition-colors"
-            onClick={() => composer.open('post')}
-          >
-            <div className="flex items-center gap-2.5">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={profile.avatar_url || ''} />
-                <AvatarFallback>{profile.display_name?.[0] || profile.username?.[0] || 'U'}</AvatarFallback>
-              </Avatar>
-              <div className="flex-1 bg-muted rounded-full px-3 py-1.5 text-sm text-muted-foreground">
-                What's on your mind?
-              </div>
-              <Button size="icon" variant="ghost" className="h-7 w-7">
-                <PenSquare className="w-3.5 h-3.5" />
-              </Button>
-            </div>
-          </Card>
-        </>
-      )}
-
-      {/* Filter Tabs with Tooltips */}
-      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
-        <TabsList className="w-full grid grid-cols-5">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <TabsTrigger value="all">
-                <Newspaper className="h-4 w-4 mr-1" />
-                <span className="hidden sm:inline">All</span>
-              </TabsTrigger>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>All posts from across DNA</p>
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <TabsTrigger value="for_you">
-                <Sparkles className="h-4 w-4 mr-1" />
-                <span className="hidden sm:inline">For You</span>
-              </TabsTrigger>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Personalized based on your interests</p>
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <TabsTrigger value="network">
-                <Users className="h-4 w-4 mr-1" />
-                <span className="hidden sm:inline">My Network</span>
-              </TabsTrigger>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Posts from your connections</p>
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <TabsTrigger value="my_posts">
-                <PenSquare className="h-4 w-4 mr-1" />
-                <span className="hidden sm:inline">Mine</span>
-              </TabsTrigger>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Your posts and stories</p>
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <TabsTrigger value="bookmarks">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                </svg>
-                <span className="hidden sm:inline">Saved</span>
-              </TabsTrigger>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Bookmarked posts and stories</p>
-            </TooltipContent>
-          </Tooltip>
-        </TabsList>
-      </Tabs>
-
-      {/* Tab Explainer - shows once per day per tab */}
-      <FeedTabExplainer activeTab={activeTab} />
-
-      {/* Feed Content - Personalized or Universal */}
-      {activeTab === 'for_you' ? (
-        <PersonalizedFeed />
-      ) : (
-        <UniversalFeedInfinite
-          viewerId={user.id}
-          tab={activeTab}
-          rankingMode={rankingMode}
-          emptyMessage={
-            activeTab === 'my_posts'
-              ? "You haven't posted anything yet"
-              : activeTab === 'network'
-              ? "Your connections haven't posted yet"
-              : 'No posts to show'
-          }
-          emptyAction={
-            <Button
-              onClick={() => composer.open('post')}
-              className="bg-dna-emerald hover:bg-dna-emerald/90 text-white mt-4"
-            >
-              <PenSquare className="h-4 w-4 mr-2" />
-              Create Your First Post
-            </Button>
-          }
-        />
-      )}
-    </div>
-  );
-
-  // Right Column: Personalized Modules
-  const rightColumn = prefsLoading ? (
-    <div className="space-y-4">
-      <div className="h-32 bg-muted animate-pulse rounded-lg" />
-      <div className="h-32 bg-muted animate-pulse rounded-lg" />
-    </div>
-  ) : (
-    <DashboardModules
-      visibleModules={preferences.visible_modules}
-      collapsedModules={preferences.collapsed_modules}
-      density={preferences.density}
-    />
-  );
 
   // Mobile layout with custom header - hide UnifiedHeader
   if (isMobile) {
@@ -303,18 +132,166 @@ const DnaFeed = () => {
     );
   }
  
-  // Desktop layout
+  // Desktop layout - LinkedIn-style 3-column
   return (
-    <div className="min-h-screen bg-background pb-20 md:pb-0">
+    <div className="min-h-screen bg-background">
       {/* First-time user walkthrough */}
       <FirstTimeWalkthrough />
       
-      <LayoutController
-        leftColumn={leftColumn}
-        centerColumn={centerColumn}
-        rightColumn={rightColumn}
-      />
-      <MobileBottomNav />
+      {/* LinkedIn-style 3-column grid */}
+      <div 
+        className="max-w-7xl mx-auto px-4 py-6 grid gap-6"
+        style={{ 
+          gridTemplateColumns: '240px minmax(0, 1fr) 300px',
+          paddingTop: 'calc(var(--header-h, 96px) + 1.5rem)'
+        }}
+      >
+        {/* Left Sidebar - Profile Card & Quick Links */}
+        <aside className="space-y-4 sticky top-[calc(var(--header-h,96px)+1.5rem)] h-fit">
+          <FeedProfileCard />
+          <FeedQuickLinks />
+        </aside>
+
+        {/* Center Column - Main Feed */}
+        <main className="min-w-0 space-y-3">
+          <ProfileCompletionNudge variant="banner" threshold={40} />
+          
+          {/* Compact Feed Header */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-semibold">Feed</h1>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowSearchDialog(true)}
+                className="h-8 w-8 p-0"
+              >
+                <Search className="h-4 w-4" />
+              </Button>
+            </div>
+            <Tabs value={rankingMode} onValueChange={(v) => setRankingMode(v as RankingMode)} className="w-auto">
+              <TabsList className="h-8">
+                <TabsTrigger value="top" className="flex items-center gap-1.5 text-xs px-2">
+                  <TrendingUp className="h-3 w-3" />
+                  <span>Top</span>
+                </TabsTrigger>
+                <TabsTrigger value="latest" className="flex items-center gap-1.5 text-xs px-2">
+                  <Sparkles className="h-3 w-3" />
+                  <span>Latest</span>
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+
+          {/* Compact Create Post Card */}
+          <Card 
+            className="p-3 cursor-pointer hover:border-primary/50 transition-colors"
+            onClick={() => composer.open('post')}
+          >
+            <div className="flex items-center gap-3">
+              <Avatar className="h-10 w-10">
+                <AvatarImage src={profile.avatar_url || ''} />
+                <AvatarFallback>{profile.display_name?.[0] || profile.username?.[0] || 'U'}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1 bg-muted rounded-full px-4 py-2 text-sm text-muted-foreground">
+                What's on your mind?
+              </div>
+              <Button size="icon" variant="ghost" className="h-8 w-8">
+                <PenSquare className="w-4 h-4" />
+              </Button>
+            </div>
+          </Card>
+
+          {/* Filter Tabs */}
+          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
+            <TabsList className="w-full grid grid-cols-5 h-10">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <TabsTrigger value="all" className="text-xs">
+                    <Newspaper className="h-4 w-4 mr-1.5" />
+                    All
+                  </TabsTrigger>
+                </TooltipTrigger>
+                <TooltipContent>All posts from across DNA</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <TabsTrigger value="for_you" className="text-xs">
+                    <Sparkles className="h-4 w-4 mr-1.5" />
+                    For You
+                  </TabsTrigger>
+                </TooltipTrigger>
+                <TooltipContent>Personalized based on your interests</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <TabsTrigger value="network" className="text-xs">
+                    <Users className="h-4 w-4 mr-1.5" />
+                    Network
+                  </TabsTrigger>
+                </TooltipTrigger>
+                <TooltipContent>Posts from your connections</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <TabsTrigger value="my_posts" className="text-xs">
+                    <PenSquare className="h-4 w-4 mr-1.5" />
+                    Mine
+                  </TabsTrigger>
+                </TooltipTrigger>
+                <TooltipContent>Your posts and stories</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <TabsTrigger value="bookmarks" className="text-xs">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                    </svg>
+                    Saved
+                  </TabsTrigger>
+                </TooltipTrigger>
+                <TooltipContent>Bookmarked posts and stories</TooltipContent>
+              </Tooltip>
+            </TabsList>
+          </Tabs>
+
+          {/* Tab Explainer */}
+          <FeedTabExplainer activeTab={activeTab} />
+
+          {/* Feed Content */}
+          {activeTab === 'for_you' ? (
+            <PersonalizedFeed />
+          ) : (
+            <UniversalFeedInfinite
+              viewerId={user.id}
+              tab={activeTab}
+              rankingMode={rankingMode}
+              emptyMessage={
+                activeTab === 'my_posts'
+                  ? "You haven't posted anything yet"
+                  : activeTab === 'network'
+                  ? "Your connections haven't posted yet"
+                  : 'No posts to show'
+              }
+              emptyAction={
+                <Button
+                  onClick={() => composer.open('post')}
+                  className="bg-dna-emerald hover:bg-dna-emerald/90 text-white mt-4"
+                >
+                  <PenSquare className="h-4 w-4 mr-2" />
+                  Create Your First Post
+                </Button>
+              }
+            />
+          )}
+        </main>
+
+        {/* Right Sidebar - Suggestions & Trending */}
+        <aside className="space-y-4 sticky top-[calc(var(--header-h,96px)+1.5rem)] h-fit">
+          <FeedRightSidebar />
+        </aside>
+      </div>
+
       <UniversalComposer
         isOpen={composer.isOpen}
         mode={composer.mode}
