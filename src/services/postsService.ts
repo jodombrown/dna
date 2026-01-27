@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { CreatePostInput, PostWithAuthor, PostComment, PostLiker } from '@/types/posts';
 import { mentionService } from './mentionService';
+import { logger } from '@/lib/logger';
 import type { Database } from '@/integrations/supabase/types';
 
 /**
@@ -161,7 +162,7 @@ export async function createPost(input: CreatePostInput): Promise<{ id: string }
       data.id,
       user.id,
       authorName
-    ).catch(() => {});
+    ).catch((err) => { logger.warn('PostsService', 'Failed to process post mentions', err); });
 
     // Process hashtags - extract and create/link them
     (async () => {
@@ -268,7 +269,7 @@ export async function createComment(postId: string, content: string): Promise<Po
       postId,
       user.id,
       authorName
-    ).catch(() => {});
+    ).catch((err) => { logger.warn('PostsService', 'Failed to process comment mentions', err); });
   }
 
   return data;

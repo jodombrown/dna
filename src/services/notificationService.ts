@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { getAppUrl } from '@/lib/config';
+import { logger } from '@/lib/logger';
 
 interface CreateNotificationParams {
   user_id: string;
@@ -54,7 +55,7 @@ export async function createNotification(params: CreateNotificationParams): Prom
       action_url: params.link_url ? getAppUrl(params.link_url) : undefined,
       actor_name: params.payload?.actor_name as string | undefined,
       actor_avatar_url: params.payload?.actor_avatar_url as string | undefined,
-    }).catch(() => {});
+    }).catch((err) => { logger.warn('NotificationService', 'Failed to send notification email', err); });
 
     return { success: true, notificationId: notification.id };
   } catch (error: unknown) {

@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 import type {
   FeedbackChannel,
   FeedbackMembership,
@@ -286,7 +287,7 @@ export const feedbackService = {
 
     // Process @mentions and send notifications
     if (params.content) {
-      this.processMentions(params.content, user.id, data.id).catch(() => {});
+      this.processMentions(params.content, user.id, data.id).catch((err) => { logger.warn('FeedbackService', 'Failed to process mentions', err); });
     }
 
     return data as FeedbackMessage;

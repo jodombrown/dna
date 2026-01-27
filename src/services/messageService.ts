@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { sendNotificationEmail, NOTIFICATION_TYPES } from './notificationService';
 import { getConversationUrl } from '@/lib/config';
+import { logger } from '@/lib/logger';
 import type { Database, Json } from '@/integrations/supabase/types';
 
 /**
@@ -502,10 +503,22 @@ async getConversations(
             action_url: actionUrl,
             actor_avatar_url: senderProfile?.avatar_url,
           }
-        }).catch(() => {});
+        }).catch((err) => { logger.warn('MessageService', 'Failed to send message notification', err); });
+
+        // 3. Send push notification
+        supabase.functions.invoke('send-push-notification', {
+          body: {
+            user_id: recipientId,
+            title: `Message from ${senderName}`,
+            message: messagePreview,
+            type: 'message',
+            action_url: actionUrl,
+            actor_avatar_url: senderProfile?.avatar_url,
+          }
+        }).catch((err) => { logger.warn('MessageService', 'Failed to send push notification', err); });
       }
-    } catch {
-      // Ignore notification errors
+    } catch (err) {
+      logger.warn('MessageService', 'Failed to send message notifications', err);
     }
 
     return data as Message;

@@ -108,7 +108,7 @@ export function GroupPostComments({ postId, isOpen, onClose }: GroupPostComments
           postId,
           user!.id,
           authorName
-        ).catch(() => {});
+        ).catch((err) => { console.warn('[GroupPostComments] Failed to process mentions:', err); });
       }
 
       setNewComment('');

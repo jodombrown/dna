@@ -3,6 +3,7 @@ import { ConnectionStatus, Connection, ConnectionRequest, ConnectionProfile, Con
 import { BlockedUser } from '@/types/blocked';
 import { sendNotificationEmail, NOTIFICATION_TYPES } from './notificationService';
 import { getAppUrl, getProfileUrl, APP_PATHS } from '@/lib/config';
+import { logger } from '@/lib/logger';
 
 /**
  * Response from get_connection_requests RPC
@@ -92,7 +93,7 @@ export const connectionService = {
       action_url: getAppUrl(APP_PATHS.connect.network),
       actor_name: requesterProfile?.full_name,
       actor_avatar_url: requesterProfile?.avatar_url,
-    }).catch(() => {});
+    }).catch((err) => { logger.warn('ConnectionService', 'Failed to send connection request notification email', err); });
     
     return data;
   },
@@ -126,7 +127,7 @@ export const connectionService = {
         action_url: getProfileUrl(accepterProfile?.full_name || user.id),
         actor_name: accepterProfile?.full_name,
         actor_avatar_url: accepterProfile?.avatar_url,
-      }).catch(() => {});
+      }).catch((err) => { logger.warn('ConnectionService', 'Failed to send connection accepted notification email', err); });
     }
 
     return data;
