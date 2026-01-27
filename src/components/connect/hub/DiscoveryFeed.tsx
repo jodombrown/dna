@@ -60,6 +60,14 @@ export function DiscoveryFeed({
   }, []);
 
   // Fetch members with infinite scroll
+  // Combine regions and diasporaLocations into one array for regional_expertise filter
+  const combinedRegionalExpertise = React.useMemo(() => {
+    const regions = filters?.regions || [];
+    const diaspora = filters?.diasporaLocations || [];
+    const combined = [...regions, ...diaspora];
+    return combined.length > 0 ? combined : null;
+  }, [filters?.regions, filters?.diasporaLocations]);
+
   const {
     data: membersData,
     fetchNextPage,
@@ -68,7 +76,7 @@ export function DiscoveryFeed({
     isLoading: membersLoading,
     refetch: refetchMembers,
   } = useInfiniteQuery({
-    queryKey: ['discovery-members', user?.id, searchQuery, filters],
+    queryKey: ['discovery-members', user?.id, searchQuery, combinedRegionalExpertise],
     queryFn: async ({ pageParam = 0 }) => {
       if (!user) return { members: [], nextPage: null };
 
@@ -76,7 +84,7 @@ export function DiscoveryFeed({
         const { data, error } = await supabase.rpc('discover_members', {
           p_current_user_id: user.id,
           p_focus_areas: null,
-          p_regional_expertise: filters?.regions?.length ? filters.regions : null,
+          p_regional_expertise: combinedRegionalExpertise,
           p_industries: null,
           p_country_of_origin: null,
           p_location_country: null,
