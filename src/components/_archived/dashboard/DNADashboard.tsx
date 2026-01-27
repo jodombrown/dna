@@ -271,7 +271,7 @@ const DNADashboard: React.FC = () => {
 
           {/* Right Column - Recommendations */}
           <div className="lg:col-span-3 space-y-6">
-            {/* Removed duplicate "People You May Know" - using ConnectionRecommendationsWidget in DashboardRightColumn instead */}
+            {/* Removed duplicate "People You May Know" - using ConnectionSuggestionsWidget in DashboardRightColumn instead */}
 
             {/* My Events */}
             <MyEventsWidget />

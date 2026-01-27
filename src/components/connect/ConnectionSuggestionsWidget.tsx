@@ -45,7 +45,7 @@ const getReasonIcon = (reason: string) => {
   return Lightbulb;
 };
 
-export const ConnectionRecommendationsWidget = () => {
+export const ConnectionSuggestionsWidget = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -89,9 +89,10 @@ export const ConnectionRecommendationsWidget = () => {
         description: 'You\'ll be notified when they respond.',
       });
       
-      // Invalidate queries to refresh recommendations
-      queryClient.invalidateQueries({ queryKey: ['connection-recommendations'] });
+      // Invalidate queries to refresh suggestions
+      queryClient.invalidateQueries({ queryKey: ['dia-connection-recommendations'] });
       queryClient.invalidateQueries({ queryKey: ['pending-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['connection-status'] });
 
     } catch (error: any) {
       toast({
@@ -110,11 +111,11 @@ export const ConnectionRecommendationsWidget = () => {
     try {
       await connectionService.dismissRecommendation(userId);
       toast({
-        title: 'Recommendation dismissed',
-        description: `${userName} won't appear in your recommendations.`,
+        title: 'Suggestion dismissed',
+        description: `${userName} won't appear in your suggestions.`,
       });
       // Invalidate to refresh the list
-      queryClient.invalidateQueries({ queryKey: ['adin-connection-recommendations'] });
+      queryClient.invalidateQueries({ queryKey: ['dia-connection-recommendations'] });
     } catch (error: any) {
       toast({
         title: 'Failed to dismiss',
@@ -131,8 +132,8 @@ export const ConnectionRecommendationsWidget = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-dna-emerald" />
-            Smart Recommendations
+            <Sparkles className="h-5 w-5 text-primary" />
+            DIA Suggestions
           </CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-center py-8">
@@ -147,13 +148,13 @@ export const ConnectionRecommendationsWidget = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-dna-emerald" />
-            Smart Recommendations
+            <Sparkles className="h-5 w-5 text-primary" />
+            DIA Suggestions
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground text-center py-4">
-            No recommendations available yet. Complete your profile to see suggestions!
+            No suggestions available yet. Complete your profile to see suggestions!
           </p>
         </CardContent>
       </Card>
@@ -165,10 +166,10 @@ export const ConnectionRecommendationsWidget = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-dna-emerald" />
-            Smart Recommendations
+            <Sparkles className="h-5 w-5 text-primary" />
+            DIA Suggestions
             <Badge variant="outline" className="ml-auto text-xs font-normal">
-              DIA Powered
+              AI Powered
             </Badge>
           </CardTitle>
         </CardHeader>
