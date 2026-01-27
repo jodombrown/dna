@@ -14,12 +14,21 @@ export interface ProfileFieldCheck {
 export function getProfileFieldChecks(profile: any): ProfileFieldCheck[] {
   if (!profile) return [];
 
+  // Helper to check if a string has actual content (not just whitespace)
+  const hasContent = (val: string | null | undefined): boolean => !!val?.trim();
+  
+  // Helper to count valid items in an array (filtering out empty/whitespace strings)
+  const validArrayLength = (arr: unknown[] | null | undefined): number => {
+    if (!Array.isArray(arr)) return 0;
+    return arr.filter(item => typeof item === 'string' ? item.trim() : !!item).length;
+  };
+
   return [
     // Pillar 1: Identity (25 pts)
     {
       field: 'avatar_url',
       label: 'Profile photo',
-      complete: !!profile.avatar_url,
+      complete: hasContent(profile.avatar_url),
       points: 10,
       priority: 1,
       pillar: 'Identity',
@@ -27,7 +36,7 @@ export function getProfileFieldChecks(profile: any): ProfileFieldCheck[] {
     {
       field: 'full_name',
       label: 'Full name',
-      complete: !!profile.full_name && profile.full_name.length >= 2,
+      complete: hasContent(profile.full_name) && profile.full_name.trim().length >= 2,
       points: 5,
       priority: 1,
       pillar: 'Identity',
@@ -35,7 +44,7 @@ export function getProfileFieldChecks(profile: any): ProfileFieldCheck[] {
     {
       field: 'headline',
       label: 'Professional headline',
-      complete: !!profile.headline && profile.headline.length >= 5,
+      complete: hasContent(profile.headline) && profile.headline.trim().length >= 5,
       points: 10,
       priority: 2,
       pillar: 'Identity',
@@ -45,7 +54,7 @@ export function getProfileFieldChecks(profile: any): ProfileFieldCheck[] {
     {
       field: 'profession',
       label: 'Professional role',
-      complete: !!profile.profession,
+      complete: hasContent(profile.profession),
       points: 5,
       priority: 2,
       pillar: 'Professional',
@@ -53,7 +62,7 @@ export function getProfileFieldChecks(profile: any): ProfileFieldCheck[] {
     {
       field: 'bio',
       label: 'Bio (50+ characters)',
-      complete: !!profile.bio && profile.bio.length >= 50,
+      complete: hasContent(profile.bio) && profile.bio.trim().length >= 50,
       points: 10,
       priority: 3,
       pillar: 'Professional',
@@ -61,7 +70,7 @@ export function getProfileFieldChecks(profile: any): ProfileFieldCheck[] {
     {
       field: 'linkedin_url',
       label: 'LinkedIn profile',
-      complete: !!profile.linkedin_url,
+      complete: hasContent(profile.linkedin_url),
       points: 5,
       priority: 4,
       pillar: 'Professional',
@@ -71,7 +80,7 @@ export function getProfileFieldChecks(profile: any): ProfileFieldCheck[] {
     {
       field: 'skills',
       label: 'Skills (3+)',
-      complete: Array.isArray(profile.skills) && profile.skills.length >= 3,
+      complete: validArrayLength(profile.skills) >= 3,
       points: 10,
       priority: 2,
       pillar: 'Discovery',
@@ -79,7 +88,7 @@ export function getProfileFieldChecks(profile: any): ProfileFieldCheck[] {
     {
       field: 'focus_areas',
       label: 'Focus areas (2+)',
-      complete: Array.isArray(profile.focus_areas) && profile.focus_areas.length >= 2,
+      complete: validArrayLength(profile.focus_areas) >= 2,
       points: 10,
       priority: 2,
       pillar: 'Discovery',
@@ -87,7 +96,7 @@ export function getProfileFieldChecks(profile: any): ProfileFieldCheck[] {
     {
       field: 'interests',
       label: 'Interests (3+)',
-      complete: Array.isArray(profile.interests) && profile.interests.length >= 3,
+      complete: validArrayLength(profile.interests) >= 3,
       points: 10,
       priority: 3,
       pillar: 'Discovery',
@@ -97,7 +106,7 @@ export function getProfileFieldChecks(profile: any): ProfileFieldCheck[] {
     {
       field: 'country_of_origin',
       label: 'Country of origin',
-      complete: !!profile.country_of_origin,
+      complete: hasContent(profile.country_of_origin),
       points: 5,
       priority: 1,
       pillar: 'Diaspora Context',
@@ -105,7 +114,7 @@ export function getProfileFieldChecks(profile: any): ProfileFieldCheck[] {
     {
       field: 'current_country',
       label: 'Current country',
-      complete: !!profile.current_country,
+      complete: hasContent(profile.current_country),
       points: 5,
       priority: 1,
       pillar: 'Diaspora Context',
@@ -113,7 +122,7 @@ export function getProfileFieldChecks(profile: any): ProfileFieldCheck[] {
     {
       field: 'languages',
       label: 'Languages (1+)',
-      complete: Array.isArray(profile.languages) && profile.languages.length >= 1,
+      complete: validArrayLength(profile.languages) >= 1,
       points: 5,
       priority: 3,
       pillar: 'Diaspora Context',
@@ -123,7 +132,7 @@ export function getProfileFieldChecks(profile: any): ProfileFieldCheck[] {
     {
       field: 'banner_url',
       label: 'Profile banner',
-      complete: !!profile.banner_url,
+      complete: hasContent(profile.banner_url),
       points: 5,
       priority: 5,
       pillar: 'Engagement',
@@ -131,7 +140,7 @@ export function getProfileFieldChecks(profile: any): ProfileFieldCheck[] {
     {
       field: 'industries',
       label: 'Industries (1+)',
-      complete: Array.isArray(profile.industries) && profile.industries.length >= 1,
+      complete: validArrayLength(profile.industries) >= 1,
       points: 5,
       priority: 4,
       pillar: 'Engagement',
