@@ -70,17 +70,14 @@ const SKILLS = [
   'Research',
 ];
 
+// CRITICAL: Values must match EXACTLY what's stored in profiles.regional_expertise
 const REGIONAL_EXPERTISE = [
   'West Africa',
   'East Africa',
   'Southern Africa',
   'Central Africa',
   'North Africa',
-  'Diaspora - North America',
-  'Diaspora - Europe',
-  'Diaspora - Caribbean',
-  'Diaspora - Asia',
-  'Diaspora - South America',
+  'African Diaspora',
 ];
 
 interface FilterSectionProps {

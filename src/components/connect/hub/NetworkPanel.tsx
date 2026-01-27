@@ -49,13 +49,11 @@ const HERITAGE_REGIONS = [
   { id: 'Southern Africa', label: 'Southern Africa' },
 ];
 
-// CRITICAL: Values must match EXACTLY what's stored in profiles.regional_expertise
+// NOTE: The DB currently only stores "African Diaspora" as a single value
+// These are UI-friendly display options that map to it
+// Future: If DB is updated with specific diaspora locations, update these mappings
 const DIASPORA_LOCATIONS = [
-  { id: 'Diaspora - North America', label: 'North America' },
-  { id: 'Diaspora - Europe', label: 'Europe' },
-  { id: 'Diaspora - Caribbean', label: 'Caribbean' },
-  { id: 'Diaspora - South America', label: 'South America' },
-  { id: 'Diaspora - Asia', label: 'Asia Pacific' },
+  { id: 'African Diaspora', label: 'African Diaspora' },
 ];
 
 const C_ENGAGEMENT_OPTIONS = [
