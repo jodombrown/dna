@@ -4,7 +4,7 @@ import ProfessionalsFilters from './ProfessionalsFilters';
 import ProfessionalListItem from './ProfessionalListItem';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
-import { MockProfessional, mockProfessionals } from './ProfessionalsMockData';
+import { MockProfessional, mockProfessionals } from '@/components/connect/tabs/ProfessionalsMockData';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 

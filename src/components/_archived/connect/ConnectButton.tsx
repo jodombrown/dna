@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Check, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { ConnectionRequestModal } from "./ConnectionRequestModal";
+import { ConnectionRequestModal } from "@/components/connect/ConnectionRequestModal";
 import { useToast } from "@/hooks/use-toast";
 import { connectionService } from "@/services/connectionService";
 
