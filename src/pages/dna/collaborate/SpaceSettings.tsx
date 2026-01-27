@@ -96,7 +96,15 @@ export default function SpaceSettings() {
     await updateSpace.mutateAsync({
       id: space.id,
       updates: {
-        ...formData,
+        name: formData.name,
+        tagline: formData.tagline,
+        description: formData.description,
+        space_type: formData.space_type as 'project' | 'working_group' | 'initiative' | 'program',
+        status: formData.status as 'idea' | 'active' | 'completed' | 'paused',
+        visibility: formData.visibility as 'public' | 'invite_only',
+        focus_areas: formData.focus_areas,
+        region: formData.region,
+        external_link: formData.external_link,
         updated_at: new Date().toISOString(),
       },
     });

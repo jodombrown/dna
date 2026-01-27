@@ -166,16 +166,16 @@ export default function CreateSpace() {
         name: formData.name,
         tagline: formData.tagline,
         description: formData.description,
-        space_type: formData.space_type,
-        status: formData.status,
-        visibility: formData.visibility,
+        space_type: formData.space_type as 'project' | 'working_group' | 'initiative' | 'program',
+        status: formData.status as 'idea' | 'active' | 'completed' | 'paused',
+        visibility: formData.visibility as 'public' | 'invite_only',
         focus_areas: formData.focus_areas.length > 0 ? formData.focus_areas : [],
         region: formData.region,
         external_link: formData.external_link,
         slug,
         created_by: user.id,
-        origin_event_id: formData.origin_event_id || null,
-        origin_group_id: formData.origin_group_id || null,
+        origin_event_id: formData.origin_event_id || undefined,
+        origin_group_id: formData.origin_group_id || undefined,
       };
 
       const result = await createSpace.mutateAsync(spaceData);
