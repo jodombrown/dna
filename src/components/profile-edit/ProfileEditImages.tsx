@@ -49,13 +49,25 @@ const ProfileEditImages: React.FC<ProfileEditImagesProps> = ({
 
   const handleAvatarUploadComplete = (url: string) => {
     onAvatarChange(url);
+    // Invalidate profile queries
     queryClient.invalidateQueries({ queryKey: ['profile', userId] });
     queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
+    // Invalidate feed queries so new avatar appears immediately in posts
+    queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
+    queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
+    queryClient.invalidateQueries({ queryKey: ['posts'] });
+    queryClient.invalidateQueries({ queryKey: ['user-posts'] });
   };
 
   const handleBannerUploadComplete = (data: BannerUpdateData) => {
+    // Invalidate profile queries
     queryClient.invalidateQueries({ queryKey: ['profile', userId] });
     queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
+    // Invalidate feed queries so new banner appears immediately
+    queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
+    queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
+    queryClient.invalidateQueries({ queryKey: ['posts'] });
+    queryClient.invalidateQueries({ queryKey: ['user-posts'] });
     // Refetch to get the new banner data
     queryClient.refetchQueries({ queryKey: ['profile', userId] });
     // Pass the data up so parent can update local state immediately

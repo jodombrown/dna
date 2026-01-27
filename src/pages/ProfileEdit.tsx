@@ -196,8 +196,14 @@ const ProfileEdit = () => {
       return data[0];
     },
     onSuccess: (data) => {
+      // Invalidate profile queries
       queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
       queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
+      // Invalidate feed queries so updated avatar/name appears immediately in posts
+      queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
+      queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['user-posts'] });
       
       // Use points-based calculation (100 pts total)
       const completionPts = calculateProfileCompletionPts(data);
