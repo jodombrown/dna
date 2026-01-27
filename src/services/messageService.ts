@@ -491,19 +491,7 @@ async getConversations(
           action_url: actionUrl,
           actor_name: senderName,
           actor_avatar_url: senderProfile?.avatar_url,
-        }).catch(() => {});
-
-        // 3. Send push notification
-        supabase.functions.invoke('send-push-notification', {
-          body: {
-            user_id: recipientId,
-            title: `Message from ${senderName}`,
-            message: messagePreview,
-            type: 'message',
-            action_url: actionUrl,
-            actor_avatar_url: senderProfile?.avatar_url,
-          }
-        }).catch((err) => { logger.warn('MessageService', 'Failed to send message notification', err); });
+        }).catch((err) => { logger.warn('MessageService', 'Failed to send message notification email', err); });
 
         // 3. Send push notification
         supabase.functions.invoke('send-push-notification', {
