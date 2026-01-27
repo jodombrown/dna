@@ -190,10 +190,7 @@ export const feedbackService = {
 
     let query = supabase
       .from('feedback_messages')
-      .select(`
-        *,
-        attachments:feedback_attachments (*)
-      `)
+      .select('*')
       .eq('channel_id', channelId)
       .eq('is_deleted', false) // Exclude deleted messages
       .is('parent_id', null) // Only top-level messages
@@ -366,10 +363,7 @@ export const feedbackService = {
   async getThread(parentMessageId: string): Promise<FeedbackMessageWithSender[]> {
     const { data, error } = await supabase
       .from('feedback_messages')
-      .select(`
-        *,
-        attachments:feedback_attachments (*)
-      `)
+      .select('*')
       .eq('parent_id', parentMessageId)
       .order('created_at', { ascending: true });
 
@@ -402,12 +396,9 @@ export const feedbackService = {
   async getMessage(messageId: string): Promise<FeedbackMessageWithSender | null> {
     const { data, error } = await supabase
       .from('feedback_messages')
-      .select(`
-        *,
-        attachments:feedback_attachments (*)
-      `)
+      .select('*')
       .eq('id', messageId)
-      .single();
+      .maybeSingle();
 
     if (error) {
       return null;
