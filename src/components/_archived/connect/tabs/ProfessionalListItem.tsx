@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { MapPin, MessageSquare, UserPlus, MoreHorizontal, Share, ThumbsUp, Check, Clock, Loader2 } from 'lucide-react';
-import { MockProfessional } from './ProfessionalsMockData';
+import { MockProfessional } from '@/components/connect/tabs/ProfessionalsMockData';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { connectionService } from '@/services/connectionService';
 import { useToast } from '@/hooks/use-toast';
