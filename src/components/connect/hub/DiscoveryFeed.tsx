@@ -76,7 +76,14 @@ export function DiscoveryFeed({
     isLoading: membersLoading,
     refetch: refetchMembers,
   } = useInfiniteQuery({
-    queryKey: ['discovery-members', user?.id, searchQuery, combinedRegionalExpertise],
+    // Query key must include ALL filter values for proper refetching
+    queryKey: [
+      'discovery-members',
+      user?.id,
+      searchQuery,
+      combinedRegionalExpertise,
+      filters?.cEngagement,
+    ],
     queryFn: async ({ pageParam = 0 }) => {
       if (!user) return { members: [], nextPage: null };
 

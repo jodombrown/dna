@@ -161,8 +161,9 @@ export default function Discover() {
           if (filters?.regional_expertise?.length) q = q.overlaps('regional_expertise', filters.regional_expertise);
           if (filters?.industries?.length) q = q.overlaps('industries', filters.industries);
           if (filters?.skills?.length) q = q.overlaps('skills', filters.skills);
-          if (filters?.country_of_origin) q = q.ilike('country_of_origin', `%${filters.country_of_origin}%`);
-          if (filters?.current_country) q = q.ilike('current_country', `%${filters.current_country}%`);
+          // Use exact match for country filters (consistent with updated RPC)
+          if (filters?.country_of_origin) q = q.eq('country_of_origin', filters.country_of_origin);
+          if (filters?.current_country) q = q.eq('current_country_name', filters.current_country);
           if (searchQuery) {
             q = q.or(
               `full_name.ilike.%${searchQuery}%,headline.ilike.%${searchQuery}%,bio.ilike.%${searchQuery}%`
