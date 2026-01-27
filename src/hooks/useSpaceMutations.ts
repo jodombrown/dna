@@ -4,6 +4,45 @@ import { toast } from 'sonner';
 import { SpaceMemberRole } from '@/types/spaceTypes';
 import { createSpacePost } from '@/lib/feedWriter';
 
+interface SupabaseError {
+  message: string;
+  details?: string;
+  hint?: string;
+  code?: string;
+}
+
+interface CreateSpaceData {
+  name: string;
+  slug?: string;
+  tagline?: string;
+  description?: string;
+  space_type?: 'project' | 'working_group' | 'initiative' | 'program';
+  status?: 'idea' | 'active' | 'completed' | 'paused';
+  visibility?: 'public' | 'invite_only';
+  focus_areas?: string[];
+  region?: string;
+  created_by: string;
+  cover_image?: string;
+  origin_event_id?: string;
+  origin_group_id?: string;
+  external_link?: string;
+}
+
+interface UpdateSpaceData {
+  name?: string;
+  slug?: string;
+  tagline?: string;
+  description?: string;
+  space_type?: 'project' | 'working_group' | 'initiative' | 'program';
+  status?: 'idea' | 'active' | 'completed' | 'paused';
+  visibility?: 'public' | 'invite_only';
+  focus_areas?: string[];
+  region?: string;
+  cover_image?: string;
+  external_link?: string;
+  updated_at?: string;
+}
+
 export const useJoinSpace = () => {
   const queryClient = useQueryClient();
   
@@ -25,7 +64,7 @@ export const useJoinSpace = () => {
       queryClient.invalidateQueries({ queryKey: ['space-members'] });
       toast.success('Successfully joined space');
     },
-    onError: (error: any) => {
+    onError: (error: SupabaseError) => {
       toast.error(error.message || 'Failed to join space');
     },
   });
@@ -49,7 +88,7 @@ export const useLeaveSpace = () => {
       queryClient.invalidateQueries({ queryKey: ['space-members'] });
       toast.success('Successfully left space');
     },
-    onError: (error: any) => {
+    onError: (error: SupabaseError) => {
       if (error.message?.includes('last lead')) {
         toast.error('Cannot leave: You are the last lead in this space');
       } else {
@@ -76,7 +115,7 @@ export const useUpdateMemberRole = () => {
       queryClient.invalidateQueries({ queryKey: ['space-members'] });
       toast.success('Member role updated');
     },
-    onError: (error: any) => {
+    onError: (error: SupabaseError) => {
       toast.error(error.message || 'Failed to update role');
     },
   });
@@ -99,7 +138,7 @@ export const useRemoveMember = () => {
       queryClient.invalidateQueries({ queryKey: ['space-members'] });
       toast.success('Member removed');
     },
-    onError: (error: any) => {
+    onError: (error: SupabaseError) => {
       if (error.message?.includes('last lead')) {
         toast.error('Cannot remove: This is the last lead in the space');
       } else {
@@ -113,7 +152,7 @@ export const useCreateSpace = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (spaceData: any) => {
+    mutationFn: async (spaceData: CreateSpaceData) => {
       const { data, error } = await supabaseClient
         .from('spaces')
         .insert(spaceData)
@@ -145,7 +184,7 @@ export const useCreateSpace = () => {
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       toast.success('Space created successfully');
     },
-    onError: (error: any) => {
+    onError: (error: SupabaseError) => {
       toast.error(error.message || 'Failed to create space');
     },
   });
@@ -155,7 +194,7 @@ export const useUpdateSpace = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async ({ id, updates }: { id: string; updates: any }) => {
+    mutationFn: async ({ id, updates }: { id: string; updates: UpdateSpaceData }) => {
       const { error } = await supabaseClient
         .from('spaces')
         .update(updates)
@@ -168,7 +207,7 @@ export const useUpdateSpace = () => {
       queryClient.invalidateQueries({ queryKey: ['my-spaces'] });
       toast.success('Space updated successfully');
     },
-    onError: (error: any) => {
+    onError: (error: SupabaseError) => {
       toast.error(error.message || 'Failed to update space');
     },
   });
