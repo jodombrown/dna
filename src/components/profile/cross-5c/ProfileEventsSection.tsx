@@ -21,7 +21,7 @@ export const ProfileEventsSection: React.FC<ProfileEventsSectionProps> = ({ user
       // Get events where user is organizer or attendee
       const { data: hostedEvents, error: hostedError } = await supabase
         .from('events')
-        .select('*, event_type, format, start_time, title, description')
+        .select('*')
         .eq('organizer_id', userId)
         .gte('start_time', new Date().toISOString())
         .order('start_time', { ascending: true })
