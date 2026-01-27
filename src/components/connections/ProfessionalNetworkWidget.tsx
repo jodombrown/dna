@@ -139,7 +139,7 @@ export const ProfessionalNetworkWidget: React.FC = () => {
           </div>
         </div>
 
-        {/* Network Suggestions - Removed duplicate. Use ConnectionRecommendationsWidget instead */}
+        {/* Network Suggestions - Removed duplicate. Use ConnectionSuggestionsWidget instead */}
 
         {/* Professional Insights */}
         <div className="pt-3 border-t">

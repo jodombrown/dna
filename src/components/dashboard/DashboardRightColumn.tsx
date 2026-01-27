@@ -9,7 +9,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { useLiveEvents } from '@/hooks/useLiveEvents';
-import { ConnectionRecommendationsWidget } from '@/components/connect/ConnectionRecommendationsWidget';
+import { ConnectionSuggestionsWidget } from '@/components/connect/ConnectionSuggestionsWidget';
 import { ProfileCompletionWidget } from '@/components/connect/ProfileCompletionWidget';
 import { EventRecommendationsWidget } from '@/components/convene/EventRecommendationsWidget';
 import { ConnectionRequestModal } from '@/components/connect/ConnectionRequestModal';
@@ -101,8 +101,8 @@ const DashboardRightColumn: React.FC<DashboardRightColumnProps> = ({
       {/* Events Widget */}
       {isOwnProfile && <EventRecommendationsWidget />}
       
-      {/* Connection Recommendations Widget */}
-      {isOwnProfile && <ConnectionRecommendationsWidget />}
+      {/* Connection Suggestions Widget */}
+      {isOwnProfile && <ConnectionSuggestionsWidget />}
 
       {/* Upcoming Events */}
       <Card className="transition-all duration-150 hover:shadow-lg hover:-translate-y-1">
