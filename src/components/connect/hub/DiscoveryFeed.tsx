@@ -8,9 +8,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Search, Loader2, Users, Filter, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 import { EnhancedMemberCard } from './EnhancedMemberCard';
 import { DiaInsightCard, DiaInsightData, DiaInsightType } from './DiaInsightCard';
 import { FilterState } from './NetworkPanel';
+import { ConnectionRequestModal } from '@/components/connect/ConnectionRequestModal';
+import { connectionService } from '@/services/connectionService';
 import { cn } from '@/lib/utils';
 
 interface DiscoveryFeedProps {
@@ -41,10 +44,19 @@ export function DiscoveryFeed({
   className,
 }: DiscoveryFeedProps) {
   const { user } = useAuth();
+  const { toast } = useToast();
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
   const [dismissedDiaCards, setDismissedDiaCards] = useState<Set<string>>(new Set());
   const scrollRef = useRef<HTMLDivElement>(null);
+  
+  // Connection modal state
+  const [connectionModalOpen, setConnectionModalOpen] = useState(false);
+  const [connectionTarget, setConnectionTarget] = useState<{
+    id: string;
+    full_name: string;
+    headline?: string;
+  } | null>(null);
 
   // Load dismissed cards from localStorage
   useEffect(() => {
@@ -421,6 +433,38 @@ export function DiscoveryFeed({
     });
   }, []);
 
+  // Handle DIA insight connect action
+  const handleDiaConnect = useCallback((memberId: string, memberName: string, headline?: string) => {
+    setConnectionTarget({
+      id: memberId,
+      full_name: memberName,
+      headline,
+    });
+    setConnectionModalOpen(true);
+  }, []);
+
+  // Handle sending connection request
+  const handleSendConnectionRequest = async (message: string) => {
+    if (!connectionTarget) return;
+    
+    try {
+      await connectionService.sendConnectionRequest(connectionTarget.id, message);
+      toast({
+        title: "Connection request sent",
+        description: `Request sent to ${connectionTarget.full_name}`,
+      });
+      // Refresh members list to update connection status
+      refetchMembers();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to send connection request",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
   // Handle search
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
@@ -549,6 +593,7 @@ export function DiscoveryFeed({
                     <DiaInsightCard
                       insight={item.data}
                       onDismiss={handleDismissDiaCard}
+                      onConnect={handleDiaConnect}
                     />
                   )}
                 </motion.div>
@@ -571,6 +616,14 @@ export function DiscoveryFeed({
           </motion.div>
         )}
       </div>
+
+      {/* Connection Request Modal */}
+      <ConnectionRequestModal
+        isOpen={connectionModalOpen}
+        onClose={() => setConnectionModalOpen(false)}
+        onSend={handleSendConnectionRequest}
+        targetUser={connectionTarget}
+      />
     </div>
   );
 }

@@ -74,6 +74,7 @@ export interface DiaInsightData {
 interface DiaInsightCardProps {
   insight: DiaInsightData;
   onDismiss?: (id: string) => void;
+  onConnect?: (memberId: string, memberName: string, headline?: string) => void;
   className?: string;
 }
 
@@ -90,6 +91,7 @@ interface DiaInsightCardProps {
 export function DiaInsightCard({
   insight,
   onDismiss,
+  onConnect,
   className,
 }: DiaInsightCardProps) {
   const navigate = useNavigate();
@@ -105,7 +107,7 @@ export function DiaInsightCard({
       case 'new_arrivals':
         return <NewArrivalsContent insight={insight} navigate={navigate} />;
       case 'people_you_should_know':
-        return <PeopleYouShouldKnowContent insight={insight} navigate={navigate} />;
+        return <PeopleYouShouldKnowContent insight={insight} navigate={navigate} onConnect={onConnect} />;
       case 'network_insight':
         return <NetworkInsightContent insight={insight} navigate={navigate} />;
       case 'event_overlap':
@@ -263,11 +265,21 @@ function NewArrivalsContent({
 function PeopleYouShouldKnowContent({
   insight,
   navigate,
+  onConnect,
 }: {
   insight: DiaInsightData;
   navigate: (path: string) => void;
+  onConnect?: (memberId: string, memberName: string, headline?: string) => void;
 }) {
   const member = insight.members?.[0];
+
+  const handleConnect = () => {
+    if (member && onConnect) {
+      onConnect(member.id, member.name, member.headline);
+    } else if (insight.primaryAction?.action) {
+      insight.primaryAction.action();
+    }
+  };
 
   return (
     <div className="space-y-3">
@@ -299,10 +311,10 @@ function PeopleYouShouldKnowContent({
         <Button
           size="sm"
           className="bg-dna-terra hover:bg-dna-terra/90 text-white"
-          onClick={insight.primaryAction.action}
+          onClick={handleConnect}
         >
           <UserPlus className="h-3.5 w-3.5 mr-1" />
-          {insight.primaryAction.label}
+          {insight.primaryAction?.label || 'Connect'}
         </Button>
         {insight.secondaryAction && (
           <Button

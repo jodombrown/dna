@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +10,12 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import {
   Search,
   Users,
@@ -22,6 +29,7 @@ import {
   Lightbulb,
   FileText,
   ChevronRight,
+  HelpCircle,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -79,6 +87,7 @@ export function NetworkPanel({
   onSearchChange,
   className,
 }: NetworkPanelProps) {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [networkSearch, setNetworkSearch] = useState('');
   const [filters, setFilters] = useState<FilterState>({
@@ -250,6 +259,7 @@ export function NetworkPanel({
               variant="ghost"
               size="sm"
               className="w-full justify-between text-muted-foreground hover:text-foreground"
+              onClick={() => navigate('/dna/connect/network')}
             >
               <span>View full network</span>
               <ChevronRight className="h-4 w-4" />
@@ -344,7 +354,19 @@ export function NetworkPanel({
         {/* Filter by Diaspora Location */}
         <Card>
           <CardHeader className="p-3 pb-2">
-            <CardTitle className="text-sm font-medium">Diaspora Locations</CardTitle>
+            <CardTitle className="text-sm font-medium flex items-center gap-1">
+              <span>Diaspora Locations</span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="max-w-[200px]">
+                    <p className="text-xs">Filter by members who identify as part of the African Diaspora living outside the continent.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </CardTitle>
           </CardHeader>
           <CardContent className="p-3 pt-0 space-y-2">
             {DIASPORA_LOCATIONS.map((location) => (
@@ -376,20 +398,35 @@ export function NetworkPanel({
             <CardTitle className="text-sm font-medium">Your Activity</CardTitle>
           </CardHeader>
           <CardContent className="p-3 pt-0">
-            <div className="space-y-3">
+            <div className="space-y-1">
               {/* Profile Views */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Eye className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">Profile views this week</span>
-                </div>
-                <Badge variant="secondary" className="font-semibold">
-                  {activitySummary?.profileViews ?? 0}
-                </Badge>
-              </div>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div 
+                      className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                      onClick={() => navigate('/dna/settings/profile')}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Eye className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm">Profile views this week</span>
+                      </div>
+                      <Badge variant="secondary" className="font-semibold">
+                        {activitySummary?.profileViews ?? 0}
+                      </Badge>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    <p className="text-xs">Click to view your profile settings</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
 
               {/* Pending Requests */}
-              <div className="flex items-center justify-between">
+              <div 
+                className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                onClick={() => navigate('/dna/connect/network?tab=requests')}
+              >
                 <div className="flex items-center gap-2">
                   <UserPlus className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm">Pending requests</span>
@@ -403,7 +440,10 @@ export function NetworkPanel({
               </div>
 
               {/* New Match Notifications */}
-              <div className="flex items-center justify-between">
+              <div 
+                className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                onClick={() => navigate('/dna/notifications')}
+              >
                 <div className="flex items-center gap-2">
                   <Bell className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm">New match notifications</span>
