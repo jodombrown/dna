@@ -39,21 +39,23 @@ export interface FilterState {
   diasporaLocations: string[];
 }
 
+// CRITICAL: Values must match EXACTLY what's stored in profiles.regional_expertise
+// The DB stores display-friendly values like "West Africa", NOT snake_case
 const HERITAGE_REGIONS = [
-  { id: 'west_africa', label: 'West Africa' },
-  { id: 'east_africa', label: 'East Africa' },
-  { id: 'north_africa', label: 'North Africa' },
-  { id: 'central_africa', label: 'Central Africa' },
-  { id: 'southern_africa', label: 'Southern Africa' },
+  { id: 'West Africa', label: 'West Africa' },
+  { id: 'East Africa', label: 'East Africa' },
+  { id: 'North Africa', label: 'North Africa' },
+  { id: 'Central Africa', label: 'Central Africa' },
+  { id: 'Southern Africa', label: 'Southern Africa' },
 ];
 
+// CRITICAL: Values must match EXACTLY what's stored in profiles.regional_expertise
 const DIASPORA_LOCATIONS = [
-  { id: 'north_america', label: 'North America' },
-  { id: 'europe', label: 'Europe' },
-  { id: 'caribbean', label: 'Caribbean' },
-  { id: 'south_america', label: 'South America' },
-  { id: 'asia_pacific', label: 'Asia Pacific' },
-  { id: 'middle_east', label: 'Middle East' },
+  { id: 'Diaspora - North America', label: 'North America' },
+  { id: 'Diaspora - Europe', label: 'Europe' },
+  { id: 'Diaspora - Caribbean', label: 'Caribbean' },
+  { id: 'Diaspora - South America', label: 'South America' },
+  { id: 'Diaspora - Asia', label: 'Asia Pacific' },
 ];
 
 const C_ENGAGEMENT_OPTIONS = [
