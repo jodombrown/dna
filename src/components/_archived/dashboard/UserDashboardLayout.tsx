@@ -17,19 +17,19 @@ import {
 } from '@/components/profile/cross-5c';
 import { ProfileStrengthBanner } from '@/components/shared/ProfileStrengthBanner';
 
-import DashboardLeftColumn from './DashboardLeftColumn';
-import DashboardCenterColumn from './DashboardCenterColumn';
-import DashboardRightColumn from './DashboardRightColumn';
-import DashboardDiscoverColumn from './DashboardDiscoverColumn';
-import DashboardGroupsColumn from './DashboardGroupsColumn';
-import DashboardNetworkColumn from './DashboardNetworkColumn';
-import DashboardFeedColumn from './DashboardFeedColumn';
-import DashboardEventsColumn from './DashboardEventsColumn';
-import DashboardMessagesColumn from './DashboardMessagesColumn';
-import DashboardImpactColumn from './DashboardImpactColumn';
-import { DashboardNotificationsColumn } from './DashboardNotificationsColumn';
-import { DashboardNotificationSettingsColumn } from './DashboardNotificationSettingsColumn';
-import { DashboardAnalyticsColumn } from './DashboardAnalyticsColumn';
+import DashboardLeftColumn from '@/components/dashboard/DashboardLeftColumn';
+import DashboardCenterColumn from '@/components/dashboard/DashboardCenterColumn';
+import DashboardRightColumn from '@/components/dashboard/DashboardRightColumn';
+import DashboardDiscoverColumn from '@/components/dashboard/DashboardDiscoverColumn';
+import DashboardGroupsColumn from '@/components/dashboard/DashboardGroupsColumn';
+import DashboardNetworkColumn from '@/components/dashboard/DashboardNetworkColumn';
+import DashboardFeedColumn from '@/components/dashboard/DashboardFeedColumn';
+import DashboardEventsColumn from '@/components/dashboard/DashboardEventsColumn';
+import DashboardMessagesColumn from '@/components/dashboard/DashboardMessagesColumn';
+import DashboardImpactColumn from '@/components/dashboard/DashboardImpactColumn';
+import { DashboardNotificationsColumn } from '@/components/dashboard/DashboardNotificationsColumn';
+import { DashboardNotificationSettingsColumn } from '@/components/dashboard/DashboardNotificationSettingsColumn';
+import { DashboardAnalyticsColumn } from '@/components/dashboard/DashboardAnalyticsColumn';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { useNavigate } from 'react-router-dom';
 
