@@ -14,6 +14,21 @@ import {
 import { logHighError } from '@/lib/errorLogger';
 import type { UniversalFeedItem } from '@/types/feed';
 
+interface InfiniteFeedData {
+  pages: Array<{
+    items: UniversalFeedItem[];
+    nextCursor?: string;
+  }>;
+  pageParams: unknown[];
+}
+
+interface ComposerAnalyticsMetadata {
+  fromMode?: ComposerMode;
+  contentLength?: number;
+  hasMedia?: boolean;
+  [key: string]: unknown;
+}
+
 export type ComposerMode = 'post' | 'story' | 'event' | 'need' | 'space' | 'community';
 
 export interface ComposerContext {
@@ -359,20 +374,29 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
           break;
         }
 
-        case 'need':
-          // Use Supabase client with type casting for contribution_needs
-          const { data: needData, error: needError } = await (supabase as any)
+        case 'need': {
+          // Map formData needType to database enum values
+          const needTypeMap: Record<string, 'funding' | 'skills' | 'time' | 'access' | 'resources'> = {
+            funding: 'funding',
+            expertise: 'skills',
+            resources: 'resources',
+            volunteers: 'time',
+            partnership: 'access',
+          };
+          const dbNeedType = needTypeMap[formData.needType || 'expertise'] || 'skills';
+
+          const { data: needData, error: needError } = await supabase
             .from('contribution_needs')
-            .insert({
+            .insert([{
               title: formData.title || '',
               description: formData.content,
-              type: formData.needType || 'expertise',
+              type: dbNeedType,
               space_id: context.spaceId!,
               created_by: user.id,
-              target_amount: formData.targetAmount,
-              currency: formData.currency,
-              needed_by: formData.neededBy,
-            })
+              target_amount: formData.targetAmount ?? null,
+              currency: formData.currency ?? null,
+              needed_by: formData.neededBy ?? null,
+            }])
             .select()
             .single();
 
@@ -387,6 +411,7 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
             spaceId: context.spaceId!,
           });
           break;
+        }
 
         case 'space':
           const { data: spaceData, error: spaceError } = await supabase
@@ -446,7 +471,7 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
         // 1. All Posts feed
         queryClient.setQueryData(
           ['universal-feed-infinite', { viewerId: user.id, tab: 'all', authorId: undefined, spaceId: undefined, eventId: undefined, rankingMode: 'latest' }],
-          (old: any) => {
+          (old: InfiniteFeedData | undefined) => {
             if (!old?.pages) return old;
             return {
               ...old,
@@ -458,7 +483,7 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
         // 2. My Posts feed
         queryClient.setQueryData(
           ['universal-feed-infinite', { viewerId: user.id, tab: 'my_posts', authorId: user.id, spaceId: undefined, eventId: undefined, rankingMode: 'latest' }],
-          (old: any) => {
+          (old: InfiniteFeedData | undefined) => {
             if (!old?.pages) return old;
             return {
               ...old,
@@ -471,7 +496,7 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
         if (context.spaceId) {
           queryClient.setQueryData(
             ['universal-feed-infinite', { viewerId: user.id, tab: 'all', authorId: undefined, spaceId: context.spaceId, eventId: undefined, rankingMode: 'latest' }],
-            (old: any) => {
+            (old: InfiniteFeedData | undefined) => {
               if (!old?.pages) return old;
               return {
                 ...old,
@@ -484,7 +509,7 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
         if (context.eventId) {
           queryClient.setQueryData(
             ['universal-feed-infinite', { viewerId: user.id, tab: 'all', authorId: undefined, spaceId: undefined, eventId: context.eventId, rankingMode: 'latest' }],
-            (old: any) => {
+            (old: InfiniteFeedData | undefined) => {
               if (!old?.pages) return old;
               return {
                 ...old,
@@ -547,7 +572,7 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
   };
 };
 
-function trackComposerEvent(action: 'open' | 'cancel' | 'switch' | 'submit', mode: ComposerMode, metadata?: any) {
+function trackComposerEvent(action: 'open' | 'cancel' | 'switch' | 'submit', mode: ComposerMode, metadata?: ComposerAnalyticsMetadata) {
   // Silent tracking - don't block UX
   try {
     supabase.from('analytics_events').insert({
