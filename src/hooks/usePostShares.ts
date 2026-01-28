@@ -2,6 +2,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
+/** Typed Supabase error for mutation handlers */
+interface SupabaseError {
+  message: string;
+  code?: string;
+  details?: string;
+}
+
 export function usePostShares(postId: string, userId?: string) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -61,10 +68,10 @@ export function usePostShares(postId: string, userId?: string) {
         description: 'You shared this post to your network',
       });
     },
-    onError: (error: any) => {
+    onError: (error: SupabaseError) => {
       toast({
         title: 'Failed to share post',
-        description: error.message,
+        description: error.message || 'An unexpected error occurred',
         variant: 'destructive',
       });
     },
@@ -91,10 +98,10 @@ export function usePostShares(postId: string, userId?: string) {
         description: 'This post was removed from your shares',
       });
     },
-    onError: (error: any) => {
+    onError: (error: SupabaseError) => {
       toast({
         title: 'Failed to remove share',
-        description: error.message,
+        description: error.message || 'An unexpected error occurred',
         variant: 'destructive',
       });
     },

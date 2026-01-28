@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 
 export type ConnectEventName =
   | 'connect_profile_completed_40_plus'
@@ -30,22 +31,27 @@ export type ConnectEventName =
   | 'partner_models_cta_clicked'
   | 'partner_form_submitted';
 
+/** Typed metadata for analytics events */
+export type AnalyticsMetadata = Record<string, string | number | boolean | null | undefined>;
+
 export function useAnalytics() {
-  const trackEvent = async (eventName: ConnectEventName, metadata?: any, route?: string) => {
+  const trackEvent = async (
+    eventName: ConnectEventName,
+    metadata?: AnalyticsMetadata,
+    route?: string
+  ) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
       
-      // Use type assertion to bypass TypeScript strict checking
-      // The analytics_events table exists but types haven't regenerated yet
-      await (supabase as any).from('analytics_events').insert({
+      await supabase.from('analytics_events').insert({
         user_id: user.id,
         event_name: eventName,
         event_metadata: metadata || null,
         route: route || window.location.pathname,
       });
-    } catch {
-      // Silently ignore analytics failures
+    } catch (err) {
+      logger.warn('Analytics', 'Failed to track event', { eventName, error: err });
     }
   };
   return { trackEvent };

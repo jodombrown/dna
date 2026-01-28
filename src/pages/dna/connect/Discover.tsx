@@ -210,7 +210,7 @@ export default function Discover() {
 
   const handleFilterChange = (newFilters: FilterState) => {
     setFilters(newFilters);
-    trackEvent('connect_discovery_filter_applied', { filters: newFilters });
+    trackEvent('connect_discovery_filter_applied', { filter_count: Object.keys(newFilters).length });
   };
 
   const handleClearFilters = () => {

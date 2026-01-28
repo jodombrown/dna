@@ -10,7 +10,58 @@ import { UniversalFeedItem, FeedFilters } from '@/types/feed';
 import { logHighError } from '@/lib/errorLogger';
 
 const PAGE_SIZE = 20;
-const DEBUG_FEED = false; // Enable for troubleshooting only
+
+/** RPC parameters for get_universal_feed */
+interface UniversalFeedRpcParams {
+  p_viewer_id: string;
+  p_tab: string;
+  p_author_id: string | null;
+  p_space_id: string | null;
+  p_event_id: string | null;
+  p_limit: number;
+  p_offset: number;
+  p_ranking_mode: string;
+  p_cursor?: number;
+}
+
+/** Raw row shape from the RPC result */
+interface FeedRpcRow {
+  id: string;
+  author_id: string;
+  author_username: string;
+  author_full_name: string;
+  author_avatar_url: string | null;
+  content: string;
+  title: string | null;
+  subtitle?: string | null;
+  image_url: string | null;
+  post_type: string;
+  story_type?: string | null;
+  privacy_level: string;
+  linked_entity_type: string | null;
+  linked_entity_id: string | null;
+  space_id: string | null;
+  event_id: string | null;
+  created_at: string;
+  updated_at: string;
+  likes_count: number | string;
+  comments_count: number | string;
+  user_has_liked: boolean;
+  user_has_bookmarked: boolean;
+  link_url?: string | null;
+  link_title?: string | null;
+  link_description?: string | null;
+  link_metadata?: Record<string, unknown> | null;
+  original_post_id?: string | null;
+  original_author_id?: string | null;
+  original_author_username?: string | null;
+  original_author_full_name?: string | null;
+  original_author_avatar_url?: string | null;
+  original_author_headline?: string | null;
+  original_content?: string | null;
+  original_image_url?: string | null;
+  original_created_at?: string | null;
+}
 
 export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'offset'>) => {
   const {
@@ -26,7 +77,7 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
     queryFn: async ({ pageParam }) => {
       try {
         // Build RPC params - DO NOT include p_post_type as it doesn't exist in the DB function
-        const params: Record<string, any> = {
+        const params: UniversalFeedRpcParams = {
           p_viewer_id: filters.viewerId,
           p_tab: filters.tab || 'all',
           p_author_id: filters.authorId || null,
@@ -40,15 +91,17 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
           params.p_cursor = pageParam;
         }
 
-        const { data, error } = await (supabase.rpc as any)('get_universal_feed', params);
+        // Call RPC - spread params to match function signature
+        const { data, error } = await supabase.rpc('get_universal_feed', { ...params });
 
         if (error) {
           logHighError(error, 'feed', 'get_universal_feed RPC failed', { filters });
           throw error;
         }
         
-        // Map RPC response to UniversalFeedItem
-        const items = (data || []).map((item: any) => ({
+        // Map RPC response to UniversalFeedItem with proper typing
+        const rawRows = (data || []) as FeedRpcRow[];
+        const items = rawRows.map((item) => ({
           post_id: item.id,
           author_id: item.author_id,
           author_username: item.author_username,

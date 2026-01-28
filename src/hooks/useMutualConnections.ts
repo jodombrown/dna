@@ -16,6 +16,16 @@ export interface MutualConnection {
   headline?: string | null;
 }
 
+/** Raw RPC row for mutual connections */
+interface MutualConnectionRpcRow {
+  id?: string;
+  user_id?: string;
+  full_name?: string;
+  username?: string;
+  avatar_url?: string | null;
+  headline?: string | null;
+}
+
 /**
  * Hook to get mutual connections between the current user and a target user
  */
@@ -42,9 +52,10 @@ export const useMutualConnections = (
         return [];
       }
 
-      // Map the RPC response to our interface
-      return ((data as any[]) || []).map((item) => ({
-        user_id: item.id || item.user_id,
+      // Map the RPC response to our interface with proper typing
+      const rows = (data || []) as MutualConnectionRpcRow[];
+      return rows.map((item) => ({
+        user_id: item.id || item.user_id || '',
         full_name: item.full_name || '',
         username: item.username || '',
         avatar_url: item.avatar_url || null,
@@ -62,7 +73,7 @@ export const useMutualConnections = (
     queryFn: async (): Promise<number> => {
       if (!currentUserId || !targetUserId) return 0;
 
-      const { data, error } = await (supabase.rpc as any)('get_mutual_connection_count', {
+      const { data, error } = await supabase.rpc('get_mutual_connection_count', {
         user_a: currentUserId,
         user_b: targetUserId,
       });
