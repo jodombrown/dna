@@ -62,6 +62,7 @@ const AdminSignals = lazy(() => import("./pages/admin/AdminSignals"));
 const WaitlistManagement = lazy(() => import("./pages/admin/WaitlistManagement"));
 const UserManagement = lazy(() => import("./pages/admin/UserManagement"));
 const PlatformHealth = lazy(() => import("./pages/admin/PlatformHealth"));
+const ErrorDashboard = lazy(() => import("./pages/admin/ErrorDashboard"));
 const ContentModeration = lazy(() => import("./pages/admin/ContentModeration"));
 
 // New Admin Dashboard Routes
@@ -715,6 +716,8 @@ function App() {
                 <Route path="contributions/moderation" element={<ContributionModeration />} />
                 {/* Contribution Analytics */}
                 <Route path="analytics/contributions" element={<ContributionAnalytics />} />
+                {/* Error monitoring */}
+                <Route path="errors" element={<ErrorDashboard />} />
               </Route>
 
               {/* Legacy Admin routes */}
