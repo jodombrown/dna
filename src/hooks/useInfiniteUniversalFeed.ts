@@ -4,19 +4,16 @@
  * Cursor-based infinite loading for the Universal Feed.
  */
 
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { UniversalFeedItem, FeedFilters } from '@/types/feed';
-import { useEffect } from 'react';
 import { logHighError } from '@/lib/errorLogger';
 
 const PAGE_SIZE = 20;
 const DEBUG_FEED = false; // Enable for troubleshooting only
 
 export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'offset'>) => {
-  const queryClient = useQueryClient();
-  
-  const { 
+  const {
     data, 
     isLoading, 
     error, 
@@ -120,28 +117,12 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
     enabled: !!filters.viewerId,
   });
 
-  // Real-time subscription for feed updates
-  useEffect(() => {
-    if (!filters.viewerId) return;
-
-    const channelName = `universal_feed_updates_${filters.viewerId}`;
-    const channel = supabase
-      .channel(channelName)
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
-      })
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'post_likes' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
-      })
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'post_comments' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [filters.viewerId, queryClient]);
+  // PERFORMANCE: Removed aggressive realtime subscriptions that were causing
+  // excessive refetches. Feed updates are now handled through:
+  // 1. Manual refetch when user creates content
+  // 2. Pull-to-refresh on mobile
+  // 3. Periodic stale time expiration (2 minutes)
+  // This significantly reduces database load and improves responsiveness.
 
   // Flatten pages into single array
   const feedItems = data?.pages.flatMap(page => page.items) || [];

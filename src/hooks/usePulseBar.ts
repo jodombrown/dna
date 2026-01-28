@@ -450,10 +450,9 @@ export function usePulseBar() {
       };
     },
     enabled: !!user?.id,
-    staleTime: STALE_TIMES.realtime, // 30 seconds
-    refetchInterval: 60000, // Refresh every minute as baseline
+    staleTime: 2 * 60 * 1000, // 2 minutes (increased from 30s)
+    refetchInterval: 5 * 60 * 1000, // 5 minutes (increased from 1 min) - pulse data doesn't need to be real-time
   });
-
   // Set up realtime subscriptions for instant updates
   useEffect(() => {
     if (!user?.id) return;
