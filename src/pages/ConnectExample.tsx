@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import Footer from '@/components/Footer';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import ConnectTabs from '@/components/connect/ConnectTabs';
@@ -8,14 +8,16 @@ import PrototypeNotice from '@/components/connect/PrototypeNotice';
 import SearchSection from '@/components/connect/search/SearchSection';
 import { useConnectFiltering } from '@/hooks/useConnectFiltering';
 import { Tabs } from '@/components/ui/tabs';
-// Mobile page navigation removed - handled by global system
 import PageSpecificSurvey from '@/components/survey/PageSpecificSurvey';
 import { mockProfessionals } from '@/components/connect/tabs/ProfessionalsMockData';
 import { demoCommunities, demoEvents } from '@/data/demoSearchData';
 import { PageSEO } from '@/components/seo/PageSEO';
+import { useToast } from '@/hooks/use-toast';
 
 const ConnectExample = () => {
   useScrollToTop();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   
   
@@ -60,21 +62,32 @@ useEffect(() => {
     };
   };
 
-  // Simplified handlers - removed console.log statements for efficiency
+  // Navigate to full Connect experience for actual functionality
   const handleConnect = (professionalId: string) => {
-    // TODO: Implement actual connection logic
+    toast({
+      title: 'Sign in required',
+      description: 'Create an account to connect with professionals.',
+    });
+    navigate('/auth?redirect=/dna/connect/discover');
   };
 
   const handleMessage = (recipientId: string, recipientName: string) => {
-    // TODO: Implement messaging logic
+    toast({
+      title: 'Sign in required',
+      description: `Create an account to message ${recipientName}.`,
+    });
+    navigate('/auth?redirect=/dna/messages');
   };
 
   const handleJoinCommunity = () => {
-    // TODO: Implement join community logic
+    toast({
+      title: 'Communities coming soon',
+      description: 'Community features are under development.',
+    });
   };
 
   const handleRegisterEvent = () => {
-    // TODO: Implement event registration logic
+    navigate('/dna/convene');
   };
 
 const getConnectionStatus = (professionalId: string) => {

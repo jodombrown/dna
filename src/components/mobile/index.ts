@@ -12,7 +12,6 @@ export { MobileViewContainer } from './MobileViewContainer';
 
 // Mobile Views
 export { MobileFeedView } from './MobileFeedView';
-export { default as MobileMessagingView } from './MobileMessagingView';
 export { default as MobileProfileView } from './MobileProfileView';
 export { default as MobileSettingsView } from './MobileSettingsView';
 
