@@ -252,49 +252,52 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
         onDeleteConversation={() => deleteConversationMutation.mutate()}
       />
 
-      {/* Messages */}
+      {/* Messages - Subtle pattern background */}
       <div 
         ref={containerRef}
-        className="flex-1 overflow-y-auto bg-white dark:bg-zinc-900"
+        className="flex-1 overflow-y-auto bg-gradient-to-b from-muted/20 to-muted/40 dark:from-zinc-900 dark:to-zinc-950"
       >
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            <Loader2 className="h-6 w-6 animate-spin text-primary/60" />
           </div>
         ) : isError ? (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground text-sm gap-2">
             <p>Unable to load messages</p>
             <button
               onClick={() => window.location.reload()}
-              className="text-primary hover:underline"
+              className="text-primary hover:underline text-sm"
             >
               Try refreshing
             </button>
           </div>
         ) : messages.length === 0 ? (
-          <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
-            Start the conversation!
+          <div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-1">
+            <span className="text-2xl">👋</span>
+            <p className="text-sm">Start the conversation!</p>
           </div>
         ) : (
-          <div className="py-4">
+          <div className="py-2">
             {groupedMessages.map((group) => (
               <div key={group.date}>
                 <DateSeparator date={group.date} />
-                {group.messages.map((msg, msgIndex) => {
-                  const isOwn = msg.sender_id === user?.id;
-                  const prevMsg = msgIndex > 0 ? group.messages[msgIndex - 1] : null;
-                  const showAvatar = !prevMsg || prevMsg.sender_id !== msg.sender_id;
-                  
-                  return (
-                    <ChatBubble
-                      key={msg.message_id}
-                      message={msg}
-                      isOwn={isOwn}
-                      showAvatar={showAvatar}
-                      onDeleteMessage={handleDeleteMessage}
-                    />
-                  );
-                })}
+                <div className="space-y-0.5">
+                  {group.messages.map((msg, msgIndex) => {
+                    const isOwn = msg.sender_id === user?.id;
+                    const prevMsg = msgIndex > 0 ? group.messages[msgIndex - 1] : null;
+                    const showAvatar = !prevMsg || prevMsg.sender_id !== msg.sender_id;
+                    
+                    return (
+                      <ChatBubble
+                        key={msg.message_id}
+                        message={msg}
+                        isOwn={isOwn}
+                        showAvatar={showAvatar}
+                        onDeleteMessage={handleDeleteMessage}
+                      />
+                    );
+                  })}
+                </div>
               </div>
             ))}
             <div ref={messagesEndRef} />

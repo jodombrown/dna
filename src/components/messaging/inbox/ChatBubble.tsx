@@ -107,18 +107,18 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   if (message.is_deleted) {
     return (
       <div className={cn(
-        "flex gap-1.5 px-2 sm:px-3 py-0.5",
+        "flex gap-1 px-2 py-px",
         isOwn ? "flex-row-reverse" : "flex-row"
       )}>
-        {!isOwn && showAvatar && <div className="w-7 h-7" />}
-        {!isOwn && !showAvatar && <div className="w-7" />}
-        <div className="max-w-[88%] sm:max-w-[75%]">
+        {!isOwn && showAvatar && <div className="w-6 h-6" />}
+        {!isOwn && !showAvatar && <div className="w-6" />}
+        <div className="max-w-[85%]">
           <div className={cn(
-            "rounded-xl px-3 py-2 bg-muted",
-            isOwn ? "rounded-br-sm" : "rounded-bl-sm"
+            "rounded-2xl px-2.5 py-1.5 bg-muted/50",
+            isOwn ? "rounded-br-md" : "rounded-bl-md"
           )}>
-            <p className="text-sm text-muted-foreground italic">
-              This message was deleted
+            <p className="text-xs text-muted-foreground italic">
+              Message deleted
             </p>
           </div>
         </div>
@@ -128,26 +128,25 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
 
   return (
     <div className={cn(
-      "group flex gap-1.5 px-2 sm:px-3 py-0.5",
+      "group flex gap-1 px-2 py-px",
       isOwn ? "flex-row-reverse" : "flex-row"
     )}>
-      {/* Avatar - Only for other user, smaller on mobile */}
+      {/* Avatar - Compact for mobile */}
       {!isOwn && showAvatar && (
-        <Avatar className="h-7 w-7 flex-shrink-0">
+        <Avatar className="h-6 w-6 flex-shrink-0 mt-0.5">
           <AvatarImage src={message.sender_avatar_url} />
-          <AvatarFallback className="bg-muted text-muted-foreground text-[10px]">
+          <AvatarFallback className="bg-primary/10 text-primary text-[9px] font-medium">
             {message.sender_full_name?.charAt(0) || '?'}
           </AvatarFallback>
         </Avatar>
       )}
-      {!isOwn && !showAvatar && <div className="w-7" />}
+      {!isOwn && !showAvatar && <div className="w-6" />}
 
-      {/* Message Actions Menu - appears on hover */}
+      {/* Message Actions - hover reveal */}
       <div className={cn(
-        "flex items-center gap-1",
+        "flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity",
         isOwn ? "order-first" : "order-last"
       )}>
-        {/* Reaction trigger button - visible on hover */}
         <MessageReactions
           reactions={[]}
           onAddReaction={(emoji) => addReactionMutation.mutate(emoji)}
@@ -163,23 +162,22 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
         />
       </div>
 
-      {/* Message Bubble - DNA branded styling */}
-      <div className="flex flex-col gap-0.5 max-w-[95%] sm:max-w-[70%]">
+      {/* Message Bubble - DNA branded with tighter spacing */}
+      <div className="flex flex-col gap-px max-w-[82%]">
         <div className={cn(
-          "rounded-xl px-3 py-1.5",
-          // DNA branded colors: Emerald tint for sent, warm cream for received
+          "rounded-2xl px-2.5 py-1.5",
           isOwn 
-            ? "bg-[#d4e8e0] dark:bg-emerald-800/80 text-foreground dark:text-white rounded-br-sm shadow-sm" 
-            : "bg-white dark:bg-zinc-800 text-foreground rounded-bl-sm shadow-sm border border-[#e8e0d4]/50"
+            ? "bg-primary/15 dark:bg-primary/25 text-foreground rounded-br-md" 
+            : "bg-card text-foreground rounded-bl-md border border-border/40 shadow-sm"
         )}>
           {/* Voice Message Player */}
           {isVoiceMessage && attachment?.url ? (
             <VoiceMessagePlayer url={attachment.url} duration={attachment.duration} isOwn={isOwn} />
           ) : (
             <>
-              {/* Text content - hide raw URLs when link preview exists */}
+              {/* Text content */}
               {message.content && (
-                <p className="text-sm whitespace-pre-wrap break-words">
+                <p className="text-[13px] leading-snug whitespace-pre-wrap break-words">
                   {linkPreview && linkPreview.url 
                     ? message.content.replace(linkPreview.url, '').trim() 
                     : message.content}
@@ -191,32 +189,29 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
                 <MessageAttachment attachment={attachment} isOwn={isOwn} />
               )}
 
-              {/* Link Preview - only show if no attachment and link detected */}
+              {/* Link Preview */}
               {!attachment && linkPreview && linkPreview.url && (
                 <LinkPreview preview={linkPreview} isOwn={isOwn} />
               )}
             </>
           )}
 
-          {/* Timestamp and read receipt - WhatsApp style inline */}
-          <div className={cn(
-            "flex items-center gap-1 mt-0.5",
-            "justify-end"
-          )}>
-            <span className="text-[10px] text-muted-foreground/70">
+          {/* Timestamp and read receipt - inline compact */}
+          <div className="flex items-center gap-0.5 mt-0.5 justify-end">
+            <span className="text-[9px] text-muted-foreground/60">
               {formatTime(message.created_at)}
             </span>
             {isOwn && (
               message.is_read ? (
-                <CheckCheck className="h-3.5 w-3.5 text-blue-500" />
+                <CheckCheck className="h-3 w-3 text-primary" />
               ) : (
-                <Check className="h-3.5 w-3.5 text-muted-foreground/60" />
+                <Check className="h-3 w-3 text-muted-foreground/50" />
               )
             )}
           </div>
         </div>
 
-        {/* Existing Reactions - displayed below message */}
+        {/* Reactions below message */}
         {reactions.length > 0 && (
           <MessageReactions
             reactions={reactions}

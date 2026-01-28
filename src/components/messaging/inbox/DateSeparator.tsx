@@ -18,8 +18,8 @@ export const DateSeparator: React.FC<DateSeparatorProps> = ({ date }) => {
   };
 
   return (
-    <div className="flex items-center justify-center py-4">
-      <div className="bg-muted/80 text-muted-foreground text-xs font-medium px-3 py-1 rounded-full">
+    <div className="flex items-center justify-center py-2">
+      <div className="bg-primary/10 text-primary/80 text-[10px] font-medium px-2.5 py-0.5 rounded-full">
         {formatDate(date)}
       </div>
     </div>
