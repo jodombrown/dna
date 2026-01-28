@@ -10,18 +10,19 @@ import { handleQueryError } from './errorLogger';
 
 /**
  * Default stale times for different query types (in milliseconds)
+ * PERFORMANCE: Increased default times to reduce unnecessary refetches
  */
 export const STALE_TIMES = {
   /** User profile data - relatively stable */
-  profile: 5 * 60 * 1000, // 5 minutes
-  /** Feed data - changes frequently */
-  feed: 1 * 60 * 1000, // 1 minute
+  profile: 10 * 60 * 1000, // 10 minutes (increased from 5)
+  /** Feed data - changes frequently but doesn't need to be instant */
+  feed: 2 * 60 * 1000, // 2 minutes (increased from 1)
   /** Static data like countries, languages */
-  static: 30 * 60 * 1000, // 30 minutes
-  /** Real-time data like messages, notifications */
-  realtime: 30 * 1000, // 30 seconds
+  static: 60 * 60 * 1000, // 60 minutes (increased from 30)
+  /** Real-time data like messages, notifications - use realtime subscriptions instead */
+  realtime: 60 * 1000, // 1 minute (increased from 30s)
   /** Default for most queries */
-  default: 2 * 60 * 1000, // 2 minutes
+  default: 5 * 60 * 1000, // 5 minutes (increased from 2)
 } as const;
 
 /**

@@ -41,10 +41,10 @@ export function useNotifications(
       return (data as unknown as Notification[]) || [];
     },
     enabled: !!user,
-    staleTime: 10000, // Consider data stale after 10 seconds to ensure fresher data
-    refetchOnWindowFocus: true, // Refetch when user returns to tab
+    staleTime: 30000, // 30 seconds
+    refetchOnWindowFocus: true,
+    // Removed refetchInterval - realtime subscription handles updates
   });
-
   const { data: unreadCount } = useQuery({
     queryKey: ['notifications-unread-count', user?.id],
     queryFn: async () => {
@@ -61,9 +61,9 @@ export function useNotifications(
       return (data as number) || 0;
     },
     enabled: !!user,
-    refetchInterval: 30000, // Refetch every 30 seconds
+    staleTime: 60000, // 1 minute
+    refetchInterval: 120000, // 2 minutes (reduced from 30s - realtime handles urgent updates)
   });
-
   // Real-time subscription
   useEffect(() => {
     if (!user?.id) return;
