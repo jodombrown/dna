@@ -38,31 +38,35 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   const navigate = useNavigate();
 
   return (
-    <div className="flex items-center gap-2 px-2 py-2 border-b border-border/50 bg-[#4A8D77] dark:bg-[#3a7261]">
+    <div className="flex items-center gap-2 px-2 py-1.5 border-b border-primary/20 bg-gradient-to-r from-primary to-primary/90">
       {/* Back Button */}
-      <Button variant="ghost" size="icon" onClick={onBack} className="h-9 w-9 text-white hover:bg-white/10">
-        <ArrowLeft className="h-5 w-5" />
+      <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8 text-primary-foreground hover:bg-white/15">
+        <ArrowLeft className="h-4 w-4" />
       </Button>
 
       {/* User Info - Tap to view profile */}
       <button 
         onClick={() => navigate(`/dna/${otherUser.username}`)}
-        className="flex items-center gap-3 flex-1 min-w-0"
+        className="flex items-center gap-2.5 flex-1 min-w-0"
       >
-        <Avatar className="h-10 w-10 border-2 border-white/20">
+        <Avatar className="h-9 w-9 border-2 border-white/25 shadow-sm">
           <AvatarImage src={otherUser.avatar_url} />
-          <AvatarFallback className="bg-white/20 text-white font-semibold">
+          <AvatarFallback className="bg-white/20 text-primary-foreground font-semibold text-sm">
             {otherUser.full_name?.charAt(0) || '?'}
           </AvatarFallback>
         </Avatar>
         <div className="text-left min-w-0 flex-1">
-          <h2 className="font-semibold text-white text-sm truncate">{otherUser.full_name}</h2>
-          <p className="text-xs text-white/70 truncate">tap here for contact info</p>
+          <h2 className="font-semibold text-primary-foreground text-sm leading-tight truncate">
+            {otherUser.full_name}
+          </h2>
+          <p className="text-[11px] text-primary-foreground/70 truncate">
+            tap for info
+          </p>
         </div>
       </button>
 
       {/* Actions Menu */}
-      <div className="[&_button]:text-white [&_button:hover]:bg-white/10">
+      <div className="[&_button]:text-primary-foreground [&_button:hover]:bg-white/15">
         <ConversationActionsMenu
           otherUser={otherUser}
           conversationId={conversationId}

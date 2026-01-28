@@ -143,10 +143,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   return (
-    <div className="border-t border-border/30 bg-[#f5f2ed] dark:bg-zinc-900">
+    <div className="border-t border-border/20 bg-muted/30 dark:bg-zinc-900/80">
       {/* Link Preview - shown before sending */}
       {linkPreview && !attachment && (
-        <div className="px-3 pt-3">
+        <div className="px-2.5 pt-2">
           <div className="relative">
             <LinkPreview preview={linkPreview} isOwn={false} />
             {previewLoading && (
@@ -160,29 +160,29 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
       {/* Attachment Preview */}
       {attachment && (
-        <div className="px-3 pt-3">
+        <div className="px-2.5 pt-2">
           <div className="relative inline-block">
             {attachment.type === 'image' ? (
               <div className="relative">
                 <img 
                   src={attachment.url} 
                   alt={attachment.filename}
-                  className="h-20 w-auto rounded-lg object-cover"
+                  className="h-16 w-auto rounded-lg object-cover"
                 />
                 <button
                   onClick={removeAttachment}
-                  className="absolute -top-2 -right-2 p-1 bg-destructive text-destructive-foreground rounded-full hover:bg-destructive/90"
+                  className="absolute -top-1.5 -right-1.5 p-0.5 bg-destructive text-destructive-foreground rounded-full hover:bg-destructive/90"
                 >
                   <X className="h-3 w-3" />
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2 bg-muted rounded-lg px-3 py-2 pr-8">
-                <Paperclip className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm truncate max-w-[200px]">{attachment.filename}</span>
+              <div className="flex items-center gap-2 bg-muted rounded-lg px-2.5 py-1.5 pr-7">
+                <Paperclip className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="text-xs truncate max-w-[180px]">{attachment.filename}</span>
                 <button
                   onClick={removeAttachment}
-                  className="absolute -top-2 -right-2 p-1 bg-destructive text-destructive-foreground rounded-full hover:bg-destructive/90"
+                  className="absolute -top-1.5 -right-1.5 p-0.5 bg-destructive text-destructive-foreground rounded-full hover:bg-destructive/90"
                 >
                   <X className="h-3 w-3" />
                 </button>
@@ -192,8 +192,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         </div>
       )}
 
-      <div className="p-3">
-        <div className="flex items-center gap-2 min-w-0">
+      <div className="p-2">
+        <div className="flex items-center gap-1.5 min-w-0">
           {/* File input */}
           <input
             type="file"
@@ -203,24 +203,24 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             className="hidden"
           />
 
-          {/* Attachment button - hide when voice recorder is active */}
+          {/* Attachment button */}
           {!isVoiceRecorderActive && (
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-10 w-10 flex-shrink-0"
+              className="h-9 w-9 flex-shrink-0 hover:bg-primary/10"
               onClick={() => fileInputRef.current?.click()}
               disabled={disabled || uploading}
             >
               {uploading ? (
-                <Loader2 className="h-5 w-5 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                <Paperclip className="h-5 w-5" />
+                <Paperclip className="h-4 w-4 text-muted-foreground" />
               )}
             </Button>
           )}
 
-          {/* Voice Message Recorder - takes over when active */}
+          {/* Voice Message Recorder */}
           {onSendVoice && !message.trim() && !attachment && (
             <VoiceMessageRecorder 
               onSendVoice={onSendVoice} 
@@ -229,7 +229,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             />
           )}
 
-          {/* Input - hide when voice recorder is active */}
+          {/* Input */}
           {!isVoiceRecorderActive && (
             <div className="flex-1 min-w-0">
               <Textarea
@@ -241,23 +241,23 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 disabled={disabled}
                 rows={1}
                 className={cn(
-                  "min-h-[44px] max-h-[120px] resize-none",
-                  "text-base md:text-sm", // 16px on mobile to prevent iOS zoom
-                  "bg-white dark:bg-zinc-800 border-0 focus-visible:ring-1 focus-visible:ring-primary/30 rounded-3xl py-3 px-4 shadow-sm"
+                  "min-h-[38px] max-h-[100px] resize-none",
+                  "text-[15px] md:text-sm",
+                  "bg-background border-border/50 focus-visible:ring-1 focus-visible:ring-primary/40 rounded-2xl py-2 px-3"
                 )}
               />
             </div>
           )}
 
-          {/* Send button - show when there's content */}
+          {/* Send button */}
           {(message.trim() || attachment || linkPreview) && !isVoiceRecorderActive && (
             <Button 
               onClick={handleSend}
               disabled={(!message.trim() && !attachment && !linkPreview) || disabled}
               size="icon"
-              className="h-10 w-10 rounded-full flex-shrink-0"
+              className="h-9 w-9 rounded-full flex-shrink-0 bg-primary hover:bg-primary/90"
             >
-              <Send className="h-5 w-5" />
+              <Send className="h-4 w-4" />
             </Button>
           )}
         </div>
