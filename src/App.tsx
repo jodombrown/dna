@@ -92,6 +92,7 @@ const FeaturedCalendarsPage = lazy(() => import("./pages/FeaturedCalendarsPage")
 const LocalEventsPage = lazy(() => import("./pages/LocalEventsPage"));
 const FactSheetPage = lazy(() => import("./pages/FactSheetPage"));
 const PitchDeck = lazy(() => import("./pages/PitchDeck"));
+const Manifesto = lazy(() => import("./pages/Manifesto"));
 const Demo = lazy(() => import("./pages/Demo"));
 const FeaturesHub = lazy(() => import("./pages/documentation/FeaturesHub"));
 const FeatureDetail = lazy(() => import("./pages/documentation/FeatureDetail"));
@@ -753,6 +754,7 @@ function App() {
               <Route path="/africa/:regionSlug/:countrySlug" element={<CountryHubPage />} />
 
               {/* Static pages */}
+              <Route path="/manifesto" element={<Manifesto />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/about" element={<About />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
