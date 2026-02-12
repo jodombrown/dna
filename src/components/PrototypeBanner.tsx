@@ -19,14 +19,14 @@ const PrototypeBanner: React.FC = () => {
   }, []);
 
   return (
-    <div 
+    <div
       className={`
         bg-gradient-to-r from-dna-emerald/15 via-dna-copper/10 to-dna-gold/10 
         border-b border-dna-emerald/30 shadow-sm
         transform transition-all duration-700 ease-out
         ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}
-      `}
-    >
+      `}>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-start gap-2 sm:gap-3">
         <Info className="w-5 h-5 sm:w-6 sm:h-6 text-dna-emerald mt-0.5 sm:mt-1 flex-shrink-0" />
         <div>
@@ -37,12 +37,12 @@ const PrototypeBanner: React.FC = () => {
             After 6 months of building, our Alpha Prototype is ready for you to test. Create your profile,
             connect with diaspora professionals, and help shape what's next.
             <br className="hidden lg:block" />
-            <span className="font-semibold">Full Beta launches March 5, 2026 — be part of it from day one!</span>
+            <span className="font-semibold"> Full Beta launches March 5, 2026, be part of it from day one!</span>
           </p>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 };
 
 export default PrototypeBanner;
