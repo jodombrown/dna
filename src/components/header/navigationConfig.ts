@@ -51,8 +51,9 @@ export const pillarNavigation = {
   contribute: {
     label: 'Contribute',
     icon: 'Heart',
-    items: [],
-    badge: 'Soon',
+    items: [
+      { name: 'Marketplace', path: '/dna/contribute' },
+    ],
   },
   convey: {
     label: 'Convey',
@@ -64,8 +65,9 @@ export const pillarNavigation = {
   commerce: {
     label: 'Commerce',
     icon: 'ShoppingBag',
-    items: [],
-    badge: 'Soon',
+    items: [
+      { name: 'Commerce', path: '/dna/commerce' },
+    ],
   },
 };
 
