@@ -62,13 +62,6 @@ export const pillarNavigation = {
       { name: 'Stories', path: '/dna/convey' },
     ],
   },
-  commerce: {
-    label: 'Commerce',
-    icon: 'ShoppingBag',
-    items: [
-      { name: 'Commerce', path: '/dna/commerce' },
-    ],
-  },
 };
 
 export const phases = [
