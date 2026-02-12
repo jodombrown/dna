@@ -1156,88 +1156,92 @@ function SpaceCoverUpload({
 }
 
 /**
- * OpportunityModeFields - Enhanced need/offer creation form per PRD
+ * OpportunityModeFields - Enhanced per PRD Section 3.2
+ *
+ * Features: Need/Offer direction, PRD category taxonomy, compensation types,
+ * diaspora-aware location relevance, duration, and budget range.
  */
-function OpportunityModeFields({ 
-  formData, 
-  onChange 
-}: { 
-  formData: ComposerFormData; 
+function OpportunityModeFields({
+  formData,
+  onChange
+}: {
+  formData: ComposerFormData;
   onChange: (updates: Partial<ComposerFormData>) => void;
 }) {
-  const opportunityType = (formData as any).opportunityType || 'need';
-  const selectedCurrencies: string[] = (formData as any).currencyTypes || [];
+  const opportunityType = (formData as Record<string, unknown>).opportunityType as string || 'need';
 
-  const currencies = [
-    { value: 'money', icon: '💰', label: 'Money', description: 'Financial support' },
-    { value: 'time', icon: '⏰', label: 'Time', description: 'Hours & availability' },
-    { value: 'network', icon: '🤝', label: 'Network', description: 'Connections & intros' },
-    { value: 'knowledge', icon: '📚', label: 'Knowledge', description: 'Skills & expertise' },
-  ];
-
+  // PRD OpportunityCategory enum values
   const categories = [
-    { value: 'business', label: 'Business' },
-    { value: 'technology', label: 'Technology' },
-    { value: 'education', label: 'Education' },
-    { value: 'creative', label: 'Creative' },
-    { value: 'legal', label: 'Legal' },
-    { value: 'finance', label: 'Finance' },
-    { value: 'marketing', label: 'Marketing' },
-    { value: 'operations', label: 'Operations' },
-    { value: 'other', label: 'Other' },
+    { value: 'skills_expertise', label: 'Skills & Expertise' },
+    { value: 'funding_investment', label: 'Funding & Investment' },
+    { value: 'mentorship_guidance', label: 'Mentorship & Guidance' },
+    { value: 'partnership_collaboration', label: 'Partnership & Collaboration' },
+    { value: 'knowledge_training', label: 'Knowledge & Training' },
+    { value: 'network_introductions', label: 'Network & Introductions' },
+    { value: 'physical_resources', label: 'Physical Resources' },
+    { value: 'volunteer_time', label: 'Volunteer Time' },
   ];
 
+  // PRD CompensationType enum values
+  const compensationOptions = [
+    { value: 'paid', label: 'Paid' },
+    { value: 'volunteer', label: 'Volunteer' },
+    { value: 'exchange', label: 'Exchange' },
+    { value: 'equity', label: 'Equity' },
+    { value: 'hybrid', label: 'Hybrid' },
+  ];
+
+  // PRD LocationRelevance enum values
   const locationOptions = [
-    { value: 'remote', label: 'Remote', description: 'Can be done from anywhere' },
-    { value: 'specific', label: 'Specific Location', description: 'Requires physical presence' },
-    { value: 'both', label: 'Both', description: 'Remote and in-person' },
+    { value: 'diaspora', label: 'Diaspora', description: 'Relevant to the global African diaspora' },
+    { value: 'africa_based', label: 'Africa-Based', description: 'On the continent' },
+    { value: 'global', label: 'Global', description: 'Open to anyone, anywhere' },
+    { value: 'specific_region', label: 'Specific Region', description: 'Limited to a particular region' },
   ];
 
-  const urgencyOptions = [
-    { value: 'urgent', label: '🔥 Urgent' },
-    { value: 'this-month', label: 'This Month' },
-    { value: 'flexible', label: 'Flexible' },
+  // PRD OpportunityDuration enum values
+  const durationOptions = [
+    { value: 'one_time', label: 'One-Time' },
+    { value: 'short_term', label: 'Short-Term' },
+    { value: 'long_term', label: 'Long-Term' },
+    { value: 'ongoing', label: 'Ongoing' },
   ];
 
-  const toggleCurrency = (currency: string) => {
-    const updated = selectedCurrencies.includes(currency)
-      ? selectedCurrencies.filter((c) => c !== currency)
-      : [...selectedCurrencies, currency];
-    onChange({ ...formData, currencyTypes: updated } as any);
-  };
+  const extData = formData as Record<string, unknown>;
+  const selectedCompensation = (extData.compensationType as string) || '';
+  const selectedLocation = (extData.locationRelevance as string) || '';
+  const selectedDuration = (extData.duration as string) || '';
 
   return (
     <div className="space-y-4">
       {/* Need/Offer Toggle */}
       <div>
-        <Label className="text-sm font-medium">What type of opportunity? *</Label>
+        <Label className="text-sm font-medium">Direction *</Label>
         <div className="grid grid-cols-2 gap-3 mt-2">
           <button
             type="button"
-            onClick={() => onChange({ ...formData, opportunityType: 'need' } as any)}
+            onClick={() => onChange({ ...formData, opportunityType: 'need' } as Partial<ComposerFormData>)}
             className={cn(
               'flex flex-col items-center p-4 rounded-lg border-2 transition-all',
               opportunityType === 'need'
-                ? 'border-dna-bevel-opportunity bg-orange-50 dark:bg-orange-500/10'
+                ? 'border-[#B87333] bg-orange-50 dark:bg-orange-500/10'
                 : 'border-border hover:border-muted-foreground/50'
             )}
           >
-            <span className="text-2xl mb-1">🙋</span>
-            <span className="font-semibold">I NEED</span>
+            <span className="text-2xl mb-1">I Need</span>
             <span className="text-xs text-muted-foreground">Looking for help</span>
           </button>
           <button
             type="button"
-            onClick={() => onChange({ ...formData, opportunityType: 'offer' } as any)}
+            onClick={() => onChange({ ...formData, opportunityType: 'offer' } as Partial<ComposerFormData>)}
             className={cn(
               'flex flex-col items-center p-4 rounded-lg border-2 transition-all',
               opportunityType === 'offer'
-                ? 'border-dna-bevel-opportunity bg-orange-50 dark:bg-orange-500/10'
+                ? 'border-[#B87333] bg-orange-50 dark:bg-orange-500/10'
                 : 'border-border hover:border-muted-foreground/50'
             )}
           >
-            <span className="text-2xl mb-1">🎁</span>
-            <span className="font-semibold">I'M OFFERING</span>
+            <span className="text-2xl mb-1">I'm Offering</span>
             <span className="text-xs text-muted-foreground">Sharing resources</span>
           </button>
         </div>
@@ -1255,48 +1259,12 @@ function OpportunityModeFields({
         />
       </div>
 
-      {/* Four Currencies Multi-Select */}
-      <div>
-        <Label className="text-sm font-medium">What kind of contribution? * (select all that apply)</Label>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">
-          {currencies.map((currency) => (
-            <button
-              key={currency.value}
-              type="button"
-              onClick={() => toggleCurrency(currency.value)}
-              className={cn(
-                'flex flex-col items-center p-3 rounded-lg border-2 transition-all',
-                selectedCurrencies.includes(currency.value)
-                  ? 'border-dna-bevel-opportunity bg-orange-50 dark:bg-orange-500/10'
-                  : 'border-border hover:border-muted-foreground/50'
-              )}
-            >
-              <span className="text-2xl mb-1">{currency.icon}</span>
-              <span className="text-sm font-medium">{currency.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Description */}
-      <div>
-        <Label className="text-sm font-medium">Description *</Label>
-        <Textarea
-          placeholder={opportunityType === 'need' 
-            ? 'Describe what you need in detail...' 
-            : 'Describe what you\'re offering...'}
-          value={formData.content}
-          onChange={(e) => onChange({ content: e.target.value })}
-          className="min-h-[100px] resize-none mt-1.5"
-        />
-      </div>
-
-      {/* Category */}
+      {/* Category (PRD OpportunityCategory) */}
       <div>
         <Label className="text-sm font-medium">Category *</Label>
         <Select
-          value={(formData as any).category || ''}
-          onValueChange={(value) => onChange({ ...formData, category: value } as any)}
+          value={(extData.category as string) || ''}
+          onValueChange={(value) => onChange({ ...formData, category: value } as Partial<ComposerFormData>)}
         >
           <SelectTrigger className="mt-1.5">
             <SelectValue placeholder="Select a category" />
@@ -1311,26 +1279,85 @@ function OpportunityModeFields({
         </Select>
       </div>
 
-      {/* Location */}
+      {/* Description */}
       <div>
-        <Label className="text-sm font-medium">Location *</Label>
+        <Label className="text-sm font-medium">Description *</Label>
+        <Textarea
+          placeholder={opportunityType === 'need'
+            ? 'Describe what you need in detail...'
+            : 'Describe what you\'re offering...'}
+          value={formData.content}
+          onChange={(e) => onChange({ content: e.target.value })}
+          className="min-h-[100px] resize-none mt-1.5"
+        />
+      </div>
+
+      {/* Compensation Type (PRD CompensationType) */}
+      <div>
+        <Label className="text-sm font-medium">Compensation *</Label>
+        <Select
+          value={selectedCompensation}
+          onValueChange={(value) => onChange({ ...formData, compensationType: value } as Partial<ComposerFormData>)}
+        >
+          <SelectTrigger className="mt-1.5">
+            <SelectValue placeholder="Select compensation type" />
+          </SelectTrigger>
+          <SelectContent>
+            {compensationOptions.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Budget Range (shown for paid compensation) */}
+      {selectedCompensation === 'paid' && (
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <Label className="text-sm font-medium">Min Budget</Label>
+            <Input
+              type="number"
+              placeholder="0"
+              value={(extData.budgetMin as string) || ''}
+              onChange={(e) => onChange({ ...formData, budgetMin: e.target.value } as Partial<ComposerFormData>)}
+              className="mt-1.5"
+            />
+          </div>
+          <div>
+            <Label className="text-sm font-medium">Max Budget</Label>
+            <Input
+              type="number"
+              placeholder="10000"
+              value={(extData.budgetMax as string) || ''}
+              onChange={(e) => onChange({ ...formData, budgetMax: e.target.value } as Partial<ComposerFormData>)}
+              className="mt-1.5"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Location Relevance (PRD LocationRelevance) */}
+      <div>
+        <Label className="text-sm font-medium">Location Relevance *</Label>
         <div className="space-y-2 mt-2">
           {locationOptions.map((option) => (
             <label
               key={option.value}
               className={cn(
                 'flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors',
-                (formData as any).locationType === option.value
-                  ? 'border-dna-bevel-opportunity bg-orange-50/50 dark:bg-orange-500/5'
+                selectedLocation === option.value
+                  ? 'border-[#B87333] bg-orange-50/50 dark:bg-orange-500/5'
                   : 'border-border hover:bg-muted/50'
               )}
             >
               <input
                 type="radio"
-                name="location"
+                name="locationRelevance"
                 value={option.value}
-                checked={(formData as any).locationType === option.value}
-                onChange={() => onChange({ ...formData, locationType: option.value } as any)}
+                checked={selectedLocation === option.value}
+                onChange={() => onChange({ ...formData, locationRelevance: option.value } as Partial<ComposerFormData>)}
                 className="mt-1"
               />
               <div>
@@ -1340,31 +1367,30 @@ function OpportunityModeFields({
             </label>
           ))}
         </div>
-        
-        {/* Location Details (if specific) */}
-        {(formData as any).locationType === 'specific' && (
+
+        {selectedLocation === 'specific_region' && (
           <Input
-            placeholder="Enter location..."
-            value={(formData as any).locationDetails || ''}
-            onChange={(e) => onChange({ ...formData, locationDetails: e.target.value } as any)}
+            placeholder="Enter region or country..."
+            value={(extData.specificRegion as string) || ''}
+            onChange={(e) => onChange({ ...formData, specificRegion: e.target.value } as Partial<ComposerFormData>)}
             className="mt-2"
           />
         )}
       </div>
 
-      {/* Urgency & Deadline */}
+      {/* Duration & Deadline */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label className="text-sm font-medium">Urgency</Label>
+          <Label className="text-sm font-medium">Duration</Label>
           <Select
-            value={(formData as any).urgency || ''}
-            onValueChange={(value) => onChange({ ...formData, urgency: value } as any)}
+            value={selectedDuration}
+            onValueChange={(value) => onChange({ ...formData, duration: value } as Partial<ComposerFormData>)}
           >
             <SelectTrigger className="mt-1.5">
-              <SelectValue placeholder="Select urgency" />
+              <SelectValue placeholder="Select duration" />
             </SelectTrigger>
             <SelectContent>
-              {urgencyOptions.map((option) => (
+              {durationOptions.map((option) => (
                 <SelectItem key={option.value} value={option.value}>
                   {option.label}
                 </SelectItem>
@@ -1376,25 +1402,23 @@ function OpportunityModeFields({
           <Label className="text-sm font-medium">Deadline</Label>
           <Input
             type="date"
-            value={(formData as any).deadline || ''}
-            onChange={(e) => onChange({ ...formData, deadline: e.target.value } as any)}
+            value={(extData.deadline as string) || ''}
+            onChange={(e) => onChange({ ...formData, deadline: e.target.value } as Partial<ComposerFormData>)}
             className="mt-1.5"
           />
         </div>
       </div>
 
-      {/* Compensation (if Money selected) */}
-      {selectedCurrencies.includes('money') && (
-        <div>
-          <Label className="text-sm font-medium">Compensation</Label>
-          <Input
-            placeholder="e.g., $500, Equity, Grant amount, Negotiable"
-            value={(formData as any).compensation || ''}
-            onChange={(e) => onChange({ ...formData, compensation: e.target.value } as any)}
-            className="mt-1.5"
-          />
-        </div>
-      )}
+      {/* Requirements */}
+      <div>
+        <Label className="text-sm font-medium">Requirements (optional)</Label>
+        <Textarea
+          placeholder="Skills, experience, or qualifications needed..."
+          value={(extData.requirements as string) || ''}
+          onChange={(e) => onChange({ ...formData, requirements: e.target.value } as Partial<ComposerFormData>)}
+          className="min-h-[60px] resize-none mt-1.5"
+        />
+      </div>
     </div>
   );
 }

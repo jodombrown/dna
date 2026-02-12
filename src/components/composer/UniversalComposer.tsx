@@ -1,13 +1,28 @@
+/**
+ * DNA Post Composer — Universal Gateway
+ *
+ * A single, unified creation interface that transforms based on user intent
+ * across all Five C's (CONNECT, CONVENE, COLLABORATE, CONTRIBUTE, CONVEY).
+ *
+ * Mobile: bottom sheet (85% screen height, slide up)
+ * Desktop: centered modal (600px max width)
+ */
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ComposerMode, ComposerContext, ComposerFormData } from '@/hooks/useUniversalComposer';
 import { ComposerModeSelector } from './ComposerModeSelector';
 import { ComposerBody } from './ComposerBody';
 import { ComposerFooter } from './ComposerFooter';
-import { useState } from 'react';
+import { DIASuggestionBar } from './DIASuggestionBar';
+import { DraftIndicator } from './DraftIndicator';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Hash, Calendar, Users, Building2 } from 'lucide-react';
+import { Hash, Calendar, Users, Building2, FileEdit } from 'lucide-react';
 import { useMobile } from '@/hooks/useMobile';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { diaComposerService } from '@/services/diaComposerService';
+import { composerService } from '@/services/composerService';
+import { ComposerMode as PRDComposerMode, type DIASuggestion } from '@/types/composer';
 
 interface UniversalComposerProps {
   isOpen: boolean;
@@ -31,17 +46,93 @@ export const UniversalComposer = ({
   const [formData, setFormData] = useState<ComposerFormData>({
     content: '',
   });
+  const [diaSuggestion, setDiaSuggestion] = useState<DIASuggestion | null>(null);
+  const [isDraftSaved, setIsDraftSaved] = useState(false);
   const { isMobile } = useMobile();
+  const diaDebounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const autoSaveRef = useRef<ReturnType<typeof setTimeout>>();
+
+  // DIA ambient analysis: analyze content as user types
+  useEffect(() => {
+    if (!formData.content || formData.content.length < 50) {
+      setDiaSuggestion(null);
+      return;
+    }
+
+    if (diaDebounceRef.current) {
+      clearTimeout(diaDebounceRef.current);
+    }
+
+    diaDebounceRef.current = setTimeout(async () => {
+      const prdMode = mode as unknown as PRDComposerMode;
+      const suggestion = await diaComposerService.analyzeContent(
+        formData.content,
+        prdMode
+      );
+      setDiaSuggestion(suggestion);
+    }, 1500);
+
+    return () => {
+      if (diaDebounceRef.current) clearTimeout(diaDebounceRef.current);
+    };
+  }, [formData.content, mode]);
+
+  // Auto-save draft every 10 seconds when content changes
+  useEffect(() => {
+    if (!formData.content.trim()) return;
+
+    if (autoSaveRef.current) {
+      clearTimeout(autoSaveRef.current);
+    }
+
+    autoSaveRef.current = setTimeout(async () => {
+      try {
+        const prdMode = mode as unknown as PRDComposerMode;
+        await composerService.saveDraft(
+          prdMode,
+          {
+            body: formData.content,
+            media: [],
+            audience: 'public' as const,
+            tags: [],
+            mentions: [],
+            hashtags: [],
+          },
+          { ...formData }
+        );
+        setIsDraftSaved(true);
+        setTimeout(() => setIsDraftSaved(false), 2000);
+      } catch {
+        // Silent fail for draft auto-save
+      }
+    }, 10000);
+
+    return () => {
+      if (autoSaveRef.current) clearTimeout(autoSaveRef.current);
+    };
+  }, [formData, mode]);
 
   const handleSubmit = () => {
     onSubmit(formData);
-    // Reset form
     setFormData({ content: '' });
+    setDiaSuggestion(null);
   };
 
-  const updateFormData = (updates: Partial<ComposerFormData>) => {
+  const updateFormData = useCallback((updates: Partial<ComposerFormData>) => {
     setFormData(prev => ({ ...prev, ...updates }));
-  };
+  }, []);
+
+  const handleDIASuggestionAccept = useCallback((suggestion: DIASuggestion) => {
+    if (suggestion.action.type === 'switch_mode') {
+      const targetMode = suggestion.action.payload.targetMode as ComposerMode;
+      onModeChange(targetMode);
+    }
+    setDiaSuggestion(null);
+  }, [onModeChange]);
+
+  const handleDIASuggestionDismiss = useCallback(() => {
+    setDiaSuggestion(null);
+  }, []);
 
   const getValidationMessage = (): string | null => {
     switch (mode) {
@@ -54,7 +145,6 @@ export const UniversalComposer = ({
         return null;
       case 'need':
         if (!formData.title) return 'Please add a title';
-        if (!context.spaceId) return 'Needs must be created within a Space';
         if (!formData.content.trim()) return 'Please add a description';
         return null;
       case 'space':
@@ -73,79 +163,85 @@ export const UniversalComposer = ({
 
   const isValid = () => getValidationMessage() === null;
 
-  // Mobile: slide-in sheet from the right
-  if (isMobile) {
-    return (
-      <Sheet open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
-        <SheetContent side="right" className="w-full max-w-md sm:max-w-lg">
-          <div className="space-y-4 mt-2">
-            <ComposerModeSelector
-              currentMode={mode}
-              onModeChange={onModeChange}
-              context={context}
-            />
-
-            <ComposerBody
-              mode={mode}
-              formData={formData}
-              context={context}
-              onChange={updateFormData}
-            />
-
-            <ComposerFooter
-              mode={mode}
-              isSubmitting={isSubmitting}
-              isValid={isValid()}
-              validationMessage={getValidationMessage()}
-              onCancel={onClose}
-              onSubmit={handleSubmit}
-            />
-          </div>
-        </SheetContent>
-      </Sheet>
-    );
-  }
-
-  // Desktop: existing centered dialog
-  return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl">
-            Share something with the diaspora
-          </DialogTitle>
-          <div className="flex items-center gap-2 flex-wrap">
-            <p className="text-sm text-muted-foreground">
-              {getSubheader(mode)}
-            </p>
-            {/* Context Badge */}
-            {getContextBadge(context)}
-          </div>
-        </DialogHeader>
-
-        <div className="space-y-6">
+  const composerContent = (
+    <div className="space-y-4">
+      {/* Header: Mode Selector + Draft Indicator */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex-1 min-w-0">
           <ComposerModeSelector
             currentMode={mode}
             onModeChange={onModeChange}
             context={context}
           />
-
-          <ComposerBody
-            mode={mode}
-            formData={formData}
-            context={context}
-            onChange={updateFormData}
-          />
-
-          <ComposerFooter
-            mode={mode}
-            isSubmitting={isSubmitting}
-            isValid={isValid()}
-            validationMessage={getValidationMessage()}
-            onCancel={onClose}
-            onSubmit={handleSubmit}
-          />
         </div>
+        {isDraftSaved && <DraftIndicator />}
+      </div>
+
+      {/* Context Badge */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <p className="text-sm text-muted-foreground">
+          {getSubheader(mode)}
+        </p>
+        {getContextBadge(context)}
+      </div>
+
+      {/* Body (mode-specific fields) */}
+      <ComposerBody
+        mode={mode}
+        formData={formData}
+        context={context}
+        onChange={updateFormData}
+      />
+
+      {/* DIA Suggestion Bar */}
+      {diaSuggestion && (
+        <DIASuggestionBar
+          suggestion={diaSuggestion}
+          onAccept={handleDIASuggestionAccept}
+          onDismiss={handleDIASuggestionDismiss}
+        />
+      )}
+
+      {/* Footer */}
+      <ComposerFooter
+        mode={mode}
+        isSubmitting={isSubmitting}
+        isValid={isValid()}
+        validationMessage={getValidationMessage()}
+        onCancel={onClose}
+        onSubmit={handleSubmit}
+      />
+    </div>
+  );
+
+  // Mobile: bottom sheet (per PRD Section 7.1)
+  if (isMobile) {
+    return (
+      <Sheet open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+        <SheetContent
+          side="bottom"
+          className="h-[85vh] rounded-t-2xl overflow-y-auto px-4 pb-6 pt-3"
+        >
+          {/* Drag handle */}
+          <div className="flex justify-center mb-3">
+            <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
+          </div>
+          {composerContent}
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  // Desktop: centered modal (per PRD Section 7.1)
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-[600px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-semibold">
+            Share something with the diaspora
+          </DialogTitle>
+        </DialogHeader>
+        {composerContent}
       </DialogContent>
     </Dialog>
   );
