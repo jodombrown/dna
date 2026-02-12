@@ -31,13 +31,13 @@ const PrototypeBanner: React.FC = () => {
         <Info className="w-5 h-5 sm:w-6 sm:h-6 text-dna-emerald mt-0.5 sm:mt-1 flex-shrink-0" />
         <div>
           <h3 className="font-semibold text-sm sm:text-md md:text-lg text-dna-forest mb-0.5 leading-tight">
-            You're using the DNA Platform Prototype!
+            🎉 DNA Alpha is Live — Sign Up &amp; Explore!
           </h3>
           <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
-            This is an early preview of Diaspora Network of Africa. Your ideas, feedback, and involvement
-            will shape the future of our community-powered professional platform.
+            After 6 months of building, our Alpha Prototype is ready for you to test. Create your profile,
+            connect with diaspora professionals, and help shape what's next.
             <br className="hidden lg:block" />
-            <span className="font-semibold">Help us build a home for Africa's Diaspora!</span>
+            <span className="font-semibold">Full Beta launches March 5, 2026 — be part of it from day one!</span>
           </p>
         </div>
       </div>

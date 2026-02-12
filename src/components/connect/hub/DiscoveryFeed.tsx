@@ -71,6 +71,28 @@ export function DiscoveryFeed({
     }
   }, []);
 
+  // Fetch connected user IDs to exclude from discovery feed
+  const { data: connectedUserIds } = useQuery({
+    queryKey: ['connected-user-ids', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return new Set<string>();
+      const { data } = await supabase
+        .from('connections')
+        .select('requester_id, recipient_id')
+        .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`)
+        .in('status', ['accepted', 'pending']);
+      
+      const ids = new Set<string>();
+      data?.forEach(c => {
+        if (c.requester_id !== user.id) ids.add(c.requester_id);
+        if (c.recipient_id !== user.id) ids.add(c.recipient_id);
+      });
+      return ids;
+    },
+    enabled: !!user?.id,
+    staleTime: 30000,
+  });
+
   // Fetch members with infinite scroll
   // Combine regions and diasporaLocations into one array for regional_expertise filter
   const combinedRegionalExpertise = React.useMemo(() => {
@@ -373,10 +395,12 @@ export function DiscoveryFeed({
     retryDelay: 1000,
   });
 
-  // Flatten members pages
+  // Flatten members pages and filter out already connected/pending users
   const allMembers = useMemo(() => {
-    return membersData?.pages.flatMap((page) => page.members) || [];
-  }, [membersData]);
+    const members = membersData?.pages.flatMap((page) => page.members) || [];
+    if (!connectedUserIds || connectedUserIds.size === 0) return members;
+    return members.filter((m: any) => !connectedUserIds.has(m.id));
+  }, [membersData, connectedUserIds]);
 
   // Filter DIA cards (not dismissed, limit to MAX_VISIBLE)
   const visibleDiaInsights = useMemo(() => {

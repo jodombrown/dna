@@ -44,7 +44,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
-import { publicNavItems, phases, aboutUsDropdown } from './header/navigationConfig';
+import { publicNavItems, aboutUsDropdown } from './header/navigationConfig';
 import { useUnreadMessageCount } from '@/hooks/useUnreadMessageCount';
 import { useUnreadNotificationCount } from '@/hooks/useUnreadNotificationCount';
 import { useMobile } from '@/hooks/useMobile';
@@ -410,42 +410,6 @@ const UnifiedHeader = () => {
                       </NavLink>
                     ))}
                     
-                    {/* Phases Dropdown */}
-                    {phases.length > 0 && (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="text-gray-700 hover:text-dna-forest transition-colors font-medium">
-                            Phases
-                            <ChevronDown className="w-4 h-4 ml-1" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start" className="w-64 p-2">
-                          {phases.map((phase, index) => {
-                            const PhaseIcon = [Search, Lightbulb, Target, TestTube, Users2, Rocket][index];
-                            const colors = ['text-dna-emerald', 'text-dna-forest', 'text-dna-copper', 'text-dna-mint', 'text-dna-gold', 'text-dna-emerald'];
-                            const bgColors = ['hover:bg-dna-emerald/10', 'hover:bg-dna-forest/10', 'hover:bg-dna-copper/10', 'hover:bg-dna-mint/10', 'hover:bg-dna-gold/10', 'hover:bg-dna-emerald/10'];
-                            
-                            return (
-                              <DropdownMenuItem 
-                                key={phase.path}
-                                onClick={() => navigate(phase.path)}
-                                className={`py-3 px-3 cursor-pointer rounded-lg transition-all ${bgColors[index]} group`}
-                              >
-                                <div className="flex items-center w-full">
-                                  <div className={`w-8 h-8 rounded-full bg-gray-100 group-hover:bg-white flex items-center justify-center mr-3 transition-colors`}>
-                                    <PhaseIcon className={`w-4 h-4 ${colors[index]}`} />
-                                  </div>
-                                  <div className="flex-1">
-                                    <span className="text-base font-medium text-gray-900">{phase.name}</span>
-                                    <div className="text-xs text-gray-500 mt-0.5">Phase {index + 1}</div>
-                                  </div>
-                                </div>
-                              </DropdownMenuItem>
-                            );
-                          })}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    )}
                     
                   </nav>
                   
@@ -527,42 +491,6 @@ const UnifiedHeader = () => {
                               ))}
                             </div>
                             
-                            {/* Mobile Phases Menu */}
-                            {phases.length > 0 && (
-                              <>
-                                <div className="border-t pt-4 mt-4">
-                                  <p className="text-sm text-gray-600 mb-4 font-medium">Development Phases</p>
-                                  <div className="space-y-2">
-                                    {phases.map((phase, index) => {
-                                      const PhaseIcon = [Search, Lightbulb, Target, TestTube, Users2, Rocket][index];
-                                      const colors = ['text-dna-emerald', 'text-dna-forest', 'text-dna-copper', 'text-dna-mint', 'text-dna-gold', 'text-dna-emerald'];
-                                      
-                                      return (
-                                        <Button
-                                          key={phase.path}
-                                          variant="ghost"
-                                          className="justify-start text-left w-full hover:bg-dna-mint/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0 py-3"
-                                          onClick={() => {
-                                            navigate(phase.path);
-                                            setIsMobileMenuOpen(false);
-                                          }}
-                                        >
-                                          <div className="flex items-center w-full">
-                                            <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-3">
-                                              <PhaseIcon className={`w-4 h-4 ${colors[index]}`} />
-                                            </div>
-                                            <div className="flex-1 text-left">
-                                              <div className="font-medium">{phase.name}</div>
-                                              <div className="text-xs text-gray-500">Phase {index + 1}</div>
-                                            </div>
-                                          </div>
-                                        </Button>
-                                      );
-                                    })}
-                                  </div>
-                                </div>
-                              </>
-                            )}
                             
                             
                             <Button
