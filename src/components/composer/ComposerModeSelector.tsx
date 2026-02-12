@@ -1,24 +1,24 @@
 /**
- * ComposerModeSelector - Tab-style mode selector for Universal Composer
- * 
- * Design System v1.0 Implementation:
- * - 5 modes with signature colors
- * - Horizontal tabs with icon + label
- * - Selected: white text, mode color background, subtle glow
- * - 200ms transition for smooth switching
+ * ComposerModeSelector — Horizontal scrolling chips with C-module accent colors
+ *
+ * Per PRD Section 2.1 & 7.2:
+ * - Selected chip: filled background with C-module accent color, white text
+ * - Unselected: outlined, DNA text color
+ * - Horizontal scroll on mobile (no wrapping)
+ * - Switching modes preserves base fields
+ * - 200ms ease transition
  */
 
 import { ComposerMode, ComposerContext } from '@/hooks/useUniversalComposer';
-import { Button } from '@/components/ui/button';
 import { COMPOSER_MODE_CONFIG } from '@/config/composerModes';
 import { cn } from '@/lib/utils';
-import { 
-  MessageSquare, 
-  BookOpen, 
-  Calendar, 
-  Rocket, 
+import {
+  MessageSquare,
+  BookOpen,
+  Calendar,
+  Rocket,
   Lightbulb,
-  LucideIcon
+  LucideIcon,
 } from 'lucide-react';
 
 interface ComposerModeSelectorProps {
@@ -27,56 +27,58 @@ interface ComposerModeSelectorProps {
   context: ComposerContext;
 }
 
-// Mode configuration per PRD Design System
-interface ModeConfig {
+interface ModeChipConfig {
   id: ComposerMode;
   label: string;
   icon: LucideIcon;
-  colorClass: string;
-  bgSelected: string;
-  shadowGlow: string;
+  /** Tailwind text color for icon when active */
+  activeTextClass: string;
+  /** Tailwind bg color when active */
+  activeBgClass: string;
+  /** Inline accent color from C-module palette */
+  accentColor: string;
 }
 
-const modeConfigs: ModeConfig[] = [
+const modeChips: ModeChipConfig[] = [
   {
     id: 'post',
-    label: 'Post',
+    label: 'Share a Thought',
     icon: MessageSquare,
-    colorClass: 'text-dna-emerald',
-    bgSelected: 'bg-dna-emerald',
-    shadowGlow: 'shadow-[0_0_12px_rgba(74,141,119,0.4)]',
+    activeTextClass: 'text-white',
+    activeBgClass: 'bg-[#4A8D77]',
+    accentColor: '#4A8D77', // DNA Emerald — CONNECT
   },
   {
     id: 'story',
-    label: 'Story',
+    label: 'Tell a Story',
     icon: BookOpen,
-    colorClass: 'text-teal-600',
-    bgSelected: 'bg-teal-600',
-    shadowGlow: 'shadow-[0_0_12px_rgba(13,148,136,0.4)]',
+    activeTextClass: 'text-white',
+    activeBgClass: 'bg-[#2A7A8C]',
+    accentColor: '#2A7A8C', // Deep Teal — CONVEY
   },
   {
     id: 'event',
-    label: 'Event',
+    label: 'Host an Event',
     icon: Calendar,
-    colorClass: 'text-amber-500',
-    bgSelected: 'bg-amber-500',
-    shadowGlow: 'shadow-[0_0_12px_rgba(245,158,11,0.4)]',
+    activeTextClass: 'text-white',
+    activeBgClass: 'bg-[#C4942A]',
+    accentColor: '#C4942A', // Warm Amber-Gold — CONVENE
   },
   {
     id: 'space',
-    label: 'Space',
+    label: 'Start a Project',
     icon: Rocket,
-    colorClass: 'text-violet-500',
-    bgSelected: 'bg-violet-500',
-    shadowGlow: 'shadow-[0_0_12px_rgba(139,92,246,0.4)]',
+    activeTextClass: 'text-white',
+    activeBgClass: 'bg-[#2D5A3D]',
+    accentColor: '#2D5A3D', // Forest Green — COLLABORATE
   },
   {
     id: 'need',
-    label: 'Opportunity',
+    label: 'Post an Opportunity',
     icon: Lightbulb,
-    colorClass: 'text-dna-copper',
-    bgSelected: 'bg-dna-copper',
-    shadowGlow: 'shadow-[0_0_12px_rgba(184,115,51,0.4)]',
+    activeTextClass: 'text-white',
+    activeBgClass: 'bg-[#B87333]',
+    accentColor: '#B87333', // Copper — CONTRIBUTE
   },
 ];
 
@@ -85,49 +87,42 @@ export const ComposerModeSelector = ({
   onModeChange,
   context,
 }: ComposerModeSelectorProps) => {
-  // Filter to only enabled modes
-  const enabledModes = modeConfigs.filter(
-    (config) => COMPOSER_MODE_CONFIG[config.id]?.enabled
+  const enabledChips = modeChips.filter(
+    (chip) => COMPOSER_MODE_CONFIG[chip.id]?.enabled
   );
 
-  // Context-based disabling
   const isDisabled = (modeId: ComposerMode): boolean => {
-    // Don't allow creating another event from an event context
     if (modeId === 'event' && context.eventId) return true;
-    // Don't allow creating another space from a space context
     if (modeId === 'space' && context.spaceId) return true;
-    // Opportunity mode is always enabled - users can create needs/offers globally
     return false;
   };
 
   return (
-    <div className="flex items-center justify-between gap-1 p-1 bg-muted/50 rounded-lg mb-4">
-      {enabledModes.map((config) => {
-        const Icon = config.icon;
-        const isActive = currentMode === config.id;
-        const disabled = isDisabled(config.id);
+    <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
+      {enabledChips.map((chip) => {
+        const Icon = chip.icon;
+        const isActive = currentMode === chip.id;
+        const disabled = isDisabled(chip.id);
 
         return (
           <button
-            key={config.id}
-            onClick={() => onModeChange(config.id)}
+            key={chip.id}
+            onClick={() => onModeChange(chip.id)}
             disabled={disabled}
             className={cn(
-              "flex items-center justify-center gap-1.5 py-2 rounded-md transition-all duration-200",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-              isActive 
-                ? "bg-background shadow-sm flex-1 px-3" 
-                : "px-3 text-muted-foreground hover:text-foreground hover:bg-background/50",
-              disabled && "opacity-40 cursor-not-allowed pointer-events-none"
+              'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap',
+              'transition-all duration-200 ease-out',
+              'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+              isActive
+                ? `${chip.activeBgClass} ${chip.activeTextClass} shadow-sm`
+                : 'bg-transparent border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30',
+              disabled && 'opacity-40 cursor-not-allowed pointer-events-none'
             )}
           >
-            <Icon className={cn(
-              "h-4 w-4 shrink-0",
-              isActive && config.colorClass
-            )} />
-            {isActive && (
-              <span className="text-xs font-medium truncate">{config.label}</span>
-            )}
+            <Icon className="h-3.5 w-3.5 shrink-0" />
+            <span className={cn(!isActive && 'hidden sm:inline')}>
+              {isActive ? chip.label : chip.label.split(' ').pop()}
+            </span>
           </button>
         );
       })}
