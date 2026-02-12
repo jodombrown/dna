@@ -10,18 +10,40 @@
  * - Matching algorithms start rule-based, graduate to ML as data accumulates
  * - DIA never shares private user data across trust boundaries
  * - All suggestions are tracked (shown, accepted, dismissed) for learning
+ *
+ * Service layers:
+ * 1. Foundation: Relationship Strength, Network Intelligence
+ * 2. Matching: People, Opportunities, Spaces, Events
+ * 3. Engagement: Nudge Engine, Content Intelligence
+ * 4. Interface: DIA Chat, Trend Intelligence
  */
 
+// ── Foundation Services ──────────────────────────────────
 export { profileIntelligenceService } from './profileIntelligence';
 export { networkIntelligenceService } from './networkIntelligence';
-export { contentIntelligenceService } from './contentIntelligence';
-export { matchingEngineService } from './matchingEngine';
-export { trendIntelligenceService } from './trendIntelligence';
-export { nudgeEngineService } from './nudgeEngine';
-export { conversationIntelligenceService } from './conversationIntelligence';
-export { regionalIntelligenceService } from './regionalIntelligence';
+export { relationshipStrengthService } from './relationshipStrength';
 
-// Re-export types for convenience
+// ── Content & Communication Intelligence ─────────────────
+export { contentIntelligenceService } from './contentIntelligence';
+export { conversationIntelligenceService } from './conversationIntelligence';
+
+// ── Matching Services ────────────────────────────────────
+export { matchingEngineService } from './matchingEngine';
+export { peopleMatchingService } from './peopleMatching';
+export { opportunityMatchingEngineService } from './opportunityMatching';
+export { spaceMatchingService } from './spaceMatching';
+export { eventMatchingService } from './eventMatching';
+
+// ── Nudge & Trend Services ───────────────────────────────
+export { nudgeEngineService } from './nudgeEngine';
+export { nudgeEngineV2Service } from './nudgeEngineV2';
+export { trendIntelligenceService } from './trendIntelligence';
+
+// ── Regional & Chat Services ─────────────────────────────
+export { regionalIntelligenceService } from './regionalIntelligence';
+export { diaChatService } from './diaChat';
+
+// ── Re-export foundational types ─────────────────────────
 export type {
   DIACoreService,
   DIAOperationalMode,
@@ -38,3 +60,47 @@ export type {
   ConnectionStrength,
   ContentAnalysis,
 } from '@/types/dia';
+
+// ── Re-export DIA Engine types ───────────────────────────
+export type {
+  // Network Graph
+  NetworkEdge,
+  RelationshipSignals,
+  RawRelationshipData,
+
+  // People Matching
+  PeopleMatchResult,
+  PeopleMatchSignals,
+  MatchReason,
+  MatchSurface,
+  MatchPriority,
+  MatchStatus,
+
+  // Opportunity Matching
+  OpportunityMatchResult,
+  OpportunityMatchSignals,
+
+  // Space Matching
+  SpaceMatchResult,
+  SpaceMatchSignals,
+
+  // Event Matching
+  EventMatchResult,
+  EventMatchSignals,
+
+  // Nudge Engine
+  Nudge,
+  NudgeTiming,
+  UserNudgeState,
+
+  // DIA Chat
+  DIAChatMessage,
+  DIAChatQuery,
+  DIAChatContext,
+  DIAChatResult,
+  DIAChatAction,
+  NetworkStats,
+
+  // Feature Tiers
+  DIAFeatureTier,
+} from '@/types/diaEngine';
