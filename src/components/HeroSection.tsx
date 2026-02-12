@@ -48,14 +48,6 @@ const HeroSection = () => {
                     Sign in
                   </Button>
                   <Button 
-                    variant="default" 
-                    size="lg"
-                    onClick={() => setIsBetaDialogOpen(true)}
-                    className="bg-dna-emerald hover:bg-dna-forest text-base lg:text-xl px-6 lg:px-10 py-3 lg:py-6 h-auto font-medium"
-                  >
-                    Join Our Beta
-                  </Button>
-                  <Button 
                     variant="outline"
                     size="lg" 
                     onClick={() => setIsDemoDialogOpen(true)}
