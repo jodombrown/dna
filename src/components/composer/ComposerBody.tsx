@@ -1168,7 +1168,7 @@ function OpportunityModeFields({
   formData: ComposerFormData;
   onChange: (updates: Partial<ComposerFormData>) => void;
 }) {
-  const opportunityType = (formData as Record<string, unknown>).opportunityType as string || 'need';
+  const opportunityType = (formData as unknown as Record<string, unknown>).opportunityType as string || 'need';
 
   // PRD OpportunityCategory enum values
   const categories = [
@@ -1207,7 +1207,7 @@ function OpportunityModeFields({
     { value: 'ongoing', label: 'Ongoing' },
   ];
 
-  const extData = formData as Record<string, unknown>;
+  const extData = formData as unknown as Record<string, unknown>;
   const selectedCompensation = (extData.compensationType as string) || '';
   const selectedLocation = (extData.locationRelevance as string) || '';
   const selectedDuration = (extData.duration as string) || '';

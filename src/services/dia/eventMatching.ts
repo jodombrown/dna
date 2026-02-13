@@ -53,9 +53,9 @@ async function matchUserToEvents(userId: string, limit = 20): Promise<EventMatch
   // Get upcoming events
   const { data: events } = await supabase
     .from('events')
-    .select('id, title, description, category, location, start_date, event_type, created_by')
-    .gte('start_date', new Date().toISOString())
-    .order('start_date', { ascending: true })
+    .select('id, title, description, tags, location_name, start_time, event_type, organizer_id')
+    .gte('start_time', new Date().toISOString())
+    .order('start_time', { ascending: true })
     .limit(100);
 
   if (!events) return [];
@@ -87,20 +87,21 @@ async function matchUserToEvents(userId: string, limit = 20): Promise<EventMatch
   const results: EventMatchResult[] = events
     .filter(e => !registeredEventIds.has(e.id))
     .map(event => {
+      const eventRecord = event as unknown as Record<string, unknown>;
       const attendees = eventAttendeeMap.get(event.id) || [];
       const signals = computeEventSignals(
-        event,
+        eventRecord,
         userInterests,
         userSkills,
         attendees,
         userConnections,
         pastEventCategories,
         userSpaceIds,
-        profile,
+        profile as unknown as Record<string, unknown>,
       );
       const score = computeScore(signals);
       const matchType = classifyEventMatchType(signals);
-      const reasons = generateEventReasons(signals, event, attendees, userConnections);
+      const reasons = generateEventReasons(signals, eventRecord, attendees, userConnections);
 
       return {
         eventId: event.id,
@@ -110,7 +111,7 @@ async function matchUserToEvents(userId: string, limit = 20): Promise<EventMatch
         matchReasons: reasons,
         signals,
         surfacedVia: determineSurfaces(score),
-        priority: determinePriority(score, event.start_date as string),
+        priority: determinePriority(score, (event.start_time || '') as string),
         createdAt: new Date(),
         status: 'active' as MatchStatus,
       };
@@ -150,10 +151,11 @@ async function matchEventToUsers(eventId: string, limit = 50): Promise<EventMatc
 
   if (!candidates) return [];
 
-  const eventText = `${event.title} ${event.description || ''} ${event.category || ''}`.toLowerCase();
+  const eventRecord = event as unknown as Record<string, unknown>;
+  const eventText = `${eventRecord.title} ${eventRecord.description || ''} ${(eventRecord.tags as string[] || []).join(' ')}`.toLowerCase();
 
   const results: EventMatchResult[] = candidates
-    .filter(c => !registeredIds.has(c.id) && c.id !== event.created_by)
+    .filter(c => !registeredIds.has(c.id) && c.id !== (eventRecord.organizer_id as string))
     .map(candidate => {
       const userInterests = ((candidate.interests || []) as string[]).map(s => s.toLowerCase());
       const userSkills = ((candidate.skills || []) as string[]).map(s => s.toLowerCase());
@@ -171,7 +173,7 @@ async function matchEventToUsers(eventId: string, limit = 50): Promise<EventMatc
         relatedSpaceMembership: 0,
         regionalAlignment: computeLocationMatch(
           (candidate.location || '') as string,
-          (event.location || '') as string,
+          (eventRecord.location_name || '') as string,
         ),
       };
 
@@ -183,10 +185,10 @@ async function matchEventToUsers(eventId: string, limit = 50): Promise<EventMatc
         userId: candidate.id,
         matchScore: score,
         matchType,
-        matchReasons: generateEventReasons(signals, event, [], new Set()),
+        matchReasons: generateEventReasons(signals, eventRecord, [], new Set()),
         signals,
         surfacedVia: [MatchSurface.NOTIFICATION],
-        priority: determinePriority(score, event.start_date as string),
+        priority: determinePriority(score, (eventRecord.start_time || '') as string),
         createdAt: new Date(),
         status: 'active' as MatchStatus,
       };
@@ -208,7 +210,7 @@ function computeEventSignals(
   userSpaceIds: Set<string>,
   profile: Record<string, unknown>,
 ): EventMatchSignals {
-  const eventText = `${event.title} ${event.description || ''} ${event.category || ''}`.toLowerCase();
+  const eventText = `${event.title} ${event.description || ''} ${((event.tags as string[]) || []).join(' ')}`.toLowerCase();
 
   // Topic/interest overlap
   const interestHits = userInterests.filter(i => eventText.includes(i));
@@ -220,15 +222,15 @@ function computeEventSignals(
   const connectionAttendeeCount = Math.min(connectionAttendees.length / 5, 1);
 
   // Organizer relationship
-  const organizerRelationship = userConnections.has(event.created_by as string) ? 0.7 : 0.1;
+  const organizerRelationship = userConnections.has(event.organizer_id as string) ? 0.7 : 0.1;
 
   // Past attendance pattern
-  const category = ((event.category || '') as string).toLowerCase();
-  const pastAttendancePattern = pastCategories.has(category) ? 0.8 : 0.2;
+  const eventTags = ((event.tags as string[]) || []).join(' ').toLowerCase();
+  const pastAttendancePattern = pastCategories.has(eventTags) ? 0.8 : 0.2;
 
   // Regional alignment
   const userLocation = ((profile.location || '') as string).toLowerCase();
-  const eventLocation = ((event.location || '') as string).toLowerCase();
+  const eventLocation = ((event.location_name || '') as string).toLowerCase();
   const regionalAlignment = computeLocationMatch(userLocation, eventLocation);
 
   return {
@@ -301,7 +303,7 @@ function generateEventReasons(
   if (signals.pastAttendancePattern > 0.5) {
     reasons.push({
       type: 'event_overlap',
-      text: `You attend similar ${(event.category as string) || ''} events`,
+      text: `You attend similar events`,
       strength: signals.pastAttendancePattern,
       icon: 'calendar-people',
     });
@@ -352,13 +354,14 @@ function computeLocationMatch(userLocation: string, eventLocation: string): numb
 async function fetchUserConnectionIds(userId: string): Promise<Set<string>> {
   const { data } = await supabase
     .from('connections')
-    .select('user_id, connected_user_id')
-    .or(`user_id.eq.${userId},connected_user_id.eq.${userId}`)
+    .select('requester_id, recipient_id')
+    .eq('status', 'accepted')
+    .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`)
     .limit(500);
 
   const ids = new Set<string>();
   for (const conn of data || []) {
-    ids.add(conn.user_id === userId ? conn.connected_user_id : conn.user_id);
+    ids.add(conn.requester_id === userId ? conn.recipient_id : conn.requester_id);
   }
   return ids;
 }
@@ -391,12 +394,12 @@ async function fetchPastEventCategories(userId: string): Promise<Set<string>> {
   const eventIds = registrations.map(r => r.event_id);
   const { data: events } = await supabase
     .from('events')
-    .select('category')
+    .select('tags')
     .in('id', eventIds.slice(0, 50));
 
   return new Set(
     (events || [])
-      .map(e => ((e.category || '') as string).toLowerCase())
+      .flatMap(e => ((e.tags || []) as string[]).map(t => t.toLowerCase()))
       .filter(Boolean),
   );
 }
