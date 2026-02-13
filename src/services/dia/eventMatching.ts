@@ -13,14 +13,14 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import type {
-  EventMatchResult,
+import {
   EventMatchType,
-  EventMatchSignals,
-  MatchReason,
   MatchSurface,
   MatchPriority,
-  MatchStatus,
+  type EventMatchResult,
+  type EventMatchSignals,
+  type MatchReason,
+  type MatchStatus,
 } from '@/types/diaEngine';
 
 /** Weights for event match signals */

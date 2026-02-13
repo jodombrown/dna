@@ -15,15 +15,15 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import type {
-  PeopleMatchResult,
+import {
   PeopleMatchType,
-  PeopleMatchSignals,
-  MatchReason,
-  MatchReasonType,
   MatchSurface,
   MatchPriority,
   MatchStatus,
+  type PeopleMatchResult,
+  type PeopleMatchSignals,
+  type MatchReason,
+  type MatchReasonType,
 } from '@/types/diaEngine';
 import { relationshipStrengthService } from './relationshipStrength';
 
@@ -131,17 +131,17 @@ async function getCandidatePool(userId: string): Promise<string[]> {
   // Get existing connections to exclude
   const { data: existingConnections } = await supabase
     .from('connections')
-    .select('user_id, connected_user_id')
-    .or(`user_id.eq.${userId},connected_user_id.eq.${userId}`);
+    .select('requester_id, recipient_id')
+    .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`);
 
   const connectedIds = new Set<string>();
   for (const conn of existingConnections || []) {
-    connectedIds.add(conn.user_id === userId ? conn.connected_user_id : conn.user_id);
+    connectedIds.add(conn.requester_id === userId ? conn.recipient_id : conn.requester_id);
   }
 
   // Get recently dismissed matches (30 days)
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-  const { data: dismissed } = await supabase
+  const { data: dismissed } = await (supabase as any)
     .from('dia_match_results')
     .select('matched_entity_id')
     .eq('user_id', userId)
@@ -149,7 +149,7 @@ async function getCandidatePool(userId: string): Promise<string[]> {
     .eq('status', 'dismissed')
     .gte('dismissed_at', thirtyDaysAgo);
 
-  const dismissedIds = new Set((dismissed || []).map(d => d.matched_entity_id));
+  const dismissedIds = new Set(((dismissed || []) as Record<string, unknown>[]).map(d => d.matched_entity_id as string));
 
   // Source 1: 2nd-degree connections
   const secondDegree = await getSecondDegreeConnections(userId, connectedIds);
@@ -422,7 +422,7 @@ async function storeMatches(matches: PeopleMatchResult[]): Promise<void> {
     expires_at: m.expiresAt?.toISOString() || null,
   }));
 
-  await supabase.from('dia_match_results').insert(rows);
+  await (supabase as any).from('dia_match_results').insert(rows);
 }
 
 /**
@@ -436,7 +436,7 @@ async function updateMatchStatus(
   if (status === MatchStatus.ACTED_ON) updates.acted_on_at = new Date().toISOString();
   if (status === MatchStatus.DISMISSED) updates.dismissed_at = new Date().toISOString();
 
-  await supabase
+  await (supabase as any)
     .from('dia_match_results')
     .update(updates)
     .eq('id', matchId);
@@ -453,22 +453,22 @@ async function getSecondDegreeConnections(
 
   const { data: secondDegree } = await supabase
     .from('connections')
-    .select('user_id, connected_user_id')
+    .select('requester_id, recipient_id')
     .or(
       connectedArray.flatMap(id => [
-        `user_id.eq.${id}`,
-        `connected_user_id.eq.${id}`,
+        `requester_id.eq.${id}`,
+        `recipient_id.eq.${id}`,
       ]).join(','),
     )
     .limit(200);
 
   const candidates = new Set<string>();
   for (const conn of secondDegree || []) {
-    if (!connectedIds.has(conn.user_id) && conn.user_id !== userId) {
-      candidates.add(conn.user_id);
+    if (!connectedIds.has(conn.requester_id) && conn.requester_id !== userId) {
+      candidates.add(conn.requester_id);
     }
-    if (!connectedIds.has(conn.connected_user_id) && conn.connected_user_id !== userId) {
-      candidates.add(conn.connected_user_id);
+    if (!connectedIds.has(conn.recipient_id) && conn.recipient_id !== userId) {
+      candidates.add(conn.recipient_id);
     }
   }
   return Array.from(candidates);
@@ -542,12 +542,12 @@ async function fetchMutualConnectionCounts(
 ): Promise<Map<string, number>> {
   const { data: userConnections } = await supabase
     .from('connections')
-    .select('user_id, connected_user_id')
-    .or(`user_id.eq.${userId},connected_user_id.eq.${userId}`)
+    .select('requester_id, recipient_id')
+    .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`)
     .limit(500);
 
   const userConnSet = new Set(
-    (userConnections || []).flatMap(c => [c.user_id, c.connected_user_id]).filter(id => id !== userId),
+    (userConnections || []).flatMap(c => [c.requester_id, c.recipient_id]).filter(id => id !== userId),
   );
 
   const result = new Map<string, number>();
@@ -557,13 +557,13 @@ async function fetchMutualConnectionCounts(
   for (const candidateId of candidateIds.slice(0, 50)) {
     const { data: candidateConns } = await supabase
       .from('connections')
-      .select('user_id, connected_user_id')
-      .or(`user_id.eq.${candidateId},connected_user_id.eq.${candidateId}`)
+      .select('requester_id, recipient_id')
+      .or(`requester_id.eq.${candidateId},recipient_id.eq.${candidateId}`)
       .limit(100);
 
     let mutual = 0;
     for (const conn of candidateConns || []) {
-      const otherId = conn.user_id === candidateId ? conn.connected_user_id : conn.user_id;
+      const otherId = conn.requester_id === candidateId ? conn.recipient_id : conn.requester_id;
       if (userConnSet.has(otherId)) mutual++;
     }
     result.set(candidateId, mutual);

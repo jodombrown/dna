@@ -14,14 +14,14 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import type {
-  OpportunityMatchResult,
+import {
   OpportunityMatchType,
-  OpportunityMatchSignals,
-  MatchReason,
   MatchSurface,
   MatchPriority,
-  MatchStatus,
+  type OpportunityMatchResult,
+  type OpportunityMatchSignals,
+  type MatchReason,
+  type MatchStatus,
 } from '@/types/diaEngine';
 
 /** Weights for opportunity match signals */
@@ -53,7 +53,7 @@ async function matchOpportunityToUsers(
 
   if (!opportunity) return [];
 
-  const oppSkills = ((opportunity.skills_needed as string[]) || []).map(s => s.toLowerCase());
+  const oppSkills = ((opportunity.focus_areas as string[]) || []).map(s => s.toLowerCase());
 
   // Build candidate pool: users with matching skills or in same region
   let candidateQuery = supabase
@@ -63,7 +63,7 @@ async function matchOpportunityToUsers(
     .limit(200);
 
   if (oppSkills.length > 0) {
-    candidateQuery = candidateQuery.overlaps('skills', opportunity.skills_needed as string[]);
+    candidateQuery = candidateQuery.overlaps('skills', (opportunity.focus_areas as string[]));
   }
 
   const { data: candidates } = await candidateQuery;
@@ -274,13 +274,13 @@ function determinePriority(score: number): MatchPriority {
 async function fetchUserConnectionIds(userId: string): Promise<Set<string>> {
   const { data } = await supabase
     .from('connections')
-    .select('user_id, connected_user_id')
-    .or(`user_id.eq.${userId},connected_user_id.eq.${userId}`)
+    .select('requester_id, recipient_id')
+    .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`)
     .limit(500);
 
   const ids = new Set<string>();
   for (const conn of data || []) {
-    ids.add(conn.user_id === userId ? conn.connected_user_id : conn.user_id);
+    ids.add(conn.requester_id === userId ? conn.recipient_id : conn.requester_id);
   }
   return ids;
 }

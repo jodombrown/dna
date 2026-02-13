@@ -89,11 +89,11 @@ async function getSmartIntroductions(
   // Get user's existing connections
   const { data: connections } = await supabase
     .from('connections')
-    .select('user_id, connected_user_id')
-    .or(`user_id.eq.${userId},connected_user_id.eq.${userId}`);
+    .select('requester_id, recipient_id')
+    .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`);
 
   const connectedIds = new Set(
-    (connections || []).flatMap(c => [c.user_id, c.connected_user_id]),
+    (connections || []).flatMap(c => [c.requester_id, c.recipient_id]),
   );
   connectedIds.delete(userId);
 
@@ -103,11 +103,11 @@ async function getSmartIntroductions(
 
   const { data: secondDegree } = await supabase
     .from('connections')
-    .select('user_id, connected_user_id')
+    .select('requester_id, recipient_id')
     .or(
       connectedArray.slice(0, 20).flatMap(id => [
-        `user_id.eq.${id}`,
-        `connected_user_id.eq.${id}`,
+        `requester_id.eq.${id}`,
+        `recipient_id.eq.${id}`,
       ]).join(','),
     )
     .limit(200);
@@ -115,10 +115,10 @@ async function getSmartIntroductions(
   // Count mutual connections and find candidates
   const candidateMutuals = new Map<string, string[]>();
   for (const conn of secondDegree || []) {
-    for (const candidateId of [conn.user_id, conn.connected_user_id]) {
+    for (const candidateId of [conn.requester_id, conn.recipient_id]) {
       if (candidateId !== userId && !connectedIds.has(candidateId)) {
         // Find which of user's connections links to this candidate
-        const mutualId = connectedIds.has(conn.user_id) ? conn.user_id : conn.connected_user_id;
+        const mutualId = connectedIds.has(conn.requester_id) ? conn.requester_id : conn.recipient_id;
         const existing = candidateMutuals.get(candidateId) || [];
         if (!existing.includes(mutualId)) {
           existing.push(mutualId);
@@ -193,25 +193,25 @@ async function getCommunityCluster(userId: string): Promise<CommunityCluster[]> 
   // For now, derive clusters from shared spaces
   const { data: memberships } = await supabase
     .from('collaboration_memberships')
-    .select(`
-      space_id,
-      collaboration_spaces (
-        id, title, description, focus_area
-      )
-    `)
+    .select('space_id')
     .eq('user_id', userId)
     .eq('status', 'active');
 
   if (!memberships || memberships.length === 0) return [];
 
-  return memberships
-    .filter(m => m.collaboration_spaces)
-    .map(m => {
-      const space = m.collaboration_spaces as Record<string, unknown>;
+  const spaceIds = memberships.map(m => m.space_id);
+  const { data: spaces } = await supabase
+    .from('collaboration_spaces')
+    .select('id, title, description')
+    .in('id', spaceIds);
+
+  if (!spaces || spaces.length === 0) return [];
+
+  return spaces.map(space => {
       return {
-        cluster_id: space.id as string,
-        name: (space.title as string) || 'Unnamed Cluster',
-        description: (space.description as string) || '',
+        cluster_id: space.id,
+        name: space.title || 'Unnamed Cluster',
+        description: space.description || '',
         member_count: 0,
         primary_skills: [],
         primary_regions: [],

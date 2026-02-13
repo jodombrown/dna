@@ -11,14 +11,14 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import type {
-  SpaceMatchResult,
+import {
   SpaceMatchType,
-  SpaceMatchSignals,
-  MatchReason,
   MatchSurface,
   MatchPriority,
-  MatchStatus,
+  type SpaceMatchResult,
+  type SpaceMatchSignals,
+  type MatchReason,
+  type MatchStatus,
 } from '@/types/diaEngine';
 
 /** Weights for space match signals */
@@ -310,13 +310,13 @@ function determinePriority(score: number): MatchPriority {
 async function fetchUserConnectionIds(userId: string): Promise<Set<string>> {
   const { data } = await supabase
     .from('connections')
-    .select('user_id, connected_user_id')
-    .or(`user_id.eq.${userId},connected_user_id.eq.${userId}`)
+    .select('requester_id, recipient_id')
+    .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`)
     .limit(500);
 
   const ids = new Set<string>();
   for (const conn of data || []) {
-    ids.add(conn.user_id === userId ? conn.connected_user_id : conn.user_id);
+    ids.add(conn.requester_id === userId ? conn.recipient_id : conn.requester_id);
   }
   return ids;
 }

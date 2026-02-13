@@ -238,13 +238,13 @@ async function processQuery(
  * Create a new DIA chat conversation.
  */
 async function createConversation(userId: string): Promise<string> {
-  const { data } = await supabase
-    .from('dia_conversations' as string)
+  const { data } = await (supabase as any)
+    .from('dia_conversations')
     .insert({ user_id: userId })
     .select('id')
     .single();
 
-  return (data as Record<string, unknown>)?.id as string || crypto.randomUUID();
+  return (data as any)?.id as string || crypto.randomUUID();
 }
 
 /**
@@ -254,8 +254,8 @@ async function getConversationHistory(
   conversationId: string,
   limit = 50,
 ): Promise<DIAChatMessage[]> {
-  const { data } = await supabase
-    .from('dia_messages' as string)
+  const { data } = await (supabase as any)
+    .from('dia_messages')
     .select('*')
     .eq('conversation_id', conversationId)
     .order('created_at', { ascending: true })
@@ -481,7 +481,7 @@ async function handleNetworkInsights(
   // Get trending topics from user's network
   const { data: recentPosts } = await supabase
     .from('posts')
-    .select('content, like_count, comment_count')
+    .select('content')
     .order('created_at', { ascending: false })
     .limit(50);
 
@@ -531,7 +531,7 @@ async function handlePersonalAnalytics(
   const connectionCount = await supabase
     .from('connections')
     .select('*', { count: 'exact', head: true })
-    .or(`user_id.eq.${context.userId},connected_user_id.eq.${context.userId}`);
+    .or(`requester_id.eq.${context.userId},recipient_id.eq.${context.userId}`);
 
   const lines = [
     'Here\'s your Five C\'s activity snapshot:',
@@ -768,7 +768,7 @@ async function storeMessages(
   diaResponse: DIAChatMessage,
 ): Promise<void> {
   // Store user message
-  await supabase.from('dia_messages').insert({
+  await (supabase as any).from('dia_messages').insert({
     conversation_id: conversationId,
     role: 'user',
     content: userText,
@@ -776,7 +776,7 @@ async function storeMessages(
   });
 
   // Store DIA response
-  await supabase.from('dia_messages').insert({
+  await (supabase as any).from('dia_messages').insert({
     conversation_id: conversationId,
     role: 'dia',
     content: diaResponse.content,
@@ -790,24 +790,24 @@ async function computeNetworkStats(userId: string): Promise<NetworkStats> {
   const { count: connectionCount } = await supabase
     .from('connections')
     .select('*', { count: 'exact', head: true })
-    .or(`user_id.eq.${userId},connected_user_id.eq.${userId}`);
+    .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`);
 
-  // Count strong connections (relationship_strength > 0.7)
+  // Count strong connections — approximate from connections with status accepted
   const { count: strongCount } = await supabase
-    .from('network_edges')
+    .from('connections')
     .select('*', { count: 'exact', head: true })
-    .eq('user_id', userId)
-    .gt('relationship_strength', 0.7);
+    .eq('status', 'accepted')
+    .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`);
 
   // Count unique regions/countries from connected users
   const { data: connections } = await supabase
     .from('connections')
-    .select('user_id, connected_user_id')
-    .or(`user_id.eq.${userId},connected_user_id.eq.${userId}`)
+    .select('requester_id, recipient_id')
+    .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`)
     .limit(200);
 
   const connectedIds = (connections || []).map(c =>
-    c.user_id === userId ? c.connected_user_id : c.user_id,
+    c.requester_id === userId ? c.recipient_id : c.requester_id,
   );
 
   let countryCount = 0;
