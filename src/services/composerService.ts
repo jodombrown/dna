@@ -107,7 +107,7 @@ export const composerService = {
     const userId = (await supabase.auth.getUser()).data.user?.id;
     if (!userId) return;
 
-    const { error } = await supabase.from('composer_drafts' as string).upsert(
+    const { error } = await (supabase as any).from('composer_drafts').upsert(
       {
         user_id: userId,
         mode,
@@ -129,8 +129,8 @@ export const composerService = {
     baseFields: ComposerBaseFields;
     modeFields: Record<string, unknown>;
   } | null> {
-    const { data, error } = await supabase
-      .from('composer_drafts' as string)
+    const { data, error } = await (supabase as any)
+      .from('composer_drafts')
       .select('base_fields, mode_fields')
       .eq('mode', mode)
       .single();
@@ -145,8 +145,8 @@ export const composerService = {
   },
 
   async deleteDraft(mode: ComposerMode): Promise<void> {
-    await supabase
-      .from('composer_drafts' as string)
+    await (supabase as any)
+      .from('composer_drafts')
       .delete()
       .eq('mode', mode);
   },
@@ -156,8 +156,8 @@ export const composerService = {
   // ============================================
 
   async createAttribution(attribution: AttributionInsert): Promise<void> {
-    const { error } = await supabase
-      .from('content_attribution' as string)
+    const { error } = await (supabase as any)
+      .from('content_attribution')
       .insert({
         content_type: attribution.content_type,
         content_id: attribution.content_id,
@@ -233,7 +233,7 @@ export const composerService = {
     base: ComposerBaseFields,
     fields: PostModeFields
   ): Promise<string> {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('posts')
       .insert({
         content: base.body,
@@ -253,7 +253,7 @@ export const composerService = {
     base: ComposerBaseFields,
     fields: StoryModeFields
   ): Promise<string> {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('posts')
       .insert({
         content: base.body,
@@ -325,7 +325,7 @@ export const composerService = {
     base: ComposerBaseFields,
     fields: SpaceModeFields
   ): Promise<string> {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('collaboration_spaces')
       .insert({
         title: fields.name,
@@ -352,8 +352,8 @@ export const composerService = {
   ): Promise<string> {
     const userId = (await supabase.auth.getUser()).data.user?.id;
 
-    const { data, error } = await supabase
-      .from('opportunities' as string)
+    const { data, error } = await (supabase as any)
+      .from('opportunities')
       .insert({
         created_by: userId,
         title: fields.title,
@@ -378,7 +378,6 @@ export const composerService = {
       .single();
 
     if (error || !data) throw error || new Error('Failed to create opportunity');
-    const record = data as Record<string, string>;
-    return record.id;
+    return (data as any).id;
   },
 };

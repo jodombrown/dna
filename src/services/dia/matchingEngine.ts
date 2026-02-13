@@ -60,7 +60,7 @@ async function matchOpportunitiesToProfile(
 
   const { data: opportunities } = await supabase
     .from('contribution_needs')
-    .select('id, title, description, skills_needed, need_type, location')
+    .select('id, title, description, type, region')
     .eq('status', 'open')
     .limit(100);
 
@@ -74,51 +74,40 @@ async function matchOpportunitiesToProfile(
       const factors: MatchFactor[] = [];
       let totalScore = 0;
 
-      // Skill match (weight: 0.40)
-      const oppSkills = (opp.skills_needed as string[] | null) || [];
-      const skillMatches = oppSkills.filter(s => userSkills.has(s.toLowerCase()));
-      const skillScore = oppSkills.length > 0 ? (skillMatches.length / oppSkills.length) * 100 : 0;
-      factors.push({
-        factor: 'skills',
-        weight: 0.40,
-        score: skillScore,
-        detail: skillMatches.length > 0 ? `Matches: ${skillMatches.join(', ')}` : 'No skill overlap',
-      });
-      totalScore += skillScore * 0.40;
-
-      // Interest alignment (weight: 0.25)
+      // Interest alignment from description (weight: 0.50)
       const description = (opp.description || '').toLowerCase();
       const interestMatches = Array.from(userInterests).filter(i => description.includes(i));
-      const interestScore = Math.min(100, interestMatches.length * 30);
+      const skillMatches = Array.from(userSkills).filter(s => description.includes(s));
+      const relevanceScore = Math.min(100, (interestMatches.length * 25) + (skillMatches.length * 20));
       factors.push({
-        factor: 'interests',
-        weight: 0.25,
-        score: interestScore,
-        detail: interestMatches.length > 0 ? `Aligned: ${interestMatches.join(', ')}` : 'No interest alignment',
+        factor: 'relevance',
+        weight: 0.50,
+        score: relevanceScore,
+        detail: [...interestMatches, ...skillMatches].slice(0, 3).join(', ') || 'General match',
       });
-      totalScore += interestScore * 0.25;
+      totalScore += relevanceScore * 0.50;
 
-      // Location proximity (weight: 0.20)
-      const locationScore = opp.location && profile.location &&
-        opp.location.toLowerCase().includes(profile.location.toLowerCase().split(',')[0])
+      // Region proximity (weight: 0.30)
+      const locationScore = opp.region && profile.location &&
+        (opp.region.toLowerCase().includes(profile.location.toLowerCase().split(',')[0]))
         ? 80 : 20;
       factors.push({
         factor: 'location',
-        weight: 0.20,
+        weight: 0.30,
         score: locationScore,
-        detail: locationScore > 50 ? 'Location match' : 'Different location',
+        detail: locationScore > 50 ? 'Region match' : 'Different region',
       });
-      totalScore += locationScore * 0.20;
+      totalScore += locationScore * 0.30;
 
-      // Type alignment (weight: 0.15)
+      // Type alignment (weight: 0.20)
       const typeScore = 50; // Baseline
       factors.push({
         factor: 'type_alignment',
-        weight: 0.15,
+        weight: 0.20,
         score: typeScore,
-        detail: `${opp.need_type || 'general'} opportunity`,
+        detail: `${opp.type || 'general'} opportunity`,
       });
-      totalScore += typeScore * 0.15;
+      totalScore += typeScore * 0.20;
 
       return {
         entity_id: opp.id,
@@ -150,9 +139,9 @@ async function matchEventsToInterests(userId: string, limit: number): Promise<Ma
 
   const { data: events } = await supabase
     .from('events')
-    .select('id, title, description, category, location, start_date')
-    .gte('start_date', new Date().toISOString())
-    .order('start_date', { ascending: true })
+    .select('id, title, description, tags, location_name, start_time')
+    .gte('start_time', new Date().toISOString())
+    .order('start_time', { ascending: true })
     .limit(50);
 
   if (!events) return [];
@@ -165,8 +154,8 @@ async function matchEventsToInterests(userId: string, limit: number): Promise<Ma
       const factors: MatchFactor[] = [];
       let totalScore = 0;
 
-      // Category / interest match
-      const desc = `${event.title} ${event.description || ''} ${event.category || ''}`.toLowerCase();
+      // Topic / interest match
+      const desc = `${event.title} ${event.description || ''} ${((event.tags || []) as string[]).join(' ')}`.toLowerCase();
       const interestHits = Array.from(userInterests).filter(i => desc.includes(i));
       const skillHits = Array.from(userSkills).filter(s => desc.includes(s));
       const relevanceScore = Math.min(100, (interestHits.length * 25) + (skillHits.length * 20));
@@ -180,8 +169,8 @@ async function matchEventsToInterests(userId: string, limit: number): Promise<Ma
       totalScore += relevanceScore * 0.60;
 
       // Location proximity
-      const locScore = event.location && profile.location &&
-        event.location.toLowerCase().includes(profile.location.toLowerCase().split(',')[0])
+      const locScore = event.location_name && profile.location &&
+        (event.location_name as string).toLowerCase().includes(profile.location.toLowerCase().split(',')[0])
         ? 80 : 30;
       factors.push({ factor: 'location', weight: 0.25, score: locScore, detail: '' });
       totalScore += locScore * 0.25;
@@ -225,7 +214,7 @@ async function matchSpacesToSkills(userId: string, limit: number): Promise<Match
 
   const { data: spaces } = await supabase
     .from('collaboration_spaces')
-    .select('id, title, description, focus_area, visibility')
+    .select('id, title, description, visibility')
     .eq('visibility', 'public')
     .limit(50);
 
@@ -236,7 +225,7 @@ async function matchSpacesToSkills(userId: string, limit: number): Promise<Match
   return spaces
     .filter(s => !mySpaceIds.has(s.id))
     .map(space => {
-      const desc = `${space.title} ${space.description || ''} ${space.focus_area || ''}`.toLowerCase();
+      const desc = `${space.title} ${space.description || ''}`.toLowerCase();
       const skillHits = Array.from(userSkills).filter(s => desc.includes(s));
       const score = Math.min(100, skillHits.length * 25 + 20);
 
