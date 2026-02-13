@@ -14,6 +14,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+const db = supabase as any;
 import type {
   NotificationV2,
   NotificationCategory,
@@ -181,13 +182,13 @@ function isQuietHours(prefs: NotificationPreferencesV2): boolean {
 // --- Digest section generators ---
 
 async function getConnectDigest(userId: string, since: string): Promise<DigestSection> {
-  const { count: newConnections } = await supabase
+  const { count: newConnections } = await db
     .from('connections')
     .select('*', { count: 'exact', head: true })
-    .or(`user_id.eq.${userId},connected_user_id.eq.${userId}`)
+    .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`)
     .gte('created_at', since);
 
-  const { count: profileViews } = await supabase
+  const { count: profileViews } = await db
     .from('notifications')
     .select('*', { count: 'exact', head: true })
     .eq('user_id', userId)
@@ -207,7 +208,7 @@ async function getConnectDigest(userId: string, since: string): Promise<DigestSe
 }
 
 async function getConveneDigest(userId: string, since: string): Promise<DigestSection> {
-  const { count: eventRegistrations } = await supabase
+  const { count: eventRegistrations } = await db
     .from('event_registrations')
     .select('*', { count: 'exact', head: true })
     .eq('user_id', userId)
@@ -221,7 +222,7 @@ async function getConveneDigest(userId: string, since: string): Promise<DigestSe
 }
 
 async function getCollaborateDigest(userId: string, since: string): Promise<DigestSection> {
-  const { count: taskUpdates } = await supabase
+  const { count: taskUpdates } = await db
     .from('collaborate_tasks')
     .select('*', { count: 'exact', head: true })
     .eq('assigned_to', userId)
@@ -235,7 +236,7 @@ async function getCollaborateDigest(userId: string, since: string): Promise<Dige
 }
 
 async function getContributeDigest(userId: string, since: string): Promise<DigestSection> {
-  const { count: opportunityActivity } = await supabase
+  const { count: opportunityActivity } = await db
     .from('notifications')
     .select('*', { count: 'exact', head: true })
     .eq('user_id', userId)
@@ -250,14 +251,14 @@ async function getContributeDigest(userId: string, since: string): Promise<Diges
 }
 
 async function getConveyDigest(userId: string, since: string): Promise<DigestSection> {
-  const { data: posts } = await supabase
+  const { data: posts } = await db
     .from('posts')
-    .select('like_count, comment_count, share_count')
+    .select('view_count')
     .eq('author_id', userId)
     .gte('created_at', since);
 
   const totalEngagement = (posts || []).reduce(
-    (sum, p) => sum + (p.like_count || 0) + (p.comment_count || 0) + (p.share_count || 0),
+    (sum: number, p: any) => sum + (p.view_count || 0),
     0,
   );
 
