@@ -10384,10 +10384,9 @@ export type Database = {
           shared_sectors: string[]
         }[]
       }
-      rpc_check_in_by_token: {
-        Args: { p_event: string; p_token: string }
-        Returns: Json
-      }
+      rpc_check_in_by_token:
+        | { Args: { p_event: string; p_token: string }; Returns: Json }
+        | { Args: { p_token: string }; Returns: Json }
       rpc_create_post:
         | {
             Args: {
