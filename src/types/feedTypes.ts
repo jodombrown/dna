@@ -31,8 +31,9 @@ import {
   type CrossReference,
 } from './composer';
 
-// Re-export commonly used enums for convenience
+// Re-export commonly used enums/types for convenience
 export { CModule, UserTier };
+export type { CrossReference };
 
 // ============================================================
 // FEED CONFIGURATION

@@ -13,6 +13,9 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+
+// Cast to bypass strict typing for messaging tables not yet in generated schema
+const db = supabase as any;
 import { logger } from '@/lib/logger';
 import type {
   Conversation,
@@ -134,7 +137,7 @@ export const messagingPrdService = {
     userId: string,
     recipientId: string
   ): Promise<Conversation> {
-    const { data, error } = await supabase.rpc('create_direct_messaging_conversation', {
+    const { data, error } = await db.rpc('create_direct_messaging_conversation', {
       p_user_id: userId,
       p_recipient_id: recipientId,
     });
@@ -161,7 +164,7 @@ export const messagingPrdService = {
       imageUrl?: string;
     }
   ): Promise<Conversation> {
-    const { data, error } = await supabase.rpc('create_group_messaging_conversation', {
+    const { data, error } = await db.rpc('create_group_messaging_conversation', {
       p_creator_id: userId,
       p_title: params.title,
       p_participant_ids: params.participantIds,
@@ -185,7 +188,7 @@ export const messagingPrdService = {
     organizerId: string,
     eventTitle: string
   ): Promise<Conversation> {
-    const { data, error } = await supabase.rpc('create_event_messaging_thread', {
+    const { data, error } = await db.rpc('create_event_messaging_thread', {
       p_event_id: eventId,
       p_organizer_id: organizerId,
       p_title: `${eventTitle} Discussion`,
@@ -208,7 +211,7 @@ export const messagingPrdService = {
     creatorId: string,
     channelName: string = 'General'
   ): Promise<Conversation> {
-    const { data, error } = await supabase.rpc('create_space_messaging_channel', {
+    const { data, error } = await db.rpc('create_space_messaging_channel', {
       p_space_id: spaceId,
       p_creator_id: creatorId,
       p_channel_name: channelName,
@@ -232,7 +235,7 @@ export const messagingPrdService = {
     interestedUserId: string,
     opportunityTitle: string
   ): Promise<Conversation> {
-    const { data, error } = await supabase.rpc('create_opportunity_messaging_thread', {
+    const { data, error } = await db.rpc('create_opportunity_messaging_thread', {
       p_opportunity_id: opportunityId,
       p_poster_id: posterId,
       p_interested_user_id: interestedUserId,
@@ -260,7 +263,7 @@ export const messagingPrdService = {
    * Fetch a single conversation by ID.
    */
   async getConversation(conversationId: string): Promise<Conversation> {
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from('messaging_conversations')
       .select('*')
       .eq('id', conversationId)
@@ -288,7 +291,7 @@ export const messagingPrdService = {
     params: SendMessageParams
   ): Promise<Message> {
     // Get sender profile
-    const { data: profile } = await supabase
+    const { data: profile } = await db
       .from('profiles')
       .select('full_name, avatar_url')
       .eq('id', senderId)
@@ -300,7 +303,7 @@ export const messagingPrdService = {
     // If reply, fetch preview
     let replyToPreview: string | null = null;
     if (params.replyToMessageId) {
-      const { data: original } = await supabase
+      const { data: original } = await db
         .from('messaging_messages')
         .select('content')
         .eq('id', params.replyToMessageId)
@@ -309,7 +312,7 @@ export const messagingPrdService = {
     }
 
     // Insert message
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from('messaging_messages')
       .insert({
         conversation_id: conversationId,
@@ -340,7 +343,7 @@ export const messagingPrdService = {
     const sentMessage = mapMessageRow(data as Record<string, unknown>);
 
     // Update conversation metadata
-    await supabase
+    await db
       .from('messaging_conversations')
       .update({
         last_message_at: sentMessage.createdAt.toISOString(),
@@ -354,7 +357,7 @@ export const messagingPrdService = {
 
     // Broadcast via real-time
     try {
-      await supabase
+      await db
         .channel(`messaging:${conversationId}`)
         .send({
           type: 'broadcast',
@@ -366,7 +369,7 @@ export const messagingPrdService = {
     }
 
     // Increment unread for other participants
-    const { data: otherParticipants } = await supabase
+    const { data: otherParticipants } = await db
       .from('messaging_participants')
       .select('user_id, unread_count, mute_until')
       .eq('conversation_id', conversationId)
@@ -374,7 +377,7 @@ export const messagingPrdService = {
 
     if (otherParticipants) {
       for (const p of otherParticipants) {
-        await supabase
+        await db
           .from('messaging_participants')
           .update({ unread_count: (p.unread_count || 0) + 1 })
           .eq('conversation_id', conversationId)
@@ -401,7 +404,7 @@ export const messagingPrdService = {
       senderId?: string;
     }
   ): Promise<void> {
-    const { error } = await supabase
+    const { error } = await db
       .from('messaging_messages')
       .insert({
         conversation_id: conversationId,
@@ -440,7 +443,7 @@ export const messagingPrdService = {
     }
 
     // Fetch current reactions
-    const { data: msg } = await supabase
+    const { data: msg } = await db
       .from('messaging_messages')
       .select('reactions, conversation_id')
       .eq('id', messageId)
@@ -460,14 +463,14 @@ export const messagingPrdService = {
       reactions.push({ emoji, userIds: [userId], count: 1 });
     }
 
-    await supabase
+    await db
       .from('messaging_messages')
       .update({ reactions: reactions as unknown as Record<string, unknown>[] })
       .eq('id', messageId);
 
     // Broadcast reaction
     try {
-      await supabase
+      await db
         .channel(`messaging:${msg.conversation_id}`)
         .send({
           type: 'broadcast',
@@ -487,7 +490,7 @@ export const messagingPrdService = {
     userId: string,
     emoji: string
   ): Promise<void> {
-    const { data: msg } = await supabase
+    const { data: msg } = await db
       .from('messaging_messages')
       .select('reactions')
       .eq('id', messageId)
@@ -506,7 +509,7 @@ export const messagingPrdService = {
     // Remove empty reactions
     const filtered = reactions.filter((r) => r.count > 0);
 
-    await supabase
+    await db
       .from('messaging_messages')
       .update({ reactions: filtered as unknown as Record<string, unknown>[] })
       .eq('id', messageId);
@@ -524,7 +527,7 @@ export const messagingPrdService = {
     userId: string,
     lastReadMessageId: string
   ): Promise<void> {
-    await supabase
+    await db
       .from('messaging_participants')
       .update({
         last_read_at: new Date().toISOString(),
@@ -536,7 +539,7 @@ export const messagingPrdService = {
 
     // Broadcast read receipt
     try {
-      await supabase
+      await db
         .channel(`messaging:${conversationId}`)
         .send({
           type: 'broadcast',
@@ -562,7 +565,7 @@ export const messagingPrdService = {
     isTyping: boolean
   ): Promise<void> {
     try {
-      await supabase
+      await db
         .channel(`messaging:${conversationId}`)
         .send({
           type: 'broadcast',
@@ -587,7 +590,7 @@ export const messagingPrdService = {
     userId: string
   ): Promise<void> {
     // Check permission
-    const { data: participant } = await supabase
+    const { data: participant } = await db
       .from('messaging_participants')
       .select('role')
       .eq('conversation_id', conversationId)
@@ -598,7 +601,7 @@ export const messagingPrdService = {
       throw new Error('Only admins can pin messages');
     }
 
-    await supabase
+    await db
       .from('messaging_messages')
       .update({ is_pinned: true })
       .eq('id', messageId)
@@ -606,13 +609,13 @@ export const messagingPrdService = {
 
     // Update pinned count
     const conversation = await this.getConversation(conversationId);
-    await supabase
+    await db
       .from('messaging_conversations')
       .update({ pinned_message_count: conversation.pinnedMessageCount + 1 })
       .eq('id', conversationId);
 
     // Send system message
-    const { data: profile } = await supabase
+    const { data: profile } = await db
       .from('profiles')
       .select('full_name')
       .eq('id', userId)
@@ -633,7 +636,7 @@ export const messagingPrdService = {
     messageId: string,
     userId: string
   ): Promise<void> {
-    const { data: participant } = await supabase
+    const { data: participant } = await db
       .from('messaging_participants')
       .select('role')
       .eq('conversation_id', conversationId)
@@ -644,14 +647,14 @@ export const messagingPrdService = {
       throw new Error('Only admins can unpin messages');
     }
 
-    await supabase
+    await db
       .from('messaging_messages')
       .update({ is_pinned: false })
       .eq('id', messageId)
       .eq('conversation_id', conversationId);
 
     const conversation = await this.getConversation(conversationId);
-    await supabase
+    await db
       .from('messaging_conversations')
       .update({
         pinned_message_count: Math.max(0, conversation.pinnedMessageCount - 1),
@@ -671,7 +674,7 @@ export const messagingPrdService = {
     userId: string,
     role: ParticipantRole = PartRole.MEMBER
   ): Promise<void> {
-    const { error } = await supabase
+    const { error } = await db
       .from('messaging_participants')
       .insert({
         conversation_id: conversationId,
@@ -686,7 +689,7 @@ export const messagingPrdService = {
 
     // Update participant count
     const conversation = await this.getConversation(conversationId);
-    await supabase
+    await db
       .from('messaging_conversations')
       .update({ participant_count: conversation.participantCount + 1 })
       .eq('id', conversationId);
@@ -699,7 +702,7 @@ export const messagingPrdService = {
     conversationId: string,
     userId: string
   ): Promise<void> {
-    const { error } = await supabase
+    const { error } = await db
       .from('messaging_participants')
       .delete()
       .eq('conversation_id', conversationId)
@@ -711,7 +714,7 @@ export const messagingPrdService = {
     }
 
     const conversation = await this.getConversation(conversationId);
-    await supabase
+    await db
       .from('messaging_conversations')
       .update({ participant_count: Math.max(0, conversation.participantCount - 1) })
       .eq('id', conversationId);
@@ -725,7 +728,7 @@ export const messagingPrdService = {
     userId: string,
     newRole: ParticipantRole
   ): Promise<void> {
-    const { error } = await supabase
+    const { error } = await db
       .from('messaging_participants')
       .update({ role: newRole })
       .eq('conversation_id', conversationId)
@@ -744,7 +747,7 @@ export const messagingPrdService = {
     conversationId: string,
     userId: string
   ): Promise<ConversationParticipant | null> {
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from('messaging_participants')
       .select('*')
       .eq('conversation_id', conversationId)
@@ -761,7 +764,7 @@ export const messagingPrdService = {
   async getParticipants(
     conversationId: string
   ): Promise<ConversationParticipant[]> {
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from('messaging_participants')
       .select('*')
       .eq('conversation_id', conversationId);
@@ -771,7 +774,7 @@ export const messagingPrdService = {
       return [];
     }
 
-    return (data || []).map((row) => mapParticipantRow(row as Record<string, unknown>));
+    return (data || []).map((row: any) => mapParticipantRow(row as Record<string, unknown>));
   },
 
   // ============================================
@@ -788,7 +791,7 @@ export const messagingPrdService = {
     limit: number = 20
   ): Promise<{ conversations: ConversationPreview[]; hasMore: boolean }> {
     // Get user's conversations via participant records
-    let query = supabase
+    let query = db
       .from('messaging_participants')
       .select('*, conversation:messaging_conversations(*)')
       .eq('user_id', userId)
@@ -825,7 +828,7 @@ export const messagingPrdService = {
       const participant = mapParticipantRow(item as Record<string, unknown>);
 
       // Get other participants preview
-      const { data: otherParts } = await supabase
+      const { data: otherParts } = await db
         .from('messaging_participants')
         .select('user_id, role')
         .eq('conversation_id', conversation.id)
@@ -836,18 +839,18 @@ export const messagingPrdService = {
       let directRecipient: DirectRecipientInfo | null = null;
 
       if (otherParts && otherParts.length > 0) {
-        const otherUserIds = otherParts.map((p) => p.user_id);
-        const { data: profiles } = await supabase
+        const otherUserIds = otherParts.map((p: any) => p.user_id);
+        const { data: profiles } = await db
           .from('profiles')
           .select('id, full_name, avatar_url, headline')
           .in('id', otherUserIds);
 
         const profileMap = new Map(
-          (profiles || []).map((p) => [p.id, p])
+          (profiles || []).map((p: any) => [p.id, p])
         );
 
         for (const part of otherParts) {
-          const prof = profileMap.get(part.user_id);
+          const prof = profileMap.get(part.user_id) as any;
           otherParticipants.push({
             userId: part.user_id,
             displayName: prof?.full_name || 'Unknown',
@@ -858,7 +861,7 @@ export const messagingPrdService = {
 
         // For direct messages, set the direct recipient
         if (conversation.type === ConvType.DIRECT && otherParts.length === 1) {
-          const recipientProfile = profileMap.get(otherParts[0].user_id);
+          const recipientProfile = profileMap.get(otherParts[0].user_id) as any;
           if (recipientProfile) {
             directRecipient = {
               userId: recipientProfile.id,
@@ -899,7 +902,7 @@ export const messagingPrdService = {
     cursor: string | null,
     limit: number = 30
   ): Promise<{ messages: Message[]; hasMore: boolean }> {
-    let query = supabase
+    let query = db
       .from('messaging_messages')
       .select('*')
       .eq('conversation_id', conversationId)
@@ -920,7 +923,7 @@ export const messagingPrdService = {
     const messages = (data || [])
       .slice(0, limit)
       .reverse()
-      .map((row) => mapMessageRow(row as Record<string, unknown>));
+      .map((row: any) => mapMessageRow(row as Record<string, unknown>));
 
     return { messages, hasMore };
   },
@@ -929,7 +932,7 @@ export const messagingPrdService = {
    * Get pinned messages for a conversation.
    */
   async getPinnedMessages(conversationId: string): Promise<Message[]> {
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from('messaging_messages')
       .select('*')
       .eq('conversation_id', conversationId)
@@ -941,7 +944,7 @@ export const messagingPrdService = {
       return [];
     }
 
-    return (data || []).map((row) => mapMessageRow(row as Record<string, unknown>));
+    return (data || []).map((row: any) => mapMessageRow(row as Record<string, unknown>));
   },
 
   /**
@@ -961,7 +964,7 @@ export const messagingPrdService = {
     createdAt: Date;
     rank: number;
   }>> {
-    const { data, error } = await supabase.rpc('search_messaging_messages', {
+    const { data, error } = await db.rpc('search_messaging_messages', {
       p_user_id: userId,
       p_query: query,
       p_conversation_id: conversationId || null,
@@ -992,7 +995,7 @@ export const messagingPrdService = {
    * Archive a conversation for the current user.
    */
   async archiveConversation(conversationId: string): Promise<void> {
-    await supabase
+    await db
       .from('messaging_conversations')
       .update({ is_archived: true })
       .eq('id', conversationId);
@@ -1002,7 +1005,7 @@ export const messagingPrdService = {
    * Unarchive a conversation.
    */
   async unarchiveConversation(conversationId: string): Promise<void> {
-    await supabase
+    await db
       .from('messaging_conversations')
       .update({ is_archived: false })
       .eq('id', conversationId);
@@ -1034,7 +1037,7 @@ export const messagingPrdService = {
         break;
     }
 
-    await supabase
+    await db
       .from('messaging_participants')
       .update({ mute_until: muteUntil })
       .eq('conversation_id', conversationId)
@@ -1048,7 +1051,7 @@ export const messagingPrdService = {
     conversationId: string,
     userId: string
   ): Promise<void> {
-    await supabase
+    await db
       .from('messaging_participants')
       .update({ mute_until: null })
       .eq('conversation_id', conversationId)
@@ -1063,7 +1066,7 @@ export const messagingPrdService = {
     userId: string,
     newContent: string
   ): Promise<void> {
-    const { error } = await supabase
+    const { error } = await db
       .from('messaging_messages')
       .update({
         content: newContent,
@@ -1087,7 +1090,7 @@ export const messagingPrdService = {
     messageId: string,
     userId: string
   ): Promise<void> {
-    const { error } = await supabase
+    const { error } = await db
       .from('messaging_messages')
       .update({
         content: '[Message deleted]',
@@ -1116,24 +1119,24 @@ export const messagingPrdService = {
     conversationId: string,
     callbacks: ConversationSubscriptionCallbacks
   ): () => void {
-    const channel = supabase
+    const channel = db
       .channel(`messaging:${conversationId}`)
-      .on('broadcast', { event: 'new_message' }, (payload) => {
+      .on('broadcast', { event: 'new_message' }, (payload: any) => {
         callbacks.onMessage(payload.payload as Message);
       })
-      .on('broadcast', { event: 'typing' }, (payload) => {
+      .on('broadcast', { event: 'typing' }, (payload: any) => {
         callbacks.onTyping(payload.payload as TypingIndicator);
       })
-      .on('broadcast', { event: 'read_receipt' }, (payload) => {
+      .on('broadcast', { event: 'read_receipt' }, (payload: any) => {
         callbacks.onReadReceipt(payload.payload as { userId: string; lastReadMessageId: string });
       })
-      .on('broadcast', { event: 'reaction_added' }, (payload) => {
+      .on('broadcast', { event: 'reaction_added' }, (payload: any) => {
         callbacks.onReaction(payload.payload as { messageId: string; userId: string; emoji: string });
       })
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      db.removeChannel(channel);
     };
   },
 
@@ -1145,15 +1148,15 @@ export const messagingPrdService = {
     userId: string,
     callback: (update: { conversationId: string; lastMessage: Partial<Message> }) => void
   ): () => void {
-    const channel = supabase
+    const channel = db
       .channel(`user_messaging:${userId}`)
-      .on('broadcast', { event: 'conversation_update' }, (payload) => {
+      .on('broadcast', { event: 'conversation_update' }, (payload: any) => {
         callback(payload.payload as { conversationId: string; lastMessage: Partial<Message> });
       })
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      db.removeChannel(channel);
     };
   },
 
@@ -1179,7 +1182,7 @@ export const messagingPrdService = {
       if (!other) return;
 
       try {
-        await supabase.rpc('update_messaging_metadata', {
+        await db.rpc('update_messaging_metadata', {
           p_user_a: senderId,
           p_user_b: other.userId,
           p_timestamp: new Date().toISOString(),
@@ -1192,7 +1195,7 @@ export const messagingPrdService = {
     // For Space channels: update collaboration signals
     if (conversation.type === ConvType.SPACE_CHANNEL && conversation.contextId) {
       try {
-        await supabase.rpc('update_space_activity', {
+        await db.rpc('update_space_activity', {
           p_space_id: conversation.contextId,
           p_user_id: senderId,
           p_activity_type: 'channel_message',
@@ -1205,7 +1208,7 @@ export const messagingPrdService = {
 
     // Update per-user messaging metadata
     const now = new Date().toISOString();
-    const { data: existing } = await supabase
+    const { data: existing } = await db
       .from('messaging_metadata')
       .select('id, message_count')
       .eq('conversation_id', conversationId)
@@ -1213,7 +1216,7 @@ export const messagingPrdService = {
       .maybeSingle();
 
     if (existing) {
-      await supabase
+      await db
         .from('messaging_metadata')
         .update({
           message_count: (existing.message_count || 0) + 1,
@@ -1222,7 +1225,7 @@ export const messagingPrdService = {
         })
         .eq('id', existing.id);
     } else {
-      await supabase
+      await db
         .from('messaging_metadata')
         .insert({
           conversation_id: conversationId,
@@ -1242,14 +1245,14 @@ export const messagingPrdService = {
    * Get total unread message count across all conversations.
    */
   async getTotalUnreadCount(userId: string): Promise<number> {
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from('messaging_participants')
       .select('unread_count')
       .eq('user_id', userId)
       .gt('unread_count', 0);
 
     if (error || !data) return 0;
-    return data.reduce((sum, row) => sum + (row.unread_count || 0), 0);
+    return data.reduce((sum: number, row: any) => sum + (row.unread_count || 0), 0);
   },
 
   // ============================================
@@ -1263,7 +1266,7 @@ export const messagingPrdService = {
     contextType: 'event' | 'space' | 'opportunity',
     contextId: string
   ): Promise<Conversation[]> {
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from('messaging_conversations')
       .select('*')
       .eq('context_type', contextType)
@@ -1274,6 +1277,6 @@ export const messagingPrdService = {
       return [];
     }
 
-    return (data || []).map((row) => mapConversationRow(row as Record<string, unknown>));
+    return (data || []).map((row: any) => mapConversationRow(row as Record<string, unknown>));
   },
 };

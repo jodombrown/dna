@@ -6,6 +6,8 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+
+const db = supabase as any;
 import { feedRankingService } from './feedRankingService';
 import { logHighError } from '@/lib/errorLogger';
 import { CModule, UserTier } from '@/types/composer';
@@ -85,11 +87,11 @@ export const feedService = {
   async getFeed(request: FeedRequest): Promise<FeedPage> {
     try {
       // 1. Build base query
-      let query = supabase
-        .from('feed_items' as string)
+      let query = db
+        .from('feed_items')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(request.pageSize * 3); // Fetch extra for ranking/diversity
+        .limit(request.pageSize * 3);
 
       // 2. Apply feed type filter
       if (request.feedType !== 'universal') {
@@ -191,7 +193,7 @@ export const feedService = {
 
     const fetchPromises = Array.from(groups.entries()).map(async ([contentType, ids]) => {
       const tableName = this.getTableName(contentType);
-      const { data } = await supabase.from(tableName).select('*').in('id', ids);
+      const { data } = await db.from(tableName).select('*').in('id', ids);
 
       if (data) {
         for (const row of data) {
@@ -506,8 +508,8 @@ export const feedService = {
     userTier: string
   ): Promise<DIAInsightFeedContent[]> {
     try {
-      const { data } = await supabase
-        .from('dia_feed_insights' as string)
+      const { data } = await db
+        .from('dia_feed_insights')
         .select('*')
         .eq('user_id', userId)
         .eq('shown', false)
@@ -543,8 +545,8 @@ export const feedService = {
     userId: string
   ): Promise<{ active: boolean }> {
     try {
-      const { data: existing } = await supabase
-        .from('feed_engagement' as string)
+      const { data: existing } = await db
+        .from('feed_engagement')
         .select('id')
         .eq('feed_item_id', feedItemId)
         .eq('user_id', userId)
@@ -553,10 +555,10 @@ export const feedService = {
 
       if (existing) {
         const record = existing as Record<string, string>;
-        await supabase.from('feed_engagement' as string).delete().eq('id', record.id);
+        await db.from('feed_engagement').delete().eq('id', record.id);
         return { active: false };
       } else {
-        await supabase.from('feed_engagement' as string).insert({
+        await db.from('feed_engagement').insert({
           feed_item_id: feedItemId,
           user_id: userId,
           action,
@@ -571,7 +573,7 @@ export const feedService = {
 
   async trackView(feedItemId: string, userId: string): Promise<void> {
     try {
-      await supabase.from('feed_engagement' as string).upsert(
+      await db.from('feed_engagement').upsert(
         {
           feed_item_id: feedItemId,
           user_id: userId,
@@ -589,8 +591,8 @@ export const feedService = {
   // ============================================================
 
   async getUserFeedPreferences(userId: string) {
-    const { data } = await supabase
-      .from('user_feed_preferences' as string)
+    const { data } = await db
+      .from('user_feed_preferences')
       .select('*')
       .eq('user_id', userId)
       .single();
@@ -602,8 +604,8 @@ export const feedService = {
     userId: string,
     updates: Record<string, unknown>
   ) {
-    const { error } = await supabase
-      .from('user_feed_preferences' as string)
+    const { error } = await db
+      .from('user_feed_preferences')
       .upsert({
         user_id: userId,
         ...updates,
