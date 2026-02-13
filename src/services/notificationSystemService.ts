@@ -15,6 +15,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+const db = supabase as any;
 import { logger } from '@/lib/logger';
 import type {
   NotificationRecord,
@@ -485,7 +486,7 @@ export const notificationSystemService = {
       let actorAvatarUrl: string | null = null;
 
       if (params.actorId) {
-        const { data: actorProfile } = await supabase
+        const { data: actorProfile } = await db
           .from('profiles')
           .select('full_name, username, avatar_url')
           .eq('id', params.actorId)
@@ -541,7 +542,7 @@ export const notificationSystemService = {
           : NotificationStatus.QUEUED;
 
       // Step 8: Write to database
-      const { data, error } = await supabase
+      const { data, error } = await db
         .from('notification_records')
         .insert({
           recipient_id: params.recipientId,
@@ -668,7 +669,7 @@ export const notificationSystemService = {
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
 
-    const { count: todayCount } = await supabase
+    const { count: todayCount } = await db
       .from('notification_records')
       .select('*', { count: 'exact', head: true })
       .eq('recipient_id', recipientId)
@@ -683,7 +684,7 @@ export const notificationSystemService = {
     // 3. Check per-type cooldown (most types shouldn't fire more than once per hour)
     if (!suppress && adjustedPriority !== 'critical' && adjustedPriority !== 'urgent') {
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-      const { count: recentSameType } = await supabase
+      const { count: recentSameType } = await db
         .from('notification_records')
         .select('*', { count: 'exact', head: true })
         .eq('recipient_id', recipientId)
@@ -699,11 +700,11 @@ export const notificationSystemService = {
 
     // 4. Compute relevance score (simplified)
     if (actorId) {
-      const { count: mutualConnections } = await supabase
+      const { count: mutualConnections } = await db
         .from('connections')
         .select('*', { count: 'exact', head: true })
-        .or(`user_id.eq.${recipientId},connected_user_id.eq.${recipientId}`)
-        .or(`user_id.eq.${actorId},connected_user_id.eq.${actorId}`);
+        .or(`requester_id.eq.${recipientId},recipient_id.eq.${recipientId}`)
+        .or(`requester_id.eq.${actorId},recipient_id.eq.${actorId}`);
 
       if (mutualConnections && mutualConnections > 5) {
         relevanceScore = Math.min(0.9, 0.5 + mutualConnections * 0.02);
@@ -731,7 +732,7 @@ export const notificationSystemService = {
     actorName: string | null,
     actorAvatarUrl: string | null
   ): Promise<boolean> {
-    const { data: existing } = await supabase
+    const { data: existing } = await db
       .from('notification_records')
       .select('id')
       .eq('recipient_id', params.recipientId)
@@ -749,7 +750,7 @@ export const notificationSystemService = {
     );
 
     // Mark existing as batched
-    await supabase
+    await db
       .from('notification_records')
       .update({ status: 'batched' })
       .in('id', existing.map((n: { id: string }) => n.id));
@@ -757,7 +758,7 @@ export const notificationSystemService = {
     const primaryAction = buildPrimaryAction(params.type, params.targetType, params.targetId);
 
     // Upsert batch record
-    await supabase
+    await db
       .from('notification_batches')
       .upsert({
         recipient_id: params.recipientId,
@@ -812,7 +813,7 @@ export const notificationSystemService = {
       }
     }
 
-    await supabase
+    await db
       .from('notification_records')
       .update({
         status: 'delivered',
@@ -824,7 +825,7 @@ export const notificationSystemService = {
 
   async deliverInApp(notification: NotificationRecord): Promise<void> {
     // Supabase real-time broadcast
-    const channel = supabase.channel(`notifications:${notification.recipientId}`);
+    const channel = db.channel(`notifications:${notification.recipientId}`);
     await channel.send({
       type: 'broadcast',
       event: 'new_notification',
@@ -833,7 +834,7 @@ export const notificationSystemService = {
   },
 
   async deliverPush(notification: NotificationRecord): Promise<void> {
-    const { data: tokens } = await supabase
+    const { data: tokens } = await db
       .from('push_tokens')
       .select('token, platform')
       .eq('user_id', notification.recipientId);
@@ -841,7 +842,7 @@ export const notificationSystemService = {
     if (!tokens || tokens.length === 0) return;
 
     // Send push via edge function
-    await supabase.functions.invoke('send-push-notification', {
+    await db.functions.invoke('send-push-notification', {
       body: {
         action: 'send',
         tokens: tokens.map((t: { token: string; platform: string }) => ({
@@ -861,7 +862,7 @@ export const notificationSystemService = {
   },
 
   async deliverEmail(notification: NotificationRecord): Promise<void> {
-    await supabase.functions.invoke('send-notification-email', {
+    await db.functions.invoke('send-notification-email', {
       body: {
         user_id: notification.recipientId,
         notification_type: notification.type,
@@ -875,7 +876,7 @@ export const notificationSystemService = {
   },
 
   async updateBadge(notification: NotificationRecord): Promise<void> {
-    await supabase.rpc('increment_badge_count', {
+    await db.rpc('increment_badge_count', {
       p_user_id: notification.recipientId,
       p_c_module: notification.cModule,
     });
@@ -891,7 +892,7 @@ export const notificationSystemService = {
     cursor: string | null,
     limit: number = 30
   ): Promise<{ notifications: NotificationDisplayItem[]; hasMore: boolean }> {
-    let query = supabase
+    let query = db
       .from('notification_records')
       .select('*')
       .eq('recipient_id', userId)
@@ -918,7 +919,7 @@ export const notificationSystemService = {
     if (error) throw error;
 
     const hasMore = (data?.length || 0) > limit;
-    const items = (data || []).slice(0, limit).map((row: Record<string, unknown>) => mapRecordFromDb(row));
+    const items = (data || []).slice(0, limit).map((row: any) => mapRecordFromDb(row));
 
     return { notifications: items, hasMore };
   },
@@ -928,7 +929,7 @@ export const notificationSystemService = {
   // ============================================
 
   async markAsSeen(userId: string, notificationIds: string[]): Promise<void> {
-    await supabase
+    await db
       .from('notification_records')
       .update({ status: 'seen', seen_at: new Date().toISOString() })
       .in('id', notificationIds)
@@ -937,14 +938,14 @@ export const notificationSystemService = {
   },
 
   async markAsOpened(userId: string, notificationId: string): Promise<void> {
-    const { data: notification } = await supabase
+    const { data: notification } = await db
       .from('notification_records')
       .select('c_module')
       .eq('id', notificationId)
       .eq('recipient_id', userId)
       .single();
 
-    await supabase
+    await db
       .from('notification_records')
       .update({ status: 'opened', opened_at: new Date().toISOString() })
       .eq('id', notificationId)
@@ -952,7 +953,7 @@ export const notificationSystemService = {
 
     // Decrement badge count
     if (notification) {
-      await supabase.rpc('decrement_badge_count', {
+      await db.rpc('decrement_badge_count', {
         p_user_id: userId,
         p_c_module: notification.c_module,
       });
@@ -960,7 +961,7 @@ export const notificationSystemService = {
   },
 
   async markAsActedOn(userId: string, notificationId: string): Promise<void> {
-    await supabase
+    await db
       .from('notification_records')
       .update({ status: 'acted_on', acted_on_at: new Date().toISOString() })
       .eq('id', notificationId)
@@ -968,21 +969,21 @@ export const notificationSystemService = {
   },
 
   async dismiss(userId: string, notificationId: string): Promise<void> {
-    const { data: notification } = await supabase
+    const { data: notification } = await db
       .from('notification_records')
       .select('c_module, status')
       .eq('id', notificationId)
       .eq('recipient_id', userId)
       .single();
 
-    await supabase
+    await db
       .from('notification_records')
       .update({ status: 'dismissed', dismissed_at: new Date().toISOString() })
       .eq('id', notificationId)
       .eq('recipient_id', userId);
 
     if (notification && notification.status === 'delivered') {
-      await supabase.rpc('decrement_badge_count', {
+      await db.rpc('decrement_badge_count', {
         p_user_id: userId,
         p_c_module: notification.c_module,
       });
@@ -990,17 +991,17 @@ export const notificationSystemService = {
   },
 
   async markAllAsRead(userId: string): Promise<void> {
-    await supabase
+    await db
       .from('notification_records')
       .update({ status: 'seen', seen_at: new Date().toISOString() })
       .eq('recipient_id', userId)
       .eq('status', 'delivered');
 
-    await supabase.rpc('reset_badge_counts', { p_user_id: userId });
+    await db.rpc('reset_badge_counts', { p_user_id: userId });
   },
 
   async getUnreadCount(userId: string): Promise<number> {
-    const { count } = await supabase
+    const { count } = await db
       .from('notification_records')
       .select('*', { count: 'exact', head: true })
       .eq('recipient_id', userId)
@@ -1010,7 +1011,7 @@ export const notificationSystemService = {
   },
 
   async getUnreadByModule(userId: string): Promise<Record<string, number>> {
-    const { data } = await supabase
+    const { data } = await db
       .from('badge_counts')
       .select('c_module, count')
       .eq('user_id', userId);
@@ -1027,7 +1028,7 @@ export const notificationSystemService = {
   // ============================================
 
   async getPreferences(userId: string): Promise<NotificationPreferences> {
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from('notification_preferences')
       .select('*')
       .eq('user_id', userId)
@@ -1086,7 +1087,7 @@ export const notificationSystemService = {
     if (updates.mutedSpaceIds !== undefined) dbUpdates.muted_space_ids = updates.mutedSpaceIds;
     if (updates.mutedEventIds !== undefined) dbUpdates.muted_event_ids = updates.mutedEventIds;
 
-    await supabase
+    await db
       .from('notification_preferences')
       .upsert({ user_id: userId, ...dbUpdates }, { onConflict: 'user_id' });
   },
@@ -1102,12 +1103,12 @@ export const notificationSystemService = {
       onBadgeUpdate: (counts: Record<string, number>) => void;
     }
   ) {
-    return supabase
+    return db
       .channel(`notif_system:${userId}`)
-      .on('broadcast', { event: 'new_notification' }, (payload) => {
+      .on('broadcast', { event: 'new_notification' }, (payload: any) => {
         callbacks.onNew(payload.payload as NotificationRecord);
       })
-      .on('broadcast', { event: 'badge_update' }, (payload) => {
+      .on('broadcast', { event: 'badge_update' }, (payload: any) => {
         callbacks.onBadgeUpdate(payload.payload as Record<string, number>);
       })
       .subscribe();
