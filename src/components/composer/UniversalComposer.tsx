@@ -93,7 +93,7 @@ export const UniversalComposer = ({
           {
             body: formData.content,
             media: [],
-            audience: 'public' as const,
+            audience: 'public' as unknown as import('@/types/composer').AudienceType,
             tags: [],
             mentions: [],
             hashtags: [],

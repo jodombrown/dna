@@ -18,15 +18,15 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import type {
-  DIAChatMessage,
-  DIAChatQuery,
+import {
   DIAChatIntent,
-  DIAChatEntity,
-  DIAChatContext,
-  DIAChatResult,
-  DIAChatAction,
-  NetworkStats,
+  type DIAChatMessage,
+  type DIAChatQuery,
+  type DIAChatEntity,
+  type DIAChatContext,
+  type DIAChatResult,
+  type DIAChatAction,
+  type NetworkStats,
 } from '@/types/diaEngine';
 import { peopleMatchingService } from './peopleMatching';
 import { eventMatchingService } from './eventMatching';
@@ -239,12 +239,12 @@ async function processQuery(
  */
 async function createConversation(userId: string): Promise<string> {
   const { data } = await supabase
-    .from('dia_conversations')
+    .from('dia_conversations' as string)
     .insert({ user_id: userId })
     .select('id')
     .single();
 
-  return data?.id || crypto.randomUUID();
+  return (data as Record<string, unknown>)?.id as string || crypto.randomUUID();
 }
 
 /**
@@ -255,13 +255,13 @@ async function getConversationHistory(
   limit = 50,
 ): Promise<DIAChatMessage[]> {
   const { data } = await supabase
-    .from('dia_messages')
+    .from('dia_messages' as string)
     .select('*')
     .eq('conversation_id', conversationId)
     .order('created_at', { ascending: true })
     .limit(limit);
 
-  return (data || []).map(mapDbMessage);
+  return ((data || []) as Record<string, unknown>[]).map(mapDbMessage);
 }
 
 // ============================================================

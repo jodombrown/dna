@@ -154,7 +154,7 @@ export function NotificationSystemCard({
     >
       {/* Avatar / Icon */}
       <div className="relative flex-shrink-0">
-        {notification.actorAvatarUrl && notification.showAvatar !== false ? (
+        {notification.actorAvatarUrl && (notification as unknown as Record<string, unknown>).showAvatar !== false ? (
           <Avatar className="h-11 w-11">
             <AvatarImage src={notification.actorAvatarUrl} alt={notification.actorName || ''} />
             <AvatarFallback className="text-xs bg-muted">
