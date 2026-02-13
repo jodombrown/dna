@@ -114,24 +114,23 @@ async function analyzeProfile(input: ProfileIntelligenceInput): Promise<ProfileI
  * Identify skills that are in-demand on the platform but missing from user's profile.
  */
 async function computeSkillGaps(userSkills: string[]): Promise<SkillGap[]> {
-  // Query popular skills from opportunities
+  // Query popular skills from opportunities — contribution_needs uses 'type' not 'skills_needed'
   const { data: opportunities } = await supabase
     .from('contribution_needs')
-    .select('skills_needed')
+    .select('type, title, description')
     .eq('status', 'open')
     .limit(200);
 
   if (!opportunities) return [];
 
-  // Count skill demand
+  // Count skill demand from type + title + description text
   const skillDemand = new Map<string, number>();
   for (const opp of opportunities) {
-    const skills = opp.skills_needed as string[] | null;
-    if (skills) {
-      for (const skill of skills) {
-        const normalized = skill.toLowerCase().trim();
-        skillDemand.set(normalized, (skillDemand.get(normalized) || 0) + 1);
-      }
+    const text = `${opp.type || ''} ${opp.title || ''} ${opp.description || ''}`;
+    const words = text.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+    for (const word of words) {
+      const normalized = word.trim();
+      skillDemand.set(normalized, (skillDemand.get(normalized) || 0) + 1);
     }
   }
 
@@ -160,7 +159,7 @@ async function computeNetworkPosition(userId: string): Promise<NetworkPosition> 
   const { count: connectionCount } = await supabase
     .from('connections')
     .select('*', { count: 'exact', head: true })
-    .or(`user_id.eq.${userId},connected_user_id.eq.${userId}`);
+    .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`);
 
   return {
     total_connections: connectionCount || 0,

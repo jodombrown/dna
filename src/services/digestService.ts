@@ -20,6 +20,9 @@ import type {
   DigestAction,
 } from '@/types/notificationSystem';
 
+// Cast for tables not in generated types
+const db = supabase as any;
+
 export const digestService = {
 
   // ============================================
@@ -69,11 +72,11 @@ export const digestService = {
       supabase
         .from('connections')
         .select('*', { count: 'exact', head: true })
-        .or(`user_id.eq.${userId},connected_user_id.eq.${userId}`)
+        .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`)
         .gte('created_at', since),
 
       // Profile views
-      supabase
+      db
         .from('notification_records')
         .select('*', { count: 'exact', head: true })
         .eq('recipient_id', userId)
@@ -95,7 +98,7 @@ export const digestService = {
         .gte('created_at', weekEnd.toISOString()),
 
       // Tasks completed
-      supabase
+      db
         .from('collaborate_tasks')
         .select('*', { count: 'exact', head: true })
         .eq('assigned_to', userId)
@@ -103,23 +106,23 @@ export const digestService = {
         .gte('updated_at', since),
 
       // Opportunity matches
-      supabase
+      db
         .from('notification_records')
         .select('*', { count: 'exact', head: true })
         .eq('recipient_id', userId)
         .eq('type', 'opportunity_match')
         .gte('created_at', since),
 
-      // Post engagement
+      // Post engagement — posts has view_count, not like_count/comment_count/share_count
       supabase
         .from('posts')
-        .select('like_count, comment_count, share_count')
+        .select('view_count')
         .eq('author_id', userId)
         .gte('created_at', since),
     ]);
 
     const totalEngagement = (postsRes.data || []).reduce(
-      (sum, p) => sum + (p.like_count || 0) + (p.comment_count || 0) + (p.share_count || 0),
+      (sum: number, p: any) => sum + (p.view_count || 0),
       0
     );
 
@@ -178,20 +181,20 @@ export const digestService = {
 
     const { data: topPost } = await supabase
       .from('posts')
-      .select('id, content, like_count, comment_count')
+      .select('id, content, view_count')
       .eq('author_id', userId)
       .gte('created_at', since)
-      .order('like_count', { ascending: false })
+      .order('view_count', { ascending: false })
       .limit(1)
       .single();
 
-    if (topPost && (topPost.like_count > 0 || topPost.comment_count > 0)) {
+    if (topPost && (topPost.view_count || 0) > 0) {
       highlights.push({
         cModule: CModule.CONNECT,
         type: 'top_post',
         title: 'Your top post this week',
         subtitle: (topPost.content || '').slice(0, 60) + '...',
-        metric: `${topPost.like_count} likes, ${topPost.comment_count} comments`,
+        metric: `${topPost.view_count} views`,
         actionUrl: `/dna/feed?post=${topPost.id}`,
       });
     }
@@ -226,7 +229,7 @@ export const digestService = {
   async getCollaborateHighlights(userId: string, since: string): Promise<DigestHighlight[]> {
     const highlights: DigestHighlight[] = [];
 
-    const { count: completedTasks } = await supabase
+    const { count: completedTasks } = await db
       .from('collaborate_tasks')
       .select('*', { count: 'exact', head: true })
       .eq('assigned_to', userId)
@@ -250,7 +253,7 @@ export const digestService = {
   async getContributeHighlights(userId: string, since: string): Promise<DigestHighlight[]> {
     const highlights: DigestHighlight[] = [];
 
-    const { count: matches } = await supabase
+    const { count: matches } = await db
       .from('notification_records')
       .select('*', { count: 'exact', head: true })
       .eq('recipient_id', userId)
@@ -276,12 +279,12 @@ export const digestService = {
 
     const { data: posts } = await supabase
       .from('posts')
-      .select('like_count, comment_count, share_count')
+      .select('view_count')
       .eq('author_id', userId)
       .gte('created_at', since);
 
     const totalEngagement = (posts || []).reduce(
-      (sum, p) => sum + (p.like_count || 0) + (p.comment_count || 0) + (p.share_count || 0),
+      (sum: number, p: any) => sum + (p.view_count || 0),
       0
     );
 
@@ -289,7 +292,7 @@ export const digestService = {
       highlights.push({
         cModule: CModule.CONVEY,
         type: 'content_engagement',
-        title: `${totalEngagement} engagement${totalEngagement > 1 ? 's' : ''} on your content`,
+        title: `${totalEngagement} view${totalEngagement > 1 ? 's' : ''} on your content`,
         subtitle: 'Your voice resonated this week.',
         metric: `${totalEngagement} total`,
         actionUrl: '/dna/convey',

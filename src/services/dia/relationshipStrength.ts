@@ -142,16 +142,16 @@ async function fetchRawRelationshipData(
     // Shared spaces
     fetchSharedSpaceData(userId, connectedUserId),
     // Profiles
-    supabase.from('profiles').select('skills, interests, location, diaspora_status').eq('id', userId).single(),
-    supabase.from('profiles').select('skills, interests, location, diaspora_status').eq('id', connectedUserId).single(),
+    supabase.from('profiles').select('skills, interests, location, diaspora_status').eq('id', userId).single() as unknown as Promise<{ data: Record<string, unknown> | null; error: unknown }>,
+    supabase.from('profiles').select('skills, interests, location, diaspora_status').eq('id', connectedUserId).single() as unknown as Promise<{ data: Record<string, unknown> | null; error: unknown }>,
     // Connection counts
     fetchConnectionCounts(userId, connectedUserId),
     // Mutual connections
     fetchMutualConnectionCount(userId, connectedUserId),
   ]);
 
-  const userProfile = profileA.data || {};
-  const connectedProfile = profileB.data || {};
+  const userProfile = (profileA.data || {}) as Record<string, unknown>;
+  const connectedProfile = (profileB.data || {}) as Record<string, unknown>;
 
   return {
     messageCount90Days: messageData.count,
@@ -195,7 +195,7 @@ async function computeAndStoreStrength(
   const frequency = classifyCommunicationFrequency(rawData.messageCount90Days);
 
   // Upsert into network_edges
-  await supabase.from('network_edges').upsert(
+  await (supabase as any).from('network_edges').upsert(
     {
       user_id: userId,
       connected_user_id: connectedUserId,
@@ -221,14 +221,14 @@ async function computeAndStoreStrength(
 async function recomputeUserStrengths(userId: string): Promise<void> {
   const { data: connections } = await supabase
     .from('connections')
-    .select('user_id, connected_user_id')
-    .or(`user_id.eq.${userId},connected_user_id.eq.${userId}`)
+    .select('requester_id, recipient_id')
+    .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`)
     .limit(500);
 
   if (!connections) return;
 
-  const connectedIds = connections.map(c =>
-    c.user_id === userId ? c.connected_user_id : c.user_id,
+  const connectedIds = connections.map((c: any) =>
+    c.requester_id === userId ? c.recipient_id : c.requester_id,
   );
 
   // Process in batches of 10 for performance
@@ -247,7 +247,7 @@ async function getStrongestConnections(
   userId: string,
   limit = 20,
 ): Promise<Array<{ connectedUserId: string; strength: number }>> {
-  const { data } = await supabase
+  const { data } = await (supabase as any)
     .from('network_edges')
     .select('connected_user_id, relationship_strength')
     .eq('user_id', userId)
@@ -255,7 +255,7 @@ async function getStrongestConnections(
     .order('relationship_strength', { ascending: false })
     .limit(limit);
 
-  return (data || []).map(d => ({
+  return (data || []).map((d: any) => ({
     connectedUserId: d.connected_user_id,
     strength: d.relationship_strength,
   }));
@@ -455,12 +455,12 @@ async function fetchConnectionCounts(userId: string, connectedUserId: string) {
   const { count: userCount } = await supabase
     .from('connections')
     .select('*', { count: 'exact', head: true })
-    .or(`user_id.eq.${userId},connected_user_id.eq.${userId}`);
+    .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`);
 
   const { count: connectedCount } = await supabase
     .from('connections')
     .select('*', { count: 'exact', head: true })
-    .or(`user_id.eq.${connectedUserId},connected_user_id.eq.${connectedUserId}`);
+    .or(`requester_id.eq.${connectedUserId},recipient_id.eq.${connectedUserId}`);
 
   return { userCount: userCount || 0, connectedCount: connectedCount || 0 };
 }
@@ -468,21 +468,21 @@ async function fetchConnectionCounts(userId: string, connectedUserId: string) {
 async function fetchMutualConnectionCount(userId: string, connectedUserId: string): Promise<number> {
   const { data: connectionsA } = await supabase
     .from('connections')
-    .select('user_id, connected_user_id')
-    .or(`user_id.eq.${userId},connected_user_id.eq.${userId}`)
+    .select('requester_id, recipient_id')
+    .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`)
     .limit(500);
 
   const { data: connectionsB } = await supabase
     .from('connections')
-    .select('user_id, connected_user_id')
-    .or(`user_id.eq.${connectedUserId},connected_user_id.eq.${connectedUserId}`)
+    .select('requester_id, recipient_id')
+    .or(`requester_id.eq.${connectedUserId},recipient_id.eq.${connectedUserId}`)
     .limit(500);
 
   const idsA = new Set(
-    (connectionsA || []).flatMap(c => [c.user_id, c.connected_user_id]).filter(id => id !== userId),
+    (connectionsA || []).flatMap((c: any) => [c.requester_id, c.recipient_id]).filter((id: string) => id !== userId),
   );
   const idsB = new Set(
-    (connectionsB || []).flatMap(c => [c.user_id, c.connected_user_id]).filter(id => id !== connectedUserId),
+    (connectionsB || []).flatMap((c: any) => [c.requester_id, c.recipient_id]).filter((id: string) => id !== connectedUserId),
   );
 
   let mutual = 0;

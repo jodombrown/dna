@@ -5,7 +5,7 @@
  * Powers: Feed (trending sort), DIA Insight Cards, Convey Hub
  *
  * Data sources:
- * - Post engagement velocity (likes, comments, shares over time)
+ * - Post engagement velocity (view_count over time)
  * - Hashtag frequency
  * - Event registration rates
  * - Opportunity creation rates
@@ -44,14 +44,15 @@ async function getTrends(query: TrendQuery): Promise<TrendItem[]> {
 
 /**
  * Get trending topics based on post content engagement.
+ * Note: posts table has view_count but no like_count/comment_count/share_count
  */
 async function getTopicTrends(since: string, limit: number): Promise<TrendItem[]> {
-  // Get recent highly-engaged posts
+  // Get recent highly-viewed posts
   const { data: posts } = await supabase
     .from('posts')
-    .select('id, content, title, like_count, comment_count, share_count, created_at')
+    .select('id, content, title, view_count, created_at')
     .gte('created_at', since)
-    .order('like_count', { ascending: false })
+    .order('view_count', { ascending: false })
     .limit(100);
 
   if (!posts || posts.length === 0) return [];
@@ -74,7 +75,7 @@ async function getTopicTrends(since: string, limit: number): Promise<TrendItem[]
 
   for (const post of posts) {
     const text = `${post.title || ''} ${post.content || ''}`.toLowerCase();
-    const engagement = (post.like_count || 0) + (post.comment_count || 0) * 2 + (post.share_count || 0) * 3;
+    const engagement = (post.view_count || 0);
 
     for (const [topic, keywords] of Object.entries(TOPIC_KEYWORDS)) {
       if (keywords.some(kw => text.includes(kw))) {
@@ -91,7 +92,7 @@ async function getTopicTrends(since: string, limit: number): Promise<TrendItem[]
       trend_id: `topic-${topic}`,
       trend_type: 'topic' as TrendType,
       title: topic.charAt(0).toUpperCase() + topic.slice(1),
-      description: `${data.posts} posts with ${data.score} total engagement`,
+      description: `${data.posts} posts with ${data.score} total views`,
       score: data.score,
       velocity: data.posts, // Posts per time window
       regions: [],
@@ -110,7 +111,7 @@ async function getTopicTrends(since: string, limit: number): Promise<TrendItem[]
 async function getHashtagTrends(since: string, limit: number): Promise<TrendItem[]> {
   const { data: posts } = await supabase
     .from('posts')
-    .select('content, like_count, comment_count')
+    .select('content, view_count')
     .gte('created_at', since)
     .limit(200);
 
@@ -122,7 +123,7 @@ async function getHashtagTrends(since: string, limit: number): Promise<TrendItem
     const hashtags = (post.content || '').match(/#(\w{2,30})/g);
     if (!hashtags) continue;
 
-    const engagement = (post.like_count || 0) + (post.comment_count || 0) * 2;
+    const engagement = (post.view_count || 0);
 
     for (const tag of hashtags) {
       const normalized = tag.toLowerCase();
@@ -154,13 +155,14 @@ async function getHashtagTrends(since: string, limit: number): Promise<TrendItem
 
 /**
  * Get trending event categories based on registration rates.
+ * Events use 'tags' (string[]) and 'start_time', not 'category'/'start_date'.
  */
 async function getEventCategoryTrends(since: string, limit: number): Promise<TrendItem[]> {
   const { data: events } = await supabase
     .from('events')
-    .select('id, title, category')
-    .gte('start_date', new Date().toISOString())
-    .order('start_date', { ascending: true })
+    .select('id, title, tags')
+    .gte('start_time', new Date().toISOString())
+    .order('start_time', { ascending: true })
     .limit(50);
 
   if (!events || events.length === 0) return [];
@@ -168,7 +170,8 @@ async function getEventCategoryTrends(since: string, limit: number): Promise<Tre
   const categoryScores = new Map<string, { count: number; eventIds: string[] }>();
 
   for (const event of events) {
-    const category = event.category || 'general';
+    const tags = event.tags || ['general'];
+    const category = tags[0] || 'general';
     const existing = categoryScores.get(category) || { count: 0, eventIds: [] };
     existing.count += 1;
     existing.eventIds.push(event.id);
