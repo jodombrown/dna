@@ -57,7 +57,7 @@ async function matchUserToSpaces(userId: string, limit = 20): Promise<SpaceMatch
   // Get open/public spaces
   const { data: spaces } = await supabase
     .from('collaboration_spaces')
-    .select('id, title, description, focus_area, visibility, status')
+    .select('id, title, description, tags, visibility, status')
     .in('visibility', ['public', 'open'])
     .eq('status', 'active')
     .limit(100);
@@ -133,7 +133,7 @@ async function matchSpaceToUsers(spaceId: string, limit = 30): Promise<SpaceMatc
   const memberIds = new Set((members || []).map(m => m.user_id));
 
   // Get candidate profiles
-  const spaceDesc = `${space.title} ${space.description || ''} ${space.focus_area || ''}`.toLowerCase();
+  const spaceDesc = `${space.title} ${space.description || ''} ${(space.tags as string[] || []).join(' ')}`.toLowerCase();
   const { data: candidates } = await supabase
     .from('profiles')
     .select('id, full_name, skills, interests, location, profession')
@@ -189,7 +189,7 @@ function computeSpaceSignals(
   userConnections: Set<string>,
   profile: Record<string, unknown>,
 ): SpaceMatchSignals {
-  const spaceText = `${space.title} ${space.description || ''} ${space.focus_area || ''}`.toLowerCase();
+  const spaceText = `${space.title} ${space.description || ''} ${((space as any).tags || []).join(' ')}`.toLowerCase();
 
   // Role/skill overlap
   const skillHits = userSkills.filter(s => spaceText.includes(s));
@@ -207,7 +207,7 @@ function computeSpaceSignals(
 
   // Regional alignment
   const userLocation = ((profile.location || '') as string).toLowerCase();
-  const spaceRegion = ((space.focus_area || '') as string).toLowerCase();
+  const spaceRegion = (((space as any).tags || []) as string[]).join(' ').toLowerCase();
   const regionalAlignment = userLocation && spaceRegion && userLocation.includes(spaceRegion)
     ? 0.8
     : 0.3;
@@ -240,7 +240,7 @@ function classifySpaceMatchType(signals: SpaceMatchSignals): SpaceMatchType {
 }
 
 function findMatchedRoles(space: Record<string, unknown>, userSkills: string[]): string[] {
-  const spaceText = `${space.title} ${space.description || ''} ${space.focus_area || ''}`.toLowerCase();
+  const spaceText = `${space.title} ${space.description || ''} ${((space as any).tags || []).join(' ')}`.toLowerCase();
   return userSkills.filter(s => spaceText.includes(s)).slice(0, 3);
 }
 
