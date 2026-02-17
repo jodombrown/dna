@@ -26,10 +26,10 @@ const AfricaSpinner: React.FC<AfricaSpinnerProps> = ({
   return (
     <div className={cn('flex flex-col items-center justify-center gap-3', className)}>
       <div className={cn('relative', config.container)}>
-        {/* Spinning ring */}
+        {/* Spinning ring — uses primary token */}
         <div 
           className={cn(
-            'absolute inset-0 rounded-full border-dna-emerald/30 border-t-dna-emerald animate-spin',
+            'absolute inset-0 rounded-full border-primary/30 border-t-primary animate-spin',
             config.ring
           )}
           style={{ animationDuration: '1s' }}
@@ -46,7 +46,7 @@ const AfricaSpinner: React.FC<AfricaSpinnerProps> = ({
       </div>
       
       {showText && (
-        <span className="text-sm text-muted-foreground font-medium">{text}</span>
+        <span className="text-sm text-muted-foreground font-ui font-medium">{text}</span>
       )}
     </div>
   );
