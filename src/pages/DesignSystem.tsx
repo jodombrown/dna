@@ -6,7 +6,8 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Bell, Calendar, Users, LayoutGrid, Handshake, Megaphone, Sparkles, Heart, MessageSquare, Share2, Bookmark } from 'lucide-react';
+import { Bell, Calendar, Users, LayoutGrid, Handshake, Megaphone, Sparkles, Heart, MessageSquare, Share2, Bookmark, Check, X } from 'lucide-react';
+import dnaLogo from '@/assets/dna-logo-optimized.webp';
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <section className="space-y-4">
@@ -49,6 +50,135 @@ export default function DesignSystem() {
       </header>
 
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-12">
+
+        {/* ── BRAND & LOGO ── */}
+        <Section title="Brand & Logo">
+          <div className="space-y-8">
+            <div>
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Primary Logo</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-card border border-border rounded-dna-lg p-8 flex flex-col items-center gap-4">
+                  <img src={dnaLogo} alt="DNA Logo on light" className="h-12 w-auto" />
+                  <span className="text-xs text-muted-foreground font-ui">On light background</span>
+                </div>
+                <div className="bg-[hsl(30,10%,12%)] rounded-dna-lg p-8 flex flex-col items-center gap-4">
+                  <img src={dnaLogo} alt="DNA Logo on dark" className="h-12 w-auto brightness-110" />
+                  <span className="text-xs text-[hsl(30,10%,60%)] font-ui">On dark background</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Clear Space & Minimum Size</h3>
+              <div className="bg-card border border-border rounded-dna-lg p-6">
+                <div className="flex items-center gap-6 flex-wrap">
+                  <div className="relative border-2 border-dashed border-dna-emerald/30 p-6 rounded-dna-md">
+                    <img src={dnaLogo} alt="DNA Logo with clear space" className="h-8 w-auto" />
+                    <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-ui text-dna-emerald whitespace-nowrap">Clear space = logo height ÷ 2</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <img src={dnaLogo} alt="Minimum logo size" className="h-6 w-auto" />
+                      <span className="text-xs text-muted-foreground font-ui">Minimum: 24px height (digital)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <img src={dnaLogo} alt="Preferred logo size" className="h-8 w-auto" />
+                      <span className="text-xs text-muted-foreground font-ui">Preferred: 32px height (header)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Usage Guidelines</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                  { do: true, text: 'Use the logo on clean, uncluttered backgrounds' },
+                  { do: true, text: 'Maintain the original aspect ratio at all sizes' },
+                  { do: true, text: 'Use approved brand colors for monochrome variants' },
+                  { do: true, text: 'Pair logo with "Diaspora Network of Africa" when space allows' },
+                  { do: false, text: 'Stretch, skew, or rotate the logo' },
+                  { do: false, text: 'Place on busy patterns or photos without overlay' },
+                  { do: false, text: 'Change the logo colors outside brand palette' },
+                  { do: false, text: 'Add effects like drop shadows, glows, or outlines' },
+                ].map((rule, i) => (
+                  <div key={i} className={`flex items-start gap-2 p-3 rounded-dna-md border ${rule.do ? 'border-dna-success/30 bg-dna-emerald-subtle/50' : 'border-destructive/30 bg-dna-error-light/50'}`}>
+                    {rule.do ? <Check className="w-4 h-4 text-dna-success mt-0.5 shrink-0" /> : <X className="w-4 h-4 text-destructive mt-0.5 shrink-0" />}
+                    <span className="text-sm font-ui text-foreground">{rule.text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Section>
+
+        {/* ── BRAND VOICE & IDENTITY ── */}
+        <Section title="Brand Voice & Identity">
+          <div className="space-y-6">
+            <Card className="p-6 shadow-dna-1 space-y-4">
+              <div>
+                <span className="text-[11px] font-ui text-muted-foreground uppercase tracking-widest">Platform Name</span>
+                <p className="font-heritage text-2xl font-bold text-foreground">DNA — Diaspora Network of Africa</p>
+              </div>
+              <div>
+                <span className="text-[11px] font-ui text-muted-foreground uppercase tracking-widest">Tagline</span>
+                <p className="font-heritage text-lg font-semibold text-primary italic">The Operating System for the Global African Diaspora</p>
+              </div>
+              <div>
+                <span className="text-[11px] font-ui text-muted-foreground uppercase tracking-widest">Mission</span>
+                <p className="text-[15px] font-ui text-foreground leading-relaxed">
+                  Transform scattered diaspora potential into coordinated collective power through community-owned infrastructure — connecting 200M+ members worldwide with the African continent.
+                </p>
+              </div>
+            </Card>
+
+            <div>
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Brand Voice</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                  { trait: 'Warm', desc: 'Welcoming, community-first tone. Never cold or corporate.' },
+                  { trait: 'Rooted', desc: 'Culturally authentic. Heritage is foundation, not decoration.' },
+                  { trait: 'Empowering', desc: 'Action-oriented, enabling collective progress.' },
+                  { trait: 'Modern', desc: 'Forward-looking, tech-savvy, Pan-African futurism.' },
+                ].map(v => (
+                  <Card key={v.trait} className="p-4 shadow-dna-1">
+                    <h4 className="font-heritage text-lg font-semibold text-primary mb-2">{v.trait}</h4>
+                    <p className="text-sm text-muted-foreground font-ui">{v.desc}</p>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Tone Guidelines</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                  { do: true, text: '"Welcome home" — language of belonging and return' },
+                  { do: true, text: '"Build together" — collective action over individual achievement' },
+                  { do: true, text: '"Your roots, your future" — heritage connected to forward motion' },
+                  { do: false, text: '"Help Africa" — patronizing savior language' },
+                  { do: false, text: '"Exotic" or "tribal" — reductive colonial framing' },
+                  { do: false, text: 'Generic corporate jargon — "synergize," "leverage," etc.' },
+                ].map((rule, i) => (
+                  <div key={i} className={`flex items-start gap-2 p-3 rounded-dna-md border ${rule.do ? 'border-dna-success/30 bg-dna-emerald-subtle/50' : 'border-destructive/30 bg-dna-error-light/50'}`}>
+                    {rule.do ? <Check className="w-4 h-4 text-dna-success mt-0.5 shrink-0" /> : <X className="w-4 h-4 text-destructive mt-0.5 shrink-0" />}
+                    <span className="text-sm font-ui text-foreground">{rule.text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <Card className="p-6 shadow-dna-1 border-l-[3px] border-l-dna-contribute bg-dna-cream/50">
+              <p className="font-heritage text-lg font-semibold text-foreground italic mb-2">
+                "Cultural authenticity is not decoration — it is foundation."
+              </p>
+              <p className="text-sm text-muted-foreground font-ui">
+                Every design decision asks: "Does this honor the diaspora experience?" African heritage patterns, colors, and interaction metaphors are the framework — not a skin applied over Western conventions.
+              </p>
+            </Card>
+          </div>
+        </Section>
 
         {/* ── COLORS ── */}
         <Section title="1. Color Tokens">
