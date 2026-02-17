@@ -14,8 +14,25 @@ const badgeVariants = cva(
           "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
         destructive:
           "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        outline: "text-foreground",
-        virtual: "bg-dna-copper text-white border-transparent hover:bg-dna-forest hover:text-white"
+        outline:
+          "text-foreground",
+        // Five C's module variants
+        connect:
+          "border-transparent bg-dna-emerald-subtle text-dna-emerald-dark",
+        convene:
+          "border-transparent bg-dna-gold-light text-dna-gold-dark",
+        collaborate:
+          "border-transparent bg-dna-forest-light text-dna-forest-dark",
+        contribute:
+          "border-transparent bg-dna-copper-light text-dna-copper-dark",
+        convey:
+          "border-transparent bg-dna-ocean-light text-dna-ocean-dark",
+        // DIA
+        dia:
+          "border-transparent bg-dna-gold-light text-dna-gold-dark",
+        // Legacy
+        virtual:
+          "bg-dna-copper text-white border-transparent hover:bg-dna-forest hover:text-white",
       },
     },
     defaultVariants: {
