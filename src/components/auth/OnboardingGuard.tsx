@@ -39,7 +39,7 @@ export const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
 
     // If not authenticated, redirect to auth page
     if (!user) {
-      navigate('/auth', { replace: true });
+      navigate('/auth', { replace: true, state: { from: location.pathname } });
       return;
     }
 
