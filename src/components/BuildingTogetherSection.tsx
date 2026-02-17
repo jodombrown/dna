@@ -9,7 +9,7 @@ const BuildingTogetherSection = () => {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
   return (
-    <PatternBackground pattern="stripes" intensity="subtle" className="py-12 lg:py-16 bg-gradient-to-br from-dna-pearl-light via-white to-dna-terra-light/5">
+    <PatternBackground pattern="mudcloth" intensity="subtle" className="py-12 lg:py-16 bg-gradient-to-br from-dna-pearl-light via-white to-dna-terra-light/5">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
         <div className="text-center mb-8 lg:mb-12">
           <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold font-serif text-dna-forest mb-3 lg:mb-4">
