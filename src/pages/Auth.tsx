@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Globe, Users, Handshake, Eye, EyeOff } from 'lucide-react';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
@@ -16,7 +16,11 @@ import { BetaWaitlist } from '@/components/auth/BetaWaitlist';
 const Auth = () => {
   useScrollToTop();
   const navigate = useNavigate();
+  const location = useLocation();
   const { signIn, signUp } = useAuth();
+
+  // Where to redirect after login (passed via state.from by OnboardingGuard / protected routes)
+  const redirectTo = (location.state as { from?: string })?.from || '/dna/feed';
   const { registrationEnabled } = useFeatureFlags();
   const { toast } = useToast();
   
@@ -70,7 +74,7 @@ const Auth = () => {
         title: firstName ? `Welcome back, ${firstName}!` : 'Welcome back!',
         description: 'Successfully signed in.',
       });
-      navigate('/dna/feed');
+      navigate(redirectTo);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
       toast({

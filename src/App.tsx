@@ -227,11 +227,17 @@ const CountryHubPage = lazy(() => import("./pages/africa/CountryHubPage"));
 const AuthGuard = ({ children, redirectAuth = false }: { children: React.ReactNode; redirectAuth?: boolean }) => {
   const { user, loading } = useAuth();
   
-  if (loading) return null;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" />
+      </div>
+    );
+  }
   
   // Redirect authenticated users away from auth-only pages (login/signup)
   if (user && redirectAuth) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dna/feed" replace />;
   }
   
   return <>{children}</>;

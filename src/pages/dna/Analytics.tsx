@@ -5,6 +5,9 @@ import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { Card } from '@/components/ui/card';
 import { BarChart3 } from 'lucide-react';
+import { TierGate } from '@/components/auth/TierGate';
+import { checkTierAccess } from '@/services/tierService';
+import { UserTier } from '@/types/composer';
 
 const DnaAnalytics = () => {
   const { user } = useAuth();
@@ -22,16 +25,25 @@ const DnaAnalytics = () => {
     return null;
   }
 
+  // Tier gating — free users cannot access cross-C analytics
+  const tierAccess = checkTierAccess(UserTier.FREE, 'canViewCrossCAnalytics');
+
   const centerColumn = (
-    <div className="space-y-6">
-      <div className="flex items-center gap-3 mb-6">
-        <BarChart3 className="w-6 h-6 text-primary" />
-        <h1 className="text-2xl font-bold">Analytics Dashboard</h1>
+    <TierGate
+      hasAccess={tierAccess.allowed}
+      requiredTier="pro"
+      featureLabel="Cross-C Analytics"
+    >
+      <div className="space-y-6">
+        <div className="flex items-center gap-3 mb-6">
+          <BarChart3 className="w-6 h-6 text-primary" />
+          <h1 className="text-2xl font-bold">Analytics Dashboard</h1>
+        </div>
+        <Card className="p-6">
+          <p className="text-muted-foreground">Analytics content coming soon...</p>
+        </Card>
       </div>
-      <Card className="p-6">
-        <p className="text-muted-foreground">Analytics content coming soon...</p>
-      </Card>
-    </div>
+    </TierGate>
   );
 
   return (
