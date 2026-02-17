@@ -28,10 +28,11 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				sans: ['Inter', 'sans-serif'],
-				serif: ['Lora', 'serif'],
-				display: ['Cormorant Garamond', 'serif'],
-				body: ['Outfit', 'sans-serif'],
+				sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+				serif: ['Lora', 'Georgia', 'Times New Roman', 'serif'],
+				heritage: ['Lora', 'Georgia', 'Times New Roman', 'serif'],
+				ui: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+				mono: ['JetBrains Mono', 'Fira Code', 'Consolas', 'monospace'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -77,112 +78,144 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// DNA Brand Identity Colors (Updated with Cultural Palette)
+				// DNA Brand Identity Colors (Design System PRD)
 				dna: {
-					// Core Brand Colors (Primary - Green family for continuity)
-					forest: {
-						DEFAULT: 'hsl(var(--dna-forest))',
-						light: 'hsl(var(--dna-forest-light))',
-						dark: 'hsl(var(--dna-forest-dark))'
-					},
+					// Core Brand — Emerald
 					emerald: {
 						DEFAULT: 'hsl(var(--dna-emerald))',
 						light: 'hsl(var(--dna-emerald-light))',
-						dark: 'hsl(var(--dna-emerald-dark))'
+						dark: 'hsl(var(--dna-emerald-dark))',
+						subtle: 'hsl(var(--dna-emerald-subtle, 153 31% 92%))',
 					},
-					
-					// Cultural Warm Tones (NEW - African Earth & Heritage)
+					// Five C's Module Colors
+					connect: {
+						DEFAULT: 'hsl(var(--module-connect))',
+						light: 'hsl(var(--module-connect-light))',
+						dark: 'hsl(var(--module-connect-dark))',
+					},
+					convene: {
+						DEFAULT: 'hsl(var(--module-convene))',
+						light: 'hsl(var(--module-convene-light))',
+						dark: 'hsl(var(--module-convene-dark))',
+					},
+					collaborate: {
+						DEFAULT: 'hsl(var(--module-collaborate))',
+						light: 'hsl(var(--module-collaborate-light))',
+						dark: 'hsl(var(--module-collaborate-dark))',
+					},
+					contribute: {
+						DEFAULT: 'hsl(var(--module-contribute))',
+						light: 'hsl(var(--module-contribute-light))',
+						dark: 'hsl(var(--module-contribute-dark))',
+					},
+					convey: {
+						DEFAULT: 'hsl(var(--module-convey))',
+						light: 'hsl(var(--module-convey-light))',
+						dark: 'hsl(var(--module-convey-dark))',
+					},
+					// DIA
+					dia: {
+						DEFAULT: 'hsl(var(--dna-dia))',
+						light: 'hsl(var(--dna-dia-light))',
+						glow: 'hsl(var(--dna-dia-glow))',
+					},
+					// Neutral palette (warm)
+					cream: 'hsl(var(--dna-cream))',
+					sand: {
+						DEFAULT: 'hsl(var(--dna-sand))',
+						light: 'hsl(var(--dna-sand-light))',
+						dark: 'hsl(var(--dna-sand-dark))',
+					},
+					stone: 'hsl(var(--dna-stone))',
+					gray400: 'hsl(var(--dna-gray400))',
+					gray500: 'hsl(var(--dna-gray500))',
+					gray600: 'hsl(var(--dna-gray600))',
+					gray800: 'hsl(var(--dna-gray800))',
+					black: 'hsl(var(--dna-black))',
+					// Legacy colors (backward compat)
+					forest: {
+						DEFAULT: 'hsl(var(--dna-forest))',
+						light: 'hsl(var(--dna-forest-light))',
+						dark: 'hsl(var(--dna-forest-dark))',
+					},
 					terra: {
 						DEFAULT: 'hsl(var(--dna-terra))',
 						light: 'hsl(var(--dna-terra-light))',
-						dark: 'hsl(var(--dna-terra-dark))'
+						dark: 'hsl(var(--dna-terra-dark))',
 					},
 					ochre: {
 						DEFAULT: 'hsl(var(--dna-ochre))',
 						light: 'hsl(var(--dna-ochre-light))',
-						dark: 'hsl(var(--dna-ochre-dark))'
+						dark: 'hsl(var(--dna-ochre-dark))',
 					},
 					sunset: {
 						DEFAULT: 'hsl(var(--dna-sunset))',
 						light: 'hsl(var(--dna-sunset-light))',
-						dark: 'hsl(var(--dna-sunset-dark))'
+						dark: 'hsl(var(--dna-sunset-dark))',
 					},
 					purple: {
 						DEFAULT: 'hsl(var(--dna-purple))',
 						light: 'hsl(var(--dna-purple-light))',
-						dark: 'hsl(var(--dna-purple-dark))'
+						dark: 'hsl(var(--dna-purple-dark))',
 					},
-					
-					// Updated Legacy Colors (WCAG AA Compliant)
 					copper: {
-						DEFAULT: 'hsl(var(--dna-copper))',  // Now WCAG AA compliant
+						DEFAULT: 'hsl(var(--dna-copper))',
 						light: 'hsl(var(--dna-copper-light))',
-						dark: 'hsl(var(--dna-copper-dark))'
+						dark: 'hsl(var(--dna-copper-dark))',
 					},
 					gold: {
-						DEFAULT: 'hsl(var(--dna-gold))',  // Now WCAG AA compliant
+						DEFAULT: 'hsl(var(--dna-gold))',
 						light: 'hsl(var(--dna-gold-light))',
-						dark: 'hsl(var(--dna-gold-dark))'
+						dark: 'hsl(var(--dna-gold-dark))',
 					},
 					mint: {
 						DEFAULT: 'hsl(var(--dna-mint))',
 						light: 'hsl(var(--dna-mint-light))',
-						dark: 'hsl(var(--dna-mint-dark))'
+						dark: 'hsl(var(--dna-mint-dark))',
 					},
 					crimson: {
 						DEFAULT: 'hsl(var(--dna-crimson))',
 						light: 'hsl(var(--dna-crimson-light))',
-						dark: 'hsl(var(--dna-crimson-dark))'
+						dark: 'hsl(var(--dna-crimson-dark))',
 					},
-					
-					// Extended Palette (Keep for backward compatibility)
 					earth: {
 						DEFAULT: 'hsl(var(--dna-earth))',
 						light: 'hsl(var(--dna-earth-light))',
-						dark: 'hsl(var(--dna-earth-dark))'
-					},
-					sand: {
-						DEFAULT: 'hsl(var(--dna-sand))',
-						light: 'hsl(var(--dna-sand-light))',
-						dark: 'hsl(var(--dna-sand-dark))'
+						dark: 'hsl(var(--dna-earth-dark))',
 					},
 					ocean: {
 						DEFAULT: 'hsl(var(--dna-ocean))',
 						light: 'hsl(var(--dna-ocean-light))',
-						dark: 'hsl(var(--dna-ocean-dark))'
+						dark: 'hsl(var(--dna-ocean-dark))',
 					},
-					
-					// Warm Neutral Tones (NEW - Replaces generic grays)
 					slate: {
 						DEFAULT: 'hsl(var(--dna-slate))',
 						light: 'hsl(var(--dna-slate-light))',
-						dark: 'hsl(var(--dna-slate-dark))'
+						dark: 'hsl(var(--dna-slate-dark))',
 					},
 					pearl: {
 						DEFAULT: 'hsl(var(--dna-pearl))',
 						light: 'hsl(var(--dna-pearl-light))',
-						dark: 'hsl(var(--dna-pearl-dark))'
+						dark: 'hsl(var(--dna-pearl-dark))',
 					},
 					charcoal: {
 						DEFAULT: 'hsl(var(--dna-charcoal))',
 						light: 'hsl(var(--dna-charcoal-light))',
-						dark: 'hsl(var(--dna-charcoal-dark))'
+						dark: 'hsl(var(--dna-charcoal-dark))',
 					},
-					
-					// Semantic Colors
+					// Semantic
 					success: 'hsl(var(--dna-success))',
 					warning: 'hsl(var(--dna-warning))',
 					error: 'hsl(var(--dna-error))',
 					info: 'hsl(var(--dna-info))',
-					
 					// Feed Card Bevel Colors
 					bevel: {
 						post: 'hsl(var(--bevel-post))',
 						story: 'hsl(var(--bevel-story))',
 						event: 'hsl(var(--bevel-event))',
 						space: 'hsl(var(--bevel-space))',
-						opportunity: 'hsl(var(--bevel-opportunity))'
-					}
+						opportunity: 'hsl(var(--bevel-opportunity))',
+					},
 				},
 				// Country Flag Colors
 				morocco: {
@@ -214,7 +247,20 @@ export default {
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				sm: 'calc(var(--radius) - 4px)',
+				'dna-sm': 'var(--radius-sm, 6px)',
+				'dna-md': 'var(--radius-md, 10px)',
+				'dna-lg': 'var(--radius-lg, 12px)',
+				'dna-xl': 'var(--radius-xl, 16px)',
+			},
+			boxShadow: {
+				'dna-1': 'var(--shadow-level1)',
+				'dna-2': 'var(--shadow-level2)',
+				'dna-3': 'var(--shadow-level3)',
+				'dna-4': 'var(--shadow-level4)',
+				'dna-inner': 'var(--shadow-inner)',
+				'dna-focus': 'var(--shadow-focus)',
+				'dna-glow': 'var(--shadow-glow)',
 			},
 			keyframes: {
 				'accordion-down': {

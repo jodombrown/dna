@@ -20,16 +20,15 @@ interface FeedCardBaseProps {
   onClick?: () => void;
 }
 
-// Using inline styles for border colors to ensure they're applied correctly
-// These match the CSS variables defined in index.css
+// Module-aligned bevel colors from Design System PRD
 const bevelColors: Record<FeedCardBevelType, string> = {
-  post: 'hsl(215 16% 47%)',        // Slate #64748B
-  story: 'hsl(173 84% 32%)',       // Deep Teal #0D9488
-  event: 'hsl(38 92% 50%)',        // Warm Amber #F59E0B
-  space: 'hsl(258 77% 60%)',       // Purple #8B5CF6
-  opportunity: 'hsl(25 51% 46%)',  // Copper #B87333
-  need: 'hsl(25 51% 46%)',         // Same as opportunity
-  offer: 'hsl(25 51% 46%)',        // Same as opportunity
+  post: 'hsl(215 16% 47%)',          // Neutral slate
+  story: 'hsl(191 53% 35%)',         // Convey Deep Teal
+  event: 'hsl(39 65% 47%)',          // Convene Amber Gold
+  space: 'hsl(147 33% 27%)',         // Collaborate Forest Green
+  opportunity: 'hsl(25 51% 46%)',    // Contribute Copper
+  need: 'hsl(25 51% 46%)',           // Contribute Copper
+  offer: 'hsl(25 51% 46%)',          // Contribute Copper
 };
 
 export const FeedCardBase: React.FC<FeedCardBaseProps> = ({

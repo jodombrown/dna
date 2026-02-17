@@ -21,120 +21,179 @@ html, body {
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* ── PAGE FOUNDATIONS ── */
+    --background: 34 33% 97%; /* Warm cream #F9F7F4 */
+    --foreground: 20 8% 15%; /* Warm black #3D3833 */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%; /* White cards on cream bg */
+    --card-foreground: 20 8% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 20 8% 15%;
 
-    /* DNA Brand Identity Colors */
-    --primary: 183 28% 28%; /* DNA Forest - Primary brand color */
+    /* ── PRIMARY: DNA Emerald ── */
+    --primary: 153 31% 42%; /* #4A8D77 — DNA signature emerald */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 69 71% 59%; /* DNA Emerald - Growth & prosperity */
-    --secondary-foreground: 183 28% 28%;
+    /* ── SECONDARY ── */
+    --secondary: 34 33% 94%; /* Warm sand bg */
+    --secondary-foreground: 20 8% 15%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 34 20% 94%;
+    --muted-foreground: 25 7% 49%; /* #8A847D warm gray */
 
-    --accent: 34 75% 56%; /* DNA Copper - Innovation & warmth */
+    --accent: 25 51% 46%; /* DNA Copper */
     --accent-foreground: 0 0% 100%;
 
-    /* DNA Core Brand Palette (Primary - Green family for continuity) */
-    --dna-forest: 183 28% 28%; /* Deep forest green - Heritage & stability */
-    --dna-forest-light: 183 28% 35%;
-    --dna-forest-dark: 183 28% 20%;
-    
-    --dna-emerald: 160 35% 45%; /* Sage green from DNA logo - Growth & opportunity */
-    --dna-emerald-light: 160 35% 55%;
-    --dna-emerald-dark: 160 35% 35%;
-    
-    /* Cultural Warm Tones (NEW - African Earth & Heritage) */
-    --dna-terra: 18 60% 55%; /* Terra cotta - Warm clay earth */
+    /* ══════════════════════════════════════════
+       DNA BRAND COLOR SYSTEM (Design System PRD)
+       ══════════════════════════════════════════ */
+
+    /* ── DNA EMERALD (Hero brand color #4A8D77) ── */
+    --dna-emerald: 153 31% 42%;
+    --dna-emerald-light: 153 31% 54%; /* #6BAF98 hover */
+    --dna-emerald-dark: 153 31% 34%; /* #3A7262 active */
+    --dna-emerald-subtle: 153 31% 92%; /* #E8F2EE backgrounds */
+
+    /* ── FIVE C's MODULE COLORS ── */
+    /* CONNECT — Emerald (the network) */
+    --module-connect: 153 31% 42%; /* #4A8D77 */
+    --module-connect-light: 153 31% 92%;
+    --module-connect-dark: 153 31% 34%;
+
+    /* CONVENE — Amber Gold (gathering warmth) */
+    --module-convene: 39 65% 47%; /* #C4942A */
+    --module-convene-light: 39 50% 91%; /* #F5EDD8 */
+    --module-convene-dark: 39 65% 39%; /* #A67B1E */
+
+    /* COLLABORATE — Forest Green (growth, depth) */
+    --module-collaborate: 147 33% 27%; /* #2D5A3D */
+    --module-collaborate-light: 147 22% 90%; /* #E0EBE4 */
+    --module-collaborate-dark: 147 33% 18%; /* #1F4029 */
+
+    /* CONTRIBUTE — Copper (value, exchange) */
+    --module-contribute: 25 51% 46%; /* #B87333 */
+    --module-contribute-light: 25 40% 90%; /* #F2E6D9 */
+    --module-contribute-dark: 25 51% 37%; /* #965E29 */
+
+    /* CONVEY — Deep Teal (voice, expression) */
+    --module-convey: 191 53% 35%; /* #2A7A8C */
+    --module-convey-light: 191 40% 91%; /* #DFF0F4 */
+    --module-convey-dark: 191 53% 27%; /* #1E5E6B */
+
+    /* ── DIA COLORS ── */
+    --dna-dia: 39 65% 47%; /* Gold — intelligence */
+    --dna-dia-light: 39 50% 91%;
+    --dna-dia-glow: 39 65% 60%;
+
+    /* ── NEUTRAL PALETTE (warm, not cold) ── */
+    --dna-cream: 34 33% 97%; /* #F9F7F4 primary bg */
+    --dna-sand: 34 8% 94%; /* #F0EFED secondary bg */
+    --dna-stone: 28 10% 89%; /* #E8E4DF borders */
+    --dna-gray400: 25 7% 60%; /* #A09A93 placeholder */
+    --dna-gray500: 25 7% 52%; /* #8A847D secondary text */
+    --dna-gray600: 0 0% 40%; /* #666666 body text secondary */
+    --dna-gray800: 20 8% 22%; /* #3D3833 primary text */
+    --dna-black: 0 0% 10%; /* #1A1A1A headings */
+
+    /* ── LEGACY DNA COLORS (backward compat) ── */
+    --dna-forest: 147 33% 27%;
+    --dna-forest-light: 147 22% 90%;
+    --dna-forest-dark: 147 33% 18%;
+
+    --dna-terra: 18 60% 55%;
     --dna-terra-light: 18 60% 70%;
     --dna-terra-dark: 18 60% 35%;
-    
-    --dna-ochre: 38 70% 50%; /* Ochre - Golden earth */
+
+    --dna-ochre: 38 70% 50%;
     --dna-ochre-light: 38 70% 70%;
     --dna-ochre-dark: 38 70% 40%;
-    
-    --dna-sunset: 25 85% 55%; /* Sunset orange - Vibrant warmth */
+
+    --dna-sunset: 25 85% 55%;
     --dna-sunset-light: 25 85% 70%;
     --dna-sunset-dark: 25 85% 40%;
-    
-    --dna-purple: 270 60% 55%; /* Royal purple - Heritage */
+
+    --dna-purple: 270 60% 55%;
     --dna-purple-light: 270 60% 70%;
     --dna-purple-dark: 270 60% 35%;
-    
-    /* Updated Legacy Colors (WCAG AA Compliant) */
-    --dna-copper: 25 75% 46%; /* Warm copper - WCAG AA compliant (was 56%) */
-    --dna-copper-light: 25 75% 66%;
-    --dna-copper-dark: 25 75% 36%;
-    
-    --dna-gold: 45 85% 35%; /* Vibrant gold - WCAG AA compliant (was 55%) */
-    --dna-gold-light: 45 85% 65%;
-    --dna-gold-dark: 45 85% 25%;
-    
-    --dna-mint: 170 45% 75%; /* Fresh mint - Collaboration & freshness */
+
+    --dna-copper: 25 51% 46%;
+    --dna-copper-light: 25 40% 90%;
+    --dna-copper-dark: 25 51% 37%;
+
+    --dna-gold: 39 65% 47%;
+    --dna-gold-light: 39 50% 91%;
+    --dna-gold-dark: 39 65% 35%;
+
+    --dna-mint: 170 45% 75%;
     --dna-mint-light: 170 45% 85%;
     --dna-mint-dark: 170 45% 65%;
-    
-    --dna-crimson: 0 100% 40%; /* Bold crimson - Passion & urgency */
-    --dna-crimson-light: 0 100% 50%;
-    --dna-crimson-dark: 0 100% 30%;
 
-    /* DNA Extended Palette */
-    --dna-earth: 30 35% 45%; /* Earthy brown - Foundation & roots */
+    --dna-crimson: 0 70% 45%; /* Warm red #CC3333 */
+    --dna-crimson-light: 0 70% 93%; /* #FDEAEA */
+    --dna-crimson-dark: 0 70% 35%;
+
+    --dna-earth: 30 35% 45%;
     --dna-earth-light: 30 35% 55%;
     --dna-earth-dark: 30 35% 35%;
-    
-    --dna-sand: 40 25% 78%; /* Warm sand - Accessibility & openness */
-    --dna-sand-light: 40 25% 85%;
-    --dna-sand-dark: 40 25% 70%;
-    
-    --dna-ocean: 200 50% 45%; /* Deep ocean blue - Depth & wisdom */
-    --dna-ocean-light: 200 50% 55%;
-    --dna-ocean-dark: 200 50% 35%;
-    
-    --dna-sunset: 15 80% 60%; /* Warm sunset orange - Energy & warmth */
-    --dna-sunset-light: 15 80% 70%;
-    --dna-sunset-dark: 15 80% 50%;
+
+    --dna-sand: 34 8% 94%;
+    --dna-sand-light: 34 8% 97%;
+    --dna-sand-dark: 34 8% 88%;
+
+    --dna-ocean: 191 53% 35%;
+    --dna-ocean-light: 191 40% 91%;
+    --dna-ocean-dark: 191 53% 27%;
 
     /* DNA Neutral Tones */
-    --dna-slate: 210 15% 25%; /* Professional slate - Business & formality */
+    --dna-slate: 210 15% 25%;
     --dna-slate-light: 210 15% 35%;
     --dna-slate-dark: 210 15% 15%;
-    
-    --dna-pearl: 0 0% 95%; /* Soft pearl - Elegance & clarity */
+
+    --dna-pearl: 0 0% 95%;
     --dna-pearl-light: 0 0% 98%;
     --dna-pearl-dark: 0 0% 90%;
-    
-    --dna-charcoal: 0 0% 15%; /* Rich charcoal - Strength & sophistication */
+
+    --dna-charcoal: 0 0% 15%;
     --dna-charcoal-light: 0 0% 25%;
     --dna-charcoal-dark: 0 0% 10%;
 
-    /* DNA Semantic Colors */
-    --dna-success: 160 35% 45%; /* Sage emerald for success states */
-    --dna-warning: 45 85% 55%; /* Gold for warning states */
-    --dna-error: 0 100% 40%; /* Crimson for error states */
-    --dna-info: 200 50% 45%; /* Ocean for informational states */
+    /* ── SEMANTIC COLORS ── */
+    --dna-success: 153 31% 42%; /* Emerald aligned */
+    --dna-warning: 39 65% 47%; /* Amber Gold */
+    --dna-error: 0 70% 45%; /* Warm red #CC3333 */
+    --dna-info: 191 53% 35%; /* Deep Teal */
 
-    /* Feed Card Bevel Colors (per Design System) */
-    --bevel-post: 215 16% 47%; /* Slate #64748B - Neutral default */
-    --bevel-story: 173 84% 32%; /* Deep Teal #0D9488 */
-    --bevel-event: 38 92% 50%; /* Warm Amber #F59E0B */
-    --bevel-space: 258 77% 60%; /* Achievement Purple #8B5CF6 */
-    --bevel-opportunity: 25 51% 46%; /* Copper Gold #B87333 */
+    /* ── FEED CARD BEVEL COLORS ── */
+    --bevel-post: 215 16% 47%;
+    --bevel-story: 191 53% 35%; /* Convey teal */
+    --bevel-event: 39 65% 47%; /* Convene amber */
+    --bevel-space: 147 33% 27%; /* Collaborate forest */
+    --bevel-opportunity: 25 51% 46%; /* Contribute copper */
 
-    /* Card System Tokens */
+    /* ── ELEVATION / SHADOW SYSTEM ── */
+    --shadow-level0: none;
+    --shadow-level1: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-level2: 0 4px 6px rgba(0,0,0,0.04), 0 2px 4px rgba(0,0,0,0.06);
+    --shadow-level3: 0 10px 15px rgba(0,0,0,0.05), 0 4px 6px rgba(0,0,0,0.05);
+    --shadow-level4: 0 20px 25px rgba(0,0,0,0.06), 0 10px 10px rgba(0,0,0,0.04);
+    --shadow-inner: inset 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-focus: 0 0 0 3px hsla(153, 31%, 42%, 0.2);
+    --shadow-glow: 0 0 20px hsla(39, 65%, 47%, 0.15);
+
+    /* ── CARD SYSTEM TOKENS ── */
     --card-radius: 12px;
-    --card-padding: 20px;
-    --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);
-    --card-shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.10), 0 8px 24px rgba(0, 0, 0, 0.08);
-    --bevel-width: 6px;
+    --card-padding: 16px;
+    --card-shadow: var(--shadow-level1);
+    --card-shadow-hover: var(--shadow-level2);
+    --bevel-width: 3px;
+
+    /* ── BORDER RADIUS TOKENS ── */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px;
 
     /* Country Flag Inspired Colors */
     --morocco-red: 0 100% 50%;
@@ -151,69 +210,78 @@ html, body {
     --sudan-black: 0 0% 0%;
     --sudan-green: 120 100% 25%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 70% 45%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 28 10% 89%; /* dna-stone */
+    --input: 28 10% 89%;
+    --ring: 153 31% 42%; /* emerald focus ring */
 
-    --radius: 0.5rem;
+    --radius: 0.75rem; /* 12px default */
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 34 33% 97%;
+    --sidebar-foreground: 20 8% 22%;
+    --sidebar-primary: 153 31% 42%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 34 20% 94%;
+    --sidebar-accent-foreground: 20 8% 15%;
+    --sidebar-border: 28 10% 89%;
+    --sidebar-ring: 153 31% 42%;
   }
 
   .dark {
-    --background: 183 28% 8%;
-    --foreground: 0 0% 98%;
+    --background: 0 0% 10%; /* #1A1A1A */
+    --foreground: 34 8% 94%; /* #F0EFED */
 
-    --card: 183 28% 12%;
-    --card-foreground: 0 0% 98%;
+    --card: 20 6% 13%; /* #262220 */
+    --card-foreground: 34 8% 94%;
 
-    --popover: 183 28% 12%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 20 6% 13%;
+    --popover-foreground: 34 8% 94%;
 
-    --primary: 160 35% 55%; /* DNA Sage Green - Enhanced for dark mode */
-    --primary-foreground: 183 28% 8%;
+    --primary: 153 31% 42%; /* Emerald stays same */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 183 28% 20%;
-    --secondary-foreground: 160 35% 55%;
+    --secondary: 20 6% 17%;
+    --secondary-foreground: 34 8% 94%;
 
-    --muted: 183 28% 15%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 20 6% 15%;
+    --muted-foreground: 25 7% 60%;
 
-    --accent: 25 75% 66%; /* DNA Copper - Enhanced for dark mode */
-    --accent-foreground: 183 28% 8%;
+    --accent: 25 51% 55%;
+    --accent-foreground: 0 0% 100%;
 
-    /* Dark mode DNA brand colors (enhanced visibility) */
-    --dna-forest: 183 28% 35%; /* Lighter forest for dark mode */
-    --dna-emerald: 160 35% 55%; /* Brighter sage green for dark mode */
-    --dna-copper: 25 75% 66%; /* Warmer copper for dark mode */
-    --dna-gold: 45 85% 65%; /* Brighter gold for dark mode */
-    --dna-mint: 170 45% 80%; /* Lighter mint for dark mode */
-    --dna-crimson: 0 100% 50%; /* Brighter crimson for dark mode */
+    /* Dark mode module colors stay the same */
+    --dna-emerald: 153 31% 42%;
+    --dna-emerald-light: 153 31% 54%;
+    --dna-emerald-dark: 153 31% 34%;
+    --dna-forest: 147 33% 35%;
+    --dna-copper: 25 51% 55%;
+    --dna-gold: 39 65% 55%;
+    --dna-mint: 170 45% 80%;
+    --dna-crimson: 0 70% 50%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 70% 40%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --border: 20 6% 28%; /* #4A4540 */
+    --input: 20 6% 28%;
+    --ring: 153 31% 42%;
+
+    --shadow-level1: 0 1px 3px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.15);
+    --shadow-level2: 0 4px 6px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.15);
+    --shadow-level3: 0 10px 15px rgba(0,0,0,0.25), 0 4px 6px rgba(0,0,0,0.15);
+    --shadow-level4: 0 20px 25px rgba(0,0,0,0.3), 0 10px 10px rgba(0,0,0,0.15);
+    --shadow-glow: 0 0 20px hsla(39, 65%, 47%, 0.25);
+
+    --sidebar-background: 0 0% 10%;
+    --sidebar-foreground: 34 8% 94%;
+    --sidebar-primary: 153 31% 42%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 20 6% 17%;
+    --sidebar-accent-foreground: 34 8% 94%;
+    --sidebar-border: 20 6% 28%;
+    --sidebar-ring: 153 31% 42%;
   }
 }
 
