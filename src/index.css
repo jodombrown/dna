@@ -230,6 +230,7 @@ html, body {
   }
 
   .dark {
+    /* ── PAGE FOUNDATIONS (dark) ── */
     --background: 0 0% 10%; /* #1A1A1A */
     --foreground: 34 8% 94%; /* #F0EFED */
 
@@ -251,15 +252,61 @@ html, body {
     --accent: 25 51% 55%;
     --accent-foreground: 0 0% 100%;
 
-    /* Dark mode module colors stay the same */
+    /* ── DNA EMERALD (dark) ── */
     --dna-emerald: 153 31% 42%;
     --dna-emerald-light: 153 31% 54%;
     --dna-emerald-dark: 153 31% 34%;
+    --dna-emerald-subtle: 153 25% 18%; /* Darkened subtle */
+
+    /* ── FIVE C's MODULE COLORS (dark — primaries same, lights darkened) ── */
+    --module-connect: 153 31% 42%;
+    --module-connect-light: 153 25% 18%;
+    --module-connect-dark: 153 31% 34%;
+
+    --module-convene: 39 65% 47%;
+    --module-convene-light: 39 40% 18%;
+    --module-convene-dark: 39 65% 39%;
+
+    --module-collaborate: 147 33% 27%;
+    --module-collaborate-light: 147 22% 16%;
+    --module-collaborate-dark: 147 33% 18%;
+
+    --module-contribute: 25 51% 46%;
+    --module-contribute-light: 25 30% 18%;
+    --module-contribute-dark: 25 51% 37%;
+
+    --module-convey: 191 53% 35%;
+    --module-convey-light: 191 35% 16%;
+    --module-convey-dark: 191 53% 27%;
+
+    /* ── DIA COLORS (dark) ── */
+    --dna-dia: 39 65% 55%;
+    --dna-dia-light: 39 40% 18%;
+    --dna-dia-glow: 39 65% 65%;
+
+    /* ── NEUTRAL PALETTE (dark swaps per PRD §12) ── */
+    --dna-cream: 0 0% 10%; /* maps to dark.background */
+    --dna-sand: 20 6% 13%; /* maps to dark.surface */
+    --dna-stone: 20 6% 28%; /* maps to dark.border */
+    --dna-gray400: 25 7% 45%;
+    --dna-gray500: 25 7% 55%;
+    --dna-gray600: 25 7% 65%;
+    --dna-gray800: 34 8% 88%;
+    --dna-black: 34 8% 94%; /* inverted for dark text */
+
+    /* ── LEGACY COLORS (dark) ── */
     --dna-forest: 147 33% 35%;
     --dna-copper: 25 51% 55%;
     --dna-gold: 39 65% 55%;
     --dna-mint: 170 45% 80%;
     --dna-crimson: 0 70% 50%;
+    --dna-crimson-light: 0 40% 18%;
+
+    /* ── SEMANTIC (dark) ── */
+    --dna-success: 153 31% 45%;
+    --dna-warning: 39 65% 55%;
+    --dna-error: 0 70% 50%;
+    --dna-info: 191 53% 45%;
 
     --destructive: 0 70% 40%;
     --destructive-foreground: 0 0% 100%;
@@ -268,12 +315,14 @@ html, body {
     --input: 20 6% 28%;
     --ring: 153 31% 42%;
 
+    /* ── ELEVATION (dark — stronger shadows) ── */
     --shadow-level1: 0 1px 3px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.15);
     --shadow-level2: 0 4px 6px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.15);
     --shadow-level3: 0 10px 15px rgba(0,0,0,0.25), 0 4px 6px rgba(0,0,0,0.15);
     --shadow-level4: 0 20px 25px rgba(0,0,0,0.3), 0 10px 10px rgba(0,0,0,0.15);
     --shadow-glow: 0 0 20px hsla(39, 65%, 47%, 0.25);
 
+    /* ── SIDEBAR (dark) ── */
     --sidebar-background: 0 0% 10%;
     --sidebar-foreground: 34 8% 94%;
     --sidebar-primary: 153 31% 42%;

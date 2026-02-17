@@ -1,3 +1,4 @@
+import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -94,6 +95,7 @@ const FactSheetPage = lazy(() => import("./pages/FactSheetPage"));
 const PitchDeck = lazy(() => import("./pages/PitchDeck"));
 const Manifesto = lazy(() => import("./pages/Manifesto"));
 const Demo = lazy(() => import("./pages/Demo"));
+const DesignSystem = lazy(() => import("./pages/DesignSystem"));
 const FeaturesHub = lazy(() => import("./pages/documentation/FeaturesHub"));
 const FeatureDetail = lazy(() => import("./pages/documentation/FeatureDetail"));
 
@@ -262,6 +264,7 @@ const LegacySpaceSlugRedirect = () => {
 function App() {
   return (
     <ErrorBoundary>
+      <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
       <HelmetProvider>
         <QueryClientProvider client={queryClient}>
           <TooltipProvider>
@@ -286,6 +289,7 @@ function App() {
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
               <Route path="/waitlist" element={<Waitlist />} />
               <Route path="/demo" element={<Demo />} />
+              <Route path="/design-system" element={<DesignSystem />} />
               <Route path="/install" element={<Install />} />
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
               <Route path="/reset-password" element={<AuthGuard redirectAuth><ResetPassword /></AuthGuard>} />
@@ -779,6 +783,7 @@ function App() {
         </TooltipProvider>
       </QueryClientProvider>
       </HelmetProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }
