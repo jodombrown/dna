@@ -7,6 +7,7 @@ import { useMobile } from '@/hooks/useMobile';
 import { cn } from '@/lib/utils';
 import { AnimatedNumber } from '@/components/AnimatedNumber';
 import { FlipCard } from '@/components/FlipCard';
+import dnaLogo from '@/assets/dna-logo.png';
 
 const PitchDeck = () => {
   const { toast } = useToast();
@@ -24,7 +25,7 @@ const PitchDeck = () => {
       content: (
         <div className="flex flex-col items-center justify-center h-full text-center space-y-8 animate-fade-in">
           <img 
-            src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
+            src={dnaLogo}
             alt="DNA Logo" 
             className="h-32 md:h-48 w-auto mb-4 animate-scale-in"
           />
@@ -700,7 +701,7 @@ const PitchDeck = () => {
                       <p className="text-sm md:text-base text-muted-foreground">{slide.subtitle}</p>
                     </div>
                     <img 
-                      src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
+                      src={dnaLogo}
                       alt="DNA Logo" 
                       className="h-8 md:h-12 w-auto ml-3 flex-shrink-0"
                     />
@@ -767,7 +768,7 @@ const PitchDeck = () => {
                         <p className="text-base md:text-lg text-muted-foreground">{slide.subtitle}</p>
                       </div>
                       <img 
-                        src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
+                        src={dnaLogo} 
                         alt="DNA Logo" 
                         className="h-12 md:h-16 w-auto ml-4 flex-shrink-0"
                       />

@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { NotificationCenter } from '@/components/notifications/NotificationCenter';
 import { cn } from '@/lib/utils';
+import dnaLogo from '@/assets/dna-logo.png';
 
 import { 
   Home,
@@ -128,7 +129,7 @@ const UnifiedHeader = () => {
                 className="flex items-center hover:opacity-80 transition-opacity"
               >
                 <img 
-                  src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
+                  src={dnaLogo}
                   alt="DNA Logo" 
                   className="h-8 w-auto"
                   width={57}
@@ -158,7 +159,7 @@ const UnifiedHeader = () => {
                     <div className="p-4 sm:p-6 border-b flex-shrink-0">
                       <div className="flex items-center justify-end">
                         <img 
-                          src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
+                          src={dnaLogo}
                           alt="Logo" 
                           className="h-6 sm:h-8 w-auto"
                           width={57}
@@ -252,7 +253,7 @@ const UnifiedHeader = () => {
                 className="flex items-center hover:opacity-80 transition-opacity"
               >
                 <img 
-                  src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
+                  src={dnaLogo}
                   alt="DNA Logo" 
                   className="h-8 w-auto"
                   width={57}
@@ -448,7 +449,7 @@ const UnifiedHeader = () => {
                     <div className="p-4 sm:p-6 border-b flex-shrink-0">
                       <div className="flex items-center justify-end">
                         <img 
-                          src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
+                          src={dnaLogo}
                           alt="Logo" 
                           className="h-6 sm:h-8 w-auto"
                           width={57}
