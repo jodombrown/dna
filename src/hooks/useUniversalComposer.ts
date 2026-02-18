@@ -338,7 +338,7 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
             tags: formData.tags || [],
           };
 
-          console.log('📤 Submitting event:', eventPayload);
+          
 
           const { data: authData } = await supabase.auth.getSession();
           const response = await supabase.functions.invoke('create-event', {
