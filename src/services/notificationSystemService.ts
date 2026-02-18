@@ -15,6 +15,11 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import { typedSupabase } from '@/lib/typedSupabase';
+// notificationSystemService uses multiple provisional tables (notification_records,
+// notification_batches, push_tokens) plus real supabase methods (.functions, .rpc, .channel).
+// Use supabase directly for real methods, provisionalDb for provisional tables.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = supabase as any;
 import { logger } from '@/lib/logger';
 import type {

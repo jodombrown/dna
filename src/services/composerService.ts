@@ -6,6 +6,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import { typedSupabase } from '@/lib/typedSupabase';
 import {
   ComposerMode,
   CModule,
@@ -107,7 +108,7 @@ export const composerService = {
     const userId = (await supabase.auth.getUser()).data.user?.id;
     if (!userId) return;
 
-    const { error } = await (supabase as any).from('composer_drafts').upsert(
+    const { error } = await typedSupabase.composerDrafts().upsert(
       {
         user_id: userId,
         mode,
@@ -129,8 +130,7 @@ export const composerService = {
     baseFields: ComposerBaseFields;
     modeFields: Record<string, unknown>;
   } | null> {
-    const { data, error } = await (supabase as any)
-      .from('composer_drafts')
+    const { data, error } = await typedSupabase.composerDrafts()
       .select('base_fields, mode_fields')
       .eq('mode', mode)
       .single();
@@ -145,8 +145,7 @@ export const composerService = {
   },
 
   async deleteDraft(mode: ComposerMode): Promise<void> {
-    await (supabase as any)
-      .from('composer_drafts')
+    await typedSupabase.composerDrafts()
       .delete()
       .eq('mode', mode);
   },
@@ -156,8 +155,7 @@ export const composerService = {
   // ============================================
 
   async createAttribution(attribution: AttributionInsert): Promise<void> {
-    const { error } = await (supabase as any)
-      .from('content_attribution')
+    const { error } = await typedSupabase.contentAttribution()
       .insert({
         content_type: attribution.content_type,
         content_id: attribution.content_id,
@@ -233,8 +231,10 @@ export const composerService = {
     base: ComposerBaseFields,
     fields: PostModeFields
   ): Promise<string> {
-    const { data, error } = await (supabase as any)
-      .from('posts')
+    // posts table exists in generated types but insert shape is strict —
+    // extra fields like composer_mode are provisional columns not yet in types
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase.from('posts') as any)
       .insert({
         content: base.body,
         image_url: base.media[0]?.url ?? null,
@@ -253,8 +253,8 @@ export const composerService = {
     base: ComposerBaseFields,
     fields: StoryModeFields
   ): Promise<string> {
-    const { data, error } = await (supabase as any)
-      .from('posts')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase.from('posts') as any)
       .insert({
         content: base.body,
         title: fields.title,
@@ -325,8 +325,8 @@ export const composerService = {
     base: ComposerBaseFields,
     fields: SpaceModeFields
   ): Promise<string> {
-    const { data, error } = await (supabase as any)
-      .from('collaboration_spaces')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase.from('collaboration_spaces') as any)
       .insert({
         title: fields.name,
         description: fields.description || base.body,
@@ -352,8 +352,8 @@ export const composerService = {
   ): Promise<string> {
     const userId = (await supabase.auth.getUser()).data.user?.id;
 
-    const { data, error } = await (supabase as any)
-      .from('opportunities')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase.from('opportunities') as any)
       .insert({
         created_by: userId,
         title: fields.title,
@@ -378,6 +378,6 @@ export const composerService = {
       .single();
 
     if (error || !data) throw error || new Error('Failed to create opportunity');
-    return (data as any).id;
+    return data.id;
   },
 };
