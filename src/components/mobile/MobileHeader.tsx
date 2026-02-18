@@ -61,7 +61,7 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
           <img 
             src={dnaLogo}
             alt="DNA" 
-            className="h-10 w-auto cursor-pointer flex-shrink-0"
+            className="h-12 w-auto cursor-pointer flex-shrink-0"
             width={57}
             height={32}
             onClick={() => navigate('/dna/feed')}
@@ -117,7 +117,7 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
             <img 
               src={dnaLogo}
               alt="DNA" 
-              className="h-10 w-auto cursor-pointer"
+              className="h-12 w-auto cursor-pointer"
               width={57}
               height={32}
               onClick={() => navigate('/dna/feed')}
