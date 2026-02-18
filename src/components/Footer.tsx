@@ -4,17 +4,17 @@ import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white py-6 lg:py-8">
+    <footer className="bg-[hsl(151,75%,10%)] text-white py-6 lg:py-8">
       <div className="max-w-6xl mx-auto px-3 sm:px-4 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-center gap-3 md:gap-0">
           {/* Copyright and Documentation Link */}
           <div className="mb-4 md:mb-0 text-center md:text-left">
-            <p className="text-gray-400 text-sm">
+            <p className="text-white/60 text-sm">
               © 2025 DNA - Diaspora Network of Africa. All rights reserved.
             </p>
             <Link 
               to="/documentation/features" 
-              className="text-gray-400 hover:text-dna-copper transition-colors text-sm inline-block mt-1"
+              className="text-white/60 hover:text-dna-copper transition-colors text-sm inline-block mt-1"
             >
               DNA | Documentation Hub
             </Link>
@@ -26,7 +26,7 @@ const Footer = () => {
               href="https://www.linkedin.com/company/diasporanetworkafrica"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-dna-copper transition-colors"
+              className="text-white/60 hover:text-dna-copper transition-colors"
               aria-label="Follow us on LinkedIn"
             >
               <Linkedin className="w-6 h-6" />
