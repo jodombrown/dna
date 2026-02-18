@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import dnaLogo from '@/assets/dna-logo-optimized.webp';
+import dnaLogo from '@/assets/dna-logo.png';
 
 const Logo = () => {
   const navigate = useNavigate();

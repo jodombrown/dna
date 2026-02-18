@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Search, PenSquare } from 'lucide-react';
+import dnaLogo from '@/assets/dna-logo.png';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
@@ -58,7 +59,7 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
         <div className="flex items-center justify-between h-14 px-3 gap-2">
           {/* DNA Logo */}
           <img 
-            src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
+            src={dnaLogo}
             alt="DNA" 
             className="h-8 w-auto cursor-pointer flex-shrink-0"
             width={57}
@@ -114,7 +115,7 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
             </Button>
           ) : (
             <img 
-              src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
+              src={dnaLogo}
               alt="DNA" 
               className="h-8 w-auto cursor-pointer"
               width={57}

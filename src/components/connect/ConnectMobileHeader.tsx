@@ -2,6 +2,7 @@ import React from 'react';
 import { Users, Network, MessageCircle, SlidersHorizontal } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import dnaLogo from '@/assets/dna-logo.png';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -46,7 +47,7 @@ export function ConnectMobileHeader({
       <div className="flex items-center h-14 px-3 gap-2 bg-background border-b-0">
         {/* DNA Logo */}
         <img 
-          src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
+          src={dnaLogo}
           alt="DNA" 
           className="h-8 w-auto cursor-pointer flex-shrink-0"
           width={57}
