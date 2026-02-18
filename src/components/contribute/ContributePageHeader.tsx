@@ -5,7 +5,7 @@ import UnifiedHeader from '@/components/UnifiedHeader';
 
 const ContributePageHeader: React.FC = () => {
   return (
-    <div className="bg-white border-b">
+    <div className="bg-background border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-12">
           <div className="flex items-center gap-3">

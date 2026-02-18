@@ -56,7 +56,7 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-between px-4 py-3 bg-white border-b sticky top-0 z-[100] shadow-sm">
+    <div className="flex items-center justify-between px-4 py-3 bg-background border-b border-border sticky top-0 z-[100] shadow-sm">
       {/* Navigation arrows - Left side */}
       <div className="flex items-center gap-2">
         <Button
