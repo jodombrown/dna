@@ -16,7 +16,7 @@ const Logo = () => {
         <img 
           src={dnaLogo}
           alt="DNA Logo" 
-          className="h-8 w-auto"
+          className="h-[60px] w-auto"
           width="57"
           height="32"
         />
