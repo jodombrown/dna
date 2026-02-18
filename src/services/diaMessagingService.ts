@@ -10,7 +10,7 @@
  * Smart replies use local rule-based detection on the client side.
  */
 
-import { supabase } from '@/integrations/supabase/client';
+import { typedSupabase } from '@/lib/typedSupabase';
 import { logger } from '@/lib/logger';
 import type {
   Message,
@@ -277,8 +277,7 @@ export const diaMessagingService = {
     conversationId: string,
     sinceDate: Date
   ): Promise<string> {
-    const { data, error } = await (supabase as any)
-      .from('messaging_messages')
+    const { data, error } = await typedSupabase.messagingMessages()
       .select('content, reactions, sender_name')
       .eq('conversation_id', conversationId)
       .gte('created_at', sinceDate.toISOString())
@@ -294,7 +293,8 @@ export const diaMessagingService = {
     }
 
     // Filter to messages that have reactions (likely important decisions)
-    const messagesWithReactions = (data as any[]).filter((m) => {
+    const records = (data || []) as Array<Record<string, unknown>>;
+    const messagesWithReactions = records.filter((m) => {
       const reactions = m.reactions as Array<{ count: number }> | null;
       return reactions && reactions.length > 0;
     });
@@ -304,9 +304,9 @@ export const diaMessagingService = {
     }
 
     // Build summary from reacted messages
-    const summaryLines = messagesWithReactions.map((m: any) => {
+    const summaryLines = messagesWithReactions.map((m) => {
       const reactions = m.reactions as Array<{ emoji: string; count: number }>;
-      const totalReactions = reactions.reduce((sum: number, r: any) => sum + r.count, 0);
+      const totalReactions = reactions.reduce((sum, r) => sum + r.count, 0);
       const contentPreview = (m.content as string).slice(0, 100);
       return `- ${m.sender_name}: "${contentPreview}" (${totalReactions} reactions)`;
     });

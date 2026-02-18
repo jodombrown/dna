@@ -1,8 +1,11 @@
 import { supabase } from '@/integrations/supabase/client';
 import { Event } from '@/types/search';
+import type { Database } from '@/integrations/supabase/types';
+
+type EventType = Database['public']['Enums']['event_type'];
 
 interface EventSearchFilters {
-  type?: string;
+  type?: EventType;
   is_virtual?: boolean;
   upcoming_only?: boolean;
 }
@@ -16,7 +19,7 @@ export const searchEvents = async (searchTerm: string = '', filters: EventSearch
   }
   
   if (filters.type) {
-    query = query.eq('event_type', filters.type as any);
+    query = query.eq('event_type', filters.type);
   }
   
   if (filters.is_virtual !== undefined) {

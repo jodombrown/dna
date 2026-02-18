@@ -14,7 +14,7 @@
  * - Value-first — every nudge explains why it benefits the user
  */
 
-import { supabase } from '@/integrations/supabase/client';
+import { typedSupabase } from '@/lib/typedSupabase';
 import { CModule } from '@/types/composer';
 import {
   NudgeType,
@@ -281,8 +281,7 @@ async function getPendingNudges(
   channel?: NudgeDeliveryChannel,
   limit = 10,
 ): Promise<Nudge[]> {
-  let query = (supabase as any)
-    .from('dia_nudges')
+  let query = typedSupabase.diaNudges()
     .select('*')
     .eq('user_id', userId)
     .in('status', ['queued', 'delivered'])
@@ -301,8 +300,7 @@ async function getPendingNudges(
  * Mark a nudge as acted on.
  */
 async function actOnNudge(nudgeId: string): Promise<void> {
-  await (supabase as any)
-    .from('dia_nudges')
+  await typedSupabase.diaNudges()
     .update({
       status: 'acted_on',
       acted_on_at: new Date().toISOString(),
@@ -315,8 +313,7 @@ async function actOnNudge(nudgeId: string): Promise<void> {
  */
 async function dismissNudge(nudgeId: string, userId: string): Promise<void> {
   // Update nudge status
-  await (supabase as any)
-    .from('dia_nudges')
+  await typedSupabase.diaNudges()
     .update({
       status: 'dismissed',
       dismissed_at: new Date().toISOString(),
@@ -324,14 +321,14 @@ async function dismissNudge(nudgeId: string, userId: string): Promise<void> {
     .eq('id', nudgeId);
 
   // Get nudge type for dismiss count tracking
-  const { data: nudge } = await (supabase as any)
-    .from('dia_nudges')
+  const { data: nudge } = await typedSupabase.diaNudges()
     .select('nudge_type')
     .eq('id', nudgeId)
     .single();
 
   if (nudge) {
-    await incrementDismissCount(userId, (nudge as any).nudge_type);
+    const record = nudge as Record<string, unknown>;
+    await incrementDismissCount(userId, record.nudge_type as string);
   }
 }
 
@@ -339,8 +336,7 @@ async function dismissNudge(nudgeId: string, userId: string): Promise<void> {
  * Expire old nudges.
  */
 async function expireOldNudges(): Promise<number> {
-  const { data } = await (supabase as any)
-    .from('dia_nudges')
+  const { data } = await typedSupabase.diaNudges()
     .update({ status: 'expired' })
     .in('status', ['queued', 'delivered'])
     .lt('expires_at', new Date().toISOString())
@@ -392,8 +388,7 @@ function shouldSuppress(nudge: Nudge, userState: UserNudgeState): boolean {
 // ============================================================
 
 async function getUserNudgeState(userId: string): Promise<UserNudgeState> {
-  const { data } = await (supabase as any)
-    .from('user_nudge_state')
+  const { data } = await typedSupabase.userNudgeState()
     .select('*')
     .eq('user_id', userId)
     .single();
@@ -410,7 +405,7 @@ async function getUserNudgeState(userId: string): Promise<UserNudgeState> {
       timezone: 'UTC',
     };
 
-    await (supabase as any).from('user_nudge_state').insert({
+    await typedSupabase.userNudgeState().insert({
       user_id: userId,
       nudges_today: 0,
       nudges_today_reset_at: new Date().toISOString(),
@@ -428,11 +423,10 @@ async function getUserNudgeState(userId: string): Promise<UserNudgeState> {
   const resetAt = new Date(record.nudges_today_reset_at as string);
   const now = new Date();
   if (now.getDate() !== resetAt.getDate() || now.getMonth() !== resetAt.getMonth()) {
-    await (supabase as any)
-      .from('user_nudge_state')
+    await typedSupabase.userNudgeState()
       .update({ nudges_today: 0, nudges_today_reset_at: now.toISOString() })
       .eq('user_id', userId);
-    (record as any).nudges_today = 0;
+    record.nudges_today = 0;
   }
 
   return {
@@ -452,8 +446,7 @@ async function updateNudgeState(userId: string, nudge: Nudge): Promise<void> {
   const lastNudgeByType = { ...state.lastNudgeByType };
   lastNudgeByType[nudge.nudgeType] = new Date();
 
-  await (supabase as any)
-    .from('user_nudge_state')
+  await typedSupabase.userNudgeState()
     .update({
       nudges_today: state.nudgesToday + 1,
       last_nudge_by_type: lastNudgeByType,
@@ -466,8 +459,7 @@ async function incrementDismissCount(userId: string, nudgeType: string): Promise
   const counts = { ...state.dismissCountByType };
   counts[nudgeType] = (counts[nudgeType] || 0) + 1;
 
-  await (supabase as any)
-    .from('user_nudge_state')
+  await typedSupabase.userNudgeState()
     .update({ dismiss_count_by_type: counts })
     .eq('user_id', userId);
 }
@@ -479,8 +471,7 @@ async function updateDiaFrequency(
   userId: string,
   frequency: 'frequent' | 'normal' | 'minimal' | 'off',
 ): Promise<void> {
-  await (supabase as any)
-    .from('user_nudge_state')
+  await typedSupabase.userNudgeState()
     .upsert({
       user_id: userId,
       dia_frequency: frequency,
@@ -494,7 +485,7 @@ async function updateDiaFrequency(
 // ============================================================
 
 async function storeNudge(nudge: Nudge): Promise<void> {
-  await (supabase as any).from('dia_nudges').insert({
+  await typedSupabase.diaNudges().insert({
     id: nudge.id,
     user_id: nudge.userId,
     nudge_type: nudge.nudgeType,

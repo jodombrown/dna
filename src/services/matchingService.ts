@@ -302,14 +302,15 @@ class MatchingService {
     // =========================================================================
 
     // Mentor/Investor seeking bonus (+15 each)
-    if (criteria.isLookingForMentor && (professional as any).is_mentor) {
-      totalScore += 15;
-      reasons.push('Available mentor');
-    }
-    if (criteria.isLookingForInvestor && (professional as any).is_investor) {
-      totalScore += 15;
-      reasons.push('Active investor');
-    }
+    // TODO: requires DB migration — is_mentor and is_investor columns do not exist on profiles
+    // if (criteria.isLookingForMentor && professional.is_mentor) {
+    //   totalScore += 15;
+    //   reasons.push('Available mentor');
+    // }
+    // if (criteria.isLookingForInvestor && professional.is_investor) {
+    //   totalScore += 15;
+    //   reasons.push('Active investor');
+    // }
 
     // High-value complementary matching bonuses
     const userAvailableFor = currentUser.available_for || [];
@@ -591,9 +592,12 @@ class MatchingService {
   private calculateMentorshipMatch(user: ProfileRow, prof: ProfileRow): number {
     let score = 0;
 
-    // Direct mentor/mentee pairing
-    if (((user as any).is_mentor && (prof as any).seeking_mentorship) ||
-        ((user as any).seeking_mentorship && (prof as any).is_mentor)) {
+    // Mentorship pairing via seeking_mentorship (exists in DB)
+    // TODO: is_mentor column does not exist — using available_for mentoring intent instead
+    const userMentoring = (user.available_for || []).includes('mentoring');
+    const profMentoring = (prof.available_for || []).includes('mentoring');
+    if ((userMentoring && prof.seeking_mentorship) ||
+        (user.seeking_mentorship && profMentoring)) {
       score += 50;
     }
 
@@ -749,8 +753,9 @@ class MatchingService {
         avatar_url: p.avatar_url,
         skills: p.skills,
         impact_areas: p.impact_areas,
-        is_mentor: (p as any).is_mentor || false,
-        is_investor: (p as any).is_investor || false,
+        // TODO: is_mentor/is_investor columns do not exist in profiles — defaulting to false
+        is_mentor: false,
+        is_investor: false,
         looking_for_opportunities: p.looking_for_opportunities || false,
         created_at: p.created_at,
         updated_at: p.updated_at || p.created_at
