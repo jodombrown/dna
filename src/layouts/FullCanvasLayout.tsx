@@ -118,8 +118,10 @@ const FullCanvasLayout: React.FC<FullCanvasLayoutProps> = ({
 
       {/* Main content area */}
       <main 
+        id="main-content"
+        tabIndex={-1}
         className={cn(
-          "flex-1 transition-all duration-300 ease-in-out overflow-auto relative h-full",
+          "flex-1 transition-all duration-300 ease-in-out overflow-auto relative h-full focus:outline-none",
           isCollapsed && "w-full"
         )}
         style={{ minWidth: 0 }}

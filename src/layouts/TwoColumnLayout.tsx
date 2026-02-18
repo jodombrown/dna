@@ -55,15 +55,17 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
   return (
     <div className={cn("flex w-full gap-4 p-4", className)} style={{ height: 'calc(100vh - 64px)' }}>
       {left && (
-        <div 
-          className="transition-all duration-300 ease-in-out overflow-hidden h-full"
+        <main 
+          id="main-content"
+          tabIndex={-1}
+          className="transition-all duration-300 ease-in-out overflow-hidden h-full focus:outline-none"
           style={{ 
             width: leftWidth,
             minWidth: 0,
           }}
         >
           {left}
-        </div>
+        </main>
       )}
       
       {right && (

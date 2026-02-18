@@ -362,11 +362,12 @@ html, body {
     max-width: 100vw;
   }
 
-  /* Remove black outlines on focus and hover */
+  /* Remove default outlines — focus-visible handles keyboard focus */
   *:focus {
     outline: none;
   }
   
+  /* Keyboard-only focus ring: DNA Emerald, WCAG AA compliant */
   *:focus-visible {
     outline: 2px solid hsl(var(--dna-emerald, 69 71% 59%));
     outline-offset: 2px;
@@ -377,9 +378,9 @@ html, body {
     @apply max-w-full h-auto;
   }
 
-  /* Consistent button focus states */
-  button:focus,
-  a:focus {
+  /* Consistent keyboard-only focus states for interactive elements */
+  button:focus-visible,
+  a:focus-visible {
     @apply ring-2 ring-offset-2 ring-dna-emerald outline-none;
   }
 }

@@ -74,7 +74,9 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
       
       {center && (
         <main 
-          className="transition-all duration-300 ease-in-out overflow-y-auto"
+          id="main-content"
+          tabIndex={-1}
+          className="transition-all duration-300 ease-in-out overflow-y-auto focus:outline-none"
           style={{ 
             width: centerWidth,
             maxWidth: centerWidth,

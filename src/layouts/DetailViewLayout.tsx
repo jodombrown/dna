@@ -106,7 +106,7 @@ const DetailViewLayout: React.FC<DetailViewLayoutProps> = ({
   return (
     <div className={`flex bg-background ${className}`} style={{ height: 'calc(100vh - 64px)' }}>
       {/* Main Content Column */}
-      <div className="flex-1 max-w-4xl mx-auto p-6 overflow-auto h-full" style={{ minWidth: 0 }}>
+      <main id="main-content" tabIndex={-1} className="flex-1 max-w-4xl mx-auto p-6 overflow-auto h-full focus:outline-none" style={{ minWidth: 0 }}>
         <div className="min-w-max">
           {/* Header / Breadcrumbs */}
           <div className="mb-6">
@@ -150,7 +150,7 @@ const DetailViewLayout: React.FC<DetailViewLayoutProps> = ({
             {children}
           </div>
         </div>
-      </div>
+      </main>
 
       {/* Context Rail (Right Column) - Independent scrolling */}
       {showContextPanel && contextPanel && (
