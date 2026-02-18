@@ -5,6 +5,7 @@ import TwoColumnLayout from '@/layouts/TwoColumnLayout';
 import FullCanvasLayout from '@/layouts/FullCanvasLayout';
 import DetailViewLayout from '@/layouts/DetailViewLayout';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+import SkipLink from '@/components/shared/SkipLink';
 
 interface LayoutControllerProps {
   // Column content for ThreeColumnLayout
@@ -61,9 +62,10 @@ const LayoutController: React.FC<LayoutControllerProps> = ({
 }) => {
   const { viewState, layoutConfig } = useViewState();
 
-  // Helper to wrap layout with MobileBottomNav
+  // Helper to wrap layout with SkipLink + MobileBottomNav
   const withMobileNav = (layout: React.ReactNode) => (
     <>
+      <SkipLink />
       {layout}
       <MobileBottomNav />
     </>
