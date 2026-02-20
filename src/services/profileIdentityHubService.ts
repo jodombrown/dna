@@ -10,7 +10,11 @@
  * Also handles profile completion, view tracking, and badge evaluation.
  */
 
-import { supabase } from '@/integrations/supabase/client';
+import { supabase as _supabase } from '@/integrations/supabase/client';
+
+// Bypass: provisional tables/columns not yet in generated types
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const supabase = _supabase as any;
 import type {
   IdentityHubProfile,
   ProfileViewPayload,
@@ -868,7 +872,7 @@ export const profileIdentityHubService = {
     }
 
     const sections: ProfileSection[] = ['avatar', 'cover_image', 'headline', 'bio'];
-    const vis = visibility as ProfileVisibility;
+    const vis = visibility as unknown as ProfileVisibility;
     const isConnected = viewContext === 'connected';
 
     const shouldShow = (setting: string | undefined): boolean => {

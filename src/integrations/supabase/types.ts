@@ -1686,24 +1686,57 @@ export type Database = {
       }
       conversations_new: {
         Row: {
+          conversation_type: string
           created_at: string
+          created_by: string | null
           id: string
           last_message_at: string
+          metadata: Json | null
+          origin_id: string | null
+          origin_type: string | null
+          title: string | null
           updated_at: string
         }
         Insert: {
+          conversation_type?: string
           created_at?: string
+          created_by?: string | null
           id?: string
           last_message_at?: string
+          metadata?: Json | null
+          origin_id?: string | null
+          origin_type?: string | null
+          title?: string | null
           updated_at?: string
         }
         Update: {
+          conversation_type?: string
           created_at?: string
+          created_by?: string | null
           id?: string
           last_message_at?: string
+          metadata?: Json | null
+          origin_id?: string | null
+          origin_type?: string | null
+          title?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "conversations_new_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_new_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       countries: {
         Row: {
@@ -8951,6 +8984,10 @@ export type Database = {
             }
             Returns: string
           }
+      create_event_messaging_thread: {
+        Args: { p_event_id: string; p_title?: string }
+        Returns: string
+      }
       create_notification:
         | {
             Args: {
@@ -8976,6 +9013,10 @@ export type Database = {
             }
             Returns: string
           }
+      create_opportunity_messaging_thread: {
+        Args: { p_opportunity_id: string; p_title?: string }
+        Returns: string
+      }
       create_personal_hashtag: {
         Args: { p_description?: string; p_tag: string; p_user_id: string }
         Returns: {
@@ -8983,6 +9024,10 @@ export type Database = {
           hashtag_id: string
           success: boolean
         }[]
+      }
+      create_space_messaging_channel: {
+        Args: { p_space_id: string; p_title?: string }
+        Returns: string
       }
       cron_overdue_task_reminders: { Args: never; Returns: undefined }
       delete_reshare: {
@@ -9618,6 +9663,15 @@ export type Database = {
       }
       get_or_create_hashtag: {
         Args: { p_display_name?: string; p_name: string }
+        Returns: string
+      }
+      get_or_create_origin_conversation: {
+        Args: {
+          p_created_by: string
+          p_origin_id: string
+          p_origin_type: string
+          p_title: string
+        }
         Returns: string
       }
       get_organizer_analytics:
