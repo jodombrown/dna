@@ -495,9 +495,9 @@ export function useCreateConversation() {
   });
 
   const createEventThread = useMutation({
-    mutationFn: async (params: { eventId: string; eventTitle: string }) => {
+    mutationFn: async (params: { eventId: string; title?: string }) => {
       if (!user?.id) throw new Error('Not authenticated');
-      return messagingPrdService.createEventThread(params.eventId, user.id, params.eventTitle);
+      return messagingPrdService.createEventThread(params.eventId, params.title);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messaging-conversations'] });
@@ -505,9 +505,9 @@ export function useCreateConversation() {
   });
 
   const createSpaceChannel = useMutation({
-    mutationFn: async (params: { spaceId: string; channelName?: string }) => {
+    mutationFn: async (params: { spaceId: string; title?: string }) => {
       if (!user?.id) throw new Error('Not authenticated');
-      return messagingPrdService.createSpaceChannel(params.spaceId, user.id, params.channelName);
+      return messagingPrdService.createSpaceChannel(params.spaceId, params.title);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messaging-conversations'] });
@@ -515,18 +515,9 @@ export function useCreateConversation() {
   });
 
   const createOpportunityThread = useMutation({
-    mutationFn: async (params: {
-      opportunityId: string;
-      posterId: string;
-      opportunityTitle: string;
-    }) => {
+    mutationFn: async (params: { opportunityId: string; title?: string }) => {
       if (!user?.id) throw new Error('Not authenticated');
-      return messagingPrdService.createOpportunityThread(
-        params.opportunityId,
-        params.posterId,
-        user.id,
-        params.opportunityTitle
-      );
+      return messagingPrdService.createOpportunityThread(params.opportunityId, params.title);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messaging-conversations'] });
