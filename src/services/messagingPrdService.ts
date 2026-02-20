@@ -13,6 +13,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import { CModule } from '@/types/composer';
 
 // Cast to bypass strict typing for messaging tables not yet in generated schema
 const db = supabase as any;
@@ -52,17 +53,33 @@ const LOG_TAG = 'MessagingPrdService';
 // DATABASE ROW MAPPERS
 // ============================================================
 
+/**
+ * Derive Five C's module from conversation_type.
+ * Keeps backward compat for components reading cModule.
+ */
+function cModuleFromType(conversationType: string): Conversation['cModule'] {
+  switch (conversationType) {
+    case 'event': return CModule.CONVENE;
+    case 'space': return CModule.COLLABORATE;
+    case 'opportunity': return CModule.CONTRIBUTE;
+    case 'group': return CModule.CONNECT;
+    case 'direct':
+    default: return CModule.CONNECT;
+  }
+}
+
 function mapConversationRow(row: Record<string, unknown>): Conversation {
+  const conversationType = (row.conversation_type as string) || 'direct';
   return {
     id: row.id as string,
-    type: row.type as ConversationType,
-    cModule: row.c_module as Conversation['cModule'],
+    type: conversationType as ConversationType,
+    cModule: cModuleFromType(conversationType),
     title: (row.title as string) || null,
-    description: (row.description as string) || null,
-    imageUrl: (row.image_url as string) || null,
-    createdBy: row.created_by as string,
-    contextType: (row.context_type as Conversation['contextType']) || null,
-    contextId: (row.context_id as string) || null,
+    description: null, // lives in metadata jsonb if needed
+    imageUrl: null,     // lives in metadata jsonb if needed
+    createdBy: (row.created_by as string) || '',
+    contextType: (row.origin_type as Conversation['contextType']) || null,
+    contextId: (row.origin_id as string) || null,
     participantCount: (row.participant_count as number) || 0,
     participantLimit: (row.participant_limit as number) || 50,
     lastMessageAt: row.last_message_at ? new Date(row.last_message_at as string) : null,
@@ -185,13 +202,11 @@ export const messagingPrdService = {
    */
   async createEventThread(
     eventId: string,
-    organizerId: string,
-    eventTitle: string
+    title?: string
   ): Promise<Conversation> {
     const { data, error } = await db.rpc('create_event_messaging_thread', {
       p_event_id: eventId,
-      p_organizer_id: organizerId,
-      p_title: `${eventTitle} Discussion`,
+      p_title: title || null,
     });
 
     if (error) {
@@ -208,13 +223,11 @@ export const messagingPrdService = {
    */
   async createSpaceChannel(
     spaceId: string,
-    creatorId: string,
-    channelName: string = 'General'
+    title?: string
   ): Promise<Conversation> {
     const { data, error } = await db.rpc('create_space_messaging_channel', {
       p_space_id: spaceId,
-      p_creator_id: creatorId,
-      p_channel_name: channelName,
+      p_title: title || null,
     });
 
     if (error) {
@@ -231,15 +244,11 @@ export const messagingPrdService = {
    */
   async createOpportunityThread(
     opportunityId: string,
-    posterId: string,
-    interestedUserId: string,
-    opportunityTitle: string
+    title?: string
   ): Promise<Conversation> {
     const { data, error } = await db.rpc('create_opportunity_messaging_thread', {
       p_opportunity_id: opportunityId,
-      p_poster_id: posterId,
-      p_interested_user_id: interestedUserId,
-      p_title: `Re: ${opportunityTitle}`,
+      p_title: title || null,
     });
 
     if (error) {
@@ -248,14 +257,6 @@ export const messagingPrdService = {
     }
 
     const conversationId = data as string;
-
-    // Send structured intro system message
-    await this.sendSystemMessage(conversationId, {
-      type: 'conversation_created',
-      content: `Interest expressed in "${opportunityTitle}". Start the conversation to explore this opportunity.`,
-      senderId: interestedUserId,
-    });
-
     return this.getConversation(conversationId);
   },
 
@@ -264,7 +265,7 @@ export const messagingPrdService = {
    */
   async getConversation(conversationId: string): Promise<Conversation> {
     const { data, error } = await db
-      .from('messaging_conversations')
+      .from('conversations_new')
       .select('*')
       .eq('id', conversationId)
       .single();
@@ -344,7 +345,7 @@ export const messagingPrdService = {
 
     // Update conversation metadata
     await db
-      .from('messaging_conversations')
+      .from('conversations_new')
       .update({
         last_message_at: sentMessage.createdAt.toISOString(),
         last_message_preview: sentMessage.content.slice(0, 100),
@@ -610,7 +611,7 @@ export const messagingPrdService = {
     // Update pinned count
     const conversation = await this.getConversation(conversationId);
     await db
-      .from('messaging_conversations')
+      .from('conversations_new')
       .update({ pinned_message_count: conversation.pinnedMessageCount + 1 })
       .eq('id', conversationId);
 
@@ -655,7 +656,7 @@ export const messagingPrdService = {
 
     const conversation = await this.getConversation(conversationId);
     await db
-      .from('messaging_conversations')
+      .from('conversations_new')
       .update({
         pinned_message_count: Math.max(0, conversation.pinnedMessageCount - 1),
       })
@@ -690,7 +691,7 @@ export const messagingPrdService = {
     // Update participant count
     const conversation = await this.getConversation(conversationId);
     await db
-      .from('messaging_conversations')
+      .from('conversations_new')
       .update({ participant_count: conversation.participantCount + 1 })
       .eq('id', conversationId);
   },
@@ -715,7 +716,7 @@ export const messagingPrdService = {
 
     const conversation = await this.getConversation(conversationId);
     await db
-      .from('messaging_conversations')
+      .from('conversations_new')
       .update({ participant_count: Math.max(0, conversation.participantCount - 1) })
       .eq('id', conversationId);
   },
@@ -793,7 +794,7 @@ export const messagingPrdService = {
     // Get user's conversations via participant records
     let query = db
       .from('messaging_participants')
-      .select('*, conversation:messaging_conversations(*)')
+      .select('*, conversation:conversations_new(*)')
       .eq('user_id', userId)
       .order('joined_at', { ascending: false })
       .limit(limit + 1);
@@ -996,7 +997,7 @@ export const messagingPrdService = {
    */
   async archiveConversation(conversationId: string): Promise<void> {
     await db
-      .from('messaging_conversations')
+      .from('conversations_new')
       .update({ is_archived: true })
       .eq('id', conversationId);
   },
@@ -1006,7 +1007,7 @@ export const messagingPrdService = {
    */
   async unarchiveConversation(conversationId: string): Promise<void> {
     await db
-      .from('messaging_conversations')
+      .from('conversations_new')
       .update({ is_archived: false })
       .eq('id', conversationId);
   },
@@ -1260,17 +1261,17 @@ export const messagingPrdService = {
   // ============================================
 
   /**
-   * Find conversations by their C-module context (event, space, opportunity).
+   * Find conversations by origin (event, space, opportunity).
    */
   async getConversationsByContext(
-    contextType: 'event' | 'space' | 'opportunity',
-    contextId: string
+    originType: 'event' | 'space' | 'opportunity',
+    originId: string
   ): Promise<Conversation[]> {
     const { data, error } = await db
-      .from('messaging_conversations')
+      .from('conversations_new')
       .select('*')
-      .eq('context_type', contextType)
-      .eq('context_id', contextId);
+      .eq('origin_type', originType)
+      .eq('origin_id', originId);
 
     if (error) {
       logger.error(LOG_TAG, 'Failed to fetch conversations by context', error);
@@ -1278,5 +1279,23 @@ export const messagingPrdService = {
     }
 
     return (data || []).map((row: any) => mapConversationRow(row as Record<string, unknown>));
+  },
+
+  /** Convenience: get event thread */
+  async getEventThread(eventId: string): Promise<Conversation | null> {
+    const results = await this.getConversationsByContext('event', eventId);
+    return results[0] || null;
+  },
+
+  /** Convenience: get space channel */
+  async getSpaceChannel(spaceId: string): Promise<Conversation | null> {
+    const results = await this.getConversationsByContext('space', spaceId);
+    return results[0] || null;
+  },
+
+  /** Convenience: get opportunity thread */
+  async getOpportunityThread(opportunityId: string): Promise<Conversation | null> {
+    const results = await this.getConversationsByContext('opportunity', opportunityId);
+    return results[0] || null;
   },
 };
