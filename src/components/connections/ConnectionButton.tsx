@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { diaEventBus } from '@/services/dia/diaEventBus';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 interface ConnectionButtonProps {
   targetUserId: string;
@@ -105,10 +106,10 @@ export const ConnectionButton: React.FC<ConnectionButtonProps> = ({
         fromUserId: user.id,
       });
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Connection failed",
-        description: error.message || "Unable to send connection request. Please try again.",
+        description: getErrorMessage(error) || "Unable to send connection request. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -143,10 +144,10 @@ export const ConnectionButton: React.FC<ConnectionButtonProps> = ({
         description: `You are now connected with ${targetUserName}.`
       });
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Failed to accept connection",
-        description: error.message || "Please try again.",
+        description: getErrorMessage(error) || "Please try again.",
         variant: "destructive"
       });
     } finally {

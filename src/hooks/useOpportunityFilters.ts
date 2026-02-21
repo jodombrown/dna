@@ -97,7 +97,7 @@ export const useOpportunityFilters = () => {
     }
   }, [opportunities, sortBy]);
 
-  const updateFilters = (key: keyof OpportunityFilters, value: any) => {
+  const updateFilters = (key: keyof OpportunityFilters, value: OpportunityFilters[keyof OpportunityFilters]) => {
     setFilters(prev => ({ ...prev, [key]: value }));
   };
 

@@ -7,6 +7,7 @@ import { Calendar, MapPin, Users, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
+import { logger } from '@/lib/logger';
 
 export const RegisteredEventsWidget = () => {
   const { user } = useAuth();
@@ -35,12 +36,12 @@ export const RegisteredEventsWidget = () => {
           .limit(3);
         
         if (error) {
-          console.warn('[RegisteredEventsWidget] Error fetching events:', error);
+          logger.warn('RegisteredEventsWidget', 'Error fetching events:', error);
           return [];
         }
         return data || [];
       } catch (error) {
-        console.warn('[RegisteredEventsWidget] Failed to fetch events:', error);
+        logger.warn('RegisteredEventsWidget', 'Failed to fetch events:', error);
         return [];
       }
     },

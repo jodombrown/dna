@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SettingsLayout } from '@/components/settings/SettingsLayout';
 import { Loader2, Layout, Eye, RotateCcw } from 'lucide-react';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 interface DisplayPreferences {
   display_density: 'comfortable' | 'compact';
@@ -70,10 +71,10 @@ export default function PreferencesSettings() {
 
       queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
       toast({ title: 'Preferences saved' });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Error saving preferences',
-        description: error.message,
+        description: getErrorMessage(error),
         variant: 'destructive',
       });
     } finally {

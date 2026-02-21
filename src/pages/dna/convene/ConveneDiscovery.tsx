@@ -30,6 +30,7 @@ import { UpcomingEventsSection } from '@/components/convene/UpcomingEventsSectio
 
 // DIA Card System (Sprint 4A)
 import { DIAHubSection } from '@/components/dia/DIAHubSection';
+import { logger } from '@/lib/logger';
 
 export function ConveneDiscovery() {
   const navigate = useNavigate();
@@ -92,7 +93,7 @@ export function ConveneDiscovery() {
           thisWeek: thisWeekResult.count || 0,
         };
       } catch (error) {
-        console.warn('[ConveneDiscovery] Failed to fetch stats:', error);
+        logger.warn('ConveneDiscovery', 'Failed to fetch stats:', error);
         return { upcoming: 0, myRsvps: 0, hosting: 0, thisWeek: 0 };
       }
     },
@@ -116,12 +117,12 @@ export function ConveneDiscovery() {
           .limit(5);
 
         if (error) {
-          console.warn('[ConveneDiscovery] Failed to fetch recent activity:', error);
+          logger.warn('ConveneDiscovery', 'Failed to fetch recent activity:', error);
           return [];
         }
         return data || [];
       } catch (error) {
-        console.warn('[ConveneDiscovery] Error fetching recent activity:', error);
+        logger.warn('ConveneDiscovery', 'Error fetching recent activity:', error);
         return [];
       }
     },

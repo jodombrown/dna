@@ -88,7 +88,7 @@ export function usePostBookmarks(postId: string, userId: string) {
       queryClient.invalidateQueries({ queryKey: ['post-user-bookmarked', postId, userId] });
       queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
     },
-    onError: (error: any) => {
+    onError: () => {
       toast({
         variant: 'default',
         description: 'Could not update bookmark. Please try again.',

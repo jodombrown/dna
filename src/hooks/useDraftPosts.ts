@@ -57,7 +57,7 @@ export const useDraftPosts = () => {
       queryClient.invalidateQueries({ queryKey: ['draft-posts'] });
       toast.success('Draft saved');
     },
-    onError: (error: any) => {
+    onError: () => {
       toast.error('Failed to save draft');
     },
   });
@@ -70,21 +70,21 @@ export const useDraftPosts = () => {
       const existingDrafts: DraftPost[] = JSON.parse(localStorage.getItem(`drafts_${user.id}`) || '[]');
       const draftIndex = existingDrafts.findIndex(d => d.id === id);
       if (draftIndex === -1) throw new Error('Draft not found');
-      
+
       existingDrafts[draftIndex] = {
         ...existingDrafts[draftIndex],
         content,
         updated_at: new Date().toISOString(),
       };
       localStorage.setItem(`drafts_${user.id}`, JSON.stringify(existingDrafts));
-      
+
       return existingDrafts[draftIndex];
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['draft-posts'] });
       toast.success('Draft updated');
     },
-    onError: (error: any) => {
+    onError: () => {
       toast.error('Failed to update draft');
     },
   });
@@ -102,7 +102,7 @@ export const useDraftPosts = () => {
       queryClient.invalidateQueries({ queryKey: ['draft-posts'] });
       toast.success('Draft deleted');
     },
-    onError: (error: any) => {
+    onError: () => {
       toast.error('Failed to delete draft');
     },
   });

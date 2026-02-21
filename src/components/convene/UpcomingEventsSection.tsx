@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { useState } from 'react';
+import { logger } from '@/lib/logger';
 
 interface MyEventsData {
   hosting: any[];
@@ -47,7 +48,7 @@ export const UpcomingEventsSection = () => {
           .limit(5);
 
         if (hostingError) {
-          console.warn('[UpcomingEventsSection] Failed to fetch hosting events:', hostingError);
+          logger.warn('UpcomingEventsSection', 'Failed to fetch hosting events:', hostingError);
         }
 
         // Fetch attending events
@@ -58,7 +59,7 @@ export const UpcomingEventsSection = () => {
           .in('status', ['going', 'maybe']);
 
         if (attendeeError) {
-          console.warn('[UpcomingEventsSection] Failed to fetch attendee data:', attendeeError);
+          logger.warn('UpcomingEventsSection', 'Failed to fetch attendee data:', attendeeError);
         }
 
         let attending: any[] = [];
@@ -83,7 +84,7 @@ export const UpcomingEventsSection = () => {
             .limit(5);
 
           if (eventsError) {
-            console.warn('[UpcomingEventsSection] Failed to fetch attending events:', eventsError);
+            logger.warn('UpcomingEventsSection', 'Failed to fetch attending events:', eventsError);
           }
 
           attending = events?.map(event => ({
@@ -97,7 +98,7 @@ export const UpcomingEventsSection = () => {
           attending: attending || []
         };
       } catch (error) {
-        console.warn('[UpcomingEventsSection] Failed to fetch events:', error);
+        logger.warn('UpcomingEventsSection', 'Failed to fetch events:', error);
         return { hosting: [], attending: [] };
       }
     },

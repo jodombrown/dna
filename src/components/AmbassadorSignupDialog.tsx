@@ -100,7 +100,7 @@ Availability: ${formData.availability || 'Not provided'}
       } else {
         throw new Error(data?.error || 'Failed to submit ambassador application');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error('Something went wrong. Please try again.');
     } finally {
       setIsSubmitting(false);

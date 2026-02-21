@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 
 /**
  * ADA Phase 4 - M1: Adaptive Config Service
@@ -215,7 +216,7 @@ export class AdaptiveConfigService {
 
       // Gracefully handle missing table or RLS issues
       if (error) {
-        console.warn('Could not fetch experiment policy:', error.message);
+        logger.warn('AdaptiveConfigService', 'Could not fetch experiment policy', error.message);
         return null;
       }
 
@@ -252,7 +253,7 @@ export class AdaptiveConfigService {
         variantId: variant.id,
       };
     } catch (err) {
-      console.warn('Error in getExperimentPolicy:', err);
+      logger.warn('AdaptiveConfigService', 'Error in getExperimentPolicy', err);
       return null;
     }
   }
@@ -306,13 +307,13 @@ export class AdaptiveConfigService {
         .maybeSingle();
 
       if (error) {
-        console.warn('Could not fetch global policy:', error.message);
+        logger.warn('AdaptiveConfigService', 'Could not fetch global policy', error.message);
         return null;
       }
 
       return data as AdaPolicy | null;
     } catch (err) {
-      console.warn('Error in getGlobalPolicy:', err);
+      logger.warn('AdaptiveConfigService', 'Error in getGlobalPolicy', err);
       return null;
     }
   }

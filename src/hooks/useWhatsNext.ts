@@ -102,7 +102,7 @@ export function useWhatsNext() {
         .eq('status', 'approved');
 
       if (memberSpaces && memberSpaces.length > 0) {
-        const spaceIds = memberSpaces.map((m: any) => m.space_id).filter(Boolean);
+        const spaceIds = memberSpaces.map((m: { space_id: string }) => m.space_id).filter(Boolean);
         
         const { data: openNeeds } = await supabase
           .from('contribution_needs')
@@ -147,7 +147,7 @@ export function useWhatsNext() {
 
       // 6. Based on last view state, suggest returning
       if (lastState && lastState.last_view_state !== 'DASHBOARD_HOME') {
-        const viewStateMap: Record<string, { pillar: any; route: string; title: string }> = {
+        const viewStateMap: Record<string, { pillar: NextActionCard['pillar']; route: string; title: string }> = {
           CONNECT_MODE: { pillar: 'connect', route: '/dna/connect', title: 'Continue Building Your Network' },
           CONVENE_MODE: { pillar: 'convene', route: '/dna/convene', title: 'Explore More Events' },
           COLLABORATE_MODE: { pillar: 'collaborate', route: '/dna/collaborate', title: 'Work on Your Projects' },

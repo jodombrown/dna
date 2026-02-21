@@ -194,7 +194,7 @@ export default function CreateSpace() {
       }
 
       navigate(`/dna/collaborate/spaces/${result.slug}`);
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Error handled by mutation
     } finally {
       setIsCheckingProfile(false);

@@ -40,17 +40,19 @@ export function usePinnedPosts(userId: string) {
       if (error) throw error;
 
       // Map to UniversalFeedItem format
-      return (data || []).map((post: any): UniversalFeedItem => ({
+      return (data || []).map((post): UniversalFeedItem => {
+        const profile = Array.isArray(post.profiles) ? post.profiles[0] : post.profiles;
+        return {
         post_id: post.id,
         author_id: post.author_id,
-        author_username: post.profiles?.username || '',
-        author_display_name: post.profiles?.full_name || '',
-        author_avatar_url: post.profiles?.avatar_url || null,
+        author_username: profile?.username || '',
+        author_display_name: profile?.full_name || '',
+        author_avatar_url: profile?.avatar_url || null,
         content: post.content,
         title: post.title || null,
         subtitle: post.subtitle || null,
         media_url: post.image_url || null,
-        post_type: post.post_type || 'post',
+        post_type: (post.post_type || 'post') as UniversalFeedItem['post_type'],
         story_type: post.story_type || null,
         privacy_level: post.privacy_level || 'public',
         linked_entity_type: null,
@@ -75,7 +77,7 @@ export function usePinnedPosts(userId: string) {
         link_url: post.link_url || null,
         link_title: post.link_title || null,
         link_description: post.link_description || null,
-        link_metadata: post.link_metadata || null,
+        link_metadata: (post.link_metadata as UniversalFeedItem['link_metadata']) || null,
         original_post_id: null,
         original_author_id: null,
         original_author_username: null,
@@ -85,8 +87,9 @@ export function usePinnedPosts(userId: string) {
         original_content: null,
         original_image_url: null,
         original_created_at: null,
-        slug: post.slug || null,
-      }));
+        slug: ('slug' in post ? (post as { slug?: string }).slug : null) || null,
+      };
+      });
     },
     enabled: !!userId,
   });

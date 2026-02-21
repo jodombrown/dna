@@ -38,8 +38,8 @@ const NudgeCenter: React.FC = () => {
     );
     if (nudge?.payload) {
       setArchiveSpaceData({
-        id: nudge.payload.space_id,
-        name: nudge.payload.space_name,
+        id: nudge.payload.space_id as string,
+        name: nudge.payload.space_name as string,
       });
       setArchiveDialogOpen(true);
     }

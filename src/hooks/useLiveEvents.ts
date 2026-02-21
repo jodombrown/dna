@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 export interface LiveEvent {
   id: string;
@@ -59,8 +60,8 @@ export const useLiveEvents = (limit: number = 10) => {
         }));
 
         setEvents(transformedEvents);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        setError(err instanceof Error ? getErrorMessage(err) : 'Unknown error');
         setEvents([]);
       } finally {
         setLoading(false);

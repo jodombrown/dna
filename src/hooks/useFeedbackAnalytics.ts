@@ -93,12 +93,12 @@ export function useFeedbackAnalytics(channelId: string | null, enabled: boolean 
 
       // Top contributors
       const contributorCounts: Record<string, { count: number; profile: { username: string | null; full_name: string | null; avatar_url: string | null } }> = {};
-      messages?.forEach((m: any) => {
+      messages?.forEach((m) => {
         if (m.sender_id) {
           if (!contributorCounts[m.sender_id]) {
             contributorCounts[m.sender_id] = {
               count: 0,
-              profile: m.sender as { username: string | null; full_name: string | null; avatar_url: string | null },
+              profile: m.sender as unknown as { username: string | null; full_name: string | null; avatar_url: string | null },
             };
           }
           contributorCounts[m.sender_id].count++;

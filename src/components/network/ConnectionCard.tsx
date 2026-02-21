@@ -29,6 +29,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 interface ConnectionCardProps {
   connection: {
@@ -66,10 +67,10 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, connectionI
     try {
       const conversation = await messageService.getOrCreateConversation(connection.id);
       navigate(`/dna/messages/${conversation.id}`);
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Error',
-        description: error.message || 'Failed to start conversation',
+        description: getErrorMessage(error) || 'Failed to start conversation',
         variant: 'destructive',
       });
     }

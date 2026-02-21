@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { config } from '@/lib/config';
 import { 
   Mail, 
   Users, 
@@ -104,7 +105,7 @@ const Waitlist = () => {
         title: "Welcome to the Waitlist!",
         description: "Check your email for confirmation.",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Waitlist signup error:', error);
       toast({
         title: "Error",
@@ -147,7 +148,7 @@ const Waitlist = () => {
         <meta property="og:title" content="Join the DNA Waitlist" />
         <meta property="og:description" content="Be the first to connect with 200M+ global diaspora members. Join the movement building Africa's future together." />
         <meta property="og:type" content="website" />
-        <link rel="canonical" href="https://diasporanetwork.africa/waitlist" />
+        <link rel="canonical" href={`${config.APP_URL}/waitlist`} />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">

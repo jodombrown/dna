@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { useAuth } from '@/contexts/AuthContext';
 import { diaEventBus } from '@/services/dia/diaEventBus';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 interface ConnectionRequestCardProps {
   request: {
@@ -69,10 +70,10 @@ export const ConnectionRequestCard: React.FC<ConnectionRequestCardProps> = ({
         target_user_id: request.requester_id,
       });
       onRequestHandled?.();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Error accepting request',
-        description: error.message || 'Please try again.',
+        description: getErrorMessage(error) || 'Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -98,10 +99,10 @@ export const ConnectionRequestCard: React.FC<ConnectionRequestCardProps> = ({
         description: `Connection request from ${request.full_name} has been declined.`,
       });
       onRequestHandled?.();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Error declining request',
-        description: error.message || 'Please try again.',
+        description: getErrorMessage(error) || 'Please try again.',
         variant: 'destructive',
       });
     } finally {

@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
+import { logger } from '@/lib/logger';
 
 export function ConveneRightWidgets() {
   const { user } = useAuth();
@@ -33,7 +34,7 @@ export function ConveneRightWidgets() {
           .maybeSingle();
 
         if (hostingError) {
-          console.warn('[ConveneRightWidgets] Error fetching hosting events:', hostingError);
+          logger.warn('ConveneRightWidgets', 'Error fetching hosting events:', hostingError);
         }
 
         if (hosting) return { ...hosting, role: 'hosting' };
@@ -47,7 +48,7 @@ export function ConveneRightWidgets() {
           .limit(1);
 
         if (attendeeError) {
-          console.warn('[ConveneRightWidgets] Error fetching attendee data:', attendeeError);
+          logger.warn('ConveneRightWidgets', 'Error fetching attendee data:', attendeeError);
           return null;
         }
 
@@ -64,13 +65,13 @@ export function ConveneRightWidgets() {
           .maybeSingle();
 
         if (attendingError) {
-          console.warn('[ConveneRightWidgets] Error fetching attending events:', attendingError);
+          logger.warn('ConveneRightWidgets', 'Error fetching attending events:', attendingError);
           return null;
         }
 
         return attending ? { ...attending, role: 'attending' } : null;
       } catch (error) {
-        console.warn('[ConveneRightWidgets] Failed to fetch next event:', error);
+        logger.warn('ConveneRightWidgets', 'Failed to fetch next event:', error);
         return null;
       }
     },

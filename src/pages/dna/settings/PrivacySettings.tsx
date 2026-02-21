@@ -13,6 +13,7 @@ import { SettingsLayout } from '@/components/settings/SettingsLayout';
 import { Loader2, Eye, EyeOff, Globe, Lock, Info, Share2, Copy, ExternalLink } from 'lucide-react';
 import { PublicVisibilitySettings, DEFAULT_PUBLIC_VISIBILITY } from '@/types/profileV2';
 import { ROUTES, getProfileShareUrl } from '@/config/routes';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 export default function PrivacySettings() {
   const { user } = useAuth();
@@ -81,12 +82,12 @@ export default function PrivacySettings() {
         title: 'Visibility updated',
         description: `${field.replace(/_/g, ' ')} is now ${checked ? 'visible' : 'hidden'} on your public profile`,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Revert on error
       setPublicVisibility({ ...publicVisibility, [field]: !checked });
       toast({
         title: 'Error updating visibility',
-        description: error.message,
+        description: getErrorMessage(error),
         variant: 'destructive',
       });
     }
@@ -116,11 +117,11 @@ export default function PrivacySettings() {
           ? 'Other DNA members can now discover and view your profile.'
           : 'Your profile is now hidden from other members.',
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       setIsPublic(!checked); // Revert on error
       toast({
         title: 'Error updating privacy',
-        description: error.message,
+        description: getErrorMessage(error),
         variant: 'destructive',
       });
     } finally {
@@ -152,11 +153,11 @@ export default function PrivacySettings() {
           ? 'Other users can now share your profile with their network.'
           : 'Other users can no longer share your profile.',
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       setAllowProfileSharing(!checked); // Revert on error
       toast({
         title: 'Error updating setting',
-        description: error.message,
+        description: getErrorMessage(error),
         variant: 'destructive',
       });
     } finally {

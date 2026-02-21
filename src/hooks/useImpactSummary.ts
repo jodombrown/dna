@@ -65,7 +65,7 @@ export function useImpactSummary(spaceId: string | undefined, needId: string | u
 
       // Build contributor list
       const contributorNames = badges
-        .map((b: any) => b.profiles?.full_name)
+        .map((b: { profiles?: { full_name: string | null } }) => b.profiles?.full_name)
         .filter((name: string | null) => name != null) as string[];
       
       const uniqueContributors = Array.from(new Set(contributorNames));

@@ -11,6 +11,7 @@ import { BANNER_GRADIENTS, BannerGradientKey, DEFAULT_GRADIENT } from "@/lib/con
 import { Loader2, Upload, Check, Move, ZoomIn, ZoomOut, RotateCcw, User } from "lucide-react";
 import Cropper from "react-easy-crop";
 import { getCroppedImg } from "@/lib/utils/cropImage";
+import { getErrorMessage } from '@/lib/errorLogger';
 
 export interface BannerSaveData {
   type: 'gradient' | 'solid' | 'image';
@@ -178,8 +179,8 @@ export function BannerUploadModal({
       toast({ title: "Success", description: "Banner updated!" });
       handleClearImage();
       onOpenChange(false);
-    } catch (error: any) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } catch (error: unknown) {
+      toast({ title: "Error", description: getErrorMessage(error), variant: "destructive" });
     } finally {
       setUploading(false);
     }

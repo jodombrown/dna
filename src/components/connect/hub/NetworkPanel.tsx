@@ -34,6 +34,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
+import { logger } from '@/lib/logger';
 
 interface NetworkPanelProps {
   onFilterChange?: (filters: FilterState) => void;
@@ -111,7 +112,7 @@ export function NetworkPanel({
           .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
 
         if (totalError) {
-          console.warn('[NetworkPanel] Failed to fetch total connections:', totalError);
+          logger.warn('NetworkPanel', 'Failed to fetch total connections:', totalError);
         }
 
         // Get connections from last week (for trend)
@@ -126,7 +127,7 @@ export function NetworkPanel({
           .gte('updated_at', weekAgo.toISOString());
 
         if (weekError) {
-          console.warn('[NetworkPanel] Failed to fetch weekly connections:', weekError);
+          logger.warn('NetworkPanel', 'Failed to fetch weekly connections:', weekError);
         }
 
         // Get pending requests using correct column name
@@ -137,7 +138,7 @@ export function NetworkPanel({
           .eq('recipient_id', user.id);
 
         if (pendingError) {
-          console.warn('[NetworkPanel] Failed to fetch pending requests:', pendingError);
+          logger.warn('NetworkPanel', 'Failed to fetch pending requests:', pendingError);
         }
 
         return {
@@ -146,7 +147,7 @@ export function NetworkPanel({
           pendingRequests: pendingRequests || 0,
         };
       } catch (error) {
-        console.warn('[NetworkPanel] Error fetching network stats:', error);
+        logger.warn('NetworkPanel', 'Error fetching network stats:', error);
         return { total: 0, weeklyChange: 0, pendingRequests: 0 };
       }
     },
@@ -174,7 +175,7 @@ export function NetworkPanel({
           .gte('viewed_at', weekAgo.toISOString());
 
         if (error) {
-          console.warn('[NetworkPanel] Failed to fetch profile views:', error);
+          logger.warn('NetworkPanel', 'Failed to fetch profile views:', error);
         }
 
         // Get new match notifications (simplified - would need notifications table)
@@ -185,7 +186,7 @@ export function NetworkPanel({
           newMatches,
         };
       } catch (error) {
-        console.warn('[NetworkPanel] Error fetching activity summary:', error);
+        logger.warn('NetworkPanel', 'Error fetching activity summary:', error);
         return { profileViews: 0, newMatches: 0 };
       }
     },

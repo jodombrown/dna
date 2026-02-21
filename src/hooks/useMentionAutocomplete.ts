@@ -37,7 +37,7 @@ export const useMentionAutocomplete = (query: string, enabled: boolean = true) =
       }
 
       // Map to MentionSuggestion format
-      const profiles: MentionSuggestion[] = (data || []).map((profile: any) => ({
+      const profiles: MentionSuggestion[] = (data || []).map((profile: { id: string; username: string | null; full_name: string | null; avatar_url: string | null; headline: string | null }) => ({
         id: profile.id,
         username: profile.username || '',
         full_name: profile.full_name || '',

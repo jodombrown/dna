@@ -32,6 +32,16 @@ interface LogErrorOptions {
 }
 
 /**
+ * Extract a human-readable message from an unknown error.
+ * Use in catch blocks: catch (error: unknown) { const msg = getErrorMessage(error); }
+ */
+export function getErrorMessage(err: unknown): string {
+  if (err instanceof Error) return err.message;
+  if (typeof err === 'string') return err;
+  return 'An unexpected error occurred';
+}
+
+/**
  * Main error logging function - sends errors to database
  */
 export async function logError(options: LogErrorOptions): Promise<void> {

@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { opportunityMatchingService, MatchingOpportunity, OpportunityMatchScore } from '@/services/opportunityMatchingService';
 import type { ContributionNeedWithSpace } from '@/types/contributeTypes';
+import { logger } from '@/lib/logger';
 
 /**
  * Hook to get matching opportunities for the current user
@@ -16,7 +17,7 @@ export function useMatchingOpportunities() {
         if (!user?.id) return [];
         return await opportunityMatchingService.getMatchingOpportunities(user.id);
       } catch (error) {
-        console.warn('[useMatchingOpportunities] Failed to fetch:', error);
+        logger.warn('useMatchingOpportunities', 'Failed to fetch:', error);
         return [];
       }
     },
@@ -41,7 +42,7 @@ export function useOpportunityMatchScore(opportunityId: string | undefined) {
         if (!user?.id || !opportunityId) return null;
         return await opportunityMatchingService.getMatchScore(user.id, opportunityId);
       } catch (error) {
-        console.warn('[useOpportunityMatchScore] Failed to fetch:', error);
+        logger.warn('useOpportunityMatchScore', 'Failed to fetch:', error);
         return null;
       }
     },
@@ -62,7 +63,7 @@ export function useTrendingOpportunities(limit: number = 5) {
       try {
         return await opportunityMatchingService.getTrendingOpportunities(limit);
       } catch (error) {
-        console.warn('[useTrendingOpportunities] Failed to fetch:', error);
+        logger.warn('useTrendingOpportunities', 'Failed to fetch:', error);
         return [];
       }
     },
@@ -85,7 +86,7 @@ export function useNetworkOpportunities() {
         if (!user?.id) return [];
         return await opportunityMatchingService.getNetworkOpportunities(user.id);
       } catch (error) {
-        console.warn('[useNetworkOpportunities] Failed to fetch:', error);
+        logger.warn('useNetworkOpportunities', 'Failed to fetch:', error);
         return [];
       }
     },

@@ -227,7 +227,7 @@ async function recomputeUserStrengths(userId: string): Promise<void> {
 
   if (!connections) return;
 
-  const connectedIds = connections.map((c: any) =>
+  const connectedIds = connections.map((c: { requester_id: string; recipient_id: string }) =>
     c.requester_id === userId ? c.recipient_id : c.requester_id,
   );
 
@@ -255,7 +255,7 @@ async function getStrongestConnections(
     .order('relationship_strength', { ascending: false })
     .limit(limit);
 
-  return (data || []).map((d: any) => ({
+  return (data || []).map((d: { connected_user_id: string; relationship_strength: number }) => ({
     connectedUserId: d.connected_user_id,
     strength: d.relationship_strength,
   }));
@@ -479,10 +479,10 @@ async function fetchMutualConnectionCount(userId: string, connectedUserId: strin
     .limit(500);
 
   const idsA = new Set(
-    (connectionsA || []).flatMap((c: any) => [c.requester_id, c.recipient_id]).filter((id: string) => id !== userId),
+    (connectionsA || []).flatMap((c: { requester_id: string; recipient_id: string }) => [c.requester_id, c.recipient_id]).filter((id: string) => id !== userId),
   );
   const idsB = new Set(
-    (connectionsB || []).flatMap((c: any) => [c.requester_id, c.recipient_id]).filter((id: string) => id !== connectedUserId),
+    (connectionsB || []).flatMap((c: { requester_id: string; recipient_id: string }) => [c.requester_id, c.recipient_id]).filter((id: string) => id !== connectedUserId),
   );
 
   let mutual = 0;

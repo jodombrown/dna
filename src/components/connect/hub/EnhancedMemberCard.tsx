@@ -38,6 +38,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useMutualConnections } from '@/hooks/useMutualConnections';
 import { FiveCsEngagement } from './FiveCsEngagement';
 import { cn } from '@/lib/utils';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 // Sector color mapping
 const SECTOR_COLORS: Record<string, string> = {
@@ -213,10 +214,10 @@ export function EnhancedMemberCard({
           description: result.message || 'Please try again later.',
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Error sending request',
-        description: error.message || 'Please try again.',
+        description: getErrorMessage(error) || 'Please try again.',
         variant: 'destructive',
       });
     } finally {

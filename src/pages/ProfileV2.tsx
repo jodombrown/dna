@@ -46,6 +46,7 @@ import { useTrackProfileView } from '@/hooks/useTrackProfileView';
 
 // Profile completion calculation
 import { calculateProfileCompletionPts } from '@/lib/profileCompletion';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 const ProfileV2: React.FC = () => {
   const { username } = useParams<{ username: string }>();
@@ -286,8 +287,8 @@ const ProfileV2: React.FC = () => {
             } else {
               toast({ title: 'Unable to connect', description: result.error || 'Please try again.', variant: 'destructive' });
             }
-          } catch (err: any) {
-            toast({ title: 'Error', description: err.message || 'Failed to send request', variant: 'destructive' });
+          } catch (err: unknown) {
+            toast({ title: 'Error', description: getErrorMessage(err) || 'Failed to send request', variant: 'destructive' });
           }
         }}
         onAcceptConnection={async () => {
@@ -319,8 +320,8 @@ const ProfileV2: React.FC = () => {
               description: `You are now connected with ${profile.full_name}`,
             });
             queryClient.invalidateQueries({ queryKey: ['profile-v2', username] });
-          } catch (err: any) {
-            toast({ title: 'Error', description: err.message || 'Failed to accept connection', variant: 'destructive' });
+          } catch (err: unknown) {
+            toast({ title: 'Error', description: getErrorMessage(err) || 'Failed to accept connection', variant: 'destructive' });
           }
         }}
         onMessage={() => openMessageOverlay(profile.id)}

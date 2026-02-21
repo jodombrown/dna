@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowLeft } from 'lucide-react';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 interface PasswordResetFormProps {
   onBackToAuth: () => void;
@@ -42,7 +43,7 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ onBackToAuth }) =
       if (error) {
         toast({
           title: "Reset Failed",
-          description: error.message || "Failed to send reset email. Please try again.",
+          description: getErrorMessage(error) || "Failed to send reset email. Please try again.",
           variant: "destructive",
         });
       } else {
@@ -52,7 +53,7 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ onBackToAuth }) =
           description: "Please check your email for password reset instructions.",
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again later.",

@@ -1,6 +1,7 @@
 
 import { Linkedin } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { config } from '@/lib/config';
 
 const Footer = () => {
   return (
@@ -23,7 +24,7 @@ const Footer = () => {
           {/* Social Media Links */}
           <div className="flex items-center space-x-6">
             <a
-              href="https://www.linkedin.com/company/diasporanetworkafrica"
+              href={config.social.linkedin}
               target="_blank"
               rel="noopener noreferrer"
               className="text-white/60 hover:text-dna-copper transition-colors"

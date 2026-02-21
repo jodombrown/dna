@@ -14,6 +14,7 @@ import UsernameStep from '@/components/onboarding/steps/UsernameStep';
 import { validateStep } from '@/components/onboarding/validation/onboardingStepValidation';
 import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 const TOTAL_STEPS = 5;
 
@@ -208,10 +209,10 @@ const Onboarding = () => {
       setTimeout(() => {
         navigate('/dna/feed');
       }, 1800);
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Error",
-        description: error.message || "Failed to complete onboarding. Please try again.",
+        description: getErrorMessage(error) || "Failed to complete onboarding. Please try again.",
         variant: "destructive"
       });
     } finally {

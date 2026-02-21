@@ -22,6 +22,7 @@ import { MoreVertical, UserMinus, Ban, MessageCircle } from 'lucide-react';
 import { connectionService } from '@/services/connectionService';
 import { useToast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 interface ConnectionActionsMenuProps {
   connectionId: string;
@@ -66,10 +67,10 @@ export const ConnectionActionsMenu: React.FC<ConnectionActionsMenuProps> = ({
       });
       
       setShowRemoveDialog(false);
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Failed to remove connection',
-        description: error.message || 'Please try again',
+        description: getErrorMessage(error) || 'Please try again',
         variant: 'destructive',
       });
     } finally {
@@ -94,10 +95,10 @@ export const ConnectionActionsMenu: React.FC<ConnectionActionsMenuProps> = ({
       
       setShowBlockDialog(false);
       setBlockReason('');
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Failed to block user',
-        description: error.message || 'Please try again',
+        description: getErrorMessage(error) || 'Please try again',
         variant: 'destructive',
       });
     } finally {

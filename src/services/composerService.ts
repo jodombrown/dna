@@ -21,6 +21,7 @@ import {
   type OpportunityModeFields,
   type CrossReference,
 } from '@/types/composer';
+import { logger } from '@/lib/logger';
 
 interface AttributionInsert {
   content_type: string;
@@ -170,7 +171,7 @@ export const composerService = {
       });
 
     if (error) {
-      console.warn('Failed to create attribution record:', error);
+      logger.warn('composerService', 'Failed to create attribution record', error);
     }
   },
 

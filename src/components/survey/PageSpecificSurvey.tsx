@@ -162,7 +162,7 @@ const PageSpecificSurvey: React.FC<PageSpecificSurveyProps> = ({ isOpen, onClose
         usage_frequency: '',
         additional_comments: ''
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Error",
         description: "Failed to submit survey. Please try again.",

@@ -3,6 +3,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { useViewState } from '@/contexts/ViewStateContext';
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 
 interface LastViewState {
   last_view_state: string;
@@ -29,12 +30,12 @@ export function useLastViewState() {
 
         // Gracefully handle missing table or RLS issues
         if (error) {
-          console.warn('Could not fetch last view state:', error.message);
+          logger.warn('useLastViewState', 'Could not fetch last view state', error.message);
           return null;
         }
         return data as LastViewState | null;
       } catch (err) {
-        console.warn('Error fetching last view state:', err);
+        logger.warn('useLastViewState', 'Error fetching last view state', err);
         return null;
       }
     },

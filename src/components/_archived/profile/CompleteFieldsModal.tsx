@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import CountryCombobox from '@/components/ui/CountryCombobox';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 export function CompleteFieldsModal({ missing, onClose }: { missing: string[]; onClose: () => void; }) {
   const { toast } = useToast();
@@ -51,8 +52,8 @@ export function CompleteFieldsModal({ missing, onClose }: { missing: string[]; o
 
       toast({ title: 'Profile updated', description: 'You can continue your action now.' });
       onClose();
-    } catch (e: any) {
-      toast({ title: 'Update failed', description: e.message || 'Please try again', variant: 'destructive' });
+    } catch (e: unknown) {
+      toast({ title: 'Update failed', description: getErrorMessage(e) || 'Please try again', variant: 'destructive' });
     } finally {
       setSaving(false);
     }

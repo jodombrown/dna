@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { getErrorMessage } from '@/lib/errorLogger';
 
 interface AvatarUploaderProps {
   value?: string;
@@ -59,8 +60,8 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ value, onUploaded }) =>
       const url = data.publicUrl;
       onUploaded(url);
       toast({ title: "Uploaded", description: "Profile photo updated." });
-    } catch (err: any) {
-      toast({ title: "Upload failed", description: err.message || "Try again.", variant: "destructive" });
+    } catch (err: unknown) {
+      toast({ title: "Upload failed", description: getErrorMessage(err) || "Try again.", variant: "destructive" });
     } finally {
       setUploading(false);
     }

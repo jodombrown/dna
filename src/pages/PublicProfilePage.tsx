@@ -37,6 +37,7 @@ import {
   PublicProfileCTA,
   PublicProfileFooter,
 } from '@/components/public-profile';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 // About section component with read more functionality
 const AboutSection = ({ bio }: { bio: string }) => {
@@ -143,10 +144,10 @@ const PublicProfilePage = () => {
       try {
         const { id: conversationId } = await messageService.getOrCreateConversation(profile.id);
         navigate(`/dna/messages/${conversationId}`);
-      } catch (error: any) {
+      } catch (error: unknown) {
         toast({
           title: 'Cannot start conversation',
-          description: error.message || 'Please try again',
+          description: getErrorMessage(error) || 'Please try again',
           variant: 'destructive',
         });
       }

@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
+import { logger } from '@/lib/logger';
 
 export const MyEventsWidget = () => {
   const { user } = useAuth();
@@ -27,12 +28,12 @@ export const MyEventsWidget = () => {
           .limit(3);
         
         if (error) {
-          console.warn('[MyEventsWidget] Error fetching events:', error);
+          logger.warn('MyEventsWidget', 'Error fetching events:', error);
           return [];
         }
         return data || [];
       } catch (error) {
-        console.warn('[MyEventsWidget] Failed to fetch events:', error);
+        logger.warn('MyEventsWidget', 'Failed to fetch events:', error);
         return [];
       }
     },

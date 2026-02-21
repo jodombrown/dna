@@ -14,6 +14,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 interface BetaWaitlistProps {
   onBack?: () => void;
@@ -75,10 +76,10 @@ export const BetaWaitlist = ({ onBack, open, onOpenChange }: BetaWaitlistProps) 
         setFormData({ firstName: '', lastName: '', email: '', linkedin: '', message: '' });
         if (onOpenChange) onOpenChange(false);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Error",
-        description: error.message || "Failed to join waitlist. Please try again.",
+        description: getErrorMessage(error) || "Failed to join waitlist. Please try again.",
         variant: "destructive"
       });
     } finally {

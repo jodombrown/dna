@@ -15,6 +15,8 @@ import { FilterState } from './NetworkPanel';
 import { ConnectionRequestModal } from '@/components/connect/ConnectionRequestModal';
 import { connectionService } from '@/services/connectionService';
 import { cn } from '@/lib/utils';
+import { logger } from '@/lib/logger';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 interface DiscoveryFeedProps {
   filters?: FilterState;
@@ -137,7 +139,7 @@ export function DiscoveryFeed({
         });
 
         if (error) {
-          console.warn('[DiscoveryFeed] RPC failed, using fallback:', error);
+          logger.warn('DiscoveryFeed', 'RPC failed, using fallback', error);
           // Fallback query
           try {
             const { data: fallbackData, error: fallbackError } = await supabase
@@ -149,7 +151,7 @@ export function DiscoveryFeed({
               .range(pageParam * 20, pageParam * 20 + 19);
 
             if (fallbackError) {
-              console.warn('[DiscoveryFeed] Fallback query also failed:', fallbackError);
+              logger.warn('DiscoveryFeed', 'Fallback query also failed:', fallbackError);
               return { members: [], nextPage: null };
             }
 
@@ -158,7 +160,7 @@ export function DiscoveryFeed({
               nextPage: (fallbackData || []).length === 20 ? pageParam + 1 : null,
             };
           } catch (fallbackErr) {
-            console.warn('[DiscoveryFeed] Fallback query error:', fallbackErr);
+            logger.warn('DiscoveryFeed', 'Fallback query error:', fallbackErr);
             return { members: [], nextPage: null };
           }
         }
@@ -168,7 +170,7 @@ export function DiscoveryFeed({
           nextPage: (data || []).length === 20 ? pageParam + 1 : null,
         };
       } catch (error) {
-        console.warn('[DiscoveryFeed] Error fetching members:', error);
+        logger.warn('DiscoveryFeed', 'Error fetching members:', error);
         return { members: [], nextPage: null };
       }
     },
@@ -202,7 +204,7 @@ export function DiscoveryFeed({
             .limit(5);
 
           if (newMembersError) {
-            console.warn('[DiscoveryFeed] Failed to fetch new members:', newMembersError);
+            logger.warn('DiscoveryFeed', 'Failed to fetch new members:', newMembersError);
           }
 
           if (newMembers && newMembers.length >= 3) {
@@ -228,7 +230,7 @@ export function DiscoveryFeed({
             });
           }
         } catch (err) {
-          console.warn('[DiscoveryFeed] Error fetching new members:', err);
+          logger.warn('DiscoveryFeed', 'Error fetching new members:', err);
         }
 
         // 2. People You Should Know - random high match recommendation
@@ -248,7 +250,7 @@ export function DiscoveryFeed({
           });
 
           if (recError) {
-            console.warn('[DiscoveryFeed] Failed to fetch recommendations:', recError);
+            logger.warn('DiscoveryFeed', 'Failed to fetch recommendations:', recError);
           }
 
           if (recommendations && recommendations.length > 0) {
@@ -280,7 +282,7 @@ export function DiscoveryFeed({
             });
           }
         } catch (err) {
-          console.warn('[DiscoveryFeed] Error fetching recommendations:', err);
+          logger.warn('DiscoveryFeed', 'Error fetching recommendations:', err);
         }
 
         // 3. Network Insight - activity trends
@@ -308,7 +310,7 @@ export function DiscoveryFeed({
             .limit(1);
 
           if (eventsError) {
-            console.warn('[DiscoveryFeed] Failed to fetch upcoming events:', eventsError);
+            logger.warn('DiscoveryFeed', 'Failed to fetch upcoming events:', eventsError);
           }
 
           if (upcomingEvents && upcomingEvents.length > 0) {
@@ -333,7 +335,7 @@ export function DiscoveryFeed({
             });
           }
         } catch (err) {
-          console.warn('[DiscoveryFeed] Error fetching upcoming events:', err);
+          logger.warn('DiscoveryFeed', 'Error fetching upcoming events:', err);
         }
 
         // 5. Contribution Match - use contribution_needs table
@@ -345,7 +347,7 @@ export function DiscoveryFeed({
             .limit(1);
 
           if (needsError) {
-            console.warn('[DiscoveryFeed] Failed to fetch contribution needs:', needsError);
+            logger.warn('DiscoveryFeed', 'Failed to fetch contribution needs:', needsError);
           }
 
           if (needs && needs.length > 0) {
@@ -358,7 +360,7 @@ export function DiscoveryFeed({
               .maybeSingle();
 
             if (authorError) {
-              console.warn('[DiscoveryFeed] Failed to fetch author profile:', authorError);
+              logger.warn('DiscoveryFeed', 'Failed to fetch author profile:', authorError);
             }
 
             insights.push({
@@ -380,12 +382,12 @@ export function DiscoveryFeed({
             });
           }
         } catch (err) {
-          console.warn('[DiscoveryFeed] Error fetching contribution needs:', err);
+          logger.warn('DiscoveryFeed', 'Error fetching contribution needs:', err);
         }
 
         return insights;
       } catch (error) {
-        console.warn('[DiscoveryFeed] Error fetching DIA insights:', error);
+        logger.warn('DiscoveryFeed', 'Error fetching DIA insights:', error);
         return [];
       }
     },
@@ -479,10 +481,10 @@ export function DiscoveryFeed({
       });
       // Refresh members list to update connection status
       refetchMembers();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Error",
-        description: error.message || "Failed to send connection request",
+        description: getErrorMessage(error) || "Failed to send connection request",
         variant: "destructive",
       });
       throw error;

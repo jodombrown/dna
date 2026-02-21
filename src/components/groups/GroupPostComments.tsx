@@ -11,6 +11,7 @@ import { Send, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { mentionService } from '@/services/mentionService';
+import { logger } from '@/lib/logger';
 
 interface Comment {
   id: string;
@@ -108,7 +109,7 @@ export function GroupPostComments({ postId, isOpen, onClose }: GroupPostComments
           postId,
           user!.id,
           authorName
-        ).catch((err) => { console.warn('[GroupPostComments] Failed to process mentions:', err); });
+        ).catch((err) => { logger.warn('GroupPostComments', 'Failed to process mentions:', err); });
       }
 
       setNewComment('');

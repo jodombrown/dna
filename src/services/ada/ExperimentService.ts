@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { adaptiveConfigService, type AdaPolicy } from './AdaptiveConfigService';
+import { logger } from '@/lib/logger';
 
 /**
  * ADA Phase 4 - M1: Experiment Service
@@ -107,7 +108,7 @@ export class ExperimentService {
 
       // Gracefully handle missing table or RLS issues
       if (error) {
-        console.warn('Could not fetch experiment assignment:', error.message);
+        logger.warn('ExperimentService', 'Could not fetch experiment assignment', error.message);
         return null;
       }
 
@@ -127,7 +128,7 @@ export class ExperimentService {
       // No assignment yet - create one
       return this.assignUserToVariant(userId, experimentId);
     } catch (err) {
-      console.warn('Error in getVariantForUser:', err);
+      logger.warn('ExperimentService', 'Error in getVariantForUser', err);
       return null;
     }
   }

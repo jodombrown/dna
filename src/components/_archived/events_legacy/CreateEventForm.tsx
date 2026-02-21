@@ -16,6 +16,7 @@ import { Switch } from '@/components/ui/switch';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 const eventSchema = z.object({
   title: z.string().min(10, 'Title must be at least 10 characters').max(200, 'Title must be less than 200 characters'),
@@ -141,10 +142,10 @@ export const CreateEventForm = ({ preselectedGroupId }: CreateEventFormProps = {
 
       // Navigate to the new event
       navigate(`/dna/convene/events/${result.event.id}`);
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Error',
-        description: error.message || 'Failed to create event',
+        description: getErrorMessage(error) || 'Failed to create event',
         variant: 'destructive',
       });
     } finally {

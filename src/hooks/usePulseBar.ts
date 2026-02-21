@@ -78,7 +78,7 @@ async function fetchConnectPulse(userId: string): Promise<ConnectPulse> {
   const pending = pendingRequests?.length || 0;
   const suggestions = recommendations?.length || 0;
 
-  const topItems: PulseItem[] = (pendingRequests || []).slice(0, 3).map((req: any) => {
+  const topItems: PulseItem[] = (pendingRequests || []).slice(0, 3).map((req: { id: string; requester_id: string; created_at: string }) => {
     const profile = requesterProfiles[req.requester_id];
     return {
       id: req.id,
@@ -140,7 +140,7 @@ async function fetchConvenePulse(userId: string): Promise<ConvenePulse> {
   const upcoming = upcomingEvents?.length || 0;
   const nextEvent = upcomingEvents?.[0]?.events;
 
-  const topItems: PulseItem[] = (upcomingEvents || []).slice(0, 3).map((att: any) => ({
+  const topItems: PulseItem[] = (upcomingEvents || []).slice(0, 3).map((att: { events: { id: string; slug?: string; title: string; start_time: string; cover_image_url?: string } }) => ({
     id: att.events.id,
     title: att.events.title,
     subtitle: formatRelativeTime(att.events.start_time),
@@ -204,12 +204,12 @@ async function fetchCollaboratePulse(userId: string): Promise<CollaboratePulse> 
   // Check for spaces that haven't been updated in 14+ days (potentially stalled)
   const twoWeeksAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
   const stalledSpaces = (memberSpaces || []).filter(
-    (m: any) => m.spaces?.updated_at && m.spaces.updated_at < twoWeeksAgo
+    (m: { spaces?: { updated_at?: string; id: string; name: string } }) => m.spaces?.updated_at && m.spaces.updated_at < twoWeeksAgo
   );
   const stalledCount = stalledSpaces.length;
   const attentionSpace = stalledSpaces[0]?.spaces;
 
-  const topItems: PulseItem[] = (memberSpaces || []).slice(0, 3).map((m: any) => {
+  const topItems: PulseItem[] = (memberSpaces || []).slice(0, 3).map((m: { space_id: string; role: string; spaces: { id: string; name: string; status: string; updated_at: string } }) => {
     const isStalled = m.spaces?.updated_at && m.spaces.updated_at < twoWeeksAgo;
     return {
       id: m.spaces.id,
@@ -280,7 +280,7 @@ async function fetchContributePulse(userId: string): Promise<ContributePulse> {
   const matchCount = pendingOffers?.length || 0;
   const openCount = openListings?.length || 0;
 
-  const topItems: PulseItem[] = (pendingOffers || []).slice(0, 3).map((offer: any) => ({
+  const topItems: PulseItem[] = (pendingOffers || []).slice(0, 3).map((offer: { id: string; created_at: string; contribution_needs: { id: string; title: string } }) => ({
     id: offer.id,
     title: offer.contribution_needs.title,
     subtitle: 'New offer received',
@@ -339,7 +339,7 @@ async function fetchConveyPulse(userId: string): Promise<ConveyPulse> {
       .select('post_id')
       .in('post_id', postIds);
     
-    (likes || []).forEach((l: any) => {
+    (likes || []).forEach((l: { post_id: string }) => {
       likeCounts[l.post_id] = (likeCounts[l.post_id] || 0) + 1;
     });
 
@@ -348,18 +348,18 @@ async function fetchConveyPulse(userId: string): Promise<ConveyPulse> {
       .from('post_comments')
       .select('post_id')
       .in('post_id', postIds);
-    
-    (comments || []).forEach((c: any) => {
+
+    (comments || []).forEach((c: { post_id: string }) => {
       commentCounts[c.post_id] = (commentCounts[c.post_id] || 0) + 1;
     });
   }
 
   // Calculate engagement
   let totalEngagement24h = 0;
-  let topPost: any = null;
+  let topPost: { id: string; content: string; created_at: string; post_type: string; engagement: number } | null = null;
   let topEngagement = 0;
 
-  (recentPosts || []).forEach((post: any) => {
+  (recentPosts || []).forEach((post) => {
     const likes = likeCounts[post.id] || 0;
     const comments = commentCounts[post.id] || 0;
     const engagement = likes + comments;
@@ -378,7 +378,7 @@ async function fetchConveyPulse(userId: string): Promise<ConveyPulse> {
 
   const topItems: PulseItem[] = (recentPosts || [])
     .slice(0, 3)
-    .map((post: any) => {
+    .map((post) => {
       const likes = likeCounts[post.id] || 0;
       const comments = commentCounts[post.id] || 0;
       const engagement = likes + comments;

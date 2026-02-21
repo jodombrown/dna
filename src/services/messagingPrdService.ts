@@ -775,7 +775,7 @@ export const messagingPrdService = {
       return [];
     }
 
-    return (data || []).map((row: any) => mapParticipantRow(row as Record<string, unknown>));
+    return (data || []).map((row: Record<string, unknown>) => mapParticipantRow(row));
   },
 
   // ============================================
@@ -840,18 +840,18 @@ export const messagingPrdService = {
       let directRecipient: DirectRecipientInfo | null = null;
 
       if (otherParts && otherParts.length > 0) {
-        const otherUserIds = otherParts.map((p: any) => p.user_id);
+        const otherUserIds = otherParts.map((p: { user_id: string }) => p.user_id);
         const { data: profiles } = await db
           .from('profiles')
           .select('id, full_name, avatar_url, headline')
           .in('id', otherUserIds);
 
         const profileMap = new Map(
-          (profiles || []).map((p: any) => [p.id, p])
+          (profiles || []).map((p: { id: string; full_name: string; avatar_url: string | null; headline: string | null }) => [p.id, p])
         );
 
         for (const part of otherParts) {
-          const prof = profileMap.get(part.user_id) as any;
+          const prof = profileMap.get(part.user_id) as { full_name?: string; avatar_url?: string | null } | undefined;
           otherParticipants.push({
             userId: part.user_id,
             displayName: prof?.full_name || 'Unknown',
@@ -924,7 +924,7 @@ export const messagingPrdService = {
     const messages = (data || [])
       .slice(0, limit)
       .reverse()
-      .map((row: any) => mapMessageRow(row as Record<string, unknown>));
+      .map((row: Record<string, unknown>) => mapMessageRow(row));
 
     return { messages, hasMore };
   },
@@ -945,7 +945,7 @@ export const messagingPrdService = {
       return [];
     }
 
-    return (data || []).map((row: any) => mapMessageRow(row as Record<string, unknown>));
+    return (data || []).map((row: Record<string, unknown>) => mapMessageRow(row));
   },
 
   /**
@@ -1122,16 +1122,16 @@ export const messagingPrdService = {
   ): () => void {
     const channel = db
       .channel(`messaging:${conversationId}`)
-      .on('broadcast', { event: 'new_message' }, (payload: any) => {
+      .on('broadcast', { event: 'new_message' }, (payload: { payload: unknown }) => {
         callbacks.onMessage(payload.payload as Message);
       })
-      .on('broadcast', { event: 'typing' }, (payload: any) => {
+      .on('broadcast', { event: 'typing' }, (payload: { payload: unknown }) => {
         callbacks.onTyping(payload.payload as TypingIndicator);
       })
-      .on('broadcast', { event: 'read_receipt' }, (payload: any) => {
+      .on('broadcast', { event: 'read_receipt' }, (payload: { payload: unknown }) => {
         callbacks.onReadReceipt(payload.payload as { userId: string; lastReadMessageId: string });
       })
-      .on('broadcast', { event: 'reaction_added' }, (payload: any) => {
+      .on('broadcast', { event: 'reaction_added' }, (payload: { payload: unknown }) => {
         callbacks.onReaction(payload.payload as { messageId: string; userId: string; emoji: string });
       })
       .subscribe();
@@ -1151,7 +1151,7 @@ export const messagingPrdService = {
   ): () => void {
     const channel = db
       .channel(`user_messaging:${userId}`)
-      .on('broadcast', { event: 'conversation_update' }, (payload: any) => {
+      .on('broadcast', { event: 'conversation_update' }, (payload: { payload: unknown }) => {
         callback(payload.payload as { conversationId: string; lastMessage: Partial<Message> });
       })
       .subscribe();
@@ -1253,7 +1253,7 @@ export const messagingPrdService = {
       .gt('unread_count', 0);
 
     if (error || !data) return 0;
-    return data.reduce((sum: number, row: any) => sum + (row.unread_count || 0), 0);
+    return data.reduce((sum: number, row: { unread_count: number | null }) => sum + (row.unread_count || 0), 0);
   },
 
   // ============================================
@@ -1278,7 +1278,7 @@ export const messagingPrdService = {
       return [];
     }
 
-    return (data || []).map((row: any) => mapConversationRow(row as Record<string, unknown>));
+    return (data || []).map((row: Record<string, unknown>) => mapConversationRow(row));
   },
 
   /** Convenience: get event thread */

@@ -924,7 +924,7 @@ export const notificationSystemService = {
     if (error) throw error;
 
     const hasMore = (data?.length || 0) > limit;
-    const items = (data || []).slice(0, limit).map((row: any) => mapRecordFromDb(row));
+    const items = (data || []).slice(0, limit).map((row: Record<string, unknown>) => mapRecordFromDb(row));
 
     return { notifications: items, hasMore };
   },
@@ -1110,10 +1110,10 @@ export const notificationSystemService = {
   ) {
     return db
       .channel(`notif_system:${userId}`)
-      .on('broadcast', { event: 'new_notification' }, (payload: any) => {
+      .on('broadcast', { event: 'new_notification' }, (payload: { payload: unknown }) => {
         callbacks.onNew(payload.payload as NotificationRecord);
       })
-      .on('broadcast', { event: 'badge_update' }, (payload: any) => {
+      .on('broadcast', { event: 'badge_update' }, (payload: { payload: unknown }) => {
         callbacks.onBadgeUpdate(payload.payload as Record<string, number>);
       })
       .subscribe();

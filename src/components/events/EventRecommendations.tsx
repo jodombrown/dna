@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 
 interface RecommendedEvent {
   id: string;
@@ -39,13 +40,13 @@ export const EventRecommendations = () => {
         });
 
         if (error) {
-          console.warn('[EventRecommendations] Edge function error:', error);
+          logger.warn('EventRecommendations', 'Edge function error:', error);
           return [];
         }
 
         return data?.recommendations || [];
       } catch (error) {
-        console.warn('[EventRecommendations] Failed to fetch recommendations:', error);
+        logger.warn('EventRecommendations', 'Failed to fetch recommendations:', error);
         return [];
       }
     },

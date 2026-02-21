@@ -9,6 +9,7 @@ import { SpaceWithMembership } from '@/types/spaceTypes';
 import { useAuth } from '@/contexts/AuthContext';
 import { useJoinSpace } from '@/hooks/useSpaceMutations';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { logger } from '@/lib/logger';
 
 export function SuggestedSpaces() {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ export function SuggestedSpaces() {
           .single();
 
         if (profileError) {
-          console.warn('[SuggestedSpaces] Failed to fetch profile:', profileError);
+          logger.warn('SuggestedSpaces', 'Failed to fetch profile:', profileError);
         }
 
         // Get spaces the user is NOT a member of
@@ -40,7 +41,7 @@ export function SuggestedSpaces() {
           .eq('user_id', user.id);
 
         if (memberError) {
-          console.warn('[SuggestedSpaces] Failed to fetch member spaces:', memberError);
+          logger.warn('SuggestedSpaces', 'Failed to fetch member spaces:', memberError);
         }
 
         const memberSpaceIds = memberSpaces?.map(m => m.space_id) || [];
@@ -60,7 +61,7 @@ export function SuggestedSpaces() {
 
         const { data: spaces, error } = await query;
         if (error) {
-          console.warn('[SuggestedSpaces] Failed to fetch spaces:', error);
+          logger.warn('SuggestedSpaces', 'Failed to fetch spaces:', error);
           return [];
         }
 
@@ -101,7 +102,7 @@ export function SuggestedSpaces() {
           .sort((a, b) => b.score - a.score)
           .slice(0, 6) as SpaceWithMembership[];
       } catch (error) {
-        console.warn('[SuggestedSpaces] Failed to fetch suggested spaces:', error);
+        logger.warn('SuggestedSpaces', 'Failed to fetch suggested spaces:', error);
         return [];
       }
     },

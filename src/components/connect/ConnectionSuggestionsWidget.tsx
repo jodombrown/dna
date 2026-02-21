@@ -21,6 +21,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 interface Profile {
   id: string;
@@ -94,10 +95,10 @@ export const ConnectionSuggestionsWidget = () => {
       queryClient.invalidateQueries({ queryKey: ['pending-requests'] });
       queryClient.invalidateQueries({ queryKey: ['connection-status'] });
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Failed to send request',
-        description: error.message,
+        description: getErrorMessage(error),
         variant: 'destructive',
       });
       throw error; // Re-throw so modal knows to stay open
@@ -116,10 +117,10 @@ export const ConnectionSuggestionsWidget = () => {
       });
       // Invalidate to refresh the list
       queryClient.invalidateQueries({ queryKey: ['dia-connection-recommendations'] });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Failed to dismiss',
-        description: error.message,
+        description: getErrorMessage(error),
         variant: 'destructive',
       });
     } finally {

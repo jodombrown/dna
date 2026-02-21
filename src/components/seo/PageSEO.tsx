@@ -131,8 +131,8 @@ export function getOrganizationSchema() {
       url: 'https://www.linkedin.com/in/jaunelamarr/',
     },
     sameAs: [
-      'https://www.linkedin.com/company/diasporanetworkafrica',
-      'https://twitter.com/diasporanetwork',
+      config.social.linkedin,
+      config.social.twitter,
     ],
     contactPoint: {
       '@type': 'ContactPoint',

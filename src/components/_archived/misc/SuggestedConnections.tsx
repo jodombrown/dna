@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { diaEventBus } from '@/services/dia/diaEventBus';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 interface SuggestedConnectionsProps {
   userId: string;
@@ -110,7 +111,7 @@ export const SuggestedConnections: React.FC<SuggestedConnectionsProps> = ({
       queryClient.invalidateQueries({ queryKey: ['suggested-connections'] });
       queryClient.invalidateQueries({ queryKey: ['connection-status', recipientId] });
       queryClient.invalidateQueries({ queryKey: ['pending-requests'] });
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Revert optimistic update
       setPendingIds(prev => {
         const newSet = new Set(prev);
@@ -120,7 +121,7 @@ export const SuggestedConnections: React.FC<SuggestedConnectionsProps> = ({
       
       toast({
         title: 'Error',
-        description: error.message || 'Failed to send connection request',
+        description: getErrorMessage(error) || 'Failed to send connection request',
         variant: 'destructive',
       });
     }

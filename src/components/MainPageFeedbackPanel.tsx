@@ -109,7 +109,7 @@ Feedback Type: ${formData.feedbackType || 'General'}
       } else {
         throw new Error(data?.error || 'Failed to send feedback');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error('Something went wrong. Please try again.');
     } finally {
       setIsSubmitting(false);

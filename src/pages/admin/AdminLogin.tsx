@@ -19,6 +19,7 @@ import {
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 interface AdminValidation {
   isValid: boolean;
@@ -148,10 +149,10 @@ const AdminLogin = () => {
         title: 'Magic Link Sent',
         description: 'Check your email for a secure login link.',
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Error',
-        description: error.message || 'Failed to send magic link. Please try again.',
+        description: getErrorMessage(error) || 'Failed to send magic link. Please try again.',
         variant: 'destructive',
       });
     } finally {
