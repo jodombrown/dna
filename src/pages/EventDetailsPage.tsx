@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import EventThreadCTA from '@/components/convene/EventThreadCTA';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -128,6 +129,7 @@ export default function EventDetailsPage() {
       queryClient.invalidateQueries({ queryKey: ['event-details', id] });
       queryClient.invalidateQueries({ queryKey: ['event-attendees', id] });
       queryClient.invalidateQueries({ queryKey: ['events'] });
+      queryClient.invalidateQueries({ queryKey: ['event-thread', id] });
       toast({
         title: 'RSVP updated',
         description: 'Your response has been recorded',
@@ -267,6 +269,7 @@ export default function EventDetailsPage() {
 
   const isFull = event.max_attendees && event.going_count >= event.max_attendees;
   const isPastEvent = new Date(event.end_time) < new Date();
+  const isRegistered = event.user_rsvp_status === 'going' || event.user_rsvp_status === 'maybe';
 
   return (
     <>
@@ -578,6 +581,15 @@ export default function EventDetailsPage() {
                   </div>
                 </Card>
               )}
+
+              {/* Event Thread CTA — links CONVENE → CONNECT */}
+              <EventThreadCTA
+                eventId={event.id}
+                eventTitle={event.title}
+                isRegistered={isRegistered}
+                isPastEvent={isPastEvent}
+                isOrganizer={event.is_organizer}
+              />
             </div>
           </div>
         </div>

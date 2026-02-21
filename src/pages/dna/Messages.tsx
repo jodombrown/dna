@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { messageService } from '@/services/messageService';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useMobile } from '@/hooks/useMobile';
 import TwoColumnLayout from '@/layouts/TwoColumnLayout';
 import ConversationListPanel from '@/components/messaging/ConversationListPanel';
@@ -20,10 +20,25 @@ import MessagesBreadcrumb from '@/components/messaging/MessagesBreadcrumb';
  */
 const DnaMessages = () => {
   const { conversationId } = useParams();
+  const [searchParams] = useSearchParams();
   const { isMobile } = useMobile();
   const queryClient = useQueryClient();
-  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(conversationId || null);
+
+  // Resolve initial conversation: route param takes precedence, then ?thread= query param
+  const threadParam = searchParams.get('thread');
+  const initialConversationId = conversationId || threadParam || null;
+
+  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(initialConversationId);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Deep link: when ?thread= is present, select that thread and clean the URL
+  useEffect(() => {
+    if (threadParam) {
+      setSelectedConversationId(threadParam);
+      // Remove ?thread= from URL without adding a history entry
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, [threadParam]);
 
   // Get header visibility controls
   const { hideHeader, showHeader } = useHeaderVisibility();
