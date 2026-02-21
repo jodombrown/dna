@@ -98,6 +98,13 @@ export const ConnectionButton: React.FC<ConnectionButtonProps> = ({
         // Don't fail the main action if analytics fails
       }
 
+      // DIA Sprint 4B: Emit connection request event for proactive nudges
+      diaEventBus.emit({
+        type: 'connection_request_received',
+        userId: targetUserId,
+        fromUserId: user.id,
+      });
+
     } catch (error: any) {
       toast({
         title: "Connection failed",

@@ -4,9 +4,11 @@
  * Generates intelligence cards for the Convey module:
  * - Content Performance
  * - Publishing Cadence
+ * - Amplification Suggestion
+ * - Trending Alignment
  *
- * Note: posts table has view_count only (no likes_count/comments_count/shares_count/hashtags).
- * Engagement metrics use view_count as proxy.
+ * Note: posts table has view_count and reshare_count. Like counts are derived
+ * from the post_likes table. Hashtags use a separate junction table.
  */
 
 import { supabase } from '@/integrations/supabase/client';
@@ -118,8 +120,143 @@ async function generatePublishingCadence(userId: string): Promise<DIACard | null
   }
 }
 
+// ── Card Type 3: Amplification Suggestion ──────────
+
+async function generateAmplificationSuggestion(userId: string): Promise<DIACard | null> {
+  try {
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+    // Get user's recent posts with their like counts
+    const { data: posts } = await supabase
+      .from('posts')
+      .select('id, content, reshare_count, created_at')
+      .eq('author_id', userId)
+      .eq('is_deleted', false)
+      .gte('created_at', thirtyDaysAgo)
+      .order('created_at', { ascending: false })
+      .limit(20);
+
+    if (!posts?.length) return null;
+
+    // For each post, get the like count from post_likes
+    const postsWithLikes = await Promise.all(
+      posts.map(async (post) => {
+        const { count } = await supabase
+          .from('post_likes')
+          .select('*', { count: 'exact', head: true })
+          .eq('post_id', post.id);
+
+        return {
+          ...post,
+          likeCount: count || 0,
+          reshareCount: post.reshare_count || 0,
+        };
+      }),
+    );
+
+    // Find posts with high likes but low reshares
+    const underAmplified = postsWithLikes
+      .filter(p => p.likeCount > 5 && p.reshareCount < 2)
+      .sort((a, b) => b.likeCount - a.likeCount);
+
+    if (!underAmplified.length) return null;
+
+    const post = underAmplified[0];
+    const snippet = post.content?.substring(0, 60) || 'your recent post';
+
+    return {
+      id: `convey-amplify-${post.id}`,
+      category: 'convey',
+      cardType: 'amplification_suggestion',
+      headline: 'This deserves more reach',
+      body: `Your post "${snippet}..." got ${post.likeCount} likes but only ${post.reshareCount} shares. Share it again to reach more of your network.`,
+      accentColor: ACCENT,
+      icon: 'Share2',
+      priority: 55,
+      actions: [
+        { label: 'Reshare', type: 'navigate' as const, payload: { route: '/dna/feed' }, isPrimary: true },
+        { label: 'Not Now', type: 'dismiss' as const, payload: {}, isPrimary: false },
+      ],
+      metadata: { postId: post.id, likeCount: post.likeCount },
+      dismissKey: `convey-amplify-${post.id}`,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+    };
+  } catch {
+    return null;
+  }
+}
+
+// ── Card Type 4: Trending Alignment ────────────────
+
+async function generateTrendingAlignment(userId: string): Promise<DIACard | null> {
+  try {
+    // Get user's skills/interests
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('skills, interests')
+      .eq('id', userId)
+      .single();
+
+    if (!profile?.skills?.length && !profile?.interests?.length) return null;
+
+    const userTopics = [...(profile.skills || []), ...(profile.interests || [])];
+
+    // Get trending hashtags from recent posts (last 7 days)
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+    const { data: recentTagRows } = await supabase
+      .from('post_hashtags')
+      .select('hashtag_id, hashtags(tag)')
+      .gte('created_at', sevenDaysAgo)
+      .limit(200);
+
+    if (!recentTagRows?.length) return null;
+
+    // Count hashtag frequency
+    const hashtagCounts: Record<string, number> = {};
+    for (const row of recentTagRows) {
+      const tag = (row as any).hashtags?.tag;
+      if (tag) {
+        hashtagCounts[tag] = (hashtagCounts[tag] || 0) + 1;
+      }
+    }
+
+    // Find overlap between trending hashtags and user topics
+    const trendingMatches = userTopics.filter(topic =>
+      Object.keys(hashtagCounts).some(tag =>
+        tag.toLowerCase().includes(topic.toLowerCase()) ||
+        topic.toLowerCase().includes(tag.toLowerCase()),
+      ),
+    );
+
+    if (!trendingMatches.length) return null;
+
+    const topMatch = trendingMatches[0];
+
+    return {
+      id: `convey-trending-${topMatch}`,
+      category: 'convey',
+      cardType: 'trending_alignment',
+      headline: `${topMatch} is trending`,
+      body: `Your network is buzzing about ${topMatch} — and you have expertise here. Share your perspective?`,
+      accentColor: ACCENT,
+      icon: 'TrendingUp',
+      priority: 60,
+      actions: [
+        { label: 'Share Your Take', type: 'open_composer' as const, payload: { mode: 'post' }, isPrimary: true },
+        { label: 'Later', type: 'dismiss' as const, payload: {}, isPrimary: false },
+      ],
+      metadata: { topic: topMatch },
+      dismissKey: `convey-trending-${topMatch}`,
+      expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+    };
+  } catch {
+    return null;
+  }
+}
+
 // ── Export ──────────────────────────────────────────
 
 export function generateConveyCards(): Array<(userId: string) => Promise<DIACard | null>> {
-  return [generateContentPerformance, generatePublishingCadence];
+  return [generateContentPerformance, generatePublishingCadence, generateAmplificationSuggestion, generateTrendingAlignment];
 }

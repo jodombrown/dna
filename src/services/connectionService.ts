@@ -5,6 +5,7 @@ import { sendNotificationEmail, NOTIFICATION_TYPES } from './notificationService
 import { getAppUrl, getProfileUrl, APP_PATHS } from '@/lib/config';
 import { logger } from '@/lib/logger';
 import { platformNotifications } from './platformNotificationGenerator';
+import { diaEventBus } from '@/services/dia/diaEventBus';
 
 /**
  * Response from get_connection_requests RPC
@@ -99,6 +100,13 @@ export const connectionService = {
     // Sprint 4C: In-app notification for connection request
     platformNotifications.connectionRequestReceived(receiverId, user.id)
       .catch(() => { /* non-critical */ });
+
+    // DIA Sprint 4B: Emit connection request event for proactive nudges
+    diaEventBus.emit({
+      type: 'connection_request_received',
+      userId: receiverId,
+      fromUserId: user.id,
+    });
 
     return data;
   },

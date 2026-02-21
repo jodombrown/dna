@@ -9,6 +9,7 @@ import { MapPin, Briefcase, ArrowRight, UserPlus, Clock, Check } from 'lucide-re
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { diaEventBus } from '@/services/dia/diaEventBus';
 
 interface SuggestedConnectionsProps {
   userId: string;
@@ -92,6 +93,13 @@ export const SuggestedConnections: React.FC<SuggestedConnectionsProps> = ({
         });
 
       if (error) throw error;
+
+      // DIA Sprint 4B: Emit connection request event for proactive nudges
+      diaEventBus.emit({
+        type: 'connection_request_received',
+        userId: recipientId,
+        fromUserId: userId,
+      });
 
       toast({
         title: 'Connection request sent',

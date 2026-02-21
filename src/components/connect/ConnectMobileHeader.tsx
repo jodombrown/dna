@@ -6,7 +6,7 @@ import dnaLogo from '@/assets/dna-logo.png';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { NotificationBell } from '@/components/notifications/NotificationBell';
+import { UnifiedNotificationBell } from '@/components/notifications/UnifiedNotificationBell';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useAccountDrawer } from '@/contexts/AccountDrawerContext';
@@ -81,7 +81,7 @@ export function ConnectMobileHeader({
 
         {/* Right: Notification + Profile */}
         <div className="flex items-center gap-2 flex-shrink-0">
-          <NotificationBell />
+          <UnifiedNotificationBell />
           {user && profile && (
             <Avatar 
               className="h-8 w-8 cursor-pointer" 
