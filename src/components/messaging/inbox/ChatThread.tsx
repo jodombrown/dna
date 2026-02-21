@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { messageService, MessageWithSender, MessageAttachmentData, deleteConversation, archiveConversation, pinConversation, muteConversation } from '@/services/messageService';
+import type { ReplyToData } from '@/services/messageTypes';
 import { useAuth } from '@/contexts/AuthContext';
 import { ChatHeader } from './ChatHeader';
 import { ChatBubble } from './ChatBubble';
@@ -38,8 +39,10 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
   const queryClient = useQueryClient();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const messageRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [replyingTo, setReplyingTo] = useState<ReplyToData | null>(null);
 
   // Fetch messages
   const { data: messages = [], isLoading, isError, error } = useQuery({
@@ -51,8 +54,12 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
 
   // Send message mutation
   const sendMutation = useMutation({
-    mutationFn: ({ content, attachment, linkPreview }: { content: string; attachment?: MessageAttachmentData; linkPreview?: MessageLinkPreview }) => 
-      messageService.sendMessage(conversationId, content, attachment, linkPreview),
+    mutationFn: ({ content, attachment, linkPreview, replyTo }: {
+      content: string;
+      attachment?: MessageAttachmentData;
+      linkPreview?: MessageLinkPreview;
+      replyTo?: ReplyToData;
+    }) => messageService.sendMessage(conversationId, content, attachment, linkPreview, replyTo),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
@@ -213,6 +220,30 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
     return groups;
   }, [messages]);
 
+  const handleReply = useCallback((messageId: string) => {
+    const msg = messages.find(m => m.message_id === messageId);
+    if (!msg) return;
+    setReplyingTo({
+      messageId: msg.message_id,
+      senderName: msg.sender_full_name,
+      senderAvatar: msg.sender_avatar_url,
+      content: msg.content,
+    });
+  }, [messages]);
+
+  const handleCancelReply = useCallback(() => {
+    setReplyingTo(null);
+  }, []);
+
+  const handleScrollToMessage = useCallback((messageId: string) => {
+    const el = messageRefs.current.get(messageId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.classList.add('bg-primary/10');
+      setTimeout(() => el.classList.remove('bg-primary/10'), 1500);
+    }
+  }, []);
+
   const handleSend = (content: string, attachment?: MessageAttachment, linkPreview?: MessageLinkPreview) => {
     // Convert ChatInput attachment to service attachment type
     const serviceAttachment: MessageAttachmentData | undefined = attachment ? {
@@ -223,7 +254,13 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
       mimetype: attachment.mimetype,
     } : undefined;
 
-    sendMutation.mutate({ content, attachment: serviceAttachment, linkPreview });
+    sendMutation.mutate({
+      content,
+      attachment: serviceAttachment,
+      linkPreview,
+      replyTo: replyingTo || undefined,
+    });
+    setReplyingTo(null);
   };
 
   const handleSendVoice = async (audioBlob: Blob, duration: number) => {
@@ -288,13 +325,22 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
                     const showAvatar = !prevMsg || prevMsg.sender_id !== msg.sender_id;
                     
                     return (
-                      <ChatBubble
+                      <div
                         key={msg.message_id}
-                        message={msg}
-                        isOwn={isOwn}
-                        showAvatar={showAvatar}
-                        onDeleteMessage={handleDeleteMessage}
-                      />
+                        ref={(el) => {
+                          if (el) messageRefs.current.set(msg.message_id, el);
+                        }}
+                        className="transition-colors duration-500"
+                      >
+                        <ChatBubble
+                          message={msg}
+                          isOwn={isOwn}
+                          showAvatar={showAvatar}
+                          onDeleteMessage={handleDeleteMessage}
+                          onReply={handleReply}
+                          onScrollToMessage={handleScrollToMessage}
+                        />
+                      </div>
                     );
                   })}
                 </div>
@@ -306,10 +352,12 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
       </div>
 
       {/* Input */}
-      <ChatInput 
-        onSend={handleSend} 
+      <ChatInput
+        onSend={handleSend}
         onSendVoice={handleSendVoice}
         disabled={sendMutation.isPending}
+        replyingTo={replyingTo}
+        onCancelReply={handleCancelReply}
       />
     </div>
   );

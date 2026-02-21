@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Calendar, MapPin, Users, ExternalLink, Share2, Clock, MoreHorizontal, XCircle, Trash2, Flag, QrCode, Loader2, Settings, Sparkles } from 'lucide-react';
+import { Calendar, MapPin, Users, ExternalLink, Share2, Clock, MoreHorizontal, XCircle, Trash2, Flag, QrCode, Loader2, Settings, Sparkles, MessageSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { Button } from '@/components/ui/button';
@@ -64,6 +64,8 @@ import EventThreadCTA from '@/components/convene/EventThreadCTA';
 import { diaEventBus } from '@/services/dia/diaEventBus';
 import { platformNotifications } from '@/services/platformNotificationGenerator';
 import { DIADetailInsight } from '@/components/dia/DIADetailInsight';
+import { ConversationPicker } from '@/components/messaging/ConversationPicker';
+import type { EntityReferenceData } from '@/services/messageTypes';
 
 const REPORT_REASONS = [
   { value: 'spam', label: 'Spam' },
@@ -100,6 +102,9 @@ const EventDetail = () => {
   // Cancel/Delete dialog states
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  // Share in Chat state
+  const [showShareInChat, setShowShareInChat] = useState(false);
 
   // Report modal states
   const [showReportDialog, setShowReportDialog] = useState(false);
@@ -578,6 +583,12 @@ const EventDetail = () => {
               <Button variant="outline" size="icon" onClick={handleShareEvent}>
                 <Share2 className="h-4 w-4" />
               </Button>
+              {isLoggedIn && (
+                <Button variant="outline" size="sm" onClick={() => setShowShareInChat(true)}>
+                  <MessageSquare className="h-4 w-4 mr-1.5" />
+                  Share in Chat
+                </Button>
+              )}
               {isOrganizer ? (
                 <>
                   <Button onClick={() => navigate(`/dna/convene/events/${id}/manage`)}>
@@ -1028,6 +1039,21 @@ const EventDetail = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Share in Chat Picker */}
+      {event && (
+        <ConversationPicker
+          open={showShareInChat}
+          onOpenChange={setShowShareInChat}
+          entityReference={{
+            entityType: 'event',
+            entityId: event.id,
+            entityTitle: event.title,
+            entityPreview: event.description?.slice(0, 100),
+            entityImage: event.cover_image_url,
+          }}
+        />
+      )}
     </div>
   );
 };

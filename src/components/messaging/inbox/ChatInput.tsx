@@ -8,6 +8,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useLinkPreview, extractFirstUrl } from '@/hooks/useLinkPreview';
 import { LinkPreview } from './LinkPreview';
 import { VoiceMessageRecorder } from './VoiceMessageRecorder';
+import { ReplyPreviewBar } from './ReplyPreviewBar';
+import type { ReplyToData } from '@/services/messageTypes';
 
 export interface MessageAttachment {
   type: 'image' | 'file';
@@ -30,6 +32,8 @@ interface ChatInputProps {
   onSendVoice?: (audioBlob: Blob, duration: number) => Promise<void>;
   disabled?: boolean;
   placeholder?: string;
+  replyingTo?: ReplyToData | null;
+  onCancelReply?: () => void;
 }
 
 export const ChatInput: React.FC<ChatInputProps> = ({
@@ -37,6 +41,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   onSendVoice,
   disabled = false,
   placeholder = "Type a message...",
+  replyingTo,
+  onCancelReply,
 }) => {
   const [message, setMessage] = useState('');
   const [attachment, setAttachment] = useState<MessageAttachment | null>(null);
@@ -96,6 +102,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       e.preventDefault();
       handleSend();
     }
+    if (e.key === 'Escape' && replyingTo && onCancelReply) {
+      e.preventDefault();
+      onCancelReply();
+    }
   };
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -144,6 +154,15 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
   return (
     <div className="border-t border-border/20 bg-muted/30 dark:bg-zinc-900/80">
+      {/* Reply Preview Bar */}
+      {replyingTo && onCancelReply && (
+        <ReplyPreviewBar
+          senderName={replyingTo.senderName}
+          content={replyingTo.content}
+          onCancel={onCancelReply}
+        />
+      )}
+
       {/* Link Preview - shown before sending */}
       {linkPreview && !attachment && (
         <div className="px-2.5 pt-2">

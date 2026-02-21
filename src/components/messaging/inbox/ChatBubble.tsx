@@ -9,8 +9,11 @@ import { useLinkPreview } from '@/hooks/useLinkPreview';
 import { MessageActionsMenu } from './MessageActionsMenu';
 import { MessageReactions } from './MessageReactions';
 import { VoiceMessagePlayer } from './VoiceMessagePlayer';
+import { QuotedMessage } from './QuotedMessage';
+import { EntityReferenceCard } from './EntityReferenceCard';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { messageService, MessageReaction } from '@/services/messageService';
+import type { MessagePayload as ServiceMessagePayload } from '@/services/messageTypes';
 
 interface AttachmentData {
   type: 'image' | 'file' | 'voice' | 'video';
@@ -33,6 +36,8 @@ interface LinkPreviewData {
 interface MessagePayload {
   attachment?: AttachmentData;
   linkPreview?: LinkPreviewData;
+  replyTo?: ServiceMessagePayload['replyTo'];
+  entityReference?: ServiceMessagePayload['entityReference'];
 }
 
 interface ChatBubbleProps {
@@ -50,6 +55,8 @@ interface ChatBubbleProps {
   isOwn: boolean;
   showAvatar?: boolean;
   onDeleteMessage?: (messageId: string) => void;
+  onReply?: (messageId: string) => void;
+  onScrollToMessage?: (messageId: string) => void;
 }
 
 export const ChatBubble: React.FC<ChatBubbleProps> = ({
@@ -57,6 +64,8 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   isOwn,
   showAvatar = true,
   onDeleteMessage,
+  onReply,
+  onScrollToMessage,
 }) => {
   const queryClient = useQueryClient();
   
@@ -159,6 +168,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
           content={message.content}
           isOwn={isOwn}
           onDelete={onDeleteMessage}
+          onReply={onReply}
         />
       </div>
 
@@ -170,16 +180,35 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
             ? "bg-primary/15 dark:bg-primary/25 text-foreground rounded-br-md" 
             : "bg-card text-foreground rounded-bl-md border border-border/40 shadow-sm"
         )}>
+          {/* Quoted reply message */}
+          {message.payload?.replyTo && (
+            <QuotedMessage
+              replyTo={message.payload.replyTo}
+              isOwn={isOwn}
+              onClickQuote={onScrollToMessage
+                ? () => onScrollToMessage(message.payload!.replyTo!.messageId)
+                : undefined}
+            />
+          )}
+
+          {/* Entity Reference Card */}
+          {message.payload?.entityReference && (
+            <EntityReferenceCard
+              entityReference={message.payload.entityReference}
+              isOwn={isOwn}
+            />
+          )}
+
           {/* Voice Message Player */}
           {isVoiceMessage && attachment?.url ? (
             <VoiceMessagePlayer url={attachment.url} duration={attachment.duration} isOwn={isOwn} />
           ) : (
             <>
               {/* Text content */}
-              {message.content && (
+              {message.content && !message.payload?.entityReference && (
                 <p className="text-[13px] leading-snug whitespace-pre-wrap break-words">
-                  {linkPreview && linkPreview.url 
-                    ? message.content.replace(linkPreview.url, '').trim() 
+                  {linkPreview && linkPreview.url
+                    ? message.content.replace(linkPreview.url, '').trim()
                     : message.content}
                 </p>
               )}
@@ -190,7 +219,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
               )}
 
               {/* Link Preview */}
-              {!attachment && linkPreview && linkPreview.url && (
+              {!attachment && linkPreview && linkPreview.url && !message.payload?.entityReference && (
                 <LinkPreview preview={linkPreview} isOwn={isOwn} />
               )}
             </>
