@@ -58,20 +58,24 @@ export const ComposerModeSelector = ({
     (chip) => COMPOSER_MODE_CONFIG[chip.id]?.enabled
   );
 
-  // Auto-scroll to keep active chip visible
+  // Auto-scroll to keep active chip + next chip visible
   useEffect(() => {
     if (activeRef.current && scrollRef.current) {
       const container = scrollRef.current;
       const chip = activeRef.current;
+      // Find the next sibling chip to ensure it's partially visible
+      const nextChip = chip.nextElementSibling as HTMLElement | null;
+      const targetRight = nextChip
+        ? nextChip.offsetLeft + nextChip.offsetWidth
+        : chip.offsetLeft + chip.offsetWidth;
       const chipLeft = chip.offsetLeft;
-      const chipRight = chipLeft + chip.offsetWidth;
       const containerWidth = container.clientWidth;
       const scrollLeft = container.scrollLeft;
 
       if (chipLeft < scrollLeft) {
-        container.scrollTo({ left: chipLeft - 8, behavior: 'smooth' });
-      } else if (chipRight > scrollLeft + containerWidth) {
-        container.scrollTo({ left: chipRight - containerWidth + 8, behavior: 'smooth' });
+        container.scrollTo({ left: Math.max(0, chipLeft - 8), behavior: 'smooth' });
+      } else if (targetRight > scrollLeft + containerWidth) {
+        container.scrollTo({ left: targetRight - containerWidth + 8, behavior: 'smooth' });
       }
     }
   }, [currentMode]);
