@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Calendar, CalendarPlus, Compass, Clock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { EventCard } from '@/components/events/EventCard';
-import { EventListItem } from '@/types/events';
+import { EventListItem, EventType, EventFormat } from '@/types/events';
 import { ProfileV2Data, ProfileV2Visibility } from '@/types/profileV2';
 
 interface ProfileV2EventsProps {
@@ -96,7 +96,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
         event_attendees: { count: number }[];
       };
 
-      return (data || []).map((event: EventQueryResult): EventListItem => ({
+      return (data || []).map((event: any): EventListItem => ({
         event_id: event.id,
         organizer_id: event.organizer_id,
         organizer_username: event.profiles?.username || '',
@@ -104,8 +104,8 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
         organizer_avatar_url: event.profiles?.avatar_url || undefined,
         title: event.title,
         description: event.description || '',
-        event_type: event.event_type,
-        format: event.format,
+        event_type: event.event_type as EventType,
+        format: event.format as EventFormat,
         location_name: event.location_name,
         location_city: event.location_city,
         location_country: event.location_country,
@@ -209,7 +209,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
       };
 
       // Transform to EventListItem format
-      return (events || []).map((event: EventQueryResult): EventListItem => ({
+      return (events || []).map((event: any): EventListItem => ({
         event_id: event.id,
         organizer_id: event.organizer_id,
         organizer_username: event.profiles?.username || '',
@@ -217,8 +217,8 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
         organizer_avatar_url: event.profiles?.avatar_url || undefined,
         title: event.title,
         description: event.description || '',
-        event_type: event.event_type,
-        format: event.format,
+        event_type: event.event_type as EventType,
+        format: event.format as EventFormat,
         location_name: event.location_name,
         location_city: event.location_city,
         location_country: event.location_country,

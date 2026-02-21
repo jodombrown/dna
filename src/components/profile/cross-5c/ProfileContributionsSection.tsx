@@ -114,7 +114,7 @@ export const ProfileContributionsSection: React.FC<ProfileContributionsSectionPr
           .limit(limit);
 
         if (!badgesError && badges) {
-          badges.forEach((badge: { id: string; badge_type: string | null; description: string | null; created_at: string; space_id: string; spaces: { name: string } | null }) => {
+          (badges as any[]).forEach((badge: { id: string; badge_type: string | null; description: string | null; created_at: string; space_id: string; spaces: { name: string } | null }) => {
             allContributions.push({
               id: badge.id,
               type: 'badge',

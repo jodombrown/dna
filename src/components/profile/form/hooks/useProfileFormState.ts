@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { FormData, ArrayStates, HelperStates } from '../FormDataTypes';
 
 interface UseProfileFormStateProps {
-  profile: Record<string, unknown> | null;
+  profile: any;
   user: { email?: string } | null;
 }
 
