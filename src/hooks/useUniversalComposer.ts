@@ -4,6 +4,10 @@
  * Sprint 3A: Replaced switch/case submission with MODE_HANDLERS object map.
  * Extended open() to accept ComposerContext with cross-C attribution fields.
  * Success/error messages now come from MODE_HANDLERS.
+ *
+ * Sprint 3B: Added success screen state management. On successful publish,
+ * the composer shows a success screen instead of closing immediately.
+ * dismissSuccess() handles cleanup and modal close.
  */
 
 import { useState, useCallback } from 'react';
@@ -29,6 +33,16 @@ interface ComposerAnalyticsMetadata {
   contentLength?: number;
   hasMedia?: boolean;
   [key: string]: unknown;
+}
+
+/**
+ * Sprint 3B: Data captured on successful submission for the success screen.
+ */
+export interface ComposerSuccessData {
+  mode: ComposerMode;
+  createdId: string;
+  createdTitle: string;
+  formDataSnapshot: ComposerFormData;
 }
 
 export type ComposerMode = 'post' | 'story' | 'event' | 'need' | 'space' | 'community';
@@ -104,9 +118,13 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
   const [context, setContext] = useState<ComposerContext>(initialContext || {});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Sprint 3B: Success screen state
+  const [successData, setSuccessData] = useState<ComposerSuccessData | null>(null);
+
   const open = useCallback((selectedMode?: ComposerMode, ctx?: ComposerContext) => {
     if (selectedMode) setMode(selectedMode);
     if (ctx) setContext(prev => ({ ...prev, ...ctx }));
+    setSuccessData(null);
     setIsOpen(true);
 
     // Track composer open
@@ -115,8 +133,19 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
 
   const close = useCallback(() => {
     setIsOpen(false);
+    setSuccessData(null);
     trackComposerEvent('cancel', mode);
   }, [mode]);
+
+  // Sprint 3B: Dismiss success screen — closes composer and shows toast
+  const dismissSuccess = useCallback(() => {
+    if (successData) {
+      const handler = MODE_HANDLERS[successData.mode];
+      toast({ description: handler.successMessage });
+    }
+    setSuccessData(null);
+    setIsOpen(false);
+  }, [successData]);
 
   const switchMode = useCallback((newMode: ComposerMode) => {
     trackComposerEvent('switch', newMode, { fromMode: mode });
@@ -229,8 +258,16 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
         hasMedia: !!formData.mediaUrl,
       });
 
-      toast({ description: handler.successMessage });
-      setIsOpen(false);
+      // Sprint 3B: Show success screen instead of closing immediately
+      const createdId = createdPost?.post_id ?? crypto.randomUUID();
+      const createdTitle = formData.title ?? '';
+      setSuccessData({
+        mode,
+        createdId,
+        createdTitle,
+        formDataSnapshot: { ...formData },
+      });
+      // DON'T close — composer stays open to show success screen
     } catch (error) {
       logHighError(error, 'composer', `Failed to create ${mode}`, { mode, context, formData });
 
@@ -251,10 +288,12 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
     mode,
     context,
     isSubmitting,
+    successData,
     open,
     close,
     switchMode,
     submit,
+    dismissSuccess,
   };
 };
 
