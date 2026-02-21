@@ -9891,6 +9891,10 @@ export type Database = {
           username: string
         }[]
       }
+      get_thread_participant_count: {
+        Args: { p_conversation_id: string }
+        Returns: number
+      }
       get_threaded_comments: {
         Args: { p_post_id: string; p_user_id: string }
         Returns: {
