@@ -45,7 +45,7 @@ const ProfileV2Spaces: React.FC<ProfileV2SpacesProps> = ({
       if (!memberships || memberships.length === 0) return [];
 
       // Get the spaces
-      const spaceIds = memberships.map((m: any) => m.space_id);
+      const spaceIds = memberships.map((m: { space_id: string; role: string }) => m.space_id);
       let query = supabaseClient
         .from('spaces')
         .select('*')
@@ -83,7 +83,7 @@ const ProfileV2Spaces: React.FC<ProfileV2SpacesProps> = ({
       if (!memberships || memberships.length === 0) return [];
 
       // Get the spaces
-      const spaceIds = memberships.map((m: any) => m.space_id);
+      const spaceIds = memberships.map((m: { space_id: string; role: string }) => m.space_id);
       let query = supabaseClient
         .from('spaces')
         .select('*')
@@ -100,7 +100,7 @@ const ProfileV2Spaces: React.FC<ProfileV2SpacesProps> = ({
 
       // Merge role info
       return (spaces || []).map((space: Space): SpaceDisplayItem => {
-        const membership = memberships.find((m: any) => m.space_id === space.id);
+        const membership = memberships.find((m: { space_id: string; role: string }) => m.space_id === space.id);
         return {
           ...space,
           user_role: (membership?.role as SpaceMemberRole) || 'contributor',

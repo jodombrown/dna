@@ -101,7 +101,7 @@ export function FiveCsEngagement({
           active: (eventRegs?.length ?? 0) > 0,
           count: eventRegs?.length ?? 0,
           items:
-            eventRegs?.map((r: any) => ({
+            eventRegs?.map((r: { event_id: string; events: { id: string; title: string; start_time: string } | null }) => ({
               id: r.events?.id || r.event_id,
               title: r.events?.title || 'Event',
               date: r.events?.start_time,
@@ -111,7 +111,7 @@ export function FiveCsEngagement({
           active: (spaceMemberships?.length ?? 0) > 0,
           count: spaceMemberships?.length ?? 0,
           items:
-            spaceMemberships?.map((s: any) => ({
+            spaceMemberships?.map((s: { space_id: string; spaces: { id: string; name: string } | null }) => ({
               id: s.spaces?.id || s.space_id,
               name: s.spaces?.name || 'Space',
             })) ?? [],
@@ -120,7 +120,7 @@ export function FiveCsEngagement({
           active: (contributions?.length ?? 0) > 0,
           count: contributions?.length ?? 0,
           items:
-            contributions?.map((i: any) => ({
+            contributions?.map((i: { id: string; title: string; type: string }) => ({
               id: i.id,
               title: i.title,
               type: i.type === 'funding' ? 'need' : 'offer',

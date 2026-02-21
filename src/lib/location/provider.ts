@@ -41,7 +41,14 @@ export const GlobalProvider: LocationProvider = {
       
       const data = await response.json();
       
-      return data.map((item: any, idx: number) => {
+      interface NominatimResult {
+        place_id?: number;
+        type?: string;
+        class?: string;
+        display_name: string;
+        address?: Record<string, string>;
+      }
+      return data.map((item: NominatimResult, idx: number) => {
         const address = item.address || {};
         const type = item.type || '';
         const placeType = item.class || '';

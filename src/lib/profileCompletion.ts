@@ -1,6 +1,23 @@
 // Pure utility for profile completion calculation - no React imports
 // This prevents circular dependency issues
 
+interface ProfileForCompletion {
+  avatar_url?: string | null;
+  full_name?: string | null;
+  headline?: string | null;
+  profession?: string | null;
+  bio?: string | null;
+  linkedin_url?: string | null;
+  skills?: string[] | null;
+  focus_areas?: string[] | null;
+  interests?: string[] | null;
+  country_of_origin?: string | null;
+  current_country?: string | null;
+  languages?: string[] | null;
+  banner_url?: string | null;
+  industries?: string[] | null;
+}
+
 export interface ProfileFieldCheck {
   field: string;
   label: string;
@@ -11,7 +28,7 @@ export interface ProfileFieldCheck {
 }
 
 // 5-pillar system totaling exactly 100 points
-export function getProfileFieldChecks(profile: any): ProfileFieldCheck[] {
+export function getProfileFieldChecks(profile: ProfileForCompletion | null): ProfileFieldCheck[] {
   if (!profile) return [];
 
   // Helper to check if a string has actual content (not just whitespace)
@@ -149,14 +166,14 @@ export function getProfileFieldChecks(profile: any): ProfileFieldCheck[] {
 }
 
 // Calculate total completion points (max 100)
-export function calculateProfileCompletionPts(profile: any): number {
+export function calculateProfileCompletionPts(profile: ProfileForCompletion | null): number {
   if (!profile) return 0;
   const fields = getProfileFieldChecks(profile);
   return Math.min(100, fields.filter(f => f.complete).reduce((sum, f) => sum + f.points, 0));
 }
 
 // Get missing fields sorted by priority (ascending) then points (descending)
-export function getMissingFields(profile: any): ProfileFieldCheck[] {
+export function getMissingFields(profile: ProfileForCompletion | null): ProfileFieldCheck[] {
   const fields = getProfileFieldChecks(profile);
   return fields
     .filter(f => !f.complete)
@@ -164,12 +181,12 @@ export function getMissingFields(profile: any): ProfileFieldCheck[] {
 }
 
 // Get completed fields
-export function getCompletedFields(profile: any): ProfileFieldCheck[] {
+export function getCompletedFields(profile: ProfileForCompletion | null): ProfileFieldCheck[] {
   return getProfileFieldChecks(profile).filter(f => f.complete);
 }
 
 // Get completion breakdown by pillar
-export function getCompletionByPillar(profile: any): Record<string, { earned: number; total: number }> {
+export function getCompletionByPillar(profile: ProfileForCompletion | null): Record<string, { earned: number; total: number }> {
   const fields = getProfileFieldChecks(profile);
   const pillars: Record<string, { earned: number; total: number }> = {};
 

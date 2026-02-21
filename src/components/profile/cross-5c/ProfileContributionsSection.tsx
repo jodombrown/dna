@@ -52,7 +52,7 @@ export const ProfileContributionsSection: React.FC<ProfileContributionsSectionPr
         .limit(limit);
 
       if (!needsError && needs) {
-        needs.forEach((need: any) => {
+        needs.forEach((need: { id: string; title: string; description: string | null; status: string; created_at: string; space_id: string; spaces: { name: string } | null }) => {
           allContributions.push({
             id: need.id,
             type: 'need',
@@ -83,7 +83,7 @@ export const ProfileContributionsSection: React.FC<ProfileContributionsSectionPr
         .limit(limit);
 
       if (!offersError && offers) {
-        offers.forEach((offer: any) => {
+        offers.forEach((offer: { id: string; message: string | null; status: string; created_at: string; space_id: string; spaces: { name: string } | null; contribution_needs: { title: string } | null }) => {
           allContributions.push({
             id: offer.id,
             type: 'offer',
@@ -114,7 +114,7 @@ export const ProfileContributionsSection: React.FC<ProfileContributionsSectionPr
           .limit(limit);
 
         if (!badgesError && badges) {
-          badges.forEach((badge: any) => {
+          badges.forEach((badge: { id: string; badge_type: string | null; description: string | null; created_at: string; space_id: string; spaces: { name: string } | null }) => {
             allContributions.push({
               id: badge.id,
               type: 'badge',

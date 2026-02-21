@@ -12,10 +12,31 @@ import {
   ExternalLink
 } from 'lucide-react';
 
+interface ProjectItem {
+  id: string;
+  title: string;
+  description?: string;
+  impact_area?: string;
+  created_at: string;
+}
+
+interface InitiativeItem {
+  id: string;
+  title: string;
+  description?: string;
+  impact_area?: string;
+  created_at: string;
+}
+
+interface ProfileData {
+  innovation_pathways?: string | null;
+  past_contributions?: string | null;
+}
+
 interface ProjectsSectionProps {
-  profile: any;
-  projects?: any[];
-  initiatives?: any[];
+  profile: ProfileData;
+  projects?: ProjectItem[];
+  initiatives?: InitiativeItem[];
   isOwnProfile: boolean;
   onEdit?: () => void;
   onAddProject?: () => void;
@@ -74,7 +95,7 @@ const LinkedInProjectsSection: React.FC<ProjectsSectionProps> = ({
           <div>
             <h4 className="font-semibold text-gray-900 mb-4">Active Projects</h4>
             <div className="space-y-4">
-              {projects.map((project: any) => (
+              {projects.map((project) => (
                 <div key={project.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex gap-3 flex-1">
@@ -115,7 +136,7 @@ const LinkedInProjectsSection: React.FC<ProjectsSectionProps> = ({
           <div>
             <h4 className="font-semibold text-gray-900 mb-4">Initiatives</h4>
             <div className="space-y-4">
-              {initiatives.map((initiative: any) => (
+              {initiatives.map((initiative) => (
                 <div key={initiative.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <div className="flex gap-3">
                     <div className="w-10 h-10 bg-dna-gold/10 rounded-lg flex items-center justify-center flex-shrink-0">

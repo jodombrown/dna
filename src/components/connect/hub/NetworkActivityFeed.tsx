@@ -75,7 +75,7 @@ export function NetworkActivityFeed() {
 
       if (!connections || connections.length === 0) return [];
 
-      const connectionIds = connections.map((c: any) =>
+      const connectionIds = connections.map((c) =>
         c.requester_id === user.id ? c.recipient_id : c.requester_id
       );
 
@@ -99,7 +99,7 @@ export function NetworkActivityFeed() {
         .limit(3);
 
       if (stories) {
-        stories.forEach((story: any) => {
+        stories.forEach((story) => {
           const profile = profileMap.get(story.author_id);
           if (profile) {
             activities.push({
@@ -133,7 +133,7 @@ export function NetworkActivityFeed() {
         .limit(3);
 
       if (eventRegs) {
-        eventRegs.forEach((reg: any) => {
+        eventRegs.forEach((reg) => {
           const profile = profileMap.get(reg.user_id);
           const event = reg.events;
           if (profile && event) {
@@ -167,7 +167,7 @@ export function NetworkActivityFeed() {
         .limit(3);
 
       if (spaceMemberships) {
-        spaceMemberships.forEach((membership: any) => {
+        spaceMemberships.forEach((membership) => {
           const profile = profileMap.get(membership.user_id);
           const space = membership.spaces;
           if (profile && space) {
@@ -202,7 +202,7 @@ export function NetworkActivityFeed() {
         .limit(3);
 
       if (contributions) {
-        contributions.forEach((opp: any) => {
+        contributions.forEach((opp) => {
           const profile = profileMap.get(opp.created_by);
           if (profile) {
             activities.push({

@@ -105,7 +105,7 @@ export function ConversationsPanel({
         }
 
         // Fetch other user profiles
-        const otherUserIds = data.map((c: any) =>
+        const otherUserIds = data.map((c) =>
           c.user_a === user.id ? c.user_b : c.user_a
         );
 
@@ -121,7 +121,7 @@ export function ConversationsPanel({
         const profileMap = new Map(profiles?.map((p) => [p.id, p]) || []);
 
         // Get unread counts using conversation_participants.last_read_at
-        const conversationIds = data.map((c: any) => c.id);
+        const conversationIds = data.map((c) => c.id);
         const { data: participations, error: participationsError } = await supabase
           .from('conversation_participants')
           .select('conversation_id, last_read_at')
@@ -158,10 +158,10 @@ export function ConversationsPanel({
           }
         }
 
-        return data.map((conv: any) => {
+        return data.map((conv: { id: string; user_a: string; user_b: string; last_message_at: string | null; messages: { content: string; created_at: string; sender_id: string }[] }) => {
           const otherId = conv.user_a === user.id ? conv.user_b : conv.user_a;
           const profile = profileMap.get(otherId);
-          const messages = conv.messages as any[];
+          const messages = conv.messages as { content: string; created_at: string; sender_id: string }[];
           const lastMessage = messages?.[messages.length - 1];
 
           return {
@@ -208,7 +208,7 @@ export function ConversationsPanel({
         }
 
         // Fetch requester profiles
-        const requesterIds = data.map((r: any) => r.requester_id);
+        const requesterIds = data.map((r: { requester_id: string }) => r.requester_id);
         const { data: profiles, error: profilesError } = await supabase
           .from('profiles')
           .select('id, full_name, avatar_url, headline')
@@ -220,7 +220,7 @@ export function ConversationsPanel({
 
         const profileMap = new Map(profiles?.map((p) => [p.id, p]) || []);
 
-        return data.map((req: any) => {
+        return data.map((req: { id: string; requester_id: string; created_at: string }) => {
           const profile = profileMap.get(req.requester_id);
           return {
             id: req.id,

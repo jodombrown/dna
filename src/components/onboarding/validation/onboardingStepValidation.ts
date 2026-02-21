@@ -1,9 +1,11 @@
+import { OnboardingFormData } from '../hooks/useOnboardingForm';
+
 export interface ValidationError {
   field: string;
   message: string;
 }
 
-export const validateUserTypeStep = (data: any): ValidationError[] => {
+export const validateUserTypeStep = (data: Partial<OnboardingFormData>): ValidationError[] => {
   const errors: ValidationError[] = [];
 
   if (!data.user_type) {
@@ -14,7 +16,7 @@ export const validateUserTypeStep = (data: any): ValidationError[] => {
   return errors;
 };
 
-export const validateIdentityStep = (data: any): ValidationError[] => {
+export const validateIdentityStep = (data: Partial<OnboardingFormData>): ValidationError[] => {
   const errors: ValidationError[] = [];
 
   if (!data.first_name?.trim()) {
@@ -46,7 +48,7 @@ export const validateIdentityStep = (data: any): ValidationError[] => {
 };
 
 // Username validation for step 2
-export const validateUsernameStep = (data: any): ValidationError[] => {
+export const validateUsernameStep = (data: Partial<OnboardingFormData>): ValidationError[] => {
   const errors: ValidationError[] = [];
 
   if (!data.username?.trim()) {
@@ -63,12 +65,12 @@ export const validateUsernameStep = (data: any): ValidationError[] => {
 };
 
 // Professional fields are now optional - deferred to in-app completion
-export const validateProfessionalStep = (data: any): ValidationError[] => {
+export const validateProfessionalStep = (data: Partial<OnboardingFormData>): ValidationError[] => {
   return []; // All fields optional - deferred to profile completion
 };
 
 // Simplified - only country_of_origin required now
-export const validateDiasporaImpactStep = (data: any): ValidationError[] => {
+export const validateDiasporaImpactStep = (data: Partial<OnboardingFormData>): ValidationError[] => {
   const errors: ValidationError[] = [];
 
   if (!data.country_of_origin?.trim()) {
@@ -79,11 +81,11 @@ export const validateDiasporaImpactStep = (data: any): ValidationError[] => {
 };
 
 // Discovery step has no required fields - all optional
-export const validateDiscoveryStep = (data: any): ValidationError[] => {
+export const validateDiscoveryStep = (data: Partial<OnboardingFormData>): ValidationError[] => {
   return []; // No validation needed - all fields optional
 };
 
-export const validateStep = (step: number, data: any): ValidationError[] => {
+export const validateStep = (step: number, data: Partial<OnboardingFormData>): ValidationError[] => {
   switch (step) {
     case 0:
       return validateUserTypeStep(data);

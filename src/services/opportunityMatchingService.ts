@@ -5,6 +5,8 @@ import type { ContributionNeedWithSpace } from '@/types/contributeTypes';
 // TYPES
 // ============================================================================
 
+type SpaceSummary = { id: string; name: string; slug: string; tagline: string | null; focus_areas: string[] | null; region: string | null };
+
 export interface OpportunityMatchScore {
   opportunityId: string;
   score: number;
@@ -307,7 +309,7 @@ class OpportunityMatchingService {
 
     // Step 2: Fetch spaces separately
     const spaceIds = [...new Set(needsData.map(n => n.space_id).filter(Boolean))];
-    let spacesMap: Record<string, any> = {};
+    let spacesMap: Record<string, SpaceSummary> = {};
     
     if (spaceIds.length > 0) {
       const { data: spacesData } = await supabase
@@ -599,7 +601,7 @@ class OpportunityMatchingService {
 
     // Step 2: Fetch spaces separately
     const spaceIds = [...new Set(needsData.map(n => n.space_id).filter(Boolean))];
-    let spacesMap: Record<string, any> = {};
+    let spacesMap: Record<string, SpaceSummary> = {};
     
     if (spaceIds.length > 0) {
       const { data: spacesData } = await supabase
@@ -653,7 +655,7 @@ class OpportunityMatchingService {
 
     // Step 2: Fetch spaces separately
     const needSpaceIds = [...new Set(needsData.map(n => n.space_id).filter(Boolean))];
-    let spacesMap: Record<string, any> = {};
+    let spacesMap: Record<string, SpaceSummary> = {};
     
     if (needSpaceIds.length > 0) {
       const { data: spacesData } = await supabase
@@ -699,7 +701,7 @@ class OpportunityMatchingService {
 
     // Step 2: Fetch spaces separately
     const spaceIds = [...new Set(needsData.map(n => n.space_id).filter(Boolean))];
-    let spacesMap: Record<string, any> = {};
+    let spacesMap: Record<string, SpaceSummary> = {};
     
     if (spaceIds.length > 0) {
       const { data: spacesData } = await supabase
@@ -724,7 +726,7 @@ class OpportunityMatchingService {
 
     // Score and filter opportunities based on search relevance
     const scoredResults = data
-      .map((opp: any) => {
+      .map((opp) => {
         const searchableText = [
           opp.title,
           opp.description,

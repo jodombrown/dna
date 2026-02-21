@@ -3,8 +3,8 @@ import { useState, useEffect } from 'react';
 import { FormData, ArrayStates, HelperStates } from '../FormDataTypes';
 
 interface UseProfileFormStateProps {
-  profile: any;
-  user: any;
+  profile: Record<string, unknown> | null;
+  user: { email?: string } | null;
 }
 
 export const useProfileFormState = ({ profile, user }: UseProfileFormStateProps) => {

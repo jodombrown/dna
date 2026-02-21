@@ -26,12 +26,14 @@ export const useRealtimeReactions = ({
   onLikeUpdate 
 }: UseRealtimeReactionsProps = {}) => {
   
-  const handleReactionChange = useCallback((payload: any, event: 'INSERT' | 'DELETE') => {
-    onReactionUpdate?.(payload.new || payload.old, event);
+  const handleReactionChange = useCallback((payload: { new?: RealtimeReactionPayload; old?: RealtimeReactionPayload }, event: 'INSERT' | 'DELETE') => {
+    const data = payload.new || payload.old;
+    if (data) onReactionUpdate?.(data, event);
   }, [onReactionUpdate]);
 
-  const handleLikeChange = useCallback((payload: any, event: 'INSERT' | 'DELETE') => {
-    onLikeUpdate?.(payload.new || payload.old, event);
+  const handleLikeChange = useCallback((payload: { new?: RealtimeLikePayload; old?: RealtimeLikePayload }, event: 'INSERT' | 'DELETE') => {
+    const data = payload.new || payload.old;
+    if (data) onLikeUpdate?.(data, event);
   }, [onLikeUpdate]);
 
   useEffect(() => {

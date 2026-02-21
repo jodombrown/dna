@@ -114,7 +114,7 @@ const DnaMe = () => {
                   <Button
                     variant="outline"
                     className="h-auto py-4 flex-col items-start gap-2"
-                    onClick={() => navigate('/opportunities')}
+                    onClick={() => navigate('/dna/contribute/needs')}
                   >
                     <div className="flex items-center gap-2 w-full">
                       <Rocket className="w-5 h-5 text-dna-gold" />

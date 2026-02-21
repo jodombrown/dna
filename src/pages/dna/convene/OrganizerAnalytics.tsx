@@ -74,7 +74,7 @@ const OrganizerAnalytics = () => {
               </AlertDescription>
             </Alert>
 
-            <Button onClick={() => navigate('/dna/convene/create')}>
+            <Button onClick={() => navigate('/dna/convene')}>
               Create Your First Event
             </Button>
           </div>

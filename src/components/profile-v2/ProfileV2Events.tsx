@@ -72,7 +72,31 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
       if (error) throw error;
 
       // Transform to EventListItem format
-      return (data || []).map((event: any): EventListItem => ({
+      type EventQueryResult = {
+        id: string;
+        organizer_id: string;
+        title: string;
+        description: string | null;
+        event_type: string;
+        format: string;
+        location_name: string | null;
+        location_city: string | null;
+        location_country: string | null;
+        meeting_url: string | null;
+        start_time: string;
+        end_time: string;
+        timezone: string;
+        max_attendees: number | null;
+        cover_image_url: string | null;
+        is_public: boolean;
+        requires_approval: boolean;
+        is_cancelled: boolean;
+        created_at: string;
+        profiles: { username: string | null; full_name: string | null; avatar_url: string | null } | null;
+        event_attendees: { count: number }[];
+      };
+
+      return (data || []).map((event: EventQueryResult): EventListItem => ({
         event_id: event.id,
         organizer_id: event.organizer_id,
         organizer_username: event.profiles?.username || '',
@@ -160,8 +184,32 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
 
       if (eventsError) throw eventsError;
 
+      type EventQueryResult = {
+        id: string;
+        organizer_id: string;
+        title: string;
+        description: string | null;
+        event_type: string;
+        format: string;
+        location_name: string | null;
+        location_city: string | null;
+        location_country: string | null;
+        meeting_url: string | null;
+        start_time: string;
+        end_time: string;
+        timezone: string;
+        max_attendees: number | null;
+        cover_image_url: string | null;
+        is_public: boolean;
+        requires_approval: boolean;
+        is_cancelled: boolean;
+        created_at: string;
+        profiles: { username: string | null; full_name: string | null; avatar_url: string | null } | null;
+        event_attendees: { count: number }[];
+      };
+
       // Transform to EventListItem format
-      return (events || []).map((event: any): EventListItem => ({
+      return (events || []).map((event: EventQueryResult): EventListItem => ({
         event_id: event.id,
         organizer_id: event.organizer_id,
         organizer_username: event.profiles?.username || '',
