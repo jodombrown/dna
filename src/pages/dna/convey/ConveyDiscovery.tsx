@@ -29,6 +29,9 @@ import { ConveyFeedCard } from '@/components/convey/ConveyFeedCard';
 import { useConveyFeed } from '@/hooks/useConveyFeed';
 import { Loader2 } from 'lucide-react';
 
+// DIA Card System (Sprint 4A)
+import { DIAHubSection } from '@/components/dia/DIAHubSection';
+
 export function ConveyDiscovery() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -247,6 +250,9 @@ export function ConveyDiscovery() {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* DIA Intelligence Cards */}
+            <DIAHubSection surface="convey_hub" limit={2} />
+
             {/* DIA Panel */}
             <HubDIAPanel
               hub="convey"

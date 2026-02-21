@@ -18,6 +18,7 @@ import { CompletionCelebration } from '@/components/collaboration/CompletionCele
 import { ArchiveSpaceDialog } from '@/components/collaboration/ArchiveSpaceDialog';
 import SpaceNeedsSection from '@/components/contribute/SpaceNeedsSection';
 import SpaceChannelCTA from '@/components/collaborate/SpaceChannelCTA';
+import { DIADetailInsight } from '@/components/dia/DIADetailInsight';
 import { useSpaceHealth, useArchiveSpace, useReactivateSpace, useMarkSpaceComplete } from '@/hooks/useSpaceHealth';
 import { supabaseClient } from '@/lib/supabaseHelpers';
 import { Loader2, Settings, ExternalLink, ArrowLeft, Users, BarChart, Activity } from 'lucide-react';
@@ -336,6 +337,9 @@ export default function SpaceDetail() {
             )}
           </CardContent>
         </Card>
+
+        {/* DIA Detail Insight */}
+        <DIADetailInsight surface="space_detail" entityId={space.id} />
 
         {/* Focus Areas */}
         {space.focus_areas && space.focus_areas.length > 0 && (

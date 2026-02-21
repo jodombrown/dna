@@ -27,6 +27,9 @@ import {
 // Existing sections
 import OpportunityRecommendations from '@/components/contribute/OpportunityRecommendations';
 
+// DIA Card System (Sprint 4A)
+import { DIAHubSection } from '@/components/dia/DIAHubSection';
+
 export function ContributeDiscovery() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -263,6 +266,9 @@ export function ContributeDiscovery() {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* DIA Intelligence Cards */}
+            <DIAHubSection surface="contribute_hub" limit={2} />
+
             {/* DIA Panel */}
             <HubDIAPanel
               hub="contribute"
