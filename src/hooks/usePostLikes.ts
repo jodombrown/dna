@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { sendNotificationEmail, NOTIFICATION_TYPES } from '@/services/notificationService';
 import { getPostUrl } from '@/lib/config';
+import { diaEventBus } from '@/services/dia/diaEventBus';
 
 interface LikeUser {
   user_id: string;
@@ -114,6 +115,22 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
       }
     },
     onSuccess: () => {
+      // DIA Sprint 4B: Check for content milestone after a like
+      const currentCount = (likeData?.likeCount ?? 0) + 1;
+      const milestones: Array<{ count: number; milestone: '10_likes' | '50_likes' }> = [
+        { count: 10, milestone: '10_likes' },
+        { count: 50, milestone: '50_likes' },
+      ];
+      const hitMilestone = milestones.find(m => currentCount === m.count);
+      if (hitMilestone && notificationContext?.postAuthorId) {
+        diaEventBus.emit({
+          type: 'content_milestone',
+          contentId: postId,
+          authorId: notificationContext.postAuthorId,
+          milestone: hitMilestone.milestone,
+        });
+      }
+
       queryClient.invalidateQueries({ queryKey: ['post-likes', postId] });
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });

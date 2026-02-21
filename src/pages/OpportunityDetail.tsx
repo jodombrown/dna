@@ -220,6 +220,7 @@ export default function OpportunityDetail() {
           <ApplicationForm
             opportunityId={id!}
             opportunityTitle={opportunity.title}
+            opportunityOwnerId={opportunity.creator?.id}
             onCancel={() => setShowApplicationForm(false)}
             onSuccess={() => {
               setShowApplicationForm(false);

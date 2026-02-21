@@ -51,6 +51,14 @@ export { generateContributeCards } from './contributeCards';
 export { generateConveyCards } from './conveyCards';
 export { generateCrossCCards } from './crossCCards';
 
+// ── DIA Proactive Triggers (Sprint 4B) ────────────────
+export { diaEventBus } from './diaEventBus';
+export { diaNudgeEngine } from './diaNudgeEngine';
+export { diaNudgeStorage } from './diaNudgeStorage';
+export { diaPeriodicCheck, initDIAPeriodicChecks } from './diaPeriodicCheck';
+export type { DIAPlatformEvent, DIAPlatformEventType } from './diaEventTypes';
+export type { DIAProactiveNudge, NudgeDeliveryStatus } from './diaNudgeStorage';
+
 // ── Re-export foundational types ─────────────────────────
 export type {
   DIACoreService,

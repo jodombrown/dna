@@ -4,6 +4,7 @@ import { UserPlus, UserCheck, Clock, MessageCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { diaEventBus } from '@/services/dia/diaEventBus';
 
 interface ConnectionButtonProps {
   targetUserId: string;
@@ -119,8 +120,17 @@ export const ConnectionButton: React.FC<ConnectionButtonProps> = ({
 
       if (error) throw error;
 
+      // DIA Sprint 4B: Emit connection event for proactive nudges
+      if (user?.id) {
+        diaEventBus.emit({
+          type: 'new_connection',
+          userId: user.id,
+          connectedUserId: targetUserId,
+        });
+      }
+
       setConnectionStatus('accepted');
-      
+
       toast({
         title: "Connection accepted!",
         description: `You are now connected with ${targetUserName}.`

@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { useAuth } from '@/contexts/AuthContext';
+import { diaEventBus } from '@/services/dia/diaEventBus';
 
 interface ConnectionRequestCardProps {
   request: {
@@ -32,6 +34,7 @@ export const ConnectionRequestCard: React.FC<ConnectionRequestCardProps> = ({
   const navigate = useNavigate();
   const { toast } = useToast();
   const { trackEvent } = useAnalytics();
+  const { user } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
   const [status, setStatus] = useState<'pending' | 'accepted' | 'declined'>('pending');
 
@@ -46,6 +49,15 @@ export const ConnectionRequestCard: React.FC<ConnectionRequestCardProps> = ({
         .eq('id', request.connection_id);
 
       if (error) throw error;
+
+      // DIA Sprint 4B: Emit connection event for proactive nudges
+      if (user?.id) {
+        diaEventBus.emit({
+          type: 'new_connection',
+          userId: user.id,
+          connectedUserId: request.requester_id,
+        });
+      }
 
       setStatus('accepted');
       toast({
