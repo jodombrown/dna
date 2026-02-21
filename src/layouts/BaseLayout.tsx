@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useViewState } from '@/contexts/ViewStateContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLocation } from 'react-router-dom';
@@ -7,6 +7,7 @@ import UnifiedHeader from '@/components/UnifiedHeader';
 import { AccountDrawer } from '@/components/navigation/AccountDrawer';
 import { FeedbackFAB } from '@/components/feedback/FeedbackFAB';
 import { PulseBar, PulseDock } from '@/components/pulse';
+import { initDIAPeriodicChecks } from '@/services/dia/diaPeriodicCheck';
 
 interface BaseLayoutProps {
   children: React.ReactNode;
@@ -28,6 +29,14 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   const { user } = useAuth();
   const location = useLocation();
   
+  // DIA Sprint 4B: Initialize periodic checks for authenticated users
+  useEffect(() => {
+    if (user?.id) {
+      const cleanup = initDIAPeriodicChecks(user.id);
+      return cleanup;
+    }
+  }, [user?.id]);
+
   // Check if we're on Connect route on mobile (has its own header)
   const isConnectRoute = location.pathname.includes('/dna/connect');
   const isMobileViewport = typeof window !== 'undefined' && window.innerWidth < 768;

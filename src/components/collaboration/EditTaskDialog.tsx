@@ -23,6 +23,7 @@ import { Separator } from '@/components/ui/separator';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { TaskDependencies } from './TaskDependencies';
+import { diaEventBus } from '@/services/dia/diaEventBus';
 
 interface Task {
   id: string;
@@ -104,6 +105,14 @@ export function EditTaskDialog({ spaceId, task, open, onOpenChange }: EditTaskDi
             created_by: user.id,
             content: `Task "${title}" was marked as done.`,
             type: 'auto_task_event',
+          });
+
+          // DIA Sprint 4B: Emit task completed event for proactive nudges
+          diaEventBus.emit({
+            type: 'task_completed',
+            taskId: task.id,
+            completedById: user.id,
+            spaceId,
           });
         }
       }

@@ -61,6 +61,7 @@ import { EventSpacesSection } from '@/components/collaboration/EventSpacesSectio
 import { EventActivityFeed } from '@/components/events/EventActivityFeed';
 import { EventLocationMap } from '@/components/convene/EventLocationMap';
 import EventThreadCTA from '@/components/convene/EventThreadCTA';
+import { diaEventBus } from '@/services/dia/diaEventBus';
 import { DIADetailInsight } from '@/components/dia/DIADetailInsight';
 
 const REPORT_REASONS = [
@@ -366,6 +367,17 @@ const EventDetail = () => {
         });
 
       if (error) throw error;
+
+      // DIA Sprint 4B: Emit RSVP event for proactive nudges (only for positive RSVPs)
+      if ((status === 'going' || status === 'maybe') && user?.id && id && event?.organizer_id) {
+        diaEventBus.emit({
+          type: 'event_rsvp',
+          eventId: id,
+          attendeeId: user.id,
+          hostId: event.organizer_id as string,
+        });
+      }
+
       return status;
     },
     onSuccess: (status) => {

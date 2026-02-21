@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { supabase } from '@/integrations/supabase/client';
+import { diaEventBus } from '@/services/dia/diaEventBus';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -21,11 +22,12 @@ type ApplicationFormData = z.infer<typeof applicationSchema>;
 interface ApplicationFormProps {
   opportunityId: string;
   opportunityTitle: string;
+  opportunityOwnerId?: string;
   onCancel: () => void;
   onSuccess: () => void;
 }
 
-export function ApplicationForm({ opportunityId, opportunityTitle, onCancel, onSuccess }: ApplicationFormProps) {
+export function ApplicationForm({ opportunityId, opportunityTitle, opportunityOwnerId, onCancel, onSuccess }: ApplicationFormProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -51,6 +53,16 @@ export function ApplicationForm({ opportunityId, opportunityTitle, onCancel, onS
       });
 
       if (error) throw error;
+
+      // DIA Sprint 4B: Emit opportunity response event for proactive nudges
+      if (opportunityOwnerId && user) {
+        diaEventBus.emit({
+          type: 'opportunity_response',
+          opportunityId,
+          ownerId: opportunityOwnerId,
+          responderId: user.id,
+        });
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['application', opportunityId] });
