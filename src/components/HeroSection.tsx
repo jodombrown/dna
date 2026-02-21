@@ -25,16 +25,13 @@ const HeroSection = () => {
               {/* Main Headline */}
               <div className="text-center lg:text-left">
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold font-serif text-dna-forest mb-4 lg:mb-6 leading-[1.1] lg:leading-[1.05]">
-                  Welcome to the
+                  One platform.
                   <br />
-                  <span className="text-dna-copper">Diaspora Network of Africa</span>
+                  <span className="text-dna-copper">Five ways to move Africa forward.</span>
                 </h1>
                 
-                <p className="text-lg sm:text-xl lg:text-2xl xl:text-3xl text-gray-700 mb-6 lg:mb-8 leading-relaxed">
-                  Connecting Africa's diaspora professionals for transformative global impact through 
-                  <span className="font-semibold text-dna-emerald"> capacity building</span>, 
-                  <span className="font-semibold text-dna-copper"> venture building</span>, and 
-                  <span className="font-semibold text-dna-forest"> ecosystem building</span>.
+                <p className="text-lg sm:text-xl lg:text-2xl xl:text-3xl text-muted-foreground mb-3 lg:mb-4 leading-relaxed">
+                  Where the African diaspora goes from scattered potential to coordinated power.
                 </p>
 
                 {/* LinkedIn-style Auth Buttons */}
@@ -67,9 +64,13 @@ const HeroSection = () => {
                   <a href="/legal/privacy-policy" className="text-dna-copper hover:underline font-medium">
                     Privacy Policy
                   </a>
-                  , and{' '}
+                  ,{' '}
                   <a href="/legal/terms" className="text-dna-copper hover:underline font-medium">
                     Terms & Conditions
+                  </a>
+                  , and{' '}
+                  <a href="/legal/cookie-policy" className="text-dna-copper hover:underline font-medium">
+                    Cookie Policy
                   </a>
                   .
                 </p>
