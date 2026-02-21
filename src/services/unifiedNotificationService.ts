@@ -193,8 +193,8 @@ export const unifiedNotificationService = {
     // Get platform notifications
     if (filter !== 'dia') {
       try {
-        const { data, error } = await supabase.rpc(
-          'get_user_notifications' as never,
+      const { data, error } = await (supabase.rpc as Function)(
+          'get_user_notifications',
           {
             p_user_id: userId,
             p_unread_only: options?.unreadOnly || false,
@@ -248,8 +248,8 @@ export const unifiedNotificationService = {
     let platformCount = 0;
 
     try {
-      const { data, error } = await supabase.rpc(
-        'get_unread_notification_count' as never,
+      const { data, error } = await (supabase.rpc as Function)(
+        'get_unread_notification_count',
         { p_user_id: userId }
       );
 
