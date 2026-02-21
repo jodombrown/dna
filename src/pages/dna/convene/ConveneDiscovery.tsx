@@ -28,6 +28,9 @@ import {
 import { EventRecommendations } from '@/components/events/EventRecommendations';
 import { UpcomingEventsSection } from '@/components/convene/UpcomingEventsSection';
 
+// DIA Card System (Sprint 4A)
+import { DIAHubSection } from '@/components/dia/DIAHubSection';
+
 export function ConveneDiscovery() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -274,6 +277,9 @@ export function ConveneDiscovery() {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* DIA Intelligence Cards */}
+            <DIAHubSection surface="convene_hub" limit={2} />
+
             {/* DIA Panel */}
             <HubDIAPanel
               hub="convene"

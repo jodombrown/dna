@@ -43,6 +43,14 @@ export { trendIntelligenceService } from './trendIntelligence';
 export { regionalIntelligenceService } from './regionalIntelligence';
 export { diaChatService } from './diaChat';
 
+// ── DIA Card System (Sprint 4A) ────────────────────────
+export { generateConnectCards } from './connectCards';
+export { generateConveneCards } from './conveneCards';
+export { generateCollaborateCards } from './collaborateCards';
+export { generateContributeCards } from './contributeCards';
+export { generateConveyCards } from './conveyCards';
+export { generateCrossCCards } from './crossCCards';
+
 // ── Re-export foundational types ─────────────────────────
 export type {
   DIACoreService,

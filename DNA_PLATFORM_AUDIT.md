@@ -18,7 +18,7 @@
 
 ### Overall Assessment
 
-The DNA platform is a feature-rich application with five core pillars (Connect, Convene, Collaborate, Contribute, Convey) plus DIA (AI assistant). The codebase has grown rapidly with significant functionality but has accumulated technical debt that should be addressed before MVE launch.
+The DNA platform is a feature-rich application with five core pillars (Connect, Convene, Collaborate, Contribute, Convey) plus DIA (AI agent). The codebase has grown rapidly with significant functionality but has accumulated technical debt that should be addressed before MVE launch.
 
 **Critical Issues:**
 - 247 files with `:any` type annotations bypassing TypeScript safety

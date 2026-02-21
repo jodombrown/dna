@@ -18,6 +18,9 @@ import {
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { ConnectMobileHeader } from '@/components/connect/ConnectMobileHeader';
 
+// DIA Card System (Sprint 4A)
+import { DIAHubSection } from '@/components/dia/DIAHubSection';
+
 /**
  * Connect Hub - Reimagined Three-Column Architecture
  *
@@ -150,10 +153,13 @@ const Connect = () => {
     <div className="min-h-screen bg-background">
       <ConnectHubLayout
         leftPanel={
-          <NetworkPanel
-            onFilterChange={handleFilterChange}
-            onSearchChange={handleNetworkSearch}
-          />
+          <div className="space-y-4">
+            <DIAHubSection surface="connect_hub" limit={2} />
+            <NetworkPanel
+              onFilterChange={handleFilterChange}
+              onSearchChange={handleNetworkSearch}
+            />
+          </div>
         }
         centerPanel={
           <DiscoveryFeed

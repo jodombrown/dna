@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 const db = supabase as any;
 import { feedRankingService } from './feedRankingService';
 import { logHighError } from '@/lib/errorLogger';
+import { getDIACardsForFeed } from '@/services/diaCardService';
 import { CModule, UserTier } from '@/types/composer';
 import type {
   EventType,
@@ -508,6 +509,8 @@ export const feedService = {
     userTier: string
   ): Promise<DIAInsightFeedContent[]> {
     try {
+      // Fetch from existing DB-based insights
+      const maxInsights = userTier === 'free' ? 3 : 10;
       const { data } = await db
         .from('dia_feed_insights')
         .select('*')
@@ -516,9 +519,9 @@ export const feedService = {
         .eq('dismissed', false)
         .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
         .order('created_at', { ascending: false })
-        .limit(userTier === 'free' ? 3 : 10);
+        .limit(maxInsights);
 
-      return ((data as Record<string, unknown>[] | null) || []).map((row) => ({
+      const dbInsights: DIAInsightFeedContent[] = ((data as Record<string, unknown>[] | null) || []).map((row) => ({
         type: 'dia_insight' as const,
         insightType: row.insight_type as DIAInsightFeedContent['insightType'],
         headline: row.headline as string,
@@ -529,6 +532,34 @@ export const feedService = {
         relatedContentIds: ((row.related_content_ids as string[]) || []),
         expiresAt: row.expires_at ? new Date(row.expires_at as string) : null,
       }));
+
+      // Supplement with per-C card system if we have room
+      const remaining = maxInsights - dbInsights.length;
+      if (remaining > 0 && userId) {
+        try {
+          const cards = await getDIACardsForFeed(userId);
+          const cardInsights: DIAInsightFeedContent[] = cards.slice(0, remaining).map(card => ({
+            type: 'dia_insight' as const,
+            insightType: 'network_insight' as DIAInsightFeedContent['insightType'],
+            headline: card.headline,
+            body: card.body,
+            dataPoints: [],
+            actionCTA: {
+              label: card.actions.find(a => a.isPrimary)?.label || 'View',
+              url: (card.actions.find(a => a.isPrimary)?.payload?.url as string) || '/dna/feed',
+              module: card.category === 'cross_c' ? 'connect' : card.category,
+            },
+            secondaryCTA: null,
+            relatedContentIds: [],
+            expiresAt: card.expiresAt ? new Date(card.expiresAt) : null,
+          }));
+          return [...dbInsights, ...cardInsights];
+        } catch {
+          // Card system failure is non-critical — return DB insights only
+        }
+      }
+
+      return dbInsights;
     } catch (err) {
       logHighError(err, 'feed', 'fetchDIAInsights failed', { userId });
       return [];

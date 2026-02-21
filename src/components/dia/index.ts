@@ -9,3 +9,6 @@ export { DiaStoryCard } from './DiaStoryCard';
 export { DiaHashtagChip, DiaHashtagInline } from './DiaHashtagChip';
 export { default as DiaOpportunityCard } from './DiaOpportunityCard';
 export { default as NudgeCard } from './NudgeCard';
+export { DIAInsightCard } from './DIAInsightCard';
+export { DIAHubSection } from './DIAHubSection';
+export { DIADetailInsight } from './DIADetailInsight';

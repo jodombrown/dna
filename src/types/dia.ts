@@ -8,7 +8,7 @@
  * Three operational modes:
  * - Ambient: Invisible intelligence (smart defaults, auto-suggestions, ranking)
  * - Proactive: Visible nudges and insights (feed cards, suggestions, recommendations)
- * - Reactive: Explicit invocation (DIA Chat, in-Composer assistant, Search)
+ * - Reactive: Explicit invocation (DIA Chat, in-Composer agent, Search)
  */
 
 // =====================================================

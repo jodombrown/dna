@@ -370,7 +370,7 @@ export const getEmailContent = (formType: string, formData: any): EmailContent =
               </p>
               <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e5e5;">
               <p style="color: #999; font-size: 12px;">
-                Sent with care by DIA, your DNA engagement assistant.<br>
+                Sent with care by DIA, your DNA engagement agent.<br>
                 Don't want these emails? <a href="https://diasporanetwork.africa/dna/notifications" style="color: #667eea;">Manage preferences</a>
               </p>
             </div>

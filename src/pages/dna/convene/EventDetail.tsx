@@ -61,6 +61,7 @@ import { EventSpacesSection } from '@/components/collaboration/EventSpacesSectio
 import { EventActivityFeed } from '@/components/events/EventActivityFeed';
 import { EventLocationMap } from '@/components/convene/EventLocationMap';
 import EventThreadCTA from '@/components/convene/EventThreadCTA';
+import { DIADetailInsight } from '@/components/dia/DIADetailInsight';
 
 const REPORT_REASONS = [
   { value: 'spam', label: 'Spam' },
@@ -842,6 +843,9 @@ const EventDetail = () => {
                   lng={event.location_lng}
                 />
               )}
+
+              {/* DIA Detail Insight */}
+              <DIADetailInsight surface="event_detail" entityId={event.id} />
 
               {/* Event Thread CTA — links CONVENE → CONNECT */}
               <EventThreadCTA

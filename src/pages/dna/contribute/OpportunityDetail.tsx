@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ArrowLeft, DollarSign, Users, Clock, Key, Package, AlertCircle } from 'lucide-react';
 import OpportunityThreadCTA from '@/components/contribute/OpportunityThreadCTA';
+import { DIADetailInsight } from '@/components/dia/DIADetailInsight';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import type { ContributionNeedWithSpace } from '@/types/contributeTypes';
@@ -228,6 +229,9 @@ export default function OpportunityDetail() {
               )}
             </CardContent>
           </Card>
+
+          {/* DIA Detail Insight */}
+          <DIADetailInsight surface="opportunity_detail" entityId={need.id} />
 
           {/* Thread CTA */}
           {user && (

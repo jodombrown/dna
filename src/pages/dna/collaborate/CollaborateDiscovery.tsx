@@ -27,6 +27,9 @@ import {
 // Existing sections
 import { SuggestedSpaces } from '@/components/collaboration/SuggestedSpaces';
 
+// DIA Card System (Sprint 4A)
+import { DIAHubSection } from '@/components/dia/DIAHubSection';
+
 export function CollaborateDiscovery() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -262,6 +265,9 @@ export function CollaborateDiscovery() {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* DIA Intelligence Cards */}
+            <DIAHubSection surface="collaborate_hub" limit={2} />
+
             {/* DIA Panel */}
             <HubDIAPanel
               hub="collaborate"
