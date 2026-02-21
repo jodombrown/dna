@@ -60,6 +60,7 @@ import { AddToCalendarButton } from '@/components/convene/AddToCalendarButton';
 import { EventSpacesSection } from '@/components/collaboration/EventSpacesSection';
 import { EventActivityFeed } from '@/components/events/EventActivityFeed';
 import { EventLocationMap } from '@/components/convene/EventLocationMap';
+import EventThreadCTA from '@/components/convene/EventThreadCTA';
 
 const REPORT_REASONS = [
   { value: 'spam', label: 'Spam' },
@@ -841,6 +842,15 @@ const EventDetail = () => {
                   lng={event.location_lng}
                 />
               )}
+
+              {/* Event Thread CTA — links CONVENE → CONNECT */}
+              <EventThreadCTA
+                eventId={event.id}
+                eventTitle={event.title}
+                isRegistered={!!currentRsvp && currentRsvp !== 'not_going'}
+                isPastEvent={isPastEvent}
+                isOrganizer={isOrganizer}
+              />
 
               {/* Event Spaces Section */}
               <EventSpacesSection 
