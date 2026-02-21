@@ -2,12 +2,14 @@
 import React from 'react';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 
-const AnimatedStat = ({ value, suffix, label, description, bgGradient }: {
+const AnimatedStat = ({ value, suffix, label, description, bgGradient, source, sourceUrl }: {
   value: number;
   suffix: string;
   label: string;
   description: string;
   bgGradient: string;
+  source?: string;
+  sourceUrl?: string;
 }) => {
   const { count, countRef } = useAnimatedCounter({ end: value, duration: 2500 });
 
@@ -18,6 +20,17 @@ const AnimatedStat = ({ value, suffix, label, description, bgGradient }: {
       </div>
       <div className="text-lg font-medium text-white/90 mb-1 h-[28px]">{label}</div>
       <div className="text-sm text-white/80 min-h-[40px]">{description}</div>
+      {source && (
+        <div className="mt-3 pt-2 border-t border-white/20">
+          {sourceUrl ? (
+            <a href={sourceUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-white/60 hover:text-white/90 underline underline-offset-2 transition-colors">
+              Source: {source}
+            </a>
+          ) : (
+            <span className="text-xs text-white/60">Source: {source}</span>
+          )}
+        </div>
+      )}
     </div>
   );
 };
@@ -39,6 +52,8 @@ const AnimatedStatsSection = () => {
             label="People of African Descent"
             description="Living outside Africa, projected to comprise 25% of global population"
             bgGradient="bg-gradient-to-br from-dna-emerald/80 to-dna-forest/80"
+            source="African Union, 2024"
+            sourceUrl="https://au.int/en/diaspora"
           />
           
           <AnimatedStat
@@ -47,14 +62,18 @@ const AnimatedStatsSection = () => {
             label="Annual Remittances (2024)"
             description="Fueling economic growth across African nations"
             bgGradient="bg-gradient-to-br from-dna-copper/80 to-dna-gold/80"
+            source="World Bank / KNOMAD, 2024"
+            sourceUrl="https://www.knomad.org/publication/migration-and-development-brief-41"
           />
           
           <AnimatedStat
-            value={60}
+            value={43}
             suffix="%"
             label="Highly Educated"
-            description="Advanced degrees and specialized skills driving innovation"
+            description="Hold bachelor's degree or higher — 2× the U.S. national average"
             bgGradient="bg-gradient-to-br from-dna-mint/80 to-dna-emerald/80"
+            source="Pew Research Center, 2022"
+            sourceUrl="https://www.pewresearch.org/global/fact-sheet/sub-saharan-african-immigrants-in-the-u-s/"
           />
         </div>
       </div>
