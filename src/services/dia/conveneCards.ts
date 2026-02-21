@@ -12,9 +12,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import type { DIACard } from '@/services/diaCardService';
-import { MODULE_ACCENT_COLORS } from '@/services/diaCardService';
-
-const ACCENT = MODULE_ACCENT_COLORS.convene;
+const ACCENT = '#C4942A';
 
 // ── Card Type 1: Event Overlap ─────────────────────
 

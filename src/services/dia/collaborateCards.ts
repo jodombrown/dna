@@ -10,9 +10,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import type { DIACard, DIACardAction } from '@/services/diaCardService';
-import { MODULE_ACCENT_COLORS } from '@/services/diaCardService';
-
-const ACCENT = MODULE_ACCENT_COLORS.collaborate;
+const ACCENT = '#2D5A3D';
 
 // ── Card Type 1: Stalled Space Alert ───────────────
 

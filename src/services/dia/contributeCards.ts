@@ -12,9 +12,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import type { DIACard } from '@/services/diaCardService';
-import { MODULE_ACCENT_COLORS } from '@/services/diaCardService';
-
-const ACCENT = MODULE_ACCENT_COLORS.contribute;
+const ACCENT = '#B87333';
 
 // ── Card Type 1: Opportunity Match ─────────────────
 
