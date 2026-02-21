@@ -546,8 +546,11 @@ export const feedService = {
             dataPoints: [],
             actionCTA: {
               label: card.actions.find(a => a.isPrimary)?.label || 'View',
-              url: (card.actions.find(a => a.isPrimary)?.payload?.url as string) || '/dna/feed',
-              module: card.category === 'cross_c' ? 'connect' : card.category,
+              type: 'navigate' as const,
+              payload: {
+                targetType: card.category === 'cross_c' ? 'connect' : card.category,
+                targetId: (card.actions.find(a => a.isPrimary)?.payload?.url as string) || '/dna/feed',
+              },
             },
             secondaryCTA: null,
             relatedContentIds: [],

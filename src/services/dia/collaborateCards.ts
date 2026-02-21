@@ -191,7 +191,7 @@ async function generateSpaceMilestone(userId: string): Promise<DIACard | null> {
         .from('space_tasks')
         .select('*', { count: 'exact', head: true })
         .eq('space_id', spaceId)
-        .eq('status', 'completed');
+        .eq('status', 'done');
 
       const total = totalTasks || 0;
       const completed = completedTasks || 0;
@@ -257,7 +257,7 @@ async function generateTaskReminder(userId: string): Promise<DIACard | null> {
       .from('space_tasks')
       .select('id, title, due_date, space_id, status')
       .eq('assignee_id', userId)
-      .neq('status', 'completed')
+      .neq('status', 'done')
       .lte('due_date', twoDaysFromNow)
       .gte('due_date', now)
       .order('due_date', { ascending: true })
