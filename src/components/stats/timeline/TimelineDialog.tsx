@@ -1,7 +1,7 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, X, ExternalLink } from 'lucide-react';
 import { TimelineDataItem } from './timelineData';
 
 interface TimelineDialogProps {
@@ -41,11 +41,31 @@ const TimelineDialog: React.FC<TimelineDialogProps> = ({
           <p className="text-gray-700 leading-relaxed text-center">
             {activeTimelineData?.expandedContent.description}
           </p>
+
+          {/* Sources */}
+          {activeTimelineData?.expandedContent.sources && activeTimelineData.expandedContent.sources.length > 0 && (
+            <div className="mt-6 pt-4 border-t border-gray-200">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Sources</p>
+              <ul className="space-y-1">
+                {activeTimelineData.expandedContent.sources.map((source, i) => (
+                  <li key={i}>
+                    <a
+                      href={source.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-dna-emerald hover:text-dna-forest hover:underline inline-flex items-center gap-1"
+                    >
+                      <ExternalLink className="w-3 h-3 flex-shrink-0" />
+                      {source.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           
           {/* Bottom Navigation */}
-          <div className={`mt-8 flex items-center gap-8 ${
-            !canNavigatePrev ? 'justify-center' : 'justify-center'
-          }`}>
+          <div className={`mt-8 flex items-center gap-8 justify-center`}>
             {canNavigatePrev && (
               <Button
                 variant="ghost"
@@ -70,7 +90,6 @@ const TimelineDialog: React.FC<TimelineDialogProps> = ({
               </Button>
             )}
 
-            {/* Exit button for last card */}
             {!canNavigateNext && (
               <Button
                 variant="default"
