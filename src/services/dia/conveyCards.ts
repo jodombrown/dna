@@ -11,9 +11,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import type { DIACard } from '@/services/diaCardService';
-import { MODULE_ACCENT_COLORS } from '@/services/diaCardService';
-
-const ACCENT = MODULE_ACCENT_COLORS.convey;
+const ACCENT = '#2A7A8C';
 
 // ── Card Type 1: Content Performance ───────────────
 
