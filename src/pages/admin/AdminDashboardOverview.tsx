@@ -45,7 +45,7 @@ const SEGMENT_COLORS = [
   '#B87333', // Copper
   '#D4AF37', // Gold
   '#3B82F6', // Blue
-  '#8B5CF6', // Purple
+  '#2A7A8C', // Deep Teal (Convey)
   '#EC4899', // Pink
   '#F59E0B'  // Amber
 ];

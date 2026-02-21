@@ -80,7 +80,7 @@ const TYPE_COLORS = {
   funding: '#10b981',
   skills: '#3b82f6',
   time: '#f97316',
-  access: '#8b5cf6',
+  access: '#2A7A8C',
   resources: '#ec4899'
 };
 
@@ -517,9 +517,9 @@ export default function ContributionAnalytics() {
                   <Line
                     type="monotone"
                     dataKey="rate"
-                    stroke="#8b5cf6"
+                    stroke="#2A7A8C"
                     strokeWidth={2}
-                    dot={{ fill: '#8b5cf6' }}
+                    dot={{ fill: '#2A7A8C' }}
                     name="Fulfillment Rate"
                   />
                 </LineChart>
