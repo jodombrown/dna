@@ -127,7 +127,7 @@ async function generateAmplificationSuggestion(userId: string): Promise<DIACard 
     // Get user's recent posts with their like counts
     const { data: posts } = await supabase
       .from('posts')
-      .select('id, content, reshare_count, created_at')
+      .select('id, content, created_at')
       .eq('author_id', userId)
       .eq('is_deleted', false)
       .gte('created_at', thirtyDaysAgo)
@@ -136,18 +136,24 @@ async function generateAmplificationSuggestion(userId: string): Promise<DIACard 
 
     if (!posts?.length) return null;
 
-    // For each post, get the like count from post_likes
+    // For each post, get the like count and reshare count
     const postsWithLikes = await Promise.all(
       posts.map(async (post) => {
-        const { count } = await supabase
-          .from('post_likes')
-          .select('*', { count: 'exact', head: true })
-          .eq('post_id', post.id);
+        const [{ count: likeCount }, { count: reshareCount }] = await Promise.all([
+          supabase
+            .from('post_likes')
+            .select('*', { count: 'exact', head: true })
+            .eq('post_id', post.id),
+          supabase
+            .from('posts')
+            .select('*', { count: 'exact', head: true })
+            .eq('original_post_id', post.id),
+        ]);
 
         return {
           ...post,
-          likeCount: count || 0,
-          reshareCount: post.reshare_count || 0,
+          likeCount: likeCount || 0,
+          reshareCount: reshareCount || 0,
         };
       }),
     );
