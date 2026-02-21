@@ -30,7 +30,6 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import EventThreadCTA from '@/components/convene/EventThreadCTA';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -582,14 +581,6 @@ export default function EventDetailsPage() {
                 </Card>
               )}
 
-              {/* Event Thread CTA — links CONVENE → CONNECT */}
-              <EventThreadCTA
-                eventId={event.id}
-                eventTitle={event.title}
-                isRegistered={isRegistered}
-                isPastEvent={isPastEvent}
-                isOrganizer={event.is_organizer}
-              />
             </div>
           </div>
         </div>
