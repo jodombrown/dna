@@ -22,6 +22,7 @@ interface ComposerBodyProps {
   formData: ComposerFormData;
   context: ComposerContext;
   onChange: (updates: Partial<ComposerFormData>) => void;
+  validationErrors?: Record<string, string>;
 }
 
 export const ComposerBody = ({
@@ -29,8 +30,8 @@ export const ComposerBody = ({
   formData,
   context,
   onChange,
+  validationErrors = {},
 }: ComposerBodyProps) => {
-  const { user } = useAuth();
   const { data: profile } = useProfile();
 
   return (
@@ -65,8 +66,8 @@ export const ComposerBody = ({
         </div>
       </div>
 
-      {/* Mode-specific fields */}
-      {renderModeFields(mode, formData, onChange)}
+      {/* Mode-specific fields with inline validation errors */}
+      {renderModeFields(mode, formData, onChange, validationErrors)}
     </div>
   );
 };
@@ -163,12 +164,14 @@ function PostModeFields({
   );
 }
 
-function StoryModeFields({ 
-  formData, 
-  onChange 
-}: { 
-  formData: ComposerFormData; 
+function StoryModeFields({
+  formData,
+  onChange,
+  validationErrors = {},
+}: {
+  formData: ComposerFormData;
   onChange: (updates: Partial<ComposerFormData>) => void;
+  validationErrors?: Record<string, string>;
 }) {
   const storyTypeOptions = getStoryTypeOptions();
   const selectedType = formData.storyType || 'update';
@@ -215,6 +218,7 @@ function StoryModeFields({
           value={formData.title || ''}
           onChange={(e) => onChange({ title: e.target.value })}
         />
+        <FieldError field="title" errors={validationErrors} />
       </div>
 
       {/* Subtitle */}
@@ -241,13 +245,14 @@ function StoryModeFields({
           minHeight="200px"
         />
         <p className="text-xs text-muted-foreground mt-1">
-          {formData.content.length < config.suggestedLength.min 
+          {formData.content.length < config.suggestedLength.min
             ? `${formData.content.length}/${config.suggestedLength.min} characters (minimum for ${config.label})`
             : formData.content.length > config.suggestedLength.max - 200
               ? `${formData.content.length}/${config.suggestedLength.max} characters (nearing limit)`
               : `${formData.content.length} characters (${config.suggestedLength.min}–${config.suggestedLength.max} recommended)`
           }
         </p>
+        <FieldError field="content" errors={validationErrors} />
       </div>
 
       {/* Cover Image */}
@@ -378,12 +383,14 @@ function StoryGalleryUpload({
 /**
  * EventModeFields - Enhanced event creation form per PRD
  */
-function EventModeFields({ 
-  formData, 
-  onChange 
-}: { 
-  formData: ComposerFormData; 
+function EventModeFields({
+  formData,
+  onChange,
+  validationErrors = {},
+}: {
+  formData: ComposerFormData;
   onChange: (updates: Partial<ComposerFormData>) => void;
+  validationErrors?: Record<string, string>;
 }) {
   const formatOptions = [
     { value: 'in_person', label: 'In Person', icon: '📍', description: 'Physical location' },
@@ -441,6 +448,7 @@ function EventModeFields({
         <p className="text-xs text-muted-foreground mt-1">
           {(formData.title?.length || 0)}/100 characters
         </p>
+        <FieldError field="title" errors={validationErrors} />
       </div>
 
       {/* Subtitle */}
@@ -485,6 +493,7 @@ function EventModeFields({
                 className="w-24"
               />
             </div>
+            <FieldError field="eventDate" errors={validationErrors} />
           </div>
           <div>
             <p className="text-xs text-muted-foreground mb-1">End</p>
@@ -502,6 +511,7 @@ function EventModeFields({
                 className="w-24"
               />
             </div>
+            <FieldError field="eventEndDate" errors={validationErrors} />
           </div>
         </div>
 
@@ -591,6 +601,7 @@ function EventModeFields({
           <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
             <span>ℹ️</span> Format: Venue, City, Country
           </p>
+          <FieldError field="location" errors={validationErrors} />
         </div>
       )}
 
@@ -607,6 +618,7 @@ function EventModeFields({
           <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
             <span>ℹ️</span> Zoom, Google Meet, Teams, or any URL
           </p>
+          <FieldError field="meetingUrl" errors={validationErrors} />
         </div>
       )}
 
@@ -627,11 +639,12 @@ function EventModeFields({
           className="min-h-[100px] resize-none mt-1.5"
         />
         <p className="text-xs text-muted-foreground mt-1">
-          {formData.content.length < 50 
+          {formData.content.length < 50
             ? `${formData.content.length}/50 characters minimum`
             : `${formData.content.length} characters`
           }
         </p>
+        <FieldError field="content" errors={validationErrors} />
       </div>
 
       {/* Agenda Builder */}
@@ -863,26 +876,44 @@ function EventCoverUpload({
   );
 }
 
+/**
+ * Inline validation error component — friendly, human messages
+ */
+function FieldError({ field, errors }: { field: string; errors: Record<string, string> }) {
+  if (!errors[field]) return null;
+  return (
+    <p id={`composer-field-${field}`} className="text-sm text-red-500 mt-1">
+      {errors[field]}
+    </p>
+  );
+}
+
 function renderModeFields(
   mode: ComposerMode,
   formData: ComposerFormData,
-  onChange: (updates: Partial<ComposerFormData>) => void
+  onChange: (updates: Partial<ComposerFormData>) => void,
+  validationErrors: Record<string, string> = {}
 ) {
   switch (mode) {
     case 'post':
-      return <PostModeFields formData={formData} onChange={onChange} />;
+      return (
+        <>
+          <PostModeFields formData={formData} onChange={onChange} />
+          <FieldError field="content" errors={validationErrors} />
+        </>
+      );
 
     case 'story':
-      return <StoryModeFields formData={formData} onChange={onChange} />;
+      return <StoryModeFields formData={formData} onChange={onChange} validationErrors={validationErrors} />;
 
     case 'event':
-      return <EventModeFields formData={formData} onChange={onChange} />;
+      return <EventModeFields formData={formData} onChange={onChange} validationErrors={validationErrors} />;
 
     case 'need':
-      return <OpportunityModeFields formData={formData} onChange={onChange} />;
+      return <OpportunityModeFields formData={formData} onChange={onChange} validationErrors={validationErrors} />;
 
     case 'space':
-      return <SpaceModeFields formData={formData} onChange={onChange} />;
+      return <SpaceModeFields formData={formData} onChange={onChange} validationErrors={validationErrors} />;
 
     case 'community':
       return (
@@ -901,6 +932,7 @@ function renderModeFields(
             onChange={(e) => onChange({ content: e.target.value })}
             className="min-h-[120px] resize-none"
           />
+          <FieldError field="content" errors={validationErrors} />
           <MediaUploadButton onUpload={(url) => onChange({ mediaUrl: url })} />
         </>
       );
@@ -913,12 +945,14 @@ function renderModeFields(
 /**
  * SpaceModeFields - Enhanced space/project creation form per PRD
  */
-function SpaceModeFields({ 
-  formData, 
-  onChange 
-}: { 
-  formData: ComposerFormData; 
+function SpaceModeFields({
+  formData,
+  onChange,
+  validationErrors = {},
+}: {
+  formData: ComposerFormData;
   onChange: (updates: Partial<ComposerFormData>) => void;
+  validationErrors?: Record<string, string>;
 }) {
   const spaceTypes = [
     { value: 'startup', icon: '🚀', label: 'Startup', description: 'Building a new venture' },
@@ -952,6 +986,7 @@ function SpaceModeFields({
           className="mt-1.5"
           maxLength={60}
         />
+        <FieldError field="title" errors={validationErrors} />
       </div>
 
       {/* Space Type Selector */}
@@ -975,6 +1010,7 @@ function SpaceModeFields({
             </button>
           ))}
         </div>
+        <FieldError field="spaceCategory" errors={validationErrors} />
       </div>
 
       {/* Description */}
@@ -986,6 +1022,7 @@ function SpaceModeFields({
           onChange={(e) => onChange({ content: e.target.value })}
           className="min-h-[100px] resize-none mt-1.5"
         />
+        <FieldError field="content" errors={validationErrors} />
       </div>
 
       {/* Cover Image */}
@@ -1163,10 +1200,12 @@ function SpaceCoverUpload({
  */
 function OpportunityModeFields({
   formData,
-  onChange
+  onChange,
+  validationErrors = {},
 }: {
   formData: ComposerFormData;
   onChange: (updates: Partial<ComposerFormData>) => void;
+  validationErrors?: Record<string, string>;
 }) {
   const opportunityType = (formData as unknown as Record<string, unknown>).opportunityType as string || 'need';
 
@@ -1257,6 +1296,7 @@ function OpportunityModeFields({
           className="mt-1.5"
           maxLength={100}
         />
+        <FieldError field="title" errors={validationErrors} />
       </div>
 
       {/* Category (PRD OpportunityCategory) */}
@@ -1290,6 +1330,7 @@ function OpportunityModeFields({
           onChange={(e) => onChange({ content: e.target.value })}
           className="min-h-[100px] resize-none mt-1.5"
         />
+        <FieldError field="content" errors={validationErrors} />
       </div>
 
       {/* Compensation Type (PRD CompensationType) */}

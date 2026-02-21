@@ -4,25 +4,33 @@
  * A single, unified creation interface that transforms based on user intent
  * across all Five C's (CONNECT, CONVENE, COLLABORATE, CONTRIBUTE, CONVEY).
  *
- * Mobile: bottom sheet (85% screen height, slide up)
+ * Mobile: vaul Drawer bottom sheet (swipe to dismiss, drag handle, sticky footer)
  * Desktop: centered modal (600px max width)
+ *
+ * Sprint 3A:
+ * - Replaced Sheet with vaul Drawer for mobile (proper swipe-to-dismiss)
+ * - Uses MODE_HANDLERS for validation (replaces switch/case)
+ * - Mode switch text preservation (shared content + per-mode field caching)
+ * - Inline validation errors with friendly messages
  */
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Drawer } from 'vaul';
 import { ComposerMode, ComposerContext, ComposerFormData } from '@/hooks/useUniversalComposer';
 import { ComposerModeSelector } from './ComposerModeSelector';
 import { ComposerBody } from './ComposerBody';
 import { ComposerFooter } from './ComposerFooter';
 import { DIASuggestionBar } from './DIASuggestionBar';
 import { DraftIndicator } from './DraftIndicator';
+import { MODE_HANDLERS } from './modeHandlers';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Hash, Calendar, Users, Building2, FileEdit } from 'lucide-react';
+import { Hash, Calendar, Users, Building2 } from 'lucide-react';
 import { useMobile } from '@/hooks/useMobile';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { diaComposerService } from '@/services/diaComposerService';
 import { composerService } from '@/services/composerService';
 import { ComposerMode as PRDComposerMode, type DIASuggestion } from '@/types/composer';
+import type { ValidationResult } from './modeHandlers';
 
 interface UniversalComposerProps {
   isOpen: boolean;
@@ -43,14 +51,48 @@ export const UniversalComposer = ({
   onModeChange,
   onSubmit,
 }: UniversalComposerProps) => {
-  const [formData, setFormData] = useState<ComposerFormData>({
-    content: '',
-  });
+  // Shared content that persists across mode switches
+  const [sharedContent, setSharedContent] = useState('');
+  const [sharedMedia, setSharedMedia] = useState<string | undefined>(undefined);
+
+  // Per-mode field cache: preserved when switching away, restored when switching back
+  const [modeFieldCache, setModeFieldCache] = useState<Partial<Record<ComposerMode, Partial<ComposerFormData>>>>({});
+
+  // Current form data (composed from shared + mode-specific)
+  const [formData, setFormData] = useState<ComposerFormData>({ content: '' });
+
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [diaSuggestion, setDiaSuggestion] = useState<DIASuggestion | null>(null);
   const [isDraftSaved, setIsDraftSaved] = useState(false);
   const { isMobile } = useMobile();
   const diaDebounceRef = useRef<ReturnType<typeof setTimeout>>();
   const autoSaveRef = useRef<ReturnType<typeof setTimeout>>();
+  const prevModeRef = useRef<ComposerMode>(mode);
+
+  // Mode switch text preservation
+  useEffect(() => {
+    const prevMode = prevModeRef.current;
+    if (prevMode === mode) return;
+
+    // Cache current mode-specific fields before switching
+    setModeFieldCache(prev => ({
+      ...prev,
+      [prevMode]: { ...formData, content: undefined, mediaUrl: undefined },
+    }));
+
+    // Restore cached fields for the new mode, or use defaults
+    const cachedFields = modeFieldCache[mode];
+    const defaults = MODE_HANDLERS[mode].getDefaultValues();
+
+    setFormData({
+      ...defaults,
+      ...cachedFields,
+      content: sharedContent,
+      mediaUrl: sharedMedia,
+    });
+
+    prevModeRef.current = mode;
+  }, [mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // DIA ambient analysis: analyze content as user types
   useEffect(() => {
@@ -113,13 +155,53 @@ export const UniversalComposer = ({
   }, [formData, mode]);
 
   const handleSubmit = () => {
+    // Client-side validation via MODE_HANDLERS (replaces switch/case)
+    const handler = MODE_HANDLERS[mode];
+    const validation: ValidationResult = handler.validate(formData);
+    if (!validation.isValid) {
+      setValidationErrors(validation.errors);
+      // Scroll to first error field
+      const firstErrorField = Object.keys(validation.errors)[0];
+      document.getElementById(`composer-field-${firstErrorField}`)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+      return;
+    }
+
+    // Clear validation errors and submit
+    setValidationErrors({});
     onSubmit(formData);
     setFormData({ content: '' });
+    setSharedContent('');
+    setSharedMedia(undefined);
+    setModeFieldCache({});
     setDiaSuggestion(null);
   };
 
   const updateFormData = useCallback((updates: Partial<ComposerFormData>) => {
-    setFormData(prev => ({ ...prev, ...updates }));
+    setFormData(prev => {
+      const next = { ...prev, ...updates };
+      return next;
+    });
+    // Keep shared content in sync
+    if ('content' in updates && updates.content !== undefined) {
+      setSharedContent(updates.content);
+    }
+    if ('mediaUrl' in updates) {
+      setSharedMedia(updates.mediaUrl);
+    }
+    // Clear specific field errors when the user types
+    const fieldKeys = Object.keys(updates);
+    if (fieldKeys.length > 0) {
+      setValidationErrors(prev => {
+        const next = { ...prev };
+        for (const key of fieldKeys) {
+          delete next[key];
+        }
+        return next;
+      });
+    }
   }, []);
 
   const handleDIASuggestionAccept = useCallback((suggestion: DIASuggestion) => {
@@ -134,34 +216,17 @@ export const UniversalComposer = ({
     setDiaSuggestion(null);
   }, []);
 
-  const getValidationMessage = (): string | null => {
-    switch (mode) {
-      case 'event':
-        if (!formData.title || formData.title.length < 10) return 'Event title must be at least 10 characters';
-        if (!formData.eventDate) return 'Please select an event date';
-        if (!formData.content || formData.content.length < 50) return 'Description must be at least 50 characters';
-        if ((formData.format === 'in_person' || !formData.format) && !formData.location) return 'Please add a location for in-person events';
-        if ((formData.format === 'virtual' || formData.format === 'hybrid') && !formData.meetingUrl) return 'Please add a meeting link';
-        return null;
-      case 'need':
-        if (!formData.title) return 'Please add a title';
-        if (!formData.content.trim()) return 'Please add a description';
-        return null;
-      case 'space':
-        if (!formData.title) return 'Please add a space title';
-        if (!formData.content.trim()) return 'Please add a description';
-        return null;
-      case 'story':
-        if (!formData.title?.trim()) return 'Story title is required';
-        if (formData.content.length < 400) return `Story needs ${400 - formData.content.length} more characters`;
-        return null;
-      default:
-        if (!formData.content.trim()) return 'Please write something';
-        return null;
-    }
+  // Validation via MODE_HANDLERS (replaces switch/case getValidationMessage)
+  const getValidationState = (): { isValid: boolean; message: string | null } => {
+    const handler = MODE_HANDLERS[mode];
+    const validation = handler.validate(formData);
+    if (validation.isValid) return { isValid: true, message: null };
+    // Return the first error as the summary message
+    const firstError = Object.values(validation.errors)[0];
+    return { isValid: false, message: firstError || null };
   };
 
-  const isValid = () => getValidationMessage() === null;
+  const { isValid: formIsValid, message: validationMessage } = getValidationState();
 
   const composerContent = (
     <div className="space-y-4">
@@ -191,6 +256,7 @@ export const UniversalComposer = ({
         formData={formData}
         context={context}
         onChange={updateFormData}
+        validationErrors={validationErrors}
       />
 
       {/* DIA Suggestion Bar */}
@@ -206,29 +272,32 @@ export const UniversalComposer = ({
       <ComposerFooter
         mode={mode}
         isSubmitting={isSubmitting}
-        isValid={isValid()}
-        validationMessage={getValidationMessage()}
+        isValid={formIsValid}
+        validationMessage={validationMessage}
         onCancel={onClose}
         onSubmit={handleSubmit}
       />
     </div>
   );
 
-  // Mobile: bottom sheet (per PRD Section 7.1)
+  // Mobile: vaul Drawer bottom sheet (swipe to dismiss, drag handle)
   if (isMobile) {
     return (
-      <Sheet open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
-        <SheetContent
-          side="bottom"
-          className="h-[85vh] rounded-t-2xl overflow-y-auto px-4 pb-6 pt-3"
-        >
-          {/* Drag handle */}
-          <div className="flex justify-center mb-3">
-            <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
-          </div>
-          {composerContent}
-        </SheetContent>
-      </Sheet>
+      <Drawer.Root open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+        <Drawer.Portal>
+          <Drawer.Overlay className="fixed inset-0 bg-black/40 z-50" />
+          <Drawer.Content className="fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-2xl">
+            {/* Drag handle */}
+            <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-muted mt-3 mb-2" />
+            {/* Scrollable content with safe area padding */}
+            <div className="max-h-[85vh] overflow-y-auto px-4 pb-safe">
+              {composerContent}
+              {/* Bottom safe area spacer for iOS home indicator */}
+              <div className="h-6" />
+            </div>
+          </Drawer.Content>
+        </Drawer.Portal>
+      </Drawer.Root>
     );
   }
 

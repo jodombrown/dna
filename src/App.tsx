@@ -112,7 +112,7 @@ const EventsIndex = lazy(() => import("./pages/dna/convene/EventsIndex"));
 const EventDetail = lazy(() => import("./pages/dna/convene/EventDetail"));
 const Welcome = lazy(() => import("./pages/dna/Welcome"));
 const DashboardSettings = lazy(() => import("./pages/dna/DashboardSettings"));
-const CreateEvent = lazy(() => import("./pages/dna/convene/CreateEvent"));
+// Sprint 3A: CreateEvent wrapper removed — route redirects to /dna/convene
 const MyEvents = lazy(() => import("./pages/dna/convene/MyEvents"));
 const EventAnalytics = lazy(() => import("./pages/dna/convene/EventAnalytics"));
 const OrganizerAnalytics = lazy(() => import("./pages/dna/convene/OrganizerAnalytics"));
@@ -461,11 +461,8 @@ function App() {
               } />
               {/* Event detail is public - no auth required for viewing */}
               <Route path="/dna/convene/events/:id" element={<EventDetail />} />
-              <Route path="/dna/convene/events/new" element={
-                <OnboardingGuard>
-                  <CreateEvent />
-                </OnboardingGuard>
-              } />
+              {/* Sprint 3A: CreateEvent wrapper removed — redirect to convene hub */}
+              <Route path="/dna/convene/events/new" element={<Navigate to="/dna/convene" replace />} />
               <Route path="/dna/convene/events/:id/edit" element={
                 <OnboardingGuard>
                   <EditEventPage />
