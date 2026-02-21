@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useViewState } from '@/contexts/ViewStateContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLocation } from 'react-router-dom';
@@ -8,6 +8,11 @@ import { AccountDrawer } from '@/components/navigation/AccountDrawer';
 import { FeedbackFAB } from '@/components/feedback/FeedbackFAB';
 import { PulseBar, PulseDock } from '@/components/pulse';
 import { initDIAPeriodicChecks } from '@/services/dia/diaPeriodicCheck';
+import { FEATURE_FLAGS } from '@/config/featureFlags';
+import { AlphaWelcomeBanner } from '@/components/alpha/AlphaWelcomeBanner';
+import { AlphaFeedbackButton } from '@/components/alpha/AlphaFeedbackButton';
+import { AlphaTestGuide } from '@/components/alpha/AlphaTestGuide';
+import { AlphaFeedbackForm } from '@/components/alpha/AlphaFeedbackForm';
 
 interface BaseLayoutProps {
   children: React.ReactNode;
@@ -26,9 +31,11 @@ interface BaseLayoutProps {
  */
 const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   const { viewState, layoutConfig } = useViewState();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const location = useLocation();
-  
+  const [isTestGuideOpen, setIsTestGuideOpen] = useState(false);
+  const [isFeedbackFormOpen, setIsFeedbackFormOpen] = useState(false);
+
   // DIA Sprint 4B: Initialize periodic checks for authenticated users
   useEffect(() => {
     if (user?.id) {
@@ -101,10 +108,44 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
         data-view-state={viewState}
         data-layout-type={layoutConfig.type}
       >
+        {/* Alpha Welcome Banner */}
+        {FEATURE_FLAGS.isAlphaTest && user && (
+          <div className="px-4 pt-4">
+            <AlphaWelcomeBanner
+              testerName={profile?.first_name ?? profile?.full_name ?? 'Tester'}
+              onOpenTestGuide={() => setIsTestGuideOpen(true)}
+              onOpenFeedback={() => setIsFeedbackFormOpen(true)}
+            />
+          </div>
+        )}
         {children}
       </div>
       <FeedbackFAB />
       <PulseDock />
+
+      {/* Alpha Testing Infrastructure */}
+      {FEATURE_FLAGS.isAlphaTest && user && (
+        <>
+          <AlphaFeedbackButton />
+          <AlphaTestGuide
+            isOpen={isTestGuideOpen}
+            onClose={() => setIsTestGuideOpen(false)}
+            onOpenFeedback={() => {
+              setIsTestGuideOpen(false);
+              setIsFeedbackFormOpen(true);
+            }}
+          />
+          <AlphaFeedbackForm
+            isOpen={isFeedbackFormOpen}
+            onClose={() => setIsFeedbackFormOpen(false)}
+          />
+          {FEATURE_FLAGS.showAlphaWatermark && (
+            <div className="fixed bottom-4 right-4 text-xs font-mono text-gray-300 opacity-50 pointer-events-none z-50">
+              DNA ALPHA v0.1
+            </div>
+          )}
+        </>
+      )}
     </>
   );
 };

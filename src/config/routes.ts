@@ -153,6 +153,7 @@ export const ROUTES = {
     users: '/admin/users',
     moderation: '/admin/moderation',
     analytics: '/admin/analytics',
+    alphaFeedback: '/admin/alpha-feedback',
   },
 } as const;
 
