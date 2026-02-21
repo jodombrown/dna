@@ -70,7 +70,7 @@ const AnimatedStatsSection = () => {
             value={43}
             suffix="%"
             label="Highly Educated"
-            description="Hold bachelor's degree or higher — 2× the U.S. national average"
+            description="Hold bachelor's degree or higher, 2x the U.S. national average"
             bgGradient="bg-gradient-to-br from-dna-mint/80 to-dna-emerald/80"
             source="Pew Research Center, 2022"
             sourceUrl="https://www.pewresearch.org/global/fact-sheet/sub-saharan-african-immigrants-in-the-u-s/"
