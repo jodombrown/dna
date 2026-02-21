@@ -280,7 +280,7 @@ export default function SpaceDetail() {
               spaceId={space.id}
               spaceName={space.name}
               isMember={isMember}
-              isArchived={space.status === 'archived'}
+              isArchived={(space.status as string) === 'archived' || space.status === 'completed'}
               isOwner={isLead}
             />
           </div>
