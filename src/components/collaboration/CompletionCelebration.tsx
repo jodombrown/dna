@@ -61,7 +61,7 @@ export function CompletionCelebration({
           startVelocity: 30,
           spread: 60,
           origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-          colors: ['#22c55e', '#10b981', '#fbbf24', '#3b82f6', '#8b5cf6'],
+          colors: ['#4A8D77', '#2D5A3D', '#C4942A', '#B87333', '#2A7A8C'],
         });
 
         // Right side
@@ -70,7 +70,7 @@ export function CompletionCelebration({
           startVelocity: 30,
           spread: 60,
           origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-          colors: ['#22c55e', '#10b981', '#fbbf24', '#3b82f6', '#8b5cf6'],
+          colors: ['#4A8D77', '#2D5A3D', '#C4942A', '#B87333', '#2A7A8C'],
         });
       }, 250);
 
