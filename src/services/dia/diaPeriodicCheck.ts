@@ -85,7 +85,7 @@ async function checkOverdueTasks(userId: string): Promise<OverdueTask[]> {
     .from('space_tasks')
     .select('id, assignee_id, space_id')
     .eq('assignee_id', userId)
-    .neq('status', 'completed')
+    .neq('status', 'done')
     .lt('due_date', now)
     .limit(10);
 
@@ -101,25 +101,26 @@ async function checkOverdueTasks(userId: string): Promise<OverdueTask[]> {
 // ── Check: Expiring Opportunities ─────────────────────────
 
 async function checkExpiringOpportunities(userId: string): Promise<ExpiringOpportunity[]> {
+  // opportunities table has no valid_until/deadline column
+  // Use updated_at as a proxy — flag opportunities not updated in 14+ days as potentially stale
   const now = new Date();
-  const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000).toISOString();
 
   const { data: opportunities } = await supabase
     .from('opportunities')
-    .select('id, created_by, valid_until')
+    .select('id, created_by, updated_at')
     .eq('created_by', userId)
     .eq('status', 'open')
-    .gt('valid_until', now.toISOString())
-    .lt('valid_until', sevenDaysFromNow)
+    .lt('updated_at', fourteenDaysAgo)
     .limit(5);
 
   if (!opportunities) return [];
 
   return opportunities.map(opp => ({
-    id: opp.id as string,
-    created_by: opp.created_by as string,
-    daysLeft: Math.ceil(
-      (new Date(opp.valid_until as string).getTime() - now.getTime()) / (24 * 60 * 60 * 1000),
+    id: opp.id,
+    created_by: opp.created_by,
+    daysLeft: Math.floor(
+      (now.getTime() - new Date(opp.updated_at).getTime()) / (24 * 60 * 60 * 1000),
     ),
   }));
 }
