@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { RelatedPolicies } from '@/components/legal/RelatedPolicies';
 import {
   Accordion,
   AccordionContent,
@@ -337,7 +338,11 @@ const UserAgreement = () => {
           </AccordionItem>
         </Accordion>
 
-        <div className="mt-12 text-center text-sm text-muted-foreground">
+        <div className="bg-card rounded-lg border p-8 mt-8">
+          <RelatedPolicies />
+        </div>
+
+        <div className="mt-8 text-center text-sm text-muted-foreground">
           <p>Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
           <p className="mt-2">
             © {new Date().getFullYear()} Diaspora Network of Africa. All rights reserved.
