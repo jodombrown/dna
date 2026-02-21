@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { diaEventBus } from '@/services/dia/diaEventBus';
+import { platformNotifications } from '@/services/platformNotificationGenerator';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -62,6 +63,14 @@ export function ApplicationForm({ opportunityId, opportunityTitle, opportunityOw
           ownerId: opportunityOwnerId,
           responderId: user.id,
         });
+
+        // Sprint 4C: In-app notification for opportunity interest
+        platformNotifications.opportunityInterest(
+          opportunityOwnerId,
+          user.id,
+          opportunityId,
+          opportunityTitle
+        ).catch(() => { /* non-critical */ });
       }
     },
     onSuccess: () => {

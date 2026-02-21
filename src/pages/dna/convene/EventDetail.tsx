@@ -62,6 +62,7 @@ import { EventActivityFeed } from '@/components/events/EventActivityFeed';
 import { EventLocationMap } from '@/components/convene/EventLocationMap';
 import EventThreadCTA from '@/components/convene/EventThreadCTA';
 import { diaEventBus } from '@/services/dia/diaEventBus';
+import { platformNotifications } from '@/services/platformNotificationGenerator';
 import { DIADetailInsight } from '@/components/dia/DIADetailInsight';
 
 const REPORT_REASONS = [
@@ -376,6 +377,15 @@ const EventDetail = () => {
           attendeeId: user.id,
           hostId: event.organizer_id as string,
         });
+
+        // Sprint 4C: In-app notification for event RSVP
+        platformNotifications.eventRsvp(
+          event.organizer_id as string,
+          user.id,
+          id,
+          event?.title || '',
+          status
+        ).catch(() => { /* non-critical */ });
       }
 
       return status;
