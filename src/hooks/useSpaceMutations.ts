@@ -3,6 +3,7 @@ import { supabaseClient } from '@/lib/supabaseHelpers';
 import { toast } from 'sonner';
 import { SpaceMemberRole } from '@/types/spaceTypes';
 import { createSpacePost } from '@/lib/feedWriter';
+import { diaEventBus } from '@/services/dia/diaEventBus';
 
 interface SupabaseError {
   message: string;
@@ -58,6 +59,26 @@ export const useJoinSpace = () => {
         });
 
       if (error) throw error;
+
+      // DIA Sprint 4B: Emit space member joined event for proactive nudges
+      try {
+        const { data: space } = await supabaseClient
+          .from('spaces')
+          .select('created_by')
+          .eq('id', spaceId)
+          .single();
+
+        if (space?.created_by) {
+          diaEventBus.emit({
+            type: 'space_member_joined',
+            spaceId,
+            newMemberId: userId,
+            creatorId: space.created_by,
+          });
+        }
+      } catch {
+        // DIA events are non-critical
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['my-spaces'] });

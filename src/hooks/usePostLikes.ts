@@ -117,9 +117,10 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
     onSuccess: () => {
       // DIA Sprint 4B: Check for content milestone after a like
       const currentCount = (likeData?.likeCount ?? 0) + 1;
-      const milestones: Array<{ count: number; milestone: '10_likes' | '50_likes' }> = [
+      const milestones: Array<{ count: number; milestone: '10_likes' | '50_likes' | '100_views' }> = [
         { count: 10, milestone: '10_likes' },
         { count: 50, milestone: '50_likes' },
+        { count: 100, milestone: '100_views' },
       ];
       const hitMilestone = milestones.find(m => currentCount === m.count);
       if (hitMilestone && notificationContext?.postAuthorId) {

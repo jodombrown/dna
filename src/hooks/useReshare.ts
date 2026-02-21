@@ -10,6 +10,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { createNotification } from '@/services/notificationService';
+import { diaEventBus } from '@/services/dia/diaEventBus';
 
 interface UseReshareOptions {
   postId: string;
@@ -112,6 +113,16 @@ export function useReshare({
       return true;
     },
     onSuccess: () => {
+      // DIA Sprint 4B: Emit content shared event for proactive nudges
+      if (originalAuthorId && userId && originalAuthorId !== userId) {
+        diaEventBus.emit({
+          type: 'content_shared',
+          contentId: postId,
+          authorId: originalAuthorId,
+          sharedById: userId,
+        });
+      }
+
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: ['hasReshared', postId] });
       queryClient.invalidateQueries({ queryKey: ['reshareCount', postId] });

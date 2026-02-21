@@ -4,7 +4,7 @@ import { ArrowLeft, Search, PenSquare } from 'lucide-react';
 import dnaLogo from '@/assets/dna-logo.png';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { NotificationBell } from '@/components/notifications/NotificationBell';
+import { UnifiedNotificationBell } from '@/components/notifications/UnifiedNotificationBell';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
@@ -79,7 +79,7 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
 
       {/* Right: Notification + Profile */}
        <div className="flex items-center gap-2 flex-shrink-0">
-         <NotificationBell />
+         <UnifiedNotificationBell />
          <Avatar 
            className="h-8 w-8 cursor-pointer" 
            onClick={openAccountDrawer}
