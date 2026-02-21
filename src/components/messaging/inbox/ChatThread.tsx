@@ -327,6 +327,7 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
                     return (
                       <div
                         key={msg.message_id}
+                        id={`message-${msg.message_id}`}
                         ref={(el) => {
                           if (el) messageRefs.current.set(msg.message_id, el);
                         }}
