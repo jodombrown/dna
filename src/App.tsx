@@ -80,6 +80,7 @@ const Contact = lazy(() => import("./pages/Contact"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const UserAgreement = lazy(() => import("./pages/UserAgreement"));
+const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
 
 const Convene = lazy(() => import("./pages/Convene"));
 const ConveneCategoryPage = lazy(() => import("./pages/ConveneCategoryPage"));
@@ -763,6 +764,7 @@ function App() {
               <Route path="/legal/user-agreement" element={<UserAgreement />} />
               <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/legal/terms" element={<TermsOfService />} />
+              <Route path="/legal/cookie-policy" element={<CookiePolicy />} />
               
               {/* Authentication flows */}
               <Route path="/invite" element={<InviteSignup />} />
