@@ -7,12 +7,10 @@
  * - Horizontal scroll on mobile (no wrapping)
  * - Switching modes preserves base fields
  * - 200ms ease transition
- *
- * Sprint 3A: Uses MODE_HANDLERS for labels (hybrid desktop/mobile).
- * Desktop: "Share a Post", "Tell a Story", etc.
- * Mobile: "Share", "Tell", "Host", "Start", "Post"
+ * - Auto-scrolls to keep selected chip visible
  */
 
+import { useRef, useEffect } from 'react';
 import { ComposerMode, ComposerContext } from '@/hooks/useUniversalComposer';
 import { COMPOSER_MODE_CONFIG } from '@/config/composerModes';
 import { MODE_HANDLERS } from './modeHandlers';
@@ -53,22 +51,42 @@ export const ComposerModeSelector = ({
   context,
 }: ComposerModeSelectorProps) => {
   const { isMobile } = useMobile();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const activeRef = useRef<HTMLButtonElement>(null);
 
   const enabledChips = modeChips.filter(
     (chip) => COMPOSER_MODE_CONFIG[chip.id]?.enabled
   );
 
+  // Auto-scroll to keep active chip visible
+  useEffect(() => {
+    if (activeRef.current && scrollRef.current) {
+      const container = scrollRef.current;
+      const chip = activeRef.current;
+      const chipLeft = chip.offsetLeft;
+      const chipRight = chipLeft + chip.offsetWidth;
+      const containerWidth = container.clientWidth;
+      const scrollLeft = container.scrollLeft;
+
+      if (chipLeft < scrollLeft) {
+        container.scrollTo({ left: chipLeft - 8, behavior: 'smooth' });
+      } else if (chipRight > scrollLeft + containerWidth) {
+        container.scrollTo({ left: chipRight - containerWidth + 8, behavior: 'smooth' });
+      }
+    }
+  }, [currentMode]);
+
   const isDisabled = (modeId: ComposerMode): boolean => {
-    // Can't create event FROM an event
     if (modeId === 'event' && context.eventId) return true;
-    // Can't create space FROM a space
     if (modeId === 'space' && context.spaceId) return true;
-    // Opportunities are creatable from ANY context
     return false;
   };
 
   return (
-    <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
+    <div
+      ref={scrollRef}
+      className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1"
+    >
       {enabledChips.map((chip) => {
         const Icon = chip.icon;
         const handler = MODE_HANDLERS[chip.id];
@@ -79,6 +97,7 @@ export const ComposerModeSelector = ({
         return (
           <button
             key={chip.id}
+            ref={isActive ? activeRef : undefined}
             onClick={() => onModeChange(chip.id)}
             disabled={disabled}
             className={cn(

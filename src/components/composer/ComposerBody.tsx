@@ -189,17 +189,15 @@ function StoryModeFields({
           <SelectTrigger className="bg-background">
             <SelectValue placeholder="Select story type" />
           </SelectTrigger>
-          <SelectContent position="item-aligned" className="bg-popover z-[9999]">
+          <SelectContent position="item-aligned" className="bg-popover z-[9999] [&_[data-highlighted]]:text-white [&_[data-highlighted]]:bg-[#2A7A8C]">
             {storyTypeOptions.map((option) => (
               <SelectItem key={option.value} value={option.value}>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 whitespace-nowrap">
                   <span>{option.icon}</span>
-                  <div>
-                    <span className="font-medium">{option.label}</span>
-                    <span className="text-muted-foreground ml-2 text-sm hidden sm:inline">
-                      – {option.description}
-                    </span>
-                  </div>
+                  <span className="font-medium">{option.label}</span>
+                  <span className="text-muted-foreground text-sm hidden sm:inline">
+                    – {option.description}
+                  </span>
                 </div>
               </SelectItem>
             ))}
@@ -476,41 +474,37 @@ function EventModeFields({
       {/* Date & Time Row */}
       <div className="space-y-3">
         <Label className="text-sm font-medium">Date & Time *</Label>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           <div>
             <p className="text-xs text-muted-foreground mb-1">Start</p>
-            <div className="flex gap-2">
-              <Input
-                type="date"
-                value={formData.eventDate || ''}
-                onChange={(e) => onChange({ eventDate: e.target.value })}
-                className="flex-1"
-              />
-              <Input
-                type="time"
-                value={formData.eventTime || ''}
-                onChange={(e) => onChange({ eventTime: e.target.value })}
-                className="w-24"
-              />
-            </div>
+            <Input
+              type="date"
+              value={formData.eventDate || ''}
+              onChange={(e) => onChange({ eventDate: e.target.value })}
+              className="w-full text-sm"
+            />
+            <Input
+              type="time"
+              value={formData.eventTime || ''}
+              onChange={(e) => onChange({ eventTime: e.target.value })}
+              className="w-full text-sm mt-1.5"
+            />
             <FieldError field="eventDate" errors={validationErrors} />
           </div>
           <div>
             <p className="text-xs text-muted-foreground mb-1">End</p>
-            <div className="flex gap-2">
-              <Input
-                type="date"
-                value={formData.eventEndDate || ''}
-                onChange={(e) => onChange({ eventEndDate: e.target.value })}
-                className="flex-1"
-              />
-              <Input
-                type="time"
-                value={formData.eventEndTime || ''}
-                onChange={(e) => onChange({ eventEndTime: e.target.value })}
-                className="w-24"
-              />
-            </div>
+            <Input
+              type="date"
+              value={formData.eventEndDate || ''}
+              onChange={(e) => onChange({ eventEndDate: e.target.value })}
+              className="w-full text-sm"
+            />
+            <Input
+              type="time"
+              value={formData.eventEndTime || ''}
+              onChange={(e) => onChange({ eventEndTime: e.target.value })}
+              className="w-full text-sm mt-1.5"
+            />
             <FieldError field="eventEndDate" errors={validationErrors} />
           </div>
         </div>
@@ -1001,7 +995,7 @@ function SpaceModeFields({
               className={cn(
                 'flex flex-col items-center p-3 rounded-lg border-2 transition-all text-center',
                 formData.spaceCategory === type.value
-                  ? 'border-dna-bevel-space bg-purple-50 dark:bg-purple-500/10'
+                  ? 'border-[#2D5A3D] bg-[#2D5A3D]/10 dark:bg-[#2D5A3D]/15'
                   : 'border-border hover:border-muted-foreground/50'
               )}
             >
@@ -1045,7 +1039,7 @@ function SpaceModeFields({
               className={cn(
                 'flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors',
                 formData.visibility === option.value
-                  ? 'border-dna-bevel-space bg-purple-50/50 dark:bg-purple-500/5'
+                  ? 'border-[#2D5A3D] bg-[#2D5A3D]/10 dark:bg-[#2D5A3D]/15'
                   : 'border-border hover:bg-muted/50'
               )}
             >
@@ -1166,17 +1160,17 @@ function SpaceCoverUpload({
   return (
     <div className="mt-2">
       <div 
-        className="border-2 border-dashed border-purple-300 rounded-lg p-4 text-center cursor-pointer hover:border-purple-400 hover:bg-purple-50/50 transition-colors"
+        className="border-2 border-dashed border-[#2D5A3D]/40 rounded-lg p-4 text-center cursor-pointer hover:border-[#2D5A3D]/60 hover:bg-[#2D5A3D]/5 transition-colors"
         onClick={() => fileInputRef.current?.click()}
       >
         {isUploading ? (
           <div className="flex items-center justify-center gap-2">
-            <Loader2 className="h-5 w-5 animate-spin text-purple-500" />
+            <Loader2 className="h-5 w-5 animate-spin text-[#2D5A3D]" />
             <span className="text-sm text-muted-foreground">Uploading...</span>
           </div>
         ) : (
           <>
-            <ImagePlus className="h-6 w-6 mx-auto text-purple-400 mb-1" />
+            <ImagePlus className="h-6 w-6 mx-auto text-[#2D5A3D]/70 mb-1" />
             <p className="text-sm text-muted-foreground">Upload cover image</p>
           </>
         )}
