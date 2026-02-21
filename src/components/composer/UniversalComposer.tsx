@@ -19,7 +19,7 @@
  * - First-time onboarding tooltips on mode chips
  */
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Drawer } from 'vaul';
 import { ComposerMode, ComposerContext, ComposerFormData } from '@/hooks/useUniversalComposer';
 import type { ComposerSuccessData } from '@/hooks/useUniversalComposer';
@@ -433,18 +433,21 @@ export const UniversalComposer = ({
     );
   }
 
-  // Desktop: centered modal (per PRD Section 7.1)
+  // Desktop: slide-in panel from right
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-[600px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">
+    <Sheet open={isOpen} onOpenChange={handleOpenChange}>
+      <SheetContent
+        side="right"
+        className="w-full sm:max-w-[480px] overflow-y-auto p-6"
+      >
+        <SheetHeader className="mb-4">
+          <SheetTitle className="text-xl font-semibold">
             {successData ? 'Published!' : 'Share something with the diaspora'}
-          </DialogTitle>
-        </DialogHeader>
+          </SheetTitle>
+        </SheetHeader>
         {composerContent}
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 };
 
