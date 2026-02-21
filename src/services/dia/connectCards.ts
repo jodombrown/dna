@@ -2,23 +2,22 @@
  * DNA | DIA CONNECT Card Generators
  *
  * Generates intelligence cards for the Connect module:
- * - People You Should Know
- * - Network Growth Insight
+ * - Skill-Based Connection Suggestions
+ * - Network Growth Milestone
  * - Connection Reactivation
  * - Mutual Connection Bridge
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import type { DIACard, DIACardAction } from '@/services/diaCardService';
+import type { DIACard } from '@/services/diaCardService';
 import { MODULE_ACCENT_COLORS } from '@/services/diaCardService';
 
 const ACCENT = MODULE_ACCENT_COLORS.connect;
 
-// ── Card Type 1: People You Should Know ─────────────
+// ── Card Type 1: Skill-Based Connection ────────────
 
-async function generatePeopleYouShouldKnow(userId: string): Promise<DIACard | null> {
+async function generateSkillSuggestion(userId: string): Promise<DIACard | null> {
   try {
-    // Get user's skills and interests
     const { data: profile } = await supabase
       .from('profiles')
       .select('skills, interests')
@@ -34,15 +33,15 @@ async function generatePeopleYouShouldKnow(userId: string): Promise<DIACard | nu
     // Get existing connections to exclude
     const { data: connections } = await supabase
       .from('connections')
-      .select('user_id, connected_user_id')
-      .or(`user_id.eq.${userId},connected_user_id.eq.${userId}`)
+      .select('requester_id, recipient_id')
+      .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`)
       .eq('status', 'accepted');
 
     const connectedIds = new Set<string>();
     connectedIds.add(userId);
     for (const c of connections || []) {
-      connectedIds.add(c.user_id);
-      connectedIds.add(c.connected_user_id);
+      connectedIds.add(c.requester_id);
+      connectedIds.add(c.recipient_id);
     }
 
     // Find users with overlapping skills who are NOT connected
@@ -54,126 +53,115 @@ async function generatePeopleYouShouldKnow(userId: string): Promise<DIACard | nu
 
     if (!candidates || candidates.length === 0) return null;
 
-    // Score candidates by skill/interest overlap
+    // Score candidates by skill overlap
     let bestCandidate: typeof candidates[0] | null = null;
     let bestScore = 0;
     let sharedSkills: string[] = [];
 
     for (const candidate of candidates) {
-      const cSkills: string[] = (candidate.skills as string[]) || [];
-      const cInterests: string[] = (candidate.interests as string[]) || [];
-      const overlap = [
-        ...userSkills.filter(s => cSkills.includes(s)),
-        ...userInterests.filter(i => cInterests.includes(i)),
+      const candidateSkills: string[] = [
+        ...((candidate.skills as string[]) || []),
+        ...((candidate.interests as string[]) || []),
       ];
-      if (overlap.length > bestScore) {
-        bestScore = overlap.length;
+      let score = 0;
+      const shared: string[] = [];
+
+      for (const skill of [...userSkills, ...userInterests]) {
+        if (candidateSkills.some(cs => cs.toLowerCase() === skill.toLowerCase())) {
+          score += 1;
+          shared.push(skill);
+        }
+      }
+
+      if (score > bestScore) {
+        bestScore = score;
         bestCandidate = candidate;
-        sharedSkills = overlap;
+        sharedSkills = [...new Set(shared)];
       }
     }
 
     if (!bestCandidate || bestScore === 0) return null;
 
-    const actions: DIACardAction[] = [
-      {
-        label: 'View Profile',
-        type: 'navigate',
-        payload: { url: `/dna/profile/${bestCandidate.id}` },
-        isPrimary: true,
-      },
-      {
-        label: 'Not now',
-        type: 'dismiss',
-        payload: {},
-        isPrimary: false,
-      },
-    ];
-
     return {
-      id: `connect-pysk-${bestCandidate.id}`,
+      id: `connect-skill-${bestCandidate.id}`,
       category: 'connect',
-      cardType: 'people_you_should_know',
-      headline: `You should know ${bestCandidate.full_name || 'someone new'}`,
-      body: `You both share expertise in ${sharedSkills.slice(0, 3).join(', ')}. ${bestCandidate.headline || 'A member of the diaspora community.'}`,
+      cardType: 'skill_suggestion',
+      headline: `You and ${bestCandidate.full_name || 'someone'} share ${sharedSkills.length} skill${sharedSkills.length > 1 ? 's' : ''}`,
+      body: `${bestCandidate.headline || 'A fellow diaspora member'} — you both know ${sharedSkills.slice(0, 2).join(' and ')}. Worth connecting?`,
       accentColor: ACCENT,
       icon: 'UserPlus',
-      priority: 75,
-      actions,
+      priority: 60,
+      actions: [
+        {
+          label: 'View Profile',
+          type: 'navigate' as const,
+          payload: { url: `/dna/connect/members/${bestCandidate.id}` },
+          isPrimary: true,
+        },
+        {
+          label: 'Not now',
+          type: 'dismiss' as const,
+          payload: {},
+          isPrimary: false,
+        },
+      ],
       metadata: {
-        candidateId: bestCandidate.id,
-        candidateName: bestCandidate.full_name,
-        candidateAvatar: bestCandidate.avatar_url,
+        suggestedUserId: bestCandidate.id,
+        suggestedName: bestCandidate.full_name,
         sharedSkills,
       },
-      dismissKey: `pysk-${bestCandidate.id}`,
+      dismissKey: `skill-${bestCandidate.id}`,
     };
   } catch {
     return null;
   }
 }
 
-// ── Card Type 2: Network Growth Insight ────────────
+// ── Card Type 2: Network Growth ────────────────────
 
-async function generateNetworkGrowthInsight(userId: string): Promise<DIACard | null> {
+async function generateNetworkGrowth(userId: string): Promise<DIACard | null> {
   try {
-    const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-    const twoWeeksAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
-
-    // Count connections this week vs last week
-    const { count: thisWeek } = await supabase
+    const { count: totalConnections } = await supabase
       .from('connections')
       .select('*', { count: 'exact', head: true })
-      .or(`user_id.eq.${userId},connected_user_id.eq.${userId}`)
-      .eq('status', 'accepted')
-      .gte('created_at', oneWeekAgo);
+      .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`)
+      .eq('status', 'accepted');
 
-    const { count: lastWeek } = await supabase
+    const total = totalConnections || 0;
+    const milestones = [10, 25, 50, 100, 250, 500, 1000];
+    const hitMilestone = milestones.find(m => total >= m && total < m + 5);
+
+    if (!hitMilestone) return null;
+
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const { count: recentCount } = await supabase
       .from('connections')
       .select('*', { count: 'exact', head: true })
-      .or(`user_id.eq.${userId},connected_user_id.eq.${userId}`)
+      .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`)
       .eq('status', 'accepted')
-      .gte('created_at', twoWeeksAgo)
-      .lt('created_at', oneWeekAgo);
+      .gte('created_at', thirtyDaysAgo);
 
-    const thisWeekCount = thisWeek || 0;
-    const lastWeekCount = lastWeek || 0;
-
-    if (thisWeekCount === 0 && lastWeekCount === 0) return null;
-
-    const growth = thisWeekCount - lastWeekCount;
-    const headline = growth > 0
-      ? `Your network grew by ${thisWeekCount} this week`
-      : thisWeekCount > 0
-        ? `${thisWeekCount} new connections this week`
-        : 'Your network is waiting to grow';
-
-    const body = growth > 0
-      ? `That's ${growth} more than last week. Keep the momentum going.`
-      : thisWeekCount > 0
-        ? 'Steady growth builds strong networks. Keep connecting.'
-        : `Last week you added ${lastWeekCount} connections. Reconnect with your network.`;
+    const recent = recentCount || 0;
 
     return {
-      id: `connect-ngi-${Date.now()}`,
+      id: `connect-growth-${hitMilestone}`,
       category: 'connect',
-      cardType: 'network_growth_insight',
-      headline,
-      body,
+      cardType: 'network_growth',
+      headline: `${total} connections and growing`,
+      body: `You've hit the ${hitMilestone} milestone${recent > 0 ? ` with ${recent} new connections this month` : ''}. Your diaspora network is expanding.`,
       accentColor: ACCENT,
       icon: 'TrendingUp',
       priority: 40,
       actions: [
         {
-          label: 'Discover People',
-          type: 'navigate',
+          label: 'Explore Network',
+          type: 'navigate' as const,
           payload: { url: '/dna/connect' },
           isPrimary: true,
         },
       ],
-      metadata: { thisWeekCount, lastWeekCount, growth },
-      dismissKey: `ngi-${new Date().toISOString().split('T')[0]}`,
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      metadata: { total, hitMilestone, recentGrowth: recent },
+      dismissKey: `growth-${hitMilestone}`,
     };
   } catch {
     return null;
@@ -189,8 +177,8 @@ async function generateConnectionReactivation(userId: string): Promise<DIACard |
     // Get connections where last interaction was 30+ days ago
     const { data: connections } = await supabase
       .from('connections')
-      .select('user_id, connected_user_id, created_at')
-      .or(`user_id.eq.${userId},connected_user_id.eq.${userId}`)
+      .select('requester_id, recipient_id, created_at')
+      .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`)
       .eq('status', 'accepted')
       .lt('created_at', thirtyDaysAgo)
       .limit(10);
@@ -199,7 +187,7 @@ async function generateConnectionReactivation(userId: string): Promise<DIACard |
 
     // Pick a random dormant connection
     const conn = connections[Math.floor(Math.random() * connections.length)];
-    const otherUserId = conn.user_id === userId ? conn.connected_user_id : conn.user_id;
+    const otherUserId = conn.requester_id === userId ? conn.recipient_id : conn.requester_id;
 
     const { data: otherProfile } = await supabase
       .from('profiles')
@@ -214,28 +202,27 @@ async function generateConnectionReactivation(userId: string): Promise<DIACard |
       category: 'connect',
       cardType: 'connection_reactivation',
       headline: `Reconnect with ${otherProfile.full_name || 'a connection'}`,
-      body: `You and ${otherProfile.full_name || 'they'} haven't connected in a while. ${otherProfile.headline ? `They're working on: ${otherProfile.headline}` : 'Check in and see what they\'re up to.'}`,
+      body: `It's been a while since you connected with ${otherProfile.full_name || 'them'}. ${otherProfile.headline || 'Catch up on what they have been working on.'}`,
       accentColor: ACCENT,
       icon: 'RefreshCw',
-      priority: 50,
+      priority: 35,
       actions: [
         {
-          label: 'View Profile',
-          type: 'navigate',
-          payload: { url: `/dna/profile/${otherUserId}` },
+          label: 'Send Message',
+          type: 'navigate' as const,
+          payload: { url: `/dna/messaging?to=${otherUserId}` },
           isPrimary: true,
         },
         {
-          label: 'Not now',
-          type: 'dismiss',
-          payload: {},
+          label: 'View Profile',
+          type: 'navigate' as const,
+          payload: { url: `/dna/connect/members/${otherUserId}` },
           isPrimary: false,
         },
       ],
       metadata: {
-        connectionId: otherUserId,
-        connectionName: otherProfile.full_name,
-        connectionAvatar: otherProfile.avatar_url,
+        connectedUserId: otherUserId,
+        connectedName: otherProfile.full_name,
       },
       dismissKey: `reactivate-${otherUserId}`,
     };
@@ -251,15 +238,15 @@ async function generateMutualBridge(userId: string): Promise<DIACard | null> {
     // Get user's connections
     const { data: myConnections } = await supabase
       .from('connections')
-      .select('user_id, connected_user_id')
-      .or(`user_id.eq.${userId},connected_user_id.eq.${userId}`)
+      .select('requester_id, recipient_id')
+      .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`)
       .eq('status', 'accepted')
       .limit(50);
 
     if (!myConnections || myConnections.length < 2) return null;
 
     const myConnectionIds = myConnections.map(c =>
-      c.user_id === userId ? c.connected_user_id : c.user_id
+      c.requester_id === userId ? c.recipient_id : c.requester_id
     );
 
     // Pick two random connections and check if they're connected
@@ -270,15 +257,17 @@ async function generateMutualBridge(userId: string): Promise<DIACard | null> {
     const { count } = await supabase
       .from('connections')
       .select('*', { count: 'exact', head: true })
-      .or(`and(user_id.eq.${personA},connected_user_id.eq.${personB}),and(user_id.eq.${personB},connected_user_id.eq.${personA})`)
+      .or(
+        `and(requester_id.eq.${personA},recipient_id.eq.${personB}),and(requester_id.eq.${personB},recipient_id.eq.${personA})`
+      )
       .eq('status', 'accepted');
 
-    if ((count || 0) > 0) return null; // Already connected
+    // Only suggest if they're NOT yet connected
+    if ((count || 0) > 0) return null;
 
-    // Fetch both profiles
     const { data: profiles } = await supabase
       .from('profiles')
-      .select('id, full_name, avatar_url, skills')
+      .select('id, full_name, headline')
       .in('id', [personA, personB]);
 
     if (!profiles || profiles.length < 2) return null;
@@ -287,39 +276,34 @@ async function generateMutualBridge(userId: string): Promise<DIACard | null> {
     const profileB = profiles.find(p => p.id === personB);
     if (!profileA || !profileB) return null;
 
-    const skillsA: string[] = (profileA.skills as string[]) || [];
-    const skillsB: string[] = (profileB.skills as string[]) || [];
-    const sharedSkills = skillsA.filter(s => skillsB.includes(s));
-
-    if (sharedSkills.length === 0) return null;
-
     return {
       id: `connect-bridge-${personA}-${personB}`,
       category: 'connect',
       cardType: 'mutual_bridge',
       headline: `Introduce ${profileA.full_name} and ${profileB.full_name}?`,
-      body: `Your connections both work in ${sharedSkills.slice(0, 2).join(' and ')} but don't know each other. An introduction could spark something.`,
+      body: `They're both in your network but don't know each other. A warm introduction could spark collaboration.`,
       accentColor: ACCENT,
       icon: 'GitBranch',
-      priority: 55,
+      priority: 50,
       actions: [
         {
           label: 'Make Introduction',
-          type: 'open_composer',
-          payload: { mentionIds: [personA, personB] },
+          type: 'navigate' as const,
+          payload: { url: `/dna/messaging?introduce=${personA},${personB}` },
           isPrimary: true,
         },
         {
           label: 'Not now',
-          type: 'dismiss',
+          type: 'dismiss' as const,
           payload: {},
           isPrimary: false,
         },
       ],
       metadata: {
-        personA: { id: personA, name: profileA.full_name, avatar: profileA.avatar_url },
-        personB: { id: personB, name: profileB.full_name, avatar: profileB.avatar_url },
-        sharedSkills,
+        personAId: personA,
+        personAName: profileA.full_name,
+        personBId: personB,
+        personBName: profileB.full_name,
       },
       dismissKey: `bridge-${personA}-${personB}`,
     };
@@ -332,8 +316,8 @@ async function generateMutualBridge(userId: string): Promise<DIACard | null> {
 
 export function generateConnectCards(): Array<(userId: string) => Promise<DIACard | null>> {
   return [
-    generatePeopleYouShouldKnow,
-    generateNetworkGrowthInsight,
+    generateSkillSuggestion,
+    generateNetworkGrowth,
     generateConnectionReactivation,
     generateMutualBridge,
   ];

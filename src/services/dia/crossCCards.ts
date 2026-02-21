@@ -2,12 +2,14 @@
  * DNA | DIA Cross-C Card Generators
  *
  * Generates intelligence cards that bridge multiple C modules:
- * - C-to-C Bridge (activity in one C suggests action in another)
+ * - C-to-C Bridge (event → space suggestion)
  * - Five C's Weekly Activity Summary
+ *
+ * Uses correct table names: event_registrations, contribution_offers, connections (requester_id/recipient_id).
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import type { DIACard, DIACardAction } from '@/services/diaCardService';
+import type { DIACard } from '@/services/diaCardService';
 import { MODULE_ACCENT_COLORS } from '@/services/diaCardService';
 
 const ACCENT = MODULE_ACCENT_COLORS.cross_c;
@@ -16,34 +18,24 @@ const ACCENT = MODULE_ACCENT_COLORS.cross_c;
 
 async function generateCToCBridge(userId: string): Promise<DIACard | null> {
   try {
-    // Check for events with many attendees that could become spaces
-    const { data: myRsvps } = await supabase
-      .from('event_rsvps')
+    const { data: myRegs } = await supabase
+      .from('event_registrations')
       .select('event_id')
       .eq('user_id', userId)
-      .eq('status', 'going');
+      .eq('status', 'confirmed');
 
-    if (!myRsvps || myRsvps.length === 0) return null;
+    if (!myRegs || myRegs.length === 0) return null;
 
-    const eventIds = myRsvps.map(r => r.event_id);
+    const eventIds = myRegs.map(r => r.event_id);
 
-    // Find events with 10+ attendees
     for (const eventId of eventIds.slice(0, 5)) {
       const { count: attendeeCount } = await supabase
-        .from('event_rsvps')
+        .from('event_registrations')
         .select('*', { count: 'exact', head: true })
         .eq('event_id', eventId)
-        .eq('status', 'going');
+        .eq('status', 'confirmed');
 
       if ((attendeeCount || 0) < 10) continue;
-
-      // Check if a space already exists for this event
-      const { count: existingSpaces } = await supabase
-        .from('spaces')
-        .select('*', { count: 'exact', head: true })
-        .eq('origin_event_id', eventId);
-
-      if ((existingSpaces || 0) > 0) continue;
 
       const { data: event } = await supabase
         .from('events')
@@ -63,26 +55,10 @@ async function generateCToCBridge(userId: string): Promise<DIACard | null> {
         icon: 'ArrowRightLeft',
         priority: 60,
         actions: [
-          {
-            label: 'Create Space',
-            type: 'navigate',
-            payload: { url: `/dna/collaborate/create?from_event=${eventId}` },
-            isPrimary: true,
-          },
-          {
-            label: 'Not now',
-            type: 'dismiss',
-            payload: {},
-            isPrimary: false,
-          },
+          { label: 'Create Space', type: 'navigate' as const, payload: { url: `/dna/collaborate/create?from_event=${eventId}` }, isPrimary: true },
+          { label: 'Not now', type: 'dismiss' as const, payload: {}, isPrimary: false },
         ],
-        metadata: {
-          sourceModule: 'convene',
-          targetModule: 'collaborate',
-          eventId,
-          eventTitle: event.title,
-          attendeeCount,
-        },
+        metadata: { sourceModule: 'convene', targetModule: 'collaborate', eventId, eventTitle: event.title, attendeeCount },
         dismissKey: `bridge-event-${eventId}`,
       };
     }
@@ -99,41 +75,35 @@ async function generateWeeklyDigest(userId: string): Promise<DIACard | null> {
   try {
     const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
-    // Count activity across all Five C's concurrently
     const [connectResult, conveneResult, collaborateResult, contributeResult, conveyResult] =
       await Promise.allSettled([
-        // Connect: new connections this week
         supabase
           .from('connections')
           .select('*', { count: 'exact', head: true })
-          .or(`user_id.eq.${userId},connected_user_id.eq.${userId}`)
+          .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`)
           .eq('status', 'accepted')
           .gte('created_at', oneWeekAgo),
 
-        // Convene: events attended
         supabase
-          .from('event_rsvps')
+          .from('event_registrations')
           .select('*', { count: 'exact', head: true })
           .eq('user_id', userId)
-          .eq('status', 'going')
-          .gte('created_at', oneWeekAgo),
+          .eq('status', 'confirmed')
+          .gte('registered_at', oneWeekAgo),
 
-        // Collaborate: tasks completed
         supabase
           .from('space_tasks')
           .select('*', { count: 'exact', head: true })
           .eq('assignee_id', userId)
-          .eq('status', 'completed')
+          .eq('status', 'done')
           .gte('updated_at', oneWeekAgo),
 
-        // Contribute: contributions made
         supabase
-          .from('need_responses')
+          .from('contribution_offers')
           .select('*', { count: 'exact', head: true })
-          .eq('responder_id', userId)
+          .eq('created_by', userId)
           .gte('created_at', oneWeekAgo),
 
-        // Convey: posts published
         supabase
           .from('posts')
           .select('*', { count: 'exact', head: true })
@@ -150,7 +120,6 @@ async function generateWeeklyDigest(userId: string): Promise<DIACard | null> {
     const totalActivity = connections + events + tasks + contributions + posts;
     if (totalActivity === 0) return null;
 
-    // Build summary parts
     const parts: string[] = [];
     if (connections > 0) parts.push(`${connections} connection${connections > 1 ? 's' : ''}`);
     if (events > 0) parts.push(`${events} event${events > 1 ? 's' : ''}`);
@@ -163,26 +132,14 @@ async function generateWeeklyDigest(userId: string): Promise<DIACard | null> {
       category: 'cross_c',
       cardType: 'weekly_digest',
       headline: 'Your week across the Five C\'s',
-      body: `This week: ${parts.join(', ')}. ${totalActivity >= 5 ? 'You\'re building real momentum.' : 'Every action strengthens the diaspora.'}`,
+      body: `This week: ${parts.join(', ')}. ${totalActivity >= 5 ? 'You are building real momentum.' : 'Every action strengthens the diaspora.'}`,
       accentColor: ACCENT,
       icon: 'LayoutGrid',
       priority: 35,
       actions: [
-        {
-          label: 'View Dashboard',
-          type: 'navigate',
-          payload: { url: '/dna/dashboard' },
-          isPrimary: true,
-        },
+        { label: 'View Dashboard', type: 'navigate' as const, payload: { url: '/dna/dashboard' }, isPrimary: true },
       ],
-      metadata: {
-        connections,
-        events,
-        tasks,
-        contributions,
-        posts,
-        totalActivity,
-      },
+      metadata: { connections, events, tasks, contributions, posts, totalActivity },
       dismissKey: `digest-${new Date().toISOString().split('T')[0]}`,
       expiresAt: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
     };
@@ -194,8 +151,5 @@ async function generateWeeklyDigest(userId: string): Promise<DIACard | null> {
 // ── Export ──────────────────────────────────────────
 
 export function generateCrossCCards(): Array<(userId: string) => Promise<DIACard | null>> {
-  return [
-    generateCToCBridge,
-    generateWeeklyDigest,
-  ];
+  return [generateCToCBridge, generateWeeklyDigest];
 }

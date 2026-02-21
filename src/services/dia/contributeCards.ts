@@ -6,10 +6,12 @@
  * - Your Listing Activity
  * - Contribution Pattern
  * - Unmet Need in Network
+ *
+ * Uses contribution_needs and contribution_offers tables.
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import type { DIACard, DIACardAction } from '@/services/diaCardService';
+import type { DIACard } from '@/services/diaCardService';
 import { MODULE_ACCENT_COLORS } from '@/services/diaCardService';
 
 const ACCENT = MODULE_ACCENT_COLORS.contribute;
@@ -32,9 +34,9 @@ async function generateOpportunityMatch(userId: string): Promise<DIACard | null>
     ];
     if (userSkills.length === 0) return null;
 
-    // Find open opportunities
+    // Find open contribution needs
     const { data: opportunities } = await supabase
-      .from('needs')
+      .from('contribution_needs')
       .select('id, title, description, focus_areas, created_by')
       .eq('status', 'open')
       .neq('created_by', userId)
@@ -43,7 +45,6 @@ async function generateOpportunityMatch(userId: string): Promise<DIACard | null>
 
     if (!opportunities || opportunities.length === 0) return null;
 
-    // Score each opportunity by skill overlap
     let bestOpp: typeof opportunities[0] | null = null;
     let bestScore = 0;
     let matchedSkills: string[] = [];
@@ -74,10 +75,8 @@ async function generateOpportunityMatch(userId: string): Promise<DIACard | null>
 
     if (!bestOpp || bestScore === 0) return null;
 
-    // Simple match percentage heuristic
     const matchPercent = Math.min(95, Math.round((bestScore / (userSkills.length * 3)) * 100));
 
-    // Get poster name
     const { data: poster } = await supabase
       .from('profiles')
       .select('full_name')
@@ -96,13 +95,13 @@ async function generateOpportunityMatch(userId: string): Promise<DIACard | null>
       actions: [
         {
           label: 'View Opportunity',
-          type: 'navigate',
+          type: 'navigate' as const,
           payload: { url: `/dna/contribute/opportunities/${bestOpp.id}` },
           isPrimary: true,
         },
         {
           label: 'Not interested',
-          type: 'dismiss',
+          type: 'dismiss' as const,
           payload: {},
           isPrimary: false,
         },
@@ -127,9 +126,8 @@ async function generateListingActivity(userId: string): Promise<DIACard | null> 
   try {
     const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
-    // Find user's open needs/offers
     const { data: myNeeds } = await supabase
-      .from('needs')
+      .from('contribution_needs')
       .select('id, title, created_at')
       .eq('created_by', userId)
       .eq('status', 'open')
@@ -140,9 +138,8 @@ async function generateListingActivity(userId: string): Promise<DIACard | null> 
 
     const need = myNeeds[0];
 
-    // Count responses (contributions/offers) for this need
     const { count: responseCount } = await supabase
-      .from('need_responses')
+      .from('contribution_offers')
       .select('*', { count: 'exact', head: true })
       .eq('need_id', need.id)
       .gte('created_at', oneWeekAgo);
@@ -162,7 +159,7 @@ async function generateListingActivity(userId: string): Promise<DIACard | null> 
       actions: [
         {
           label: 'View Responses',
-          type: 'navigate',
+          type: 'navigate' as const,
           payload: { url: `/dna/contribute/opportunities/${need.id}` },
           isPrimary: true,
         },
@@ -186,11 +183,10 @@ async function generateContributionPattern(userId: string): Promise<DIACard | nu
   try {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
-    // Count user's responses/contributions in last 30 days
     const { count: contributionCount } = await supabase
-      .from('need_responses')
+      .from('contribution_offers')
       .select('*', { count: 'exact', head: true })
-      .eq('responder_id', userId)
+      .eq('created_by', userId)
       .gte('created_at', thirtyDaysAgo);
 
     const contributions = contributionCount || 0;
@@ -208,7 +204,7 @@ async function generateContributionPattern(userId: string): Promise<DIACard | nu
       actions: [
         {
           label: 'View My Contributions',
-          type: 'navigate',
+          type: 'navigate' as const,
           payload: { url: '/dna/contribute/my' },
           isPrimary: true,
         },
@@ -236,23 +232,21 @@ async function generateUnmetNeed(userId: string): Promise<DIACard | null> {
     const userSkills: string[] = (profile.skills as string[]) || [];
     if (userSkills.length === 0) return null;
 
-    // Get user's connections
     const { data: connections } = await supabase
       .from('connections')
-      .select('user_id, connected_user_id')
-      .or(`user_id.eq.${userId},connected_user_id.eq.${userId}`)
+      .select('requester_id, recipient_id')
+      .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`)
       .eq('status', 'accepted')
       .limit(100);
 
     if (!connections || connections.length === 0) return null;
 
     const connectionIds = connections.map(c =>
-      c.user_id === userId ? c.connected_user_id : c.user_id
+      c.requester_id === userId ? c.recipient_id : c.requester_id
     );
 
-    // Find open needs from connections
     const { data: connectionNeeds } = await supabase
-      .from('needs')
+      .from('contribution_needs')
       .select('id, title, description, focus_areas, created_by')
       .in('created_by', connectionIds)
       .eq('status', 'open')
@@ -261,7 +255,6 @@ async function generateUnmetNeed(userId: string): Promise<DIACard | null> {
 
     if (!connectionNeeds || connectionNeeds.length === 0) return null;
 
-    // Find one that matches user's skills
     for (const need of connectionNeeds) {
       const focusAreas: string[] = (need.focus_areas as string[]) || [];
       const descLower = (need.description || '').toLowerCase();
@@ -290,13 +283,13 @@ async function generateUnmetNeed(userId: string): Promise<DIACard | null> {
         actions: [
           {
             label: 'See How You Can Help',
-            type: 'navigate',
+            type: 'navigate' as const,
             payload: { url: `/dna/contribute/opportunities/${need.id}` },
             isPrimary: true,
           },
           {
             label: 'Not now',
-            type: 'dismiss',
+            type: 'dismiss' as const,
             payload: {},
             isPrimary: false,
           },
