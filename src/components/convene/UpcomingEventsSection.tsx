@@ -10,9 +10,21 @@ import { format } from 'date-fns';
 import { useState } from 'react';
 import { logger } from '@/lib/logger';
 
+interface EventItem {
+  id: string;
+  title: string;
+  start_time: string;
+  format: string;
+  event_type: string;
+  location_city: string | null;
+  location_country: string | null;
+  organizer_id: string;
+  rsvp_status?: string;
+}
+
 interface MyEventsData {
-  hosting: any[];
-  attending: any[];
+  hosting: EventItem[];
+  attending: EventItem[];
 }
 
 export const UpcomingEventsSection = () => {
@@ -62,7 +74,7 @@ export const UpcomingEventsSection = () => {
           logger.warn('UpcomingEventsSection', 'Failed to fetch attendee data:', attendeeError);
         }
 
-        let attending: any[] = [];
+        let attending: EventItem[] = [];
         if (attendeeData && attendeeData.length > 0) {
           const eventIds = attendeeData.map(a => a.event_id);
           const { data: events, error: eventsError } = await supabase
@@ -176,7 +188,7 @@ export const UpcomingEventsSection = () => {
             </Button>
           </Card>
         ) : (
-          displayEvents.map((event: any) => (
+          displayEvents.map((event: EventItem) => (
             <Card
               key={event.id}
               className="p-4 hover:shadow-lg transition-shadow cursor-pointer"

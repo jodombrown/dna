@@ -1,11 +1,11 @@
-import { Users, Calendar, FolderKanban, HandHeart, FileText, MessageSquare, UserPlus, Plus } from 'lucide-react';
+import { Users, Calendar, FolderKanban, HandHeart, FileText, MessageSquare, UserPlus, Plus, type LucideIcon } from 'lucide-react';
 
 export interface CrossAction {
   id: string;
   label: string;
   description?: string;
-  icon: any;
-  route: (context?: any) => string;
+  icon: LucideIcon;
+  route: (context?: Record<string, string>) => string;
   pillar: 'connect' | 'convene' | 'collaborate' | 'contribute' | 'convey';
   requiresAuth: boolean;
 }

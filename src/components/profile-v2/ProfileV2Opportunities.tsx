@@ -130,7 +130,17 @@ const ProfileV2Opportunities: React.FC<ProfileV2OpportunitiesProps> = ({
       const { data, error } = await query;
       if (error) throw error;
 
-      return (data || []).map((item: any): OpportunityDisplayItem => ({
+      return (data || []).map((item: {
+        id: string;
+        title: string;
+        type: ContributionNeedType;
+        status: ContributionNeedStatus;
+        priority: 'normal' | 'high';
+        description: string;
+        created_at: string;
+        space: { id: string; name: string; slug: string } | null;
+        offers: { count: number }[];
+      }): OpportunityDisplayItem => ({
         id: item.id,
         title: item.title,
         type: item.type,
@@ -138,7 +148,7 @@ const ProfileV2Opportunities: React.FC<ProfileV2OpportunitiesProps> = ({
         priority: item.priority,
         description: item.description,
         created_at: item.created_at,
-        space: item.space,
+        space: item.space ?? undefined,
         offer_count: item.offers?.[0]?.count || 0,
       }));
     },
@@ -173,7 +183,17 @@ const ProfileV2Opportunities: React.FC<ProfileV2OpportunitiesProps> = ({
       const { data, error } = await query;
       if (error) throw error;
 
-      return (data || []).map((item: any): ContributionDisplayItem => ({
+      return (data || []).map((item: {
+        id: string;
+        need_id: string;
+        status: ContributionOfferStatus;
+        message: string;
+        offered_amount: number | null;
+        offered_currency: string | null;
+        created_at: string;
+        need: { id: string; title: string; type: ContributionNeedType } | null;
+        space: { id: string; name: string; slug: string } | null;
+      }): ContributionDisplayItem => ({
         id: item.id,
         need_id: item.need_id,
         status: item.status,
@@ -223,7 +243,7 @@ const ProfileV2Opportunities: React.FC<ProfileV2OpportunitiesProps> = ({
   const hasItems = totalItems > 0;
 
   // Hide if visibility is set to hidden and viewer is not owner
-  if ((visibility as any).opportunities === 'hidden' && !isOwner) {
+  if (visibility.opportunities === 'hidden' && !isOwner) {
     return null;
   }
 

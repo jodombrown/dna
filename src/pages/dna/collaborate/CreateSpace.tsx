@@ -151,7 +151,7 @@ export default function CreateSpace() {
           description: 'Update your profile to include more information about yourself',
           action: {
             label: 'Complete Profile',
-            onClick: () => navigate('/profile/edit'),
+            onClick: () => navigate('/dna/profile/edit'),
           },
         });
         return;

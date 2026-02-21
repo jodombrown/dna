@@ -74,8 +74,8 @@ interface ProfileV2QuickStatsProps {
     connections_count?: number;
     stories_count?: number;
     events_count?: number;
-    spaces?: any[];
-    events?: any[];
+    spaces?: { id: string; title: string; role: string }[];
+    events?: { id: string; title: string; role: string; event_date: string }[];
   };
   username?: string;
   isOwner: boolean;

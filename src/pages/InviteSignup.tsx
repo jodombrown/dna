@@ -106,8 +106,8 @@ const InviteSignup = () => {
         description: "Your account has been created successfully",
       });
 
-      // Redirect to dashboard
-      navigate('/app/dashboard');
+      // Redirect to feed
+      navigate('/dna/feed');
     } catch (error: unknown) {
       toast({
         title: "Signup Error",

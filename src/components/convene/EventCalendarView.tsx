@@ -42,21 +42,21 @@ export const EventCalendarView = ({ events }: EventCalendarViewProps) => {
   );
 
   const handleSelectEvent = useCallback(
-    (event: any) => {
+    (event: { id: string; title: string; start: Date; end: Date; resource: Event }) => {
       navigate(`/dna/convene/events/${event.id}`);
     },
     [navigate]
   );
 
   const handleSelectSlot = useCallback(
-    (slotInfo: any) => {
+    (slotInfo: { start: Date; end: Date; slots: Date[]; action: string }) => {
       // Optional: Navigate to create event with pre-filled date
       navigate('/dna/convene/events/new');
     },
     [navigate]
   );
 
-  const eventStyleGetter = useCallback((event: any) => {
+  const eventStyleGetter = useCallback((event: { id: string; title: string; start: Date; end: Date; resource: Event }) => {
     const isVirtual = event.resource.format === 'virtual';
     const isHybrid = event.resource.format === 'hybrid';
 

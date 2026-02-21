@@ -53,7 +53,7 @@ export function BannerUploadModal({
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
 
   // Banner aspect ratio (3:1 for wide banners)
   const BANNER_ASPECT_RATIO = 3 / 1;
@@ -77,7 +77,7 @@ export function BannerUploadModal({
     }
   }, [open, currentBanner]);
 
-  const onCropComplete = useCallback((croppedArea: any, croppedAreaPixels: any) => {
+  const onCropComplete = useCallback((_croppedArea: { x: number; y: number; width: number; height: number }, croppedAreaPixels: { x: number; y: number; width: number; height: number }) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
@@ -129,7 +129,7 @@ export function BannerUploadModal({
   const handleSave = async () => {
     setUploading(true);
     try {
-      let bannerData: any = {
+      let bannerData: { type: 'gradient' | 'image'; value: string; overlay: boolean } = {
         type: selectedTab === 'gradients' ? 'gradient' : 'image',
         value: selectedTab === 'gradients' ? selectedGradient : '',
         overlay
@@ -272,7 +272,7 @@ export function BannerUploadModal({
           </Button>
         </div>
 
-        <Tabs value={selectedTab} onValueChange={(v) => setSelectedTab(v as any)}>
+        <Tabs value={selectedTab} onValueChange={(v) => setSelectedTab(v as 'gradients' | 'upload')}>
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="gradients">Gradient Templates</TabsTrigger>
             <TabsTrigger value="upload">Upload Image</TabsTrigger>

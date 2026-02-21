@@ -52,7 +52,27 @@ export const usePopularPosts = (limit: number = 10) => {
       }
 
       // Map response to PopularPost format
-      return ((data as any[]) || []).map((item: any) => ({
+      interface FeedRow {
+        id: string;
+        author_id: string;
+        author_full_name: string;
+        author_username: string;
+        author_avatar_url: string | null;
+        content: string;
+        image_url: string | null;
+        post_type: string;
+        privacy_level: string;
+        linked_entity_type: string | null;
+        linked_entity_id: string | null;
+        space_id: string | null;
+        event_id: string | null;
+        created_at: string;
+        likes_count: number;
+        comments_count: number;
+        user_has_liked: boolean;
+        user_has_bookmarked: boolean;
+      }
+      return ((data as FeedRow[]) || []).map((item) => ({
         id: item.id,
         author_id: item.author_id,
         author_name: item.author_full_name,

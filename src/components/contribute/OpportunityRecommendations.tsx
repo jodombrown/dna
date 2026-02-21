@@ -122,7 +122,7 @@ function EmptyState() {
           Complete your profile to get personalized opportunity recommendations
         </p>
         <Button variant="outline" size="sm" className="mt-4" asChild>
-          <Link to="/settings/profile">
+          <Link to="/dna/profile/edit">
             Complete Profile <ArrowRight className="ml-2 h-3 w-3" />
           </Link>
         </Button>

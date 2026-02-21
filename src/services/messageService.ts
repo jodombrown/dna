@@ -4,6 +4,34 @@ import { getConversationUrl } from '@/lib/config';
 import { logger } from '@/lib/logger';
 import type { Database, Json } from '@/integrations/supabase/types';
 
+// Re-export types from messageTypes.ts for backward compatibility
+export type {
+  MessageAttachmentData,
+  LinkPreviewData,
+  MessagePayload,
+  Message,
+  MessageWithSender,
+  ConversationListItem,
+  MessageReaction,
+  MessageSearchResult,
+} from './messageTypes';
+
+// Re-export conversation actions from messageConversationActions.ts
+export {
+  deleteConversation,
+  archiveConversation,
+  pinConversation,
+  muteConversation,
+} from './messageConversationActions';
+
+// Import types needed internally
+import type {
+  MessagePayload,
+  Message,
+  MessageWithSender,
+  ConversationListItem,
+} from './messageTypes';
+
 /**
  * Type for messages table insert, extending with the payload field
  */
@@ -15,82 +43,6 @@ type MessageInsert = Database['public']['Tables']['messages']['Insert'];
  */
 interface MessageSoftDelete {
   deleted_at: string;
-}
-/**
- * Attachment data for messages
- */
-export interface MessageAttachmentData {
-  type: 'image' | 'file' | 'voice';
-  url: string;
-  filename?: string;
-  filesize?: number;
-  mimetype?: string;
-  duration?: number; // For voice messages, duration in seconds
-}
-
-/**
- * Link preview data for messages
- */
-export interface LinkPreviewData {
-  url: string;
-  title?: string;
-  description?: string;
-  image?: string;
-  siteName?: string;
-}
-
-/**
- * Message payload structure
- */
-export interface MessagePayload {
-  attachment?: MessageAttachmentData;
-  linkPreview?: LinkPreviewData;
-}
-
-/**
- * Message type for the simpler conversations/messages tables
- */
-export interface Message {
-  id: string;
-  conversation_id: string;
-  sender_id: string;
-  content: string;
-  read: boolean;
-  created_at: string;
-  payload?: MessagePayload;
-}
-
-/**
- * MessageWithSender - Type for messages with sender information
- */
-export interface MessageWithSender {
-  message_id: string;
-  content: string;
-  created_at: string;
-  is_deleted: boolean;
-  sender_id: string;
-  sender_username: string;
-  sender_full_name: string;
-  sender_avatar_url: string;
-  is_read?: boolean;
-  payload?: MessagePayload;
-}
-
-/**
- * ConversationListItem - Type for conversation list display
- */
-export interface ConversationListItem {
-  conversation_id: string;
-  other_user_id: string;
-  other_user_username: string;
-  other_user_full_name: string;
-  other_user_avatar_url: string;
-  last_message_content: string | null;
-  last_message_at: string | null;
-  unread_count: number;
-  is_muted: boolean;
-  is_pinned: boolean;
-  is_archived: boolean;
 }
 
 /**
@@ -1038,149 +990,16 @@ async getConversations(
   },
 };
 
-/**
- * MessageReaction type
- */
-export interface MessageReaction {
-  emoji: string;
-  count: number;
-  hasReacted: boolean;
-}
+// Types and conversation actions are now in separate files:
+// - messageTypes.ts: All type definitions
+// - messageConversationActions.ts: delete, archive, pin, mute functions
+// Re-exported above for backward compatibility
 
-/**
- * MessageSearchResult - Type for search results
- */
-export interface MessageSearchResult {
-  message_id: string;
-  conversation_id: string;
-  sender_id: string;
-  sender_username: string;
-  sender_full_name: string;
-  sender_avatar_url: string;
-  content: string;
-  content_type: string;
-  created_at: string;
-  other_user_id: string;
-  other_user_username: string;
-  other_user_full_name: string;
-  other_user_avatar_url: string;
-  rank: number;
-}
-
-/**
- * Conversation management functions
- */
-
-/**
- * Delete a conversation (soft delete - hides for current user only)
- */
-export async function deleteConversation(conversationId: string): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Not authenticated');
-
-  // Get conversation to determine which user column to update
-  const { data: conv, error: fetchError } = await supabase
-    .from('conversations')
-    .select('user_a, user_b')
-    .eq('id', conversationId)
-    .single();
-
-  if (fetchError || !conv) throw new Error('Conversation not found');
-
-  const isUserA = conv.user_a === user.id;
-  const updateField = isUserA ? 'deleted_by_a' : 'deleted_by_b';
-
-  const { error } = await supabase
-    .from('conversations')
-    .update({ [updateField]: true })
-    .eq('id', conversationId);
-
-  if (error) throw error;
-}
-
-/**
- * Archive/unarchive a conversation
- */
-export async function archiveConversation(conversationId: string, archive: boolean = true): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Not authenticated');
-
-  const { data: conv, error: fetchError } = await supabase
-    .from('conversations')
-    .select('user_a, user_b')
-    .eq('id', conversationId)
-    .single();
-
-  if (fetchError || !conv) throw new Error('Conversation not found');
-
-  const isUserA = conv.user_a === user.id;
-  const updateField = isUserA ? 'is_archived_by_a' : 'is_archived_by_b';
-
-  const { error } = await supabase
-    .from('conversations')
-    .update({ [updateField]: archive })
-    .eq('id', conversationId);
-
-  if (error) throw error;
-}
-
-/**
- * Pin/unpin a conversation
- */
-export async function pinConversation(conversationId: string, pin: boolean = true): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Not authenticated');
-
-  const { data: conv, error: fetchError } = await supabase
-    .from('conversations')
-    .select('user_a, user_b')
-    .eq('id', conversationId)
-    .single();
-
-  if (fetchError || !conv) throw new Error('Conversation not found');
-
-  const isUserA = conv.user_a === user.id;
-  const updateField = isUserA ? 'is_pinned_by_a' : 'is_pinned_by_b';
-
-  const { error } = await supabase
-    .from('conversations')
-    .update({ [updateField]: pin })
-    .eq('id', conversationId);
-
-  if (error) throw error;
-}
-
-/**
- * Mute/unmute a conversation
- */
-export async function muteConversation(conversationId: string, mute: boolean = true): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Not authenticated');
-
-  const { data: conv, error: fetchError } = await supabase
-    .from('conversations')
-    .select('user_a, user_b')
-    .eq('id', conversationId)
-    .single();
-
-  if (fetchError || !conv) throw new Error('Conversation not found');
-
-  const isUserA = conv.user_a === user.id;
-  const updateField = isUserA ? 'is_muted_by_a' : 'is_muted_by_b';
-
-  const { error } = await supabase
-    .from('conversations')
-    .update({ [updateField]: mute })
-    .eq('id', conversationId);
-
-  if (error) throw error;
-}
-
-// Also export types for backward compatibility
+// Also re-export backward-compatible type aliases
 export type {
-  MessageWithSender as MessageWithSenderType,
-  ConversationListItem as ConversationListItemType,
-  Message as MessageType,
-  MessageSearchResult as MessageSearchResultType,
-  MessageReaction as MessageReactionType,
-};
+  MessageWithSenderType,
+  ConversationListItemType,
+  MessageType,
+  MessageSearchResultType,
+  MessageReactionType,
+} from './messageTypes';

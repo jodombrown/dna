@@ -47,8 +47,7 @@ interface ProfileData {
   mentorship_areas?: string[] | null;
   // Contact visibility
   contact_number_visibility?: string;
-  // Visibility settings (for non-owner views) - any type for Json compatibility
-  visibility?: any;
+  visibility?: ProfileVisibility;
   // Is owner viewing (controls what's shown)
   isOwnerView?: boolean;
 }

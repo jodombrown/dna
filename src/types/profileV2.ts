@@ -71,13 +71,13 @@ export interface ProfileV2Tags {
   mentorship_areas?: string[];
   diaspora_networks?: string[];
   // Legacy tag fields for backward compatibility
-  skill_tags?: any[];
-  interest_tags?: any[];
-  contribution_tags?: any[];
-  sector_tags?: any[];
-  diaspora_tags?: any[];
-  region_tags?: any[];
-  language_tags?: any[];
+  skill_tags?: string[];
+  interest_tags?: string[];
+  contribution_tags?: string[];
+  sector_tags?: string[];
+  diaspora_tags?: string[];
+  region_tags?: string[];
+  language_tags?: string[];
 }
 
 export interface ProfileV2Activity {

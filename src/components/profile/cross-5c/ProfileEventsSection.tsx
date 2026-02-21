@@ -53,8 +53,8 @@ export const ProfileEventsSection: React.FC<ProfileEventsSectionProps> = ({ user
       const allEvents = [
         ...hostedEvents.map(e => ({ ...e, isOrganizer: true })),
         ...(attendeeEvents || [])
-          .filter((a: any) => a.events && a.events.organizer_id !== userId)
-          .map((a: any) => ({ ...a.events, isOrganizer: false })),
+          .filter((a: { status: string; events: { id: string; title: string; description: string | null; start_time: string; event_type: string; format: string; organizer_id: string } | null }) => a.events && a.events.organizer_id !== userId)
+          .map((a: { status: string; events: { id: string; title: string; description: string | null; start_time: string; event_type: string; format: string; organizer_id: string } | null }) => ({ ...a.events, isOrganizer: false })),
       ].sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime())
        .slice(0, limit);
 
@@ -92,7 +92,7 @@ export const ProfileEventsSection: React.FC<ProfileEventsSectionProps> = ({ user
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {events.map((event: any) => (
+          {events.map((event: { id: string; title: string; description?: string | null; start_time: string; event_type?: string; format?: string; isOrganizer: boolean }) => (
             <div
               key={event.id}
               className="flex items-start justify-between p-3 rounded-lg border hover:bg-accent transition-colors cursor-pointer"

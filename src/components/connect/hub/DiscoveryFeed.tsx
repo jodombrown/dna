@@ -156,7 +156,7 @@ export function DiscoveryFeed({
             }
 
             return {
-              members: (fallbackData || []).map((p: any) => ({ ...p, match_score: 0 })),
+              members: (fallbackData || []).map((p: Record<string, unknown>) => ({ ...p, match_score: 0 })),
               nextPage: (fallbackData || []).length === 20 ? pageParam + 1 : null,
             };
           } catch (fallbackErr) {
@@ -314,7 +314,7 @@ export function DiscoveryFeed({
           }
 
           if (upcomingEvents && upcomingEvents.length > 0) {
-            const evt = upcomingEvents[0] as any;
+            const evt = upcomingEvents[0];
             insights.push({
               id: 'event-overlap-' + evt.id,
               type: 'event_overlap',
@@ -351,7 +351,7 @@ export function DiscoveryFeed({
           }
 
           if (needs && needs.length > 0) {
-            const need = needs[0] as any;
+            const need = needs[0];
             // Fetch author profile
             const { data: authorProfile, error: authorError } = await supabase
               .from('profiles')
@@ -401,7 +401,7 @@ export function DiscoveryFeed({
   const allMembers = useMemo(() => {
     const members = membersData?.pages.flatMap((page) => page.members) || [];
     if (!connectedUserIds || connectedUserIds.size === 0) return members;
-    return members.filter((m: any) => !connectedUserIds.has(m.id));
+    return members.filter((m: Record<string, unknown>) => !connectedUserIds.has(m.id as string));
   }, [membersData, connectedUserIds]);
 
   // Filter DIA cards (not dismissed, limit to MAX_VISIBLE)
@@ -414,7 +414,7 @@ export function DiscoveryFeed({
 
   // Interleave members with DIA cards
   const feedItems = useMemo(() => {
-    const items: { type: 'member' | 'dia'; data: any; key: string }[] = [];
+    const items: { type: 'member' | 'dia'; data: Record<string, unknown> | DiaInsightData; key: string }[] = [];
     let diaIndex = 0;
 
     allMembers.forEach((member, index) => {

@@ -55,7 +55,7 @@ export const ProfileStoriesSection: React.FC<ProfileStoriesSectionProps> = ({
       }
       
       // Map to expected shape
-      return (data || []).map((item: any) => ({
+      return (data || []).map((item: { id: string; post_type: string | null; story_type: string | null; title: string | null; subtitle: string | null; content: string | null; created_at: string; slug: string | null; space_id: string | null }) => ({
         id: item.id,
         type: item.story_type || item.post_type || 'story',
         title: item.title,
@@ -117,7 +117,7 @@ export const ProfileStoriesSection: React.FC<ProfileStoriesSectionProps> = ({
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {stories.map((story: any) => (
+          {stories.map((story: { id: string; type: string; title: string | null; subtitle: string | null; body: string | null; published_at: string; slug: string | null; spaceName: string | null }) => (
             <div
               key={story.id}
               className="flex items-start justify-between p-3 rounded-lg border hover:bg-accent transition-colors cursor-pointer"

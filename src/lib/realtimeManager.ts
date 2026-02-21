@@ -25,6 +25,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 
 type ChannelConfig = {
   event: '*' | 'INSERT' | 'UPDATE' | 'DELETE';
@@ -33,8 +34,18 @@ type ChannelConfig = {
   filter?: string;
 };
 
+type RealtimePayload = {
+  schema: string;
+  table: string;
+  commit_timestamp: string;
+  eventType: string;
+  new: Record<string, unknown>;
+  old: Record<string, unknown>;
+  errors: string[] | null;
+};
+
 type ChannelEntry = {
-  channel: any;
+  channel: RealtimeChannel;
   refs: number;
 };
 
@@ -53,7 +64,7 @@ const singletonRegistry = new Map<string, ChannelEntry>();
 export function createSingletonChannel(
   channelName: string,
   config: ChannelConfig,
-  onUpdate: (payload: any) => void
+  onUpdate: (payload: RealtimePayload) => void
 ): () => void {
   let entry = singletonRegistry.get(channelName);
 
@@ -97,7 +108,7 @@ export function createSingletonChannel(
 export function createUniqueChannel(
   baseChannelName: string,
   config: ChannelConfig,
-  onUpdate: (payload: any) => void
+  onUpdate: (payload: RealtimePayload) => void
 ): () => void {
   // Generate unique instance ID to prevent collisions
   const instanceId = `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;

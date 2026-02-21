@@ -81,12 +81,6 @@ const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const UserAgreement = lazy(() => import("./pages/UserAgreement"));
 
-// Example pages
-const ConnectExample = lazy(() => import("./pages/ConnectExample"));
-const ConveneExample = lazy(() => import("./pages/ConveneExample"));
-const CollaborationsExample = lazy(() => import("./pages/CollaborationsExample"));
-const ContributeExample = lazy(() => import("./pages/ContributeExample"));
-const ConveyExample = lazy(() => import("./pages/ConveyExample"));
 const Convene = lazy(() => import("./pages/Convene"));
 const ConveneCategoryPage = lazy(() => import("./pages/ConveneCategoryPage"));
 const FeaturedCalendarsPage = lazy(() => import("./pages/FeaturedCalendarsPage"));
@@ -685,16 +679,16 @@ function App() {
                 </OnboardingGuard>
               } />
               
-              {/* Legacy example pages - keep for landing page */}
-              <Route path="/connect" element={<ConnectExample />} />
+              {/* Legacy example pages - redirect to DNA pillar routes */}
+              <Route path="/connect" element={<Navigate to="/dna/connect" replace />} />
               <Route path="/convene" element={<Convene />} />
               <Route path="/convene/category/:category" element={<ConveneCategoryPage />} />
               <Route path="/convene/featured-calendars" element={<FeaturedCalendarsPage />} />
               <Route path="/convene/local-events" element={<LocalEventsPage />} />
-              <Route path="/convene-example" element={<ConveneExample />} />
-              <Route path="/collaborate" element={<CollaborationsExample />} />
-              <Route path="/contribute" element={<ContributeExample />} />
-              <Route path="/convey" element={<ConveyExample />} />
+              <Route path="/convene-example" element={<Navigate to="/dna/convene" replace />} />
+              <Route path="/collaborate" element={<Navigate to="/dna/collaborate" replace />} />
+              <Route path="/contribute" element={<Navigate to="/dna/contribute" replace />} />
+              <Route path="/convey" element={<Navigate to="/dna/convey" replace />} />
               
               {/* New Admin Portal Routes */}
               <Route path="/admin-login" element={<AdminLogin />} />
