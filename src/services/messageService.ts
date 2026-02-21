@@ -26,10 +26,14 @@ export {
 
 // Import types needed internally
 import type {
+  MessageAttachmentData,
+  LinkPreviewData,
   MessagePayload,
   Message,
   MessageWithSender,
   ConversationListItem,
+  MessageReaction,
+  MessageSearchResult,
 } from './messageTypes';
 
 /**

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { config } from '@/lib/config';
+
 import { PageSEO } from '@/components/seo/PageSEO';
 import { RelatedPolicies } from '@/components/legal/RelatedPolicies';
 
@@ -175,8 +175,8 @@ const CookiePolicy: React.FC = () => {
               <p className="font-medium">
                 DNA – Diaspora Network of Africa<br />
                 Email:{' '}
-                <a href={`mailto:${config.supportEmail}`} className="text-dna-copper hover:underline">
-                  {config.supportEmail}
+                <a href="mailto:privacy@diasporanetwork.africa" className="text-dna-copper hover:underline">
+                  privacy@diasporanetwork.africa
                 </a>
               </p>
             </AccordionContent>

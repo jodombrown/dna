@@ -47,14 +47,14 @@ export const useRealtimeReactions = ({
         event: "INSERT",
         schema: "public",
         table: "post_reactions"
-      }, (payload) => {
+      }, (payload: any) => {
         handleReactionChange(payload, 'INSERT');
       })
       .on("postgres_changes", {
         event: "DELETE",
         schema: "public",
         table: "post_reactions"
-      }, (payload) => {
+      }, (payload: any) => {
         handleReactionChange(payload, 'DELETE');
       })
       .subscribe();
@@ -66,14 +66,14 @@ export const useRealtimeReactions = ({
         event: "INSERT",
         schema: "public",
         table: "post_likes"
-      }, (payload) => {
+      }, (payload: any) => {
         handleLikeChange(payload, 'INSERT');
       })
       .on("postgres_changes", {
         event: "DELETE",
         schema: "public",
         table: "post_likes"
-      }, (payload) => {
+      }, (payload: any) => {
         handleLikeChange(payload, 'DELETE');
       })
       .subscribe();

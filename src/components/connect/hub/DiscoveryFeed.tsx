@@ -414,14 +414,14 @@ export function DiscoveryFeed({
 
   // Interleave members with DIA cards
   const feedItems = useMemo(() => {
-    const items: { type: 'member' | 'dia'; data: Record<string, unknown> | DiaInsightData; key: string }[] = [];
+    const items: { type: 'member' | 'dia'; data: any; key: string }[] = [];
     let diaIndex = 0;
 
     allMembers.forEach((member, index) => {
       items.push({
         type: 'member',
         data: member,
-        key: `member-${member.id}`,
+        key: `member-${(member as any).id}`,
       });
 
       // Insert DIA card after every DIA_CARD_FREQUENCY members
