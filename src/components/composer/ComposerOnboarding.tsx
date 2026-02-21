@@ -109,7 +109,7 @@ export const ComposerOnboarding = ({
       onKeyDown={handleInteraction}
     >
       {/* Tooltip overlay — positioned relative to parent */}
-      {hoveredMode && MODE_TOOLTIPS[hoveredMode] && (
+      {hoveredMode && hoveredMode !== 'community' && MODE_TOOLTIPS[hoveredMode] && (
         <OnboardingTooltip
           mode={hoveredMode}
           tooltip={MODE_TOOLTIPS[hoveredMode]}
