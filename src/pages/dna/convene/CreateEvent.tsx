@@ -44,7 +44,9 @@ const CreateEvent = () => {
         isSubmitting={composer.isSubmitting}
         onClose={handleClose}
         onModeChange={composer.switchMode}
+        successData={composer.successData}
         onSubmit={composer.submit}
+        onDismissSuccess={composer.dismissSuccess}
       />
     </LayoutController>
   );

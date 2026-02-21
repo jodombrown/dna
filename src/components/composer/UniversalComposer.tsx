@@ -12,23 +12,36 @@
  * - Uses MODE_HANDLERS for validation (replaces switch/case)
  * - Mode switch text preservation (shared content + per-mode field caching)
  * - Inline validation errors with friendly messages
+ *
+ * Sprint 3B:
+ * - Success screen replaces form after publish (celebration + DIA next action)
+ * - DIA intent detection suggests mode switch while user types
+ * - First-time onboarding tooltips on mode chips
  */
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Drawer } from 'vaul';
 import { ComposerMode, ComposerContext, ComposerFormData } from '@/hooks/useUniversalComposer';
+import type { ComposerSuccessData } from '@/hooks/useUniversalComposer';
 import { ComposerModeSelector } from './ComposerModeSelector';
 import { ComposerBody } from './ComposerBody';
 import { ComposerFooter } from './ComposerFooter';
 import { DIASuggestionBar } from './DIASuggestionBar';
 import { DraftIndicator } from './DraftIndicator';
+import { ComposerSuccessScreen } from './ComposerSuccessScreen';
+import { DIAIntentBar } from './DIAIntentBar';
+import { ComposerOnboarding, useComposerOnboarding } from './ComposerOnboarding';
 import { MODE_HANDLERS } from './modeHandlers';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Hash, Calendar, Users, Building2 } from 'lucide-react';
 import { useMobile } from '@/hooks/useMobile';
+import { useNavigate } from 'react-router-dom';
 import { diaComposerService } from '@/services/diaComposerService';
 import { composerService } from '@/services/composerService';
+import { detectIntent, type IntentSuggestion } from '@/services/diaIntentDetectionService';
+import { useDebounce } from '@/hooks/useDebounce';
+import type { PostCreationSuggestion } from '@/services/diaPostCreationService';
 import { ComposerMode as PRDComposerMode, type DIASuggestion } from '@/types/composer';
 import type { ValidationResult } from './modeHandlers';
 
@@ -37,9 +50,11 @@ interface UniversalComposerProps {
   mode: ComposerMode;
   context: ComposerContext;
   isSubmitting: boolean;
+  successData: ComposerSuccessData | null;
   onClose: () => void;
   onModeChange: (mode: ComposerMode) => void;
   onSubmit: (formData: ComposerFormData) => void;
+  onDismissSuccess: () => void;
 }
 
 export const UniversalComposer = ({
@@ -47,9 +62,11 @@ export const UniversalComposer = ({
   mode,
   context,
   isSubmitting,
+  successData,
   onClose,
   onModeChange,
   onSubmit,
+  onDismissSuccess,
 }: UniversalComposerProps) => {
   // Shared content that persists across mode switches
   const [sharedContent, setSharedContent] = useState('');
@@ -68,6 +85,22 @@ export const UniversalComposer = ({
   const diaDebounceRef = useRef<ReturnType<typeof setTimeout>>();
   const autoSaveRef = useRef<ReturnType<typeof setTimeout>>();
   const prevModeRef = useRef<ComposerMode>(mode);
+
+  // Sprint 3B: Intent detection state
+  const [intentSuggestion, setIntentSuggestion] = useState<IntentSuggestion | null>(null);
+  const [dismissedModes, setDismissedModes] = useState<Set<ComposerMode>>(new Set());
+  const debouncedContent = useDebounce(sharedContent, 500);
+
+  // Sprint 3B: Onboarding
+  const { isFirstTime, markComplete } = useComposerOnboarding();
+
+  // Navigation for DIA actions
+  let navigate: ReturnType<typeof useNavigate> | null = null;
+  try {
+    navigate = useNavigate();
+  } catch {
+    // May not be in a router context in tests
+  }
 
   // Mode switch text preservation
   useEffect(() => {
@@ -118,6 +151,29 @@ export const UniversalComposer = ({
       if (diaDebounceRef.current) clearTimeout(diaDebounceRef.current);
     };
   }, [formData.content, mode]);
+
+  // Sprint 3B: Intent detection — runs on debounced content, separate from DIA ambient
+  useEffect(() => {
+    if (debouncedContent.length < 30) {
+      setIntentSuggestion(null);
+      return;
+    }
+
+    const suggestion = detectIntent(debouncedContent, mode, {
+      dismissedModes,
+      confidenceThreshold: 0.7,
+    });
+
+    setIntentSuggestion(suggestion);
+  }, [debouncedContent, mode, dismissedModes]);
+
+  // Reset intent state when composer opens/closes
+  useEffect(() => {
+    if (!isOpen) {
+      setIntentSuggestion(null);
+      setDismissedModes(new Set());
+    }
+  }, [isOpen]);
 
   // Auto-save draft every 10 seconds when content changes
   useEffect(() => {
@@ -170,14 +226,33 @@ export const UniversalComposer = ({
     }
 
     // Clear validation errors and submit
+    // Sprint 3B: Don't clear form data here — success screen needs it.
+    // Form data will be cleared when the success screen is dismissed.
     setValidationErrors({});
     onSubmit(formData);
+    setDiaSuggestion(null);
+    setIntentSuggestion(null);
+  };
+
+  // Sprint 3B: Clear form data when success screen is dismissed
+  const handleDismissSuccess = useCallback(() => {
     setFormData({ content: '' });
     setSharedContent('');
     setSharedMedia(undefined);
     setModeFieldCache({});
     setDiaSuggestion(null);
-  };
+    setIntentSuggestion(null);
+    onDismissSuccess();
+  }, [onDismissSuccess]);
+
+  // Sprint 3B: Handle DIA action from success screen
+  const handleDIAAction = useCallback((suggestion: PostCreationSuggestion) => {
+    handleDismissSuccess();
+    if (suggestion.actionType === 'navigate' && suggestion.actionPayload.route) {
+      navigate?.(suggestion.actionPayload.route);
+    }
+    // share and invite actions can be handled by future infrastructure
+  }, [handleDismissSuccess, navigate]);
 
   const updateFormData = useCallback((updates: Partial<ComposerFormData>) => {
     setFormData(prev => {
@@ -216,6 +291,20 @@ export const UniversalComposer = ({
     setDiaSuggestion(null);
   }, []);
 
+  // Sprint 3B: Intent bar accept — switch mode with text preservation
+  const handleIntentAccept = useCallback((suggestedMode: ComposerMode) => {
+    onModeChange(suggestedMode);
+    setIntentSuggestion(null);
+  }, [onModeChange]);
+
+  // Sprint 3B: Intent bar dismiss — track dismissed mode for this session
+  const handleIntentDismiss = useCallback(() => {
+    if (intentSuggestion) {
+      setDismissedModes(prev => new Set([...prev, intentSuggestion.suggestedMode]));
+    }
+    setIntentSuggestion(null);
+  }, [intentSuggestion]);
+
   // Validation via MODE_HANDLERS (replaces switch/case getValidationMessage)
   const getValidationState = (): { isValid: boolean; message: string | null } => {
     const handler = MODE_HANDLERS[mode];
@@ -228,16 +317,39 @@ export const UniversalComposer = ({
 
   const { isValid: formIsValid, message: validationMessage } = getValidationState();
 
-  const composerContent = (
+  // Sprint 3B: If success data is present, show success screen instead of form
+  const composerContent = successData ? (
+    <ComposerSuccessScreen
+      mode={successData.mode}
+      createdId={successData.createdId}
+      createdTitle={successData.createdTitle}
+      formData={successData.formDataSnapshot}
+      onDismiss={handleDismissSuccess}
+      onDIAAction={handleDIAAction}
+    />
+  ) : (
     <div className="space-y-4">
       {/* Header: Mode Selector + Draft Indicator */}
       <div className="flex items-center justify-between gap-2">
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 relative">
           <ComposerModeSelector
             currentMode={mode}
-            onModeChange={onModeChange}
+            onModeChange={(newMode) => {
+              onModeChange(newMode);
+              // Sprint 3B: Mark onboarding complete on first mode interaction
+              if (isFirstTime) markComplete();
+            }}
             context={context}
           />
+          {/* Sprint 3B: Onboarding overlay */}
+          {isFirstTime && (
+            <div className="absolute inset-0 z-10">
+              <ComposerOnboarding
+                isFirstTime={isFirstTime}
+                onComplete={markComplete}
+              />
+            </div>
+          )}
         </div>
         {isDraftSaved && <DraftIndicator />}
       </div>
@@ -259,7 +371,16 @@ export const UniversalComposer = ({
         validationErrors={validationErrors}
       />
 
-      {/* DIA Suggestion Bar */}
+      {/* Sprint 3B: Intent Detection Bar — between text input and DIA suggestions */}
+      {intentSuggestion && !diaSuggestion && (
+        <DIAIntentBar
+          suggestion={intentSuggestion}
+          onAccept={handleIntentAccept}
+          onDismiss={handleIntentDismiss}
+        />
+      )}
+
+      {/* DIA Suggestion Bar (Sprint 3A ambient analysis) */}
       {diaSuggestion && (
         <DIASuggestionBar
           suggestion={diaSuggestion}
@@ -280,10 +401,21 @@ export const UniversalComposer = ({
     </div>
   );
 
+  // Handle dismiss for both close and success screen dismiss
+  const handleOpenChange = useCallback((open: boolean) => {
+    if (!open) {
+      if (successData) {
+        handleDismissSuccess();
+      } else {
+        onClose();
+      }
+    }
+  }, [successData, handleDismissSuccess, onClose]);
+
   // Mobile: vaul Drawer bottom sheet (swipe to dismiss, drag handle)
   if (isMobile) {
     return (
-      <Drawer.Root open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <Drawer.Root open={isOpen} onOpenChange={handleOpenChange}>
         <Drawer.Portal>
           <Drawer.Overlay className="fixed inset-0 bg-black/40 z-50" />
           <Drawer.Content className="fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-2xl">
@@ -303,11 +435,11 @@ export const UniversalComposer = ({
 
   // Desktop: centered modal (per PRD Section 7.1)
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">
-            Share something with the diaspora
+            {successData ? 'Published!' : 'Share something with the diaspora'}
           </DialogTitle>
         </DialogHeader>
         {composerContent}
