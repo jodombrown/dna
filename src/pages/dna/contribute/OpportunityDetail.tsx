@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ArrowLeft, DollarSign, Users, Clock, Key, Package, AlertCircle } from 'lucide-react';
+import OpportunityThreadCTA from '@/components/contribute/OpportunityThreadCTA';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import type { ContributionNeedWithSpace } from '@/types/contributeTypes';
@@ -227,6 +228,19 @@ export default function OpportunityDetail() {
               )}
             </CardContent>
           </Card>
+
+          {/* Thread CTA */}
+          {user && (
+            <div className="mb-6">
+              <OpportunityThreadCTA
+                opportunityId={need.id}
+                opportunityTitle={need.title}
+                posterId={need.created_by}
+                currentUserId={user.id}
+                isClosed={need.status === 'closed' || need.status === 'fulfilled'}
+              />
+            </div>
+          )}
 
           {/* Offer to contribute */}
           {need.status === 'open' && user && (
