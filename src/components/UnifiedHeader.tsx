@@ -5,7 +5,7 @@ import { useAccountDrawer } from '@/contexts/AccountDrawerContext';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { NotificationCenter } from '@/components/notifications/NotificationCenter';
+import { UnifiedNotificationBell } from '@/components/notifications/UnifiedNotificationBell';
 import { cn } from '@/lib/utils';
 import dnaLogo from '@/assets/dna-logo.png';
 
@@ -47,7 +47,7 @@ import {
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import { publicNavItems, aboutUsDropdown } from './header/navigationConfig';
 import { useUnreadMessageCount } from '@/hooks/useUnreadMessageCount';
-import { useUnreadNotificationCount } from '@/hooks/useUnreadNotificationCount';
+// useUnreadNotificationCount removed — UnifiedNotificationBell handles its own count
 import { useMobile } from '@/hooks/useMobile';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
@@ -87,8 +87,7 @@ const UnifiedHeader = () => {
     enabled: !!user
   });
 
-  // Use the unread notification count hook
-  const { data: unreadCount = 0 } = useUnreadNotificationCount();
+  // Unread notification count now handled by UnifiedNotificationBell internally
 
   // Query unread message count
   const { data: unreadMessageCount = 0 } = useUnreadMessageCount();
@@ -346,8 +345,8 @@ const UnifiedHeader = () => {
                 </Tooltip>
               )}
                   
-              {/* Notifications Center */}
-              {isAuthenticated && user && <NotificationCenter />}
+              {/* Notifications Center — Sprint 4C unified (platform + DIA) */}
+              {isAuthenticated && user && <UnifiedNotificationBell />}
               
               {/* User Profile Dropdown */}
               {isAuthenticated && profile && (

@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { supabaseClient } from '@/lib/supabaseHelpers';
 import { toast } from 'sonner';
 import type { SpaceTemplate, CreateSpaceInput, SpaceTemplateRole, SpaceTemplateInitiative, Space, SpaceMember, SpaceRole, Initiative, SpaceTask, SpaceActivity, TaskStatus, NudgeTone, NudgeType } from '@/types/collaborate';
+import { platformNotifications } from '@/services/platformNotificationGenerator';
 
 export function useSpaceTemplates() {
   return useQuery({
@@ -346,6 +347,16 @@ export function useCreateTask() {
         }]);
 
       if (error) throw error;
+
+      // Sprint 4C: In-app notification for task assignment
+      if (input.assignee_id && input.assignee_id !== user.id) {
+        platformNotifications.taskAssigned(
+          input.assignee_id,
+          user.id,
+          input.space_id,
+          input.title
+        ).catch(() => { /* non-critical */ });
+      }
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['space-tasks', variables.space_id] });
