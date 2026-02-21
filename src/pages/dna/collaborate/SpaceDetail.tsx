@@ -17,6 +17,7 @@ import { SpaceHealthDetailsPanel } from '@/components/collaboration/SpaceHealthD
 import { CompletionCelebration } from '@/components/collaboration/CompletionCelebration';
 import { ArchiveSpaceDialog } from '@/components/collaboration/ArchiveSpaceDialog';
 import SpaceNeedsSection from '@/components/contribute/SpaceNeedsSection';
+import SpaceChannelCTA from '@/components/collaborate/SpaceChannelCTA';
 import { useSpaceHealth, useArchiveSpace, useReactivateSpace, useMarkSpaceComplete } from '@/hooks/useSpaceHealth';
 import { supabaseClient } from '@/lib/supabaseHelpers';
 import { Loader2, Settings, ExternalLink, ArrowLeft, Users, BarChart, Activity } from 'lucide-react';
@@ -256,7 +257,7 @@ export default function SpaceDetail() {
           )}
 
           {/* Primary Actions */}
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             {!isMember && currentUserId && (
               <Button onClick={handleJoin} disabled={joinSpace.isPending}>
                 {joinSpace.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -275,6 +276,13 @@ export default function SpaceDetail() {
                 Settings
               </Button>
             )}
+            <SpaceChannelCTA
+              spaceId={space.id}
+              spaceName={space.name}
+              isMember={isMember}
+              isArchived={space.status === 'archived'}
+              isOwner={isLead}
+            />
           </div>
         </div>
 
