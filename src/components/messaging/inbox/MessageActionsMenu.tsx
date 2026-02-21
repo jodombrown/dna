@@ -59,11 +59,6 @@ export const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
   const handleReply = () => {
     if (onReply) {
       onReply(messageId);
-    } else {
-      toast({
-        title: "Reply",
-        description: "This feature is coming soon",
-      });
     }
   };
 
