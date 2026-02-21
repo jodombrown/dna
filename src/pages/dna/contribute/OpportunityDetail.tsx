@@ -10,9 +10,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ArrowLeft, DollarSign, Users, Clock, Key, Package, AlertCircle } from 'lucide-react';
+import { ArrowLeft, DollarSign, Users, Clock, Key, Package, AlertCircle, MessageSquare } from 'lucide-react';
 import OpportunityThreadCTA from '@/components/contribute/OpportunityThreadCTA';
 import { DIADetailInsight } from '@/components/dia/DIADetailInsight';
+import { ConversationPicker } from '@/components/messaging/ConversationPicker';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import type { ContributionNeedWithSpace } from '@/types/contributeTypes';
@@ -31,6 +32,7 @@ export default function OpportunityDetail() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [offerMessage, setOfferMessage] = useState('');
+  const [showShareInChat, setShowShareInChat] = useState(false);
 
   const { data: need, isLoading } = useQuery({
     queryKey: ['contribution-need', id],
@@ -170,11 +172,17 @@ export default function OpportunityDetail() {
                     </CardDescription>
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
                   <Badge variant={need.status === 'open' ? 'default' : 'secondary'}>
                     {need.status}
                   </Badge>
                   <Badge variant="outline">{need.priority} priority</Badge>
+                  {user && (
+                    <Button variant="outline" size="sm" onClick={() => setShowShareInChat(true)}>
+                      <MessageSquare className="h-3.5 w-3.5 mr-1.5" />
+                      Share in Chat
+                    </Button>
+                  )}
                 </div>
               </div>
 
@@ -272,6 +280,18 @@ export default function OpportunityDetail() {
               </CardContent>
             </Card>
           )}
+
+          {/* Share in Chat Picker */}
+          <ConversationPicker
+            open={showShareInChat}
+            onOpenChange={setShowShareInChat}
+            entityReference={{
+              entityType: 'opportunity',
+              entityId: need.id,
+              entityTitle: need.title,
+              entityPreview: need.description?.slice(0, 100),
+            }}
+          />
         </div>
       }
       rightColumn={<RightWidgets variant="default" />}

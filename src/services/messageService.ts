@@ -9,6 +9,8 @@ export type {
   MessageAttachmentData,
   LinkPreviewData,
   MessagePayload,
+  ReplyToData,
+  EntityReferenceData,
   Message,
   MessageWithSender,
   ConversationListItem,
@@ -29,6 +31,8 @@ import type {
   MessageAttachmentData,
   LinkPreviewData,
   MessagePayload,
+  ReplyToData,
+  EntityReferenceData,
   Message,
   MessageWithSender,
   ConversationListItem,
@@ -348,25 +352,30 @@ async getConversations(
   },
 
   /**
-   * Send a message in a conversation with optional attachment
+   * Send a message in a conversation with optional attachment, reply, or entity reference
    */
   async sendMessage(
     conversationId: string,
     content: string,
     attachment?: MessageAttachmentData,
-    linkPreview?: LinkPreviewData
+    linkPreview?: LinkPreviewData,
+    replyTo?: ReplyToData,
+    entityReference?: EntityReferenceData
   ): Promise<Message> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    if (!content && !attachment && !linkPreview) {
-      throw new Error('Message must have content, attachment, or link preview');
+    if (!content && !attachment && !linkPreview && !entityReference) {
+      throw new Error('Message must have content, attachment, link preview, or entity reference');
     }
 
-    // Build payload if there's an attachment or link preview
-    const payload: MessagePayload | null = (attachment || linkPreview) ? { 
-      attachment, 
-      linkPreview 
+    // Build payload if there's an attachment, link preview, reply, or entity reference
+    const hasPayload = attachment || linkPreview || replyTo || entityReference;
+    const payload: MessagePayload | null = hasPayload ? {
+      attachment,
+      linkPreview,
+      replyTo,
+      entityReference,
     } : null;
 
     // Insert message with properly typed payload
@@ -991,6 +1000,27 @@ async getConversations(
       filesize: audioBlob.size,
       duration: duration,
     });
+  },
+
+  /**
+   * Send an entity reference (event, space, opportunity, etc.) to a conversation
+   */
+  async sendEntityReference(
+    conversationId: string,
+    entityReference: EntityReferenceData,
+    optionalNote?: string
+  ): Promise<void> {
+    if (optionalNote?.trim()) {
+      await this.sendMessage(conversationId, optionalNote.trim());
+    }
+    await this.sendMessage(
+      conversationId,
+      '',
+      undefined,
+      undefined,
+      undefined,
+      entityReference
+    );
   },
 };
 

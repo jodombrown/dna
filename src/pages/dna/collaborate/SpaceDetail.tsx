@@ -21,8 +21,10 @@ import SpaceChannelCTA from '@/components/collaborate/SpaceChannelCTA';
 import { DIADetailInsight } from '@/components/dia/DIADetailInsight';
 import { useSpaceHealth, useArchiveSpace, useReactivateSpace, useMarkSpaceComplete } from '@/hooks/useSpaceHealth';
 import { supabaseClient } from '@/lib/supabaseHelpers';
-import { Loader2, Settings, ExternalLink, ArrowLeft, Users, BarChart, Activity } from 'lucide-react';
+import { Loader2, Settings, ExternalLink, ArrowLeft, Users, BarChart, Activity, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
+import { ConversationPicker } from '@/components/messaging/ConversationPicker';
+import type { EntityReferenceData } from '@/services/messageTypes';
 
 export default function SpaceDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -39,6 +41,7 @@ export default function SpaceDetail() {
   const [showCelebration, setShowCelebration] = useState(false);
   const [showArchiveDialog, setShowArchiveDialog] = useState(false);
   const [hasSeenCelebration, setHasSeenCelebration] = useState(false);
+  const [showShareInChat, setShowShareInChat] = useState(false);
 
   // Health monitoring hooks
   const isLead = membership?.role === 'lead';
@@ -284,6 +287,12 @@ export default function SpaceDetail() {
               isArchived={(space.status as string) === 'archived' || space.status === 'completed'}
               isOwner={isLead}
             />
+            {currentUserId && (
+              <Button variant="outline" size="sm" onClick={() => setShowShareInChat(true)}>
+                <MessageSquare className="h-4 w-4 mr-1.5" />
+                Share in Chat
+              </Button>
+            )}
           </div>
         </div>
 
@@ -480,6 +489,18 @@ export default function SpaceDetail() {
           spaceName={space.name}
           onConfirm={handleArchive}
           isLoading={archiveSpace.isPending}
+        />
+
+        {/* Share in Chat Picker */}
+        <ConversationPicker
+          open={showShareInChat}
+          onOpenChange={setShowShareInChat}
+          entityReference={{
+            entityType: 'space',
+            entityId: space.id,
+            entityTitle: space.name,
+            entityPreview: space.tagline || space.description?.slice(0, 100),
+          }}
         />
       </div>
     </DetailViewLayout>

@@ -27,11 +27,34 @@ export interface LinkPreviewData {
 }
 
 /**
+ * Reply-to data stored in message payload
+ */
+export interface ReplyToData {
+  messageId: string;
+  senderName: string;
+  senderAvatar?: string;
+  content: string;
+}
+
+/**
+ * Entity reference data for sharing events/spaces/opportunities in chat
+ */
+export interface EntityReferenceData {
+  entityType: 'event' | 'space' | 'opportunity' | 'post' | 'story';
+  entityId: string;
+  entityTitle: string;
+  entityPreview?: string;
+  entityImage?: string;
+}
+
+/**
  * Message payload structure
  */
 export interface MessagePayload {
   attachment?: MessageAttachmentData;
   linkPreview?: LinkPreviewData;
+  replyTo?: ReplyToData;
+  entityReference?: EntityReferenceData;
 }
 
 /**
