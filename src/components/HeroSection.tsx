@@ -1,17 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import DiasporaStats from '@/components/DiasporaStats';
 import { TYPOGRAPHY } from '@/lib/typography.config';
-import RequestDemoDialog from '@/components/RequestDemoDialog';
-import JoinBetaDialog from '@/components/JoinBetaDialog';
 import PatternBackground from '@/components/ui/PatternBackground';
 import heroProfessional from '@/assets/hero-professional.jpeg';
 
 const HeroSection = () => {
   const navigate = useNavigate();
-  const [isDemoDialogOpen, setIsDemoDialogOpen] = useState(false);
-  const [isBetaDialogOpen, setIsBetaDialogOpen] = useState(false);
 
   return (
     <>
@@ -51,10 +47,10 @@ const HeroSection = () => {
                   <Button 
                     variant="outline"
                     size="lg" 
-                    onClick={() => setIsDemoDialogOpen(true)}
+                    onClick={() => navigate('/auth?mode=signup')}
                     className="border-2 border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white text-base lg:text-xl px-6 lg:px-10 py-3 lg:py-6 h-auto font-medium"
                   >
-                    Request a Demo
+                    Join Now
                   </Button>
                 </div>
 
@@ -112,15 +108,6 @@ const HeroSection = () => {
       </PatternBackground>
 
 
-      <RequestDemoDialog 
-        isOpen={isDemoDialogOpen} 
-        onClose={() => setIsDemoDialogOpen(false)} 
-      />
-
-      <JoinBetaDialog 
-        isOpen={isBetaDialogOpen} 
-        onClose={() => setIsBetaDialogOpen(false)} 
-      />
     </>
   );
 };

@@ -77,17 +77,17 @@ const WhoIsDNAForSection = () => {
         {/* Final CTA */}
         <div className="bg-white rounded-2xl p-8 sm:p-12 border border-gray-200 shadow-sm text-center">
           <h3 className={`${TYPOGRAPHY.h3} text-gray-900 mb-4`}>
-            Join the African diaspora movement
+            The African Diaspora Movement Starts Here
           </h3>
           <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
             Connect with visionary leaders, builders, and changemakers dedicated to accelerating Africa's development.
           </p>
           <Button 
             size="lg"
-            onClick={() => navigate('/auth')}
+            onClick={() => navigate('/auth?mode=signup')}
             className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-3"
           >
-            Get started
+            Join Now
           </Button>
         </div>
       </div>
