@@ -13,6 +13,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { ProfileCompletionNudge } from '@/components/profile/ProfileCompletionNudge';
 import { useMobile } from '@/hooks/useMobile';
+import { logger } from '@/lib/logger';
 
 interface FilterState {
   country_of_origin?: string;
@@ -147,7 +148,7 @@ export default function Discover() {
           throw error || new Error('No data returned');
         }
       } catch (rpcError) {
-        console.warn('[Discover] RPC failed, using fallback query:', rpcError);
+        logger.warn('Discover', 'RPC failed, using fallback query', rpcError);
         // Hotfix fallback: simple profiles query so the page still works
         try {
           let q = supabase
@@ -174,14 +175,14 @@ export default function Discover() {
 
           const { data: fbData, error: fbError } = await q;
           if (fbError) {
-            console.warn('[Discover] Fallback query also failed:', fbError);
+            logger.warn('Discover', 'Fallback query also failed:', fbError);
             rows = [];
           } else {
             // Map to expected shape with a default match_score
             rows = (fbData || []).map((p: any) => ({ ...p, match_score: 0 }));
           }
         } catch (fallbackError) {
-          console.warn('[Discover] All queries failed:', fallbackError);
+          logger.warn('Discover', 'All queries failed:', fallbackError);
           rows = [];
         }
       }
@@ -193,7 +194,7 @@ export default function Discover() {
       }
       setHasMore(rows.length === 20);
     } catch (error) {
-      console.warn('[Discover] Unexpected error in loadMembers:', error);
+      logger.warn('Discover', 'Unexpected error in loadMembers:', error);
       if (reset) {
         setMembers([]);
       }

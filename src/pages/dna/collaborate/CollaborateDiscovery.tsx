@@ -29,6 +29,7 @@ import { SuggestedSpaces } from '@/components/collaboration/SuggestedSpaces';
 
 // DIA Card System (Sprint 4A)
 import { DIAHubSection } from '@/components/dia/DIAHubSection';
+import { logger } from '@/lib/logger';
 
 export function CollaborateDiscovery() {
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ export function CollaborateDiscovery() {
           .eq('visibility', 'public');
         
         if (activeError) {
-          console.warn('[CollaborateDiscovery] Failed to fetch active spaces:', activeError);
+          logger.warn('CollaborateDiscovery', 'Failed to fetch active spaces:', activeError);
         }
         
         let mySpacesCount = 0;
@@ -88,7 +89,7 @@ export function CollaborateDiscovery() {
           collaborators: collaboratorsCount,
         };
       } catch (error) {
-        console.warn('[CollaborateDiscovery] Failed to fetch stats:', error);
+        logger.warn('CollaborateDiscovery', 'Failed to fetch stats:', error);
         return { activeSpaces: 0, mySpaces: 0, openTasks: 0, collaborators: 0 };
       }
     },
@@ -111,12 +112,12 @@ export function CollaborateDiscovery() {
           .limit(5);
 
         if (error) {
-          console.warn('[CollaborateDiscovery] Failed to fetch recent activity:', error);
+          logger.warn('CollaborateDiscovery', 'Failed to fetch recent activity:', error);
           return [];
         }
         return data || [];
       } catch (error) {
-        console.warn('[CollaborateDiscovery] Error fetching recent activity:', error);
+        logger.warn('CollaborateDiscovery', 'Error fetching recent activity:', error);
         return [];
       }
     },

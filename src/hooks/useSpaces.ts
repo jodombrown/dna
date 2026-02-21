@@ -38,7 +38,7 @@ export const useMySpaces = () => {
       }
 
       // Get the actual space data
-      const spaceIds = memberships.map((m: any) => m.space_id);
+      const spaceIds = memberships.map((m: { space_id: string }) => m.space_id);
       const { data: spaces, error: spacesError } = await supabaseClient
         .from('spaces')
         .select('*')
@@ -47,8 +47,8 @@ export const useMySpaces = () => {
       if (spacesError) throw spacesError;
 
       // Merge membership data with space data
-      const spacesWithRoles: SpaceWithMembership[] = (spaces || []).map((space: any) => {
-        const membership = memberships.find((m: any) => m.space_id === space.id);
+      const spacesWithRoles: SpaceWithMembership[] = (spaces || []).map((space) => {
+        const membership = memberships.find((m: { space_id: string }) => m.space_id === space.id);
         return {
           ...space,
           user_role: (membership?.role as SpaceMemberRole) || undefined,

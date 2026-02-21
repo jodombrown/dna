@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader } from '@/components/ui/loader';
 import { UserPlus, Users, ChevronRight } from 'lucide-react';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 const InviteSignup = () => {
   const [searchParams] = useSearchParams();
@@ -107,10 +108,10 @@ const InviteSignup = () => {
 
       // Redirect to dashboard
       navigate('/app/dashboard');
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Signup Error",
-        description: error.message || "Failed to create account",
+        description: getErrorMessage(error) || "Failed to create account",
         variant: "destructive",
       });
     } finally {

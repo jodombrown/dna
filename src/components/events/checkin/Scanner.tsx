@@ -3,6 +3,7 @@ import { BrowserMultiFormatReader } from '@zxing/library';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 interface ScannerProps {
   eventId: string;
@@ -42,8 +43,8 @@ const Scanner: React.FC<ScannerProps> = ({ eventId, onCheckIn }) => {
             if (error) throw error;
             toast.success('Checked in');
             onCheckIn?.(data as any);
-          } catch (e: any) {
-            toast.error(typeof e?.message === 'string' ? e.message : 'Invalid token');
+          } catch (e: unknown) {
+            toast.error(e instanceof Error ? getErrorMessage(e) : 'Invalid token');
           }
         }
       });

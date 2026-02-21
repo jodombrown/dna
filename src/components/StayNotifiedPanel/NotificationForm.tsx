@@ -80,7 +80,7 @@ const NotificationForm: React.FC<NotificationFormProps> = ({ onClose }) => {
       } else {
         throw new Error(data?.error || 'Failed to send email');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error(getGenericErrorMessage(error));
     } finally {
       setIsSubmitting(false);

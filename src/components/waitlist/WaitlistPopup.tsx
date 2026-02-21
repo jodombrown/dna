@@ -98,7 +98,7 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
       
       onClose();
       setFormData({ fullName: '', email: '', location: '' });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Something went wrong",
         description: "Please try again later or contact support.",

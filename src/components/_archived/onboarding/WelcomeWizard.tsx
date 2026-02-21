@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { Briefcase, Users, Rocket, DollarSign, GraduationCap, Heart, ArrowRight, Sparkles } from 'lucide-react';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 const ROLES = [
   { id: 'professional', label: 'Professional', icon: Briefcase, description: 'Working in a career or field' },
@@ -100,10 +101,10 @@ export function WelcomeWizard() {
       });
 
       navigate('/dna/feed');
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Setup failed',
-        description: error.message,
+        description: getErrorMessage(error),
         variant: 'destructive',
       });
     } finally {

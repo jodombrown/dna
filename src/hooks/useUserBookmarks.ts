@@ -60,15 +60,15 @@ export function useUserBookmarks(userId?: string) {
       if (error) throw error;
 
       // Transform data structure
-      return (data || []).map((bookmark: any) => ({
+      return (data || []).map((bookmark) => ({
         id: bookmark.id,
         post_id: bookmark.post_id,
         created_at: bookmark.created_at,
         pinned_at: bookmark.pinned_at,
         folder: bookmark.folder,
         post: bookmark.posts ? {
-          ...bookmark.posts,
-          author: bookmark.posts.profiles,
+          ...(bookmark.posts as any),
+          author: (bookmark.posts as any).profiles,
         } : undefined,
       })) as BookmarkedPost[];
     },

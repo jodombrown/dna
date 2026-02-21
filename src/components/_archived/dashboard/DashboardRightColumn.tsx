@@ -14,6 +14,7 @@ import { ProfileCompletionWidget } from '@/components/connect/ProfileCompletionW
 import { EventRecommendationsWidget } from '@/components/convene/EventRecommendationsWidget';
 import { ConnectionRequestModal } from '@/components/connect/ConnectionRequestModal';
 import { useToast } from '@/components/ui/use-toast';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 interface DashboardRightColumnProps {
   profile: Profile;
@@ -83,10 +84,10 @@ const DashboardRightColumn: React.FC<DashboardRightColumnProps> = ({
       queryClient.invalidateQueries({ queryKey: ['suggested-connections'] });
       setModalOpen(false);
       
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Failed to send request',
-        description: error.message,
+        description: getErrorMessage(error),
         variant: 'destructive',
       });
       throw error;

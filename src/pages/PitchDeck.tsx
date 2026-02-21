@@ -5,6 +5,7 @@ import UnifiedHeader from '@/components/UnifiedHeader';
 import { useToast } from '@/hooks/use-toast';
 import { useMobile } from '@/hooks/useMobile';
 import { cn } from '@/lib/utils';
+import { config } from '@/lib/config';
 import { AnimatedNumber } from '@/components/AnimatedNumber';
 import { FlipCard } from '@/components/FlipCard';
 import dnaLogo from '@/assets/dna-logo.png';
@@ -553,7 +554,7 @@ const PitchDeck = () => {
             </a>
             <br />
             <a 
-              href="https://www.diasporanetwork.africa" 
+              href={config.APP_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="text-lg md:text-xl text-foreground/80 mt-3 inline-block hover:text-dna-emerald transition-colors underline"

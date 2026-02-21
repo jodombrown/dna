@@ -5,6 +5,7 @@
 import React from 'react';
 import { useHubMode, HubType } from '@/hooks/useHubMode';
 import { Loader2 } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 interface HubModeSwitchProps {
   hub: HubType;
@@ -30,7 +31,7 @@ export function HubModeSwitch({
     isLoading = hubModeResult.isLoading;
   } catch (error) {
     // If useHubMode fails, default to aspiration mode
-    console.warn('[HubModeSwitch] Error in useHubMode, defaulting to aspiration:', error);
+    logger.warn('HubModeSwitch', 'Error in useHubMode, defaulting to aspiration', error);
     mode = 'aspiration';
     isLoading = false;
   }

@@ -18,7 +18,7 @@ const EventSocialSection: React.FC<EventSocialSectionProps> = ({ event }) => {
           variant="outline" 
           size="icon" 
           className="hover:bg-dna-emerald/10 hover:border-dna-emerald hover:text-dna-forest transition-colors"
-          onClick={() => window.open('https://www.linkedin.com/company/diasporanetworkafrica', '_blank')}
+          onClick={() => window.open(config.social.linkedin, '_blank')}
         >
           <Linkedin className="w-4 h-4" />
         </Button>

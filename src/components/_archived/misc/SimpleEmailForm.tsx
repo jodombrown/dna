@@ -93,7 +93,7 @@ const SimpleEmailForm = () => {
       } else {
         throw new Error(data?.error || 'Failed to send email');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Error",
         description: getGenericErrorMessage(error),

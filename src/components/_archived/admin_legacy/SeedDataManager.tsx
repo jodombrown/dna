@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { seedDataService } from '@/services/seedDataService';
 import { supabase } from '@/integrations/supabase/client';
 import { Download, Upload, Trash2, Database } from 'lucide-react';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 interface SeedDataManagerProps {
   onDataReset?: () => void;
@@ -109,10 +110,10 @@ export const SeedDataManager = ({ onDataReset }: SeedDataManagerProps = {}) => {
 
       // Trigger refresh if callback provided
       onDataReset?.();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Clear Failed',
-        description: error.message || 'Failed to clear seed data',
+        description: getErrorMessage(error) || 'Failed to clear seed data',
         variant: 'destructive',
       });
     } finally {

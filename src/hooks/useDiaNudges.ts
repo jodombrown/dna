@@ -10,7 +10,7 @@ export interface DiaNudge {
   nudge_type: string;
   message: string;
   status: string; // 'sent' | 'accepted' | 'dismissed' | 'snoozed'
-  payload: any;
+  payload: Record<string, unknown> | null;
   resolved_at: string | null;
   created_at: string;
   action_url?: string;
@@ -53,11 +53,15 @@ export function useDiaNudges(statusFilter?: 'sent' | 'all') {
       setNudges([]);
     } else {
       // Map the data and add computed properties
-      const mappedNudges: DiaNudge[] = (data || []).map((nudge: any) => ({
-        ...nudge,
-        action_url: nudge.payload?.action_url,
-        priority: nudge.payload?.priority || 'medium',
-      }));
+      const mappedNudges: DiaNudge[] = (data || []).map((nudge) => {
+        const payload = nudge.payload as Record<string, unknown> | null;
+        return {
+          ...nudge,
+          payload,
+          action_url: (payload?.action_url as string) || undefined,
+          priority: ((payload?.priority as string) || 'medium') as DiaNudge['priority'],
+        };
+      });
       setNudges(mappedNudges);
     }
 

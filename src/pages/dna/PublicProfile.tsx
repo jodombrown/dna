@@ -43,6 +43,7 @@ import {
 } from '@/components/profile/cross-5c';
 import { ProfileViewTracker } from '@/components/analytics/ProfileViewTracker';
 import { ProfileViewersWidget } from '@/components/analytics/ProfileViewersWidget';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 const PublicProfile = () => {
   const { username } = useParams<{ username: string }>();
@@ -114,7 +115,7 @@ const PublicProfile = () => {
     onError: (error: any) => {
       toast({
         title: 'Failed to send request',
-        description: error.message || 'Please try again',
+        description: getErrorMessage(error) || 'Please try again',
         variant: 'destructive',
       });
     },
@@ -128,10 +129,10 @@ const PublicProfile = () => {
       const { id: conversationId } = await messageService.getOrCreateConversation(profile.id);
       trackEvent('connect_conversation_started', { target_user_id: profile.id });
       navigate(`/dna/messages/${conversationId}`);
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Cannot start conversation',
-        description: error.message || 'You must be connected to message this user',
+        description: getErrorMessage(error) || 'You must be connected to message this user',
         variant: 'destructive',
       });
     }

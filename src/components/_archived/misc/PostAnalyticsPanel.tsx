@@ -48,8 +48,8 @@ export const PostAnalyticsPanel: React.FC<PostAnalyticsPanelProps> = ({ postId, 
             setAnalytics(data[0] as PostAnalytics);
           }
         }
-      } catch (e: any) {
-        if (!cancelled) setError(e?.message || 'Failed to load analytics');
+      } catch (e: unknown) {
+        if (!cancelled) setError(e instanceof Error ? e.message : 'Failed to load analytics');
       } finally {
         if (!cancelled) setLoading(false);
       }

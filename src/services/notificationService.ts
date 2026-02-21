@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { getAppUrl } from '@/lib/config';
 import { logger } from '@/lib/logger';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 interface CreateNotificationParams {
   user_id: string;
@@ -59,7 +60,7 @@ export async function createNotification(params: CreateNotificationParams): Prom
 
     return { success: true, notificationId: notification.id };
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
+    const message = error instanceof Error ? getErrorMessage(error) : 'Unknown error';
     return { success: false, error: message };
   }
 }
@@ -80,7 +81,7 @@ export async function sendNotificationEmail(payload: NotificationEmailPayload): 
 
     return { success: true };
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
+    const message = error instanceof Error ? getErrorMessage(error) : 'Unknown error';
     return { success: false, error: message };
   }
 }

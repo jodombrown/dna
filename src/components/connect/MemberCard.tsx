@@ -29,6 +29,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 interface MemberCardProps {
   member: {
@@ -121,10 +122,10 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
           variant: 'destructive',
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Error sending request',
-        description: error.message || 'Please try again.',
+        description: getErrorMessage(error) || 'Please try again.',
         variant: 'destructive',
       });
     } finally {

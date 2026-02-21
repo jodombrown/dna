@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, Calendar, AlertTriangle, ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 const Join: React.FC = () => {
   const { token } = useParams<{ token: string }>();
@@ -44,8 +45,8 @@ const Join: React.FC = () => {
         } else {
           setError('Invalid or expired join link');
         }
-      } catch (err: any) {
-        setError(err.message || 'An unexpected error occurred');
+      } catch (err: unknown) {
+        setError(getErrorMessage(err) || 'An unexpected error occurred');
       } finally {
         setLoading(false);
       }

@@ -122,7 +122,7 @@ export const digestService = {
     ]);
 
     const totalEngagement = (postsRes.data || []).reduce(
-      (sum: number, p: any) => sum + (p.view_count || 0),
+      (sum: number, p: { view_count: number | null }) => sum + (p.view_count || 0),
       0
     );
 
@@ -284,7 +284,7 @@ export const digestService = {
       .gte('created_at', since);
 
     const totalEngagement = (posts || []).reduce(
-      (sum: number, p: any) => sum + (p.view_count || 0),
+      (sum: number, p: { view_count: number | null }) => sum + (p.view_count || 0),
       0
     );
 

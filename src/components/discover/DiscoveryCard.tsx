@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useConnectionStatus } from "@/hooks/useConnectionStatus";
 import { useQueryClient } from "@tanstack/react-query";
 import { ConnectionRequestModal } from "@/components/connect/ConnectionRequestModal";
+import { getErrorMessage } from '@/lib/errorLogger';
 
 interface DiscoveryCardProps {
   profile: {
@@ -91,10 +92,10 @@ export function DiscoveryCard({ profile }: DiscoveryCardProps) {
       queryClient.invalidateQueries({ queryKey: ['network-suggestions'] });
       queryClient.invalidateQueries({ queryKey: ['dia-connection-recommendations'] });
       queryClient.invalidateQueries({ queryKey: ['suggested-connections'] });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Failed to send request',
-        description: error.message || 'Please try again.',
+        description: getErrorMessage(error) || 'Please try again.',
         variant: 'destructive',
       });
       throw error;

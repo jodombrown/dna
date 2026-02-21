@@ -115,7 +115,7 @@ export default function SpaceDetail() {
       try {
         await leaveSpace.mutateAsync({ spaceId: space.id, userId: currentUserId });
         navigate('/dna/collaborate/my-spaces');
-      } catch (error: any) {
+      } catch (error: unknown) {
         // Error is handled by the mutation
       }
     }

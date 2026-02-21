@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 import { USERNAME_REGEX as usernameRegex, isValidUsername, isUsernameAvailable, normalizeUsername } from "@/utils/username";
+import { getErrorMessage } from '@/lib/errorLogger';
 
 const requiredSatisfied = (p: any) => {
   if (!p) return false;
@@ -89,8 +90,8 @@ const OnboardingBar: React.FC = () => {
       toast({ title: "Saved", description: "Welcome to DNA. You're all set!" });
       setOpen(false);
       refetch();
-    } catch (e: any) {
-      toast({ title: "Save failed", description: e.message || "Try again.", variant: "destructive" });
+    } catch (e: unknown) {
+      toast({ title: "Save failed", description: getErrorMessage(e) || "Try again.", variant: "destructive" });
     } finally {
       setSaving(false);
     }

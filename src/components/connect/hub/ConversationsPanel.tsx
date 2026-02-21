@@ -27,6 +27,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { NetworkActivityFeed } from './NetworkActivityFeed';
+import { logger } from '@/lib/logger';
 
 interface ConversationsPanelProps {
   onSelectConversation?: (conversationId: string) => void;
@@ -99,7 +100,7 @@ export function ConversationsPanel({
           .limit(10);
 
         if (error || !data) {
-          console.warn('[ConversationsPanel] Failed to fetch conversations:', error);
+          logger.warn('ConversationsPanel', 'Failed to fetch conversations:', error);
           return [];
         }
 
@@ -114,7 +115,7 @@ export function ConversationsPanel({
           .in('id', otherUserIds);
 
         if (profilesError) {
-          console.warn('[ConversationsPanel] Failed to fetch profiles:', profilesError);
+          logger.warn('ConversationsPanel', 'Failed to fetch profiles:', profilesError);
         }
 
         const profileMap = new Map(profiles?.map((p) => [p.id, p]) || []);
@@ -128,7 +129,7 @@ export function ConversationsPanel({
           .in('conversation_id', conversationIds);
 
         if (participationsError) {
-          console.warn('[ConversationsPanel] Failed to fetch participations:', participationsError);
+          logger.warn('ConversationsPanel', 'Failed to fetch participations:', participationsError);
         }
 
         const unreadCounts = new Map<string, number>();
@@ -148,11 +149,11 @@ export function ConversationsPanel({
             
             const { count, error: countError } = await query;
             if (countError) {
-              console.warn('[ConversationsPanel] Failed to count unread:', countError);
+              logger.warn('ConversationsPanel', 'Failed to count unread:', countError);
             }
             unreadCounts.set(p.conversation_id, count || 0);
           } catch (countErr) {
-            console.warn('[ConversationsPanel] Error counting unread:', countErr);
+            logger.warn('ConversationsPanel', 'Error counting unread:', countErr);
             unreadCounts.set(p.conversation_id, 0);
           }
         }
@@ -176,7 +177,7 @@ export function ConversationsPanel({
           };
         });
       } catch (error) {
-        console.warn('[ConversationsPanel] Error fetching conversations:', error);
+        logger.warn('ConversationsPanel', 'Error fetching conversations:', error);
         return [];
       }
     },
@@ -202,7 +203,7 @@ export function ConversationsPanel({
           .limit(5);
 
         if (error || !data) {
-          console.warn('[ConversationsPanel] Failed to fetch connection requests:', error);
+          logger.warn('ConversationsPanel', 'Failed to fetch connection requests:', error);
           return [];
         }
 
@@ -214,7 +215,7 @@ export function ConversationsPanel({
           .in('id', requesterIds);
 
         if (profilesError) {
-          console.warn('[ConversationsPanel] Failed to fetch requester profiles:', profilesError);
+          logger.warn('ConversationsPanel', 'Failed to fetch requester profiles:', profilesError);
         }
 
         const profileMap = new Map(profiles?.map((p) => [p.id, p]) || []);
@@ -232,7 +233,7 @@ export function ConversationsPanel({
           };
         });
       } catch (error) {
-        console.warn('[ConversationsPanel] Error fetching connection requests:', error);
+        logger.warn('ConversationsPanel', 'Error fetching connection requests:', error);
         return [];
       }
     },

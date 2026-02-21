@@ -85,11 +85,11 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
       setCurrentRecipientId(params.recipientId);
       setCurrentConversationId(conversation.id);
       setIsOverlayOpen(true);
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error('MessageContext', 'Failed to open conversation', error);
 
       // Handle connection requirement error - now allows message requests
-      if (error?.message?.includes('Cannot message')) {
+      if (error instanceof Error && error.message?.includes('Cannot message')) {
         toast({
           title: 'Cannot Message',
           description: 'You cannot message this user.',

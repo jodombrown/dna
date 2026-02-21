@@ -39,6 +39,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 interface ConnectionCardProps {
   connection: {
@@ -86,10 +87,10 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
       if (error) throw error;
 
       navigate('/dna/messages');
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Error opening conversation',
-        description: error.message || 'Please try again.',
+        description: getErrorMessage(error) || 'Please try again.',
         variant: 'destructive',
       });
     }
@@ -125,10 +126,10 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
       });
 
       onConnectionRemoved?.();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Error removing connection',
-        description: error.message || 'Please try again.',
+        description: getErrorMessage(error) || 'Please try again.',
         variant: 'destructive',
       });
     } finally {

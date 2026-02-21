@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { SettingsLayout } from '@/components/settings/SettingsLayout';
 import { Loader2, Mail, Lock, Trash2, AlertTriangle } from 'lucide-react';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 export default function AccountSettings() {
   const { user, signOut } = useAuth();
@@ -60,10 +61,10 @@ export default function AccountSettings() {
         description: 'Please check your new email address to confirm the change.',
       });
       setNewEmail('');
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Error updating email',
-        description: error.message,
+        description: getErrorMessage(error),
         variant: 'destructive',
       });
     } finally {
@@ -119,10 +120,10 @@ export default function AccountSettings() {
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Error updating password',
-        description: error.message,
+        description: getErrorMessage(error),
         variant: 'destructive',
       });
     } finally {
@@ -173,10 +174,10 @@ export default function AccountSettings() {
       });
 
       navigate('/');
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Error deleting account',
-        description: error.message,
+        description: getErrorMessage(error),
         variant: 'destructive',
       });
     } finally {

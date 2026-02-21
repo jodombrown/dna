@@ -5,7 +5,7 @@ export function useLocationSearch(
   provider: LocationProvider,
   q: string,
   delay = 250,
-  opts?: any
+  opts?: Record<string, unknown>
 ) {
   const [results, setResults] = useState<LocationOption[]>([]);
   const [loading, setLoading] = useState(false);

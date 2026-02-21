@@ -707,7 +707,7 @@ export const profileIdentityHubService = {
 
     // Heritage uniqueness
     if (heritage?.heritageCountries && heritage.heritageCountries.length > 1) {
-      const countries = heritage.heritageCountries.map((h: any) => h.countryName);
+      const countries = heritage.heritageCountries.map((h: { countryName: string }) => h.countryName);
       insights.push(`Your ${countries.join(' and ')} heritage bridges communities that rarely connect on other platforms.`);
     }
 

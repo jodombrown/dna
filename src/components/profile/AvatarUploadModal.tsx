@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Upload, Move, ZoomIn, ZoomOut } from "lucide-react";
 import Cropper from "react-easy-crop";
 import { getCroppedImg } from "@/lib/utils/cropImage";
+import { getErrorMessage } from '@/lib/errorLogger';
 
 // Minimum image dimensions for profile photos
 const MIN_IMAGE_SIZE = 200;
@@ -142,8 +143,8 @@ export function AvatarUploadModal({
       toast({ title: "Success", description: "Avatar updated!" });
       onOpenChange(false);
       setImageSrc(null);
-    } catch (error: any) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } catch (error: unknown) {
+      toast({ title: "Error", description: getErrorMessage(error), variant: "destructive" });
     } finally {
       setUploading(false);
     }

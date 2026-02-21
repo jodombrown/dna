@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Download, Share2, Users, Target, Sparkles, TrendingUp, Globe, Heart, MapPin, Landmark, Building2, ArrowUpRight, ExternalLink } from 'lucide-react';
+import { config } from '@/lib/config';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -651,7 +652,7 @@ const FactSheetPage = () => {
             <span className="text-muted-foreground/40">|</span>
             <a href="/about" className="text-dna-copper hover:underline">About DNA</a>
             <span className="text-muted-foreground/40">|</span>
-            <a href="https://www.linkedin.com/company/diasporanetworkafrica" target="_blank" rel="noopener noreferrer" className="text-dna-copper hover:underline flex items-center gap-1">
+            <a href={config.social.linkedin} target="_blank" rel="noopener noreferrer" className="text-dna-copper hover:underline flex items-center gap-1">
               LinkedIn <ArrowUpRight className="h-3 w-3" />
             </a>
           </div>

@@ -24,6 +24,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 interface SentRequestCardProps {
   request: {
@@ -74,8 +75,8 @@ export const SentRequestCard: React.FC<SentRequestCardProps> = ({
 
       toast.success('Connection request withdrawn');
       onWithdraw();
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to withdraw request');
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error) || 'Failed to withdraw request');
     } finally {
       setIsWithdrawing(false);
     }

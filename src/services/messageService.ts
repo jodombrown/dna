@@ -532,7 +532,7 @@ async getConversations(
 
     // Silently ignore errors - this handles legacy conversations gracefully
     if (updateError) {
-      console.debug('markAsRead skipped for legacy conversation:', conversationId);
+      logger.debug('messageService', 'markAsRead skipped for legacy conversation', conversationId);
     }
   },
 

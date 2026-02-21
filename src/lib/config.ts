@@ -42,6 +42,12 @@ export const config = {
   // Admin
   ADMIN_EMAIL_DOMAIN: '@diasporanetwork.africa',
 
+  // Social media links
+  social: {
+    linkedin: 'https://www.linkedin.com/company/diasporanetworkafrica',
+    twitter: 'https://twitter.com/diasporanetwork',
+  },
+
   // Contact emails (for display purposes - not secrets)
   emails: {
     support: 'aweh@diasporanetwork.africa',

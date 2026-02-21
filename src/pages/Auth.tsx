@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useFeatureFlags } from '@/hooks/useFeatureFlags';
 import { BetaWaitlist } from '@/components/auth/BetaWaitlist';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 const Auth = () => {
   useScrollToTop();
@@ -52,7 +53,7 @@ const Auth = () => {
       if (error) {
         toast({
           title: 'Sign in failed',
-          description: error.message,
+          description: getErrorMessage(error),
           variant: 'destructive',
         });
         return;
@@ -76,7 +77,7 @@ const Auth = () => {
       });
       navigate(redirectTo);
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
+      const errorMessage = err instanceof Error ? getErrorMessage(err) : 'An unexpected error occurred';
       toast({
         title: 'Error',
         description: errorMessage,
@@ -108,7 +109,7 @@ const Auth = () => {
       if (error) {
         toast({
           title: 'Sign up failed',
-          description: error.message,
+          description: getErrorMessage(error),
           variant: 'destructive',
         });
       } else {
@@ -117,10 +118,10 @@ const Auth = () => {
           description: 'Please check your email to verify your account.',
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Error',
-        description: error.message || 'An unexpected error occurred',
+        description: getErrorMessage(error) || 'An unexpected error occurred',
         variant: 'destructive',
       });
     } finally {
@@ -140,14 +141,14 @@ const Auth = () => {
       if (error) {
         toast({
           title: 'LinkedIn sign in failed',
-          description: error.message,
+          description: getErrorMessage(error),
           variant: 'destructive',
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Error',
-        description: error.message || 'An unexpected error occurred',
+        description: getErrorMessage(error) || 'An unexpected error occurred',
         variant: 'destructive',
       });
     }

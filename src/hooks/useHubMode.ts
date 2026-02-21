@@ -5,6 +5,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 
 export type HubType = 'convene' | 'collaborate' | 'contribute' | 'convey';
 export type HubMode = 'aspiration' | 'discovery' | 'hybrid';
@@ -19,12 +20,12 @@ const safeCountQuery = async (queryFn: () => Promise<{ count: number | null; err
   try {
     const result = await queryFn();
     if (result.error) {
-      console.warn('[useHubMode] Query error, defaulting to 0:', result.error);
+      logger.warn('useHubMode', 'Query error, defaulting to 0', result.error);
       return 0;
     }
     return result.count || 0;
   } catch (error) {
-    console.warn('[useHubMode] Failed to fetch count, defaulting to 0:', error);
+    logger.warn('useHubMode', 'Failed to fetch count, defaulting to 0', error);
     return 0;
   }
 };
@@ -100,7 +101,7 @@ export function useHubMode(hub: HubType): UseHubModeResult {
 
   // If query failed, log but don't crash - default to aspiration mode
   if (error) {
-    console.warn(`[useHubMode] Error fetching ${hub} mode, defaulting to aspiration:`, error);
+    logger.warn('useHubMode', `Error fetching ${hub} mode, defaulting to aspiration`, error);
   }
 
   // URL parameter override: ?view=hub forces discovery, ?view=aspiration forces aspiration

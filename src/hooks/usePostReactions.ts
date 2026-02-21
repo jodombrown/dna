@@ -97,7 +97,7 @@ export function usePostReactions(postId: string, userId?: string, notificationCo
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['post-reactions', postId] });
     },
-    onError: (error: any) => {
+    onError: () => {
       // DNA v1.0 LOCKDOWN: Gentle feedback only
       toast({
         description: 'Could not add reaction. Please try again.',
@@ -123,7 +123,7 @@ export function usePostReactions(postId: string, userId?: string, notificationCo
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['post-reactions', postId] });
     },
-    onError: (error: any) => {
+    onError: () => {
       // DNA v1.0 LOCKDOWN: Gentle feedback only
       toast({
         description: 'Could not remove reaction. Please try again.',

@@ -5,6 +5,7 @@ import { Calendar, MapPin, Star } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
+import { logger } from '@/lib/logger';
 
 export const FlagshipEventsSection = () => {
   const navigate = useNavigate();
@@ -34,12 +35,12 @@ export const FlagshipEventsSection = () => {
           .limit(6);
 
         if (error) {
-          console.warn('[FlagshipEventsSection] Error fetching events:', error);
+          logger.warn('FlagshipEventsSection', 'Error fetching events:', error);
           return [];
         }
         return data || [];
       } catch (error) {
-        console.warn('[FlagshipEventsSection] Failed to fetch events:', error);
+        logger.warn('FlagshipEventsSection', 'Failed to fetch events:', error);
         return [];
       }
     },

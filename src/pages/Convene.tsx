@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 const Convene = () => {
   useScrollToTop();
@@ -57,10 +58,10 @@ const Convene = () => {
       });
       
       setSidebarOpen(false);
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Registration Failed",
-        description: error.message || "Unable to register for event",
+        description: getErrorMessage(error) || "Unable to register for event",
         variant: "destructive",
       });
     }

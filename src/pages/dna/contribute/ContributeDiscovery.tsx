@@ -29,6 +29,7 @@ import OpportunityRecommendations from '@/components/contribute/OpportunityRecom
 
 // DIA Card System (Sprint 4A)
 import { DIAHubSection } from '@/components/dia/DIAHubSection';
+import { logger } from '@/lib/logger';
 
 export function ContributeDiscovery() {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ export function ContributeDiscovery() {
           .eq('status', 'open');
         
         if (needsError) {
-          console.warn('[ContributeDiscovery] Failed to fetch open needs:', needsError);
+          logger.warn('ContributeDiscovery', 'Failed to fetch open needs:', needsError);
         }
         
         // Active offers count
@@ -61,7 +62,7 @@ export function ContributeDiscovery() {
           .eq('status', 'pending');
         
         if (offersError) {
-          console.warn('[ContributeDiscovery] Failed to fetch active offers:', offersError);
+          logger.warn('ContributeDiscovery', 'Failed to fetch active offers:', offersError);
         }
         
         let myRequestsCount = 0;
@@ -90,7 +91,7 @@ export function ContributeDiscovery() {
           matchesMade: matchesCount,
         };
       } catch (error) {
-        console.warn('[ContributeDiscovery] Failed to fetch stats:', error);
+        logger.warn('ContributeDiscovery', 'Failed to fetch stats:', error);
         return { openNeeds: 0, activeOffers: 0, myRequests: 0, matchesMade: 0 };
       }
     },
@@ -112,12 +113,12 @@ export function ContributeDiscovery() {
           .limit(5);
 
         if (error) {
-          console.warn('[ContributeDiscovery] Failed to fetch recent activity:', error);
+          logger.warn('ContributeDiscovery', 'Failed to fetch recent activity:', error);
           return [];
         }
         return data || [];
       } catch (error) {
-        console.warn('[ContributeDiscovery] Error fetching recent activity:', error);
+        logger.warn('ContributeDiscovery', 'Error fetching recent activity:', error);
         return [];
       }
     },

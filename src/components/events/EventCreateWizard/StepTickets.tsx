@@ -12,6 +12,7 @@ import { Trash2Icon, PlusIcon, DollarSignIcon, UsersIcon, CreditCard } from 'luc
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { EventData } from './index';
+import { getErrorMessage } from '@/lib/errorLogger';
 
 interface StepTicketsProps {
   eventData: EventData;
@@ -189,8 +190,8 @@ const StepTickets: React.FC<StepTicketsProps> = ({
 
       // Open Stripe checkout in a new tab
       window.open(data.url, '_blank');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to create payment');
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error) || 'Failed to create payment');
     } finally {
       setProcessingPayment(null);
     }

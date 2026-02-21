@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 interface PushSubscriptionState {
   isSupported: boolean;
@@ -52,7 +53,7 @@ export function usePushNotifications() {
           isSubscribed = !!subscription;
         }
       } catch (error) {
-        console.debug('Error checking push subscription:', error);
+        logger.debug('usePushNotifications', 'Error checking push subscription', error);
       }
 
       setState({
@@ -124,7 +125,7 @@ export function usePushNotifications() {
           }
         }).catch(() => {
           // Silent fail - subscription still works for in-app
-          console.debug('Push subscription registration queued');
+          logger.debug('usePushNotifications', 'Push subscription registration queued');
         });
       }
 
