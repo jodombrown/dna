@@ -119,7 +119,7 @@ export default function DesignSystem() {
             <Card className="p-6 shadow-dna-1 space-y-4">
               <div>
                 <span className="text-[11px] font-ui text-muted-foreground uppercase tracking-widest">Platform Name</span>
-                <p className="font-heritage text-2xl font-bold text-foreground">DNA — Diaspora Network of Africa</p>
+                <p className="font-heritage text-2xl font-bold text-foreground">DNA - Diaspora Network of Africa</p>
               </div>
               <div>
                 <span className="text-[11px] font-ui text-muted-foreground uppercase tracking-widest">Tagline</span>
@@ -128,7 +128,7 @@ export default function DesignSystem() {
               <div>
                 <span className="text-[11px] font-ui text-muted-foreground uppercase tracking-widest">Mission</span>
                 <p className="text-[15px] font-ui text-foreground leading-relaxed">
-                  Transform scattered diaspora potential into coordinated collective power through community-owned infrastructure — connecting 200M+ members worldwide with the African continent.
+                  Transform scattered diaspora potential into coordinated collective power through community-owned infrastructure, connecting 200M+ members worldwide with the African continent.
                 </p>
               </div>
             </Card>
@@ -154,12 +154,12 @@ export default function DesignSystem() {
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Tone Guidelines</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
-                  { do: true, text: '"Welcome home" — language of belonging and return' },
-                  { do: true, text: '"Build together" — collective action over individual achievement' },
-                  { do: true, text: '"Your roots, your future" — heritage connected to forward motion' },
-                  { do: false, text: '"Help Africa" — patronizing savior language' },
-                  { do: false, text: '"Exotic" or "tribal" — reductive colonial framing' },
-                  { do: false, text: 'Generic corporate jargon — "synergize," "leverage," etc.' },
+                  { do: true, text: '"Welcome home" - language of belonging and return' },
+                  { do: true, text: '"Build together" - collective action over individual achievement' },
+                  { do: true, text: '"Your roots, your future" - heritage connected to forward motion' },
+                  { do: false, text: '"Help Africa" - patronizing savior language' },
+                  { do: false, text: '"Exotic" or "tribal" - reductive colonial framing' },
+                  { do: false, text: 'Generic corporate jargon - "synergize," "leverage," etc.' },
                 ].map((rule, i) => (
                   <div key={i} className={`flex items-start gap-2 p-3 rounded-dna-md border ${rule.do ? 'border-dna-success/30 bg-dna-emerald-subtle/50' : 'border-destructive/30 bg-dna-error-light/50'}`}>
                     {rule.do ? <Check className="w-4 h-4 text-dna-success mt-0.5 shrink-0" /> : <X className="w-4 h-4 text-destructive mt-0.5 shrink-0" />}
@@ -171,10 +171,10 @@ export default function DesignSystem() {
 
             <Card className="p-6 shadow-dna-1 border-l-[3px] border-l-dna-contribute bg-dna-cream/50">
               <p className="font-heritage text-lg font-semibold text-foreground italic mb-2">
-                "Cultural authenticity is not decoration — it is foundation."
+                "Cultural authenticity is not decoration. It is foundation."
               </p>
               <p className="text-sm text-muted-foreground font-ui">
-                Every design decision asks: "Does this honor the diaspora experience?" African heritage patterns, colors, and interaction metaphors are the framework — not a skin applied over Western conventions.
+                Every design decision asks: "Does this honor the diaspora experience?" African heritage patterns, colors, and interaction metaphors are the framework, not a skin applied over Western conventions.
               </p>
             </Card>
           </div>

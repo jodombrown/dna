@@ -317,7 +317,7 @@ export const FEED_EMPTY_STATES: Record<FeedType, { headline: string; body: strin
   },
   [FeedType.CONVENE]: {
     headline: 'Your next gathering awaits',
-    body: 'From Lagos to London to Los Angeles — the diaspora gathers to learn, celebrate, and build together.',
+    body: 'From Lagos to London to Los Angeles, the diaspora gathers to learn, celebrate, and build together.',
     action: 'Browse Events',
   },
   [FeedType.COLLABORATE]: {

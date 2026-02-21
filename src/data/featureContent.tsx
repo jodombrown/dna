@@ -32,13 +32,13 @@ export const featureContentBySlug: Record<string, FeatureContent> = {
   spaces: {
     hero: {
       title: "DNA | Spaces",
-      oneLiner: "Spaces are the home for communities, projects, and initiatives on DNA — where people gather, work, contribute, and grow together.",
+      oneLiner: "Spaces are the home for communities, projects, and initiatives on DNA, where people gather, work, contribute, and grow together.",
       whoItsFor: "Members, organizers, founders, project leads, community builders, programs, and teams across the global African diaspora."
     },
     whatItIs: `Most platforms treat groups or communities as isolated islands.
 But in DNA, Spaces are something deeper:
 
-**Spaces are living hubs where the 5Cs come together** — Connect, Convene, Collaborate, Contribute, and Convey.
+**Spaces are living hubs where the 5Cs come together**: Connect, Convene, Collaborate, Contribute, and Convey.
 
 A Space can be:
 - A community
@@ -66,7 +66,7 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
     ],
     howItWorks: [
       "Each Space has roles: Lead, Contributor, Member, Follower",
-      "Permissions adapt — Leads create events, tasks, and needs; Contributors support; Members participate",
+      "Permissions adapt. Leads create events, tasks, and needs; Contributors support; Members participate",
       "Privacy settings determine visibility: Public / Private / Invite-only",
       "Activities inside a Space flow out into the CONNECT Feed and CONVEY",
       "DIA uses Space activity to personalize recommendations",
@@ -79,11 +79,11 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
         title: "If you're starting a new Space",
         steps: [
           "Choose a clear name that shows purpose ('Diaspora Creators Hub', 'Ghana Climate Tech', etc.)",
-          "Add a strong description — what the Space is for, who it's for, and what success looks like",
+          "Add a strong description: what the Space is for, who it's for, and what success looks like",
           "Set the right visibility: Public for open communities, Private for focused teams, Invite-only for premium or sensitive groups",
           "Create your first project or event to give members something to engage with",
           "Post a welcome update to set the tone",
-          "Invite your first ten people — enough to create momentum"
+          "Invite your first ten people, enough to create momentum"
         ]
       },
       {
@@ -93,7 +93,7 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
           "Look at open tasks or needs",
           "Follow other members you find interesting",
           "Join upcoming events or working sessions",
-          "Share something — even a small insight or resource"
+          "Share something, even a small insight or resource"
         ]
       },
       {
@@ -132,7 +132,7 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
     faqs: [
       {
         question: "Are Spaces free to create?",
-        answer: "Yes — any member can create a Space once their profile meets the basic completeness threshold."
+        answer: "Yes. Any member can create a Space once their profile meets the basic completeness threshold."
       },
       {
         question: "What types of Spaces work best on DNA?",
@@ -140,7 +140,7 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
       },
       {
         question: "Can Spaces be private?",
-        answer: "Yes — Spaces can be Public, Private, or Invite-Only."
+        answer: "Yes. Spaces can be Public, Private, or Invite-Only."
       },
       {
         question: "Can I run multiple projects inside one Space?",
@@ -152,11 +152,11 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
       },
       {
         question: "Can Spaces have multiple leads?",
-        answer: "Yes — Leads can be shared for balanced governance."
+        answer: "Yes. Leads can be shared for balanced governance."
       },
       {
         question: "Do Spaces support multimedia?",
-        answer: "Yes — attachments, images, links, and more."
+        answer: "Yes. Attachments, images, links, and more."
       }
     ]
   },
@@ -164,12 +164,12 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
     hero: {
       title: "DNA | CONNECT",
       oneLiner:
-        "CONNECT is the part of DNA that helps you find people across the African world — and turn those connections into real conversations, collaborations, and opportunities.",
+        "CONNECT is the part of DNA that helps you find people across the African world and turn those connections into real conversations, collaborations, and opportunities.",
       whoItsFor:
         "Members of the global African diaspora and allies who want to meet others who share their story, skills, or commitment to African futures.",
     },
     whatItIs:
-      "CONNECT is DNA's relationship layer. It's where you tell your story through your profile, discover people with shared heritage, interests, and focus areas, and build a network that can activate around projects, events, and contributions. If DNA is a mobilization engine, CONNECT is 'who's in the engine with you' — and how you start building trust.",
+      "CONNECT is DNA's relationship layer. It's where you tell your story through your profile, discover people with shared heritage, interests, and focus areas, and build a network that can activate around projects, events, and contributions. If DNA is a mobilization engine, CONNECT is 'who's in the engine with you' and how you start building trust.",
     whatYouCanDo: [
       "Create a rich profile so people know who you are, where you're from, and what you care about.",
       "Discover members based on location, heritage, skills, and focus areas.",
@@ -189,7 +189,7 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
         steps: [
           "Complete at least 40% of your profile. Add your name, location, heritage, skills, and focus areas.",
           "Browse the CONNECT feed. Get a feel for who's here and what people are doing.",
-          "Search for members in your city, region, or focus area — for example, 'Lagos', 'climate', or 'creative industries'.",
+          "Search for members in your city, region, or focus area. For example, 'Lagos', 'climate', or 'creative industries'.",
           "Send a few intentional connection requests with a short note about why you're reaching out.",
         ],
       },
@@ -198,7 +198,7 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
         steps: [
           "Connect with people you already collaborate with so your existing network has a home on DNA.",
           "Invite them into relevant spaces or events, so your network can plug into live opportunities.",
-          "Use CONNECT to bridge regions — for example, introduce a founder in Nairobi to a mentor in London.",
+          "Use CONNECT to bridge regions. For example, introduce a founder in Nairobi to a mentor in London.",
         ],
       },
       {
@@ -263,7 +263,7 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
       {
         question: "Is CONNECT like LinkedIn?",
         answer:
-          "CONNECT is inspired by professional networks, but it's built specifically for the global African diaspora and allies. It's less about generic networking and more about mobilizing around African futures — through spaces, events, projects, and contributions.",
+          "CONNECT is inspired by professional networks, but it's built specifically for the global African diaspora and allies. It's less about generic networking and more about mobilizing around African futures through spaces, events, projects, and contributions.",
       },
       {
         question: "Who can see my profile?",

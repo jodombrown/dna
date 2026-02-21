@@ -644,20 +644,20 @@ export const PROFILE_TIER_GATES: Record<UserTier, ProfileTierGate> = {
 // ============================================================
 
 export const DIASPORA_GENERATION_LABELS: Record<DiasporaGeneration, string> = {
-  first: 'First Generation — Born in Africa, living abroad',
-  second: 'Second Generation — Parents from Africa',
-  third_plus: 'Third+ Generation — Grandparents+ from Africa',
-  returnee: 'Returnee — Returned to Africa',
-  continental: 'Continental — Born and living in Africa',
-  ally: 'Ally — Committed to the mission',
+  first: 'First Generation - Born in Africa, living abroad',
+  second: 'Second Generation - Parents from Africa',
+  third_plus: 'Third+ Generation - Grandparents+ from Africa',
+  returnee: 'Returnee - Returned to Africa',
+  continental: 'Continental - Born and living in Africa',
+  ally: 'Ally - Committed to the mission',
 };
 
 export const DIASPORA_ENGAGEMENT_LABELS: Record<DiasporaEngagementLevel, string> = {
-  exploring: 'Exploring — New to diaspora engagement',
-  connecting: 'Connecting — Building connections',
-  contributing: 'Contributing — Actively giving back',
-  leading: 'Leading — Leading initiatives',
-  transforming: 'Transforming — Driving systemic change',
+  exploring: 'Exploring - New to diaspora engagement',
+  connecting: 'Connecting - Building connections',
+  contributing: 'Contributing - Actively giving back',
+  leading: 'Leading - Leading initiatives',
+  transforming: 'Transforming - Driving systemic change',
 };
 
 export const AFRICAN_REGION_LABELS: Record<AfricanRegion, string> = {

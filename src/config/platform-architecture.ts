@@ -39,7 +39,7 @@ export const LAYER_DEPENDENCIES = {
   dia_core_engine: {
     depends_on: ['profile', 'feed', 'messaging'],
     feeds_into: ['composer', 'feed', 'notifications', 'messaging'],
-    description: 'The brain — analyzes all data, powers all intelligence',
+    description: 'The brain - analyzes all data, powers all intelligence',
   },
   notification_system: {
     depends_on: ['dia', 'all_five_c_modules'],
@@ -49,22 +49,22 @@ export const LAYER_DEPENDENCIES = {
   messaging_system: {
     depends_on: ['profile', 'notifications'],
     feeds_into: ['dia', 'connect', 'collaborate'],
-    description: 'The connective tissue — 1:1, group, space, event, opportunity threads',
+    description: 'The connective tissue - 1:1, group, space, event, opportunity threads',
   },
   profile_identity: {
     depends_on: ['auth'],
     feeds_into: ['dia', 'feed', 'messaging', 'navigation'],
-    description: 'The cross-C hub — identity across all Five C\'s',
+    description: 'The cross-C hub - identity across all Five C\'s',
   },
   navigation_ada: {
     depends_on: ['profile', 'notifications'],
     feeds_into: ['all_modules', 'feed', 'composer'],
-    description: 'Adaptive Dashboard Architecture — layout transforms, not pages',
+    description: 'Adaptive Dashboard Architecture - layout transforms, not pages',
   },
   design_system: {
     depends_on: [],
     feeds_into: ['every_component'],
-    description: 'The visual DNA — cultural authenticity built into every component',
+    description: 'The visual DNA - cultural authenticity built into every component',
   },
 } as const;
 

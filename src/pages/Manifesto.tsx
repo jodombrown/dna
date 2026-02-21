@@ -37,7 +37,7 @@ const Manifesto = () => {
         <ManifestoLine>
           We are <ManifestoLink to="/about" variant="subtle">200 million</ManifestoLink> strong now.
         </ManifestoLine>
-        <ManifestoLine delay={0.1}>Scattered, yes — but not separated.</ManifestoLine>
+        <ManifestoLine delay={0.1}>Scattered, yes, but not separated.</ManifestoLine>
         <ManifestoLine delay={0.2}>In Brooklyn bodegas and London flats.</ManifestoLine>
         <ManifestoLine delay={0.3}>In São Paulo favelas and Toronto high-rises.</ManifestoLine>
         <ManifestoLine delay={0.4}>In Accra markets and Nairobi startups.</ManifestoLine>
@@ -63,7 +63,7 @@ const Manifesto = () => {
       {/* Section V */}
       <ManifestoSection number="V">
         <ManifestoLine>
-          We send <ManifestoLink to="/fact-sheet" variant="subtle">$100 billion</ManifestoLink> back each year — more than all foreign aid combined.
+          We send <ManifestoLink to="/fact-sheet" variant="subtle">$100 billion</ManifestoLink> back each year, more than all foreign aid combined.
         </ManifestoLine>
         <ManifestoLine delay={0.1}>We build schools we'll never sit in. Fund hospitals we'll never visit.</ManifestoLine>
         <ManifestoLine delay={0.2}>Support families we haven't hugged in years.</ManifestoLine>
@@ -88,19 +88,19 @@ const Manifesto = () => {
         <ManifestoLine bold>This is why we built DNA.</ManifestoLine>
         <ManifestoLine delay={0.1}>Not an app. Not a platform. An operating system for collective power.</ManifestoLine>
         <ManifestoLine delay={0.2}>
-          A place to <ManifestoLink to="/connect" variant="five-c">CONNECT</ManifestoLink> — to find your people across borders and generations.
+          A place to <ManifestoLink to="/connect" variant="five-c">CONNECT</ManifestoLink>. To find your people across borders and generations.
         </ManifestoLine>
         <ManifestoLine delay={0.3}>
-          A place to <ManifestoLink to="/convene" variant="five-c">CONVENE</ManifestoLink> — to gather, celebrate, strategize, and remember together.
+          A place to <ManifestoLink to="/convene" variant="five-c">CONVENE</ManifestoLink>. To gather, celebrate, strategize, and remember together.
         </ManifestoLine>
         <ManifestoLine delay={0.4}>
-          A place to <ManifestoLink to="/collaborate" variant="five-c">COLLABORATE</ManifestoLink> — to build together what none of us could build alone.
+          A place to <ManifestoLink to="/collaborate" variant="five-c">COLLABORATE</ManifestoLink>. To build together what none of us could build alone.
         </ManifestoLine>
         <ManifestoLine delay={0.5}>
-          A place to <ManifestoLink to="/contribute" variant="five-c">CONTRIBUTE</ManifestoLink> — to give not just money, but time, knowledge, networks, and love.
+          A place to <ManifestoLink to="/contribute" variant="five-c">CONTRIBUTE</ManifestoLink>. To give not just money, but time, knowledge, networks, and love.
         </ManifestoLine>
         <ManifestoLine delay={0.6}>
-          A place to <ManifestoLink to="/convey" variant="five-c">CONVEY</ManifestoLink> — to amplify the stories that have been whispered for too long.
+          A place to <ManifestoLink to="/convey" variant="five-c">CONVEY</ManifestoLink>. To amplify the stories that have been whispered for too long.
         </ManifestoLine>
       </ManifestoSection>
 
@@ -117,7 +117,7 @@ const Manifesto = () => {
       {/* Section IX */}
       <ManifestoSection number="IX">
         <ManifestoLine bold>The strand was never broken.</ManifestoLine>
-        <ManifestoLine delay={0.1}>We are simply making it visible again —</ManifestoLine>
+        <ManifestoLine delay={0.1}>We are simply making it visible again.</ManifestoLine>
         <ManifestoLine delay={0.2}>giving it structure,</ManifestoLine>
         <ManifestoLine delay={0.3}>giving it pathways,</ManifestoLine>
         <ManifestoLine delay={0.4}>giving it purpose.</ManifestoLine>
@@ -128,7 +128,7 @@ const Manifesto = () => {
         <ManifestoLine>
           <ManifestoLink to="/africa/west-africa" variant="subtle">Africa is rising.</ManifestoLink>
         </ManifestoLine>
-        <ManifestoLine delay={0.1}>And her children — all of us, everywhere — are part of that rise.</ManifestoLine>
+        <ManifestoLine delay={0.1}>And her children, all of us, everywhere, are part of that rise.</ManifestoLine>
         <ManifestoLine delay={0.2}>Not as outsiders looking in.</ManifestoLine>
         <ManifestoLine delay={0.3}>Not as donors with conditions.</ManifestoLine>
         <ManifestoLine bold delay={0.4}>As family. Coming home. Building together.</ManifestoLine>

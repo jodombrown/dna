@@ -261,7 +261,7 @@ export const COMPLETION_JOURNEY: CompletionTrigger[] = [
     missing_field: 'skills',
     nudge_title: 'Add your skills to see match scores',
     nudge_message: 'Skills help DIA find the best opportunity matches for you.',
-    value_proposition: 'Immediate value — better matches',
+    value_proposition: 'Immediate value - better matches',
   },
   {
     trigger_action: 'attend_first_event',

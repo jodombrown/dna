@@ -53,31 +53,31 @@ export const FIVE_C_COLORS = {
     primary: COLOR_TOKENS.emerald,
     name: 'Emerald',
     cssVar: '--dna-emerald',
-    description: 'Emerald accents — growth, connection, harmony',
+    description: 'Emerald accents - growth, connection, harmony',
   },
   convene: {
     primary: COLOR_TOKENS.gold,
     name: 'Amber-Gold',
     cssVar: '--dna-gold',
-    description: 'Amber-Gold accents — warmth, gathering, celebration',
+    description: 'Amber-Gold accents - warmth, gathering, celebration',
   },
   collaborate: {
     primary: COLOR_TOKENS.forest,
     name: 'Forest Green',
     cssVar: '--dna-forest',
-    description: 'Forest Green accents — depth, stability, teamwork',
+    description: 'Forest Green accents - depth, stability, teamwork',
   },
   contribute: {
     primary: COLOR_TOKENS.copper,
     name: 'Copper',
     cssVar: '--dna-copper',
-    description: 'Copper accents — value, craftsmanship, contribution',
+    description: 'Copper accents - value, craftsmanship, contribution',
   },
   convey: {
     primary: COLOR_TOKENS.deepTeal,
     name: 'Deep Teal',
     cssVar: '--dna-ocean',
-    description: 'Deep Teal accents — knowledge, depth, storytelling',
+    description: 'Deep Teal accents - knowledge, depth, storytelling',
   },
 } as const;
 

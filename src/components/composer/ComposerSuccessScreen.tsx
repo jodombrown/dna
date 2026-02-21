@@ -131,7 +131,7 @@ export const ComposerSuccessScreen = ({
         className="w-full min-h-[44px]"
         onClick={onDismiss}
       >
-        Done — Go to Feed
+        Done - Go to Feed
       </Button>
     </div>
   );
