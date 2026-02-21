@@ -25,13 +25,17 @@ const HeroSection = () => {
               {/* Main Headline */}
               <div className="text-center lg:text-left">
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold font-serif text-dna-forest mb-4 lg:mb-6 leading-[1.1] lg:leading-[1.05]">
-                  One platform.
+                  Welcome to the
                   <br />
-                  <span className="text-dna-copper">Five ways to move Africa forward.</span>
+                  <span className="text-dna-copper">Diaspora Network of Africa</span>
                 </h1>
                 
-                <p className="text-lg sm:text-xl lg:text-2xl xl:text-3xl text-muted-foreground mb-3 lg:mb-4 leading-relaxed">
+                <p className="text-lg sm:text-xl lg:text-2xl xl:text-3xl text-muted-foreground mb-2 lg:mb-3 leading-relaxed">
                   Where the African diaspora goes from scattered potential to coordinated power.
+                </p>
+
+                <p className="text-base sm:text-lg lg:text-xl text-dna-forest/80 font-medium mb-3 lg:mb-4">
+                  One platform. Five ways to move Africa forward.
                 </p>
 
                 {/* LinkedIn-style Auth Buttons */}
