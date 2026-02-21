@@ -302,6 +302,8 @@ const DnaFeed = () => {
         onClose={composer.close}
         onModeChange={composer.switchMode}
         onSubmit={composer.submit}
+        successData={composer.successData}
+        onDismissSuccess={composer.dismissSuccess}
       />
       <SearchDialog
         isOpen={showSearchDialog}
