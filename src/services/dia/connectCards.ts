@@ -86,7 +86,7 @@ async function generateSkillSuggestion(userId: string): Promise<DIACard | null> 
       category: 'connect',
       cardType: 'skill_suggestion',
       headline: `You and ${bestCandidate.full_name || 'someone'} share ${sharedSkills.length} skill${sharedSkills.length > 1 ? 's' : ''}`,
-      body: `${bestCandidate.headline || 'A fellow diaspora member'} — you both know ${sharedSkills.slice(0, 2).join(' and ')}. Worth connecting?`,
+      body: `${bestCandidate.headline || 'A fellow diaspora member'}. You both know ${sharedSkills.slice(0, 2).join(' and ')}. Worth connecting?`,
       accentColor: ACCENT,
       icon: 'UserPlus',
       priority: 60,

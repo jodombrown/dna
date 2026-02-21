@@ -37,7 +37,7 @@ const COMPLETION_TRIGGERS: Array<{
     field: 'skills',
     title: 'Add your skills to see match scores',
     message: 'You\'re browsing opportunities. Adding skills helps DIA find the best matches for you.',
-    value: 'Immediate — better opportunity matching',
+    value: 'Immediate: better opportunity matching',
   },
   {
     trigger_action: 'attend_first_event',

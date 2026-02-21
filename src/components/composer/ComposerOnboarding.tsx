@@ -45,7 +45,7 @@ const MODE_TOOLTIPS: Record<
   },
   need: {
     title: 'Post an Opportunity',
-    description: 'Share what you need or what you can offer — money, time, skills, or knowledge.',
+    description: 'Share what you need or what you can offer: money, time, skills, or knowledge.',
   },
 };
 

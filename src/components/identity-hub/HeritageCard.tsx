@@ -49,7 +49,7 @@ export const HeritageCard: React.FC<HeritageCardProps> = ({ heritage, isCompact 
   }
 
   const generationShort = heritage.diasporaGeneration
-    ? DIASPORA_GENERATION_LABELS[heritage.diasporaGeneration]?.split('—')[0]?.trim()
+    ? DIASPORA_GENERATION_LABELS[heritage.diasporaGeneration]?.split(' - ')[0]?.trim()
     : null;
 
   return (

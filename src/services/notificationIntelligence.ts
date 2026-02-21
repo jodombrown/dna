@@ -45,7 +45,7 @@ function evaluateNotification(
   if (isQuietHours(userPrefs)) {
     return {
       channels: ['in_app'], // Only in-app during quiet hours
-      reason: 'Quiet hours active — in-app only',
+      reason: 'Quiet hours active - in-app only',
       delay_minutes: 0,
     };
   }

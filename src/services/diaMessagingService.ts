@@ -113,7 +113,7 @@ export const diaMessagingService = {
       });
       replies.push({
         id: 'sr_meeting_2',
-        text: "I'm free this week — when works for you?",
+        text: "I'm free this week. When works for you?",
         confidence: 0.6,
         context: 'meeting',
       });
@@ -257,7 +257,7 @@ export const diaMessagingService = {
           action: {
             type: 'suggest_message',
             label: 'Send Follow-up',
-            payload: { suggestedText: "Hey! Just checking in — how are things going?" },
+            payload: { suggestedText: "Hey! Just checking in. How are things going?" },
           },
         };
       }

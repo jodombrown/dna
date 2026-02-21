@@ -125,7 +125,7 @@ const ProfileV2StatusCard: React.FC<ProfileV2StatusCardProps> = ({
           />
           <p className="text-xs text-muted-foreground mt-1.5">
             {isComplete 
-              ? '✨ Profile complete — fully discoverable'
+              ? '✨ Profile complete. Fully discoverable'
               : `${100 - score} pts to unlock full discoverability`
             }
           </p>

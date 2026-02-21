@@ -64,7 +64,7 @@ const MutualConnections: React.FC<MutualConnectionsProps> = ({
           </span>
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[220px] text-center">
-          <p className="text-xs">People you both know — connections you share in common</p>
+          <p className="text-xs">People you both know, connections you share in common</p>
         </TooltipContent>
       </Tooltip>
       <TooltipProvider>

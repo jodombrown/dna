@@ -404,7 +404,7 @@ async function handleFindSpaces(
 
   const responseText = results.length > 0
     ? 'Here are collaboration spaces that match your skills:'
-    : 'No matching spaces found. Consider starting your own — your skills could attract great collaborators.';
+    : 'No matching spaces found. Consider starting your own. Your skills could attract great collaborators.';
 
   return buildResponse(context, responseText, results.length > 0 ? 'results_list' : 'text', results, [
     { label: 'Browse spaces', type: 'navigate', payload: { route: '/dna/collaborate' } },
@@ -464,7 +464,7 @@ async function handleNetworkAnalysis(
     stats.countryCount > 0 ? `Your network spans ${stats.countryCount} countries across ${stats.regionCount} regions.` : '',
     stats.topCluster.count > 0 ? `Your strongest cluster is in ${stats.topCluster.name} (${stats.topCluster.count} connections).` : '',
     '',
-    stats.growthOpportunity || 'Your network is growing — keep connecting!',
+    stats.growthOpportunity || 'Your network is growing. Keep connecting!',
   ].filter(Boolean);
 
   return buildResponse(context, lines.join('\n'), 'insight', [], [
@@ -555,7 +555,7 @@ async function handlePersonalAnalytics(
   if (inactiveCs.length > 0) {
     lines.push('', `Try exploring ${inactiveCs[0]} to unlock more of DNA's power.`);
   } else {
-    lines.push('', 'You\'re active across all Five C\'s — great engagement!');
+    lines.push('', 'You\'re active across all Five C\'s. Great engagement!');
   }
 
   return buildResponse(context, lines.join('\n'), 'insight', [], [
@@ -616,12 +616,12 @@ async function handleOptimizeProfile(
   }
 
   const tips: string[] = [];
-  if (!profile.avatar_url) tips.push('Add a profile photo — profiles with photos get 5x more connection requests');
-  if (!profile.headline) tips.push('Add a professional headline — it\'s the first thing people see');
-  if (!(profile.skills as string[])?.length) tips.push('Add your skills — this powers opportunity matching and recommendations');
-  if (!profile.bio) tips.push('Write a bio — share your story with the diaspora');
-  if (!(profile.interests as string[])?.length) tips.push('Add interests — DIA uses these to personalize your feed');
-  if (!profile.location) tips.push('Add your location — unlock local event and connection recommendations');
+  if (!profile.avatar_url) tips.push('Add a profile photo. Profiles with photos get 5x more connection requests');
+  if (!profile.headline) tips.push('Add a professional headline. It\'s the first thing people see');
+  if (!(profile.skills as string[])?.length) tips.push('Add your skills. This powers opportunity matching and recommendations');
+  if (!profile.bio) tips.push('Write a bio. Share your story with the diaspora');
+  if (!(profile.interests as string[])?.length) tips.push('Add interests. DIA uses these to personalize your feed');
+  if (!profile.location) tips.push('Add your location. Unlock local event and connection recommendations');
 
   const responseText = tips.length > 0
     ? `Here are ways to strengthen your profile:\n\n${tips.map((t, i) => `${i + 1}. ${t}`).join('\n')}`
@@ -699,11 +699,11 @@ async function handlePlatformHelp(
   const responseText = [
     'DNA is the operating system for the global African diaspora. It\'s organized around the Five C\'s:',
     '',
-    '**Connect** — Build your professional network across the diaspora',
-    '**Convene** — Host and attend events, from local meetups to virtual conferences',
-    '**Collaborate** — Create project spaces and work together with others',
-    '**Contribute** — Post needs or offer your skills to help the diaspora',
-    '**Convey** — Share your stories, insights, and knowledge',
+    '**Connect**: Build your professional network across the diaspora',
+    '**Convene**: Host and attend events, from local meetups to virtual conferences',
+    '**Collaborate**: Create project spaces and work together with others',
+    '**Contribute**: Post needs or offer your skills to help the diaspora',
+    '**Convey**: Share your stories, insights, and knowledge',
     '',
     'I\'m DIA, your intelligence agent. Ask me anything about finding people, events, opportunities, or how to use the platform.',
   ].join('\n');
