@@ -1,29 +1,27 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
+const db = supabase as any;
+
 interface EntityLiveData {
   title: string;
   slug?: string;
   deleted?: boolean;
-  // Event fields
   startDate?: string;
   location?: string;
   eventType?: string;
   attendeeCount?: number;
-  // Space fields
   category?: string;
   memberCount?: number;
-  // Opportunity fields
   opportunityType?: string;
-  // Post/Story fields
   authorName?: string;
   likeCount?: number;
 }
 
 async function fetchEventData(entityId: string): Promise<EntityLiveData> {
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('events')
-    .select('id, title, slug, start_date, location, event_type, is_cancelled')
+    .select('id, title, slug, start_time, location, event_type, is_cancelled')
     .eq('id', entityId)
     .maybeSingle();
 
@@ -31,8 +29,8 @@ async function fetchEventData(entityId: string): Promise<EntityLiveData> {
     return { title: 'Unknown Event', deleted: true };
   }
 
-  const { count } = await supabase
-    .from('event_attendees')
+  const { count } = await db
+    .from('event_registrations')
     .select('*', { count: 'exact', head: true })
     .eq('event_id', entityId);
 
@@ -40,7 +38,7 @@ async function fetchEventData(entityId: string): Promise<EntityLiveData> {
     title: data.title,
     slug: data.slug,
     deleted: data.is_cancelled || false,
-    startDate: data.start_date,
+    startDate: data.start_time,
     location: data.location,
     eventType: data.event_type,
     attendeeCount: count ?? 0,
@@ -48,7 +46,7 @@ async function fetchEventData(entityId: string): Promise<EntityLiveData> {
 }
 
 async function fetchSpaceData(entityId: string): Promise<EntityLiveData> {
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('spaces')
     .select('id, name, slug, space_type, status')
     .eq('id', entityId)
@@ -58,7 +56,7 @@ async function fetchSpaceData(entityId: string): Promise<EntityLiveData> {
     return { title: 'Unknown Space', deleted: true };
   }
 
-  const { count } = await supabase
+  const { count } = await db
     .from('space_members')
     .select('*', { count: 'exact', head: true })
     .eq('space_id', entityId);
@@ -73,9 +71,9 @@ async function fetchSpaceData(entityId: string): Promise<EntityLiveData> {
 }
 
 async function fetchOpportunityData(entityId: string): Promise<EntityLiveData> {
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('opportunities')
-    .select('id, title, contribution_type, status')
+    .select('id, title, type, status')
     .eq('id', entityId)
     .maybeSingle();
 
@@ -86,14 +84,14 @@ async function fetchOpportunityData(entityId: string): Promise<EntityLiveData> {
   return {
     title: data.title,
     deleted: data.status === 'closed',
-    opportunityType: data.contribution_type,
+    opportunityType: data.type,
   };
 }
 
 async function fetchPostData(entityId: string): Promise<EntityLiveData> {
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('posts')
-    .select('id, content, user_id, profiles(full_name)')
+    .select('id, content, author_id, profiles:author_id(full_name)')
     .eq('id', entityId)
     .maybeSingle();
 
@@ -101,7 +99,7 @@ async function fetchPostData(entityId: string): Promise<EntityLiveData> {
     return { title: 'Unknown Post', deleted: true };
   }
 
-  const { count } = await supabase
+  const { count } = await db
     .from('post_reactions')
     .select('*', { count: 'exact', head: true })
     .eq('post_id', entityId);
@@ -116,9 +114,9 @@ async function fetchPostData(entityId: string): Promise<EntityLiveData> {
 }
 
 async function fetchStoryData(entityId: string): Promise<EntityLiveData> {
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('impact_stories')
-    .select('id, title, slug, author_id, profiles(full_name)')
+    .select('id, title, slug, author_id, profiles:author_id(full_name)')
     .eq('id', entityId)
     .maybeSingle();
 
