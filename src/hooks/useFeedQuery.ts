@@ -116,7 +116,7 @@ export function useFeedQuery(options: UseFeedQueryOptions = {}): UseFeedQueryRes
         cursor: pageParam || null,
         pageSize: pageSize * 2, // Over-fetch for diversity filtering
         userId,
-        userTier: 'free',
+        userTier: 'free' as unknown as import('@/types/composer').UserTier,
         userTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       };
 
