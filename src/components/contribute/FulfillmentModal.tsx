@@ -64,8 +64,10 @@ const FulfillmentModal: React.FC<FulfillmentModalProps> = ({
       if (oppError) throw oppError;
 
       // Notify accepted contributors
-      const { data: accepted } = await supabase
-        .from('opportunity_interests' as any)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const db = supabase as any;
+      const { data: accepted } = await db
+        .from('opportunity_interests')
         .select('user_id')
         .eq('opportunity_id', opportunityId)
         .eq('status', 'accepted');

@@ -601,6 +601,42 @@ export type Database = {
           },
         ]
       }
+      badge_definitions: {
+        Row: {
+          category: string
+          created_at: string | null
+          criteria: Json | null
+          description: string
+          icon: string
+          id: string
+          name: string
+          slug: string
+          tier: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          criteria?: Json | null
+          description: string
+          icon: string
+          id?: string
+          name: string
+          slug: string
+          tier?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          criteria?: Json | null
+          description?: string
+          icon?: string
+          id?: string
+          name?: string
+          slug?: string
+          tier?: string | null
+        }
+        Relationships: []
+      }
       beta_waitlist: {
         Row: {
           created_at: string
@@ -5376,6 +5412,44 @@ export type Database = {
           },
         ]
       }
+      opportunity_interests: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string | null
+          opportunity_id: string
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message?: string | null
+          opportunity_id: string
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string | null
+          opportunity_id?: string
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opportunity_interests_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization_verification_requests: {
         Row: {
           annual_budget_usd: number | null
@@ -6410,6 +6484,8 @@ export type Database = {
           current_region: string | null
           dashboard_version: string | null
           deleted_at: string | null
+          dia_insight: string | null
+          dia_insight_updated_at: string | null
           diaspora_networks: string[] | null
           diaspora_origin: string | null
           diaspora_status: string | null
@@ -6441,6 +6517,8 @@ export type Database = {
           impact_areas: string[] | null
           impact_goals: string[] | null
           impact_regions: string[] | null
+          impact_scores: Json | null
+          impact_scores_updated_at: string | null
           industries: string[] | null
           industry: string | null
           industry_sectors: string[] | null
@@ -6620,6 +6698,8 @@ export type Database = {
           current_region?: string | null
           dashboard_version?: string | null
           deleted_at?: string | null
+          dia_insight?: string | null
+          dia_insight_updated_at?: string | null
           diaspora_networks?: string[] | null
           diaspora_origin?: string | null
           diaspora_status?: string | null
@@ -6651,6 +6731,8 @@ export type Database = {
           impact_areas?: string[] | null
           impact_goals?: string[] | null
           impact_regions?: string[] | null
+          impact_scores?: Json | null
+          impact_scores_updated_at?: string | null
           industries?: string[] | null
           industry?: string | null
           industry_sectors?: string[] | null
@@ -6830,6 +6912,8 @@ export type Database = {
           current_region?: string | null
           dashboard_version?: string | null
           deleted_at?: string | null
+          dia_insight?: string | null
+          dia_insight_updated_at?: string | null
           diaspora_networks?: string[] | null
           diaspora_origin?: string | null
           diaspora_status?: string | null
@@ -6861,6 +6945,8 @@ export type Database = {
           impact_areas?: string[] | null
           impact_goals?: string[] | null
           impact_regions?: string[] | null
+          impact_scores?: Json | null
+          impact_scores_updated_at?: string | null
           industries?: string[] | null
           industry?: string | null
           industry_sectors?: string[] | null
@@ -8127,6 +8213,35 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_badges: {
+        Row: {
+          badge_id: string
+          earned_at: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          badge_id: string
+          earned_at?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          badge_id?: string
+          earned_at?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badge_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_communities: {
         Row: {
