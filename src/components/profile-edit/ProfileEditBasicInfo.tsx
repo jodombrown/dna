@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import CountryCombobox from '@/components/ui/country-combobox';
+import HeadlineWizard from '@/components/profile/HeadlineWizard';
 
 interface ProfileEditBasicInfoProps {
   fullName: string;
@@ -14,6 +15,8 @@ interface ProfileEditBasicInfoProps {
   countryOfOrigin: string;
   currentCountry: string;
   pronouns: string;
+  skills?: string[];
+  professionalSectors?: string[];
   onFullNameChange: (value: string) => void;
   onHeadlineChange: (value: string) => void;
   onBioChange: (value: string) => void;
@@ -40,6 +43,8 @@ const ProfileEditBasicInfo: React.FC<ProfileEditBasicInfoProps> = ({
   countryOfOrigin,
   currentCountry,
   pronouns,
+  skills = [],
+  professionalSectors = [],
   onFullNameChange,
   onHeadlineChange,
   onBioChange,
@@ -87,22 +92,14 @@ const ProfileEditBasicInfo: React.FC<ProfileEditBasicInfoProps> = ({
         </div>
 
         <div>
-          <Label htmlFor="headline">Professional Headline</Label>
-          <Input
-            id="headline"
-            placeholder="e.g., Software Engineer at Tech Company"
-            value={headline}
-            onChange={(e) => onHeadlineChange(e.target.value)}
-            maxLength={150}
+          <HeadlineWizard
+            headline={headline}
+            currentCountry={currentCountry}
+            countryOfOrigin={countryOfOrigin}
+            skills={skills}
+            professionalSectors={professionalSectors}
+            onHeadlineChange={onHeadlineChange}
           />
-          <div className="flex justify-between mt-1">
-            <p className="text-xs text-muted-foreground">
-              A short description of what you do
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {headline.length}/150
-            </p>
-          </div>
         </div>
 
         <div>

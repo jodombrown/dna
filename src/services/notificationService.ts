@@ -118,10 +118,19 @@ export const NOTIFICATION_TYPES = {
   MESSAGE: 'message',
   MENTION: 'mention',
   EVENT_REMINDER: 'event_reminder',
+  EVENT_RSVP: 'event_rsvp',
   POST_LIKE: 'post_like',
+  POST_COMMENT: 'post_comment',
   STORY_PUBLISHED: 'story_published',
   WELCOME: 'welcome',
   FEEDBACK_STATUS_CHANGE: 'feedback_status_change',
+  // Sprint 13 additions
+  BADGE_EARNED: 'badge_earned',
+  NEW_FOLLOWER: 'new_follower',
+  OPPORTUNITY_INTEREST: 'opportunity_interest',
+  OPPORTUNITY_INTEREST_ACCEPTED: 'opportunity_interest_accepted',
+  OPPORTUNITY_INTEREST_DECLINED: 'opportunity_interest_declined',
+  OPPORTUNITY_FULFILLED: 'opportunity_fulfilled',
 } as const;
 
 /**

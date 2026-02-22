@@ -48,6 +48,12 @@ import { useTrackProfileView } from '@/hooks/useTrackProfileView';
 import { calculateProfileCompletionPts } from '@/lib/profileCompletion';
 import { getErrorMessage } from '@/lib/errorLogger';
 
+// Sprint 13 — Impact Radar, Badges, DIA Insight
+import ImpactRadarChart from '@/components/profile/ImpactRadarChart';
+import ProfileBadges from '@/components/profile/ProfileBadges';
+import DiaUniqueInsight from '@/components/profile/DiaUniqueInsight';
+import { useImpactScores } from '@/hooks/useImpactScores';
+
 const ProfileV2: React.FC = () => {
   const { username } = useParams<{ username: string }>();
   const { user } = useAuth();
@@ -57,6 +63,9 @@ const ProfileV2: React.FC = () => {
   const navigate = useNavigate();
   const { data: bundle, isLoading, error } = useProfileV2(username);
   const { data: ownerProfile } = useProfile();
+
+  // Sprint 13: Impact scores for radar chart
+  const { scores: impactScores } = useImpactScores(bundle?.profile?.id);
 
   // Track profile views for analytics (non-owner views only)
   useTrackProfileView({
@@ -391,6 +400,30 @@ const ProfileV2: React.FC = () => {
 
           {/* Right Column - Sidebar */}
           <div className="space-y-6">
+            {/* Impact Radar Chart — Sprint 13A */}
+            {impactScores && (
+              <div className="bg-card border rounded-lg p-4 flex flex-col items-center">
+                <h3 className="text-sm font-semibold mb-2 self-start">Five C&apos;s Impact</h3>
+                <ImpactRadarChart
+                  scores={impactScores}
+                  size={permissions.is_owner ? 'lg' : 'md'}
+                  interactive={permissions.is_owner}
+                />
+              </div>
+            )}
+
+            {/* DIA Unique Insight — Sprint 13B */}
+            <DiaUniqueInsight
+              userId={profile.id}
+              isOwner={permissions.is_owner}
+            />
+
+            {/* Profile Badges — Sprint 13C */}
+            <ProfileBadges
+              userId={profile.id}
+              isOwner={permissions.is_owner}
+            />
+
             {/* Mutual Connections (Non-Owner Only) */}
             {!permissions.is_owner && user?.id && profile?.id && (
               <MutualConnectionsWidget

@@ -92,6 +92,20 @@ function convertPlatformNotification(notif: Notification): UnifiedNotification {
       ? `/u/${notif.actor_username}`
       : '/dna/connect',
     feedback_status_change: '/dna/settings',
+    // Sprint 13 additions
+    badge_earned: notif.actor_username
+      ? `/u/${notif.actor_username}`
+      : '/dna/profile/edit',
+    new_follower: notif.actor_username
+      ? `/u/${notif.actor_username}`
+      : '/dna/connect',
+    opportunity_interest: '/dna/contribute',
+    opportunity_interest_accepted: '/dna/contribute',
+    opportunity_interest_declined: '/dna/contribute',
+    opportunity_fulfilled: '/dna/contribute',
+    event_rsvp: notif.entity_id
+      ? `/dna/convene/events/${notif.entity_id}`
+      : '/dna/convene',
   };
 
   const labelMap: Record<string, string> = {
@@ -108,6 +122,14 @@ function convertPlatformNotification(notif: Notification): UnifiedNotification {
     group_invite: 'View Space',
     profile_view: 'View Profile',
     feedback_status_change: 'View',
+    // Sprint 13 additions
+    badge_earned: 'View Badge',
+    new_follower: 'View Profile',
+    opportunity_interest: 'View Interest',
+    opportunity_interest_accepted: 'View',
+    opportunity_interest_declined: 'View',
+    opportunity_fulfilled: 'View',
+    event_rsvp: 'View Event',
   };
 
   return {

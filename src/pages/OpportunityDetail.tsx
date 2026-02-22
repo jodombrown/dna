@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,15 +9,19 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowLeft, MapPin, Clock, Bookmark, Share2, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
 import { ApplicationForm } from '@/components/opportunities/ApplicationForm';
+import InterestManager from '@/components/contribute/InterestManager';
+import FulfillmentModal from '@/components/contribute/FulfillmentModal';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 
 export default function OpportunityDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [showApplicationForm, setShowApplicationForm] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [showFulfillModal, setShowFulfillModal] = useState(false);
 
   const { data: opportunity, isLoading } = useQuery({
     queryKey: ['opportunity', id],
@@ -199,6 +204,39 @@ export default function OpportunityDetail() {
               </div>
             </CardContent>
           </Card>
+        )}
+
+        {/* Interest Manager for opportunity poster — Sprint 13D */}
+        {user && opportunity.created_by === user.id && id && (
+          <>
+            <InterestManager
+              opportunityId={id}
+              opportunityTitle={opportunity.title}
+            />
+            <div className="mt-4 mb-6 flex gap-2">
+              {opportunity.status !== 'fulfilled' && (
+                <Button
+                  variant="outline"
+                  onClick={() => setShowFulfillModal(true)}
+                  className="bg-green-50 hover:bg-green-100 text-green-700 border-green-200"
+                >
+                  <CheckCircle2 className="w-4 h-4 mr-2" />
+                  Mark as Fulfilled
+                </Button>
+              )}
+              {opportunity.status === 'fulfilled' && (
+                <Badge variant="default" className="bg-green-600 text-sm py-1 px-3">
+                  Fulfilled
+                </Badge>
+              )}
+            </div>
+            <FulfillmentModal
+              open={showFulfillModal}
+              onOpenChange={setShowFulfillModal}
+              opportunityId={id}
+              opportunityTitle={opportunity.title}
+            />
+          </>
         )}
 
         {existingApplication ? (
