@@ -149,7 +149,7 @@ export const ReactionBar: React.FC<ReactionBarProps> = ({
           reaction_type: reactionType,
         });
         if (error) {
-          const errMsg = (error as Record<string, string>).message || '';
+          const errMsg = (error as unknown as Record<string, string>).message || '';
           if (errMsg.includes('duplicate key')) {
             // Already exists, update instead
             await supabase

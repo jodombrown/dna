@@ -76,7 +76,7 @@ export const BookmarkButton: React.FC<BookmarkButtonProps> = ({
           content_id: contentId,
         });
         if (error) {
-          const errMsg = (error as Record<string, string>).message || '';
+          const errMsg = (error as unknown as Record<string, string>).message || '';
           if (!errMsg.includes('duplicate key')) throw error;
         }
       }

@@ -12,9 +12,8 @@
  * - No more than 60% from any single region
  */
 
-import type { FeedItem, FeedContentType } from '@/types/feedTypes';
+import type { FeedItem, FeedContentType, EventFeedContent, SpaceFeedContent } from '@/types/feedTypes';
 import type { CModule } from '@/types/composer';
-import type { EventFeedContent } from '@/types/feedTypes';
 
 // ============================================================
 // DIVERSITY RULES

@@ -125,7 +125,7 @@ export async function getUserInterestProfile(userId: string): Promise<UserIntere
       behavioralWeight,
     };
   } catch (err) {
-    logHighError(err, 'personalization', 'getUserInterestProfile failed', { userId });
+    logHighError(err, 'feed', 'getUserInterestProfile failed', { userId });
     // Fallback: return minimal profile from explicit data
     const fallback = await fetchExplicitProfile(userId);
     return {
@@ -300,7 +300,9 @@ async function fetchContentCreationSignals(userId: string): Promise<{
   sectors: WeightedTopic[];
   topics: WeightedTopic[];
 }> {
-  const { data: posts } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const db = supabase as any;
+  const { data: posts } = await db
     .from('posts')
     .select('tags, post_type')
     .eq('author_id', userId)
@@ -308,7 +310,7 @@ async function fetchContentCreationSignals(userId: string): Promise<{
     .limit(50);
 
   const tagCounts = new Map<string, number>();
-  for (const post of (posts || []) as Array<Record<string, unknown>>) {
+  for (const post of (posts || []) as unknown as Array<Record<string, unknown>>) {
     const tags = post.tags as string[] | null;
     if (tags) {
       for (const tag of tags) {
