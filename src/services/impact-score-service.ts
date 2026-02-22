@@ -346,7 +346,9 @@ export async function computeImpactScores(userId: string): Promise<ImpactScores>
     // Get previous scores for trend detection
     let previousScores: Record<string, number> | null = null;
     try {
-      const { data: profile } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const db = supabase as any;
+      const { data: profile } = await db
         .from('profiles')
         .select('impact_scores')
         .eq('id', userId)
@@ -405,7 +407,9 @@ export async function computeImpactScores(userId: string): Promise<ImpactScores>
  */
 export async function getOrComputeImpactScores(userId: string): Promise<ImpactScores> {
   try {
-    const { data: profile } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const db = supabase as any;
+    const { data: profile } = await db
       .from('profiles')
       .select('impact_scores, impact_scores_updated_at')
       .eq('id', userId)

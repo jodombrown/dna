@@ -107,7 +107,9 @@ export async function generateUniquenessInsight(userId: string): Promise<string>
  */
 export async function getOrGenerateInsight(userId: string): Promise<string> {
   try {
-    const { data } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const db = supabase as any;
+    const { data } = await db
       .from('profiles')
       .select('dia_insight, dia_insight_updated_at')
       .eq('id', userId)
