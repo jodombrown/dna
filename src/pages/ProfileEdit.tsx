@@ -535,6 +535,8 @@ const ProfileEdit = () => {
             countryOfOrigin={countryOfOrigin}
             currentCountry={currentCountry}
             pronouns={pronouns}
+            skills={skills}
+            professionalSectors={professionalSectors}
             onFullNameChange={setFullName}
             onHeadlineChange={setHeadline}
             onBioChange={setBio}
