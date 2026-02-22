@@ -3636,6 +3636,7 @@ export type Database = {
           channel_id: string
           content: string
           created_at: string | null
+          deleted_at: string | null
           id: string
           is_deleted: boolean | null
           is_highlighted: boolean | null
@@ -3655,6 +3656,7 @@ export type Database = {
           channel_id: string
           content: string
           created_at?: string | null
+          deleted_at?: string | null
           id?: string
           is_deleted?: boolean | null
           is_highlighted?: boolean | null
@@ -3674,6 +3676,7 @@ export type Database = {
           channel_id?: string
           content?: string
           created_at?: string | null
+          deleted_at?: string | null
           id?: string
           is_deleted?: boolean | null
           is_highlighted?: boolean | null
@@ -6090,6 +6093,7 @@ export type Database = {
           space_id: string | null
           story_type: string | null
           subtitle: string | null
+          tags: string[] | null
           title: string | null
           updated_at: string
           view_count: number | null
@@ -6129,6 +6133,7 @@ export type Database = {
           space_id?: string | null
           story_type?: string | null
           subtitle?: string | null
+          tags?: string[] | null
           title?: string | null
           updated_at?: string
           view_count?: number | null
@@ -6168,6 +6173,7 @@ export type Database = {
           space_id?: string | null
           story_type?: string | null
           subtitle?: string | null
+          tags?: string[] | null
           title?: string | null
           updated_at?: string
           view_count?: number | null
@@ -6249,6 +6255,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      profile_completion: {
+        Row: {
+          completed_at: string | null
+          guide_dismissed: boolean | null
+          guide_minimized: boolean | null
+          steps_completed: string[] | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          guide_dismissed?: boolean | null
+          guide_minimized?: boolean | null
+          steps_completed?: string[] | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          guide_dismissed?: boolean | null
+          guide_minimized?: boolean | null
+          steps_completed?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       profile_skills: {
         Row: {
@@ -6395,6 +6428,8 @@ export type Database = {
           first_action_type: string | null
           first_name: string | null
           focus_areas: string[] | null
+          follower_count: number | null
+          following_count: number | null
           full_name: string | null
           fundraising_status: string | null
           github_url: string | null
@@ -6603,6 +6638,8 @@ export type Database = {
           first_action_type?: string | null
           first_name?: string | null
           focus_areas?: string[] | null
+          follower_count?: number | null
+          following_count?: number | null
           full_name?: string | null
           fundraising_status?: string | null
           github_url?: string | null
@@ -6811,6 +6848,8 @@ export type Database = {
           first_action_type?: string | null
           first_name?: string | null
           focus_areas?: string[] | null
+          follower_count?: number | null
+          following_count?: number | null
           full_name?: string | null
           fundraising_status?: string | null
           github_url?: string | null
@@ -8304,6 +8343,27 @@ export type Database = {
           type?: string
           updated_at?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_follows: {
+        Row: {
+          created_at: string | null
+          followed_id: string
+          follower_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string | null
+          followed_id: string
+          follower_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string | null
+          followed_id?: string
+          follower_id?: string
+          id?: string
         }
         Relationships: []
       }
