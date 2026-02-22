@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-// Navigation handled by child components
 import { PenSquare, Sparkles, Users, Newspaper, TrendingUp, Search } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -19,22 +18,67 @@ import { FirstTimeWalkthrough } from '@/components/onboarding/FirstTimeWalkthrou
 import { FeedProfileCard } from '@/components/feed/FeedProfileCard';
 import { FeedQuickLinks } from '@/components/feed/FeedQuickLinks';
 import { FeedRightSidebar } from '@/components/feed/FeedRightSidebar';
+import { NewPostsIndicator } from '@/components/feed/NewPostsIndicator';
 import { FeedTab, RankingMode } from '@/types/feed';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { MobileHeader } from '@/components/mobile/MobileHeader';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { useMobile } from '@/hooks/useMobile';
+import { incrementSessionCount } from '@/services/dia-feed-cadence';
+
+// Scroll position storage key
+const FEED_SCROLL_KEY = 'dna_feed_scroll_position';
 
 const DnaFeed = () => {
   const { user } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile();
-  
+
   const [activeTab, setActiveTab] = useState<FeedTab>('all');
   const [rankingMode, setRankingMode] = useState<RankingMode>('latest');
   const [showSearchDialog, setShowSearchDialog] = useState(false);
+  const [newPostCount, setNewPostCount] = useState(0);
+  const feedContainerRef = useRef<HTMLDivElement>(null);
   const composer = useUniversalComposer();
   const { isMobile } = useMobile();
+
+  // Increment session count for DIA cadence engine
+  useEffect(() => {
+    incrementSessionCount();
+  }, []);
+
+  // Scroll position preservation
+  useEffect(() => {
+    const savedScroll = sessionStorage.getItem(FEED_SCROLL_KEY);
+    if (savedScroll) {
+      const scrollY = parseInt(savedScroll, 10);
+      requestAnimationFrame(() => {
+        window.scrollTo(0, scrollY);
+      });
+      sessionStorage.removeItem(FEED_SCROLL_KEY);
+    }
+
+    const handleBeforeUnload = () => {
+      sessionStorage.setItem(FEED_SCROLL_KEY, String(window.scrollY));
+    };
+
+    // Save scroll position when navigating away
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
+  // Save scroll position on route change (SPA navigation)
+  useEffect(() => {
+    return () => {
+      sessionStorage.setItem(FEED_SCROLL_KEY, String(window.scrollY));
+    };
+  }, []);
+
+  // New posts handler
+  const handleNewPostsClick = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setNewPostCount(0);
+  }, []);
 
   if (profileLoading) {
     return (
@@ -82,11 +126,14 @@ const DnaFeed = () => {
             </div>
           </div>
 
+          {/* New Posts Indicator */}
+          <NewPostsIndicator count={newPostCount} onClick={handleNewPostsClick} />
+
           {/* Add top padding to account for fixed header height */}
           <main className="pb-16 px-3 pt-[9rem] space-y-2">
             {/* Tab Explainer - shows once per day/login per tab */}
             <FeedTabExplainer activeTab={activeTab} />
-            
+
             {activeTab === 'for_you' ? (
               <PersonalizedFeed />
             ) : (
@@ -136,9 +183,12 @@ const DnaFeed = () => {
  
   // Desktop layout - LinkedIn-style 3-column
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" ref={feedContainerRef}>
       {/* First-time user walkthrough */}
       <FirstTimeWalkthrough />
+
+      {/* New Posts Indicator */}
+      <NewPostsIndicator count={newPostCount} onClick={handleNewPostsClick} />
       
       {/* LinkedIn-style 3-column grid */}
       <div 

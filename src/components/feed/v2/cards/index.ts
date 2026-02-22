@@ -11,3 +11,4 @@ export { OpportunityFeedCard } from './OpportunityFeedCard';
 export { DIAInsightCard } from './DIAInsightCard';
 export { MilestoneFeedCard } from './MilestoneFeedCard';
 export { ActivityFeedCard } from './ActivityFeedCard';
+export { MemberSpotlightFeedCard } from './MemberSpotlightFeedCard';
