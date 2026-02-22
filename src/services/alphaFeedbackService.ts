@@ -49,7 +49,8 @@ export const alphaFeedbackService = {
       return false;
     }
 
-    const { error } = await supabase.from('alpha_feedback').insert({
+    const db = supabase as any;
+    const { error } = await db.from('alpha_feedback').insert({
       user_id: userData.user.id,
       category: feedback.category,
       area: feedback.area ?? null,
@@ -68,7 +69,8 @@ export const alphaFeedbackService = {
   },
 
   async getFeedbackForAdmin(): Promise<AlphaFeedbackRow[]> {
-    const { data, error } = await supabase
+    const db = supabase as any;
+    const { data, error } = await db
       .from('alpha_feedback')
       .select('*')
       .order('created_at', { ascending: false });

@@ -765,9 +765,15 @@ export async function seedAlphaData(config: AlphaSeedConfig = DEFAULT_CONFIG): P
         }
       }
 
-      const { error: connError } = await supabase
+      const db = supabase as any;
+      const mappedConnections = connections.slice(0, 60).map((c) => ({
+        requester_id: c.user_id,
+        recipient_id: c.connected_user_id,
+        status: c.status,
+      }));
+      const { error: connError } = await db
         .from('connections')
-        .upsert(connections.slice(0, 60));
+        .upsert(mappedConnections);
 
       if (connError) {
         logger.warn('SeedAlpha', 'Failed to seed connections', connError);
@@ -781,15 +787,16 @@ export async function seedAlphaData(config: AlphaSeedConfig = DEFAULT_CONFIG): P
       id: generateId(),
       title: e.title,
       description: e.description,
-      event_type: e.format,
-      location: e.location,
-      start_date: daysFromNow(e.daysFromNow),
-      end_date: daysFromNow(e.daysFromNow + 1),
-      creator_id: randomElement(result.profileIds),
+      event_type: e.format as 'conference' | 'meetup' | 'workshop' | 'webinar' | 'social' | 'networking' | 'other',
+      format: e.format === 'virtual' ? 'virtual' : e.format === 'in_person' ? 'in_person' : 'hybrid',
+      location_name: e.location,
+      start_time: daysFromNow(e.daysFromNow),
+      end_time: daysFromNow(e.daysFromNow + 1),
+      organizer_id: randomElement(result.profileIds),
       status: e.daysFromNow < 0 ? 'completed' : 'published',
     }));
 
-    const { data: insertedEvents, error: eventError } = await supabase
+    const { data: insertedEvents, error: eventError } = await (supabase as any)
       .from('events')
       .upsert(eventsToInsert)
       .select('id');
@@ -804,14 +811,14 @@ export async function seedAlphaData(config: AlphaSeedConfig = DEFAULT_CONFIG): P
     // 4. Seed Spaces
     const spacesToInsert = SEED_SPACES.slice(0, config.activeSpaces + config.stalledSpaces).map((s) => ({
       id: generateId(),
-      name: s.name,
+      title: s.name,
       description: s.description,
       created_by: randomElement(result.profileIds),
       status: s.status === 'stalled' ? 'active' : s.status,
       updated_at: daysFromNow(-s.daysSinceActivity),
     }));
 
-    const { data: insertedSpaces, error: spaceError } = await supabase
+    const { data: insertedSpaces, error: spaceError } = await (supabase as any)
       .from('collaboration_spaces')
       .upsert(spacesToInsert)
       .select('id');
@@ -829,13 +836,12 @@ export async function seedAlphaData(config: AlphaSeedConfig = DEFAULT_CONFIG): P
       title: o.title,
       description: o.description,
       type: o.type,
-      category: o.category,
-      skills_needed: o.skills,
+      tags: o.skills ?? [],
       created_by: randomElement(result.profileIds),
-      status: 'open',
+      status: 'active',
     }));
 
-    const { data: insertedOpps, error: oppError } = await supabase
+    const { data: insertedOpps, error: oppError } = await (supabase as any)
       .from('opportunities')
       .upsert(opportunitiesToInsert)
       .select('id');
@@ -852,11 +858,11 @@ export async function seedAlphaData(config: AlphaSeedConfig = DEFAULT_CONFIG): P
       id: generateId(),
       content,
       author_id: randomElement(result.profileIds),
-      type: 'post' as const,
-      visibility: 'public' as const,
+      post_type: 'post',
+      privacy_level: 'public',
     }));
 
-    const { data: insertedPosts, error: postError } = await supabase
+    const { data: insertedPosts, error: postError } = await (supabase as any)
       .from('posts')
       .upsert(postsToInsert)
       .select('id');
@@ -873,11 +879,11 @@ export async function seedAlphaData(config: AlphaSeedConfig = DEFAULT_CONFIG): P
       id: generateId(),
       content,
       author_id: randomElement(result.profileIds),
-      type: 'story' as const,
-      visibility: 'public' as const,
+      post_type: 'story',
+      privacy_level: 'public',
     }));
 
-    const { data: insertedStories, error: storyError } = await supabase
+    const { data: insertedStories, error: storyError } = await (supabase as any)
       .from('posts')
       .upsert(storiesToInsert)
       .select('id');
