@@ -82,7 +82,7 @@ export function DiscoveryFeed({
         .from('connections')
         .select('requester_id, recipient_id')
         .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`)
-        .in('status', ['accepted', 'pending']);
+        .eq('status', 'accepted');
       
       const ids = new Set<string>();
       data?.forEach(c => {
