@@ -36,6 +36,8 @@ export interface UserProfile {
   secondDegreeIds: Set<string>;
   sharedSpaceIds: Set<string>;
   messageHistoryUserIds: Set<string>;
+  /** Sprint 12D.3: IDs of users this user follows (asymmetric) */
+  followedIds: Set<string>;
 }
 
 export interface FeedState {
@@ -221,6 +223,10 @@ export function connectionScore(item: FeedItem, user: UserProfile): number {
   if (user.connectionIds.has(authorId)) {
     score = 1.0;
   }
+  // Sprint 12D.3: Following boost (1.5-degree — stronger than strangers, slightly weaker than mutual connections)
+  else if (user.followedIds.has(authorId)) {
+    score = 0.7;
+  }
   // 2nd degree connection
   else if (user.secondDegreeIds.has(authorId)) {
     score = 0.5;
@@ -233,6 +239,11 @@ export function connectionScore(item: FeedItem, user: UserProfile): number {
   // Bonus for message history
   if (user.messageHistoryUserIds.has(authorId)) {
     score = Math.min(score + 0.15, 1.0);
+  }
+
+  // Bonus for following even if already connected (stacks to show preference)
+  if (user.followedIds.has(authorId) && user.connectionIds.has(authorId)) {
+    score = Math.min(score + 0.05, 1.0);
   }
 
   // Bonus for shared spaces

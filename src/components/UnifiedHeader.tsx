@@ -9,9 +9,10 @@ import { UnifiedNotificationBell } from '@/components/notifications/UnifiedNotif
 import { cn } from '@/lib/utils';
 import dnaLogo from '@/assets/dna-logo.png';
 
-import { 
+import {
   Home,
   MessageCircle,
+  MessageSquarePlus,
   Bell,
   User,
   LogOut,
@@ -345,6 +346,28 @@ const UnifiedHeader = () => {
                 </Tooltip>
               )}
                   
+              {/* Feedback Hub Access — Sprint 12A */}
+              {isAuthenticated && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => navigate('/dna/feedback')}
+                      className={cn(
+                        "hidden md:flex",
+                        location.pathname === '/dna/feedback' ? 'text-primary' : 'text-muted-foreground hover:text-primary'
+                      )}
+                    >
+                      <MessageSquarePlus className="w-5 h-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Feedback Hub</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+
               {/* Notifications Center — Sprint 4C unified (platform + DIA) */}
               {isAuthenticated && user && <UnifiedNotificationBell />}
               

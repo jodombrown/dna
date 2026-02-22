@@ -30,6 +30,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { getErrorMessage } from '@/lib/errorLogger';
+import { FollowButton } from '@/components/profile/FollowButton';
 
 interface MemberCardProps {
   member: {
@@ -328,6 +329,9 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
                     {isSending ? '...' : 'Connect'}
                   </Button>
                 )}
+
+                {/* Sprint 12D.2: Follow button */}
+                <FollowButton targetUserId={member.id} compact />
 
                 {/* Overflow menu for secondary actions */}
                 <DropdownMenu>
