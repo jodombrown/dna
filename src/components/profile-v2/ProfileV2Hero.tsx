@@ -1,11 +1,13 @@
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Edit, MapPin, Globe, Briefcase, MessageCircle, UserPlus, Clock, Check, UserCheck } from 'lucide-react';
+import { Edit, MapPin, Globe, Briefcase, MessageCircle, UserPlus, Clock, Check, UserCheck, Users } from 'lucide-react';
 import { ProfileV2Data, ProfileV2Permissions, VerificationStatus, ConnectionStatus } from '@/types/profileV2';
 import { useToast } from '@/hooks/use-toast';
 import { ProfileShareDropdown } from '@/components/profile/ProfileShareDropdown';
 import { BANNER_GRADIENTS, BannerGradientKey } from '@/lib/constants/bannerGradients';
+import { FollowButton } from '@/components/profile/FollowButton';
+import { useFollow } from '@/hooks/useFollow';
 
 interface ProfileV2HeroProps {
   profile: ProfileV2Data;
@@ -57,6 +59,7 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
   onMessage,
 }) => {
   const { toast } = useToast();
+  const { followerCount, followingCount } = useFollow(profile.id);
 
   const handleShare = async () => {
     const profileUrl = `${window.location.origin}/dna/${profile.username}`;
@@ -174,6 +177,8 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                       Connected
                     </Button>
                   )}
+                  {/* Sprint 12D.2: Follow button */}
+                  <FollowButton targetUserId={profile.id} />
                   {onMessage && (
                     <Button onClick={onMessage} variant="outline" size="sm">
                       <MessageCircle className="w-4 h-4 mr-2" />
@@ -233,6 +238,17 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                   </span>
                 </div>
               )}
+              {/* Sprint 12D.2: Follower/Following counts */}
+              {(followerCount > 0 || followingCount > 0) && (
+                <div className="flex items-center gap-1.5">
+                  <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+                  <span>
+                    <strong>{followerCount}</strong> followers
+                    <span className="mx-1">·</span>
+                    <strong>{followingCount}</strong> following
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Mobile Action Buttons - Preserved original simple UI */}
@@ -263,6 +279,8 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                       Connect
                     </Button>
                   )}
+                  {/* Sprint 12D.2: Follow button (mobile) */}
+                  <FollowButton targetUserId={profile.id} compact />
                   {onMessage && (
                     <Button onClick={onMessage} variant="outline" className="flex-1" size="sm">
                       <MessageCircle className="w-4 h-4 mr-2" />

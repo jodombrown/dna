@@ -22,6 +22,7 @@ import {
   type CrossReference,
 } from '@/types/composer';
 import { logger } from '@/lib/logger';
+import { extractHashtags } from '@/utils/hashtagUtils';
 
 interface AttributionInsert {
   content_type: string;
@@ -232,6 +233,19 @@ export const composerService = {
     base: ComposerBaseFields,
     fields: PostModeFields
   ): Promise<string> {
+    // Extract tags from content hashtags + base tags
+    const contentTags = extractHashtags(base.body);
+    const baseTags = base.tags.map((t) => t.label.toLowerCase());
+    const allTags = [...new Set([...contentTags, ...baseTags])];
+
+    // Also add creator's professional_sectors as fallback tags
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('professional_sectors')
+      .single();
+    const sectorTags = (profile?.professional_sectors as string[] | null) ?? [];
+    const finalTags = allTags.length > 0 ? allTags : sectorTags;
+
     // posts table exists in generated types but insert shape is strict —
     // extra fields like composer_mode are provisional columns not yet in types
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -242,6 +256,7 @@ export const composerService = {
         privacy_level: base.audience,
         context: base.context ?? null,
         composer_mode: 'post',
+        tags: finalTags,
       })
       .select('id')
       .single();
@@ -254,6 +269,11 @@ export const composerService = {
     base: ComposerBaseFields,
     fields: StoryModeFields
   ): Promise<string> {
+    // Extract tags from content + story topics
+    const contentTags = extractHashtags(base.body);
+    const baseTags = base.tags.map((t) => t.label.toLowerCase());
+    const allTags = [...new Set([...contentTags, ...baseTags])];
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabase.from('posts') as any)
       .insert({
@@ -264,6 +284,7 @@ export const composerService = {
         post_type: 'story',
         privacy_level: base.audience,
         composer_mode: 'story',
+        tags: allTags,
       })
       .select('id')
       .single();

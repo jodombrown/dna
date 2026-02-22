@@ -300,9 +300,7 @@ async function fetchContentCreationSignals(userId: string): Promise<{
   sectors: WeightedTopic[];
   topics: WeightedTopic[];
 }> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const db = supabase as any;
-  const { data: posts } = await db
+  const { data: posts } = await supabase
     .from('posts')
     .select('tags, post_type')
     .eq('author_id', userId)

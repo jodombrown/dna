@@ -83,6 +83,7 @@ export function useFeedQuery(options: UseFeedQueryOptions = {}): UseFeedQueryRes
     secondDegreeIds: new Set(),
     sharedSpaceIds: new Set(),
     messageHistoryUserIds: new Set(),
+    followedIds: new Set(),
   };
 
   const diaStats: DIAEngagementStats = {

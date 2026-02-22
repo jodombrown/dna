@@ -6,12 +6,10 @@
  */
 
 interface FeatureFlags {
-  /** Shows alpha banner, feedback widget, test guide */
+  /** Shows alpha banner, test guide */
   isAlphaTest: boolean;
   /** Subtle "ALPHA" watermark in bottom-right corner */
   showAlphaWatermark: boolean;
-  /** Floating feedback button on every page */
-  enableFeedbackWidget: boolean;
   /** In-app test guide accessible from banner and navigation */
   enableTestGuide: boolean;
   /** Show DIA card reasoning metadata (for debugging only) */
@@ -21,7 +19,6 @@ interface FeatureFlags {
 export const FEATURE_FLAGS: FeatureFlags = {
   isAlphaTest: true,
   showAlphaWatermark: true,
-  enableFeedbackWidget: true,
   enableTestGuide: true,
   showDIADebugInfo: false,
 };

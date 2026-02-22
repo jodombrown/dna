@@ -8,7 +8,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Gift, Megaphone, Sparkles, MessageCircle, Bell, Settings, User, X } from 'lucide-react';
+import { Gift, Megaphone, Sparkles, MessageCircle, MessageSquarePlus, Bell, Settings, User, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { PulseNavigationData } from '@/hooks/usePulseNavigation';
 import type { PulseSection } from '@/types/pulse';
@@ -29,6 +29,7 @@ const PULSE_ITEMS = [
 
 const UTILITY_ITEMS = [
   { key: 'notifications', label: 'Notifications', icon: Bell, href: '/dna/notifications' },
+  { key: 'feedback', label: 'Feedback', icon: MessageSquarePlus, href: '/dna/feedback' },
   { key: 'settings', label: 'Settings', icon: Settings, href: '/dna/settings' },
   { key: 'profile', label: 'Profile', icon: User, href: '/dna/profile' },
 ] as const;
