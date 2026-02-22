@@ -3,11 +3,15 @@
  *
  * Hook for managing follow/unfollow state between users.
  * Returns follow state, counts, and toggle function with optimistic updates.
+ * Uses `db` bypass for user_follows (not yet in generated types).
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const db = supabase as any;
 
 interface UseFollowResult {
   isFollowing: boolean;
@@ -30,7 +34,7 @@ export function useFollow(targetUserId: string | undefined): UseFollowResult {
         return { isFollowing: false };
       }
 
-      const { data, error } = await supabase
+      const { data, error } = await db
         .from('user_follows')
         .select('id')
         .eq('follower_id', user.id)
@@ -49,15 +53,15 @@ export function useFollow(targetUserId: string | undefined): UseFollowResult {
     queryFn: async () => {
       if (!targetUserId) return { followerCount: 0, followingCount: 0 };
 
-      const { data: profile } = await supabase
+      const { data: profile } = await db
         .from('profiles')
         .select('follower_count, following_count')
         .eq('id', targetUserId)
         .single();
 
       return {
-        followerCount: (profile as Record<string, unknown>)?.follower_count as number || 0,
-        followingCount: (profile as Record<string, unknown>)?.following_count as number || 0,
+        followerCount: profile?.follower_count ?? 0,
+        followingCount: profile?.following_count ?? 0,
       };
     },
     enabled: !!targetUserId,
@@ -74,51 +78,28 @@ export function useFollow(targetUserId: string | undefined): UseFollowResult {
       const isCurrentlyFollowing = followState?.isFollowing || false;
 
       if (isCurrentlyFollowing) {
-        // Unfollow
-        const { error } = await supabase
+        const { error } = await db
           .from('user_follows')
           .delete()
           .eq('follower_id', user.id)
           .eq('followed_id', targetUserId);
-
         if (error) throw error;
 
-        // Decrement counts
+        // Update counts
         await Promise.all([
-          supabase.rpc('decrement_counter', {
-            row_id: targetUserId,
-            table_name: 'profiles',
-            column_name: 'follower_count',
-          }).then(() => {}).catch(() => {
-            // Fallback: manual decrement
-            supabase
-              .from('profiles')
-              .update({ follower_count: Math.max((counts?.followerCount || 1) - 1, 0) })
-              .eq('id', targetUserId);
-          }),
-          supabase
-            .from('profiles')
-            .update({ following_count: Math.max(0, ((await supabase.from('profiles').select('following_count').eq('id', user.id).single()).data as Record<string, unknown>)?.following_count as number - 1 || 0) })
-            .eq('id', user.id),
+          db.from('profiles').update({ follower_count: Math.max((counts?.followerCount || 1) - 1, 0) }).eq('id', targetUserId),
+          db.from('profiles').update({ following_count: Math.max((counts?.followingCount || 1) - 1, 0) }).eq('id', user.id),
         ]).catch(() => {});
       } else {
-        // Follow
-        const { error } = await supabase
+        const { error } = await db
           .from('user_follows')
           .insert({ follower_id: user.id, followed_id: targetUserId });
-
         if (error) throw error;
 
-        // Increment counts
+        // Update counts
         await Promise.all([
-          supabase
-            .from('profiles')
-            .update({ follower_count: (counts?.followerCount || 0) + 1 })
-            .eq('id', targetUserId),
-          supabase
-            .from('profiles')
-            .update({ following_count: ((await supabase.from('profiles').select('following_count').eq('id', user.id).single()).data as Record<string, unknown>)?.following_count as number + 1 || 1 })
-            .eq('id', user.id),
+          db.from('profiles').update({ follower_count: (counts?.followerCount || 0) + 1 }).eq('id', targetUserId),
+          db.from('profiles').update({ following_count: (counts?.followingCount || 0) + 1 }).eq('id', user.id),
         ]).catch(() => {});
       }
     },

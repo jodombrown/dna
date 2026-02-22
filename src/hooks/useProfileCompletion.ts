@@ -28,13 +28,16 @@ export function useProfileCompletion() {
   const { user, profile } = useAuth();
   const queryClient = useQueryClient();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const db = supabase as any;
+
   // Fetch profile completion state from DB
   const { data: completionState } = useQuery({
     queryKey: ['profile-completion', user?.id],
     queryFn: async (): Promise<ProfileCompletionState> => {
       if (!user?.id) return { stepsCompleted: [], guideDismissed: false, guideMinimized: false };
 
-      const { data, error } = await supabase
+      const { data, error } = await db
         .from('profile_completion')
         .select('steps_completed, guide_dismissed, guide_minimized')
         .eq('user_id', user.id)
@@ -45,9 +48,9 @@ export function useProfileCompletion() {
       }
 
       return {
-        stepsCompleted: (data as Record<string, unknown>).steps_completed as string[] || [],
-        guideDismissed: (data as Record<string, unknown>).guide_dismissed as boolean || false,
-        guideMinimized: (data as Record<string, unknown>).guide_minimized as boolean || false,
+        stepsCompleted: data.steps_completed as string[] || [],
+        guideDismissed: data.guide_dismissed as boolean || false,
+        guideMinimized: data.guide_minimized as boolean || false,
       };
     },
     enabled: !!user?.id,
@@ -92,8 +95,8 @@ export function useProfileCompletion() {
     staleTime: 60000,
   });
 
-  // Build steps from profile + activity data
-  const profileData = profile as Record<string, unknown> | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const profileData = profile as any;
   const steps: ProfileStep[] = [
     // Required
     {
@@ -203,7 +206,7 @@ export function useProfileCompletion() {
 
       const updatedSteps = [...currentSteps, stepId];
 
-      await supabase
+      await db
         .from('profile_completion')
         .upsert({
           user_id: user.id,
@@ -221,7 +224,7 @@ export function useProfileCompletion() {
   const dismissGuide = useMutation({
     mutationFn: async () => {
       if (!user?.id) return;
-      await supabase
+      await db
         .from('profile_completion')
         .upsert({
           user_id: user.id,
@@ -238,7 +241,7 @@ export function useProfileCompletion() {
   const toggleMinimized = useMutation({
     mutationFn: async (minimized: boolean) => {
       if (!user?.id) return;
-      await supabase
+      await db
         .from('profile_completion')
         .upsert({
           user_id: user.id,
