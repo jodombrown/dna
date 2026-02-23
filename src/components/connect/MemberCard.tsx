@@ -229,11 +229,11 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
                     {primaryLabel}
                   </Badge>
                 )}
-                {/* Match Score Badge */}
+                {/* Match Score Badge — single line */}
                 {member.match_score > 0 && (
                   <Badge 
                     variant="outline" 
-                    className={`w-fit px-2 py-0.5 text-[10px] font-semibold ${
+                    className={`w-fit px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap ${
                       member.match_score >= 80 
                         ? 'bg-emerald-100 text-emerald-700 border-emerald-200' 
                         : member.match_score >= 60 
@@ -241,7 +241,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
                           : 'bg-muted text-muted-foreground border-border'
                     }`}
                   >
-                    {member.match_score}% Match
+                    {member.match_score}%
                   </Badge>
                 )}
               </div>
@@ -264,9 +264,9 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
             </div>
 
             {/* Right column: Square avatar + actions */}
-            <div className="flex flex-col items-end gap-2 shrink-0">
+            <div className="flex flex-col items-end gap-2 shrink-0 mr-1">
               {/* Square avatar with rounded corners - Apple News style */}
-              <Avatar className="h-20 w-20 rounded-xl">
+              <Avatar className="h-18 w-18 rounded-xl">
                 <AvatarImage
                   src={member.avatar_url}
                   alt={member.full_name}

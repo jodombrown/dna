@@ -115,10 +115,10 @@ const DnaMessages = () => {
       );
     }
 
-    // Mobile: Conversation list
+    // Mobile: Conversation list — reduced top gap
     return (
-      <div className="min-h-screen bg-background pt-20">
-        <div className="container mx-auto px-4 py-6">
+      <div className="min-h-screen bg-background pt-14">
+        <div className="container mx-auto px-3 py-2">
           <ConversationListPanel
             conversations={conversations || []}
             archivedConversations={archivedConversations || []}

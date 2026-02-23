@@ -140,11 +140,6 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
             isOpen={isFeedbackFormOpen}
             onClose={() => setIsFeedbackFormOpen(false)}
           />
-          {FEATURE_FLAGS.showAlphaWatermark && (
-            <div className="fixed bottom-4 right-4 text-xs font-mono text-gray-300 opacity-50 pointer-events-none z-50">
-              DNA ALPHA v0.1
-            </div>
-          )}
         </>
       )}
     </>

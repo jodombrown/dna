@@ -400,14 +400,14 @@ const ProfileV2: React.FC = () => {
 
           {/* Right Column - Sidebar */}
           <div className="space-y-6">
-            {/* Impact Radar Chart — Sprint 13A */}
-            {impactScores && (
+            {/* Impact Radar Chart — Sprint 13A (owner only) */}
+            {permissions.is_owner && impactScores && (
               <div className="bg-card border rounded-lg p-4 flex flex-col items-center">
                 <h3 className="text-sm font-semibold mb-2 self-start">Five C&apos;s Impact</h3>
                 <ImpactRadarChart
                   scores={impactScores}
-                  size={permissions.is_owner ? 'lg' : 'md'}
-                  interactive={permissions.is_owner}
+                  size="lg"
+                  interactive
                 />
               </div>
             )}
