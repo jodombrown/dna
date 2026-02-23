@@ -266,7 +266,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
             {/* Right column: Square avatar + actions */}
             <div className="flex flex-col items-end gap-2 shrink-0 mr-1">
               {/* Square avatar with rounded corners - Apple News style */}
-              <Avatar className="h-18 w-18 rounded-xl">
+              <Avatar className="h-[72px] w-[72px] rounded-xl">
                 <AvatarImage
                   src={member.avatar_url}
                   alt={member.full_name}
