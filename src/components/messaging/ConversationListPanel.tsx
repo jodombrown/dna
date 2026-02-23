@@ -424,12 +424,12 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
                     transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                     className={cn(
                       'relative group',
-                      selectedConversationId === conversation.conversation_id && 'bg-accent'
+                      selectedConversationId === conversation.conversation_id && 'bg-primary text-primary-foreground [&_p]:text-primary-foreground [&_span]:text-primary-foreground/80'
                     )}
                   >
                   <button
                     onClick={() => onSelectConversation(conversation.conversation_id)}
-                    className="w-full p-4 pr-12 hover:bg-accent transition-colors text-left"
+                    className="w-full p-4 pr-10 hover:bg-accent transition-colors text-left"
                   >
                     <div className="flex items-start gap-3">
                       {/* Avatar with presence indicator */}

@@ -273,14 +273,8 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                 </>
               ) : (
                 <>
-                  {permissions.can_connect && onConnect && (
-                    <Button onClick={onConnect} className="flex-1" size="sm">
-                      <UserPlus className="w-4 h-4 mr-2" />
-                      Connect
-                    </Button>
-                  )}
-                  {/* Sprint 12D.2: Follow button (mobile) */}
-                  <FollowButton targetUserId={profile.id} compact />
+                  {/* Sprint 12D.2: Follow button (mobile) — equal width */}
+                  <FollowButton targetUserId={profile.id} />
                   {onMessage && (
                     <Button onClick={onMessage} variant="outline" className="flex-1" size="sm">
                       <MessageCircle className="w-4 h-4 mr-2" />
