@@ -28,7 +28,7 @@ const PULSE_KEYS: PulseKey[] = ['connect', 'convene', 'collaborate', 'contribute
  */
 function PulseBarSkeleton() {
   return (
-    <div className="w-full bg-white/80 backdrop-blur-sm border-b border-gray-200 px-4 py-2">
+    <div className="w-full bg-white/80 backdrop-blur-sm border-b border-gray-200 px-4 py-2 fixed top-14 sm:top-16 z-40 left-0">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
         {PULSE_KEYS.map((key) => (
           <div key={key} className="flex-1 animate-pulse">
@@ -70,7 +70,7 @@ export function PulseBar() {
         'w-full bg-white/80 backdrop-blur-sm',
         'border-b border-gray-200',
         'px-2 sm:px-4 py-2',
-        'sticky top-14 sm:top-16 z-40'
+        'fixed top-14 sm:top-16 z-40 left-0'
       )}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-1 sm:gap-2">
