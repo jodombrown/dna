@@ -7825,42 +7825,67 @@ export type Database = {
       }
       space_tasks: {
         Row: {
+          assigned_to: string | null
           assignee_id: string | null
+          completed_at: string | null
           created_at: string
           created_by: string
           description: string | null
           due_date: string | null
           id: string
+          parent_task_id: string | null
+          priority: string | null
+          sort_order: number | null
           space_id: string
           status: Database["public"]["Enums"]["task_status"]
+          tags: string[] | null
           title: string
           updated_at: string
         }
         Insert: {
+          assigned_to?: string | null
           assignee_id?: string | null
+          completed_at?: string | null
           created_at?: string
           created_by: string
           description?: string | null
           due_date?: string | null
           id?: string
+          parent_task_id?: string | null
+          priority?: string | null
+          sort_order?: number | null
           space_id: string
           status?: Database["public"]["Enums"]["task_status"]
+          tags?: string[] | null
           title: string
           updated_at?: string
         }
         Update: {
+          assigned_to?: string | null
           assignee_id?: string | null
+          completed_at?: string | null
           created_at?: string
           created_by?: string
           description?: string | null
           due_date?: string | null
           id?: string
+          parent_task_id?: string | null
+          priority?: string | null
+          sort_order?: number | null
           space_id?: string
           status?: Database["public"]["Enums"]["task_status"]
+          tags?: string[] | null
           title?: string
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "space_tasks_parent_task_id_fkey"
+            columns: ["parent_task_id"]
+            isOneToOne: false
+            referencedRelation: "space_tasks"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "space_tasks_space_id_fkey"
             columns: ["space_id"]
@@ -7953,11 +7978,14 @@ export type Database = {
       spaces: {
         Row: {
           completion_summary: Json | null
+          contributor_stats: Json | null
           cover_image_url: string | null
           created_at: string
           created_by: string
           description: string | null
           focus_areas: string[] | null
+          health_score: number | null
+          health_updated_at: string | null
           id: string
           last_activity_at: string | null
           name: string
@@ -7978,11 +8006,14 @@ export type Database = {
         }
         Insert: {
           completion_summary?: Json | null
+          contributor_stats?: Json | null
           cover_image_url?: string | null
           created_at?: string
           created_by: string
           description?: string | null
           focus_areas?: string[] | null
+          health_score?: number | null
+          health_updated_at?: string | null
           id?: string
           last_activity_at?: string | null
           name: string
@@ -8003,11 +8034,14 @@ export type Database = {
         }
         Update: {
           completion_summary?: Json | null
+          contributor_stats?: Json | null
           cover_image_url?: string | null
           created_at?: string
           created_by?: string
           description?: string | null
           focus_areas?: string[] | null
+          health_score?: number | null
+          health_updated_at?: string | null
           id?: string
           last_activity_at?: string | null
           name?: string
@@ -9090,6 +9124,10 @@ export type Database = {
         Returns: undefined
       }
       accept_connection: { Args: { p_connection: string }; Returns: undefined }
+      add_group_participant: {
+        Args: { p_conversation_id: string; p_user_id: string }
+        Returns: undefined
+      }
       add_message_reaction: {
         Args: { p_message_id: string; p_reaction: string; p_user_id: string }
         Returns: undefined
@@ -9280,6 +9318,14 @@ export type Database = {
           }
       create_event_messaging_thread: {
         Args: { p_event_id: string; p_title?: string }
+        Returns: string
+      }
+      create_group_conversation: {
+        Args: {
+          p_created_by?: string
+          p_participant_ids: string[]
+          p_title: string
+        }
         Returns: string
       }
       create_notification:
@@ -10616,6 +10662,10 @@ export type Database = {
       reject_html: { Args: { _txt: string }; Returns: boolean }
       remove_connection: {
         Args: { p_connection_id: string }
+        Returns: undefined
+      }
+      remove_group_participant: {
+        Args: { p_conversation_id: string; p_user_id: string }
         Returns: undefined
       }
       remove_message_reaction: {
