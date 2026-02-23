@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { Loader2, Search, Plus, MoreVertical, Pin, BellOff, Trash2, Archive, ArchiveRestore, Check, Settings } from 'lucide-react';
+import { Loader2, Search, Plus, MoreVertical, Pin, BellOff, Trash2, Archive, ArchiveRestore, Check, Settings, Users, MessageSquarePlus } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ConversationListItem, InboxTab } from '@/types/messaging';
@@ -33,6 +33,7 @@ interface ConversationListPanelProps {
   selectedConversationId: string | null;
   onSelectConversation: (id: string) => void;
   onNewConversation?: () => void;
+  onNewGroup?: () => void;
   onlineUsers?: string[];
   onRefresh?: () => void;
   archivedConversations?: ConversationListItem[];
@@ -57,6 +58,7 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
   selectedConversationId,
   onSelectConversation,
   onNewConversation,
+  onNewGroup,
   onlineUsers = [],
   onRefresh,
   archivedConversations = [],
@@ -265,10 +267,28 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
         <div className="flex items-center justify-between">
           <h2 className="font-semibold text-lg">Messages</h2>
           <div className="flex items-center gap-1">
-            {onNewConversation && (
-              <Button variant="ghost" size="icon" onClick={onNewConversation} className="h-8 w-8">
-                <Plus className="w-4 h-4" />
-              </Button>
+            {(onNewConversation || onNewGroup) && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="z-[9999]">
+                  {onNewConversation && (
+                    <DropdownMenuItem onClick={onNewConversation} className="cursor-pointer">
+                      <MessageSquarePlus className="h-4 w-4 mr-2" />
+                      New Message
+                    </DropdownMenuItem>
+                  )}
+                  {onNewGroup && (
+                    <DropdownMenuItem onClick={onNewGroup} className="cursor-pointer">
+                      <Users className="h-4 w-4 mr-2" />
+                      New Group
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
             {/* Header Actions Menu */}
             <DropdownMenu>

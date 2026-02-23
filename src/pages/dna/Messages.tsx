@@ -7,13 +7,14 @@ import TwoColumnLayout from '@/layouts/TwoColumnLayout';
 import ConversationListPanel from '@/components/messaging/ConversationListPanel';
 import { ChatThread } from '@/components/messaging/inbox/ChatThread';
 import EmptyConversationState from '@/components/messaging/EmptyConversationState';
+import { CreateGroupDrawer } from '@/components/messaging/CreateGroupDrawer';
 import { LayoutTransitionLoader } from '@/components/LayoutTransitionLoader';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import MessagesBreadcrumb from '@/components/messaging/MessagesBreadcrumb';
 /**
  * DnaMessages - Canonical Messages route (/dna/messages)
- * 
+ *
  * MESSAGES_MODE: Two-column layout (35% list / 65% thread)
  * Replaces legacy /dna/connect/messages route
  * Part of ADA v2 (Adaptive Dashboard Architecture)
@@ -30,6 +31,7 @@ const DnaMessages = () => {
 
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(initialConversationId);
   const [searchTerm, setSearchTerm] = useState('');
+  const [groupDrawerOpen, setGroupDrawerOpen] = useState(false);
 
   // Deep link: when ?thread= is present, select that thread and clean the URL
   useEffect(() => {
@@ -50,7 +52,7 @@ const DnaMessages = () => {
     } else {
       showHeader();
     }
-    
+
     // Cleanup: show header when leaving the page
     return () => {
       showHeader();
@@ -76,12 +78,17 @@ const DnaMessages = () => {
     select: (data) => data.filter(c => c.is_archived),
   });
 
+  const handleGroupCreated = (newConversationId: string) => {
+    setSelectedConversationId(newConversationId);
+    handleRefresh();
+  };
+
   if (isLoading) {
     return <LayoutTransitionLoader message="Loading messages..." />;
   }
 
   const selectedConversation = conversations?.find(c => c.conversation_id === selectedConversationId);
-  
+
   // Build otherUser object for ChatThread
   const otherUser = selectedConversation ? {
     id: selectedConversation.other_user_id,
@@ -89,7 +96,7 @@ const DnaMessages = () => {
     full_name: selectedConversation.other_user_full_name || 'Unknown User',
     avatar_url: selectedConversation.other_user_avatar_url || '',
   } : null;
-  
+
   // Mobile: Show only conversation list or thread, not both
   if (isMobile) {
     if (selectedConversationId && otherUser) {
@@ -97,7 +104,7 @@ const DnaMessages = () => {
       return (
         <div className="fixed inset-0 flex flex-col bg-background pb-16">
           <div className="flex-1 overflow-hidden">
-            <ChatThread 
+            <ChatThread
               conversationId={selectedConversationId}
               otherUser={otherUser}
               onBack={() => setSelectedConversationId(null)}
@@ -120,9 +127,15 @@ const DnaMessages = () => {
             onSelectConversation={setSelectedConversationId}
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
+            onNewGroup={() => setGroupDrawerOpen(true)}
             onRefresh={handleRefresh}
           />
         </div>
+        <CreateGroupDrawer
+          open={groupDrawerOpen}
+          onOpenChange={setGroupDrawerOpen}
+          onGroupCreated={handleGroupCreated}
+        />
         <MobileBottomNav />
       </div>
     );
@@ -131,7 +144,7 @@ const DnaMessages = () => {
   // Desktop: Two-column layout
   return (
     <div className="min-h-screen bg-background pt-20">
-      
+
       <TwoColumnLayout
         leftWidth="35%"
         rightWidth="65%"
@@ -144,12 +157,13 @@ const DnaMessages = () => {
             onSelectConversation={setSelectedConversationId}
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
+            onNewGroup={() => setGroupDrawerOpen(true)}
             onRefresh={handleRefresh}
           />
         }
         right={
           selectedConversationId && otherUser ? (
-            <ChatThread 
+            <ChatThread
               conversationId={selectedConversationId}
               otherUser={otherUser}
               onBack={() => setSelectedConversationId(null)}
@@ -158,6 +172,11 @@ const DnaMessages = () => {
             <EmptyConversationState />
           )
         }
+      />
+      <CreateGroupDrawer
+        open={groupDrawerOpen}
+        onOpenChange={setGroupDrawerOpen}
+        onGroupCreated={handleGroupCreated}
       />
     </div>
   );

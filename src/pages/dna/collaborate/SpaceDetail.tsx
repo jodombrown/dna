@@ -18,6 +18,11 @@ import { CompletionCelebration } from '@/components/collaboration/CompletionCele
 import { ArchiveSpaceDialog } from '@/components/collaboration/ArchiveSpaceDialog';
 import SpaceNeedsSection from '@/components/contribute/SpaceNeedsSection';
 import SpaceChannelCTA from '@/components/collaborate/SpaceChannelCTA';
+import { SpaceChannelList } from '@/components/collaborate/SpaceChannelList';
+import { TaskBoard } from '@/components/collaborate/TaskBoard';
+import { TaskDetailDrawer } from '@/components/collaborate/TaskDetailDrawer';
+import { ContributorRanking } from '@/components/collaborate/ContributorRanking';
+import { useTaskStats, type Task } from '@/hooks/useTasks';
 import { DIADetailInsight } from '@/components/dia/DIADetailInsight';
 import { useSpaceHealth, useArchiveSpace, useReactivateSpace, useMarkSpaceComplete } from '@/hooks/useSpaceHealth';
 import { supabaseClient } from '@/lib/supabaseHelpers';
@@ -42,6 +47,8 @@ export default function SpaceDetail() {
   const [showArchiveDialog, setShowArchiveDialog] = useState(false);
   const [hasSeenCelebration, setHasSeenCelebration] = useState(false);
   const [showShareInChat, setShowShareInChat] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [taskDrawerOpen, setTaskDrawerOpen] = useState(false);
 
   // Health monitoring hooks
   const isLead = membership?.role === 'lead';
@@ -49,6 +56,14 @@ export default function SpaceDetail() {
   const archiveSpace = useArchiveSpace();
   const reactivateSpace = useReactivateSpace();
   const markSpaceComplete = useMarkSpaceComplete();
+
+  // Task stats for overview
+  const { data: taskStats } = useTaskStats(space?.id || '');
+
+  const handleTaskClick = (task: Task) => {
+    setSelectedTask(task);
+    setTaskDrawerOpen(true);
+  };
 
   useEffect(() => {
     async function loadUserData() {
@@ -392,6 +407,51 @@ export default function SpaceDetail() {
             </TabsList>
 
             <TabsContent value="overview" className="space-y-4">
+              {/* Task Stats Overview */}
+              {taskStats && taskStats.total > 0 && (
+                <Card>
+                  <CardContent className="pt-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="font-medium">Tasks: {taskStats.total} total</span>
+                        <span className="text-muted-foreground">{taskStats.completionRate}% complete</span>
+                      </div>
+                      <div className="w-full bg-muted rounded-full h-2">
+                        <div
+                          className="bg-primary rounded-full h-2 transition-all"
+                          style={{ width: `${taskStats.completionRate}%` }}
+                        />
+                      </div>
+                      <div className="flex gap-4 text-xs text-muted-foreground">
+                        {taskStats.overdue > 0 && (
+                          <span className="text-red-500">{taskStats.overdue} overdue</span>
+                        )}
+                        {taskStats.dueThisWeek > 0 && (
+                          <span>{taskStats.dueThisWeek} due this week</span>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Channels */}
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4" />
+                    Channels
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <SpaceChannelList
+                    spaceId={space.id}
+                    canManage={isLead}
+                  />
+                </CardContent>
+              </Card>
+
+              {/* Members */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -404,25 +464,21 @@ export default function SpaceDetail() {
                 </CardContent>
               </Card>
 
-              <div className="flex gap-4">
-                <Button onClick={() => navigate(`/dna/collaborate/spaces/${slug}/board`)}>
-                  View Kanban Board
-                </Button>
-              </div>
+              {/* Top Contributors */}
+              <ContributorRanking spaceId={space.id} />
             </TabsContent>
 
             <TabsContent value="tasks">
               <Card>
                 <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle>Tasks</CardTitle>
-                    <Button onClick={() => navigate(`/dna/collaborate/spaces/${slug}/board`)}>
-                      Board View
-                    </Button>
-                  </div>
+                  <CardTitle>Task Board</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <SpaceTasks spaceId={space.id} canEdit={isLead} />
+                  <TaskBoard
+                    spaceId={space.id}
+                    canEdit={isLead || isMember}
+                    onTaskClick={handleTaskClick}
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -489,6 +545,15 @@ export default function SpaceDetail() {
           spaceName={space.name}
           onConfirm={handleArchive}
           isLoading={archiveSpace.isPending}
+        />
+
+        {/* Task Detail Drawer */}
+        <TaskDetailDrawer
+          open={taskDrawerOpen}
+          onOpenChange={setTaskDrawerOpen}
+          task={selectedTask}
+          spaceId={space.id}
+          canEdit={isLead || isMember}
         />
 
         {/* Share in Chat Picker */}
