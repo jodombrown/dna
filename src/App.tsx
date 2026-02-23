@@ -90,6 +90,12 @@ const FactSheetPage = lazy(() => import("./pages/FactSheetPage"));
 const PitchDeck = lazy(() => import("./pages/PitchDeck"));
 const Manifesto = lazy(() => import("./pages/Manifesto"));
 const Demo = lazy(() => import("./pages/Demo"));
+
+// Public marketing pages (Five C's examples)
+const ConnectExample = lazy(() => import("./pages/_archived/ConnectExample"));
+const CollaborateExample = lazy(() => import("./pages/_archived/CollaborationsExample"));
+const ContributeExample = lazy(() => import("./pages/_archived/ContributeExample"));
+const ConveyExample = lazy(() => import("./pages/_archived/ConveyExample"));
 const DesignSystem = lazy(() => import("./pages/DesignSystem"));
 const FeaturesHub = lazy(() => import("./pages/documentation/FeaturesHub"));
 const FeatureDetail = lazy(() => import("./pages/documentation/FeatureDetail"));
@@ -680,16 +686,15 @@ function App() {
                 </OnboardingGuard>
               } />
               
-              {/* Legacy example pages - redirect to DNA pillar routes */}
-              <Route path="/connect" element={<Navigate to="/dna/connect" replace />} />
+              {/* Public marketing pages - Five C's examples */}
+              <Route path="/connect" element={<ConnectExample />} />
               <Route path="/convene" element={<Convene />} />
               <Route path="/convene/category/:category" element={<ConveneCategoryPage />} />
               <Route path="/convene/featured-calendars" element={<FeaturedCalendarsPage />} />
               <Route path="/convene/local-events" element={<LocalEventsPage />} />
-              <Route path="/convene-example" element={<Navigate to="/dna/convene" replace />} />
-              <Route path="/collaborate" element={<Navigate to="/dna/collaborate" replace />} />
-              <Route path="/contribute" element={<Navigate to="/dna/contribute" replace />} />
-              <Route path="/convey" element={<Navigate to="/dna/convey" replace />} />
+              <Route path="/collaborate" element={<CollaborateExample />} />
+              <Route path="/contribute" element={<ContributeExample />} />
+              <Route path="/convey" element={<ConveyExample />} />
               
               {/* New Admin Portal Routes */}
               <Route path="/admin-login" element={<AdminLogin />} />
