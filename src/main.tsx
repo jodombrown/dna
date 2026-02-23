@@ -9,33 +9,32 @@ if (!document.getElementById("root")) {
   console.error("Root element not found. Make sure your HTML includes <div id='root'></div>");
 }
 
-// Register service worker for PWA support
+// Register service worker for PWA support with version-check
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
       .then((registration) => {
-        console.log('[PWA] Service worker registered:', registration.scope);
+        // Force update check on every page load
+        registration.update();
 
-        // Check for updates
         registration.addEventListener('updatefound', () => {
           const newWorker = registration.installing;
           if (newWorker) {
             newWorker.addEventListener('statechange', () => {
               if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                // New content is available, prompt user to refresh
-                console.log('[PWA] New content available, refresh to update');
-                // Dispatch custom event for the app to handle
+                // New SW ready — skip waiting and activate immediately
+                newWorker.postMessage({ type: 'SKIP_WAITING' });
                 window.dispatchEvent(new CustomEvent('sw-update-available'));
               }
             });
           }
         });
       })
-      .catch((error) => {
-        console.error('[PWA] Service worker registration failed:', error);
+      .catch(() => {
+        // SW registration failed — app still works without it
       });
 
-    // Handle service worker controller change (after update)
+    // Auto-reload when new SW takes control
     let refreshing = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       if (!refreshing) {
