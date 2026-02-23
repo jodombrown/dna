@@ -131,10 +131,10 @@ export const FeedTabExplainer: React.FC<FeedTabExplainerProps> = ({ activeTab })
       {visibleTab && (
         <motion.div
           key={visibleTab}
-          initial={{ opacity: 0, y: -20, height: 0 }}
+          initial={{ opacity: 0, y: -10, height: 0 }}
           animate={isExiting 
             ? { opacity: 0, x: 100, height: 0, marginBottom: 0 }
-            : { opacity: 1, y: 0, height: 'auto', marginBottom: 16 }
+            : { opacity: 1, y: 0, height: 'auto', marginBottom: 4 }
           }
           exit={{ opacity: 0, x: 100, height: 0, marginBottom: 0 }}
           transition={isExiting 
@@ -143,12 +143,12 @@ export const FeedTabExplainer: React.FC<FeedTabExplainerProps> = ({ activeTab })
           }
           className="overflow-hidden"
         >
-          <div className={`p-4 rounded-lg border ${explainer.bgClass}`}>
-            <div className="flex items-start gap-3">
-              <Icon className="h-5 w-5 text-foreground/70 mt-0.5 shrink-0" />
+          <div className={`p-3 rounded-lg border ${explainer.bgClass}`}>
+            <div className="flex items-start gap-2">
+              <Icon className="h-4 w-4 text-foreground/70 mt-0.5 shrink-0" />
               <div className="flex-1 min-w-0">
-                <h4 className="font-semibold text-sm">{explainer.title}</h4>
-                <p className="text-xs text-muted-foreground mt-1">
+                <h4 className="font-semibold text-xs">{explainer.title}</h4>
+                <p className="text-[11px] text-muted-foreground mt-0.5 leading-snug">
                   {explainer.description}
                 </p>
               </div>

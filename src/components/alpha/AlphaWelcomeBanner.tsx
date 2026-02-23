@@ -37,9 +37,9 @@ export function AlphaWelcomeBanner({
   return (
     <div
       className={cn(
-        'relative mx-auto max-w-3xl mb-4',
+        'relative mx-auto max-w-3xl mb-2 sm:mb-4',
         'rounded-xl border border-emerald-200 bg-emerald-50/80 dark:bg-emerald-950/30 dark:border-emerald-800',
-        'px-4 py-4 sm:px-6 sm:py-5',
+        'px-3 py-3 sm:px-6 sm:py-5',
         'shadow-sm'
       )}
     >

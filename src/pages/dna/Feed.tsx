@@ -121,7 +121,7 @@ const DnaFeed = () => {
             />
             {/* Profile completion banner - above tabs */}
             <MobileProfileCompletionBanner threshold={100} />
-            <div className="px-3 pb-2 pt-1 overflow-x-auto border-b border-border">
+            <div className="px-3 pb-1.5 pt-0.5 overflow-x-auto border-b border-border">
               <MobileFeedTabs activeTab={activeTab} onTabChange={setActiveTab} />
             </div>
           </div>
@@ -130,7 +130,7 @@ const DnaFeed = () => {
           <NewPostsIndicator count={newPostCount} onClick={handleNewPostsClick} />
 
           {/* Add top padding to account for fixed header height */}
-          <main className="pb-16 px-3 pt-[9rem] space-y-2">
+          <main className="pb-16 px-3 pt-[7.5rem] space-y-1">
             {/* Tab Explainer - shows once per day/login per tab */}
             <FeedTabExplainer activeTab={activeTab} />
 
