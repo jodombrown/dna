@@ -214,9 +214,9 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
         className="bg-card/60 backdrop-blur-sm border-border/30 overflow-hidden cursor-pointer hover:bg-card/80 transition-colors"
         onClick={handleViewProfile}
       >
-        <div className="p-4">
+        <div className="p-3 md:p-4">
           {/* Apple News style: Two columns - Text left, Image right */}
-          <div className="flex gap-3">
+          <div className="flex gap-2.5 md:gap-3">
             {/* Left column: Content */}
             <div className="flex-1 min-w-0 flex flex-col">
               {/* Source badge (like USA TODAY, The Guardian) */}
@@ -264,7 +264,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
             </div>
 
             {/* Right column: Square avatar + actions */}
-            <div className="flex flex-col items-end gap-2 shrink-0 mr-1">
+            <div className="flex flex-col items-end gap-2 shrink-0">
               {/* Square avatar with rounded corners - Apple News style */}
               <Avatar className="h-[72px] w-[72px] rounded-xl">
                 <AvatarImage

@@ -229,7 +229,7 @@ export default function Discover() {
   if (!user) return null;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2 md:space-y-4">
       {/* Profile Completion Nudge */}
       <ProfileCompletionNudge variant="compact" threshold={40} showMissingFields={true} />
 
@@ -272,7 +272,7 @@ export default function Discover() {
       ) : (
         <>
           <motion.div
-            className="grid gap-3 px-1"
+            className="grid gap-2 md:gap-3"
             variants={prefersReducedMotion ? undefined : containerVariants}
             initial="hidden"
             animate="visible"

@@ -95,7 +95,7 @@ export function ConnectMobileHeader({
       </div>
 
       {/* Tab Bar - Matches Feed tab styling (no sticky needed, parent is fixed) */}
-      <div className="px-3 py-2 bg-background border-b border-border">
+      <div className="px-3 py-1.5 bg-background border-b border-border">
         <div className="flex items-center justify-between gap-1 p-1 bg-muted/50 rounded-lg">
           {TAB_CONFIG.map(({ value, icon: Icon, label }) => {
             const isActive = activeTab === value;
