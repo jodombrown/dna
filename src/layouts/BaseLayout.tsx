@@ -106,9 +106,9 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
         data-view-state={viewState}
         data-layout-type={layoutConfig.type}
       >
-        {/* Alpha Welcome Banner */}
+        {/* Alpha Welcome Banner - hidden on mobile feed (has its own layout) */}
         {FEATURE_FLAGS.isAlphaTest && user && (
-          <div className="px-4 pt-4">
+          <div className="px-3 pt-2 sm:px-4 sm:pt-4 hidden sm:block [body:has([data-mobile-feed='true'])_&]:hidden">
             <AlphaWelcomeBanner
               testerName={profile?.first_name ?? profile?.full_name ?? 'Tester'}
               onOpenTestGuide={() => setIsTestGuideOpen(true)}
