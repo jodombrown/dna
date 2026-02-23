@@ -607,6 +607,74 @@ export const spaceHealthService = {
   },
 
   /**
+   * Detect completion milestones for a space.
+   * Returns a milestone message if a threshold has been crossed, or null.
+   */
+  getCompletionMilestone(factors: SpaceHealthFactors): {
+    milestone: '100' | '50' | 'first' | null;
+    message: string;
+  } | null {
+    const { totalTasks, completedTasks, taskCompletionRate } = factors;
+
+    if (totalTasks === 0) return null;
+
+    if (completedTasks === totalTasks && totalTasks > 0) {
+      return {
+        milestone: '100',
+        message: 'All tasks completed! Share this achievement with your network?',
+      };
+    }
+
+    if (taskCompletionRate >= 50 && taskCompletionRate < 100 && completedTasks >= 2) {
+      return {
+        milestone: '50',
+        message: `Halfway there! ${completedTasks} of ${totalTasks} tasks completed.`,
+      };
+    }
+
+    if (completedTasks === 1) {
+      return {
+        milestone: 'first',
+        message: 'First task completed! Momentum is building.',
+      };
+    }
+
+    return null;
+  },
+
+  /**
+   * Generate stall detection suggestions for DIA cards.
+   * Called when a space health score drops below 50.
+   */
+  getStallSuggestions(factors: SpaceHealthFactors): string[] {
+    const suggestions: string[] = [];
+
+    if (factors.daysSinceLastActivity >= 7) {
+      suggestions.push('Post an update to let your team know the project status');
+    }
+
+    if (factors.overdueTasksCount > 0) {
+      suggestions.push(`Review ${factors.overdueTasksCount} overdue task${factors.overdueTasksCount > 1 ? 's' : ''} and update deadlines`);
+    }
+
+    if (factors.totalTasks === 0) {
+      suggestions.push('Break your project into tasks to track progress');
+    }
+
+    if (factors.totalMembers <= 1) {
+      suggestions.push('Invite collaborators to bring fresh energy');
+    }
+
+    if (factors.memberEngagementRate < 50) {
+      suggestions.push('Message your team to check in on availability');
+    }
+
+    suggestions.push('Create an event to bring the team together');
+
+    return suggestions.slice(0, 4); // Max 4 suggestions
+  },
+
+  /**
    * Get health color based on status
    */
   getHealthColor(status: SpaceHealthStatus): string {

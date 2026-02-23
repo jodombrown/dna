@@ -1287,10 +1287,15 @@ export const messagingPrdService = {
     return results[0] || null;
   },
 
-  /** Convenience: get space channel */
+  /** Convenience: get space channel (primary / general) */
   async getSpaceChannel(spaceId: string): Promise<Conversation | null> {
     const results = await this.getConversationsByContext('space', spaceId);
     return results[0] || null;
+  },
+
+  /** Get all channels for a space */
+  async getSpaceChannels(spaceId: string): Promise<Conversation[]> {
+    return this.getConversationsByContext('space', spaceId);
   },
 
   /** Convenience: get opportunity thread */
