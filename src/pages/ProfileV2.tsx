@@ -47,6 +47,7 @@ import { useTrackProfileView } from '@/hooks/useTrackProfileView';
 // Profile completion calculation
 import { calculateProfileCompletionPts } from '@/lib/profileCompletion';
 import { getErrorMessage } from '@/lib/errorLogger';
+import { connectionService } from '@/services/connectionService';
 
 // Sprint 13 — Impact Radar, Badges, DIA Insight
 import ImpactRadarChart from '@/components/profile/ImpactRadarChart';
@@ -303,7 +304,7 @@ const ProfileV2: React.FC = () => {
         onAcceptConnection={async () => {
           if (!user || permissions.is_owner || connectionStatus !== 'pending_received') return;
           try {
-            // Find and accept the pending connection request
+            // Find the pending connection request
             const { data: connection } = await supabase
               .from('connections')
               .select('id')
@@ -317,12 +318,8 @@ const ProfileV2: React.FC = () => {
               return;
             }
 
-            const { error } = await supabase
-              .from('connections')
-              .update({ status: 'accepted', updated_at: new Date().toISOString() })
-              .eq('id', connection.id);
-
-            if (error) throw error;
+            // Use connectionService to get event bus emission, notifications, and DIA nudges
+            await connectionService.acceptConnectionRequest(connection.id);
 
             toast({
               title: 'Connection accepted',
