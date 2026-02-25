@@ -4,7 +4,7 @@
 // BUILD VERSION: Updated automatically — bump CACHE_VERSION to force invalidation
 // SAFETY: Never caches empty or broken HTML responses
 
-const CACHE_VERSION = 4;
+const CACHE_VERSION = 6;
 const CACHE_NAME = `dna-cache-v${CACHE_VERSION}`;
 const RUNTIME_CACHE = `dna-runtime-v${CACHE_VERSION}`;
 
@@ -138,7 +138,22 @@ async function networkFirstSafe(request) {
   try {
     const networkResponse = await fetch(request);
 
-    // Validate before caching — NEVER cache broken HTML
+    const isDocumentRequest =
+      request.mode === 'navigate' ||
+      request.destination === 'document' ||
+      (request.headers.get('accept') || '').includes('text/html');
+
+    // For non-document requests (images, fonts, XHR, opaque cross-origin responses),
+    // return live network response directly and only cache safe responses.
+    if (!isDocumentRequest) {
+      if (networkResponse.ok || networkResponse.type === 'opaque') {
+        const cache = await caches.open(RUNTIME_CACHE);
+        cache.put(request, networkResponse.clone());
+      }
+      return networkResponse;
+    }
+
+    // Validate HTML before caching — NEVER cache broken HTML
     const isValid = await isValidHtmlResponse(networkResponse);
     if (isValid) {
       const cache = await caches.open(RUNTIME_CACHE);
@@ -157,21 +172,23 @@ async function networkFirstSafe(request) {
     const cached = await caches.match(request);
     if (cached) return cached;
 
-    // Last resort for navigation requests — redirect to root
-    if (request.mode === 'navigate') {
+    // Last resort for navigation requests — show offline page
+    if (request.mode === 'navigate' || request.destination === 'document') {
       const rootCached = await caches.match('/');
       if (rootCached) return rootCached;
+
+      return new Response(
+        '<!DOCTYPE html><html><head><meta charset="utf-8"><title>DNA — Offline</title></head>' +
+        '<body style="font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#F9F7F4">' +
+        '<div style="text-align:center;padding:2rem"><h1 style="color:#1A1A1A">You\'re offline</h1>' +
+        '<p style="color:#666">Please check your connection and try again.</p>' +
+        '<button onclick="location.reload()" style="margin-top:1rem;padding:0.75rem 1.5rem;background:#4A8D77;color:white;border:none;border-radius:8px;cursor:pointer;font-size:1rem">Retry</button>' +
+        '</div></body></html>',
+        { status: 503, headers: { 'Content-Type': 'text/html' } }
+      );
     }
 
-    return new Response(
-      '<!DOCTYPE html><html><head><meta charset="utf-8"><title>DNA — Offline</title></head>' +
-      '<body style="font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#F9F7F4">' +
-      '<div style="text-align:center;padding:2rem"><h1 style="color:#1A1A1A">You\'re offline</h1>' +
-      '<p style="color:#666">Please check your connection and try again.</p>' +
-      '<button onclick="location.reload()" style="margin-top:1rem;padding:0.75rem 1.5rem;background:#4A8D77;color:white;border:none;border-radius:8px;cursor:pointer;font-size:1rem">Retry</button>' +
-      '</div></body></html>',
-      { status: 503, headers: { 'Content-Type': 'text/html' } }
-    );
+    return new Response('Offline', { status: 503, headers: { 'Content-Type': 'text/plain' } });
   }
 }
 
@@ -207,6 +224,17 @@ self.addEventListener('fetch', (event) => {
   // ALL navigation requests and HTML — network-first with validation
   if (request.mode === 'navigate') {
     event.respondWith(networkFirstSafe(request));
+    return;
+  }
+
+  // Supabase Storage images: always network-direct to avoid offline HTML fallbacks
+  if (request.url.includes('/storage/v1/object/') && request.destination === 'image') {
+    event.respondWith(
+      fetch(request, { cache: 'no-store' }).catch(async () => {
+        const cached = await caches.match(request);
+        return cached || new Response('', { status: 503, headers: { 'Content-Type': 'text/plain' } });
+      })
+    );
     return;
   }
 
