@@ -303,13 +303,30 @@ export const feedService = {
 
   transformContent(contentType: string, raw: Record<string, unknown>): FeedItem['content'] {
     switch (contentType) {
-      case 'post':
+      case 'post': {
+        // Build media array from image_url and gallery_urls since DB has no "media" column
+        const postMedia: MediaAttachment[] = [];
+        const imageUrl = raw.image_url as string | null;
+        const galleryUrls = raw.gallery_urls as string[] | null;
+
+        if (imageUrl) {
+          postMedia.push({ id: 'primary', url: imageUrl, type: 'image', altText: undefined, fileName: '', fileSize: 0, mimeType: 'image/*', uploadProgress: 100, uploadStatus: 'complete' });
+        }
+        if (galleryUrls && Array.isArray(galleryUrls)) {
+          galleryUrls.forEach((url, idx) => {
+            // Avoid duplicating if image_url is already in gallery
+            if (url && url !== imageUrl) {
+              postMedia.push({ id: `gallery-${idx}`, url, type: 'image', altText: undefined, fileName: '', fileSize: 0, mimeType: 'image/*', uploadProgress: 100, uploadStatus: 'complete' });
+            }
+          });
+        }
+
         return {
           type: 'post',
           body: (raw.content as string) || '',
           bodyPreview: ((raw.content as string) || '').slice(0, 280),
           fullBodyLength: ((raw.content as string) || '').length,
-          media: (raw.media as MediaAttachment[]) || [],
+          media: postMedia,
           poll: null,
           linkPreview: raw.link_url
             ? {
@@ -324,6 +341,7 @@ export const feedService = {
           hashtags: (raw.tags as string[]) || [],
           mentionedUsers: [],
         } as PostFeedContent;
+      }
 
       case 'story':
         return {
