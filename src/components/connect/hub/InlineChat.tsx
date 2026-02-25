@@ -17,6 +17,8 @@ import { formatDistanceToNow, format, isToday, isYesterday } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
+import { EntityReferenceCard } from '@/components/messaging/inbox/EntityReferenceCard';
+import type { EntityReferenceData } from '@/services/messageTypes';
 
 interface InlineChatProps {
   conversationId: string;
@@ -31,6 +33,7 @@ interface Message {
   sender_id: string;
   created_at: string;
   read: boolean;
+  payload?: Record<string, unknown> | null;
 }
 
 interface ConversationDetails {
@@ -100,7 +103,7 @@ export function InlineChat({
 
       const { data, error } = await supabase
         .from('messages')
-        .select('id, content, sender_id, created_at, read')
+        .select('id, content, sender_id, created_at, read, payload')
         .eq('conversation_id', conversationId)
         .order('created_at', { ascending: true });
 
@@ -333,7 +336,17 @@ export function InlineChat({
                             : 'bg-muted rounded-bl-md'
                         )}
                       >
-                        <p className="whitespace-pre-wrap break-words">{msg.content}</p>
+                        {/* Entity Reference Card */}
+                        {(msg.payload as Record<string, unknown> | null)?.entityReference && (
+                          <EntityReferenceCard
+                            entityReference={(msg.payload as Record<string, unknown>).entityReference as EntityReferenceData}
+                            isOwn={isOwn}
+                          />
+                        )}
+                        {/* Text content — hide for entity-only messages */}
+                        {msg.content && !(msg.payload as Record<string, unknown> | null)?.entityReference && (
+                          <p className="whitespace-pre-wrap break-words">{msg.content}</p>
+                        )}
                         <p
                           className={cn(
                             'text-[10px] mt-1',

@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { CulturalPattern } from '@/components/shared/CulturalPattern';
 import {
   Sparkles,
   UserPlus,
@@ -167,6 +168,9 @@ export function DiaInsightCard({
           getBorderColor()
         )}
       >
+        {/* Adinkra cultural pattern — wisdom aligns with DIA intelligence */}
+        <CulturalPattern pattern="adinkra" opacity={0.06} />
+
         {/* DIA Badge */}
         <div className="absolute top-3 left-3">
           <Badge

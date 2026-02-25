@@ -28,6 +28,8 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { NetworkActivityFeed } from './NetworkActivityFeed';
 import { logger } from '@/lib/logger';
+import { CulturalPattern } from '@/components/shared/CulturalPattern';
+import { connectionService } from '@/services/connectionService';
 
 interface ConversationsPanelProps {
   onSelectConversation?: (conversationId: string) => void;
@@ -260,12 +262,7 @@ export function ConversationsPanel({
     setProcessingRequests((prev) => new Set(prev).add(requestId));
 
     try {
-      const { error } = await supabase
-        .from('connections')
-        .update({ status: 'accepted' })
-        .eq('id', requestId);
-
-      if (error) throw error;
+      await connectionService.acceptConnectionRequest(requestId);
 
       toast({
         title: 'Connection accepted',
@@ -336,15 +333,18 @@ export function ConversationsPanel({
   return (
     <ScrollArea className={cn('h-full', className)}>
       <div className="p-4 space-y-4">
-        {/* Search Messages */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search messages..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 bg-muted/50"
-          />
+        {/* Conversation header with Ndebele pattern */}
+        <div className="relative overflow-hidden rounded-lg bg-muted/20 p-3">
+          <CulturalPattern pattern="ndebele" opacity={0.05} />
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search messages..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 bg-background/80"
+            />
+          </div>
         </div>
 
         {/* Active Conversations */}

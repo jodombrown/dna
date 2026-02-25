@@ -39,6 +39,7 @@ import { useMutualConnections } from '@/hooks/useMutualConnections';
 import { FiveCsEngagement } from './FiveCsEngagement';
 import { cn } from '@/lib/utils';
 import { getErrorMessage } from '@/lib/errorLogger';
+import { CulturalPattern } from '@/components/shared/CulturalPattern';
 
 // Sector color mapping
 const SECTOR_COLORS: Record<string, string> = {
@@ -302,10 +303,14 @@ export function EnhancedMemberCard({
         className="w-full"
       >
         <Card
-          className="bg-card/60 backdrop-blur-sm border-border/30 overflow-hidden cursor-pointer hover:bg-card/80 hover:shadow-md transition-all duration-200"
+          className="group relative bg-card/60 backdrop-blur-sm border-border/30 overflow-hidden cursor-pointer hover:bg-card/80 hover:shadow-md transition-all duration-200"
           onClick={handleViewProfile}
         >
-          <div className={cn('p-4', isCompact && 'p-3')}>
+          {/* Mudcloth pattern — visible on hover only */}
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out pointer-events-none">
+            <CulturalPattern pattern="mudcloth" opacity={0.04} />
+          </div>
+          <div className={cn('relative p-4', isCompact && 'p-3')}>
             <div className="flex gap-3">
               {/* Left column: Content */}
               <div className="flex-1 min-w-0 flex flex-col">

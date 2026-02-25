@@ -28,6 +28,15 @@ interface ConnectionRequestReceivedEvent {
   fromUserId: string;
 }
 
+interface ConnectionAcceptedEvent {
+  type: 'connection_accepted';
+  userId: string;
+  connectionId: string;
+  connectedUserId: string;
+  connectedUserName: string;
+  timestamp: string;
+}
+
 interface NewMemberInSectorEvent {
   type: 'new_member_in_sector';
   userId: string;
@@ -166,6 +175,7 @@ interface ProfileCompletionStallEvent {
 export type DIAPlatformEvent =
   // CONNECT events
   | NewConnectionEvent
+  | ConnectionAcceptedEvent
   | ConnectionRequestReceivedEvent
   | NewMemberInSectorEvent
   // CONVENE events
