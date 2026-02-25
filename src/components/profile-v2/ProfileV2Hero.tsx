@@ -8,6 +8,7 @@ import { ProfileShareDropdown } from '@/components/profile/ProfileShareDropdown'
 import { BANNER_GRADIENTS, BannerGradientKey } from '@/lib/constants/bannerGradients';
 import { FollowButton } from '@/components/profile/FollowButton';
 import { useFollow } from '@/hooks/useFollow';
+import { CulturalPattern } from '@/components/shared/CulturalPattern';
 
 interface ProfileV2HeroProps {
   profile: ProfileV2Data;
@@ -104,9 +105,14 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
     <div className="relative w-full">
       {/* Banner */}
       <div
-        className="h-32 sm:h-44 md:h-56 w-full relative"
+        className="h-32 sm:h-44 md:h-56 w-full relative overflow-hidden"
         style={getBannerStyle()}
       >
+        {/* Cultural pattern overlay — defaults to Kente, respects user preference */}
+        <CulturalPattern
+          pattern={((profile as Record<string, unknown>).preferred_pattern as 'kente' | 'mudcloth' | 'ndebele' | 'adinkra') || 'kente'}
+          opacity={0.08}
+        />
         {/* Dark overlay for text contrast if enabled */}
         {profile.banner_overlay && (
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />

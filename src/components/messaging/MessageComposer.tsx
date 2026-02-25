@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Send } from 'lucide-react';
+import { Send, Link2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { messageService } from '@/services/messageService';
 import { cn } from '@/lib/utils';
+import { EntitySharePicker } from '@/components/messaging/EntitySharePicker';
 
 interface MessageComposerProps {
   conversationId: string;
@@ -16,6 +17,7 @@ interface MessageComposerProps {
  * - Pill-shaped input field
  * - Inline send button
  * - Auto-expanding textarea
+ * - Entity share button to share events/spaces/opportunities in chat
  */
 export function MessageComposer({
   conversationId,
@@ -24,6 +26,7 @@ export function MessageComposer({
 }: MessageComposerProps) {
   const [message, setMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [showEntityPicker, setShowEntityPicker] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { toast } = useToast();
 
@@ -45,7 +48,7 @@ export function MessageComposer({
 
   const handleSend = async () => {
     const trimmedMessage = message.trim();
-    
+
     if (!trimmedMessage || trimmedMessage.length === 0) {
       return;
     }
@@ -86,6 +89,17 @@ export function MessageComposer({
   return (
     <div className="border-t bg-background/95 backdrop-blur-sm px-4 py-3 safe-area-bottom">
       <div className="flex items-end gap-2">
+        {/* Share entity button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-9 w-9 rounded-full flex-shrink-0"
+          onClick={() => setShowEntityPicker(true)}
+          title="Share an event, space, or opportunity"
+        >
+          <Link2 className="h-4 w-4" />
+        </Button>
+
         {/* Pill-shaped input container */}
         <div className="flex-1 flex items-end bg-muted rounded-3xl border border-border/50 px-4 py-2">
           <textarea
@@ -119,6 +133,14 @@ export function MessageComposer({
           <Send className="h-4 w-4" />
         </Button>
       </div>
+
+      {/* Entity share picker */}
+      <EntitySharePicker
+        open={showEntityPicker}
+        onOpenChange={setShowEntityPicker}
+        conversationId={conversationId}
+        onEntitySent={onMessageSent}
+      />
     </div>
   );
 }

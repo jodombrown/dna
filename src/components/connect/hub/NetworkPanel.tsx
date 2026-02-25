@@ -35,6 +35,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logger';
+import { CulturalPattern } from '@/components/shared/CulturalPattern';
 
 interface NetworkPanelProps {
   onFilterChange?: (filters: FilterState) => void;
@@ -230,8 +231,9 @@ export function NetworkPanel({
     <ScrollArea className={cn('h-full', className)}>
       <div className="p-4 space-y-4">
         {/* Network Stats Card */}
-        <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
-          <CardContent className="p-4">
+        <Card className="relative overflow-hidden bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+          <CulturalPattern pattern="kente" opacity={0.08} />
+          <CardContent className="relative p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <div className="p-2 rounded-lg bg-primary/10">

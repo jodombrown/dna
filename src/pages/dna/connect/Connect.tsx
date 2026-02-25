@@ -21,6 +21,9 @@ import { ConnectMobileHeader } from '@/components/connect/ConnectMobileHeader';
 // DIA Card System (Sprint 4A)
 import { DIAHubSection } from '@/components/dia/DIAHubSection';
 
+// Cultural pattern overlay
+import { CulturalPattern } from '@/components/shared/CulturalPattern';
+
 /**
  * Connect Hub - Reimagined Three-Column Architecture
  *
@@ -150,7 +153,10 @@ const Connect = () => {
 
   // Desktop/Tablet: Three-column layout
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen bg-background overflow-hidden">
+      {/* Kente pattern at 5% opacity behind all content */}
+      <CulturalPattern pattern="kente" opacity={0.05} className="z-0" />
+      <div className="relative z-10">
       <ConnectHubLayout
         leftPanel={
           <div className="space-y-4">
@@ -186,6 +192,7 @@ const Connect = () => {
         expandedChat={expandedChat}
         onChatExpand={handleChatExpand}
       />
+      </div>
     </div>
   );
 };

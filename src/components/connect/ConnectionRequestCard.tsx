@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -9,7 +10,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { useAuth } from '@/contexts/AuthContext';
-import { diaEventBus } from '@/services/dia/diaEventBus';
+import { connectionService } from '@/services/connectionService';
+import { generatePostConnectionNudges, PostConnectionNudge } from '@/lib/dia/postConnectionNudges';
+import { PostConnectionNudgeCard } from '@/components/dia/PostConnectionNudgeCard';
 import { getErrorMessage } from '@/lib/errorLogger';
 
 interface ConnectionRequestCardProps {
@@ -38,27 +41,17 @@ export const ConnectionRequestCard: React.FC<ConnectionRequestCardProps> = ({
   const { user } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
   const [status, setStatus] = useState<'pending' | 'accepted' | 'declined'>('pending');
+  const [nudges, setNudges] = useState<PostConnectionNudge[]>([]);
+  const [showNudges, setShowNudges] = useState(false);
 
   const handleAccept = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    
+
     setIsProcessing(true);
     try {
-      const { error } = await supabase
-        .from('connections')
-        .update({ status: 'accepted' })
-        .eq('id', request.connection_id);
-
-      if (error) throw error;
-
-      // DIA Sprint 4B: Emit connection event for proactive nudges
-      if (user?.id) {
-        diaEventBus.emit({
-          type: 'new_connection',
-          userId: user.id,
-          connectedUserId: request.requester_id,
-        });
-      }
+      // Use connectionService which handles email notifications, in-app notifications,
+      // and emits the CONNECTION_ACCEPTED event on the DIA event bus
+      await connectionService.acceptConnectionRequest(request.connection_id);
 
       setStatus('accepted');
       toast({
@@ -70,6 +63,25 @@ export const ConnectionRequestCard: React.FC<ConnectionRequestCardProps> = ({
         target_user_id: request.requester_id,
       });
       onRequestHandled?.();
+
+      // Generate DIA post-connection nudges asynchronously (don't block acceptance)
+      if (user?.id) {
+        const dismissKey = `nudge-connection-${request.connection_id}`;
+        const alreadyDismissed = localStorage.getItem(dismissKey);
+        if (!alreadyDismissed) {
+          generatePostConnectionNudges(
+            user.id,
+            request.requester_id,
+            request.full_name,
+          ).then((result) => {
+            if (result.length > 0) {
+              setNudges(result);
+              // Small delay so the acceptance toast settles first
+              setTimeout(() => setShowNudges(true), 500);
+            }
+          }).catch(() => { /* non-critical */ });
+        }
+      }
     } catch (error: unknown) {
       toast({
         title: 'Error accepting request',
@@ -79,6 +91,11 @@ export const ConnectionRequestCard: React.FC<ConnectionRequestCardProps> = ({
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  const handleDismissNudges = () => {
+    setShowNudges(false);
+    localStorage.setItem(`nudge-connection-${request.connection_id}`, 'dismissed');
   };
 
   const handleDecline = async (e: React.MouseEvent) => {
@@ -109,6 +126,20 @@ export const ConnectionRequestCard: React.FC<ConnectionRequestCardProps> = ({
       setIsProcessing(false);
     }
   };
+
+  if (status === 'accepted' && showNudges && nudges.length > 0) {
+    return (
+      <AnimatePresence>
+        <PostConnectionNudgeCard
+          connectedUserName={request.full_name}
+          connectedUserAvatar={request.avatar_url}
+          connectedUserHeadline={request.headline}
+          nudges={nudges}
+          onDismiss={handleDismissNudges}
+        />
+      </AnimatePresence>
+    );
+  }
 
   if (status !== 'pending') return null;
 

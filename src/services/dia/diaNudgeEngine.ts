@@ -100,6 +100,8 @@ function getRecipientFromEvent(event: DIAPlatformEvent): string {
   switch (event.type) {
     case 'new_connection':
       return event.userId;
+    case 'connection_accepted':
+      return event.userId;
     case 'connection_request_received':
       return event.userId;
     case 'new_member_in_sector':

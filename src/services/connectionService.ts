@@ -145,6 +145,16 @@ export const connectionService = {
       // Sprint 4C: In-app notification for connection accepted
       platformNotifications.connectionRequestAccepted(data.requester_id, user.id)
         .catch(() => { /* non-critical */ });
+
+      // Emit CONNECTION_ACCEPTED event for DIA post-connection nudges
+      diaEventBus.emit({
+        type: 'connection_accepted',
+        userId: user.id,
+        connectionId: connectionId,
+        connectedUserId: data.requester_id,
+        connectedUserName: accepterProfile?.full_name || 'Someone',
+        timestamp: new Date().toISOString(),
+      });
     }
 
     return data;

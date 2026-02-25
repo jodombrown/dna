@@ -4,6 +4,8 @@ import { MessageWithSender } from '@/services/messageService';
 import { format, isToday, isYesterday } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Check, CheckCheck } from 'lucide-react';
+import { EntityReferenceCard } from '@/components/messaging/inbox/EntityReferenceCard';
+import type { EntityReferenceData } from '@/services/messageTypes';
 
 interface MessageBubbleProps {
   message: MessageWithSender;
@@ -111,7 +113,18 @@ export function MessageBubble({
               : 'bg-muted rounded-bl-md'
           )}
         >
-          <p className="text-[15px] leading-snug whitespace-pre-wrap">{message.content}</p>
+          {/* Entity Reference Card — if this message shares an entity */}
+          {message.payload?.entityReference && (
+            <EntityReferenceCard
+              entityReference={message.payload.entityReference as EntityReferenceData}
+              isOwn={isOwnMessage}
+            />
+          )}
+
+          {/* Text content — hide when the message is entity-only (empty content) */}
+          {message.content && !message.payload?.entityReference && (
+            <p className="text-[15px] leading-snug whitespace-pre-wrap">{message.content}</p>
+          )}
         </div>
         <div className="flex items-center gap-1 mt-0.5 px-1">
           <span className="text-[11px] text-muted-foreground">
