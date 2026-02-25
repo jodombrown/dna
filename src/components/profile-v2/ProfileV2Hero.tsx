@@ -110,7 +110,7 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
       >
         {/* Cultural pattern overlay — defaults to Kente, respects user preference */}
         <CulturalPattern
-          pattern={((profile as Record<string, unknown>).preferred_pattern as 'kente' | 'mudcloth' | 'ndebele' | 'adinkra') || 'kente'}
+          pattern={((profile as unknown as Record<string, unknown>).preferred_pattern as 'kente' | 'mudcloth' | 'ndebele' | 'adinkra') || 'kente'}
           opacity={0.08}
         />
         {/* Dark overlay for text contrast if enabled */}

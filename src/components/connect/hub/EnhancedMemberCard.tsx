@@ -426,7 +426,7 @@ export function EnhancedMemberCard({
                     src={member.avatar_url}
                     alt={member.full_name}
                     className="object-cover"
-                    loading="lazy"
+                    loading="eager"
                   />
                   <AvatarFallback className="bg-primary/10 text-primary text-lg font-semibold rounded-xl">
                     {(member.full_name || member.username || 'DN')
