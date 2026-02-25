@@ -101,7 +101,7 @@ export const EntitySharePicker: React.FC<EntitySharePickerProps> = ({
         .select('id, name, description, cover_image_url')
         .order('created_at', { ascending: false })
         .limit(20);
-      return (data || []).map((s: any): EntityItem => ({
+      return (data || []).map((s): EntityItem => ({
         id: s.id,
         title: s.name,
         preview: s.description ? s.description.slice(0, 80) : undefined,
@@ -151,20 +151,21 @@ export const EntitySharePicker: React.FC<EntitySharePickerProps> = ({
     enabled: open && activeTab === 'post',
   });
 
-  // Fetch stories
+  // Fetch stories (stored in posts table with post_type = 'story')
   const { data: stories = [], isLoading: storiesLoading } = useQuery({
     queryKey: ['share-picker-stories'],
     queryFn: async () => {
-      const { data } = await (supabase as any)
-        .from('stories')
-        .select('id, title, summary, cover_image_url')
+      const { data } = await supabase
+        .from('posts')
+        .select('id, title, content, image_url')
+        .eq('post_type', 'story')
         .order('created_at', { ascending: false })
         .limit(20);
-      return (data || []).map((s: any): EntityItem => ({
+      return (data || []).map((s): EntityItem => ({
         id: s.id,
-        title: s.title,
-        preview: s.summary ? s.summary.slice(0, 80) : undefined,
-        image: s.cover_image_url || undefined,
+        title: s.title || (s.content?.slice(0, 60) || 'Story'),
+        preview: s.content ? s.content.slice(0, 80) : undefined,
+        image: s.image_url || undefined,
         type: 'story',
       }));
     },
