@@ -21,7 +21,7 @@ interface EntityLiveData {
 async function fetchEventData(entityId: string): Promise<EntityLiveData> {
   const { data, error } = await db
     .from('events')
-    .select('id, title, slug, start_time, location, event_type, is_cancelled')
+    .select('id, title, slug, start_time, location_name, event_type, is_cancelled')
     .eq('id', entityId)
     .maybeSingle();
 
@@ -39,7 +39,7 @@ async function fetchEventData(entityId: string): Promise<EntityLiveData> {
     slug: data.slug,
     deleted: data.is_cancelled || false,
     startDate: data.start_time,
-    location: data.location,
+    location: data.location_name,
     eventType: data.event_type,
     attendeeCount: count ?? 0,
   };
@@ -114,9 +114,10 @@ async function fetchPostData(entityId: string): Promise<EntityLiveData> {
 }
 
 async function fetchStoryData(entityId: string): Promise<EntityLiveData> {
+  // Stories are stored in the posts table with post_type = 'story'
   const { data, error } = await db
-    .from('impact_stories')
-    .select('id, title, slug, author_id, profiles:author_id(full_name)')
+    .from('posts')
+    .select('id, content, title, author_id, profiles:author_id(full_name)')
     .eq('id', entityId)
     .maybeSingle();
 
@@ -127,8 +128,7 @@ async function fetchStoryData(entityId: string): Promise<EntityLiveData> {
   const profile = data.profiles as { full_name: string } | null;
 
   return {
-    title: data.title,
-    slug: data.slug,
+    title: data.title || (data.content?.slice(0, 60) || 'Story'),
     authorName: profile?.full_name,
   };
 }
