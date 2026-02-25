@@ -364,7 +364,16 @@ export function PostCard({
                 <img
                   src={post.image_url}
                   alt="Post media"
-                  className="w-full h-auto object-cover max-h-[32rem]"
+                  className="w-full min-h-[200px] object-cover max-h-[32rem]"
+                  loading="eager"
+                  onError={(e) => {
+                    // Hide the container if image fails to load
+                    const target = e.currentTarget;
+                    target.style.display = 'none';
+                    if (target.parentElement) {
+                      target.parentElement.style.display = 'none';
+                    }
+                  }}
                 />
               )}
             </div>
