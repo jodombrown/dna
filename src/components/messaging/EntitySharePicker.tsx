@@ -98,14 +98,14 @@ export const EntitySharePicker: React.FC<EntitySharePickerProps> = ({
     queryFn: async () => {
       const { data } = await supabase
         .from('spaces')
-        .select('id, name, description, cover_image')
+        .select('id, name, description, cover_image_url')
         .order('created_at', { ascending: false })
         .limit(20);
-      return (data || []).map((s): EntityItem => ({
+      return (data || []).map((s: any): EntityItem => ({
         id: s.id,
         title: s.name,
         preview: s.description ? s.description.slice(0, 80) : undefined,
-        image: s.cover_image || undefined,
+        image: s.cover_image_url || undefined,
         type: 'space',
       }));
     },
@@ -155,12 +155,12 @@ export const EntitySharePicker: React.FC<EntitySharePickerProps> = ({
   const { data: stories = [], isLoading: storiesLoading } = useQuery({
     queryKey: ['share-picker-stories'],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data } = await (supabase as any)
         .from('stories')
         .select('id, title, summary, cover_image_url')
         .order('created_at', { ascending: false })
         .limit(20);
-      return (data || []).map((s): EntityItem => ({
+      return (data || []).map((s: any): EntityItem => ({
         id: s.id,
         title: s.title,
         preview: s.summary ? s.summary.slice(0, 80) : undefined,
