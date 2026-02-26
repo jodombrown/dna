@@ -9410,77 +9410,42 @@ export type Database = {
         Args: { p_original_post_id: string; p_user_id: string }
         Returns: undefined
       }
-      discover_members:
-        | {
-            Args: {
-              p_country_of_origin?: string
-              p_current_user_id: string
-              p_focus_areas?: string[]
-              p_industries?: string[]
-              p_limit?: number
-              p_location_country?: string
-              p_offset?: number
-              p_regional_expertise?: string[]
-              p_search_query?: string
-              p_skills?: string[]
-              p_sort_by?: string
-            }
-            Returns: {
-              avatar_url: string
-              banner_gradient: string
-              banner_overlay: boolean
-              banner_type: string
-              banner_url: string
-              country_of_origin: string
-              focus_areas: string[]
-              full_name: string
-              headline: string
-              id: string
-              industries: string[]
-              location: string
-              match_score: number
-              profession: string
-              profile_completion_percentage: number
-              regional_expertise: string[]
-              username: string
-            }[]
-          }
-        | {
-            Args: {
-              p_country_of_origin?: string
-              p_current_user_id: string
-              p_ethnic_heritage?: string[]
-              p_focus_areas?: string[]
-              p_industries?: string[]
-              p_limit?: number
-              p_location_country?: string
-              p_offset?: number
-              p_regional_expertise?: string[]
-              p_search_query?: string
-              p_skills?: string[]
-              p_sort_by?: string
-            }
-            Returns: {
-              avatar_url: string
-              banner_gradient: string
-              banner_overlay: boolean
-              banner_type: string
-              banner_url: string
-              calc_match_score: number
-              country_of_origin: string
-              created_at: string
-              focus_areas: string[]
-              full_name: string
-              headline: string
-              id: string
-              industries: string[]
-              location: string
-              profession: string
-              profile_comp: number
-              regional_expertise: string[]
-              username: string
-            }[]
-          }
+      discover_members: {
+        Args: {
+          p_country_of_origin?: string
+          p_current_user_id: string
+          p_ethnic_heritage?: string[]
+          p_focus_areas?: string[]
+          p_industries?: string[]
+          p_limit?: number
+          p_location_country?: string
+          p_offset?: number
+          p_regional_expertise?: string[]
+          p_search_query?: string
+          p_skills?: string[]
+          p_sort_by?: string
+        }
+        Returns: {
+          avatar_url: string
+          banner_gradient: string
+          banner_overlay: boolean
+          banner_type: string
+          banner_url: string
+          calc_match_score: number
+          country_of_origin: string
+          created_at: string
+          focus_areas: string[]
+          full_name: string
+          headline: string
+          id: string
+          industries: string[]
+          location: string
+          profession: string
+          profile_comp: number
+          regional_expertise: string[]
+          username: string
+        }[]
+      }
       enqueue_reminders_for_all_users: { Args: never; Returns: number }
       ensure_connection: { Args: { u1: string; u2: string }; Returns: string }
       ensure_profile_for_user: {
