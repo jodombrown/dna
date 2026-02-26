@@ -1,21 +1,19 @@
 /**
  * DNA | Introduction Modal
  *
- * A guided warm introduction workflow. Shows both profiles,
- * DIA context, editable message, and sends a group introduction.
+ * Bumble-card-inspired warm introduction workflow.
+ * DNA logo, overlapping profile photos with pulsing Africa icon,
+ * editable message (250 chars, auto-stretch), branded colors.
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Sparkles, ArrowRight, Loader2, Check, MapPin } from 'lucide-react';
+import { Loader2, Check, MapPin } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import {
   sendGroupIntroduction,
@@ -24,6 +22,8 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import confetti from 'canvas-confetti';
+import dnaLogo from '@/assets/dna-logo.png';
+import africaIcon from '@/assets/africa-icon.png';
 
 interface ProfileData {
   id: string;
@@ -44,6 +44,8 @@ interface IntroductionModalProps {
 }
 
 type ModalState = 'compose' | 'sending' | 'success';
+
+const MAX_CHARS = 250;
 
 export function IntroductionModal({
   open,
@@ -82,18 +84,16 @@ export function IntroductionModal({
   // Generate default message when profiles load
   useEffect(() => {
     if (profileA && profileB && !message) {
-      setMessage(
-        generateIntroMessage(
-          profileA.full_name || 'there',
-          profileB.full_name || 'there',
-          profileA.headline || undefined,
-          profileB.headline || undefined
-        )
+      const generated = generateIntroMessage(
+        profileA.full_name || 'there',
+        profileB.full_name || 'there',
+        profileA.headline || undefined,
+        profileB.headline || undefined
       );
+      setMessage(generated.slice(0, MAX_CHARS));
     }
   }, [profileA, profileB, message]);
 
-  // Reset state when closing
   const handleOpenChange = useCallback(
     (val: boolean) => {
       if (!val) {
@@ -109,7 +109,7 @@ export function IntroductionModal({
   );
 
   const handleSend = async () => {
-    if (!message.trim()) return;
+    if (!message.trim() || message.length > MAX_CHARS) return;
     setModalState('sending');
 
     const result = await sendGroupIntroduction({
@@ -125,7 +125,6 @@ export function IntroductionModal({
       setConversationId(result.conversationId || null);
       setModalState('success');
 
-      // Fire confetti
       confetti({
         particleCount: 80,
         spread: 60,
@@ -151,171 +150,235 @@ export function IntroductionModal({
           .slice(0, 2)
       : '?';
 
-  const contextReasons = context
-    ? Object.entries(context)
-        .filter(([, v]) => v)
-        .map(([k, v]) => {
-          if (k === 'sharedSkills' && Array.isArray(v))
-            return `Shared skills: ${(v as string[]).join(', ')}`;
-          if (k === 'sharedSectors' && Array.isArray(v))
-            return `Same sectors: ${(v as string[]).join(', ')}`;
-          return null;
-        })
-        .filter(Boolean)
-    : [];
+  const isOverLimit = message.length > MAX_CHARS;
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md gap-0 p-0 overflow-hidden">
-        {/* Gradient top bar */}
-        <div
-          className="h-1"
-          style={{
-            background:
-              'linear-gradient(90deg, #C4942A 0%, #4A8D77 50%, #2A7A8C 100%)',
-          }}
-        />
+      <DialogContent className="sm:max-w-[400px] gap-0 p-0 overflow-hidden rounded-2xl border-0 shadow-2xl">
+        {/* Card body with warm branded background */}
+        <div className="bg-gradient-to-b from-primary/5 via-background to-background">
 
-        {modalState === 'success' ? (
-          /* ─── Success State ─────────────────────── */
-          <div className="flex flex-col items-center justify-center px-6 py-10 text-center">
-            <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <Check className="w-7 h-7 text-primary" />
-            </div>
-            <h3 className="text-lg font-semibold mb-1">Introduction sent!</h3>
-            <p className="text-sm text-muted-foreground mb-6">
-              {profileA?.full_name} and {profileB?.full_name} have been connected
-              in a group thread.
-            </p>
-            <div className="flex gap-2">
-              {conversationId && (
+          {/* Top section: DNA Logo */}
+          <div className="flex flex-col items-center pt-6 pb-2">
+            <img
+              src={dnaLogo}
+              alt="DNA"
+              className="h-[50px] w-auto mb-3"
+            />
+          </div>
+
+          {modalState === 'success' ? (
+            /* Success State */
+            <div className="flex flex-col items-center px-6 pb-8 text-center">
+              <h2 className="text-xl font-bold text-foreground mb-1 font-display">
+                Introduction Sent!
+              </h2>
+              <p className="text-sm text-muted-foreground mb-6">
+                {profileA?.full_name} and {profileB?.full_name} are now connected in a group thread.
+              </p>
+
+              {/* Overlapping avatars in success */}
+              <div className="flex items-center justify-center mb-6">
+                <Avatar className="w-16 h-16 border-[3px] border-background shadow-lg z-10">
+                  <AvatarImage src={profileA?.avatar_url || undefined} />
+                  <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                    {initials(profileA?.full_name ?? null)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="w-10 h-10 rounded-full bg-primary/10 border-[3px] border-background flex items-center justify-center -mx-3 z-20 shadow-md">
+                  <Check className="w-5 h-5 text-primary" />
+                </div>
+                <Avatar className="w-16 h-16 border-[3px] border-background shadow-lg z-10">
+                  <AvatarImage src={profileB?.avatar_url || undefined} />
+                  <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                    {initials(profileB?.full_name ?? null)}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+
+              <div className="flex gap-2 w-full">
+                {conversationId && (
+                  <Button
+                    className="flex-1"
+                    onClick={() => {
+                      handleOpenChange(false);
+                      window.location.href = `/dna/messages?conversation=${conversationId}`;
+                    }}
+                  >
+                    View Conversation
+                  </Button>
+                )}
                 <Button
-                  size="sm"
-                  onClick={() => {
-                    handleOpenChange(false);
-                    window.location.href = `/dna/messages?conversation=${conversationId}`;
-                  }}
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => handleOpenChange(false)}
                 >
-                  View Conversation
+                  Done
                 </Button>
+              </div>
+            </div>
+          ) : (
+            /* Compose State */
+            <div className="px-6 pb-6">
+              {/* Headline */}
+              <h2 className="text-center text-xl font-bold text-foreground mb-5 font-display">
+                Make an Introduction
+              </h2>
+
+              {/* Overlapping profile photos with pulsing Africa icon */}
+              <div className="flex items-center justify-center mb-5">
+                {/* Person A */}
+                <div className="flex flex-col items-center z-10">
+                  <Avatar className="w-20 h-20 border-[3px] border-background shadow-lg">
+                    <AvatarImage src={profileA?.avatar_url || undefined} />
+                    <AvatarFallback className="bg-primary/10 text-primary font-semibold text-lg">
+                      {initials(profileA?.full_name ?? null)}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+
+                {/* Pulsing Africa continent icon (overlapping center) */}
+                <div className="relative -mx-4 z-20">
+                  <div className="w-11 h-11 rounded-full bg-background border-2 border-primary/20 flex items-center justify-center shadow-md animate-pulse">
+                    <img
+                      src={africaIcon}
+                      alt="Africa"
+                      className="w-6 h-6 object-contain"
+                    />
+                  </div>
+                </div>
+
+                {/* Person B */}
+                <div className="flex flex-col items-center z-10">
+                  <Avatar className="w-20 h-20 border-[3px] border-background shadow-lg">
+                    <AvatarImage src={profileB?.avatar_url || undefined} />
+                    <AvatarFallback className="bg-primary/10 text-primary font-semibold text-lg">
+                      {initials(profileB?.full_name ?? null)}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+              </div>
+
+              {/* Names + details row */}
+              <div className="flex items-start justify-between mb-5 gap-2">
+                <div className="flex-1 text-center min-w-0">
+                  <p className="text-sm font-semibold text-foreground truncate">
+                    {profileA?.full_name || 'Loading...'}
+                  </p>
+                  {profileA?.headline && (
+                    <p className="text-[11px] text-muted-foreground truncate mt-0.5">
+                      {profileA.headline}
+                    </p>
+                  )}
+                  {profileA?.country_of_origin && (
+                    <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-0.5 mt-0.5">
+                      <MapPin className="w-2.5 h-2.5 shrink-0" />
+                      <span className="truncate">{profileA.country_of_origin}</span>
+                    </p>
+                  )}
+                </div>
+                <div className="flex-1 text-center min-w-0">
+                  <p className="text-sm font-semibold text-foreground truncate">
+                    {profileB?.full_name || 'Loading...'}
+                  </p>
+                  {profileB?.headline && (
+                    <p className="text-[11px] text-muted-foreground truncate mt-0.5">
+                      {profileB.headline}
+                    </p>
+                  )}
+                  {profileB?.country_of_origin && (
+                    <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-0.5 mt-0.5">
+                      <MapPin className="w-2.5 h-2.5 shrink-0" />
+                      <span className="truncate">{profileB.country_of_origin}</span>
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Context reasons */}
+              {context && Object.keys(context).length > 0 && (
+                <ContextBlock context={context} />
               )}
+
+              {/* Message composer */}
+              <div className="mb-4">
+                <label className="text-xs font-medium text-muted-foreground block mb-1.5">
+                  Your introduction message
+                </label>
+                <textarea
+                  value={message}
+                  onChange={e => {
+                    setMessage(e.target.value);
+                  }}
+                  className={cn(
+                    'w-full min-h-[80px] rounded-xl border-[1.5px] bg-background px-4 py-3 text-sm',
+                    'placeholder:text-muted-foreground/50',
+                    'focus:outline-none focus:border-primary focus:shadow-sm',
+                    'transition-[border-color,box-shadow] duration-150',
+                    'resize-y',
+                    isOverLimit
+                      ? 'border-destructive'
+                      : 'border-border'
+                  )}
+                  placeholder="Write a warm introduction..."
+                  style={{ fieldSizing: 'content' } as React.CSSProperties}
+                />
+                <p className={cn(
+                  'text-[11px] text-right mt-1',
+                  isOverLimit ? 'text-destructive font-semibold' : 'text-muted-foreground'
+                )}>
+                  {message.length}/{MAX_CHARS}
+                </p>
+              </div>
+
+              {/* Send button */}
               <Button
-                size="sm"
-                variant="outline"
-                onClick={() => handleOpenChange(false)}
+                className="w-full h-12 rounded-xl text-base font-semibold"
+                disabled={!message.trim() || isOverLimit || modalState === 'sending'}
+                onClick={handleSend}
               >
-                Done
+                {modalState === 'sending' ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  'Send Introduction'
+                )}
               </Button>
             </div>
-          </div>
-        ) : (
-          /* ─── Compose State ─────────────────────── */
-          <div className="px-5 py-5">
-            <DialogHeader className="pb-4">
-              <DialogTitle className="flex items-center gap-2 text-base">
-                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-dna-gold to-primary flex items-center justify-center">
-                  <Sparkles className="w-3 h-3 text-white" />
-                </div>
-                Make an Introduction
-              </DialogTitle>
-            </DialogHeader>
-
-            {/* Profile Cards */}
-            <div className="flex items-center gap-3 mb-4">
-              <ProfileMiniCard profile={profileA} initials={initials} />
-              <div className="flex-shrink-0">
-                <ArrowRight className="w-4 h-4 text-muted-foreground" />
-              </div>
-              <ProfileMiniCard profile={profileB} initials={initials} />
-            </div>
-
-            {/* Context */}
-            {contextReasons.length > 0 && (
-              <div className="rounded-lg bg-muted/50 px-3 py-2.5 mb-4 border border-border/30">
-                <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1">
-                  Why connect them?
-                </p>
-                {contextReasons.map((reason, i) => (
-                  <p key={i} className="text-xs text-foreground">
-                    {reason}
-                  </p>
-                ))}
-              </div>
-            )}
-
-            {/* Message */}
-            <div className="mb-4">
-              <label className="text-xs font-medium text-muted-foreground block mb-1.5">
-                Your introduction message
-              </label>
-              <Textarea
-                value={message}
-                onChange={e => setMessage(e.target.value)}
-                rows={4}
-                className="text-sm resize-none"
-                placeholder="Write a warm introduction..."
-              />
-            </div>
-
-            {/* Send */}
-            <Button
-              className="w-full"
-              disabled={!message.trim() || modalState === 'sending'}
-              onClick={handleSend}
-            >
-              {modalState === 'sending' ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Sending…
-                </>
-              ) : (
-                'Send Introduction'
-              )}
-            </Button>
-          </div>
-        )}
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   );
 }
 
-/* ─── Profile Mini Card ──────────────────────────── */
+/* Context Block */
+function ContextBlock({ context }: { context: Record<string, unknown> }) {
+  const reasons = Object.entries(context)
+    .filter(([, v]) => v)
+    .map(([k, v]) => {
+      if (k === 'sharedSkills' && Array.isArray(v))
+        return `Shared skills: ${(v as string[]).join(', ')}`;
+      if (k === 'sharedSectors' && Array.isArray(v))
+        return `Same sectors: ${(v as string[]).join(', ')}`;
+      return null;
+    })
+    .filter(Boolean);
 
-function ProfileMiniCard({
-  profile,
-  initials,
-}: {
-  profile: ProfileData | null;
-  initials: (name: string | null) => string;
-}) {
-  if (!profile) {
-    return (
-      <div className="flex-1 rounded-lg border border-border/50 bg-muted/30 p-3 animate-pulse h-20" />
-    );
-  }
+  if (reasons.length === 0) return null;
 
   return (
-    <div className="flex-1 rounded-lg border border-border/50 bg-card p-3 text-center">
-      <Avatar className="w-10 h-10 mx-auto mb-1.5">
-        <AvatarImage src={profile.avatar_url || undefined} />
-        <AvatarFallback className="text-xs bg-primary/10 text-primary">
-          {initials(profile.full_name)}
-        </AvatarFallback>
-      </Avatar>
-      <p className="text-xs font-semibold truncate">
-        {profile.full_name || 'Unknown'}
+    <div className="rounded-xl bg-muted/40 px-3 py-2.5 mb-4 border border-border/30">
+      <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+        Why connect them?
       </p>
-      {profile.headline && (
-        <p className="text-[10px] text-muted-foreground truncate mt-0.5">
-          {profile.headline}
+      {reasons.map((reason, i) => (
+        <p key={i} className="text-xs text-foreground">
+          {reason}
         </p>
-      )}
-      {profile.country_of_origin && (
-        <p className="text-[10px] text-muted-foreground flex items-center justify-center gap-0.5 mt-0.5">
-          <MapPin className="w-2.5 h-2.5" />
-          {profile.country_of_origin}
-        </p>
-      )}
+      ))}
     </div>
   );
 }
