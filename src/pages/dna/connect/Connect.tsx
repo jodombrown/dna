@@ -153,7 +153,7 @@ const Connect = () => {
 
   // Desktop/Tablet: Three-column layout
   return (
-    <div className="relative min-h-screen bg-background overflow-hidden">
+    <div className="relative bg-background">
       {/* Kente pattern at 5% opacity behind all content */}
       <CulturalPattern pattern="kente" opacity={0.05} className="z-0" />
       <div className="relative z-10">

@@ -106,36 +106,42 @@ export function ConnectHubLayout({
   }
 
   // Desktop: Full three-column layout with dynamic sizing
+  // Each column scrolls independently within viewport height minus header+PulseBar
+  const columnHeight = 'calc(100vh - 7.5rem)';
+
   return (
-    <div className={cn('flex min-h-screen', className)}>
+    <div className={cn('flex', className)} style={{ height: columnHeight }}>
       {/* Left column - Network Panel (always 25%) */}
       <motion.div
-        className="border-r border-border/40 overflow-y-auto bg-background/50 backdrop-blur-sm"
+        className="border-r border-border/40 overflow-y-auto bg-background/50 backdrop-blur-sm scrollbar-thin"
         initial={false}
         animate={{ width: '25%' }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        style={{ height: columnHeight }}
       >
-        <div className="sticky top-0">
+        <div className="p-4">
           {leftPanel}
         </div>
       </motion.div>
 
       {/* Center column - Discovery Feed */}
       <motion.div
-        className="overflow-y-auto"
+        className="overflow-y-auto scrollbar-thin"
         initial={false}
         animate={{ width: expandedChat ? '35%' : '50%' }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        style={{ height: columnHeight }}
       >
         {centerPanel}
       </motion.div>
 
       {/* Right column - Conversations Panel */}
       <motion.div
-        className="border-l border-border/40 overflow-y-auto bg-background/50 backdrop-blur-sm"
+        className="border-l border-border/40 overflow-y-auto bg-background/50 backdrop-blur-sm scrollbar-thin"
         initial={false}
         animate={{ width: expandedChat ? '40%' : '25%' }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        style={{ height: columnHeight }}
       >
         {rightPanel}
       </motion.div>
