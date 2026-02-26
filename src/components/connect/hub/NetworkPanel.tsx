@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -180,10 +181,19 @@ export function NetworkPanel({
               </Badge>
             )}
             {networkStats?.weeklyChange !== undefined && networkStats.weeklyChange > 0 && (
-              <div className="flex items-center gap-1 text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                <TrendingUp className="h-3 w-3" />
-                <span className="text-xs font-medium">+{networkStats.weeklyChange}</span>
-              </div>
+              <TooltipProvider delayDuration={200}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex items-center gap-1 text-primary bg-primary/10 px-2 py-0.5 rounded-full cursor-default">
+                      <TrendingUp className="h-3 w-3" />
+                      <span className="text-xs font-medium">+{networkStats.weeklyChange}</span>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="text-xs">
+                    New connections this week
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             )}
           </div>
           <Button
