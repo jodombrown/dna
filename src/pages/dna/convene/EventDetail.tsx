@@ -296,6 +296,10 @@ const EventDetail = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['events'] });
+      queryClient.invalidateQueries({ queryKey: ['events-index'] });
+      queryClient.invalidateQueries({ queryKey: ['convene-featured-events'] });
+      queryClient.invalidateQueries({ queryKey: ['convene-category-counts'] });
+      queryClient.invalidateQueries({ queryKey: ['event-recommendations'] });
       toast({
         title: 'Event Deleted',
         description: 'Your event has been permanently deleted.',
