@@ -215,6 +215,7 @@ Recommend the top 10 events with scores and brief reasoning.`;
       .slice(0, 10)
       .map((rec: any) => {
         const event = events[rec.event_index - 1];
+        if (!event) return null;
         const attendees = attendeesByEvent[event.id] || [];
         const friendsGoing = attendees.filter(a => connectionIds.includes(a));
         
@@ -225,7 +226,8 @@ Recommend the top 10 events with scores and brief reasoning.`;
           friends_attending_count: friendsGoing.length,
           total_attendees: attendees.length
         };
-      });
+      })
+      .filter(Boolean);
 
     console.log(`Generated ${recommendations.length} recommendations for user ${user.id}`);
 
