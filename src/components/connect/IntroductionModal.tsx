@@ -154,200 +154,201 @@ export function IntroductionModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[400px] gap-0 p-0 overflow-hidden rounded-2xl border-0 shadow-2xl">
-        {/* Card body with warm branded background */}
-        <div className="bg-gradient-to-b from-primary/5 via-background to-background">
+      <DialogContent className="sm:max-w-[480px] gap-0 p-0 overflow-hidden rounded-2xl border-0 shadow-2xl">
+        {/* Card body with warm branded background + Kente pattern */}
+        <div className="relative bg-gradient-to-b from-primary/5 via-background to-background">
+          {/* Kente heritage pattern overlay */}
+          <div
+            className="absolute inset-0 opacity-[0.06] pointer-events-none"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23C4942A' stroke-width='1'%3E%3Cpath d='M0 20h40M20 0v40M0 0h40v40H0z'/%3E%3Crect x='5' y='5' width='10' height='10' fill='%23C4942A' fill-opacity='0.3'/%3E%3Crect x='25' y='25' width='10' height='10' fill='%23C4942A' fill-opacity='0.3'/%3E%3C/g%3E%3C/svg%3E")`,
+            }}
+          />
 
-          {/* Top section: DNA Logo */}
-          <div className="flex flex-col items-center pt-6 pb-2">
-            <img
-              src={dnaLogo}
-              alt="DNA"
-              className="h-[50px] w-auto mb-3"
-            />
-          </div>
-
-          {modalState === 'success' ? (
-            /* Success State */
-            <div className="flex flex-col items-center px-6 pb-8 text-center">
-              <h2 className="text-xl font-bold text-foreground mb-1 font-display">
-                Introduction Sent!
-              </h2>
-              <p className="text-sm text-muted-foreground mb-6">
-                {profileA?.full_name} and {profileB?.full_name} are now connected in a group thread.
-              </p>
-
-              {/* Overlapping avatars in success */}
-              <div className="flex items-center justify-center mb-6">
-                <Avatar className="w-16 h-16 border-[3px] border-background shadow-lg z-10">
-                  <AvatarImage src={profileA?.avatar_url || undefined} />
-                  <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                    {initials(profileA?.full_name ?? null)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="w-10 h-10 rounded-full bg-primary/10 border-[3px] border-background flex items-center justify-center -mx-3 z-20 shadow-md">
-                  <Check className="w-5 h-5 text-primary" />
-                </div>
-                <Avatar className="w-16 h-16 border-[3px] border-background shadow-lg z-10">
-                  <AvatarImage src={profileB?.avatar_url || undefined} />
-                  <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                    {initials(profileB?.full_name ?? null)}
-                  </AvatarFallback>
-                </Avatar>
-              </div>
-
-              <div className="flex gap-2 w-full">
-                {conversationId && (
-                  <Button
-                    className="flex-1"
-                    onClick={() => {
-                      handleOpenChange(false);
-                      window.location.href = `/dna/messages?conversation=${conversationId}`;
-                    }}
-                  >
-                    View Conversation
-                  </Button>
-                )}
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => handleOpenChange(false)}
-                >
-                  Done
-                </Button>
-              </div>
+          <div className="relative z-10">
+            {/* Top section: DNA Logo */}
+            <div className="flex flex-col items-center pt-8 pb-3">
+              <img
+                src={dnaLogo}
+                alt="DNA"
+                className="h-[72px] w-auto mb-4"
+              />
             </div>
-          ) : (
-            /* Compose State */
-            <div className="px-6 pb-6">
-              {/* Headline */}
-              <h2 className="text-center text-xl font-bold text-foreground mb-5 font-display">
-                Make an Introduction
-              </h2>
 
-              {/* Overlapping profile photos with pulsing Africa icon */}
-              <div className="flex items-center justify-center mb-5">
-                {/* Person A */}
-                <div className="flex flex-col items-center z-10">
-                  <Avatar className="w-20 h-20 border-[3px] border-background shadow-lg">
+            {modalState === 'success' ? (
+              /* Success State */
+              <div className="flex flex-col items-center px-8 pb-8 text-center">
+                <h2 className="text-2xl font-bold text-foreground mb-1 font-display">
+                  Introduction Sent!
+                </h2>
+                <p className="text-sm text-muted-foreground mb-8">
+                  {profileA?.full_name} and {profileB?.full_name} are now connected in a group thread.
+                </p>
+
+                {/* Overlapping avatars in success */}
+                <div className="flex items-center justify-center mb-8">
+                  <Avatar className="w-18 h-18 border-[3px] border-background shadow-lg z-10">
                     <AvatarImage src={profileA?.avatar_url || undefined} />
                     <AvatarFallback className="bg-primary/10 text-primary font-semibold text-lg">
                       {initials(profileA?.full_name ?? null)}
                     </AvatarFallback>
                   </Avatar>
-                </div>
-
-                {/* Pulsing Africa continent icon (overlapping center) */}
-                <div className="relative -mx-4 z-20">
-                  <div className="w-11 h-11 rounded-full bg-background border-2 border-primary/20 flex items-center justify-center shadow-md animate-pulse">
-                    <img
-                      src={africaIcon}
-                      alt="Africa"
-                      className="w-6 h-6 object-contain"
-                    />
+                  <div className="w-12 h-12 rounded-full bg-background border-2 border-primary/20 flex items-center justify-center -mx-3 z-20 shadow-md">
+                    <Check className="w-6 h-6 text-primary" />
                   </div>
-                </div>
-
-                {/* Person B */}
-                <div className="flex flex-col items-center z-10">
-                  <Avatar className="w-20 h-20 border-[3px] border-background shadow-lg">
+                  <Avatar className="w-18 h-18 border-[3px] border-background shadow-lg z-10">
                     <AvatarImage src={profileB?.avatar_url || undefined} />
                     <AvatarFallback className="bg-primary/10 text-primary font-semibold text-lg">
                       {initials(profileB?.full_name ?? null)}
                     </AvatarFallback>
                   </Avatar>
                 </div>
-              </div>
 
-              {/* Names + details row */}
-              <div className="flex items-start justify-between mb-5 gap-2">
-                <div className="flex-1 text-center min-w-0">
-                  <p className="text-sm font-semibold text-foreground truncate">
-                    {profileA?.full_name || 'Loading...'}
-                  </p>
-                  {profileA?.headline && (
-                    <p className="text-[11px] text-muted-foreground truncate mt-0.5">
-                      {profileA.headline}
-                    </p>
+                <div className="flex gap-3 w-full">
+                  {conversationId && (
+                    <Button
+                      className="flex-1 h-12 rounded-xl text-base font-semibold"
+                      onClick={() => {
+                        handleOpenChange(false);
+                        window.location.href = `/dna/messages?conversation=${conversationId}`;
+                      }}
+                    >
+                      View Conversation
+                    </Button>
                   )}
-                  {profileA?.country_of_origin && (
-                    <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-0.5 mt-0.5">
-                      <MapPin className="w-2.5 h-2.5 shrink-0" />
-                      <span className="truncate">{profileA.country_of_origin}</span>
-                    </p>
-                  )}
-                </div>
-                <div className="flex-1 text-center min-w-0">
-                  <p className="text-sm font-semibold text-foreground truncate">
-                    {profileB?.full_name || 'Loading...'}
-                  </p>
-                  {profileB?.headline && (
-                    <p className="text-[11px] text-muted-foreground truncate mt-0.5">
-                      {profileB.headline}
-                    </p>
-                  )}
-                  {profileB?.country_of_origin && (
-                    <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-0.5 mt-0.5">
-                      <MapPin className="w-2.5 h-2.5 shrink-0" />
-                      <span className="truncate">{profileB.country_of_origin}</span>
-                    </p>
-                  )}
+                  <Button
+                    variant="outline"
+                    className="flex-1 h-12 rounded-xl text-base font-semibold"
+                    onClick={() => handleOpenChange(false)}
+                  >
+                    Done
+                  </Button>
                 </div>
               </div>
+            ) : (
+              /* Compose State */
+              <div className="px-8 pb-8">
+                {/* Headline */}
+                <h2 className="text-center text-2xl font-bold text-foreground mb-6 font-display">
+                  Make an Introduction
+                </h2>
 
-              {/* Context reasons */}
-              {context && Object.keys(context).length > 0 && (
-                <ContextBlock context={context} />
-              )}
+                {/* Profile photos with info centered below each */}
+                <div className="grid grid-cols-[1fr_auto_1fr] items-start gap-0 mb-6">
+                  {/* Person A */}
+                  <div className="flex flex-col items-center text-center px-1">
+                    <Avatar className="w-[88px] h-[88px] border-[3px] border-background shadow-lg mb-3">
+                      <AvatarImage src={profileA?.avatar_url || undefined} />
+                      <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xl">
+                        {initials(profileA?.full_name ?? null)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <p className="text-sm font-semibold text-foreground leading-tight">
+                      {profileA?.full_name || 'Loading...'}
+                    </p>
+                    {profileA?.headline && (
+                      <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2 max-w-[140px]">
+                        {profileA.headline}
+                      </p>
+                    )}
+                    {profileA?.country_of_origin && (
+                      <p className="text-[11px] text-muted-foreground flex items-center gap-0.5 mt-1">
+                        <MapPin className="w-2.5 h-2.5 shrink-0" />
+                        <span>{profileA.country_of_origin}</span>
+                      </p>
+                    )}
+                  </div>
 
-              {/* Message composer */}
-              <div className="mb-4">
-                <label className="text-xs font-medium text-muted-foreground block mb-1.5">
-                  Your introduction message
-                </label>
-                <textarea
-                  value={message}
-                  onChange={e => {
-                    setMessage(e.target.value);
-                  }}
-                  className={cn(
-                    'w-full min-h-[80px] rounded-xl border-[1.5px] bg-background px-4 py-3 text-sm',
-                    'placeholder:text-muted-foreground/50',
-                    'focus:outline-none focus:border-primary focus:shadow-sm',
-                    'transition-[border-color,box-shadow] duration-150',
-                    'resize-y',
-                    isOverLimit
-                      ? 'border-destructive'
-                      : 'border-border'
-                  )}
-                  placeholder="Write a warm introduction..."
-                  style={{ fieldSizing: 'content' } as React.CSSProperties}
-                />
-                <p className={cn(
-                  'text-[11px] text-right mt-1',
-                  isOverLimit ? 'text-destructive font-semibold' : 'text-muted-foreground'
-                )}>
-                  {message.length}/{MAX_CHARS}
-                </p>
-              </div>
+                  {/* Pulsing Africa continent icon (center column) */}
+                  <div className="flex items-center justify-center pt-8">
+                    <div className="w-12 h-12 rounded-full bg-background border-2 border-primary/20 flex items-center justify-center shadow-md animate-pulse">
+                      <img
+                        src={africaIcon}
+                        alt="Africa"
+                        className="w-7 h-7 object-contain"
+                      />
+                    </div>
+                  </div>
 
-              {/* Send button */}
-              <Button
-                className="w-full h-12 rounded-xl text-base font-semibold"
-                disabled={!message.trim() || isOverLimit || modalState === 'sending'}
-                onClick={handleSend}
-              >
-                {modalState === 'sending' ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Sending...
-                  </>
-                ) : (
-                  'Send Introduction'
+                  {/* Person B */}
+                  <div className="flex flex-col items-center text-center px-1">
+                    <Avatar className="w-[88px] h-[88px] border-[3px] border-background shadow-lg mb-3">
+                      <AvatarImage src={profileB?.avatar_url || undefined} />
+                      <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xl">
+                        {initials(profileB?.full_name ?? null)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <p className="text-sm font-semibold text-foreground leading-tight">
+                      {profileB?.full_name || 'Loading...'}
+                    </p>
+                    {profileB?.headline && (
+                      <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2 max-w-[140px]">
+                        {profileB.headline}
+                      </p>
+                    )}
+                    {profileB?.country_of_origin && (
+                      <p className="text-[11px] text-muted-foreground flex items-center gap-0.5 mt-1">
+                        <MapPin className="w-2.5 h-2.5 shrink-0" />
+                        <span>{profileB.country_of_origin}</span>
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Context reasons */}
+                {context && Object.keys(context).length > 0 && (
+                  <ContextBlock context={context} />
                 )}
-              </Button>
-            </div>
-          )}
+
+                {/* Message composer */}
+                <div className="mb-5">
+                  <label className="text-xs font-medium text-muted-foreground block mb-1.5">
+                    Your introduction message
+                  </label>
+                  <textarea
+                    value={message}
+                    onChange={e => {
+                      setMessage(e.target.value);
+                    }}
+                    className={cn(
+                      'w-full min-h-[90px] rounded-xl border-[1.5px] bg-background px-4 py-3 text-sm',
+                      'placeholder:text-muted-foreground/50',
+                      'focus:outline-none focus:border-primary focus:shadow-sm',
+                      'transition-[border-color,box-shadow] duration-150',
+                      'resize-y',
+                      isOverLimit
+                        ? 'border-destructive'
+                        : 'border-border'
+                    )}
+                    placeholder="Write a warm introduction..."
+                    style={{ fieldSizing: 'content' } as React.CSSProperties}
+                  />
+                  <p className={cn(
+                    'text-[11px] text-right mt-1',
+                    isOverLimit ? 'text-destructive font-semibold' : 'text-muted-foreground'
+                  )}>
+                    {message.length}/{MAX_CHARS}
+                  </p>
+                </div>
+
+                {/* Send button */}
+                <Button
+                  className="w-full h-12 rounded-xl text-base font-semibold"
+                  disabled={!message.trim() || isOverLimit || modalState === 'sending'}
+                  onClick={handleSend}
+                >
+                  {modalState === 'sending' ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    'Send Introduction'
+                  )}
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
