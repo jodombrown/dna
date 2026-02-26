@@ -38,7 +38,7 @@ export function RightWidgets({ variant = 'default' }: RightWidgetsProps) {
         <div className="space-y-2">
           <Button variant="outline" size="sm" className="w-full justify-start">
             <Calendar className="w-4 h-4 mr-2" />
-            Create Event
+            Host an Event
           </Button>
         </div>
       </Card>

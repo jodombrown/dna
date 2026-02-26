@@ -1066,9 +1066,9 @@ One tool. Many possibilities. Always intuitive.`,
         ],
       },
       {
-        title: "If you're creating an event",
+        title: "If you're hosting an event",
         steps: [
-          "Select 'Create Event' in the Composer",
+          "Select 'Host an Event' in the Composer",
           "Add title, description, date/time, and format (virtual/in-person/hybrid)",
           "Choose the Space it belongs to",
           "Publish and invite members",
