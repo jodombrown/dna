@@ -81,9 +81,9 @@ export function NetworkHighlights({
   }
 
   return (
-    <div className={cn('space-y-3', className)}>
-      <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wide">
-        <Globe className="h-3.5 w-3.5" />
+    <div className={cn('space-y-1.5 sm:space-y-3', className)}>
+      <div className="flex items-center gap-1.5 text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wide">
+        <Globe className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
         Network Pulse
       </div>
 

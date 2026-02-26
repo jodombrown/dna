@@ -312,7 +312,7 @@ export function EnhancedMemberCard({
           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out pointer-events-none">
             <CulturalPattern pattern="mudcloth" opacity={0.04} />
           </div>
-          <div className={cn('relative p-4', isCompact && 'p-3')}>
+          <div className={cn('relative p-3 sm:p-4', isCompact && 'p-2.5 sm:p-3')}>
             <div className="flex gap-3">
               {/* Left column: Content */}
               <div className="flex-1 min-w-0 flex flex-col">
