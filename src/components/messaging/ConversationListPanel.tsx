@@ -19,6 +19,7 @@ import { ConversationListItem, InboxTab } from '@/types/messaging';
 import InboxTabs from './InboxTabs';
 import PresenceIndicator from './PresenceIndicator';
 import { ConversationContextBadge } from './ConversationContext';
+import { DiaConversationStarter } from './DiaConversationStarter';
 import { MessageRequestCard } from './MessageRequestBanner';
 import { useMessageRequests } from '@/hooks/useMessageRequests';
 import { useToast } from '@/hooks/use-toast';
@@ -513,6 +514,16 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
                             {conversation.last_message_preview ||
                               conversation.last_message_content}
                           </p>
+                        )}
+
+                        {/* DIA Conversation Starter for stale conversations */}
+                        {!hasUnread && (
+                          <DiaConversationStarter
+                            otherUserId={conversation.other_user_id}
+                            lastMessageAt={conversation.last_message_at || null}
+                            conversationId={conversation.conversation_id}
+                            onClick={() => onSelectConversation(conversation.conversation_id)}
+                          />
                         )}
                       </div>
                     </div>

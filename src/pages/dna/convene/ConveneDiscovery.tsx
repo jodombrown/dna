@@ -32,6 +32,7 @@ import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { EventRecommendations } from '@/components/events/EventRecommendations';
 import { UpcomingEventsSection } from '@/components/convene/UpcomingEventsSection';
 import { DIAHubSection } from '@/components/dia/DIAHubSection';
+import { HappeningNowSection } from '@/components/convene/HappeningNowSection';
 import { logger } from '@/lib/logger';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -189,6 +190,11 @@ export function ConveneDiscovery() {
         </div>
 
         {/* ═══════════════════════════════════════════════════
+            SECTION 1.5: Happening Now — Live events
+            ═══════════════════════════════════════════════════ */}
+        <HappeningNowSection />
+
+        {/* ═══════════════════════════════════════════════════
             SECTION 2: Featured Events — Carousel with cover images
             ═══════════════════════════════════════════════════ */}
         {featuredEvents.length > 0 && (
@@ -254,6 +260,7 @@ export function ConveneDiscovery() {
                           }}
                           variant="full"
                           showOrganizer
+                          showMutualAttendees
                         />
                       </div>
                     </CarouselItem>
