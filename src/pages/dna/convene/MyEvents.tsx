@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Calendar, Users, MapPin, Edit, Eye, BarChart3, List, CalendarDays } from 'lucide-react';
+import { Calendar, BarChart3, List, CalendarDays } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import LayoutController from '@/components/LayoutController';
 import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
-import { format } from 'date-fns';
 import { EventCalendarView } from '@/components/convene/EventCalendarView';
+import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
 
 const MyEvents = () => {
   const navigate = useNavigate();
@@ -78,98 +77,6 @@ const MyEvents = () => {
   const pastHosting = hostingEvents.filter(e => new Date(e.start_time) <= now);
   const upcomingAttending = attendingEvents.filter(e => new Date(e.start_time) > now);
   const pastAttending = attendingEvents.filter(e => new Date(e.start_time) <= now);
-
-  const EventCard = ({ event, isHost = false }: any) => {
-    const isPast = new Date(event.start_time) < now;
-
-    return (
-      <Card className="hover:shadow-lg transition-shadow">
-        <CardHeader>
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <Badge variant="secondary" className="capitalize">
-                  {event.event_type}
-                </Badge>
-                <Badge variant="outline" className="capitalize">
-                  {event.format.replace('_', ' ')}
-                </Badge>
-                {isPast && <Badge variant="secondary">Past</Badge>}
-                {event.is_cancelled && <Badge variant="destructive">Cancelled</Badge>}
-                {!isHost && event.rsvp_status && (
-                  <Badge variant={event.rsvp_status === 'going' ? 'default' : 'outline'}>
-                    {event.rsvp_status}
-                  </Badge>
-                )}
-              </div>
-              <CardTitle className="text-lg">{event.title}</CardTitle>
-              <CardDescription className="mt-2">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  <span>{format(new Date(event.start_time), 'MMM d, yyyy · h:mm a')}</span>
-                </div>
-                {(event.location_city || event.meeting_url) && (
-                  <div className="flex items-center gap-2 mt-1">
-                    <MapPin className="h-4 w-4" />
-                    <span>
-                      {event.format === 'virtual' 
-                        ? 'Online' 
-                        : `${event.location_city}, ${event.location_country}`
-                      }
-                    </span>
-                  </div>
-                )}
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              {isHost && (
-                <>
-                  <Users className="h-4 w-4" />
-                  <span>{event.event_attendees?.[0]?.count || 0} attendees</span>
-                </>
-              )}
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate(`/dna/convene/events/${event.slug || event.id}`)}
-              >
-                <Eye className="h-4 w-4 mr-2" />
-                View
-              </Button>
-              {isHost && (
-                <>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigate(`/dna/convene/events/${event.slug || event.id}/analytics`)}
-                  >
-                    <BarChart3 className="h-4 w-4 mr-2" />
-                    Analytics
-                  </Button>
-                  {!isPast && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigate(`/dna/convene/events/${event.slug || event.id}/edit`)}
-                    >
-                      <Edit className="h-4 w-4 mr-2" />
-                      Edit
-                    </Button>
-                  )}
-                </>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  };
 
   return (
     <LayoutController
@@ -250,7 +157,13 @@ const MyEvents = () => {
                       <h2 className="text-2xl font-bold mb-4">Upcoming</h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {upcomingHosting.map(event => (
-                          <EventCard key={event.id} event={event} isHost />
+                          <ConveneEventCard
+                            key={event.id}
+                            event={event}
+                            variant="compact"
+                            showActions
+                            isOrganizer
+                          />
                         ))}
                       </div>
                     </div>
@@ -261,7 +174,13 @@ const MyEvents = () => {
                       <h2 className="text-2xl font-bold mb-4">Past Events</h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {pastHosting.map(event => (
-                          <EventCard key={event.id} event={event} isHost />
+                          <ConveneEventCard
+                            key={event.id}
+                            event={event}
+                            variant="compact"
+                            showActions
+                            isOrganizer
+                          />
                         ))}
                       </div>
                     </div>
@@ -294,7 +213,12 @@ const MyEvents = () => {
                       <h2 className="text-2xl font-bold mb-4">Upcoming</h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {upcomingAttending.map(event => (
-                          <EventCard key={event.id} event={event} isHost={false} />
+                          <ConveneEventCard
+                            key={event.id}
+                            event={event}
+                            variant="compact"
+                            rsvpStatus={event.rsvp_status as 'going' | 'maybe' | null}
+                          />
                         ))}
                       </div>
                     </div>
@@ -305,7 +229,12 @@ const MyEvents = () => {
                       <h2 className="text-2xl font-bold mb-4">Past Events</h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {pastAttending.map(event => (
-                          <EventCard key={event.id} event={event} isHost={false} />
+                          <ConveneEventCard
+                            key={event.id}
+                            event={event}
+                            variant="compact"
+                            rsvpStatus={event.rsvp_status as 'going' | 'maybe' | null}
+                          />
                         ))}
                       </div>
                     </div>

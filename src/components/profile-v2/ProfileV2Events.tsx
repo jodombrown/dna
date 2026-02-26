@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Calendar, CalendarPlus, Compass, Clock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { EventCard } from '@/components/events/EventCard';
+import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
 import { EventListItem, EventType, EventFormat } from '@/types/events';
 import { ProfileV2Data, ProfileV2Visibility } from '@/types/profileV2';
 
@@ -337,7 +337,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
             </div>
             <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
               {upcoming.map((event) => (
-                <EventCard key={event.event_id} event={event} />
+                <ConveneEventCard key={event.event_id} event={{ ...event, id: event.event_id }} variant="compact" />
               ))}
             </div>
           </div>
@@ -354,7 +354,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
             </div>
             <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
               {past.map((event) => (
-                <EventCard key={event.event_id} event={event} />
+                <ConveneEventCard key={event.event_id} event={{ ...event, id: event.event_id }} variant="compact" />
               ))}
             </div>
           </div>
