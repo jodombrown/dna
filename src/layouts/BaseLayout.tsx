@@ -103,7 +103,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
             : "pt-14 sm:pt-16",
           // Add bottom padding on mobile to account for PulseDock
           "pb-20 lg:pb-0",
-          "transition-all duration-300 ease-in-out",
+          "transition-colors duration-300 ease-in-out",
           "overflow-x-hidden"
         )}
         data-view-state={viewState}

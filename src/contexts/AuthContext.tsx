@@ -99,9 +99,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (!data) {
-        // Profile should have been created by trigger, but if not, wait a bit longer
-        // Give the database trigger more time to complete (increased from 100ms)
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Profile should have been created by trigger — brief retry delay
+        await new Promise(resolve => setTimeout(resolve, 150));
 
         // Try one more time
         const { data: retryData, error: retryError } = await supabase
@@ -145,12 +144,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(session);
         setUser(session?.user ?? null);
         
-        if (session?.user) {
-          // Fetch profile after a delay to allow database trigger to complete
-          // Increased timeout to ensure trigger has time to run
-          setTimeout(() => {
-            fetchProfile(session.user.id);
-          }, 500);
+      if (session?.user) {
+          // Fetch profile immediately - the retry inside fetchProfile handles race conditions
+          fetchProfile(session.user.id);
         } else {
           setProfile(null);
         }
