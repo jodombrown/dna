@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import LayoutController from '@/components/LayoutController';
 import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
+import { CulturalPattern } from '@/components/shared/CulturalPattern';
 
 type GroupFilter = 'all' | 'my_groups' | 'popular' | 'recommended';
 
@@ -81,8 +82,9 @@ export default function GroupsBrowse() {
       centerColumn={
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <div>
+          <div className="flex items-center justify-between mb-6 relative overflow-hidden rounded-xl p-6">
+            <CulturalPattern pattern="ndebele" opacity={0.05} />
+            <div className="relative z-10">
               <h1 className="text-3xl font-bold">Groups</h1>
               <p className="text-muted-foreground mt-1">
                 Connect with communities that share your interests

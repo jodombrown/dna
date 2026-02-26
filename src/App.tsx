@@ -512,7 +512,7 @@ function App() {
               } />
               <Route path="/dna/convene/groups" element={
                 <OnboardingGuard>
-                  <DnaGroups />
+                  <GroupsBrowse />
                 </OnboardingGuard>
               } />
               <Route path="/dna/convene/groups/:slug/events" element={<OnboardingGuard><GroupEventsPage /></OnboardingGuard>} />

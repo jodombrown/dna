@@ -13,6 +13,7 @@ import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { EventCalendarView } from '@/components/convene/EventCalendarView';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
+import { PastEventDiaNudge } from '@/components/convene/PastEventDiaNudge';
 
 const MyEvents = () => {
   const navigate = useNavigate();
@@ -229,6 +230,23 @@ const MyEvents = () => {
                   {pastAttending.length > 0 && (
                     <div>
                       <h2 className="text-2xl font-bold mb-4">Past Events</h2>
+                      {/* DIA Circulation Nudges for past attended events */}
+                      <div className="space-y-3 mb-4">
+                        {pastAttending.slice(0, 2).map(event => (
+                          <div key={`nudges-${event.id}`} className="space-y-2">
+                            <PastEventDiaNudge
+                              eventId={event.id}
+                              eventTitle={event.title}
+                              variant="share_story"
+                            />
+                            <PastEventDiaNudge
+                              eventId={event.id}
+                              eventTitle={event.title}
+                              variant="connect_attendees"
+                            />
+                          </div>
+                        ))}
+                      </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {pastAttending.map(event => (
                           <ConveneEventCard
