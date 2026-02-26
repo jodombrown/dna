@@ -5,6 +5,7 @@ import { format, isToday, isYesterday } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Check, CheckCheck } from 'lucide-react';
 import { EntityReferenceCard } from '@/components/messaging/inbox/EntityReferenceCard';
+import { IntroductionMessageCard } from '@/components/messaging/IntroductionMessageCard';
 import type { EntityReferenceData } from '@/services/messageTypes';
 
 interface MessageBubbleProps {
@@ -14,6 +15,8 @@ interface MessageBubbleProps {
   showReadReceipt?: boolean;
   isRead?: boolean;
   isDelivered?: boolean;
+  currentUserId?: string;
+  onFocusReply?: () => void;
 }
 
 /**
@@ -29,6 +32,8 @@ export function MessageBubble({
   showReadReceipt = false,
   isRead = false,
   isDelivered = false,
+  currentUserId,
+  onFocusReply,
 }: MessageBubbleProps) {
   const getInitials = (name: string) => {
     return name
@@ -54,6 +59,26 @@ export function MessageBubble({
           <p className="text-sm">This message was deleted</p>
         </div>
       </div>
+    );
+  }
+
+  // Render Introduction Card if payload contains introductionCard
+  const introCard = (message.payload as Record<string, unknown> | undefined)?.introductionCard as {
+    introducer: { id: string; full_name: string | null; avatar_url: string | null; username: string | null; headline: string | null };
+    personA: { id: string; full_name: string | null; avatar_url: string | null; username: string | null; headline: string | null };
+    personB: { id: string; full_name: string | null; avatar_url: string | null; username: string | null; headline: string | null };
+  } | undefined;
+
+  if (introCard) {
+    return (
+      <IntroductionMessageCard
+        introducer={introCard.introducer}
+        personA={introCard.personA}
+        personB={introCard.personB}
+        message={message.content}
+        currentUserId={currentUserId}
+        onSayHello={onFocusReply}
+      />
     );
   }
 

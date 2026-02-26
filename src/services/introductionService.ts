@@ -66,7 +66,25 @@ export async function sendGroupIntroduction(
       return { success: false, error: partError.message };
     }
 
-    // 3. Send the introduction message
+    // 3. Fetch profiles for the card payload
+    const { data: cardProfiles } = await supabase
+      .from('profiles')
+      .select('id, full_name, avatar_url, username, headline')
+      .in('id', [introducerId, personAId, personBId]);
+
+    const profileMap = new Map(
+      (cardProfiles || []).map(p => [p.id, p])
+    );
+
+    // 4. Send the introduction message with rich card payload
+    const introPayload = {
+      introductionCard: {
+        introducer: profileMap.get(introducerId) || { id: introducerId, full_name: null, avatar_url: null, username: null, headline: null },
+        personA: profileMap.get(personAId) || { id: personAId, full_name: null, avatar_url: null, username: null, headline: null },
+        personB: profileMap.get(personBId) || { id: personBId, full_name: null, avatar_url: null, username: null, headline: null },
+      },
+    };
+
     const { error: msgError } = await supabase
       .from('messages')
       .insert({
@@ -74,6 +92,7 @@ export async function sendGroupIntroduction(
         sender_id: introducerId,
         content: message,
         message_type: 'text',
+        payload: introPayload,
       });
 
     if (msgError) {
@@ -85,6 +104,7 @@ export async function sendGroupIntroduction(
           sender_id: introducerId,
           content: message,
           message_type: 'text',
+          payload: introPayload,
         } as never);
     }
 
@@ -107,17 +127,33 @@ export async function sendGroupIntroduction(
         context: context || {},
       } as never);
 
-    // 6. Create notifications for both recipients
-    const notifs = [personAId, personBId].map(recipientId => ({
-      user_id: recipientId,
-      type: 'introduction',
-      title: 'You were introduced to someone',
-      message: message.slice(0, 100),
-      link: `/dna/messages?conversation=${conversationId}`,
-      is_read: false,
-    }));
+    // 6. Create richer notifications for both recipients
+    const personAProfile = profileMap.get(personAId);
+    const personBProfile = profileMap.get(personBId);
+    const introducerProfile = profileMap.get(introducerId);
+    const introducerName = introducerProfile?.full_name || 'Someone';
 
-    await supabase.from('notifications').insert(notifs);
+    // Person A gets notified about Person B
+    await supabase.from('notifications').insert({
+      user_id: personAId,
+      type: 'introduction',
+      title: `${introducerName} introduced you to ${personBProfile?.full_name || 'someone'}`,
+      message: message.slice(0, 120),
+      link_url: `/dna/messages?conversation=${conversationId}`,
+      is_read: false,
+      payload: { actor_id: introducerId, conversation_id: conversationId },
+    });
+
+    // Person B gets notified about Person A
+    await supabase.from('notifications').insert({
+      user_id: personBId,
+      type: 'introduction',
+      title: `${introducerName} introduced you to ${personAProfile?.full_name || 'someone'}`,
+      message: message.slice(0, 120),
+      link_url: `/dna/messages?conversation=${conversationId}`,
+      is_read: false,
+      payload: { actor_id: introducerId, conversation_id: conversationId },
+    });
 
     return { success: true, conversationId };
   } catch (err) {

@@ -199,4 +199,27 @@ export const platformNotifications = {
       actorId: responderId,
     });
   },
+
+  /**
+   * 6. Introduction notification for recipients.
+   * Richer notification with introducer name and both avatars.
+   */
+  async introductionReceived(
+    recipientId: string,
+    introducerId: string,
+    otherPersonName: string,
+    conversationId: string,
+    messagePreview: string
+  ): Promise<void> {
+    const introducerName = await getProfileName(introducerId);
+    await createPlatformNotification({
+      userId: recipientId,
+      type: 'introduction',
+      title: `${introducerName} introduced you to ${otherPersonName}`,
+      message: messagePreview.slice(0, 120),
+      linkUrl: `/dna/messages?conversation=${conversationId}`,
+      entityType: 'introduction',
+      actorId: introducerId,
+    });
+  },
 };

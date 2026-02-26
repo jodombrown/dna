@@ -25,6 +25,8 @@ import confetti from 'canvas-confetti';
 import { useNavigate } from 'react-router-dom';
 import dnaLogo from '@/assets/dna-logo.png';
 import africaIcon from '@/assets/africa-icon.png';
+import { IntroductionToneSelector } from './IntroductionToneSelector';
+import { IntroductionInsightChips } from './IntroductionInsightChips';
 
 // --- Kente pattern as inline SVG data URI ---
 const KENTE_PATTERN = `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23C4942A' stroke-width='1'%3E%3Cpath d='M0 20h40M20 0v40M0 0h40v40H0z'/%3E%3Crect x='5' y='5' width='10' height='10' fill='%23C4942A' fill-opacity='0.3'/%3E%3Crect x='25' y='25' width='10' height='10' fill='%23C4942A' fill-opacity='0.3'/%3E%3C/g%3E%3C/svg%3E")`;
@@ -66,6 +68,7 @@ export function IntroductionModal({
   const [message, setMessage] = useState('');
   const [modalState, setModalState] = useState<ModalState>('compose');
   const [conversationId, setConversationId] = useState<string | null>(null);
+  const [activeTone, setActiveTone] = useState<string | null>(null);
 
   // Fetch profiles
   useEffect(() => {
@@ -101,12 +104,13 @@ export function IntroductionModal({
 
   const handleOpenChange = useCallback(
     (val: boolean) => {
-      if (!val) {
-        setTimeout(() => {
-          setModalState('compose');
-          setMessage('');
-          setConversationId(null);
-        }, 300);
+    if (!val) {
+      setTimeout(() => {
+        setModalState('compose');
+        setMessage('');
+        setConversationId(null);
+        setActiveTone(null);
+      }, 300);
       }
       onOpenChange(val);
     },
@@ -320,6 +324,33 @@ export function IntroductionModal({
                 {context && Object.keys(context).length > 0 && (
                   <ContextBlock context={context} />
                 )}
+
+                {/* Tone Selector */}
+                <IntroductionToneSelector
+                  personAName={profileA?.full_name || 'there'}
+                  personBName={profileB?.full_name || 'there'}
+                  personAHeadline={profileA?.headline || undefined}
+                  personBHeadline={profileB?.headline || undefined}
+                  activeTone={activeTone}
+                  onSelectTone={(toneId, msg) => {
+                    setActiveTone(toneId);
+                    setMessage(msg.slice(0, MAX_CHARS));
+                  }}
+                />
+
+                {/* DIA Insight Chips */}
+                <IntroductionInsightChips
+                  personAId={personAId}
+                  personBId={personBId}
+                  personAName={profileA?.full_name || 'there'}
+                  personBName={profileB?.full_name || 'there'}
+                  onInsertSentence={(sentence) => {
+                    setMessage(prev => {
+                      const newMsg = prev ? `${prev} ${sentence}` : sentence;
+                      return newMsg.slice(0, MAX_CHARS);
+                    });
+                  }}
+                />
 
                 {/* Message composer */}
                 <div className="mb-5">
