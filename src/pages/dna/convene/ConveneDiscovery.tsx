@@ -1,41 +1,50 @@
 // src/pages/dna/convene/ConveneDiscovery.tsx
-// Discovery mode for Convene hub - full events experience with PRD hub pattern
+// Redesigned Convene Hub — matches marketing page visual quality with authenticated features
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { Calendar, Plus, Search, Users, CalendarDays, Sparkles } from 'lucide-react';
+import {
+  Calendar, Plus, Search, Users, CalendarDays, Sparkles,
+  ArrowRight, MapPin, Video, Globe, Mic, Palette, Briefcase,
+  GraduationCap, Heart, Leaf, Landmark, Lightbulb,
+} from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
+import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
-
-// New Hub Components
-import {
-  HubHero,
-  HubStatsBar,
-  HubQuickActions,
-  HubDIAPanel,
-  HubActivityFeed,
-  HubSubNav,
-  type HubStat,
-  type QuickAction,
-  type DIARecommendation,
-  type ActivityItem,
-  type SubNavTab,
-} from '@/components/hubs/shared';
-
-// Existing sections
 import { EventRecommendations } from '@/components/events/EventRecommendations';
 import { UpcomingEventsSection } from '@/components/convene/UpcomingEventsSection';
-
-// DIA Card System (Sprint 4A)
 import { DIAHubSection } from '@/components/dia/DIAHubSection';
 import { logger } from '@/lib/logger';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
+
+// ── Category Data ──────────────────────────────────────
+const EVENT_CATEGORIES = [
+  { id: 'conference', name: 'Conferences', icon: Mic, description: 'Summits, panels & keynotes' },
+  { id: 'workshop', name: 'Workshops', icon: Lightbulb, description: 'Hands-on learning sessions' },
+  { id: 'networking', name: 'Networking', icon: Users, description: 'Connect with your community' },
+  { id: 'meetup', name: 'Meetups', icon: MapPin, description: 'Local & casual gatherings' },
+  { id: 'webinar', name: 'Virtual Events', icon: Video, description: 'Online talks & panels' },
+  { id: 'social', name: 'Cultural', icon: Palette, description: 'Arts, music & celebration' },
+  { id: 'other', name: 'Business', icon: Briefcase, description: 'Investment & trade' },
+];
 
 export function ConveneDiscovery() {
   const navigate = useNavigate();
@@ -43,7 +52,7 @@ export function ConveneDiscovery() {
   const [searchQuery, setSearchQuery] = useState('');
   const composer = useUniversalComposer();
 
-  // Fetch featured events (upcoming, with cover images, most registrations)
+  // ── Featured Events Query ────────────────────────────
   const { data: featuredEvents = [] } = useQuery({
     queryKey: ['convene-featured-events'],
     queryFn: async () => {
@@ -51,16 +60,16 @@ export function ConveneDiscovery() {
         const { data, error } = await supabase
           .from('events')
           .select(`
-            id, title, slug, start_time, end_time, location_name,
+            id, title, slug, start_time, end_time, location_name, location_city,
             cover_image_url, event_type, format, is_cancelled,
-            organizer_id, profiles!events_organizer_id_fkey(id, full_name, avatar_url, username)
+            organizer_id, profiles!events_organizer_id_fkey(id, full_name, avatar_url, username),
+            event_attendees(count)
           `)
           .eq('is_cancelled', false)
           .eq('is_public', true)
-          .not('cover_image_url', 'is', null)
           .gte('start_time', new Date().toISOString())
           .order('start_time', { ascending: true })
-          .limit(3);
+          .limit(8);
 
         if (error) {
           logger.warn('ConveneDiscovery', 'Failed to fetch featured events:', error);
@@ -78,6 +87,32 @@ export function ConveneDiscovery() {
     staleTime: 60000,
   });
 
+  // ── Category Counts Query ────────────────────────────
+  const { data: categoryCounts = {} } = useQuery({
+    queryKey: ['convene-category-counts'],
+    queryFn: async () => {
+      try {
+        const { data, error } = await supabase
+          .from('events')
+          .select('event_type')
+          .eq('is_cancelled', false)
+          .eq('is_public', true)
+          .gte('start_time', new Date().toISOString());
+
+        if (error) return {};
+        const counts: Record<string, number> = {};
+        (data || []).forEach((e: { event_type: string | null }) => {
+          const type = e.event_type || 'other';
+          counts[type] = (counts[type] || 0) + 1;
+        });
+        return counts;
+      } catch {
+        return {};
+      }
+    },
+    staleTime: 120000,
+  });
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -85,312 +120,220 @@ export function ConveneDiscovery() {
     }
   };
 
-  // Fetch stats with error handling
-  const { data: stats, isLoading: statsLoading } = useQuery({
-    queryKey: ['convene-hub-stats', user?.id],
-    queryFn: async () => {
-      try {
-        const now = new Date().toISOString();
-        const weekFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
-
-        // Fetch all counts in parallel with individual error handling
-        const [upcomingResult, myRsvpsResult, myHostingResult, thisWeekResult] = await Promise.all([
-          // Upcoming events (public, not cancelled)
-          supabase
-            .from('events')
-            .select('id', { count: 'exact', head: true })
-            .eq('is_cancelled', false)
-            .eq('is_public', true)
-            .gte('start_time', now)
-            .then(r => ({ count: r.error ? 0 : r.count })),
-          
-          // My RSVPs
-          user?.id
-            ? supabase
-                .from('event_attendees')
-                .select('id', { count: 'exact', head: true })
-                .eq('user_id', user.id)
-                .eq('status', 'going')
-                .then(r => ({ count: r.error ? 0 : r.count }))
-            : Promise.resolve({ count: 0 }),
-          
-          // Events I'm hosting
-          user?.id
-            ? supabase
-                .from('events')
-                .select('id', { count: 'exact', head: true })
-                .eq('organizer_id', user.id)
-                .eq('is_cancelled', false)
-                .then(r => ({ count: r.error ? 0 : r.count }))
-            : Promise.resolve({ count: 0 }),
-          
-          // This week
-          supabase
-            .from('events')
-            .select('id', { count: 'exact', head: true })
-            .eq('is_cancelled', false)
-            .eq('is_public', true)
-            .gte('start_time', now)
-            .lte('start_time', weekFromNow)
-            .then(r => ({ count: r.error ? 0 : r.count })),
-        ]);
-
-        return {
-          upcoming: upcomingResult.count || 0,
-          myRsvps: myRsvpsResult.count || 0,
-          hosting: myHostingResult.count || 0,
-          thisWeek: thisWeekResult.count || 0,
-        };
-      } catch (error) {
-        logger.warn('ConveneDiscovery', 'Failed to fetch stats:', error);
-        return { upcoming: 0, myRsvps: 0, hosting: 0, thisWeek: 0 };
-      }
-    },
-    staleTime: 60000,
-    retry: 2,
-    retryDelay: 1000,
-  });
-
-  // Fetch recent activity with error handling
-  const { data: recentActivity, isLoading: activityLoading } = useQuery({
-    queryKey: ['convene-recent-activity'],
-    queryFn: async () => {
-      try {
-        const { data, error } = await supabase
-          .from('events')
-          .select('id, slug, title, start_time, location_name, cover_image_url')
-          .eq('is_cancelled', false)
-          .eq('is_public', true)
-          .gte('start_time', new Date().toISOString())
-          .order('created_at', { ascending: false })
-          .limit(5);
-
-        if (error) {
-          logger.warn('ConveneDiscovery', 'Failed to fetch recent activity:', error);
-          return [];
-        }
-        return data || [];
-      } catch (error) {
-        logger.warn('ConveneDiscovery', 'Error fetching recent activity:', error);
-        return [];
-      }
-    },
-    staleTime: 60000,
-    retry: 1,
-  });
-
-  // Hub Stats
-  const hubStats: HubStat[] = [
-    {
-      label: 'Upcoming Events',
-      value: stats?.upcoming || 0,
-      icon: Calendar,
-      onClick: () => navigate('/dna/convene/events'),
-    },
-    {
-      label: 'My RSVPs',
-      value: stats?.myRsvps || 0,
-      icon: Users,
-      onClick: () => navigate('/dna/convene/events?filter=attending'),
-    },
-    {
-      label: 'Hosting',
-      value: stats?.hosting || 0,
-      icon: Sparkles,
-      onClick: () => navigate('/dna/convene/my-events'),
-    },
-    {
-      label: 'This Week',
-      value: stats?.thisWeek || 0,
-      icon: CalendarDays,
-      onClick: () => navigate('/dna/convene/events?range=week'),
-    },
-  ];
-
-  // Quick Actions
-  const quickActions: QuickAction[] = [
-    {
-      label: 'Create Event',
-      description: 'Host your own gathering',
-      icon: Plus,
-      onClick: () => composer.open('event'),
-      variant: 'primary',
-    },
-    {
-      label: 'Browse Events',
-      description: 'Discover what\'s happening',
-      icon: Search,
-      onClick: () => navigate('/dna/convene/events'),
-    },
-    {
-      label: 'My Calendar',
-      description: 'View your schedule',
-      icon: CalendarDays,
-      onClick: () => navigate('/dna/convene/my-events'),
-    },
-    {
-      label: 'My Events',
-      description: 'Manage hosted events',
-      icon: Users,
-      onClick: () => navigate('/dna/convene/my-events'),
-    },
-  ];
-
-  // DIA Recommendations
-  const diaRecommendations: DIARecommendation[] = [
-    {
-      id: 'connections-attending',
-      title: 'Events your connections are attending',
-      description: 'See what events people in your network have RSVP\'d to',
-      reason: 'Based on your network activity and event interests',
-      icon: Users,
-      onClick: () => navigate('/dna/convene/events?filter=network'),
-    },
-    {
-      id: 'matching-interests',
-      title: 'Events matching your interests',
-      description: 'Events aligned with your profile tags and past attendance',
-      reason: 'Based on your expertise and interest areas',
-      icon: Sparkles,
-      onClick: () => navigate('/dna/convene/events'),
-    },
-    {
-      id: 'your-region',
-      title: 'Events in your region',
-      description: 'Local and virtual events focused on your area',
-      reason: 'Based on your location settings',
-      icon: Calendar,
-      onClick: () => navigate('/dna/convene/events?filter=region'),
-    },
-  ];
-
-  // Activity Feed items
-  const activityItems: ActivityItem[] = (recentActivity || []).map(event => ({
-    id: event.id,
-    type: 'event',
-    title: event.title,
-    description: event.location_name || 'Virtual Event',
-    timestamp: event.start_time,
-    avatar: event.cover_image_url,
-    icon: Calendar,
-    onClick: () => navigate(`/dna/convene/events/${event.slug || event.id}`),
-  }));
-
-  // Sub Navigation Tabs
-  const subNavTabs: SubNavTab[] = [
-    { label: 'All Events', path: '/dna/convene/events' },
-    { label: 'Attending', path: '/dna/convene/events?filter=attending' },
-    { label: 'My Events', path: '/dna/convene/my-events' },
-    { label: 'Groups', path: '/dna/convene/groups' },
-  ];
-
   return (
     <div className="w-full min-h-screen bg-background pb-20 md:pb-0">
-      <div className="container max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 space-y-6">
-        {/* Hero Section with Kente pattern */}
-        <div className="relative overflow-hidden rounded-xl">
+      <div className="container max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 space-y-10">
+
+        {/* ═══════════════════════════════════════════════════
+            SECTION 1: Hero — Rich visual with Kente pattern
+            ═══════════════════════════════════════════════════ */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[hsl(var(--module-convene)/0.15)] via-[hsl(var(--module-convene)/0.08)] to-transparent border border-[hsl(var(--module-convene)/0.2)]">
           <CulturalPattern pattern="kente" opacity={0.06} />
-          <HubHero
-            hub="convene"
-            icon={Calendar}
-            title="CONVENE"
-            tagline="Where the Diaspora Gathers"
-            primaryAction={{
-              label: 'Create Event',
-              icon: Plus,
-              onClick: () => composer.open('event'),
-            }}
-            secondaryAction={{
-              label: 'Browse Events',
-              icon: Search,
-              onClick: () => navigate('/dna/convene/events'),
-            }}
-          />
+          <div className="relative z-10 py-10 sm:py-14 px-6 sm:px-10 flex flex-col items-center text-center space-y-5">
+            {/* Module badge */}
+            <Badge
+              className="bg-[hsl(var(--module-convene)/0.15)] text-[hsl(var(--module-convene))] border-[hsl(var(--module-convene)/0.3)] hover:bg-[hsl(var(--module-convene)/0.2)] text-sm px-4 py-1"
+              variant="outline"
+            >
+              <Calendar className="w-3.5 h-3.5 mr-1.5" />
+              CONVENE
+            </Badge>
+
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground tracking-tight">
+              Where the Diaspora Gathers
+            </h1>
+
+            <p className="text-lg text-muted-foreground max-w-xl">
+              Discover, host, and attend events that bring the global African community together — conferences, workshops, meetups, and more.
+            </p>
+
+            {/* Search */}
+            <form onSubmit={handleSearch} className="relative w-full max-w-lg">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search events by name, location, or topic..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-11 h-12 bg-background/80 backdrop-blur-sm border-border rounded-xl text-base"
+              />
+            </form>
+
+            {/* CTAs */}
+            <div className="flex flex-wrap gap-3 pt-1">
+              <Button
+                size="lg"
+                className="bg-[hsl(var(--module-convene))] hover:bg-[hsl(var(--module-convene-dark))] text-white rounded-xl"
+                onClick={() => composer.open('event')}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Create Event
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="rounded-xl border-[hsl(var(--module-convene)/0.3)] text-[hsl(var(--module-convene))] hover:bg-[hsl(var(--module-convene)/0.08)]"
+                onClick={() => navigate('/dna/convene/events')}
+              >
+                <Search className="w-4 h-4 mr-2" />
+                Browse Events
+              </Button>
+            </div>
+          </div>
         </div>
 
-        {/* Search Bar */}
-        <form onSubmit={handleSearch} className="relative max-w-xl mx-auto">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search events by name, location, or topic..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 h-11 bg-card border-border"
-          />
-        </form>
-
-        {/* Featured Events (only if we have events with cover images) */}
+        {/* ═══════════════════════════════════════════════════
+            SECTION 2: Featured Events — Carousel with cover images
+            ═══════════════════════════════════════════════════ */}
         {featuredEvents.length > 0 && (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold">Featured Events</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {featuredEvents.map((event: Record<string, unknown>) => (
-                <ConveneEventCard
-                  key={event.id as string}
-                  event={{
-                    id: event.id as string,
-                    title: event.title as string,
-                    start_time: event.start_time as string,
-                    end_time: event.end_time as string | undefined,
-                    location_name: event.location_name as string | undefined,
-                    cover_image_url: event.cover_image_url as string | undefined,
-                    event_type: event.event_type as string | undefined,
-                    format: event.format as string | undefined,
-                    is_cancelled: event.is_cancelled as boolean | undefined,
-                    slug: event.slug as string | undefined,
-                    organizer: event.organizer as { id: string; full_name: string; avatar_url?: string; username?: string } | undefined,
-                  }}
-                  variant="full"
-                  showOrganizer
-                />
-              ))}
+          <div className="space-y-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Featured Events</h2>
+                <p className="text-muted-foreground text-sm mt-1">Upcoming events from the community</p>
+              </div>
+              <Button
+                variant="ghost"
+                className="text-[hsl(var(--module-convene))] hover:text-[hsl(var(--module-convene-dark))]"
+                onClick={() => navigate('/dna/convene/events')}
+              >
+                View All <ArrowRight className="ml-1 w-4 h-4" />
+              </Button>
+            </div>
+
+            <div className="relative px-0 sm:px-12">
+              <Carousel
+                className="w-full"
+                plugins={[WheelGesturesPlugin()]}
+                opts={{ align: 'start', loop: false, dragFree: true }}
+              >
+                <CarouselContent className="-ml-4">
+                  {featuredEvents.map((event: Record<string, unknown>) => (
+                    <CarouselItem key={event.id as string} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
+                      <div className="h-[420px]">
+                        <ConveneEventCard
+                          event={{
+                            id: event.id as string,
+                            title: event.title as string,
+                            start_time: event.start_time as string,
+                            end_time: event.end_time as string | undefined,
+                            location_name: event.location_name as string | undefined,
+                            location_city: event.location_city as string | undefined,
+                            cover_image_url: event.cover_image_url as string | undefined,
+                            event_type: event.event_type as string | undefined,
+                            format: event.format as string | undefined,
+                            is_cancelled: event.is_cancelled as boolean | undefined,
+                            slug: event.slug as string | undefined,
+                            organizer: event.organizer as { id: string; full_name: string; avatar_url?: string; username?: string } | undefined,
+                            event_attendees: event.event_attendees as Array<{ count: number }> | undefined,
+                          }}
+                          variant="full"
+                          showOrganizer
+                        />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="hidden sm:flex absolute -left-12 top-1/2 -translate-y-1/2 h-8 w-8 bg-background shadow-lg border-2 hover:bg-[hsl(var(--module-convene))] hover:text-white hover:border-[hsl(var(--module-convene))] transition-all" />
+                <CarouselNext className="hidden sm:flex absolute -right-12 top-1/2 -translate-y-1/2 h-8 w-8 bg-background shadow-lg border-2 hover:bg-[hsl(var(--module-convene))] hover:text-white hover:border-[hsl(var(--module-convene))] transition-all" />
+              </Carousel>
             </div>
           </div>
         )}
 
-        {/* Stats Bar */}
-        <HubStatsBar stats={hubStats} loading={statsLoading} />
+        {/* ═══════════════════════════════════════════════════
+            SECTION 3: Event Categories — Visual grid
+            ═══════════════════════════════════════════════════ */}
+        <div className="space-y-5">
+          <div>
+            <h2 className="text-2xl font-bold text-foreground">Browse by Category</h2>
+            <p className="text-muted-foreground text-sm mt-1">Find events that match your interests</p>
+          </div>
 
-        {/* Sub Navigation */}
-        <HubSubNav tabs={subNavTabs} basePath="/dna/convene" />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {EVENT_CATEGORIES.map((cat) => {
+              const count = categoryCounts[cat.id] || 0;
+              const Icon = cat.icon;
+              return (
+                <Card
+                  key={cat.id}
+                  className="group cursor-pointer hover:shadow-lg transition-all duration-200 border-border hover:border-[hsl(var(--module-convene)/0.4)] relative overflow-hidden"
+                  onClick={() => navigate(`/dna/convene/events?category=${cat.id}`)}
+                >
+                  {/* Mudcloth pattern on hover */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                    <CulturalPattern pattern="mudcloth" opacity={0.04} />
+                  </div>
+                  <CardContent className="p-4 sm:p-5 text-center relative">
+                    <div className="w-12 h-12 rounded-xl bg-[hsl(var(--module-convene)/0.12)] flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-200">
+                      <Icon className="w-6 h-6 text-[hsl(var(--module-convene))]" />
+                    </div>
+                    <h4 className="font-semibold text-sm text-foreground mb-1">{cat.name}</h4>
+                    <p className="text-xs text-muted-foreground">{cat.description}</p>
+                    {count > 0 && (
+                      <Badge variant="secondary" className="mt-2 text-xs">
+                        {count} event{count !== 1 ? 's' : ''}
+                      </Badge>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
 
-        {/* Two Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
-          {/* Main Content */}
-          <div className="space-y-6">
-            {/* Quick Actions */}
-            <HubQuickActions actions={quickActions} />
+        {/* ═══════════════════════════════════════════════════
+            SECTION 4 + 5 + 6: Two-column layout
+            ═══════════════════════════════════════════════════ */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
+          {/* Main Column */}
+          <div className="space-y-8">
 
-            {/* For You – DIA-powered recommendations */}
-            <EventRecommendations />
-
-            {/* Upcoming Events */}
+            {/* Section 4: Your Upcoming Events (authenticated) */}
             <UpcomingEventsSection onCreateEvent={() => composer.open('event')} />
+
+            {/* Section 5: DIA Recommendations */}
+            <div className="relative overflow-hidden rounded-xl">
+              <EventRecommendations />
+            </div>
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* DIA Intelligence Cards */}
-            <DIAHubSection surface="convene_hub" limit={2} />
+            {/* DIA Intelligence Cards with Adinkra pattern */}
+            <div className="relative overflow-hidden rounded-xl">
+              <CulturalPattern pattern="adinkra" opacity={0.06} />
+              <div className="relative">
+                <DIAHubSection surface="convene_hub" limit={2} />
+              </div>
+            </div>
 
-            {/* DIA Panel */}
-            <HubDIAPanel
-              hub="convene"
-              recommendations={diaRecommendations}
-              onAskDIA={() => navigate('/dna/dia?context=convene')}
-            />
-
-            {/* Recent Activity */}
-            <HubActivityFeed
-              title="Latest Events"
-              items={activityItems}
-              loading={activityLoading}
-              onViewAll={() => navigate('/dna/convene/events')}
-              emptyMessage="No upcoming events yet"
-            />
+            {/* Quick Actions */}
+            <div className="space-y-3">
+              <h3 className="font-semibold text-sm text-foreground">Quick Actions</h3>
+              {[
+                { label: 'Create Event', icon: Plus, onClick: () => composer.open('event'), primary: true },
+                { label: 'Browse Events', icon: Search, onClick: () => navigate('/dna/convene/events') },
+                { label: 'My Events', icon: CalendarDays, onClick: () => navigate('/dna/convene/my-events') },
+                { label: 'Groups', icon: Users, onClick: () => navigate('/dna/convene/groups') },
+              ].map((action) => (
+                <Button
+                  key={action.label}
+                  variant={action.primary ? 'default' : 'outline'}
+                  className={cn(
+                    'w-full justify-start rounded-xl',
+                    action.primary && 'bg-[hsl(var(--module-convene))] hover:bg-[hsl(var(--module-convene-dark))] text-white',
+                  )}
+                  onClick={action.onClick}
+                >
+                  <action.icon className="w-4 h-4 mr-2" />
+                  {action.label}
+                </Button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
+
       <MobileBottomNav />
       <UniversalComposer
         isOpen={composer.isOpen}
