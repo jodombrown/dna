@@ -139,3 +139,104 @@ export function generateIntroMessage(
 
   return `Hey ${personAName} and ${personBName}! I wanted to connect you two — ${personAName}${aDesc} and ${personBName}${bDesc}. I think you'd have a lot to talk about!`;
 }
+
+// ── Analytics & Queries ────────────────────────────────
+
+export interface IntroductionRecord {
+  id: string;
+  person_a_id: string;
+  person_b_id: string;
+  intro_type: string;
+  status: string;
+  message: string | null;
+  context: Record<string, unknown>;
+  created_at: string;
+  conversation_id: string | null;
+  person_a?: { full_name: string | null; avatar_url: string | null };
+  person_b?: { full_name: string | null; avatar_url: string | null };
+}
+
+/**
+ * Fetch introductions made by a user
+ */
+export async function getMyIntroductions(userId: string): Promise<IntroductionRecord[]> {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const db = supabase as any;
+    const { data, error } = await db
+      .from('introductions')
+      .select('id, person_a_id, person_b_id, intro_type, status, message, context, created_at, conversation_id')
+      .eq('introducer_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(20);
+
+    if (error || !data) return [];
+
+    const records = data as IntroductionRecord[];
+
+    // Collect unique person IDs to fetch profiles
+    const personIds = new Set<string>();
+    for (const intro of records) {
+      personIds.add(intro.person_a_id);
+      personIds.add(intro.person_b_id);
+    }
+
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, full_name, avatar_url')
+      .in('id', Array.from(personIds));
+
+    const profileMap = new Map(
+      (profiles || []).map(p => [p.id, { full_name: p.full_name, avatar_url: p.avatar_url }])
+    );
+
+    return records.map(intro => ({
+      ...intro,
+      person_a: profileMap.get(intro.person_a_id),
+      person_b: profileMap.get(intro.person_b_id),
+    }));
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Check if an introduction already exists between two people by this introducer.
+ * Used by DIA to avoid re-suggesting introductions.
+ */
+export async function hasExistingIntroduction(
+  introducerId: string,
+  personAId: string,
+  personBId: string
+): Promise<boolean> {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const db = supabase as any;
+    const { count } = await db
+      .from('introductions')
+      .select('id', { count: 'exact', head: true })
+      .eq('introducer_id', introducerId)
+      .or(
+        `and(person_a_id.eq.${personAId},person_b_id.eq.${personBId}),and(person_a_id.eq.${personBId},person_b_id.eq.${personAId})`
+      );
+
+    return (count || 0) > 0;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Update introduction status when both people respond or connect
+ */
+export async function updateIntroductionStatus(
+  introductionId: string,
+  status: 'accepted' | 'connected'
+): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const db = supabase as any;
+  await db
+    .from('introductions')
+    .update({ status })
+    .eq('id', introductionId);
+}

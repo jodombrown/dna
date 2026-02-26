@@ -10,6 +10,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import type { DIACard } from '@/services/diaCardService';
+import { hasExistingIntroduction } from '@/services/introductionService';
 
 const ACCENT = '#4A8D77';
 
@@ -263,6 +264,10 @@ async function generateMutualBridge(userId: string): Promise<DIACard | null> {
 
     // Only suggest if they're NOT yet connected
     if ((count || 0) > 0) return null;
+
+    // Skip if user already introduced these two
+    const alreadyIntroduced = await hasExistingIntroduction(userId, personA, personB);
+    if (alreadyIntroduced) return null;
 
     const { data: profiles } = await supabase
       .from('profiles')
