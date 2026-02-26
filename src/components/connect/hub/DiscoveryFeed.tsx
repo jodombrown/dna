@@ -101,14 +101,11 @@ export function DiscoveryFeed({
     staleTime: 30000,
   });
 
-  // Fetch members with infinite scroll
-  // Combine regions and diasporaLocations into one array for regional_expertise filter
-  const combinedRegionalExpertise = React.useMemo(() => {
+  // Heritage Regions filter → maps to ethnic_heritage (NOT regional_expertise)
+  const heritageRegions = React.useMemo(() => {
     const regions = filters?.regions || [];
-    const diaspora = filters?.diasporaLocations || [];
-    const combined = [...regions, ...diaspora];
-    return combined.length > 0 ? combined : null;
-  }, [filters?.regions, filters?.diasporaLocations]);
+    return regions.length > 0 ? regions : null;
+  }, [filters?.regions]);
 
   const {
     data: membersData,
@@ -123,7 +120,7 @@ export function DiscoveryFeed({
       'discovery-members',
       user?.id,
       searchQuery,
-      combinedRegionalExpertise,
+      heritageRegions,
       filters?.cEngagement,
     ],
     queryFn: async ({ pageParam = 0 }) => {
@@ -133,7 +130,7 @@ export function DiscoveryFeed({
         const { data, error } = await supabase.rpc('discover_members', {
           p_current_user_id: user.id,
           p_focus_areas: null,
-          p_regional_expertise: combinedRegionalExpertise,
+          p_regional_expertise: null,
           p_industries: null,
           p_country_of_origin: null,
           p_location_country: null,
@@ -142,7 +139,8 @@ export function DiscoveryFeed({
           p_sort_by: 'match',
           p_limit: 20,
           p_offset: pageParam * 20,
-        });
+          p_ethnic_heritage: heritageRegions,
+        } as any);
 
         if (error) {
           logger.warn('DiscoveryFeed', 'RPC failed, using fallback', error);
@@ -172,7 +170,7 @@ export function DiscoveryFeed({
         }
 
         return {
-          members: data || [],
+          members: (data || []) as any[],
           nextPage: (data || []).length === 20 ? pageParam + 1 : null,
         };
       } catch (error) {
@@ -405,7 +403,7 @@ export function DiscoveryFeed({
 
   // Flatten members pages and filter out already connected/pending users
   const allMembers = useMemo(() => {
-    const members = membersData?.pages.flatMap((page) => page.members) || [];
+    const members = (membersData?.pages.flatMap((page) => page.members) || []) as any[];
     if (!connectedUserIds || connectedUserIds.size === 0) return members;
     return members.filter((m: Record<string, unknown>) => !connectedUserIds.has(m.id as string));
   }, [membersData, connectedUserIds]);

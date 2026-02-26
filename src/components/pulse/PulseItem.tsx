@@ -123,11 +123,10 @@ export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
           onMouseUp={() => setIsPressed(false)}
           onMouseLeave={() => setIsPressed(false)}
         >
-          {/* Indicator + Icon + Label Row */}
-          <div className="flex items-center gap-1.5 mb-1">
+          {/* Icon + Label Row */}
+          <div className="flex items-center gap-1.5">
             {/* Animated Status Indicator */}
-            <span className="relative flex h-2.5 w-2.5">
-              {/* Breathing ring for active/urgent */}
+            <span className="relative flex h-2 w-2">
               {(status === 'active' || status === 'urgent') && (
                 <motion.span
                   className={cn(
@@ -145,7 +144,6 @@ export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
                   }}
                 />
               )}
-              {/* Attention slow pulse */}
               {status === 'attention' && (
                 <motion.span
                   className={cn(
@@ -165,62 +163,31 @@ export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
               )}
               <span
                 className={cn(
-                  'relative inline-flex rounded-full h-2.5 w-2.5',
+                  'relative inline-flex rounded-full h-2 w-2',
                   colors.indicator,
                 )}
               />
             </span>
 
-            {/* Icon with subtle bounce on active */}
-            <motion.div
-              animate={status === 'active' ? { 
-                y: [0, -1, 0],
-              } : {}}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
-            >
-              <Icon className="w-4 h-4" />
-            </motion.div>
+            <Icon className="w-4 h-4" />
 
-            {/* Label */}
             <span className="text-xs font-semibold tracking-wide hidden sm:inline">
               {config.label}
             </span>
-          </div>
 
-          {/* Activity Dots with staggered animation */}
-          <div className="flex gap-0.5 mb-1">
-            {[1, 2, 3, 4, 5].map((dot) => (
-              <motion.span
-                key={dot}
-                className={cn(
-                  'w-1.5 h-1.5 rounded-full',
-                  dot <= activityLevel ? colors.indicator : 'bg-muted-foreground/15',
-                )}
-                initial={false}
-                animate={
-                  dot <= activityLevel && status !== 'dormant'
-                    ? {
-                        scale: [1, 1.3, 1],
-                        opacity: [0.7, 1, 0.7],
-                      }
-                    : { scale: 1, opacity: 1 }
-                }
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  delay: dot * 0.15,
-                  ease: 'easeInOut',
-                }}
-              />
-            ))}
+            {/* Count badge when active */}
+            {count > 0 && (
+              <span className={cn(
+                'text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none',
+                'bg-current/10',
+              )}>
+                {count}
+              </span>
+            )}
           </div>
 
           {/* Micro-text */}
-          <span className="text-[11px] text-center truncate max-w-full px-1 opacity-80">
+          <span className="text-[11px] text-center truncate max-w-full px-1 opacity-70 mt-0.5">
             {microText}
           </span>
         </Link>

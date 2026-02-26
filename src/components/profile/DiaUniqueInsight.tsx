@@ -24,6 +24,8 @@ const DiaUniqueInsight: React.FC<DiaUniqueInsightProps> = ({
   isOwner,
   isPro = false,
 }) => {
+  // DIA insights are private — only visible to profile owner
+  if (!isOwner) return null;
   const queryClient = useQueryClient();
 
   const { data: insight, isLoading } = useQuery({
