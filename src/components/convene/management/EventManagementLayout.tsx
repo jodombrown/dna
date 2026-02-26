@@ -186,36 +186,46 @@ const EventManagementLayout: React.FC = () => {
         {/* Sidebar - Desktop */}
         {!isMobile && (
           <aside className="w-64 border-r border-border bg-muted/20 flex flex-col">
-            {/* Event Header */}
-            <div className="p-4 border-b border-border">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate(`/dna/convene/events/${event.slug || event.id}`)}
-                className="mb-3 -ml-2"
-              >
-                <ChevronLeft className="h-4 w-4 mr-1" />
-                Back to Event
-              </Button>
-              <h2 className="font-semibold text-lg line-clamp-2">{event.title}</h2>
-              <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
-                <Calendar className="h-4 w-4" />
-                <span>{format(new Date(event.start_time), 'MMM d, yyyy')}</span>
+            {/* Event Header with Mudcloth pattern */}
+            <div className="p-4 border-b border-border relative overflow-hidden">
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-repeat pointer-events-none"
+                style={{
+                  backgroundImage: 'url("/patterns/mudcloth-pattern.svg")',
+                  opacity: 0.04,
+                }}
+              />
+              <div className="relative z-10">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate(`/dna/convene/events/${event.slug || event.id}`)}
+                  className="mb-3 -ml-2"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Back to Event
+                </Button>
+                <h2 className="font-semibold text-lg line-clamp-2">{event.title}</h2>
+                <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+                  <Calendar className="h-4 w-4" />
+                  <span>{format(new Date(event.start_time), 'MMM d, yyyy')}</span>
+                </div>
+                <Badge
+                  variant={
+                    eventStatus === 'live' ? 'default' :
+                    eventStatus === 'cancelled' ? 'destructive' :
+                    eventStatus === 'completed' ? 'secondary' :
+                    'outline'
+                  }
+                  className="mt-2"
+                >
+                  {eventStatus === 'live' ? 'Happening Now' :
+                   eventStatus === 'cancelled' ? 'Cancelled' :
+                   eventStatus === 'completed' ? 'Completed' :
+                   'Upcoming'}
+                </Badge>
               </div>
-              <Badge
-                variant={
-                  eventStatus === 'live' ? 'default' :
-                  eventStatus === 'cancelled' ? 'destructive' :
-                  eventStatus === 'completed' ? 'secondary' :
-                  'outline'
-                }
-                className="mt-2"
-              >
-                {eventStatus === 'live' ? 'Happening Now' :
-                 eventStatus === 'cancelled' ? 'Cancelled' :
-                 eventStatus === 'completed' ? 'Completed' :
-                 'Upcoming'}
-              </Badge>
             </div>
 
             {/* Navigation */}

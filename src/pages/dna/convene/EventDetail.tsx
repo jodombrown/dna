@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { CulturalPattern } from '@/components/shared/CulturalPattern';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Calendar, MapPin, Users, ExternalLink, Share2, Clock, MoreHorizontal, XCircle, Trash2, Flag, QrCode, Loader2, Settings, Sparkles, MessageSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -544,16 +545,21 @@ const EventDetail = () => {
           Back to Events
         </button>
 
-        {/* Hero Image - Full Width with proper aspect ratio */}
-        {event.cover_image_url && (
-          <div className="aspect-[2.5/1] w-full overflow-hidden rounded-2xl mb-8">
-            <img
-              src={event.cover_image_url}
-              alt={event.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        )}
+        {/* Hero Image with cultural pattern backdrop */}
+        <div className="relative overflow-hidden rounded-2xl mb-8">
+          <CulturalPattern pattern="kente" opacity={0.05} />
+          {event.cover_image_url ? (
+            <div className="aspect-[2.5/1] w-full overflow-hidden">
+              <img
+                src={event.cover_image_url}
+                alt={event.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ) : (
+            <div className="aspect-[3/1] w-full bg-[hsl(var(--module-convene-light))]" />
+          )}
+        </div>
 
         {/* Title and Actions */}
         <div className="mb-8">

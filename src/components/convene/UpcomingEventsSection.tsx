@@ -158,7 +158,7 @@ export const UpcomingEventsSection = () => {
           variant={activeTab === 'attending' ? 'default' : 'outline'}
           size="sm"
           onClick={() => setActiveTab('attending')}
-          className={activeTab === 'attending' ? 'bg-dna-emerald hover:bg-dna-forest' : ''}
+          className={activeTab === 'attending' ? 'bg-[hsl(var(--module-convene))] hover:bg-[hsl(var(--module-convene-dark))] text-white' : ''}
         >
           Attending ({myEvents?.attending?.length || 0})
         </Button>
@@ -166,7 +166,7 @@ export const UpcomingEventsSection = () => {
           variant={activeTab === 'hosting' ? 'default' : 'outline'}
           size="sm"
           onClick={() => setActiveTab('hosting')}
-          className={activeTab === 'hosting' ? 'bg-dna-emerald hover:bg-dna-forest' : ''}
+          className={activeTab === 'hosting' ? 'bg-[hsl(var(--module-convene))] hover:bg-[hsl(var(--module-convene-dark))] text-white' : ''}
         >
           Hosting ({myEvents?.hosting?.length || 0})
         </Button>
