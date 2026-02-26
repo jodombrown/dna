@@ -1,13 +1,16 @@
 // src/pages/dna/convene/ConveneDiscovery.tsx
 // Discovery mode for Convene hub - full events experience with PRD hub pattern
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Calendar, Plus, Search, Users, CalendarDays, Sparkles } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+import { CulturalPattern } from '@/components/shared/CulturalPattern';
+import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
 
 // New Hub Components
 import {
@@ -35,6 +38,49 @@ import { logger } from '@/lib/logger';
 export function ConveneDiscovery() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Fetch featured events (upcoming, with cover images, most registrations)
+  const { data: featuredEvents = [] } = useQuery({
+    queryKey: ['convene-featured-events'],
+    queryFn: async () => {
+      try {
+        const { data, error } = await supabase
+          .from('events')
+          .select(`
+            id, title, slug, start_time, end_time, location_name,
+            cover_image_url, event_type, format, is_cancelled,
+            organizer_id, profiles!events_organizer_id_fkey(id, full_name, avatar_url, username)
+          `)
+          .eq('is_cancelled', false)
+          .eq('is_public', true)
+          .not('cover_image_url', 'is', null)
+          .gte('start_time', new Date().toISOString())
+          .order('start_time', { ascending: true })
+          .limit(3);
+
+        if (error) {
+          logger.warn('ConveneDiscovery', 'Failed to fetch featured events:', error);
+          return [];
+        }
+        return (data || []).map((e: Record<string, unknown>) => ({
+          ...e,
+          organizer: Array.isArray(e.profiles) ? e.profiles[0] : e.profiles,
+        }));
+      } catch (error) {
+        logger.warn('ConveneDiscovery', 'Error fetching featured events:', error);
+        return [];
+      }
+    },
+    staleTime: 60000,
+  });
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/dna/convene/events?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   // Fetch stats with error handling
   const { data: stats, isLoading: statsLoading } = useQuery({
@@ -238,23 +284,66 @@ export function ConveneDiscovery() {
   return (
     <div className="w-full min-h-screen bg-background pb-20 md:pb-0">
       <div className="container max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 space-y-6">
-        {/* Hero Section */}
-        <HubHero
-          hub="convene"
-          icon={Calendar}
-          title="CONVENE"
-          tagline="Where the Diaspora Gathers"
-          primaryAction={{
-            label: 'Create Event',
-            icon: Plus,
-            onClick: () => navigate('/dna/convene/events/new'),
-          }}
-          secondaryAction={{
-            label: 'Browse Events',
-            icon: Search,
-            onClick: () => navigate('/dna/convene/events'),
-          }}
-        />
+        {/* Hero Section with Kente pattern */}
+        <div className="relative overflow-hidden rounded-xl">
+          <CulturalPattern pattern="kente" opacity={0.06} />
+          <HubHero
+            hub="convene"
+            icon={Calendar}
+            title="CONVENE"
+            tagline="Where the Diaspora Gathers"
+            primaryAction={{
+              label: 'Create Event',
+              icon: Plus,
+              onClick: () => navigate('/dna/convene/events/new'),
+            }}
+            secondaryAction={{
+              label: 'Browse Events',
+              icon: Search,
+              onClick: () => navigate('/dna/convene/events'),
+            }}
+          />
+        </div>
+
+        {/* Search Bar */}
+        <form onSubmit={handleSearch} className="relative max-w-xl mx-auto">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search events by name, location, or topic..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 h-11 bg-card border-border"
+          />
+        </form>
+
+        {/* Featured Events (only if we have events with cover images) */}
+        {featuredEvents.length > 0 && (
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold">Featured Events</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {featuredEvents.map((event: Record<string, unknown>) => (
+                <ConveneEventCard
+                  key={event.id as string}
+                  event={{
+                    id: event.id as string,
+                    title: event.title as string,
+                    start_time: event.start_time as string,
+                    end_time: event.end_time as string | undefined,
+                    location_name: event.location_name as string | undefined,
+                    cover_image_url: event.cover_image_url as string | undefined,
+                    event_type: event.event_type as string | undefined,
+                    format: event.format as string | undefined,
+                    is_cancelled: event.is_cancelled as boolean | undefined,
+                    slug: event.slug as string | undefined,
+                    organizer: event.organizer as { id: string; full_name: string; avatar_url?: string; username?: string } | undefined,
+                  }}
+                  variant="full"
+                  showOrganizer
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Stats Bar */}
         <HubStatsBar stats={hubStats} loading={statsLoading} />

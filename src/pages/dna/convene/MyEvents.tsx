@@ -12,6 +12,7 @@ import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { EventCalendarView } from '@/components/convene/EventCalendarView';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
+import { CulturalPattern } from '@/components/shared/CulturalPattern';
 
 const MyEvents = () => {
   const navigate = useNavigate();
@@ -83,14 +84,15 @@ const MyEvents = () => {
       leftColumn={<LeftNav />}
       centerColumn={
         <div className="container max-w-6xl mx-auto px-4 py-8">
-          <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
+          <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative overflow-hidden rounded-xl p-6">
+            <CulturalPattern pattern="kente" opacity={0.05} />
+            <div className="relative z-10">
               <h1 className="text-4xl font-bold mb-2">My Events</h1>
               <p className="text-muted-foreground text-lg">
                 Manage events you're hosting and attending
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 relative z-10">
               <div className="flex gap-1 border rounded-lg p-1">
                 <Button
                   variant={viewMode === 'list' ? 'secondary' : 'ghost'}
