@@ -184,10 +184,14 @@ export function NetworkPanel({
               <TooltipProvider delayDuration={200}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div className="flex items-center gap-1 text-primary bg-primary/10 px-2 py-0.5 rounded-full cursor-default">
+                    <button
+                      type="button"
+                      onClick={handleViewNetwork}
+                      className="flex items-center gap-1 text-primary bg-primary/10 hover:bg-primary/20 px-2 py-0.5 rounded-full cursor-pointer transition-colors"
+                    >
                       <TrendingUp className="h-3 w-3" />
                       <span className="text-xs font-medium">+{networkStats.weeklyChange}</span>
-                    </div>
+                    </button>
                   </TooltipTrigger>
                   <TooltipContent side="bottom" className="text-xs">
                     New connections this week
