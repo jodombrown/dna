@@ -742,8 +742,9 @@ export const feedbackService = {
    * Subscribe to new messages in a channel
    */
   subscribeToMessages(channelId: string, onMessage: () => void): RealtimeChannel {
+    const instanceId = `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
     return supabase
-      .channel(`feedback-messages-${channelId}`)
+      .channel(`feedback-messages-${channelId}-${instanceId}`)
       .on(
         'postgres_changes',
         {
@@ -761,8 +762,9 @@ export const feedbackService = {
    * Subscribe to message updates
    */
   subscribeToMessageUpdates(channelId: string, onUpdate: () => void): RealtimeChannel {
+    const instanceId = `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
     return supabase
-      .channel(`feedback-updates-${channelId}`)
+      .channel(`feedback-updates-${channelId}-${instanceId}`)
       .on(
         'postgres_changes',
         {
