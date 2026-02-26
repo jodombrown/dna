@@ -279,12 +279,36 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                 </>
               ) : (
                 <>
-                  {/* Sprint 12D.2: Follow button (mobile) — equal width */}
+                  {/* Connection button (mobile) */}
+                  {connectionStatus === 'none' && onConnect && (
+                    <Button onClick={onConnect} size="sm" className="flex-1 bg-primary hover:bg-primary/90">
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Connect
+                    </Button>
+                  )}
+                  {connectionStatus === 'pending_sent' && (
+                    <Button variant="outline" size="sm" disabled className="flex-1 text-muted-foreground">
+                      <Clock className="w-4 h-4 mr-2" />
+                      Requested
+                    </Button>
+                  )}
+                  {connectionStatus === 'pending_received' && onAcceptConnection && (
+                    <Button onClick={onAcceptConnection} size="sm" className="flex-1 bg-primary hover:bg-primary/90">
+                      <UserCheck className="w-4 h-4 mr-2" />
+                      Accept
+                    </Button>
+                  )}
+                  {connectionStatus === 'accepted' && (
+                    <Button variant="outline" size="sm" disabled className="flex-1 text-primary border-primary/50">
+                      <Check className="w-4 h-4 mr-2" />
+                      Connected
+                    </Button>
+                  )}
+                  {/* Follow button (mobile) */}
                   <FollowButton targetUserId={profile.id} />
                   {onMessage && (
-                    <Button onClick={onMessage} variant="outline" className="flex-1" size="sm">
-                      <MessageCircle className="w-4 h-4 mr-2" />
-                      Message
+                    <Button onClick={onMessage} variant="outline" size="sm">
+                      <MessageCircle className="w-4 h-4" />
                     </Button>
                   )}
                   <ProfileShareDropdown
