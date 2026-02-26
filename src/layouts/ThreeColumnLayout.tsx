@@ -56,16 +56,20 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
   }
 
   // Desktop: 3-column grid with independent scrolling
+  // PulseBar is fixed at ~top-14/16 + ~60px = ~7.5rem total from top
   return (
-    <div className={cn("flex w-full gap-6 px-4 py-6", className)} style={{ paddingTop: 'calc(var(--header-h, 96px) + 1.5rem)' }}>
+    <div className={cn("flex w-full gap-6 px-4 py-6", className)} style={{ paddingTop: '1.5rem' }}>
       {left && (
         <aside 
-          className="transition-all duration-300 ease-in-out overflow-y-auto"
+          className="transition-all duration-300 ease-in-out overflow-y-auto scrollbar-thin"
           style={{ 
             width: leftWidth,
             maxWidth: leftWidth,
             minWidth: leftWidth,
-            maxHeight: 'calc(100vh - var(--header-h, 96px) - 3rem)',
+            maxHeight: 'calc(100vh - 7.5rem - 1.5rem)',
+            position: 'sticky',
+            top: '7.5rem',
+            alignSelf: 'flex-start',
           }}
         >
           {left}
@@ -76,12 +80,15 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
         <main 
           id="main-content"
           tabIndex={-1}
-          className="transition-all duration-300 ease-in-out overflow-y-auto focus:outline-none"
+          className="transition-all duration-300 ease-in-out overflow-y-auto scrollbar-thin focus:outline-none"
           style={{ 
             width: centerWidth,
             maxWidth: centerWidth,
             minWidth: centerWidth,
-            maxHeight: 'calc(100vh - var(--header-h, 96px) - 3rem)',
+            maxHeight: 'calc(100vh - 7.5rem - 1.5rem)',
+            position: 'sticky',
+            top: '7.5rem',
+            alignSelf: 'flex-start',
           }}
         >
           {center}
@@ -90,12 +97,15 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
       
       {right && (
         <aside 
-          className="transition-all duration-300 ease-in-out overflow-y-auto"
+          className="transition-all duration-300 ease-in-out overflow-y-auto scrollbar-thin"
           style={{ 
             width: rightWidth,
             maxWidth: rightWidth,
             minWidth: rightWidth,
-            maxHeight: 'calc(100vh - var(--header-h, 96px) - 3rem)',
+            maxHeight: 'calc(100vh - 7.5rem - 1.5rem)',
+            position: 'sticky',
+            top: '7.5rem',
+            alignSelf: 'flex-start',
           }}
         >
           {right}

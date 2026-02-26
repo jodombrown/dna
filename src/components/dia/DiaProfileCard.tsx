@@ -35,7 +35,7 @@ export function DiaProfileCard({
   const navigate = useNavigate();
 
   const handleViewProfile = () => {
-    navigate(`/profile/${id}`);
+    navigate(`/dna/${id}`);
   };
 
   const handleConnect = (e: React.MouseEvent) => {

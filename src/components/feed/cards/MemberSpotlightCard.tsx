@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 
 interface MemberSpotlightData {
   userId: string;
+  username?: string;
   displayName: string;
   avatarUrl: string | null;
   headline: string | null;
@@ -67,7 +68,7 @@ export const MemberSpotlightCard: React.FC<MemberSpotlightCardProps> = ({
       <div className="flex items-start gap-4">
         <Avatar
           className="h-16 w-16 cursor-pointer"
-          onClick={() => navigate(`/dna/connect/members/${member.userId}`)}
+          onClick={() => navigate(member.username ? `/dna/${member.username}` : `/dna/connect/discover`)}
         >
           <AvatarImage src={member.avatarUrl || ''} alt={member.displayName} />
           <AvatarFallback className="text-lg bg-dna-emerald/10 text-dna-emerald">
@@ -78,7 +79,7 @@ export const MemberSpotlightCard: React.FC<MemberSpotlightCardProps> = ({
         <div className="flex-1 min-w-0">
           <h3
             className="font-bold text-lg cursor-pointer hover:text-dna-emerald transition-colors"
-            onClick={() => navigate(`/dna/connect/members/${member.userId}`)}
+            onClick={() => navigate(member.username ? `/dna/${member.username}` : `/dna/connect/discover`)}
           >
             {member.displayName}
           </h3>
