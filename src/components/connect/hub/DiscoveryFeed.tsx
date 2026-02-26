@@ -558,7 +558,7 @@ export function DiscoveryFeed({
   return (
     <div className={cn('flex flex-col h-full', className)}>
       {/* Search Header */}
-      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/40 px-2 py-2 sm:px-4 sm:py-3 space-y-2 sm:space-y-3">
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/40 px-4 py-3 space-y-2 sm:space-y-3">
         {/* View mode tabs */}
         {viewMode !== 'discover' && (
           <div className="flex items-center gap-2">

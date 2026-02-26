@@ -334,21 +334,22 @@ export function ConversationsPanel({
   };
 
   return (
-    <ScrollArea className={cn('h-full', className)}>
-      <div className="p-4 space-y-4">
-        {/* Conversation header with Ndebele pattern */}
-        <div className="relative overflow-hidden rounded-lg bg-muted/20 p-3">
-          <CulturalPattern pattern="ndebele" opacity={0.05} />
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search messages..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 bg-background/80"
-            />
-          </div>
+    <div className={cn('flex flex-col h-full', className)}>
+      {/* Sticky Search Header - aligned with center column */}
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/40 px-4 py-3">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search messages..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 pr-10"
+          />
         </div>
+      </div>
+
+      <ScrollArea className="flex-1">
+        <div className="p-4 space-y-4">
 
         {/* Active Conversations */}
         <Card>
@@ -578,7 +579,8 @@ export function ConversationsPanel({
         onSubmit={composer.submit}
         onDismissSuccess={composer.dismissSuccess}
       />
-    </ScrollArea>
+      </ScrollArea>
+    </div>
   );
 }
 
