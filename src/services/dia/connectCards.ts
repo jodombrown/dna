@@ -46,7 +46,7 @@ async function generateSkillSuggestion(userId: string): Promise<DIACard | null> 
     // Find users with overlapping skills who are NOT connected
     const { data: candidates } = await supabase
       .from('profiles')
-      .select('id, full_name, headline, avatar_url, skills, interests')
+      .select('id, username, full_name, headline, avatar_url, skills, interests')
       .not('id', 'in', `(${Array.from(connectedIds).join(',')})`)
       .limit(20);
 
@@ -94,7 +94,7 @@ async function generateSkillSuggestion(userId: string): Promise<DIACard | null> 
         {
           label: 'View Profile',
           type: 'navigate' as const,
-          payload: { url: `/dna/connect/members/${bestCandidate.id}` },
+          payload: { url: bestCandidate.username ? `/dna/${bestCandidate.username}` : `/dna/connect/discover` },
           isPrimary: true,
         },
         {
@@ -188,9 +188,9 @@ async function generateConnectionReactivation(userId: string): Promise<DIACard |
     const conn = connections[Math.floor(Math.random() * connections.length)];
     const otherUserId = conn.requester_id === userId ? conn.recipient_id : conn.requester_id;
 
-    const { data: otherProfile } = await supabase
+      const { data: otherProfile } = await supabase
       .from('profiles')
-      .select('full_name, avatar_url, headline')
+      .select('full_name, avatar_url, headline, username')
       .eq('id', otherUserId)
       .single();
 
@@ -209,13 +209,13 @@ async function generateConnectionReactivation(userId: string): Promise<DIACard |
         {
           label: 'Send Message',
           type: 'navigate' as const,
-          payload: { url: `/dna/messaging?to=${otherUserId}` },
+          payload: { url: `/dna/messages?to=${otherUserId}` },
           isPrimary: true,
         },
         {
           label: 'View Profile',
           type: 'navigate' as const,
-          payload: { url: `/dna/connect/members/${otherUserId}` },
+          payload: { url: otherProfile.username ? `/dna/${otherProfile.username}` : `/dna/connect/discover` },
           isPrimary: false,
         },
       ],
@@ -266,7 +266,7 @@ async function generateMutualBridge(userId: string): Promise<DIACard | null> {
 
     const { data: profiles } = await supabase
       .from('profiles')
-      .select('id, full_name, headline')
+      .select('id, full_name, headline, username')
       .in('id', [personA, personB]);
 
     if (!profiles || profiles.length < 2) return null;
@@ -288,7 +288,7 @@ async function generateMutualBridge(userId: string): Promise<DIACard | null> {
         {
           label: 'Make Introduction',
           type: 'navigate' as const,
-          payload: { url: `/dna/messaging?introduce=${personA},${personB}` },
+          payload: { url: `/dna/messages?introduce=${personA},${personB}` },
           isPrimary: true,
         },
         {
