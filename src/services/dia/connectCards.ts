@@ -287,8 +287,14 @@ async function generateMutualBridge(userId: string): Promise<DIACard | null> {
       actions: [
         {
           label: 'Make Introduction',
-          type: 'navigate' as const,
-          payload: { url: `/dna/messages?introduce=${personA},${personB}` },
+          type: 'custom' as const,
+          payload: {
+            action: 'open_introduction',
+            personAId: personA,
+            personBId: personB,
+            personAName: profileA.full_name,
+            personBName: profileB.full_name,
+          },
           isPrimary: true,
         },
         {

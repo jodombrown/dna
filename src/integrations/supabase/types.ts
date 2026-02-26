@@ -4733,6 +4733,95 @@ export type Database = {
           },
         ]
       }
+      introductions: {
+        Row: {
+          context: Json | null
+          conversation_id: string | null
+          created_at: string
+          id: string
+          intro_type: string
+          introducer_id: string
+          message: string | null
+          person_a_id: string
+          person_b_id: string
+          status: string
+        }
+        Insert: {
+          context?: Json | null
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          intro_type?: string
+          introducer_id: string
+          message?: string | null
+          person_a_id: string
+          person_b_id: string
+          status?: string
+        }
+        Update: {
+          context?: Json | null
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          intro_type?: string
+          introducer_id?: string
+          message?: string | null
+          person_a_id?: string
+          person_b_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "introductions_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations_new"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "introductions_introducer_id_fkey"
+            columns: ["introducer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "introductions_introducer_id_fkey"
+            columns: ["introducer_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "introductions_person_a_id_fkey"
+            columns: ["person_a_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "introductions_person_a_id_fkey"
+            columns: ["person_a_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "introductions_person_b_id_fkey"
+            columns: ["person_b_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "introductions_person_b_id_fkey"
+            columns: ["person_b_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invites: {
         Row: {
           code: string
