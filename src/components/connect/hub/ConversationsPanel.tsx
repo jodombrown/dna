@@ -30,6 +30,8 @@ import { NetworkActivityFeed } from './NetworkActivityFeed';
 import { logger } from '@/lib/logger';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
 import { connectionService } from '@/services/connectionService';
+import { useUniversalComposer } from '@/hooks/useUniversalComposer';
+import { UniversalComposer } from '@/components/composer/UniversalComposer';
 
 interface ConversationsPanelProps {
   onSelectConversation?: (conversationId: string) => void;
@@ -78,6 +80,7 @@ export function ConversationsPanel({
 }: ConversationsPanelProps) {
   const { user } = useAuth();
   const { toast } = useToast();
+  const composer = useUniversalComposer();
   const [searchQuery, setSearchQuery] = useState('');
   const [processingRequests, setProcessingRequests] = useState<Set<string>>(new Set());
 
@@ -535,7 +538,7 @@ export function ConversationsPanel({
             <Button
               variant="outline"
               className="w-full justify-start h-10 text-sm"
-              onClick={() => (window.location.href = '/dna/contribute?action=post')}
+              onClick={() => composer.open('need')}
             >
               <Lightbulb className="h-4 w-4 mr-2 text-dna-ochre" />
               Post an Opportunity
@@ -543,7 +546,7 @@ export function ConversationsPanel({
             <Button
               variant="outline"
               className="w-full justify-start h-10 text-sm"
-              onClick={() => (window.location.href = '/dna/convene?action=create')}
+              onClick={() => composer.open('event')}
             >
               <Calendar className="h-4 w-4 mr-2 text-dna-sunset" />
               Host an Event
@@ -551,7 +554,7 @@ export function ConversationsPanel({
             <Button
               variant="outline"
               className="w-full justify-start h-10 text-sm"
-              onClick={() => (window.location.href = '/dna/collaborate?action=create')}
+              onClick={() => composer.open('space')}
             >
               <Handshake className="h-4 w-4 mr-2 text-dna-mint" />
               Start a Collaboration
@@ -562,6 +565,19 @@ export function ConversationsPanel({
         {/* Network Activity Feed */}
         <NetworkActivityFeed />
       </div>
+
+      {/* Universal Composer */}
+      <UniversalComposer
+        isOpen={composer.isOpen}
+        mode={composer.mode}
+        context={composer.context}
+        isSubmitting={composer.isSubmitting}
+        successData={composer.successData}
+        onClose={composer.close}
+        onModeChange={composer.switchMode}
+        onSubmit={composer.submit}
+        onDismissSuccess={composer.dismissSuccess}
+      />
     </ScrollArea>
   );
 }

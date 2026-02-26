@@ -59,9 +59,9 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
   // PulseBar is fixed at ~top-14/16 + ~60px = ~7.5rem total from top
   return (
     <div
-      className={cn("flex w-full gap-6 px-4", className)}
+      className={cn("flex w-full gap-4 px-4", className)}
       style={{
-        paddingTop: '1rem',
+        paddingTop: '1.5rem',
         height: 'calc(100vh - 7.5rem)',
         overflow: 'hidden',
       }}
