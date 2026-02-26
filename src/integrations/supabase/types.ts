@@ -519,6 +519,42 @@ export type Database = {
         }
         Relationships: []
       }
+      alpha_feedback: {
+        Row: {
+          area: string | null
+          category: string
+          content: string
+          created_at: string
+          device_type: string | null
+          id: string
+          page_url: string | null
+          user_id: string
+          viewport: string | null
+        }
+        Insert: {
+          area?: string | null
+          category: string
+          content: string
+          created_at?: string
+          device_type?: string | null
+          id?: string
+          page_url?: string | null
+          user_id: string
+          viewport?: string | null
+        }
+        Update: {
+          area?: string | null
+          category?: string
+          content?: string
+          created_at?: string
+          device_type?: string | null
+          id?: string
+          page_url?: string | null
+          user_id?: string
+          viewport?: string | null
+        }
+        Relationships: []
+      }
       analytics_events: {
         Row: {
           created_at: string | null

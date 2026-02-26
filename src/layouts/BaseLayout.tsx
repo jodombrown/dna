@@ -12,6 +12,7 @@ import { AlphaWelcomeBanner } from '@/components/alpha/AlphaWelcomeBanner';
 import { AlphaTestGuide } from '@/components/alpha/AlphaTestGuide';
 import { AlphaFeedbackForm } from '@/components/alpha/AlphaFeedbackForm';
 import { ProfileCompletionGuide } from '@/components/onboarding/ProfileCompletionGuide';
+import { FeedbackFAB } from '@/components/feedback/FeedbackFAB';
 
 interface BaseLayoutProps {
   children: React.ReactNode;
@@ -120,8 +121,8 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
         )}
         {children}
       </div>
-      {/* Sprint 12: FeedbackFAB and AlphaFeedbackButton removed —
-          Feedback Hub is now accessible from header icon */}
+      {/* Feedback FAB - side chevron on all /dna routes */}
+      <FeedbackFAB />
       <PulseDock />
 
       {/* Profile Completion Guide - Sprint 12B */}

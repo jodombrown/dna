@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Bug, Lightbulb, HelpCircle, Heart, Send, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 import {
   alphaFeedbackService,
   type FeedbackCategory,
@@ -66,11 +67,14 @@ export function AlphaFeedbackForm({ isOpen, onClose, onSuccess }: AlphaFeedbackF
 
     if (success) {
       setSubmitted(true);
+      toast.success('Thank you for your feedback!');
       onSuccess?.();
       setTimeout(() => {
         resetForm();
         onClose();
       }, 1500);
+    } else {
+      toast.error('Failed to submit feedback. Please try again.');
     }
   };
 
