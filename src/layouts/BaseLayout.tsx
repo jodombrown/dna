@@ -122,7 +122,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
         {children}
       </div>
       {/* Feedback FAB - side chevron on all /dna routes */}
-      <FeedbackFAB />
+      <FeedbackFAB onOpen={() => setIsFeedbackDrawerOpen(true)} />
       <PulseDock />
 
       {/* Profile Completion Guide - Sprint 12B */}
