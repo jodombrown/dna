@@ -10,9 +10,9 @@ import { initDIAPeriodicChecks } from '@/services/dia/diaPeriodicCheck';
 import { FEATURE_FLAGS } from '@/config/featureFlags';
 import { AlphaWelcomeBanner } from '@/components/alpha/AlphaWelcomeBanner';
 import { AlphaTestGuide } from '@/components/alpha/AlphaTestGuide';
-import { AlphaFeedbackForm } from '@/components/alpha/AlphaFeedbackForm';
 import { ProfileCompletionGuide } from '@/components/onboarding/ProfileCompletionGuide';
 import { FeedbackFAB } from '@/components/feedback/FeedbackFAB';
+import { FeedbackDrawer } from '@/components/feedback/FeedbackDrawer';
 
 interface BaseLayoutProps {
   children: React.ReactNode;
@@ -34,7 +34,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   const { user, profile } = useAuth();
   const location = useLocation();
   const [isTestGuideOpen, setIsTestGuideOpen] = useState(false);
-  const [isFeedbackFormOpen, setIsFeedbackFormOpen] = useState(false);
+  const [isFeedbackDrawerOpen, setIsFeedbackDrawerOpen] = useState(false);
 
   // DIA Sprint 4B: Initialize periodic checks for authenticated users
   useEffect(() => {
@@ -115,7 +115,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
             <AlphaWelcomeBanner
               testerName={profile?.first_name ?? profile?.full_name ?? 'Tester'}
               onOpenTestGuide={() => setIsTestGuideOpen(true)}
-              onOpenFeedback={() => setIsFeedbackFormOpen(true)}
+              onOpenFeedback={() => setIsFeedbackDrawerOpen(true)}
             />
           </div>
         )}
@@ -128,6 +128,12 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
       {/* Profile Completion Guide - Sprint 12B */}
       {user && <ProfileCompletionGuide />}
 
+      {/* Feedback Drawer - accessible from banner, test guide, and chevron FAB */}
+      <FeedbackDrawer
+        isOpen={isFeedbackDrawerOpen}
+        onClose={() => setIsFeedbackDrawerOpen(false)}
+      />
+
       {/* Alpha Testing Infrastructure */}
       {FEATURE_FLAGS.isAlphaTest && user && (
         <>
@@ -136,12 +142,8 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
             onClose={() => setIsTestGuideOpen(false)}
             onOpenFeedback={() => {
               setIsTestGuideOpen(false);
-              setIsFeedbackFormOpen(true);
+              setIsFeedbackDrawerOpen(true);
             }}
-          />
-          <AlphaFeedbackForm
-            isOpen={isFeedbackFormOpen}
-            onClose={() => setIsFeedbackFormOpen(false)}
           />
         </>
       )}
