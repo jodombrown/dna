@@ -1,0 +1,139 @@
+/**
+ * PastEventDiaNudge — DIA-styled prompts for post-event circulation
+ * 
+ * 1. CONVENE → CONVEY: "Share your experience" story prompt
+ * 2. CONVENE → CONNECT: "Connect with attendees" networking prompt
+ */
+
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Brain, X, PenLine, Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+
+interface PastEventDiaNudgeProps {
+  eventId: string;
+  eventTitle: string;
+  attendeeCount?: number;
+  variant: 'share_story' | 'connect_attendees';
+  className?: string;
+}
+
+const STORAGE_PREFIX = 'dia_past_event_dismissed_';
+
+function isDismissed(eventId: string, variant: string): boolean {
+  try {
+    return localStorage.getItem(`${STORAGE_PREFIX}${variant}_${eventId}`) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function setDismissed(eventId: string, variant: string) {
+  try {
+    localStorage.setItem(`${STORAGE_PREFIX}${variant}_${eventId}`, '1');
+  } catch {
+    // localStorage unavailable
+  }
+}
+
+export function PastEventDiaNudge({
+  eventId,
+  eventTitle,
+  attendeeCount,
+  variant,
+  className,
+}: PastEventDiaNudgeProps) {
+  const navigate = useNavigate();
+  const [dismissed, setDismissedState] = useState(() => isDismissed(eventId, variant));
+
+  if (dismissed) return null;
+
+  const handleDismiss = () => {
+    setDismissed(eventId, variant);
+    setDismissedState(true);
+  };
+
+  const handleAction = () => {
+    if (variant === 'share_story') {
+      // Navigate to compose with story mode context
+      navigate('/dna/convey/compose?mode=story&context=' + encodeURIComponent(eventTitle));
+    } else {
+      // Navigate to event detail attendees section
+      navigate(`/dna/convene/events/${eventId}?tab=attendees`);
+    }
+  };
+
+  const isStory = variant === 'share_story';
+
+  return (
+    <div
+      className={cn(
+        'relative overflow-hidden rounded-lg border p-4',
+        'bg-gradient-to-r from-teal-50/80 to-emerald-50/80',
+        'dark:from-teal-950/30 dark:to-emerald-950/30',
+        'border-teal-200/60 dark:border-teal-800/40',
+        className
+      )}
+    >
+      {/* Subtle pattern background */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.06]"
+        style={{
+          backgroundImage: `url('/patterns/kente-pattern.svg')`,
+          backgroundSize: '120px',
+          backgroundRepeat: 'repeat',
+        }}
+      />
+
+      <div className="relative flex items-start gap-3">
+        {/* DIA icon */}
+        <div className="flex-shrink-0 mt-0.5">
+          <div className="w-8 h-8 rounded-full bg-teal-100 dark:bg-teal-900/50 flex items-center justify-center">
+            <Brain className="h-4 w-4 text-teal-600 dark:text-teal-400" />
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium text-foreground mb-1">
+            {isStory
+              ? `You attended "${eventTitle}" — share your experience with the diaspora`
+              : `You attended "${eventTitle}"${attendeeCount ? ` with ${attendeeCount} others` : ''} — expand your network`}
+          </p>
+          <p className="text-xs text-muted-foreground mb-3">
+            {isStory
+              ? 'Write a story about what you learned or experienced'
+              : 'Connect with fellow attendees to keep the conversation going'}
+          </p>
+          <Button
+            size="sm"
+            className="h-7 px-3 text-xs bg-teal-600 hover:bg-teal-700 text-white"
+            onClick={handleAction}
+          >
+            {isStory ? (
+              <>
+                <PenLine className="h-3 w-3 mr-1.5" />
+                Write a Story
+              </>
+            ) : (
+              <>
+                <Users className="h-3 w-3 mr-1.5" />
+                View Attendees
+              </>
+            )}
+          </Button>
+        </div>
+
+        {/* Dismiss */}
+        <button
+          onClick={handleDismiss}
+          className="flex-shrink-0 text-muted-foreground/60 hover:text-muted-foreground transition-colors"
+          aria-label="Dismiss"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  );
+}
