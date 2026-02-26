@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import {
   Sheet,
   SheetContent,
-  SheetHeader,
-  SheetTitle,
 } from '@/components/ui/sheet';
 import {
   AlertDialog,
@@ -18,13 +16,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { Maximize2, LogOut, LogIn, Loader2, ChevronRight, HelpCircle } from 'lucide-react';
+import { LogOut, LogIn, Loader2, ChevronRight, HelpCircle, Sparkles, Bug, Lightbulb, MessageCircle } from 'lucide-react';
 import { FeedbackMessageList, FeedbackComposer } from '@/components/feedback';
 import { FeedbackThreadView } from './FeedbackThreadView';
 import { useFeedbackMessages } from '@/hooks/useFeedbackMessages';
@@ -32,6 +24,7 @@ import { useFeedbackMembership } from '@/hooks/useFeedbackMembership';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
 import { FeedbackHubTour } from '@/components/tours';
+import { cn } from '@/lib/utils';
 import type { FeedbackFilter, FeedbackMessageWithSender } from '@/types/feedback';
 
 interface FeedbackDrawerProps {
@@ -65,7 +58,6 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
     updateLastRead,
   } = useFeedbackMembership();
 
-  // Only fetch messages once membership is confirmed (for RLS to work)
   const isMembershipReady = !isMembershipLoading && isOptedIn;
 
   const {
@@ -76,7 +68,6 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
     fetchNextPage,
   } = useFeedbackMessages(channel?.id || null, filter, isMembershipReady);
 
-  // Update last read when drawer opens
   useEffect(() => {
     if (isOpen && channel?.id) {
       updateLastRead();
@@ -86,11 +77,9 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
   const handleReply = useCallback((messageId: string) => {
     const message = messages.find((m) => m.id === messageId);
     if (message) {
-      // If message has replies, open thread view
       if (message.reply_count > 0) {
         setSelectedThread(message);
       } else {
-        // Otherwise set up inline reply
         setReplyTo({
           id: message.id,
           username: message.sender?.username || 'anonymous',
@@ -103,11 +92,6 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
   const handleCancelReply = useCallback(() => {
     setReplyTo(null);
   }, []);
-
-  const handleOpenFullPage = () => {
-    onClose();
-    navigate('/dna/feedback');
-  };
 
   const handleOptOutClick = () => {
     setShowOptOutConfirm(true);
@@ -124,39 +108,49 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
     });
   };
 
+  const QUICK_ACTIONS = [
+    { icon: Bug, label: 'Bug', color: 'text-red-500' },
+    { icon: Lightbulb, label: 'Idea', color: 'text-amber-500' },
+    { icon: MessageCircle, label: 'Feedback', color: 'text-primary' },
+  ];
+
   return (
     <>
       <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-        <SheetContent side="right" className="w-full sm:max-w-lg p-0 flex flex-col overflow-visible" hideCloseButton>
-          {/* Left-edge chevron close tab - flush with drawer */}
+        <SheetContent side="right" className="w-full sm:max-w-lg p-0 flex flex-col overflow-visible border-l border-border/50" hideCloseButton>
+          {/* Left-edge chevron close tab */}
           <button
             onClick={onClose}
-            className="absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 z-[60] flex items-center justify-center w-6 h-16 md:w-8 md:h-20 bg-background border border-r-0 border-border hover:bg-muted rounded-l-lg shadow-md transition-all duration-200"
+            className="absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 z-[60] flex items-center justify-center w-6 h-16 md:w-8 md:h-20 bg-card border border-r-0 border-border hover:bg-muted rounded-l-lg shadow-md transition-all duration-200"
             aria-label="Close Feedback Hub"
           >
             <ChevronRight className="h-5 w-5 md:h-6 md:w-6 text-foreground" />
           </button>
 
-          {/* Header */}
-          <SheetHeader className="px-4 py-3 border-b shrink-0">
+          {/* Branded Header */}
+          <div className="relative px-4 py-4 border-b bg-gradient-to-r from-primary/5 via-transparent to-primary/10 shrink-0">
             <div className="flex items-center justify-between">
-              <SheetTitle className="text-lg">
-                DNA | Feedback Hub
-              </SheetTitle>
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-semibold text-foreground leading-tight">Feedback Hub</h2>
+                  <p className="text-[11px] text-muted-foreground">Help shape DNA</p>
+                </div>
+              </div>
               <div className="flex items-center gap-1">
-                {/* Full page - desktop only */}
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={handleOpenFullPage}
-                  title="Open full page"
-                  className="hidden md:flex"
+                  onClick={() => setShowHelpTour(true)}
+                  className="h-7 w-7"
                 >
-                  <Maximize2 className="h-4 w-4" />
+                  <HelpCircle className="h-3.5 w-3.5" />
                 </Button>
               </div>
             </div>
-          </SheetHeader>
+          </div>
 
           {/* Auth Loading State */}
           {authLoading ? (
@@ -164,87 +158,61 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
           ) : !user ? (
-            /* Not Logged In State */
             <div className="flex-1 flex items-center justify-center p-6">
               <div className="text-center max-w-xs">
-                <div className="text-4xl mb-4">🔐</div>
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
+                  <LogIn className="h-7 w-7 text-primary" />
+                </div>
                 <h3 className="text-lg font-semibold mb-2">Sign in to share feedback</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Join the DNA community to share your thoughts, report bugs, and suggest new features.
+                <p className="text-sm text-muted-foreground mb-5">
+                  Join the DNA community to share your thoughts and shape the platform.
                 </p>
-                <Button onClick={() => { onClose(); navigate('/auth'); }}>
-                  <LogIn className="h-4 w-4 mr-2" />
+                <Button onClick={() => { onClose(); navigate('/auth'); }} className="w-full">
                   Sign In
                 </Button>
               </div>
             </div>
           ) : isOptedOut ? (
-            /* Opted Out State */
             <div className="flex-1 flex items-center justify-center p-6">
               <div className="text-center max-w-xs">
                 <div className="text-4xl mb-4">👋</div>
                 <h3 className="text-lg font-semibold mb-2">You've opted out</h3>
-                <p className="text-sm text-muted-foreground mb-4">
+                <p className="text-sm text-muted-foreground mb-5">
                   You're not receiving feedback hub updates. Opt back in to participate.
                 </p>
-                <Button onClick={() => optIn()} disabled={isOptingIn}>
-                  {isOptingIn ? (
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  ) : (
-                    <LogIn className="h-4 w-4 mr-2" />
-                  )}
+                <Button onClick={() => optIn()} disabled={isOptingIn} className="w-full">
+                  {isOptingIn && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
                   Opt Back In
                 </Button>
               </div>
             </div>
           ) : (
             <>
-              {/* Filters with opt-out option */}
-              <div className="px-4 py-2 border-b shrink-0">
+              {/* Compact Filter Bar */}
+              <div className="px-3 py-2 border-b shrink-0">
                 <div className="flex items-center justify-between gap-2">
                   <Tabs value={filter} onValueChange={(v) => setFilter(v as FeedbackFilter)}>
-                    <TabsList className="h-8">
-                      <TabsTrigger value="all" className="text-xs h-7">All</TabsTrigger>
-                      <TabsTrigger value="my_feedback" className="text-xs h-7">Mine</TabsTrigger>
-                      <TabsTrigger value="pinned" className="text-xs h-7">Pinned</TabsTrigger>
+                    <TabsList className="h-8 bg-muted/50">
+                      <TabsTrigger value="all" className="text-xs h-7 px-2.5">All</TabsTrigger>
+                      <TabsTrigger value="my_feedback" className="text-xs h-7 px-2.5">Mine</TabsTrigger>
+                      <TabsTrigger value="pinned" className="text-xs h-7 px-2.5">📌</TabsTrigger>
                     </TabsList>
                   </Tabs>
                   
-                  {/* Help button */}
                   <Button
-                    variant="default"
-                    size="sm"
-                    onClick={() => setShowHelpTour(true)}
-                    title="Learn how to use Feedback Hub"
-                    className="gap-1.5 text-xs h-7 bg-primary text-primary-foreground"
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleOptOutClick}
+                    disabled={isOptingOut}
+                    className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                    title="Opt out of feedback"
                   >
-                    <HelpCircle className="h-3.5 w-3.5" />
-                    <span>Help</span>
+                    {isOptingOut ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <LogOut className="h-3.5 w-3.5" />
+                    )}
                   </Button>
-                  
-                  {/* Opt out option */}
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={handleOptOutClick}
-                          disabled={isOptingOut}
-                          className="h-7 w-7"
-                        >
-                          {isOptingOut ? (
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          ) : (
-                            <LogOut className="h-3.5 w-3.5" />
-                          )}
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom">
-                        <p>Stop receiving feedback updates and hide this hub</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
                 </div>
               </div>
 
@@ -283,15 +251,16 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
           isAdmin={isAdmin}
         />
       )}
-      {/* Opt Out Confirmation Dialog */}
+
+      {/* Opt Out Confirmation */}
       <AlertDialog open={showOptOutConfirm} onOpenChange={setShowOptOutConfirm}>
-        <AlertDialogContent>
+        <AlertDialogContent className="rounded-2xl">
           <AlertDialogHeader>
             <AlertDialogTitle>Opt out of Feedback Hub?</AlertDialogTitle>
             <AlertDialogDescription className="space-y-2">
               <p>Are you sure you want to opt out? You will no longer see the feedback button or receive updates.</p>
               <p className="font-medium text-foreground">
-                To opt back in later, tap the feedback button (it will reappear after you refresh) and select "Opt Back In".
+                To opt back in later, tap the feedback button and select "Opt Back In".
               </p>
             </AlertDialogDescription>
           </AlertDialogHeader>

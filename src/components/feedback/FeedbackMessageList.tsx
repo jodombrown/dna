@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { FeedbackMessage } from './FeedbackMessage';
 import type { FeedbackMessageWithSender } from '@/types/feedback';
-import { Loader2 } from 'lucide-react';
+import { Loader2, MessageSquare } from 'lucide-react';
 
 interface FeedbackMessageListProps {
   messages: FeedbackMessageWithSender[];
@@ -26,7 +26,6 @@ export function FeedbackMessageList({
 }: FeedbackMessageListProps) {
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
-  // Infinite scroll observer
   const handleObserver = useCallback(
     (entries: IntersectionObserverEntry[]) => {
       const [entry] = entries;
@@ -40,11 +39,7 @@ export function FeedbackMessageList({
   useEffect(() => {
     const element = loadMoreRef.current;
     if (!element) return;
-
-    const observer = new IntersectionObserver(handleObserver, {
-      threshold: 0.1,
-    });
-
+    const observer = new IntersectionObserver(handleObserver, { threshold: 0.1 });
     observer.observe(element);
     return () => observer.disconnect();
   }, [handleObserver]);
@@ -60,25 +55,26 @@ export function FeedbackMessageList({
   if (messages.length === 0) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-        <div className="text-4xl mb-4">💬</div>
-        <h3 className="text-lg font-semibold text-foreground">No feedback yet</h3>
-        <p className="text-muted-foreground mt-1">
-          Be the first to share your thoughts, report a bug, or suggest a feature!
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">
+          <MessageSquare className="h-7 w-7 text-muted-foreground" />
+        </div>
+        <h3 className="text-base font-semibold text-foreground mb-1">No feedback yet</h3>
+        <p className="text-sm text-muted-foreground max-w-[240px]">
+          Be the first to share your thoughts or report a bug!
         </p>
       </div>
     );
   }
 
-  // Separate pinned from regular messages
   const pinnedMessages = messages.filter((m) => m.is_pinned);
   const regularMessages = messages.filter((m) => !m.is_pinned);
 
   return (
-    <div className="h-full overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4">
-      {/* Pinned Messages Section */}
+    <div className="h-full overflow-y-auto p-3 md:p-4 space-y-2.5 md:space-y-3">
+      {/* Pinned */}
       {pinnedMessages.length > 0 && (
-        <div className="space-y-2 md:space-y-3">
-          <h3 className="text-xs md:text-sm font-medium text-muted-foreground flex items-center gap-2">
+        <div className="space-y-2">
+          <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider px-1">
             📌 Pinned
           </h3>
           {pinnedMessages.map((message) => (
@@ -90,7 +86,7 @@ export function FeedbackMessageList({
               onReply={() => onReply(message.id)}
             />
           ))}
-          <hr className="my-3 md:my-4" />
+          <div className="border-b border-border/50 my-2" />
         </div>
       )}
 
@@ -108,10 +104,9 @@ export function FeedbackMessageList({
       {/* Load More Trigger */}
       <div ref={loadMoreRef} className="h-4" />
 
-      {/* Loading More Indicator */}
       {isFetchingNextPage && (
-        <div className="flex justify-center py-3 md:py-4">
-          <Loader2 className="h-5 w-5 md:h-6 md:w-6 animate-spin text-muted-foreground" />
+        <div className="flex justify-center py-3">
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
         </div>
       )}
     </div>
