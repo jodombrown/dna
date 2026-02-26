@@ -8,6 +8,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Collapsible,
   CollapsibleContent,
@@ -28,11 +29,15 @@ import {
   Globe,
   Zap,
   Clock,
+  GitBranch,
+  Check,
+  MessageCircle,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logger';
+import { getMyIntroductions, type IntroductionRecord } from '@/services/introductionService';
 
 interface NetworkPanelProps {
   onFilterChange?: (filters: FilterState) => void;
@@ -140,6 +145,13 @@ export function NetworkPanel({
     enabled: !!user,
     staleTime: 60000,
     retry: 2,
+  });
+
+  const { data: myIntroductions } = useQuery({
+    queryKey: ['my-introductions', user?.id],
+    queryFn: () => (user ? getMyIntroductions(user.id) : Promise.resolve([])),
+    enabled: !!user,
+    staleTime: 60000,
   });
 
   const handleSearchChange = (value: string) => {
@@ -395,8 +407,98 @@ export function NetworkPanel({
             </div>
           </CollapsibleContent>
         </Collapsible>
+        <div className="border-t border-border/40" />
+
+        {/* My Introductions - Collapsible */}
+        <Collapsible defaultOpen={!!myIntroductions?.length}>
+          <CollapsibleTrigger className="flex items-center justify-between w-full p-3 rounded-lg hover:bg-muted/50 transition-colors group">
+            <span className="text-sm font-medium text-foreground">My Introductions</span>
+            <div className="flex items-center gap-1.5">
+              {myIntroductions && myIntroductions.length > 0 && (
+                <Badge variant="secondary" className="h-5 px-1.5 text-xs">
+                  {myIntroductions.length}
+                </Badge>
+              )}
+              <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="px-1 pb-2 space-y-1.5">
+              {!myIntroductions || myIntroductions.length === 0 ? (
+                <div className="p-3 text-center">
+                  <GitBranch className="h-5 w-5 text-muted-foreground mx-auto mb-1.5" />
+                  <p className="text-xs text-muted-foreground">
+                    No introductions yet. When DIA suggests a bridge, click "Make Introduction" to get started.
+                  </p>
+                </div>
+              ) : (
+                myIntroductions.map((intro) => (
+                  <IntroductionRow key={intro.id} intro={intro} />
+                ))
+              )}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
       </div>
     </ScrollArea>
+    </div>
+  );
+}
+
+/* ── Introduction Row ──────────────────────────── */
+
+const STATUS_CONFIG: Record<string, { label: string; icon: React.FC<{ className?: string }>; className: string }> = {
+  sent: { label: 'Pending', icon: Clock, className: 'text-muted-foreground bg-muted' },
+  accepted: { label: 'Responded', icon: MessageCircle, className: 'text-primary bg-primary/10' },
+  connected: { label: 'Connected', icon: Check, className: 'text-emerald-600 bg-emerald-50' },
+};
+
+function IntroductionRow({ intro }: { intro: IntroductionRecord }) {
+  const config = STATUS_CONFIG[intro.status] || STATUS_CONFIG.sent;
+  const StatusIcon = config.icon;
+  const nameA = intro.person_a?.full_name || 'Someone';
+  const nameB = intro.person_b?.full_name || 'Someone';
+
+  const initials = (name: string) =>
+    name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .slice(0, 2);
+
+  return (
+    <div className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-muted/50 transition-colors">
+      {/* Stacked avatars */}
+      <div className="relative w-8 h-8 flex-shrink-0">
+        <Avatar className="w-6 h-6 absolute top-0 left-0 border-2 border-background">
+          <AvatarImage src={intro.person_a?.avatar_url || undefined} />
+          <AvatarFallback className="text-[8px] bg-primary/10 text-primary">
+            {initials(nameA)}
+          </AvatarFallback>
+        </Avatar>
+        <Avatar className="w-6 h-6 absolute bottom-0 right-0 border-2 border-background">
+          <AvatarImage src={intro.person_b?.avatar_url || undefined} />
+          <AvatarFallback className="text-[8px] bg-primary/10 text-primary">
+            {initials(nameB)}
+          </AvatarFallback>
+        </Avatar>
+      </div>
+
+      {/* Names */}
+      <div className="flex-1 min-w-0">
+        <p className="text-xs font-medium truncate">
+          {nameA} &amp; {nameB}
+        </p>
+        <p className="text-[10px] text-muted-foreground">
+          {new Date(intro.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+        </p>
+      </div>
+
+      {/* Status badge */}
+      <Badge variant="secondary" className={cn('text-[10px] px-1.5 py-0 gap-0.5', config.className)}>
+        <StatusIcon className="w-2.5 h-2.5" />
+        {config.label}
+      </Badge>
     </div>
   );
 }
