@@ -23,6 +23,7 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures';
+import Autoplay from 'embla-carousel-autoplay';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
@@ -50,7 +51,13 @@ export function ConveneDiscovery() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeSlide, setActiveSlide] = useState(0);
   const composer = useUniversalComposer();
+
+  // Respect prefers-reduced-motion
+  const prefersReducedMotion =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // ── Featured Events Query ────────────────────────────
   const { data: featuredEvents = [] } = useQuery({
@@ -203,8 +210,27 @@ export function ConveneDiscovery() {
             <div className="relative px-0 sm:px-12">
               <Carousel
                 className="w-full"
-                plugins={[WheelGesturesPlugin()]}
-                opts={{ align: 'start', loop: false, dragFree: true }}
+                plugins={[
+                  WheelGesturesPlugin(),
+                  ...(prefersReducedMotion
+                    ? []
+                    : [
+                        Autoplay({
+                          delay: 5000,
+                          stopOnInteraction: true,
+                          stopOnMouseEnter: true,
+                          playOnInit: true,
+                        }),
+                      ]),
+                ]}
+                opts={{ align: 'start', loop: true, dragFree: false }}
+                setApi={(api) => {
+                  if (api) {
+                    api.on('select', () => {
+                      setActiveSlide(api.selectedScrollSnap());
+                    });
+                  }
+                }}
               >
                 <CarouselContent className="-ml-4">
                   {featuredEvents.map((event: Record<string, unknown>) => (
@@ -236,6 +262,24 @@ export function ConveneDiscovery() {
                 <CarouselPrevious className="hidden sm:flex absolute -left-12 top-1/2 -translate-y-1/2 h-8 w-8 bg-background shadow-lg border-2 hover:bg-[hsl(var(--module-convene))] hover:text-white hover:border-[hsl(var(--module-convene))] transition-all" />
                 <CarouselNext className="hidden sm:flex absolute -right-12 top-1/2 -translate-y-1/2 h-8 w-8 bg-background shadow-lg border-2 hover:bg-[hsl(var(--module-convene))] hover:text-white hover:border-[hsl(var(--module-convene))] transition-all" />
               </Carousel>
+
+              {/* Dot Indicators */}
+              {featuredEvents.length > 1 && (
+                <div className="flex justify-center gap-1.5 mt-4">
+                  {featuredEvents.map((_: unknown, index: number) => (
+                    <button
+                      key={index}
+                      className={cn(
+                        'h-1.5 rounded-full transition-all duration-300',
+                        index === activeSlide
+                          ? 'w-6 bg-[hsl(var(--module-convene))]'
+                          : 'w-1.5 bg-muted-foreground/30 hover:bg-muted-foreground/50'
+                      )}
+                      aria-label={`Go to slide ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}
