@@ -53,7 +53,7 @@ const UserAdminHub: React.FC = () => {
       items: [
         { label: 'My Events', path: '/dna/convene/my-events' },
         { label: 'Event Analytics', path: '/dna/convene/analytics' },
-        { label: 'Create Event', path: '/dna/convene/events/new' },
+        { label: 'Host an Event', path: '/dna/convene/events/new' },
       ]
     },
     {

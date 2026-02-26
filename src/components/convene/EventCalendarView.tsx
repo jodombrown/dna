@@ -97,7 +97,7 @@ export const EventCalendarView = ({ events, onCreateEvent }: EventCalendarViewPr
           </div>
         </div>
         <Button onClick={() => onCreateEvent?.()} size="sm">
-          Create Event
+          Host an Event
         </Button>
       </div>
 

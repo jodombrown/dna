@@ -174,7 +174,7 @@ export function ConveneDiscovery() {
                 onClick={() => composer.open('event')}
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Create Event
+                Host an Event
               </Button>
               <Button
                 size="lg"
@@ -362,7 +362,7 @@ export function ConveneDiscovery() {
             <div className="space-y-3">
               <h3 className="font-semibold text-sm text-foreground">Quick Actions</h3>
               {[
-                { label: 'Create Event', icon: Plus, onClick: () => composer.open('event'), primary: true },
+                { label: 'Host an Event', icon: Plus, onClick: () => composer.open('event'), primary: true },
                 { label: 'Browse Events', icon: Search, onClick: () => navigate('/dna/convene/events') },
                 { label: 'My Events', icon: CalendarDays, onClick: () => navigate('/dna/convene/my-events') },
                 { label: 'Groups', icon: Users, onClick: () => navigate('/dna/convene/groups') },

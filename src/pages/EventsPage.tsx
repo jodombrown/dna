@@ -98,7 +98,7 @@ export default function EventsPage() {
             className="bg-[hsl(151,75%,50%)] hover:bg-[hsl(151,75%,40%)] text-white"
           >
             <Plus className="h-4 w-4 mr-2" />
-            Create Event
+            Host an Event
           </Button>
         </div>
 
@@ -189,7 +189,7 @@ export default function EventsPage() {
                 className="bg-[hsl(151,75%,50%)] hover:bg-[hsl(151,75%,40%)] text-white"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Create Event
+                Host an Event
               </Button>
             )}
           </div>

@@ -385,7 +385,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
               onClick={() => composer.open('event')}
             >
               <CalendarPlus className="w-4 h-4 mr-2" />
-              Create Event
+              Host an Event
             </Button>
           )}
         </CardTitle>
