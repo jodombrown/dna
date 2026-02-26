@@ -170,58 +170,36 @@ export function NetworkPanel({
     <div className={cn('flex flex-col h-full', className)}>
       {/* Sticky Title Header - aligned with other column headers */}
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/40 px-4 py-3">
-        <div className="flex items-center gap-2 h-11">
-          <Users className="h-4 w-4 text-primary" />
-          <h2 className="text-sm font-semibold text-foreground">Your Network</h2>
-          {networkStats?.total !== undefined && networkStats.total > 0 && (
-            <Badge variant="secondary" className="text-xs px-1.5 py-0">
-              {networkStats.total}
-            </Badge>
-          )}
+        <div className="flex items-center justify-between h-11">
+          <div className="flex items-center gap-2">
+            <Users className="h-4 w-4 text-primary" />
+            <h2 className="text-sm font-semibold text-foreground">Your Network</h2>
+            {networkStats?.total !== undefined && networkStats.total > 0 && (
+              <Badge variant="secondary" className="text-xs px-1.5 py-0">
+                {networkStats.total}
+              </Badge>
+            )}
+            {networkStats?.weeklyChange !== undefined && networkStats.weeklyChange > 0 && (
+              <div className="flex items-center gap-1 text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                <TrendingUp className="h-3 w-3" />
+                <span className="text-xs font-medium">+{networkStats.weeklyChange}</span>
+              </div>
+            )}
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-xs text-muted-foreground hover:text-foreground p-1 h-auto"
+            onClick={handleViewNetwork}
+          >
+            <span>View all</span>
+            <ChevronRight className="h-3.5 w-3.5 ml-0.5" />
+          </Button>
         </div>
       </div>
 
       <ScrollArea className="flex-1">
         <div className="p-4 space-y-4">
-        {/* Network Stats Card */}
-        <Card className="relative overflow-hidden bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
-          <CulturalPattern pattern="kente" opacity={0.08} />
-          <CardContent className="relative p-4">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <Users className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-                    Your Network
-                  </p>
-                  <p className="text-2xl font-bold text-foreground">
-                    {networkStats?.total ?? '—'}
-                  </p>
-                </div>
-              </div>
-
-              {networkStats?.weeklyChange !== undefined && networkStats.weeklyChange > 0 && (
-                <div className="flex items-center gap-1 text-primary bg-primary/10 px-2 py-1 rounded-full">
-                  <TrendingUp className="h-3 w-3" />
-                  <span className="text-xs font-medium">+{networkStats.weeklyChange}</span>
-                </div>
-              )}
-            </div>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full justify-between text-muted-foreground hover:text-foreground"
-              onClick={handleViewNetwork}
-            >
-              <span>View full network</span>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </CardContent>
-        </Card>
-
         {/* Filters section */}
 
         {/* Filter by C Engagement */}
