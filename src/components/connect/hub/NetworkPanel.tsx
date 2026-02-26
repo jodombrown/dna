@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useQuery } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -10,7 +9,11 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import {
-  Search,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import {
   Users,
   TrendingUp,
   Eye,
@@ -21,12 +24,15 @@ import {
   Lightbulb,
   FileText,
   ChevronRight,
+  ChevronDown,
+  Globe,
+  Zap,
+  Clock,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logger';
-import { CulturalPattern } from '@/components/shared/CulturalPattern';
 
 interface NetworkPanelProps {
   onFilterChange?: (filters: FilterState) => void;
@@ -214,88 +220,105 @@ export function NetworkPanel({
 
       <ScrollArea className="flex-1">
         <div className="p-4 space-y-4">
-        {/* Filters section */}
-
-        {/* Filter by C Engagement */}
-        <Card>
-          <CardHeader className="p-3 pb-2">
-            <CardTitle className="text-sm font-medium flex items-center justify-between">
-              <span>Filter by Engagement</span>
+        {/* Filter by Engagement - Collapsible */}
+        <Collapsible defaultOpen>
+          <CollapsibleTrigger className="flex items-center justify-between w-full p-3 rounded-lg hover:bg-muted/50 transition-colors group">
+            <span className="text-sm font-medium text-foreground">Filter by Engagement</span>
+            <div className="flex items-center gap-1.5">
               {activeFilterCount > 0 && (
                 <Badge variant="secondary" className="h-5 px-1.5 text-xs">
                   {activeFilterCount}
                 </Badge>
               )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-3 pt-0">
-            <RadioGroup
-              value={filters.cEngagement}
-              onValueChange={(value) =>
-                handleFilterChange({
-                  cEngagement: value as FilterState['cEngagement'],
-                })
-              }
-              className="space-y-2"
-            >
-              {C_ENGAGEMENT_OPTIONS.map((option) => (
+              <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="px-1 pb-2">
+              <RadioGroup
+                value={filters.cEngagement}
+                onValueChange={(value) =>
+                  handleFilterChange({
+                    cEngagement: value as FilterState['cEngagement'],
+                  })
+                }
+                className="space-y-1"
+              >
+                {C_ENGAGEMENT_OPTIONS.map((option) => (
+                  <div
+                    key={option.id}
+                    className={cn(
+                      'flex items-center space-x-2 p-2 rounded-lg transition-colors cursor-pointer',
+                      filters.cEngagement === option.id
+                        ? 'bg-primary/10'
+                        : 'hover:bg-muted/50'
+                    )}
+                  >
+                    <RadioGroupItem value={option.id} id={option.id} />
+                    <Label
+                      htmlFor={option.id}
+                      className="flex items-center gap-2 flex-1 cursor-pointer text-sm"
+                    >
+                      <option.icon className="h-4 w-4 text-muted-foreground" />
+                      {option.label}
+                    </Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        <div className="border-t border-border/40" />
+
+        {/* Filter by Heritage Region - Collapsible */}
+        <Collapsible defaultOpen>
+          <CollapsibleTrigger className="flex items-center justify-between w-full p-3 rounded-lg hover:bg-muted/50 transition-colors group">
+            <span className="text-sm font-medium text-foreground">Filter by Heritage Region</span>
+            <div className="flex items-center gap-1.5">
+              {filters.regions.length > 0 && (
+                <Badge variant="secondary" className="h-5 px-1.5 text-xs">
+                  {filters.regions.length}
+                </Badge>
+              )}
+              <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="px-1 pb-2 space-y-1">
+              {HERITAGE_REGIONS.map((region) => (
                 <div
-                  key={option.id}
+                  key={region.id}
                   className={cn(
                     'flex items-center space-x-2 p-2 rounded-lg transition-colors cursor-pointer',
-                    filters.cEngagement === option.id
-                      ? 'bg-primary/10'
-                      : 'hover:bg-muted/50'
+                    filters.regions.includes(region.id) ? 'bg-primary/10' : 'hover:bg-muted/50'
                   )}
+                  onClick={() => handleRegionToggle(region.id)}
                 >
-                  <RadioGroupItem value={option.id} id={option.id} />
-                  <Label
-                    htmlFor={option.id}
-                    className="flex items-center gap-2 flex-1 cursor-pointer text-sm"
-                  >
-                    <option.icon className="h-4 w-4 text-muted-foreground" />
-                    {option.label}
+                  <Checkbox
+                    checked={filters.regions.includes(region.id)}
+                    id={region.id}
+                  />
+                  <Label htmlFor={region.id} className="flex items-center gap-2 text-sm cursor-pointer">
+                    <Globe className="h-4 w-4 text-muted-foreground" />
+                    {region.label}
                   </Label>
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
 
-        {/* Filter by Region */}
-        <Card>
-          <CardHeader className="p-3 pb-2">
-            <CardTitle className="text-sm font-medium">Heritage Regions</CardTitle>
-          </CardHeader>
-          <CardContent className="p-3 pt-0 space-y-2">
-            {HERITAGE_REGIONS.map((region) => (
-              <div
-                key={region.id}
-                className={cn(
-                  'flex items-center space-x-2 p-2 rounded-lg transition-colors cursor-pointer',
-                  filters.regions.includes(region.id) ? 'bg-primary/10' : 'hover:bg-muted/50'
-                )}
-                onClick={() => handleRegionToggle(region.id)}
-              >
-                <Checkbox
-                  checked={filters.regions.includes(region.id)}
-                  id={region.id}
-                />
-                <Label htmlFor={region.id} className="text-sm cursor-pointer">
-                  {region.label}
-                </Label>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+        <div className="border-t border-border/40" />
 
-        {/* Activity Summary - clicks populate center column */}
-        <Card className="bg-muted/30">
-          <CardHeader className="p-3 pb-2">
-            <CardTitle className="text-sm font-medium">Your Activity</CardTitle>
-          </CardHeader>
-          <CardContent className="p-3 pt-0">
-            <div className="space-y-1">
+        {/* Your Activity - Collapsible */}
+        <Collapsible defaultOpen>
+          <CollapsibleTrigger className="flex items-center justify-between w-full p-3 rounded-lg hover:bg-muted/50 transition-colors group">
+            <span className="text-sm font-medium text-foreground">Your Activity</span>
+            <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="px-1 pb-2 space-y-1">
               <div
                 className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
                 onClick={() => handleActivityClick('profile_views')}
@@ -338,8 +361,40 @@ export function NetworkPanel({
                 </Badge>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </CollapsibleContent>
+        </Collapsible>
+
+        <div className="border-t border-border/40" />
+
+        {/* Connection Strength - Collapsible */}
+        <Collapsible>
+          <CollapsibleTrigger className="flex items-center justify-between w-full p-3 rounded-lg hover:bg-muted/50 transition-colors group">
+            <span className="text-sm font-medium text-foreground">Connection Strength</span>
+            <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="px-1 pb-2 space-y-2">
+              <div className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                onClick={handleViewNetwork}
+              >
+                <div className="flex items-center gap-2">
+                  <Zap className="h-4 w-4 text-amber-500" />
+                  <span className="text-sm">Active connections</span>
+                </div>
+                <span className="text-xs text-muted-foreground">Messaged recently</span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                onClick={handleViewNetwork}
+              >
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm">Dormant connections</span>
+                </div>
+                <span className="text-xs text-muted-foreground">Reconnect</span>
+              </div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
       </div>
     </ScrollArea>
     </div>
