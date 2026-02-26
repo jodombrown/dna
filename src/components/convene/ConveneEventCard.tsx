@@ -18,6 +18,7 @@ import {
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { MutualAttendeesLine } from './MutualAttendeesLine';
 
 export interface ConveneEventCardProps {
   event: {
@@ -70,6 +71,7 @@ export interface ConveneEventCardProps {
   showActions?: boolean;
   isOrganizer?: boolean;
   onClick?: () => void;
+  showMutualAttendees?: boolean;
   className?: string;
 }
 
@@ -91,6 +93,7 @@ export function ConveneEventCard({
   showActions = false,
   isOrganizer = false,
   onClick,
+  showMutualAttendees = false,
   className,
 }: ConveneEventCardProps) {
   const navigate = useNavigate();
@@ -357,6 +360,9 @@ export function ConveneEventCard({
             </div>
           </div>
         )}
+
+        {/* Mutual Attendees */}
+        {showMutualAttendees && <MutualAttendeesLine eventId={event.id} />}
 
         {/* Spacer */}
         <div className="flex-1" />

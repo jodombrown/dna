@@ -57,6 +57,7 @@ import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 // DetailViewLayout removed - using custom clean layout
 import { formatDistanceToNow, format } from 'date-fns';
+import { EventCountdown } from '@/components/convene/EventCountdown';
 import { AddToCalendarButton } from '@/components/convene/AddToCalendarButton';
 import { EventSpacesSection } from '@/components/collaboration/EventSpacesSection';
 import { EventActivityFeed } from '@/components/events/EventActivityFeed';
@@ -582,6 +583,8 @@ const EventDetail = () => {
                 )}
               </div>
               <h1 className="text-2xl sm:text-4xl font-bold mb-2">{event.title}</h1>
+              {/* Countdown / Happening Now */}
+              <EventCountdown startTime={event.start_time} endTime={event.end_time} className="mt-1" />
             </div>
 
             <div className="flex gap-2 flex-wrap items-center">

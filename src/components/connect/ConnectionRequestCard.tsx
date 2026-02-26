@@ -13,6 +13,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { connectionService } from '@/services/connectionService';
 import { generatePostConnectionNudges, PostConnectionNudge } from '@/lib/dia/postConnectionNudges';
 import { PostConnectionNudgeCard } from '@/components/dia/PostConnectionNudgeCard';
+import { ConnectionRequestContext } from './ConnectionRequestContext';
 import { getErrorMessage } from '@/lib/errorLogger';
 
 interface ConnectionRequestCardProps {
@@ -170,6 +171,13 @@ export const ConnectionRequestCard: React.FC<ConnectionRequestCardProps> = ({
               <p className="text-sm text-muted-foreground truncate">
                 {request.headline || request.professional_role || 'DNA Member'}
               </p>
+              {/* Shared context from DIA */}
+              {user?.id && (
+                <ConnectionRequestContext
+                  currentUserId={user.id}
+                  requesterId={request.requester_id}
+                />
+              )}
             </div>
 
             {request.location && (
