@@ -22,6 +22,8 @@ interface DiscoveryFeedProps {
   filters?: FilterState;
   networkSearchQuery?: string;
   onMessageMember?: (memberId: string) => void;
+  viewMode?: 'discover' | 'network' | 'activity';
+  onViewModeChange?: (mode: 'discover' | 'network' | 'activity') => void;
   className?: string;
 }
 
@@ -43,6 +45,8 @@ export function DiscoveryFeed({
   filters,
   networkSearchQuery,
   onMessageMember,
+  viewMode = 'discover',
+  onViewModeChange,
   className,
 }: DiscoveryFeedProps) {
   const { user } = useAuth();
@@ -533,10 +537,26 @@ export function DiscoveryFeed({
     <div className={cn('flex flex-col h-full', className)}>
       {/* Search Header */}
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/40 p-4">
+        {/* View mode tabs */}
+        {viewMode !== 'discover' && (
+          <div className="flex items-center gap-2 mb-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onViewModeChange?.('discover')}
+              className="text-xs text-muted-foreground"
+            >
+              ← Back to Discovery
+            </Button>
+            <span className="text-sm font-medium text-foreground">
+              {viewMode === 'network' ? 'Your Network' : 'Your Activity'}
+            </span>
+          </div>
+        )}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search all members..."
+            placeholder={viewMode === 'network' ? 'Search your network...' : 'Search all members...'}
             value={searchQuery}
             onChange={(e) => handleSearchChange(e.target.value)}
             className="pl-9 pr-9 bg-muted/50"

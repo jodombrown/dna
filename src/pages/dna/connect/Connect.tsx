@@ -46,6 +46,7 @@ const Connect = () => {
     diasporaLocations: [],
   });
   const [networkSearchQuery, setNetworkSearchQuery] = useState('');
+  const [viewMode, setViewMode] = useState<'discover' | 'network' | 'activity'>('discover');
 
   // Mobile state
   const [mobileSearchQuery, setMobileSearchQuery] = useState('');
@@ -63,6 +64,13 @@ const Connect = () => {
   // Handle filter changes from NetworkPanel
   const handleFilterChange = useCallback((newFilters: FilterState) => {
     setFilters(newFilters);
+    // When filters change, switch to discover mode to show filtered results
+    setViewMode('discover');
+  }, []);
+
+  // Handle view mode changes from NetworkPanel
+  const handleViewModeChange = useCallback((mode: 'discover' | 'network' | 'activity') => {
+    setViewMode(mode);
   }, []);
 
   // Handle network search
@@ -164,6 +172,7 @@ const Connect = () => {
             <NetworkPanel
               onFilterChange={handleFilterChange}
               onSearchChange={handleNetworkSearch}
+              onViewModeChange={handleViewModeChange}
             />
           </div>
         }
@@ -172,6 +181,8 @@ const Connect = () => {
             filters={filters}
             networkSearchQuery={networkSearchQuery}
             onMessageMember={handleMessageMember}
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
           />
         }
         rightPanel={
