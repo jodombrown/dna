@@ -170,7 +170,7 @@ export function NetworkPanel({
     <div className={cn('flex flex-col h-full', className)}>
       {/* Sticky Title Header - aligned with other column headers */}
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/40 px-4 py-3">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 h-11">
           <Users className="h-4 w-4 text-primary" />
           <h2 className="text-sm font-semibold text-foreground">Your Network</h2>
           {networkStats?.total !== undefined && networkStats.total > 0 && (
