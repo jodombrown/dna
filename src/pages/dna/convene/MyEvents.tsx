@@ -14,10 +14,13 @@ import { EventCalendarView } from '@/components/convene/EventCalendarView';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
 import { PastEventDiaNudge } from '@/components/convene/PastEventDiaNudge';
+import { useUniversalComposer } from '@/hooks/useUniversalComposer';
+import { UniversalComposer } from '@/components/composer/UniversalComposer';
 
 const MyEvents = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const composer = useUniversalComposer();
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
 
   // Fetch events I'm hosting
@@ -121,7 +124,7 @@ const MyEvents = () => {
 
           {/* Calendar View */}
           {viewMode === 'calendar' && (
-            <EventCalendarView events={[...hostingEvents, ...attendingEvents]} />
+            <EventCalendarView events={[...hostingEvents, ...attendingEvents]} onCreateEvent={() => composer.open('event')} />
           )}
 
           {/* List View */}
@@ -148,7 +151,7 @@ const MyEvents = () => {
                     <p className="text-muted-foreground mb-4">
                       You haven't created any events yet. Host one to bring the diaspora together!
                     </p>
-                    <Button onClick={() => navigate('/dna/convene/events/new')}>
+                    <Button onClick={() => composer.open('event')}>
                       Create Your First Event
                     </Button>
                   </CardContent>
@@ -267,7 +270,19 @@ const MyEvents = () => {
         </div>
       }
       rightColumn={<RightWidgets variant="convene" />}
-    />
+    >
+      <UniversalComposer
+        isOpen={composer.isOpen}
+        mode={composer.mode}
+        context={composer.context}
+        isSubmitting={composer.isSubmitting}
+        onClose={composer.close}
+        onModeChange={composer.switchMode}
+        successData={composer.successData}
+        onSubmit={composer.submit}
+        onDismissSuccess={composer.dismissSuccess}
+      />
+    </LayoutController>
   );
 };
 

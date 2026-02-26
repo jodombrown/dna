@@ -11,6 +11,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
 import { EventListItem, EventType, EventFormat } from '@/types/events';
 import { ProfileV2Data, ProfileV2Visibility } from '@/types/profileV2';
+import { useUniversalComposer } from '@/hooks/useUniversalComposer';
+import { UniversalComposer } from '@/components/composer/UniversalComposer';
 
 interface ProfileV2EventsProps {
   profile: ProfileV2Data;
@@ -24,6 +26,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
   isOwner,
 }) => {
   const navigate = useNavigate();
+  const composer = useUniversalComposer();
   const profileUserId = profile.id;
 
   // Query events the profile user is hosting
@@ -303,7 +306,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
     past: EventListItem[],
     emptyTitle: string,
     emptyDescription: string,
-    emptyAction: { label: string; path: string }
+    emptyAction: { label: string; onClick: () => void }
   ) => {
     if (upcoming.length === 0 && past.length === 0) {
       return (
@@ -316,7 +319,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
             {emptyDescription}
           </p>
           {isOwner && (
-            <Button onClick={() => navigate(emptyAction.path)}>
+            <Button onClick={emptyAction.onClick}>
               {emptyAction.label}
             </Button>
           )}
@@ -364,6 +367,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
   };
 
   return (
+    <>
     <Card>
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center justify-between">
@@ -378,7 +382,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => navigate('/dna/convene/events/new')}
+              onClick={() => composer.open('event')}
             >
               <CalendarPlus className="w-4 h-4 mr-2" />
               Create Event
@@ -433,7 +437,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
               isOwner
                 ? 'Create your first event to bring the community together!'
                 : `${profile.full_name || 'This user'} hasn't hosted any events yet.`,
-              { label: 'Create Event', path: '/dna/convene/events/new' }
+              { label: 'Create Event', onClick: () => composer.open('event') }
             )}
           </TabsContent>
 
@@ -445,12 +449,24 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
               isOwner
                 ? 'Discover and RSVP to events to see them here!'
                 : `${profile.full_name || 'This user'} hasn't attended any public events yet.`,
-              { label: 'Discover Events', path: '/dna/convene' }
+              { label: 'Discover Events', onClick: () => navigate('/dna/convene') }
             )}
           </TabsContent>
         </Tabs>
       </CardContent>
     </Card>
+    <UniversalComposer
+      isOpen={composer.isOpen}
+      mode={composer.mode}
+      context={composer.context}
+      isSubmitting={composer.isSubmitting}
+      onClose={composer.close}
+      onModeChange={composer.switchMode}
+      successData={composer.successData}
+      onSubmit={composer.submit}
+      onDismissSuccess={composer.dismissSuccess}
+    />
+    </>
   );
 };
 
