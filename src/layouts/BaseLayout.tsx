@@ -97,11 +97,9 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
           "min-h-screen w-full max-w-full",
           getAuthGradient(),
           // Top padding: header (56px mobile / 64px desktop) + PulseBar (~60px on desktop for authed users)
-          isConnectRoute
-            ? "pt-0 md:pt-14 md:sm:pt-16"
-            : user
-              ? "pt-14 sm:pt-16 lg:pt-[7.5rem]"  // extra space for fixed PulseBar on desktop
-              : "pt-14 sm:pt-16",
+          user
+            ? "pt-14 sm:pt-16 lg:pt-[7.5rem]"  // extra space for fixed PulseBar on desktop
+            : "pt-14 sm:pt-16",
           // Add bottom padding on mobile to account for PulseDock
           "pb-20 lg:pb-0",
           "transition-all duration-300 ease-in-out",
