@@ -28,6 +28,8 @@ import {
   Share2,
   UserCheck,
   ExternalLink,
+  Sparkles,
+  Zap,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -340,26 +342,33 @@ export function EnhancedMemberCard({
                     </Badge>
                   )}
 
-                  {/* Match Score with Tooltip */}
-                  {member.match_score > 0 && (
+                  {/* Match Score Badge - Prominent top-right badge for high matches */}
+                  {member.match_score >= 60 && (
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Badge
                           variant="outline"
                           className={cn(
-                            'w-fit px-2 py-0.5 text-[10px] font-semibold cursor-help',
+                            'w-fit px-2.5 py-0.5 text-[10px] font-bold cursor-help gap-1',
                             member.match_score >= 80
-                              ? 'bg-emerald-100 text-emerald-700 border-emerald-200'
-                              : member.match_score >= 60
-                              ? 'bg-amber-100 text-amber-700 border-amber-200'
-                              : 'bg-muted text-muted-foreground border-border'
+                              ? 'bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-700 border-emerald-300 shadow-sm shadow-emerald-100'
+                              : 'bg-gradient-to-r from-amber-50 to-amber-100 text-amber-700 border-amber-300 shadow-sm shadow-amber-100'
                           )}
                         >
-                          {member.match_score}% Match
+                          <Zap className="h-3 w-3" />
+                          {member.match_score >= 80
+                            ? `${member.match_score}% Match`
+                            : `${member.match_score}% Match`}
                         </Badge>
                       </TooltipTrigger>
-                      <TooltipContent side="top" className="max-w-xs">
-                        <p className="text-sm">{matchTooltipContent}</p>
+                      <TooltipContent side="top" className="max-w-xs bg-popover border border-border">
+                        <div className="flex items-start gap-2">
+                          <Sparkles className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                          <div>
+                            <p className="text-sm font-medium">DIA Match Score</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">{matchTooltipContent}</p>
+                          </div>
+                        </div>
                       </TooltipContent>
                     </Tooltip>
                   )}
@@ -385,17 +394,18 @@ export function EnhancedMemberCard({
                   {member.headline || member.profession || 'DNA Community Member'}
                 </p>
 
-                {/* Contextual Match Reasons */}
+                {/* Reason to Connect - Prominent DIA line */}
                 {matchReasons.length > 0 && !isCompact && (
-                  <div className="flex flex-wrap gap-1.5 mb-2">
-                    {matchReasons.map((reason, index) => (
-                      <span
-                        key={index}
-                        className="text-[11px] text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-full"
-                      >
-                        {reason}
-                      </span>
-                    ))}
+                  <div className="flex items-start gap-1.5 mb-2">
+                    <Sparkles className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                    <p className="text-sm text-muted-foreground leading-snug">
+                      {matchReasons.slice(0, 2).map((reason, index) => (
+                        <span key={index}>
+                          {index > 0 && <span className="mx-1 text-border">·</span>}
+                          <span className="font-medium text-foreground">{reason}</span>
+                        </span>
+                      ))}
+                    </p>
                   </div>
                 )}
 

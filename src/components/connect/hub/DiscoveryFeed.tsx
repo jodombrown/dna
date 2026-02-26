@@ -12,8 +12,10 @@ import { useToast } from '@/hooks/use-toast';
 import { EnhancedMemberCard } from './EnhancedMemberCard';
 import { DiaInsightCard, DiaInsightData, DiaInsightType } from './DiaInsightCard';
 import { FilterState } from './NetworkPanel';
+import { NetworkHighlights } from './NetworkHighlights';
 import { ConnectionRequestModal } from '@/components/connect/ConnectionRequestModal';
 import { connectionService } from '@/services/connectionService';
+import { SearchTypeahead } from '@/components/connect/SearchTypeahead';
 import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logger';
 import { getErrorMessage } from '@/lib/errorLogger';
@@ -536,10 +538,10 @@ export function DiscoveryFeed({
   return (
     <div className={cn('flex flex-col h-full', className)}>
       {/* Search Header */}
-      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/40 p-4">
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/40 p-4 space-y-3">
         {/* View mode tabs */}
         {viewMode !== 'discover' && (
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-2">
             <Button
               variant="ghost"
               size="sm"
@@ -553,32 +555,41 @@ export function DiscoveryFeed({
             </span>
           </div>
         )}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder={viewMode === 'network' ? 'Search your network...' : 'Search all members...'}
-            value={searchQuery}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="pl-9 pr-9 bg-muted/50"
-          />
-          {searchQuery && (
-            <button
-              onClick={handleSearchClear}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 rounded-full hover:bg-muted"
-            >
-              <X className="h-4 w-4 text-muted-foreground" />
-            </button>
-          )}
-        </div>
+
+        {/* Typeahead Search */}
+        <SearchTypeahead
+          placeholder={viewMode === 'network' ? 'Search your network...' : 'Search members, sectors, locations...'}
+          onFullSearch={(q) => handleSearchChange(q)}
+          onFilterBySector={(sector) => {
+            handleSearchChange(sector);
+          }}
+          onFilterByLocation={(location) => {
+            handleSearchChange(location);
+          }}
+        />
 
         {/* Active search indicator */}
         {searchQuery && (
-          <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
             <span>
               Searching for "{searchQuery}" • {allMembers.length} result
               {allMembers.length !== 1 ? 's' : ''}
             </span>
+            <button
+              onClick={handleSearchClear}
+              className="text-xs text-primary hover:underline"
+            >
+              Clear
+            </button>
           </div>
+        )}
+
+        {/* Network Highlights - social proof counters */}
+        {viewMode === 'discover' && !searchQuery && (
+          <NetworkHighlights
+            onFilterBySector={(sector) => handleSearchChange(sector)}
+            onFilterByLocation={(location) => handleSearchChange(location)}
+          />
         )}
       </div>
 
