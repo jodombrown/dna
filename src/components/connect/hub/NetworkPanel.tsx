@@ -167,8 +167,22 @@ export function NetworkPanel({
     filters.regions.length;
 
   return (
-    <ScrollArea className={cn('h-full', className)}>
-      <div className="p-4 space-y-4">
+    <div className={cn('flex flex-col h-full', className)}>
+      {/* Sticky Title Header - aligned with other column headers */}
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/40 px-4 py-3">
+        <div className="flex items-center gap-2">
+          <Users className="h-4 w-4 text-primary" />
+          <h2 className="text-sm font-semibold text-foreground">Your Network</h2>
+          {networkStats?.total !== undefined && networkStats.total > 0 && (
+            <Badge variant="secondary" className="text-xs px-1.5 py-0">
+              {networkStats.total}
+            </Badge>
+          )}
+        </div>
+      </div>
+
+      <ScrollArea className="flex-1">
+        <div className="p-4 space-y-4">
         {/* Network Stats Card */}
         <Card className="relative overflow-hidden bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
           <CulturalPattern pattern="kente" opacity={0.08} />
@@ -336,6 +350,7 @@ export function NetworkPanel({
         </Card>
       </div>
     </ScrollArea>
+    </div>
   );
 }
 
