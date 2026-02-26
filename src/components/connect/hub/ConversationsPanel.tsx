@@ -546,7 +546,7 @@ export function ConversationsPanel({
               onClick={() => (window.location.href = '/dna/convene?action=create')}
             >
               <Calendar className="h-4 w-4 mr-2 text-dna-sunset" />
-              Create an Event
+              Host an Event
             </Button>
             <Button
               variant="outline"

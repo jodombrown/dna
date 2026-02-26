@@ -289,20 +289,36 @@ export function DiscoveryFeed({
           logger.warn('DiscoveryFeed', 'Error fetching recommendations:', err);
         }
 
-        // 3. Network Insight - activity trends
-        insights.push({
-          id: 'network-insight-' + Date.now(),
-          type: 'network_insight',
-          description:
-            'Your connections are more active in COLLABORATE this month. 5 new projects launched.',
-          percentage: 40,
-          primaryAction: {
-            label: 'Explore Projects',
-            action: () => {
-              window.location.href = '/dna/collaborate';
-            },
-          },
-        });
+        // 3. Network Insight - activity trends (real data)
+        try {
+          const monthAgo = new Date();
+          monthAgo.setDate(monthAgo.getDate() - 30);
+
+          const { count: recentSpaces } = await supabase
+            .from('collaboration_spaces')
+            .select('id', { count: 'exact', head: true })
+            .gte('created_at', monthAgo.toISOString())
+            .eq('status', 'active');
+
+          const spaceCount = recentSpaces || 0;
+
+          if (spaceCount > 0) {
+            insights.push({
+              id: 'network-insight-' + Date.now(),
+              type: 'network_insight',
+              description: `${spaceCount} new collaboration space${spaceCount !== 1 ? 's' : ''} launched this month. See what's happening.`,
+              percentage: Math.min(spaceCount * 10, 100),
+              primaryAction: {
+                label: 'Explore Projects',
+                action: () => {
+                  window.location.href = '/dna/collaborate';
+                },
+              },
+            });
+          }
+        } catch (err) {
+          logger.warn('DiscoveryFeed', 'Error fetching network insight:', err);
+        }
 
         // 4. Event Overlap
         try {
@@ -401,12 +417,20 @@ export function DiscoveryFeed({
     retryDelay: 1000,
   });
 
-  // Flatten members pages and filter out already connected/pending users
+  // Flatten members pages and filter based on view mode
   const allMembers = useMemo(() => {
     const members = (membersData?.pages.flatMap((page) => page.members) || []) as any[];
-    if (!connectedUserIds || connectedUserIds.size === 0) return members;
+    if (!connectedUserIds || connectedUserIds.size === 0) {
+      // In network mode with no connections, show empty
+      return viewMode === 'network' ? [] : members;
+    }
+    if (viewMode === 'network') {
+      // Network mode: ONLY show accepted connections
+      return members.filter((m: Record<string, unknown>) => connectedUserIds.has(m.id as string));
+    }
+    // Discovery mode: exclude already connected users
     return members.filter((m: Record<string, unknown>) => !connectedUserIds.has(m.id as string));
-  }, [membersData, connectedUserIds]);
+  }, [membersData, connectedUserIds, viewMode]);
 
   // Filter DIA cards (not dismissed, limit to MAX_VISIBLE)
   const visibleDiaInsights = useMemo(() => {
