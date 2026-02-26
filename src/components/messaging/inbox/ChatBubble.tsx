@@ -11,6 +11,7 @@ import { MessageReactions } from './MessageReactions';
 import { VoiceMessagePlayer } from './VoiceMessagePlayer';
 import { QuotedMessage } from './QuotedMessage';
 import { EntityReferenceCard } from './EntityReferenceCard';
+import { IntroductionMessageCard } from '@/components/messaging/IntroductionMessageCard';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { messageService, MessageReaction } from '@/services/messageService';
 import type { MessagePayload as ServiceMessagePayload } from '@/services/messageTypes';
@@ -57,6 +58,8 @@ interface ChatBubbleProps {
   onDeleteMessage?: (messageId: string) => void;
   onReply?: (messageId: string) => void;
   onScrollToMessage?: (messageId: string) => void;
+  currentUserId?: string;
+  onFocusReply?: () => void;
 }
 
 export const ChatBubble: React.FC<ChatBubbleProps> = ({
@@ -66,6 +69,8 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   onDeleteMessage,
   onReply,
   onScrollToMessage,
+  currentUserId,
+  onFocusReply,
 }) => {
   const queryClient = useQueryClient();
   
@@ -132,6 +137,26 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
           </div>
         </div>
       </div>
+    );
+  }
+
+  // Render Introduction Card if payload contains introductionCard
+  const introCard = (message.payload as Record<string, unknown> | undefined)?.introductionCard as {
+    introducer: { id: string; full_name: string | null; avatar_url: string | null; username: string | null; headline: string | null };
+    personA: { id: string; full_name: string | null; avatar_url: string | null; username: string | null; headline: string | null };
+    personB: { id: string; full_name: string | null; avatar_url: string | null; username: string | null; headline: string | null };
+  } | undefined;
+
+  if (introCard) {
+    return (
+      <IntroductionMessageCard
+        introducer={introCard.introducer}
+        personA={introCard.personA}
+        personB={introCard.personB}
+        message={message.content}
+        currentUserId={currentUserId}
+        onSayHello={onFocusReply}
+      />
     );
   }
 
