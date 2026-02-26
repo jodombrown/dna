@@ -166,7 +166,7 @@ export function IntroductionModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[480px] gap-0 p-0 overflow-hidden rounded-2xl border-0 shadow-2xl">
+      <DialogContent className="sm:max-w-[480px] gap-0 !p-0 overflow-hidden rounded-2xl !border-0 shadow-2xl bg-transparent">
         {/* Full-flush Kente pattern background */}
         <div
           className="relative"
