@@ -12,10 +12,8 @@ import { useToast } from '@/hooks/use-toast';
 import { EnhancedMemberCard } from './EnhancedMemberCard';
 import { DiaInsightCard, DiaInsightData, DiaInsightType } from './DiaInsightCard';
 import { FilterState } from './NetworkPanel';
-import { NetworkHighlights } from './NetworkHighlights';
 import { ConnectionRequestModal } from '@/components/connect/ConnectionRequestModal';
 import { connectionService } from '@/services/connectionService';
-import { SearchTypeahead } from '@/components/connect/SearchTypeahead';
 import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logger';
 import { getErrorMessage } from '@/lib/errorLogger';
@@ -578,41 +576,27 @@ export function DiscoveryFeed({
           </div>
         )}
 
-        {/* Typeahead Search */}
-        <SearchTypeahead
-          placeholder={viewMode === 'network' ? 'Search your network...' : 'Search members, sectors, locations...'}
-          onFullSearch={(q) => handleSearchChange(q)}
-          onFilterBySector={(sector) => {
-            handleSearchChange(sector);
-          }}
-          onFilterByLocation={(location) => {
-            handleSearchChange(location);
-          }}
-        />
-
-        {/* Active search indicator */}
-        {searchQuery && (
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <span>
-              Searching for "{searchQuery}" • {allMembers.length} result
-              {allMembers.length !== 1 ? 's' : ''}
-            </span>
-            <button
-              onClick={handleSearchClear}
-              className="text-xs text-primary hover:underline"
-            >
-              Clear
-            </button>
-          </div>
-        )}
-
-        {/* Network Highlights - social proof counters */}
-        {viewMode === 'discover' && !searchQuery && (
-          <NetworkHighlights
-            onFilterBySector={(sector) => handleSearchChange(sector)}
-            onFilterByLocation={(location) => handleSearchChange(location)}
+        {/* Simple Search Input */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder={viewMode === 'network' ? 'Search your network...' : 'Search members, sectors, locations...'}
+            value={searchQuery}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            className="pl-10 pr-10"
           />
-        )}
+          {searchQuery && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleSearchClear}
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0"
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Feed Content */}

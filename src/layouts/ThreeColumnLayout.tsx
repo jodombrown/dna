@@ -58,7 +58,14 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
   // Desktop: 3-column grid with independent scrolling
   // PulseBar is fixed at ~top-14/16 + ~60px = ~7.5rem total from top
   return (
-    <div className={cn("flex w-full gap-6 px-4 py-6", className)} style={{ paddingTop: '1.5rem' }}>
+    <div
+      className={cn("flex w-full gap-6 px-4", className)}
+      style={{
+        paddingTop: '1rem',
+        height: 'calc(100vh - 7.5rem)',
+        overflow: 'hidden',
+      }}
+    >
       {left && (
         <aside 
           className="transition-all duration-300 ease-in-out overflow-y-auto scrollbar-thin"
@@ -66,10 +73,7 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
             width: leftWidth,
             maxWidth: leftWidth,
             minWidth: leftWidth,
-            maxHeight: 'calc(100vh - 7.5rem - 1.5rem)',
-            position: 'sticky',
-            top: '7.5rem',
-            alignSelf: 'flex-start',
+            height: '100%',
           }}
         >
           {left}
@@ -81,14 +85,12 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
           id="main-content"
           tabIndex={-1}
           className="transition-all duration-300 ease-in-out overflow-y-auto scrollbar-thin focus:outline-none"
+          data-scroll-container="main"
           style={{ 
             width: centerWidth,
             maxWidth: centerWidth,
             minWidth: centerWidth,
-            maxHeight: 'calc(100vh - 7.5rem - 1.5rem)',
-            position: 'sticky',
-            top: '7.5rem',
-            alignSelf: 'flex-start',
+            height: '100%',
           }}
         >
           {center}
@@ -102,10 +104,7 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
             width: rightWidth,
             maxWidth: rightWidth,
             minWidth: rightWidth,
-            maxHeight: 'calc(100vh - 7.5rem - 1.5rem)',
-            position: 'sticky',
-            top: '7.5rem',
-            alignSelf: 'flex-start',
+            height: '100%',
           }}
         >
           {right}
