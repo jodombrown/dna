@@ -372,6 +372,22 @@ export default {
 						opacity: '1',
 						transform: 'translateX(0)'
 					}
+				},
+				'arrow-travel-right': {
+					'0%': {
+						left: '-8px',
+						opacity: '0'
+					},
+					'20%': {
+						opacity: '1'
+					},
+					'80%': {
+						opacity: '1'
+					},
+					'100%': {
+						left: 'calc(100% + 4px)',
+						opacity: '0'
+					}
 				}
 			},
 		animation: {
@@ -388,7 +404,8 @@ export default {
 			// Release Hero Animations
 			'float': 'float 3s ease-in-out infinite',
 			'slideInLeft': 'slideInLeft 0.5s ease-out forwards',
-			'slideInRight': 'slideInRight 0.5s ease-out forwards'
+			'slideInRight': 'slideInRight 0.5s ease-out forwards',
+			'arrow-travel-right': 'arrow-travel-right 1.5s ease-in-out infinite'
 		}
 		}
 	},

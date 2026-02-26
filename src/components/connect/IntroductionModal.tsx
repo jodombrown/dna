@@ -2,8 +2,8 @@
  * DNA | Introduction Modal
  *
  * Bumble-card-inspired warm introduction workflow.
- * DNA logo, overlapping profile photos with pulsing Africa icon,
- * editable message (250 chars, auto-stretch), branded colors.
+ * DNA logo, profile photos with animated connection arrow,
+ * editable message (500 chars, auto-stretch), branded colors.
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -22,8 +22,12 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import confetti from 'canvas-confetti';
+import { useNavigate } from 'react-router-dom';
 import dnaLogo from '@/assets/dna-logo.png';
 import africaIcon from '@/assets/africa-icon.png';
+
+// --- Kente pattern as inline SVG data URI ---
+const KENTE_PATTERN = `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23C4942A' stroke-width='1'%3E%3Cpath d='M0 20h40M20 0v40M0 0h40v40H0z'/%3E%3Crect x='5' y='5' width='10' height='10' fill='%23C4942A' fill-opacity='0.3'/%3E%3Crect x='25' y='25' width='10' height='10' fill='%23C4942A' fill-opacity='0.3'/%3E%3C/g%3E%3C/svg%3E")`;
 
 interface ProfileData {
   id: string;
@@ -45,7 +49,7 @@ interface IntroductionModalProps {
 
 type ModalState = 'compose' | 'sending' | 'success';
 
-const MAX_CHARS = 250;
+const MAX_CHARS = 500;
 
 export function IntroductionModal({
   open,
@@ -56,6 +60,7 @@ export function IntroductionModal({
   context,
 }: IntroductionModalProps) {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [profileA, setProfileA] = useState<ProfileData | null>(null);
   const [profileB, setProfileB] = useState<ProfileData | null>(null);
   const [message, setMessage] = useState('');
@@ -150,20 +155,28 @@ export function IntroductionModal({
           .slice(0, 2)
       : '?';
 
+  const goToProfile = (username: string | null) => {
+    if (username) {
+      handleOpenChange(false);
+      navigate(`/dna/${username}`);
+    }
+  };
+
   const isOverLimit = message.length > MAX_CHARS;
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[480px] gap-0 p-0 overflow-hidden rounded-2xl border-0 shadow-2xl">
-        {/* Card body with warm branded background + Kente pattern */}
-        <div className="relative bg-gradient-to-b from-primary/5 via-background to-background">
-          {/* Kente heritage pattern overlay */}
-          <div
-            className="absolute inset-0 opacity-[0.06] pointer-events-none"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23C4942A' stroke-width='1'%3E%3Cpath d='M0 20h40M20 0v40M0 0h40v40H0z'/%3E%3Crect x='5' y='5' width='10' height='10' fill='%23C4942A' fill-opacity='0.3'/%3E%3Crect x='25' y='25' width='10' height='10' fill='%23C4942A' fill-opacity='0.3'/%3E%3C/g%3E%3C/svg%3E")`,
-            }}
-          />
+        {/* Full-flush Kente pattern background */}
+        <div
+          className="relative"
+          style={{
+            backgroundImage: KENTE_PATTERN,
+            backgroundColor: 'hsl(var(--background))',
+          }}
+        >
+          {/* Soft overlay so content is readable */}
+          <div className="absolute inset-0 bg-background/[0.92] pointer-events-none" />
 
           <div className="relative z-10">
             {/* Top section: DNA Logo */}
@@ -171,7 +184,7 @@ export function IntroductionModal({
               <img
                 src={dnaLogo}
                 alt="DNA"
-                className="h-[72px] w-auto mb-4"
+                className="h-[88px] w-auto mb-4"
               />
             </div>
 
@@ -210,7 +223,7 @@ export function IntroductionModal({
                       className="flex-1 h-12 rounded-xl text-base font-semibold"
                       onClick={() => {
                         handleOpenChange(false);
-                        window.location.href = `/dna/messages?conversation=${conversationId}`;
+                        navigate(`/dna/messages?conversation=${conversationId}`);
                       }}
                     >
                       View Conversation
@@ -233,17 +246,24 @@ export function IntroductionModal({
                   Make an Introduction
                 </h2>
 
-                {/* Profile photos with info centered below each */}
+                {/* Profile photos with animated connection arrow */}
                 <div className="grid grid-cols-[1fr_auto_1fr] items-start gap-0 mb-6">
                   {/* Person A */}
                   <div className="flex flex-col items-center text-center px-1">
-                    <Avatar className="w-[88px] h-[88px] border-[3px] border-background shadow-lg mb-3">
-                      <AvatarImage src={profileA?.avatar_url || undefined} />
-                      <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xl">
-                        {initials(profileA?.full_name ?? null)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <p className="text-sm font-semibold text-foreground leading-tight">
+                    <button
+                      type="button"
+                      onClick={() => goToProfile(profileA?.username ?? null)}
+                      className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-full transition-transform hover:scale-105"
+                      aria-label={`View ${profileA?.full_name || 'user'}'s profile`}
+                    >
+                      <Avatar className="w-[88px] h-[88px] border-[3px] border-background shadow-lg">
+                        <AvatarImage src={profileA?.avatar_url || undefined} />
+                        <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xl">
+                          {initials(profileA?.full_name ?? null)}
+                        </AvatarFallback>
+                      </Avatar>
+                    </button>
+                    <p className="text-sm font-semibold text-foreground leading-tight mt-3">
                       {profileA?.full_name || 'Loading...'}
                     </p>
                     {profileA?.headline && (
@@ -259,26 +279,27 @@ export function IntroductionModal({
                     )}
                   </div>
 
-                  {/* Pulsing Africa continent icon (center column) */}
-                  <div className="flex items-center justify-center pt-8">
-                    <div className="w-12 h-12 rounded-full bg-background border-2 border-primary/20 flex items-center justify-center shadow-md animate-pulse">
-                      <img
-                        src={africaIcon}
-                        alt="Africa"
-                        className="w-7 h-7 object-contain"
-                      />
-                    </div>
+                  {/* Animated connection arrow through Africa icon */}
+                  <div className="flex items-center justify-center pt-6 px-1">
+                    <ConnectionArrow africaIcon={africaIcon} />
                   </div>
 
                   {/* Person B */}
                   <div className="flex flex-col items-center text-center px-1">
-                    <Avatar className="w-[88px] h-[88px] border-[3px] border-background shadow-lg mb-3">
-                      <AvatarImage src={profileB?.avatar_url || undefined} />
-                      <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xl">
-                        {initials(profileB?.full_name ?? null)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <p className="text-sm font-semibold text-foreground leading-tight">
+                    <button
+                      type="button"
+                      onClick={() => goToProfile(profileB?.username ?? null)}
+                      className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-full transition-transform hover:scale-105"
+                      aria-label={`View ${profileB?.full_name || 'user'}'s profile`}
+                    >
+                      <Avatar className="w-[88px] h-[88px] border-[3px] border-background shadow-lg">
+                        <AvatarImage src={profileB?.avatar_url || undefined} />
+                        <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xl">
+                          {initials(profileB?.full_name ?? null)}
+                        </AvatarFallback>
+                      </Avatar>
+                    </button>
+                    <p className="text-sm font-semibold text-foreground leading-tight mt-3">
                       {profileB?.full_name || 'Loading...'}
                     </p>
                     {profileB?.headline && (
@@ -302,7 +323,7 @@ export function IntroductionModal({
 
                 {/* Message composer */}
                 <div className="mb-5">
-                  <label className="text-xs font-medium text-muted-foreground block mb-1.5">
+                  <label className="text-xs font-medium text-muted-foreground block mb-1.5 text-center">
                     Your introduction message
                   </label>
                   <textarea
@@ -355,7 +376,35 @@ export function IntroductionModal({
   );
 }
 
-/* Context Block */
+/* ── Animated Connection Arrow ──────────────────────── */
+
+function ConnectionArrow({ africaIcon }: { africaIcon: string }) {
+  return (
+    <div className="flex items-center gap-0">
+      {/* Left arrow line with traveling dot */}
+      <div className="relative w-6 h-[2px] bg-primary/20 overflow-hidden">
+        <div className="absolute top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-primary animate-arrow-travel-right" />
+      </div>
+
+      {/* Africa icon center */}
+      <div className="w-12 h-12 rounded-full bg-background border-2 border-primary/20 flex items-center justify-center shadow-md animate-pulse">
+        <img
+          src={africaIcon}
+          alt="Africa"
+          className="w-7 h-7 object-contain"
+        />
+      </div>
+
+      {/* Right arrow line with traveling dot */}
+      <div className="relative w-6 h-[2px] bg-primary/20 overflow-hidden">
+        <div className="absolute top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-primary animate-arrow-travel-right" />
+      </div>
+    </div>
+  );
+}
+
+/* ── Context Block ──────────────────────────────────── */
+
 function ContextBlock({ context }: { context: Record<string, unknown> }) {
   const reasons = Object.entries(context)
     .filter(([, v]) => v)
