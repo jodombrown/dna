@@ -8,7 +8,7 @@ import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
-import ModernEventCard from '@/components/connect/ModernEventCard';
+import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 
@@ -261,11 +261,12 @@ const EventsIndex = () => {
             </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {events.map((event: any) => (
-                <ModernEventCard
+                <ConveneEventCard
                   key={event.id}
                   event={event}
-                  onEventClick={() => navigate(`/dna/convene/events/${event.slug || event.id}`)}
-                  onRegisterEvent={() => navigate(`/dna/convene/events/${event.slug || event.id}`)}
+                  showRsvp
+                  onRsvp={() => navigate(`/dna/convene/events/${event.slug || event.id}`)}
+                  onClick={() => navigate(`/dna/convene/events/${event.slug || event.id}`)}
                 />
               ))}
             </div>

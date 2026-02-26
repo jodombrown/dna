@@ -5,7 +5,7 @@ import { ArrowRight } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures';
 import { Event } from '@/types/search';
-import ModernEventCard from './ModernEventCard';
+import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
 
 interface PopularEventsSectionProps {
   events: Event[];
@@ -54,11 +54,11 @@ const PopularEventsSection: React.FC<PopularEventsSectionProps> = ({
             {events.map((event) => (
               <CarouselItem key={event.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/5">
                 <div className="h-[420px]">
-                  <ModernEventCard 
-                    event={event} 
-                    onEventClick={onEventClick}
-                    onRegisterEvent={() => onRegisterEvent(event)}
-                    onCreatorClick={onCreatorClick}
+                  <ConveneEventCard
+                    event={event}
+                    showRsvp
+                    onRsvp={() => onRegisterEvent(event)}
+                    onClick={() => onEventClick(event)}
                   />
                 </div>
               </CarouselItem>
