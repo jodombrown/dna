@@ -21,9 +21,10 @@ interface Event {
 
 interface EventCalendarViewProps {
   events: Event[];
+  onCreateEvent?: () => void;
 }
 
-export const EventCalendarView = ({ events }: EventCalendarViewProps) => {
+export const EventCalendarView = ({ events, onCreateEvent }: EventCalendarViewProps) => {
   const navigate = useNavigate();
   const [view, setView] = useState<View>(Views.MONTH);
   const [date, setDate] = useState(new Date());
@@ -50,8 +51,8 @@ export const EventCalendarView = ({ events }: EventCalendarViewProps) => {
 
   const handleSelectSlot = useCallback(
     (slotInfo: { start: Date; end: Date; slots: Date[]; action: string }) => {
-      // Optional: Navigate to create event with pre-filled date
-      navigate('/dna/convene/events/new');
+      // Open composer for event creation
+      onCreateEvent?.();
     },
     [navigate]
   );
@@ -95,7 +96,7 @@ export const EventCalendarView = ({ events }: EventCalendarViewProps) => {
             </div>
           </div>
         </div>
-        <Button onClick={() => navigate('/dna/convene/events/new')} size="sm">
+        <Button onClick={() => onCreateEvent?.()} size="sm">
           Create Event
         </Button>
       </div>

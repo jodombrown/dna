@@ -27,7 +27,7 @@ interface MyEventsData {
   attending: EventItem[];
 }
 
-export const UpcomingEventsSection = () => {
+export const UpcomingEventsSection = ({ onCreateEvent }: { onCreateEvent?: () => void }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'attending' | 'hosting'>('attending');
@@ -181,7 +181,7 @@ export const UpcomingEventsSection = () => {
                 : "You're not hosting any events yet. Host one and invite your community."}
             </p>
             <Button
-              onClick={() => navigate(activeTab === 'attending' ? '/dna/convene/events' : '/dna/convene/events/new')}
+              onClick={() => activeTab === 'attending' ? navigate('/dna/convene/events') : onCreateEvent?.()}
               variant="outline"
             >
               {activeTab === 'attending' ? 'Explore Events' : 'Host an Event'}

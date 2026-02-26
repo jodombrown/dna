@@ -11,6 +11,8 @@ import { Input } from '@/components/ui/input';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
+import { useUniversalComposer } from '@/hooks/useUniversalComposer';
+import { UniversalComposer } from '@/components/composer/UniversalComposer';
 
 // New Hub Components
 import {
@@ -39,6 +41,7 @@ export function ConveneDiscovery() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
+  const composer = useUniversalComposer();
 
   // Fetch featured events (upcoming, with cover images, most registrations)
   const { data: featuredEvents = [] } = useQuery({
@@ -210,7 +213,7 @@ export function ConveneDiscovery() {
       label: 'Create Event',
       description: 'Host your own gathering',
       icon: Plus,
-      onClick: () => navigate('/dna/convene/events/new'),
+      onClick: () => composer.open('event'),
       variant: 'primary',
     },
     {
@@ -295,7 +298,7 @@ export function ConveneDiscovery() {
             primaryAction={{
               label: 'Create Event',
               icon: Plus,
-              onClick: () => navigate('/dna/convene/events/new'),
+              onClick: () => composer.open('event'),
             }}
             secondaryAction={{
               label: 'Browse Events',
@@ -362,7 +365,7 @@ export function ConveneDiscovery() {
             <EventRecommendations />
 
             {/* Upcoming Events */}
-            <UpcomingEventsSection />
+            <UpcomingEventsSection onCreateEvent={() => composer.open('event')} />
           </div>
 
           {/* Sidebar */}
@@ -389,6 +392,17 @@ export function ConveneDiscovery() {
         </div>
       </div>
       <MobileBottomNav />
+      <UniversalComposer
+        isOpen={composer.isOpen}
+        mode={composer.mode}
+        context={composer.context}
+        isSubmitting={composer.isSubmitting}
+        onClose={composer.close}
+        onModeChange={composer.switchMode}
+        successData={composer.successData}
+        onSubmit={composer.submit}
+        onDismissSuccess={composer.dismissSuccess}
+      />
     </div>
   );
 }
