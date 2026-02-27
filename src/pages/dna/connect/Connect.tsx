@@ -131,7 +131,7 @@ const Connect = () => {
   // Mobile view - use Outlet for child routes to prevent hook count issues
   if (isMobile) {
     return (
-      <div className="min-h-screen bg-background pb-20">
+      <div className="min-h-screen bg-background pb-20 overflow-x-hidden">
         {/* Mobile Fixed Header */}
         <div className="fixed top-0 left-0 right-0 z-40 bg-background">
           <ConnectMobileHeader
@@ -145,7 +145,7 @@ const Connect = () => {
         </div>
 
         {/* Mobile Content - Render child routes via Outlet */}
-        <div className="pt-[7rem] px-2">
+        <div className="pt-[7rem] px-3 sm:px-4 overflow-x-hidden">
           <Outlet context={{
             mobileSearchQuery,
             showMobileFilters,
