@@ -48,7 +48,8 @@ export function PulseDockItem({ item, pulseData, isActive, onClick }: PulseDockI
       className={cn(
         'flex flex-col items-center justify-center',
         'min-w-[56px] h-full px-1',
-        'transition-colors duration-150',
+        'transition-all duration-100',
+        'active:scale-90 active:opacity-70',
         isActive ? 'text-dna-emerald' : 'text-gray-600',
         item.isCenter && 'relative'
       )}
@@ -92,15 +93,20 @@ export function PulseDockItem({ item, pulseData, isActive, onClick }: PulseDockI
           {/* Label */}
           <span
             className={cn(
-              'text-[10px] font-medium mt-1',
-              isActive ? 'text-dna-emerald' : 'text-gray-500'
+              'text-[10px] font-medium mt-0.5',
+              isActive ? 'text-dna-emerald font-semibold' : 'text-gray-500'
             )}
           >
             {item.label}
           </span>
 
+          {/* Active indicator bar */}
+          {isActive && (
+            <span className="w-4 h-[2px] rounded-full bg-dna-emerald mt-0.5" />
+          )}
+
           {/* Activity dots */}
-          {count > 0 && (
+          {count > 0 && !isActive && (
             <div className="flex gap-0.5 mt-0.5">
               {Array.from({ length: Math.min(count, 3) }).map((_, i) => (
                 <span key={i} className={cn('w-1 h-1 rounded-full', STATUS_COLORS[status])} />

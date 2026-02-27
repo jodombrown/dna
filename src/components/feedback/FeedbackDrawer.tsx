@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { LogOut, LogIn, Loader2, ChevronRight, HelpCircle, Sparkles, Bug, Lightbulb, MessageCircle } from 'lucide-react';
+import { LogOut, LogIn, Loader2, ChevronRight, HelpCircle, MessageSquareHeart, Bug, Lightbulb, MessageCircle } from 'lucide-react';
 import { FeedbackMessageList, FeedbackComposer } from '@/components/feedback';
 import { FeedbackThreadView } from './FeedbackThreadView';
 import { useFeedbackMessages } from '@/hooks/useFeedbackMessages';
@@ -128,27 +128,25 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
           </button>
 
           {/* Branded Header */}
-          <div className="relative px-4 py-4 border-b bg-gradient-to-r from-primary/5 via-transparent to-primary/10 shrink-0">
+          <div className="relative px-4 py-3 border-b bg-gradient-to-r from-primary/5 via-transparent to-primary/10 shrink-0">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-                  <Sparkles className="h-4 w-4 text-primary" />
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 shrink-0">
+                  <MessageSquareHeart className="h-[18px] w-[18px] text-primary" />
                 </div>
-                <div>
-                  <h2 className="text-sm font-semibold text-foreground leading-tight">Feedback Hub</h2>
-                  <p className="text-[11px] text-muted-foreground">Help shape DNA</p>
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-base font-bold text-foreground leading-tight tracking-tight">Feedback Hub</h2>
+                  <p className="text-xs text-muted-foreground">Help shape DNA</p>
                 </div>
               </div>
-              <div className="flex items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setShowHelpTour(true)}
-                  className="h-7 w-7"
-                >
-                  <HelpCircle className="h-3.5 w-3.5" />
-                </Button>
-              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowHelpTour(true)}
+                className="h-8 w-8 shrink-0"
+              >
+                <HelpCircle className="h-4 w-4" />
+              </Button>
             </div>
           </div>
 

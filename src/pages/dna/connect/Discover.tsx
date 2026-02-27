@@ -229,7 +229,7 @@ export default function Discover() {
   if (!user) return null;
 
   return (
-    <div className="space-y-2 md:space-y-4 overflow-x-hidden">
+    <div className="space-y-1 md:space-y-4 overflow-x-hidden">
       {/* Profile Completion Nudge */}
       <ProfileCompletionNudge variant="compact" threshold={40} showMissingFields={true} />
 
