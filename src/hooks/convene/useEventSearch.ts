@@ -50,6 +50,7 @@ export function useEventSearch(searchTerm: string, filters: EventSearchFilters =
         `)
         .eq('is_cancelled', false)
         .eq('is_public', true)
+        .eq('is_published', true)
         .gte('start_time', new Date().toISOString())
         .order('start_time', { ascending: true })
         .limit(20);
@@ -142,6 +143,7 @@ export function useTrendingEvents() {
         `)
         .eq('is_cancelled', false)
         .eq('is_public', true)
+        .eq('is_published', true)
         .gte('start_time', new Date().toISOString())
         .order('start_time', { ascending: true })
         .limit(5);

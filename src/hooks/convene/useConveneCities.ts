@@ -16,6 +16,7 @@ export function useConveneCities() {
         .select('location_city, location_country')
         .eq('is_cancelled', false)
         .eq('is_public', true)
+        .eq('is_published', true)
         .not('location_city', 'is', null)
         .gte('start_time', new Date().toISOString());
 
