@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Calendar, BarChart3, List, CalendarDays, Plus, Brain, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -28,10 +28,12 @@ import { ChevronDown } from 'lucide-react';
 
 const MyEvents = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
   const composer = useUniversalComposer();
   const queryClient = useQueryClient();
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
+  const activeTab = searchParams.get('tab') || 'hosting';
   const [pastHostingOpen, setPastHostingOpen] = useState(false);
   const [pastAttendingOpen, setPastAttendingOpen] = useState(false);
 
@@ -52,6 +54,7 @@ const MyEvents = () => {
       return data || [];
     },
     enabled: !!user,
+    staleTime: 5 * 60 * 1000,
   });
 
   // ── Attending events ─────────────────────────────────
@@ -83,6 +86,7 @@ const MyEvents = () => {
       );
     },
     enabled: !!user,
+    staleTime: 5 * 60 * 1000,
   });
 
   // ── Cancel RSVP mutation ─────────────────────────────
@@ -194,7 +198,7 @@ const MyEvents = () => {
 
           {/* ── List View ──────────────────────────── */}
           {viewMode === 'list' && (
-            <Tabs defaultValue="hosting" className="space-y-6">
+            <Tabs value={activeTab} onValueChange={(v) => setSearchParams({ tab: v })} className="space-y-6">
               <TabsList className="grid w-full max-w-md grid-cols-2">
                 <TabsTrigger value="hosting">Hosting ({hostingEvents.length})</TabsTrigger>
                 <TabsTrigger value="attending">Attending ({attendingEvents.length})</TabsTrigger>
@@ -203,8 +207,8 @@ const MyEvents = () => {
               {/* ═══ HOSTING TAB ═══ */}
               <TabsContent value="hosting" className="space-y-5">
                 {/* Stats Header */}
-                {stats && stats.eventsHosted > 0 && (
-                  <MyEventsStatsHeader stats={stats} isLoading={statsLoading} />
+                {(statsLoading || (stats && stats.eventsHosted > 0)) && (
+                  <MyEventsStatsHeader stats={stats ?? { eventsHosted: 0, totalAttendees: 0, upcoming: 0 }} isLoading={statsLoading} />
                 )}
 
                 {/* Quick Actions */}
