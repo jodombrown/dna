@@ -48,8 +48,8 @@ export function PulseDockItem({ item, pulseData, isActive, onClick }: PulseDockI
       className={cn(
         'flex flex-col items-center justify-center',
         'min-w-[56px] h-full px-1',
-        'transition-all duration-100',
-        'active:scale-90 active:opacity-70',
+        'transition-all duration-75',
+        'active:scale-[0.82] active:opacity-60',
         isActive ? 'text-dna-emerald' : 'text-gray-600',
         item.isCenter && 'relative'
       )}

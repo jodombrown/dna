@@ -38,8 +38,9 @@ export function PulseDockTray({ open, onClose, pulseNav }: PulseDockTrayProps) {
   const navigate = useNavigate();
 
   const handleNavigation = (href: string) => {
-    navigate(href);
     onClose();
+    // Small delay so the tray animates away before navigation
+    setTimeout(() => navigate(href), 150);
   };
 
   const getPulseData = (key: string): Partial<PulseSection> | null => {

@@ -45,14 +45,14 @@ export function PulseTrayItem({ item, pulseData, onClick, variant }: PulseTrayIt
 
   if (variant === 'utility') {
     return (
-      <button onClick={onClick} className="flex flex-col items-center gap-1.5">
+      <button onClick={onClick} className="flex flex-col items-center gap-1.5 active:scale-90 transition-transform duration-75">
         <div
           className={cn(
             'relative flex items-center justify-center',
             'w-12 h-12 rounded-full',
             'bg-gray-100 text-gray-600',
             'hover:bg-gray-200 transition-colors',
-            'active:scale-95'
+            'active:bg-gray-300 active:shadow-inner'
           )}
         >
           <Icon className="w-5 h-5" />
@@ -73,10 +73,10 @@ export function PulseTrayItem({ item, pulseData, onClick, variant }: PulseTrayIt
       onClick={onClick}
       className={cn(
         'flex flex-col items-center p-3 rounded-xl',
-        'transition-all duration-150',
+        'transition-all duration-75',
         STATUS_BG[status],
         'hover:opacity-80',
-        'active:scale-95'
+        'active:scale-90 active:shadow-inner active:opacity-60'
       )}
     >
       {/* Icon with status indicator */}
