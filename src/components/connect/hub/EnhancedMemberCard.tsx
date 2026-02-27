@@ -311,7 +311,7 @@ export function EnhancedMemberCard({
           </div>
 
           <div className={cn('relative p-3 sm:p-4', isCompact && 'p-2.5 sm:p-3')}>
-            <div className="flex gap-3">
+            <div className="flex gap-2 sm:gap-3">
               {/* Left column: Content */}
               <div className="flex-1 min-w-0 flex flex-col">
                 {/* Top row: Sector + Match Score + Activity */}
@@ -444,7 +444,7 @@ export function EnhancedMemberCard({
               <div className="flex flex-col items-end gap-2 shrink-0">
                 {/* Avatar with activity ring */}
                 <div className="relative">
-                  <Avatar className={cn('rounded-xl', isCompact ? 'h-16 w-16' : 'h-20 w-20',
+                  <Avatar className={cn('rounded-xl', isCompact ? 'h-14 w-14 sm:h-16 sm:w-16' : 'h-[60px] w-[60px] sm:h-[72px] sm:w-[72px] md:h-20 md:w-20',
                     activitySignal?.label === 'Online now' && 'ring-2 ring-emerald-400 ring-offset-2 ring-offset-background'
                   )}>
                     <AvatarImage src={member.avatar_url} alt={member.full_name} className="object-cover" loading="eager" />
@@ -465,31 +465,31 @@ export function EnhancedMemberCard({
                 </div>
 
                 {/* Action buttons */}
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 flex-wrap justify-end max-w-full">
                   {connectionStatus === 'accepted' ? (
-                    <Button variant="outline" size="sm" className="h-8 px-3 text-xs text-emerald-600 border-emerald-200 hover:bg-emerald-50"
+                    <Button variant="outline" size="sm" className="h-7 sm:h-8 px-2 sm:px-3 text-[11px] sm:text-xs text-emerald-600 border-emerald-200 hover:bg-emerald-50"
                       onClick={(e) => { e.stopPropagation(); handleMessage(); }}
                     >
-                      <MessageSquare className="h-3.5 w-3.5 mr-1" />
+                      <MessageSquare className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1" />
                       Message
                     </Button>
                   ) : connectionStatus === 'pending_sent' ? (
-                    <Button variant="outline" size="sm" className="h-8 px-3 text-xs text-muted-foreground border-muted" disabled onClick={(e) => e.stopPropagation()}>
-                      <Check className="h-3.5 w-3.5 mr-1" />
+                    <Button variant="outline" size="sm" className="h-7 sm:h-8 px-2 sm:px-3 text-[11px] sm:text-xs text-muted-foreground border-muted" disabled onClick={(e) => e.stopPropagation()}>
+                      <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1" />
                       Sent
                     </Button>
                   ) : connectionStatus === 'pending_received' ? (
-                    <Button variant="default" size="sm" className="h-8 px-3 text-xs bg-primary text-primary-foreground"
+                    <Button variant="default" size="sm" className="h-7 sm:h-8 px-2 sm:px-3 text-[11px] sm:text-xs bg-primary text-primary-foreground"
                       onClick={(e) => { e.stopPropagation(); navigate('/dna/connect/network?tab=requests'); }}
                     >
-                      <UserCheck className="h-3.5 w-3.5 mr-1" />
+                      <UserCheck className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1" />
                       Respond
                     </Button>
                   ) : (
-                    <Button variant="default" size="sm" className="h-8 px-3 text-xs bg-primary hover:bg-primary/90 text-primary-foreground"
+                    <Button variant="default" size="sm" className="h-7 sm:h-8 px-2 sm:px-3 text-[11px] sm:text-xs bg-primary hover:bg-primary/90 text-primary-foreground"
                       onClick={handleConnect} disabled={isSending}
                     >
-                      <UserPlus className="h-3.5 w-3.5 mr-1" />
+                      <UserPlus className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1" />
                       {isSending ? '...' : 'Connect'}
                     </Button>
                   )}
@@ -497,7 +497,7 @@ export function EnhancedMemberCard({
                   {/* Overflow menu */}
                   <DropdownMenu>
                     <DropdownMenuTrigger
-                      className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full hover:bg-muted transition-colors"
+                      className="p-1.5 sm:p-2 min-w-[32px] min-h-[32px] sm:min-w-[36px] sm:min-h-[36px] flex items-center justify-center rounded-full hover:bg-muted transition-colors"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <MoreHorizontal className="h-4 w-4 text-muted-foreground" />

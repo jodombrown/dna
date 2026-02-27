@@ -216,7 +216,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
       >
         <div className="p-3 md:p-4">
           {/* Apple News style: Two columns - Text left, Image right */}
-          <div className="flex gap-2.5 md:gap-3">
+          <div className="flex gap-2 sm:gap-2.5 md:gap-3">
             {/* Left column: Content */}
             <div className="flex-1 min-w-0 flex flex-col">
               {/* Source badge (like USA TODAY, The Guardian) */}
@@ -266,7 +266,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
             {/* Right column: Square avatar + actions */}
             <div className="flex flex-col items-end gap-2 shrink-0">
               {/* Square avatar with rounded corners - Apple News style */}
-              <Avatar className="h-[72px] w-[72px] rounded-xl">
+              <Avatar className="h-[60px] w-[60px] sm:h-[72px] sm:w-[72px] rounded-xl">
                 <AvatarImage
                   src={member.avatar_url}
                   alt={member.full_name}
@@ -284,59 +284,59 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
               </Avatar>
 
               {/* Action row: Connect/Status button + overflow menu */}
-              <div className="flex items-center gap-1">
-                {/* Connection Action Button - visible, not hidden in menu */}
+              <div className="flex items-center gap-1 flex-wrap justify-end max-w-full">
+                {/* Connection Action Button */}
                 {connectionStatus === 'accepted' ? (
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-8 px-3 text-xs text-emerald-600 border-emerald-200 hover:bg-emerald-50"
+                    className="h-7 sm:h-8 px-2 sm:px-3 text-[11px] sm:text-xs text-emerald-600 border-emerald-200 hover:bg-emerald-50"
                     onClick={(e) => { e.stopPropagation(); handleMessage(); }}
                   >
-                    <MessageSquare className="h-3.5 w-3.5 mr-1" />
+                    <MessageSquare className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1" />
                     Message
                   </Button>
                 ) : connectionStatus === 'pending_sent' ? (
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-8 px-3 text-xs text-muted-foreground border-muted"
+                    className="h-7 sm:h-8 px-2 sm:px-3 text-[11px] sm:text-xs text-muted-foreground border-muted"
                     disabled
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <Check className="h-3.5 w-3.5 mr-1" />
+                    <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1" />
                     Sent
                   </Button>
                 ) : connectionStatus === 'pending_received' ? (
                   <Button
                     variant="default"
                     size="sm"
-                    className="h-8 px-3 text-xs bg-primary text-primary-foreground"
+                    className="h-7 sm:h-8 px-2 sm:px-3 text-[11px] sm:text-xs bg-primary text-primary-foreground"
                     onClick={(e) => { e.stopPropagation(); navigate('/dna/connect/network?tab=requests'); }}
                   >
-                    <UserPlus className="h-3.5 w-3.5 mr-1" />
+                    <UserPlus className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1" />
                     Respond
                   </Button>
                 ) : (
                   <Button
                     variant="default"
                     size="sm"
-                    className="h-8 px-3 text-xs bg-primary hover:bg-primary/90 text-primary-foreground"
+                    className="h-7 sm:h-8 px-2 sm:px-3 text-[11px] sm:text-xs bg-primary hover:bg-primary/90 text-primary-foreground"
                     onClick={handleConnect}
                     disabled={isSending}
                   >
-                    <UserPlus className="h-3.5 w-3.5 mr-1" />
+                    <UserPlus className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1" />
                     {isSending ? '...' : 'Connect'}
                   </Button>
                 )}
 
-                {/* Sprint 12D.2: Follow button */}
+                {/* Follow button */}
                 <FollowButton targetUserId={member.id} compact />
 
-                {/* Overflow menu for secondary actions */}
+                {/* Overflow menu */}
                 <DropdownMenu>
                   <DropdownMenuTrigger
-                    className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full hover:bg-muted transition-colors"
+                    className="p-1.5 sm:p-2 min-w-[32px] min-h-[32px] sm:min-w-[36px] sm:min-h-[36px] flex items-center justify-center rounded-full hover:bg-muted transition-colors"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
