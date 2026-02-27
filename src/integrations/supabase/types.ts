@@ -3101,6 +3101,7 @@ export type Database = {
           is_cancelled: boolean
           is_flagship: boolean | null
           is_public: boolean
+          is_published: boolean
           location_address: string | null
           location_city: string | null
           location_country: string | null
@@ -3140,6 +3141,7 @@ export type Database = {
           is_cancelled?: boolean
           is_flagship?: boolean | null
           is_public?: boolean
+          is_published?: boolean
           location_address?: string | null
           location_city?: string | null
           location_country?: string | null
@@ -3179,6 +3181,7 @@ export type Database = {
           is_cancelled?: boolean
           is_flagship?: boolean | null
           is_public?: boolean
+          is_published?: boolean
           location_address?: string | null
           location_city?: string | null
           location_country?: string | null
