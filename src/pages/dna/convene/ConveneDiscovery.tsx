@@ -79,7 +79,7 @@ export function ConveneDiscovery() {
           .select(`
             id, title, slug, start_time, end_time, location_name, location_city,
             cover_image_url, event_type, format, is_cancelled, max_attendees,
-            organizer_id, profiles!events_organizer_id_fkey(id, full_name, avatar_url, username),
+            organizer_id,
             event_attendees(count)
           `)
           .eq('is_cancelled', false)
@@ -97,9 +97,23 @@ export function ConveneDiscovery() {
           logger.warn('ConveneDiscovery', 'Failed to fetch featured events:', error);
           return [];
         }
+
+        // Fetch organizer profiles separately
+        const organizerIds = [...new Set((data || []).map((e: Record<string, unknown>) => e.organizer_id).filter(Boolean))] as string[];
+        let organizerMap: Record<string, { id: string; full_name: string; avatar_url: string | null; username: string | null }> = {};
+        if (organizerIds.length > 0) {
+          const { data: profiles } = await supabase
+            .from('profiles')
+            .select('id, full_name, avatar_url, username')
+            .in('id', organizerIds);
+          if (profiles) {
+            organizerMap = Object.fromEntries(profiles.map((p) => [p.id, p]));
+          }
+        }
+
         return (data || []).map((e: Record<string, unknown>) => ({
           ...e,
-          organizer: Array.isArray(e.profiles) ? e.profiles[0] : e.profiles,
+          organizer: organizerMap[e.organizer_id as string] ?? null,
         }));
       } catch (error) {
         logger.warn('ConveneDiscovery', 'Error fetching featured events:', error);
@@ -119,7 +133,7 @@ export function ConveneDiscovery() {
           .select(`
             id, title, slug, start_time, end_time, location_name, location_city,
             cover_image_url, event_type, format, is_cancelled, max_attendees,
-            organizer_id, profiles!events_organizer_id_fkey(id, full_name, avatar_url, username),
+            organizer_id,
             event_attendees(count)
           `)
           .eq('is_cancelled', false)
@@ -137,9 +151,23 @@ export function ConveneDiscovery() {
 
         const { data, error } = await query;
         if (error) return [];
+
+        // Fetch organizer profiles separately
+        const organizerIds = [...new Set((data || []).map((e: Record<string, unknown>) => e.organizer_id).filter(Boolean))] as string[];
+        let organizerMap: Record<string, { id: string; full_name: string; avatar_url: string | null; username: string | null }> = {};
+        if (organizerIds.length > 0) {
+          const { data: profiles } = await supabase
+            .from('profiles')
+            .select('id, full_name, avatar_url, username')
+            .in('id', organizerIds);
+          if (profiles) {
+            organizerMap = Object.fromEntries(profiles.map((p) => [p.id, p]));
+          }
+        }
+
         return (data || []).map((e: Record<string, unknown>) => ({
           ...e,
-          organizer: Array.isArray(e.profiles) ? e.profiles[0] : e.profiles,
+          organizer: organizerMap[e.organizer_id as string] ?? null,
         }));
       } catch {
         return [];
