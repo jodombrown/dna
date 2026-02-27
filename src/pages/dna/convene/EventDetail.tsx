@@ -518,7 +518,7 @@ const EventDetail = () => {
 
             {/* Action buttons — condensed */}
             <div className="flex gap-2 flex-wrap items-center">
-              <AddToCalendarButton event={event} organizer={organizer} variant="outline" />
+              <AddToCalendarButton event={{ id: event.id as string, title: event.title as string, description: event.description as string | undefined, start_time: event.start_time as string, end_time: event.end_time as string, location_name: event.location_name as string | undefined, location_address: event.location_address as string | undefined, location_city: event.location_city as string | undefined, location_country: event.location_country as string | undefined, meeting_url: event.meeting_url as string | undefined, format: (event.format as 'in_person' | 'virtual' | 'hybrid') || 'in_person' }} organizer={organizer} variant="outline" />
               <Button variant="outline" size="icon" onClick={handleShareEvent}>
                 <Share2 className="h-4 w-4" />
               </Button>
@@ -733,7 +733,7 @@ const EventDetail = () => {
 
               <Card>
                 <CardContent className="pt-6">
-                  <AddToCalendarButton event={event} organizer={organizer} variant="outline" size="default" />
+                  <AddToCalendarButton event={{ id: event.id as string, title: event.title as string, description: event.description as string | undefined, start_time: event.start_time as string, end_time: event.end_time as string, location_name: event.location_name as string | undefined, location_address: event.location_address as string | undefined, location_city: event.location_city as string | undefined, location_country: event.location_country as string | undefined, meeting_url: event.meeting_url as string | undefined, format: (event.format as 'in_person' | 'virtual' | 'hybrid') || 'in_person' }} organizer={organizer} variant="outline" size="default" />
                 </CardContent>
               </Card>
             </div>
