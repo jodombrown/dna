@@ -9515,6 +9515,7 @@ export type Database = {
           p_sort_by?: string
         }
         Returns: {
+          available_for: string[]
           avatar_url: string
           banner_gradient: string
           banner_overlay: boolean
@@ -9523,15 +9524,19 @@ export type Database = {
           calc_match_score: number
           country_of_origin: string
           created_at: string
+          diaspora_status: string
+          ethnic_heritage: string[]
           focus_areas: string[]
           full_name: string
           headline: string
           id: string
           industries: string[]
+          last_seen_at: string
           location: string
           profession: string
           profile_comp: number
           regional_expertise: string[]
+          skills: string[]
           username: string
         }[]
       }
