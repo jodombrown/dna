@@ -21,9 +21,13 @@ interface PastEventDiaNudgeProps {
 
 const STORAGE_PREFIX = 'dia_past_event_dismissed_';
 
+const COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+
 function isDismissed(eventId: string, variant: string): boolean {
   try {
-    return localStorage.getItem(`${STORAGE_PREFIX}${variant}_${eventId}`) === '1';
+    const ts = localStorage.getItem(`${STORAGE_PREFIX}${variant}_${eventId}`);
+    if (!ts) return false;
+    return Date.now() - Number(ts) < COOLDOWN_MS;
   } catch {
     return false;
   }
@@ -31,7 +35,7 @@ function isDismissed(eventId: string, variant: string): boolean {
 
 function setDismissed(eventId: string, variant: string) {
   try {
-    localStorage.setItem(`${STORAGE_PREFIX}${variant}_${eventId}`, '1');
+    localStorage.setItem(`${STORAGE_PREFIX}${variant}_${eventId}`, String(Date.now()));
   } catch {
     // localStorage unavailable
   }
