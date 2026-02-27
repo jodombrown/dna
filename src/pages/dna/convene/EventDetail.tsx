@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Calendar, MapPin, Users, ExternalLink, Share2, Clock, MoreHorizontal, XCircle, Trash2, Flag, QrCode, Loader2, Settings, Sparkles, MessageSquare } from 'lucide-react';
+import { Calendar, MapPin, Users, ExternalLink, Share2, Clock, MoreHorizontal, XCircle, Trash2, Flag, QrCode, Loader2, Settings, Sparkles, MessageSquare, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { Button } from '@/components/ui/button';
@@ -55,7 +55,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
-// DetailViewLayout removed - using custom clean layout
 import { formatDistanceToNow, format } from 'date-fns';
 import { EventCountdown } from '@/components/convene/EventCountdown';
 import { AddToCalendarButton } from '@/components/convene/AddToCalendarButton';
@@ -68,6 +67,10 @@ import { platformNotifications } from '@/services/platformNotificationGenerator'
 import { DIADetailInsight } from '@/components/dia/DIADetailInsight';
 import { ConversationPicker } from '@/components/messaging/ConversationPicker';
 import type { EntityReferenceData } from '@/services/messageTypes';
+import { StickyRSVPBar } from '@/components/convene/StickyRSVPBar';
+import { EventSocialProof } from '@/components/convene/EventSocialProof';
+import { EventOrganizerCard } from '@/components/convene/EventOrganizerCard';
+import { cn } from '@/lib/utils';
 
 const REPORT_REASONS = [
   { value: 'spam', label: 'Spam' },
@@ -86,6 +89,8 @@ const EventDetail = () => {
   const [rsvpStatus, setRsvpStatus] = useState<string | null>(null);
   const [resolvedEventId, setResolvedEventId] = useState<string | null>(null);
   const [showBanner, setShowBanner] = useState(false);
+  const [showStickyHeader, setShowStickyHeader] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
   
   const isLoggedIn = !!user;
   
@@ -96,6 +101,18 @@ const EventDetail = () => {
       return () => clearTimeout(timer);
     }
   }, [isLoggedIn]);
+
+  // Sticky header on scroll past hero
+  useEffect(() => {
+    const hero = heroRef.current;
+    if (!hero) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowStickyHeader(!entry.isIntersecting),
+      { threshold: 0 }
+    );
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, []);
   
   // Use resolved event ID for composer (once we know it)
   const id = resolvedEventId || slugOrId;
@@ -122,7 +139,6 @@ const EventDetail = () => {
     queryFn: async () => {
       let event = null;
       
-      // Try by UUID first if it looks like one
       if (slugOrId && isUUID(slugOrId)) {
         const { data, error } = await supabase
           .from('events')
@@ -132,7 +148,6 @@ const EventDetail = () => {
         if (!error) event = data;
       }
       
-      // If not found or not UUID, try by slug
       if (!event && slugOrId) {
         const { data, error } = await supabase
           .from('events')
@@ -144,44 +159,42 @@ const EventDetail = () => {
 
       if (!event) return null;
       
-      // Store the actual event ID for use elsewhere
       setResolvedEventId(event.id);
       
-      // Redirect UUID URLs to slug URLs for SEO
       if (slugOrId && isUUID(slugOrId) && event.slug) {
         navigate(`/dna/convene/events/${event.slug}`, { replace: true });
       }
       
-      const eventData: any = event;
+      const eventRow: Record<string, unknown> = event;
       
       // Fetch organizer profile
       const { data: organizer } = await supabase
         .from('profiles')
         .select('id, username, full_name, avatar_url, headline')
-        .eq('id', eventData.organizer_id)
+        .eq('id', event.organizer_id)
         .maybeSingle();
       
       // Fetch group info if event is group-hosted
       let group = null;
-      if (eventData.group_id) {
+      if (event.group_id) {
         const { data: groupData } = await supabase
           .from('groups')
           .select('id, name, slug, description, avatar_url, member_count')
-          .eq('id', eventData.group_id)
+          .eq('id', event.group_id)
           .maybeSingle();
         group = groupData;
       }
       
       return {
-        ...eventData,
+        ...eventRow,
         organizer,
         group
       };
     },
-    enabled: !!id,
+    enabled: !!slugOrId,
   });
 
-  const event = eventData;
+  const event = eventData as Record<string, unknown> | null;
 
   // Fetch user's RSVP status
   const { data: userRsvp } = useQuery({
@@ -208,14 +221,13 @@ const EventDetail = () => {
       const { data: attendeeData, error } = await supabase
         .from('event_attendees')
         .select('status, created_at, user_id')
-        .eq('event_id', id)
+        .eq('event_id', id!)
         .eq('status', 'going')
         .limit(10);
 
       if (error) throw error;
       if (!attendeeData || attendeeData.length === 0) return [];
       
-      // Fetch profiles for attendees
       const userIds = attendeeData.map(a => a.user_id);
       const { data: profiles } = await supabase
         .from('profiles')
@@ -226,20 +238,20 @@ const EventDetail = () => {
       
       return attendeeData.map(a => ({
         ...a,
-        profile: profileMap.get(a.user_id)
+        profile: profileMap.get(a.user_id) || null,
       }));
     },
     enabled: !!id,
   });
 
-  // Fetch total registration count (for delete eligibility)
+  // Fetch total registration count
   const { data: registrationCount = 0 } = useQuery({
     queryKey: ['event-registration-count', id],
     queryFn: async () => {
       const { count, error } = await supabase
         .from('event_attendees')
         .select('id', { count: 'exact' })
-        .eq('event_id', id)
+        .eq('event_id', id!)
         .in('status', ['going', 'maybe', 'pending', 'waitlist']);
 
       if (error) throw error;
@@ -252,33 +264,21 @@ const EventDetail = () => {
   const cancelEventMutation = useMutation({
     mutationFn: async () => {
       if (!user || !id) throw new Error('Not authenticated');
-
       const { error } = await supabase
         .from('events')
-        .update({
-          is_cancelled: true,
-          cancellation_reason: 'Cancelled by organizer',
-        })
+        .update({ is_cancelled: true, cancellation_reason: 'Cancelled by organizer' })
         .eq('id', id)
         .eq('organizer_id', user.id);
-
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['event-detail', id] });
       queryClient.invalidateQueries({ queryKey: ['events'] });
-      toast({
-        title: 'Event Cancelled',
-        description: 'Your event has been cancelled. Attendees will be notified.',
-      });
+      toast({ title: 'Event Cancelled', description: 'Your event has been cancelled. Attendees will be notified.' });
       setShowCancelDialog(false);
     },
     onError: () => {
-      toast({
-        title: 'Error',
-        description: 'Failed to cancel event',
-        variant: 'destructive',
-      });
+      toast({ title: 'Error', description: 'Failed to cancel event', variant: 'destructive' });
     },
   });
 
@@ -286,33 +286,16 @@ const EventDetail = () => {
   const deleteEventMutation = useMutation({
     mutationFn: async () => {
       if (!user || !id) throw new Error('Not authenticated');
-
-      const { error } = await supabase
-        .from('events')
-        .delete()
-        .eq('id', id)
-        .eq('organizer_id', user.id);
-
+      const { error } = await supabase.from('events').delete().eq('id', id).eq('organizer_id', user.id);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['events'] });
-      queryClient.invalidateQueries({ queryKey: ['events-index'] });
-      queryClient.invalidateQueries({ queryKey: ['convene-featured-events'] });
-      queryClient.invalidateQueries({ queryKey: ['convene-category-counts'] });
-      queryClient.invalidateQueries({ queryKey: ['event-recommendations'] });
-      toast({
-        title: 'Event Deleted',
-        description: 'Your event has been permanently deleted.',
-      });
+      toast({ title: 'Event Deleted', description: 'Your event has been permanently deleted.' });
       navigate('/dna/convene/events');
     },
     onError: () => {
-      toast({
-        title: 'Error',
-        description: 'Failed to delete event',
-        variant: 'destructive',
-      });
+      toast({ title: 'Error', description: 'Failed to delete event', variant: 'destructive' });
     },
   });
 
@@ -320,44 +303,25 @@ const EventDetail = () => {
   const reportEventMutation = useMutation({
     mutationFn: async ({ reason, details }: { reason: string; details: string }) => {
       if (!user || !id) throw new Error('Not authenticated');
-
-      const { error } = await supabase
-        .from('event_reports')
-        .insert({
-          event_id: id,
-          reported_by: user.id,
-          reason,
-          description: details || null,
-          status: 'pending',
-        });
-
+      const { error } = await supabase.from('event_reports').insert({
+        event_id: id, reported_by: user.id, reason, description: details || null, status: 'pending',
+      });
       if (error) throw error;
     },
     onSuccess: () => {
-      toast({
-        title: 'Report Submitted',
-        description: 'Thank you for helping keep DNA safe.',
-      });
+      toast({ title: 'Report Submitted', description: 'Thank you for helping keep DNA safe.' });
       setShowReportDialog(false);
       setReportReason('');
       setReportDetails('');
     },
     onError: () => {
-      toast({
-        title: 'Error',
-        description: 'Failed to submit report',
-        variant: 'destructive',
-      });
+      toast({ title: 'Error', description: 'Failed to submit report', variant: 'destructive' });
     },
   });
 
   const handleReportSubmit = () => {
     if (!reportReason) {
-      toast({
-        title: 'Error',
-        description: 'Please select a reason for your report',
-        variant: 'destructive',
-      });
+      toast({ title: 'Error', description: 'Please select a reason for your report', variant: 'destructive' });
       return;
     }
     reportEventMutation.mutate({ reason: reportReason, details: reportDetails });
@@ -369,18 +333,11 @@ const EventDetail = () => {
   const rsvpMutation = useMutation({
     mutationFn: async (status: 'going' | 'maybe' | 'not_going') => {
       if (!user || !id) throw new Error('Not authenticated');
-
       const { error } = await supabase
         .from('event_attendees')
-        .upsert({
-          event_id: id,
-          user_id: user.id,
-          status,
-        });
-
+        .upsert({ event_id: id, user_id: user.id, status });
       if (error) throw error;
 
-      // DIA Sprint 4B: Emit RSVP event for proactive nudges (only for positive RSVPs)
       if ((status === 'going' || status === 'maybe') && user?.id && id && event?.organizer_id) {
         diaEventBus.emit({
           type: 'event_rsvp',
@@ -388,78 +345,54 @@ const EventDetail = () => {
           attendeeId: user.id,
           hostId: event.organizer_id as string,
         });
-
-        // Sprint 4C: In-app notification for event RSVP
         platformNotifications.eventRsvp(
-          event.organizer_id as string,
-          user.id,
-          id,
-          event?.title || '',
-          status
+          event.organizer_id as string, user.id, id, (event?.title as string) || '', status
         ).catch(() => { /* non-critical */ });
       }
-
       return status;
     },
     onSuccess: (status) => {
       queryClient.invalidateQueries({ queryKey: ['user-rsvp', id, user?.id] });
       queryClient.invalidateQueries({ queryKey: ['event-attendees', id] });
+      queryClient.invalidateQueries({ queryKey: ['event-registration-count', id] });
       toast({
         title: 'RSVP Updated',
         description: `You've marked yourself as ${status === 'going' ? 'going' : status === 'maybe' ? 'maybe' : 'not going'}`,
       });
     },
     onError: () => {
-      toast({
-        title: 'Error',
-        description: 'Failed to update RSVP',
-        variant: 'destructive',
-      });
+      toast({ title: 'Error', description: 'Failed to update RSVP', variant: 'destructive' });
     },
   });
 
   const handleRsvp = (status: 'going' | 'maybe' | 'not_going') => {
     if (!user) {
-      toast({
-        title: 'Authentication Required',
-        description: 'Please log in to RSVP to events',
-        variant: 'destructive',
-      });
+      toast({ title: 'Authentication Required', description: 'Please log in to RSVP to events', variant: 'destructive' });
       navigate('/auth');
       return;
     }
     rsvpMutation.mutate(status);
   };
 
-  const handleShareEvent = () => {
+  const handleShareEvent = async () => {
     const url = window.location.href;
-    navigator.clipboard.writeText(url);
-    toast({
-      title: 'Link Copied',
-      description: 'Event link copied to clipboard',
-    });
-  };
-
-  const handleDownloadCalendar = () => {
-    // This function is kept for backward compatibility but is replaced by AddToCalendarButton
-    toast({
-      title: 'Use Add to Calendar',
-      description: 'Click the "Add to Calendar" button to save this event',
-    });
+    const title = (event?.title as string) || 'Event';
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, url });
+      } catch { /* user cancelled */ }
+    } else {
+      await navigator.clipboard.writeText(url);
+      toast({ title: 'Link Copied', description: 'Event link copied to clipboard' });
+    }
   };
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <button
-            onClick={() => navigate('/dna/convene/events')}
-            className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6"
-          >
-            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Back to Events
+          <button onClick={() => navigate(-1)} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6">
+            <ArrowLeft className="w-4 h-4 mr-1" /> Back
           </button>
           <div className="flex items-center justify-center py-20">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -473,25 +406,13 @@ const EventDetail = () => {
     return (
       <div className="min-h-screen bg-background">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <button
-            onClick={() => navigate('/dna/convene/events')}
-            className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6"
-          >
-            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Back to Events
+          <button onClick={() => navigate(-1)} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6">
+            <ArrowLeft className="w-4 h-4 mr-1" /> Back
           </button>
           <Card>
             <CardContent className="py-12 text-center">
               <p className="text-muted-foreground">Event not found</p>
-              <Button 
-                variant="link"
-                onClick={() => navigate('/dna/convene/events')}
-                className="mt-4"
-              >
-                Back to events
-              </Button>
+              <Button variant="link" onClick={() => navigate('/dna/convene/events')} className="mt-4">Back to events</Button>
             </CardContent>
           </Card>
         </div>
@@ -500,12 +421,40 @@ const EventDetail = () => {
   }
 
   const isOrganizer = user?.id === event.organizer_id;
-  const isPastEvent = new Date(event.end_time) < new Date();
-  const currentRsvp = userRsvp?.status;
+  const isPastEvent = event.end_time ? new Date(event.end_time as string) < new Date() : false;
+  const currentRsvp = userRsvp?.status || null;
+  const organizer = event.organizer as { id: string; username: string | null; full_name: string; avatar_url: string | null; headline?: string | null } | null;
+  const group = event.group as { id: string; name: string; slug: string; avatar_url: string | null; member_count: number } | null;
+  const attendeeProfiles = attendees
+    .filter((a: Record<string, unknown>) => a.profile)
+    .map((a: Record<string, unknown>) => {
+      const p = a.profile as { id: string; username: string | null; full_name: string; avatar_url: string | null };
+      return p;
+    });
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 lg:pb-0">
       <UnifiedHeader />
+
+      {/* ── Sticky Scroll Header ─────────────────────── */}
+      <motion.div
+        initial={false}
+        animate={{ y: showStickyHeader ? 0 : -60, opacity: showStickyHeader ? 1 : 0 }}
+        transition={{ duration: 0.2 }}
+        className="fixed top-0 inset-x-0 z-50 bg-background/95 backdrop-blur-md border-b border-border"
+      >
+        <div className="max-w-5xl mx-auto px-4 py-2.5 flex items-center justify-between">
+          <div className="flex items-center gap-3 min-w-0">
+            <Button variant="ghost" size="icon" className="shrink-0 h-8 w-8" onClick={() => navigate(-1)}>
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <h2 className="text-sm font-semibold truncate">{event.title as string}</h2>
+          </div>
+          <Button variant="ghost" size="icon" className="shrink-0 h-8 w-8" onClick={handleShareEvent}>
+            <Share2 className="h-4 w-4" />
+          </Button>
+        </div>
+      </motion.div>
       
       {/* Sticky CTA Banner for non-logged-in users */}
       {!isLoggedIn && showBanner && (
@@ -514,7 +463,7 @@ const EventDetail = () => {
             initial={{ y: -30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-            className="bg-gradient-to-r from-dna-forest via-dna-emerald to-dna-forest sm:mx-auto sm:max-w-3xl rounded-lg shadow-md"
+            className="bg-gradient-to-r from-[hsl(var(--module-convene))] via-[hsl(var(--module-convene))]/90 to-[hsl(var(--module-convene))] sm:mx-auto sm:max-w-3xl rounded-lg shadow-md"
           >
             <div className="px-4 py-2.5 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-white min-w-0">
@@ -523,134 +472,94 @@ const EventDetail = () => {
                   You're invited! Join DNA to attend this event
                 </span>
               </div>
-              <Button
-                size="sm"
-                className="bg-white text-dna-forest hover:bg-white/90 shrink-0 h-7 text-xs px-3"
-                asChild
-              >
-                <Link to={`/auth?mode=signup&redirect=/dna/convene/events/${slugOrId}`}>
-                  Join DNA Free
-                </Link>
+              <Button size="sm" className="bg-white text-foreground hover:bg-white/90 shrink-0 h-7 text-xs px-3" asChild>
+                <Link to={`/auth?mode=signup&redirect=/dna/convene/events/${slugOrId}`}>Join DNA Free</Link>
               </Button>
             </div>
           </motion.div>
         </div>
       )}
       
-      {/* Clean Event Detail Layout - No DetailViewLayout wrapper for full control */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Back Navigation */}
         <button
-          onClick={() => navigate('/dna/convene/events')}
+          onClick={() => navigate(-1)}
           className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors"
         >
-          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
+          <ArrowLeft className="w-4 h-4 mr-1" />
           Back to Events
         </button>
 
-        {/* Hero Image with cultural pattern backdrop */}
-        <div className="relative overflow-hidden rounded-2xl mb-8">
+        {/* Hero Image */}
+        <div ref={heroRef} className="relative overflow-hidden rounded-2xl mb-8">
           <CulturalPattern pattern="kente" opacity={0.05} />
-          {event.cover_image_url ? (
+          {(event.cover_image_url as string) ? (
             <div className="aspect-[2.5/1] w-full overflow-hidden">
-              <img
-                src={event.cover_image_url}
-                alt={event.title}
-                className="w-full h-full object-cover"
-              />
+              <img src={event.cover_image_url as string} alt={event.title as string} className="w-full h-full object-cover" />
             </div>
           ) : (
             <div className="aspect-[3/1] w-full bg-[hsl(var(--module-convene-light))]" />
           )}
         </div>
 
-        {/* Title and Actions */}
-        <div className="mb-8">
+        {/* Title + Badges + Actions */}
+        <div className="mb-6">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
             <div className="flex-1">
               <div className="flex items-center gap-2 flex-wrap mb-2">
-                <Badge variant="secondary" className="capitalize">
-                  {event.event_type}
-                </Badge>
-                <Badge variant="outline" className="capitalize">
-                  {event.format.replace('_', ' ')}
-                </Badge>
+                <Badge variant="secondary" className="capitalize">{event.event_type as string}</Badge>
+                <Badge variant="outline" className="capitalize">{(event.format as string).replace('_', ' ')}</Badge>
                 {isPastEvent && <Badge variant="secondary">Past Event</Badge>}
-                {event.is_cancelled && (
-                  <Badge variant="destructive">Cancelled</Badge>
-                )}
+                {event.is_cancelled && <Badge variant="destructive">Cancelled</Badge>}
               </div>
-              <h1 className="text-2xl sm:text-4xl font-bold mb-2">{event.title}</h1>
-              {/* Countdown / Happening Now */}
-              <EventCountdown startTime={event.start_time} endTime={event.end_time} className="mt-1" />
+              <h1 className="text-2xl sm:text-4xl font-bold mb-2">{event.title as string}</h1>
+              <EventCountdown startTime={event.start_time as string} endTime={event.end_time as string} className="mt-1" />
             </div>
 
+            {/* Action buttons — condensed */}
             <div className="flex gap-2 flex-wrap items-center">
-              <AddToCalendarButton
-                event={event}
-                organizer={event.organizer}
-                variant="outline"
-              />
+              <AddToCalendarButton event={event} organizer={organizer} variant="outline" />
               <Button variant="outline" size="icon" onClick={handleShareEvent}>
                 <Share2 className="h-4 w-4" />
               </Button>
               {isLoggedIn && (
                 <Button variant="outline" size="sm" onClick={() => setShowShareInChat(true)}>
                   <MessageSquare className="h-4 w-4 mr-1.5" />
-                  Share in Chat
+                  <span className="hidden sm:inline">Share in Chat</span>
                 </Button>
               )}
               {isOrganizer ? (
                 <>
                   <Button onClick={() => navigate(`/dna/convene/events/${id}/manage`)}>
-                    <Settings className="h-4 w-4 mr-2" />
-                    Manage
-                  </Button>
-                  <Button variant="outline" onClick={() => navigate(`/dna/convene/events/${id}/edit`)}>
-                    Edit
+                    <Settings className="h-4 w-4 mr-2" /> Manage
                   </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="icon">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
+                      <Button variant="outline" size="icon"><MoreHorizontal className="h-4 w-4" /></Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuItem onClick={() => navigate(`/dna/convene/events/${id}/edit`)}>Edit Event</DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate(`/dna/convene/events/${id}/check-in`)}>
-                        <QrCode className="mr-2 h-4 w-4" />
-                        Check-in Attendees
+                        <QrCode className="mr-2 h-4 w-4" /> Check-in
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       {!event.is_cancelled && (
-                        <DropdownMenuItem
-                          onClick={() => setShowCancelDialog(true)}
-                          className="text-amber-600 focus:text-amber-600"
-                        >
-                          <XCircle className="mr-2 h-4 w-4" />
-                          Cancel Event
+                        <DropdownMenuItem onClick={() => setShowCancelDialog(true)} className="text-amber-600 focus:text-amber-600">
+                          <XCircle className="mr-2 h-4 w-4" /> Cancel Event
                         </DropdownMenuItem>
                       )}
                       {canDeleteEvent ? (
-                        <DropdownMenuItem
-                          onClick={() => setShowDeleteDialog(true)}
-                          className="text-destructive focus:text-destructive"
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Delete Event
+                        <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-destructive focus:text-destructive">
+                          <Trash2 className="mr-2 h-4 w-4" /> Delete Event
                         </DropdownMenuItem>
                       ) : (
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <div className="relative flex cursor-not-allowed select-none items-center rounded-sm px-2 py-1.5 text-sm opacity-50">
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Delete Event
+                              <Trash2 className="mr-2 h-4 w-4" /> Delete Event
                             </div>
                           </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Cannot delete events with registrations. Cancel instead.</p>
-                          </TooltipContent>
+                          <TooltipContent><p>Cannot delete events with registrations.</p></TooltipContent>
                         </Tooltip>
                       )}
                     </DropdownMenuContent>
@@ -659,86 +568,46 @@ const EventDetail = () => {
               ) : user && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
+                    <Button variant="outline" size="icon"><MoreHorizontal className="h-4 w-4" /></Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuItem
-                      onClick={() => setShowReportDialog(true)}
-                      className="text-destructive focus:text-destructive"
-                    >
-                      <Flag className="mr-2 h-4 w-4" />
-                      Report Event
+                    <DropdownMenuItem onClick={() => setShowReportDialog(true)} className="text-destructive focus:text-destructive">
+                      <Flag className="mr-2 h-4 w-4" /> Report Event
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
             </div>
           </div>
-
-          {/* Host Info - Group or Individual */}
-          {event.group ? (
-            <div className="flex items-center gap-3">
-              <div 
-                className="flex items-center gap-3 cursor-pointer hover:opacity-80 flex-1"
-                onClick={() => navigate(`/dna/convene/groups/${event.group.slug}`)}
-              >
-                <Avatar>
-                  <AvatarImage src={event.group.avatar_url || ''} />
-                  <AvatarFallback>{event.group.name?.[0]}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-medium">Hosted by {event.group.name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {event.group.member_count || 0} members
-                  </p>
-                </div>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate(`/dna/convene/groups/${event.group.slug}/events`)}
-              >
-                View All Group Events
-              </Button>
-            </div>
-          ) : event.organizer && (
-            <div 
-              className="flex items-center gap-3 cursor-pointer hover:opacity-80"
-              onClick={() => navigate(`/dna/${event.organizer.username}`)}
-            >
-              <Avatar>
-                <AvatarImage src={event.organizer.avatar_url || ''} />
-                <AvatarFallback>{event.organizer.full_name?.[0]}</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-medium">Hosted by {event.organizer.full_name}</p>
-                {event.organizer.headline && (
-                  <p className="text-sm text-muted-foreground">{event.organizer.headline}</p>
-                )}
-              </div>
-            </div>
-          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
-          {/* Main Content - ~65% */}
+          {/* ── Main Content ───────────────────────────── */}
           <div className="space-y-6">
+            {/* Organizer Card — enhanced */}
+            {organizer && (
+              <EventOrganizerCard organizer={organizer} groupHost={group} />
+            )}
+
+            {/* Social Proof */}
+            {id && (
+              <EventSocialProof
+                eventId={id}
+                attendees={attendeeProfiles}
+                totalCount={registrationCount}
+              />
+            )}
+
             {/* Details Card */}
             <Card>
-              <CardHeader>
-                <CardTitle>Event Details</CardTitle>
-              </CardHeader>
+              <CardHeader><CardTitle>Event Details</CardTitle></CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-start gap-3">
                   <Calendar className="h-5 w-5 mt-0.5 text-muted-foreground" />
                   <div>
-                    <p className="font-medium">
-                      {format(new Date(event.start_time), 'EEEE, MMMM d, yyyy')}
-                    </p>
+                    <p className="font-medium">{format(new Date(event.start_time as string), 'EEEE, MMMM d, yyyy')}</p>
                     <p className="text-sm text-muted-foreground">
-                      {format(new Date(event.start_time), 'h:mm a')} - {format(new Date(event.end_time), 'h:mm a')} {event.timezone}
+                      {format(new Date(event.start_time as string), 'h:mm a')} - {format(new Date(event.end_time as string), 'h:mm a')} {event.timezone as string}
                     </p>
                   </div>
                 </div>
@@ -750,25 +619,17 @@ const EventDetail = () => {
                       <>
                         <p className="font-medium">Online Event</p>
                         {event.meeting_url && (
-                          <a 
-                            href={event.meeting_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-sm text-primary hover:underline flex items-center gap-1"
-                          >
+                          <a href={event.meeting_url as string} target="_blank" rel="noopener noreferrer"
+                            className="text-sm text-primary hover:underline flex items-center gap-1">
                             Join meeting <ExternalLink className="h-3 w-3" />
                           </a>
                         )}
                       </>
                     ) : (
                       <>
-                        <p className="font-medium">{event.location_name}</p>
-                        {event.location_address && (
-                          <p className="text-sm text-muted-foreground">{event.location_address}</p>
-                        )}
-                        <p className="text-sm text-muted-foreground">
-                          {event.location_city}, {event.location_country}
-                        </p>
+                        <p className="font-medium">{event.location_name as string}</p>
+                        {event.location_address && <p className="text-sm text-muted-foreground">{event.location_address as string}</p>}
+                        <p className="text-sm text-muted-foreground">{event.location_city as string}, {event.location_country as string}</p>
                       </>
                     )}
                   </div>
@@ -778,144 +639,101 @@ const EventDetail = () => {
                   <div className="flex items-start gap-3">
                     <Users className="h-5 w-5 mt-0.5 text-muted-foreground" />
                     <p className="text-sm text-muted-foreground">
-                      Limited to {event.max_attendees} attendees
+                      {registrationCount} / {event.max_attendees as number} registered
                     </p>
                   </div>
                 )}
               </CardContent>
             </Card>
 
-            {/* Tabs for Description and Activity */}
+            {/* Tabs: Description + Activity */}
             <Tabs defaultValue="description" className="w-full">
               <TabsList>
                 <TabsTrigger value="description">Description</TabsTrigger>
                 <TabsTrigger value="activity">Activity</TabsTrigger>
               </TabsList>
-              
               <TabsContent value="description">
                 <Card>
-                  <CardHeader>
-                    <CardTitle>About This Event</CardTitle>
-                  </CardHeader>
+                  <CardHeader><CardTitle>About This Event</CardTitle></CardHeader>
                   <CardContent>
-                    <p className="text-muted-foreground whitespace-pre-wrap">
-                      {event.description}
-                    </p>
+                    <p className="text-muted-foreground whitespace-pre-wrap">{event.description as string}</p>
                   </CardContent>
                 </Card>
               </TabsContent>
-              
               <TabsContent value="activity">
-                <EventActivityFeed
-                  eventId={event.id}
-                  eventTitle={event.title}
-                  canPost={!!userRsvp}
-                />
+                <EventActivityFeed eventId={(event.id as string)} eventTitle={(event.title as string)} canPost={!!userRsvp} />
               </TabsContent>
             </Tabs>
 
             {/* Attendees */}
             {attendees.length > 0 && (
               <Card>
-                <CardHeader>
-                  <CardTitle>Attendees ({attendees.length})</CardTitle>
-                </CardHeader>
+                <CardHeader><CardTitle>Attendees ({registrationCount})</CardTitle></CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-4">
-                    {attendees.map((attendee: any) => attendee.profile && (
-                      <div 
-                        key={attendee.profile.id}
-                        className="flex items-center gap-2 cursor-pointer hover:opacity-80"
-                        onClick={() => navigate(`/dna/${attendee.profile.username}`)}
-                      >
-                        <Avatar>
-                          <AvatarImage src={attendee.profile.avatar_url || ''} />
-                          <AvatarFallback>{attendee.profile.full_name?.[0]}</AvatarFallback>
-                        </Avatar>
-                        <span className="text-sm">{attendee.profile.full_name}</span>
-                      </div>
-                    ))}
+                    {attendees.map((attendee: Record<string, unknown>) => {
+                      const profile = attendee.profile as { id: string; username: string; full_name: string; avatar_url: string | null } | null;
+                      if (!profile) return null;
+                      return (
+                        <div key={profile.id} className="flex items-center gap-2 cursor-pointer hover:opacity-80" onClick={() => navigate(`/dna/${profile.username}`)}>
+                          <Avatar>
+                            <AvatarImage src={profile.avatar_url || ''} />
+                            <AvatarFallback>{profile.full_name?.[0]}</AvatarFallback>
+                          </Avatar>
+                          <span className="text-sm">{profile.full_name}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </CardContent>
               </Card>
             )}
           </div>
 
-          {/* Sidebar - 380px fixed */}
-          <div>
+          {/* ── Sidebar ────────────────────────────────── */}
+          <div className="hidden lg:block">
             <div className="sticky top-24 space-y-4">
+              {/* RSVP Card — desktop only */}
               {!isPastEvent && !isOrganizer && (
                 <Card>
-                  <CardHeader>
-                    <CardTitle>RSVP</CardTitle>
-                  </CardHeader>
+                  <CardHeader><CardTitle>RSVP</CardTitle></CardHeader>
                   <CardContent className="space-y-2">
-                    <Button
-                      className="w-full"
-                      variant={currentRsvp === 'going' ? 'default' : 'outline'}
-                      onClick={() => handleRsvp('going')}
-                      disabled={rsvpMutation.isPending}
-                    >
-                      Going
-                    </Button>
-                    <Button
-                      className="w-full"
-                      variant={currentRsvp === 'maybe' ? 'default' : 'outline'}
-                      onClick={() => handleRsvp('maybe')}
-                      disabled={rsvpMutation.isPending}
-                    >
-                      Maybe
-                    </Button>
-                    <Button
-                      className="w-full"
-                      variant={currentRsvp === 'not_going' ? 'default' : 'outline'}
-                      onClick={() => handleRsvp('not_going')}
-                      disabled={rsvpMutation.isPending}
-                    >
-                      Can't Go
-                    </Button>
+                    <Button className="w-full" variant={currentRsvp === 'going' ? 'default' : 'outline'}
+                      onClick={() => handleRsvp('going')} disabled={rsvpMutation.isPending}>Going</Button>
+                    <Button className="w-full" variant={currentRsvp === 'maybe' ? 'default' : 'outline'}
+                      onClick={() => handleRsvp('maybe')} disabled={rsvpMutation.isPending}>Maybe</Button>
+                    <Button className="w-full" variant={currentRsvp === 'not_going' ? 'default' : 'outline'}
+                      onClick={() => handleRsvp('not_going')} disabled={rsvpMutation.isPending}>Can't Go</Button>
                   </CardContent>
                 </Card>
               )}
 
-              {/* Location Map for in-person/hybrid events */}
               {(event.format === 'in_person' || event.format === 'hybrid') && (
                 <EventLocationMap
-                  locationName={event.location_name}
-                  locationAddress={event.location_address}
-                  city={event.location_city}
-                  country={event.location_country}
-                  lat={event.location_lat}
-                  lng={event.location_lng}
+                  locationName={event.location_name as string}
+                  locationAddress={event.location_address as string}
+                  city={event.location_city as string}
+                  country={event.location_country as string}
+                  lat={event.location_lat as number}
+                  lng={event.location_lng as number}
                 />
               )}
 
-              {/* DIA Detail Insight */}
-              <DIADetailInsight surface="event_detail" entityId={event.id} />
+              <DIADetailInsight surface="event_detail" entityId={event.id as string} />
 
-              {/* Event Thread CTA — links CONVENE → CONNECT */}
               <EventThreadCTA
-                eventId={event.id}
-                eventTitle={event.title}
+                eventId={event.id as string}
+                eventTitle={event.title as string}
                 isRegistered={!!currentRsvp && currentRsvp !== 'not_going'}
                 isPastEvent={isPastEvent}
                 isOrganizer={isOrganizer}
               />
 
-              {/* Event Spaces Section */}
-              <EventSpacesSection 
-                eventId={id!}
-                isOrganizer={isOrganizer}
-              />
+              <EventSpacesSection eventId={id!} isOrganizer={isOrganizer} />
 
               <Card>
                 <CardContent className="pt-6">
-                  <AddToCalendarButton 
-                    event={event}
-                    organizer={event.organizer}
-                    variant="outline"
-                    size="default"
-                  />
+                  <AddToCalendarButton event={event} organizer={organizer} variant="outline" size="default" />
                 </CardContent>
               </Card>
             </div>
@@ -923,147 +741,102 @@ const EventDetail = () => {
         </div>
       </div>
 
-      {/* Universal Composer for event context */}
+      {/* ── Sticky RSVP Bar (Mobile) ───────────────── */}
+      {id && (
+        <StickyRSVPBar
+          eventId={id}
+          isPastEvent={isPastEvent}
+          isCancelled={!!event.is_cancelled}
+          isOrganizer={isOrganizer}
+          currentRsvp={currentRsvp}
+          maxAttendees={event.max_attendees as number | null}
+          attendeeCount={registrationCount}
+          isSubmitting={rsvpMutation.isPending}
+          onRsvp={handleRsvp}
+        />
+      )}
+
+      {/* Universal Composer */}
       <UniversalComposer
-        isOpen={composer.isOpen}
-        mode={composer.mode}
-        context={composer.context}
-        isSubmitting={composer.isSubmitting}
-        onClose={composer.close}
-        onModeChange={composer.switchMode}
-        successData={composer.successData}
-        onSubmit={composer.submit}
-        onDismissSuccess={composer.dismissSuccess}
+        isOpen={composer.isOpen} mode={composer.mode} context={composer.context}
+        isSubmitting={composer.isSubmitting} onClose={composer.close} onModeChange={composer.switchMode}
+        successData={composer.successData} onSubmit={composer.submit} onDismissSuccess={composer.dismissSuccess}
       />
 
-      {/* Cancel Event Confirmation Dialog */}
+      {/* Cancel Dialog */}
       <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Cancel Event</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to cancel this event? Attendees will be notified.
-              The event will remain visible but marked as cancelled.
-            </AlertDialogDescription>
+            <AlertDialogDescription>Are you sure? Attendees will be notified. The event will remain visible but marked as cancelled.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Keep Event</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => cancelEventMutation.mutate()}
-              className="bg-amber-600 hover:bg-amber-700"
-              disabled={cancelEventMutation.isPending}
-            >
-              {cancelEventMutation.isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Cancelling...
-                </>
-              ) : (
-                'Cancel Event'
-              )}
+            <AlertDialogAction onClick={() => cancelEventMutation.mutate()} disabled={cancelEventMutation.isPending}>
+              {cancelEventMutation.isPending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Cancelling...</> : 'Cancel Event'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Delete Event Confirmation Dialog */}
+      {/* Delete Dialog */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Event</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the event
-              and all associated data.
-            </AlertDialogDescription>
+            <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => deleteEventMutation.mutate()}
-              className="bg-destructive hover:bg-destructive/90"
-              disabled={deleteEventMutation.isPending}
-            >
-              {deleteEventMutation.isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Deleting...
-                </>
-              ) : (
-                'Delete Event'
-              )}
+            <AlertDialogAction onClick={() => deleteEventMutation.mutate()} className="bg-destructive hover:bg-destructive/90" disabled={deleteEventMutation.isPending}>
+              {deleteEventMutation.isPending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Deleting...</> : 'Delete Event'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Report Event Modal */}
+      {/* Report Dialog */}
       <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Report Event</DialogTitle>
-            <DialogDescription>
-              Help us understand what's wrong with this event.
-            </DialogDescription>
+            <DialogDescription>Help us understand what's wrong with this event.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="report-reason">Reason</Label>
               <Select value={reportReason} onValueChange={setReportReason}>
-                <SelectTrigger id="report-reason">
-                  <SelectValue placeholder="Select a reason" />
-                </SelectTrigger>
+                <SelectTrigger id="report-reason"><SelectValue placeholder="Select a reason" /></SelectTrigger>
                 <SelectContent>
-                  {REPORT_REASONS.map((reason) => (
-                    <SelectItem key={reason.value} value={reason.value}>
-                      {reason.label}
-                    </SelectItem>
-                  ))}
+                  {REPORT_REASONS.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="report-details">Additional Details (Optional)</Label>
-              <Textarea
-                id="report-details"
-                placeholder="Provide any additional context..."
-                value={reportDetails}
-                onChange={(e) => setReportDetails(e.target.value)}
-                rows={4}
-              />
+              <Textarea id="report-details" placeholder="Provide any additional context..." value={reportDetails} onChange={e => setReportDetails(e.target.value)} rows={4} />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowReportDialog(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={handleReportSubmit}
-              disabled={reportEventMutation.isPending || !reportReason}
-            >
-              {reportEventMutation.isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Submitting...
-                </>
-              ) : (
-                'Submit Report'
-              )}
+            <Button variant="outline" onClick={() => setShowReportDialog(false)}>Cancel</Button>
+            <Button onClick={handleReportSubmit} disabled={reportEventMutation.isPending || !reportReason}>
+              {reportEventMutation.isPending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Submitting...</> : 'Submit Report'}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Share in Chat Picker */}
+      {/* Share in Chat */}
       {event && (
         <ConversationPicker
           open={showShareInChat}
           onOpenChange={setShowShareInChat}
           entityReference={{
             entityType: 'event',
-            entityId: event.id,
-            entityTitle: event.title,
-            entityPreview: event.description?.slice(0, 100),
-            entityImage: event.cover_image_url,
+            entityId: event.id as string,
+            entityTitle: event.title as string,
+            entityPreview: (event.description as string)?.slice(0, 100),
+            entityImage: event.cover_image_url as string,
           }}
         />
       )}
