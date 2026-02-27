@@ -47,8 +47,8 @@ export function HappeningNowSection() {
       {/* Header */}
       <div className="flex items-center gap-2">
         <span className="relative flex h-3 w-3">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75" />
-          <span className="relative inline-flex rounded-full h-3 w-3 bg-destructive" />
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+          <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500" />
         </span>
         <h2 className="text-xl font-bold text-foreground">Happening Now</h2>
       </div>
@@ -62,15 +62,15 @@ export function HappeningNowSection() {
           return (
             <Card
               key={event.id as string}
-              className="overflow-hidden cursor-pointer hover:shadow-lg transition-all border-destructive/30 bg-gradient-to-br from-destructive/5 to-transparent group"
+              className="overflow-hidden cursor-pointer hover:shadow-lg transition-all border-emerald-500/30 bg-gradient-to-br from-emerald-500/5 to-transparent group"
               onClick={() => navigate(`/dna/convene/events/${(event.slug as string) || (event.id as string)}`)}
             >
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <Badge className="bg-destructive text-destructive-foreground text-[10px] px-2 py-0.5 font-semibold">
+                  <Badge className="bg-emerald-500 text-white text-[10px] px-2 py-0.5 font-semibold">
                     <span className="relative flex h-1.5 w-1.5 mr-1.5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive-foreground opacity-75" />
-                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-destructive-foreground" />
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white" />
                     </span>
                     LIVE
                   </Badge>
@@ -98,7 +98,7 @@ export function HappeningNowSection() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="w-full mt-3 text-xs border-destructive/30 hover:bg-destructive/10 hover:text-destructive"
+                  className="w-full mt-3 text-xs border-emerald-500/30 hover:bg-emerald-500/10 hover:text-emerald-700 dark:hover:text-emerald-400"
                   onClick={(e) => {
                     e.stopPropagation();
                     navigate(`/dna/convene/events/${(event.slug as string) || (event.id as string)}`);

@@ -35,6 +35,7 @@ import { DIAHubSection } from '@/components/dia/DIAHubSection';
 import { HappeningNowSection } from '@/components/convene/HappeningNowSection';
 import { MutualAttendeesLine } from '@/components/convene/MutualAttendeesLine';
 import { logger } from '@/lib/logger';
+import { ConveneSearchOverlay } from '@/components/convene/ConveneSearchOverlay';
 import { cn } from '@/lib/utils';
 
 export function ConveneDiscovery() {
@@ -46,8 +47,9 @@ export function ConveneDiscovery() {
   // ── Filter state from URL ────────────────────────────
   const selectedCity = searchParams.get('city');
   const activeCategory = searchParams.get('category') || 'all';
-  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
+  const viewMode = (searchParams.get('view') as 'list' | 'map') || 'list';
   const [activeSlide, setActiveSlide] = useState(0);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const prefersReducedMotion =
     typeof window !== 'undefined' &&
@@ -236,7 +238,7 @@ export function ConveneDiscovery() {
               variant="ghost"
               size="icon"
               className="h-9 w-9 rounded-full"
-              onClick={() => navigate('/dna/convene/events')}
+              onClick={() => setIsSearchOpen(true)}
               aria-label="Search events"
             >
               <Search className="w-4.5 h-4.5" />
@@ -248,7 +250,7 @@ export function ConveneDiscovery() {
                 'h-9 w-9 rounded-full',
                 viewMode === 'map' && 'bg-[hsl(var(--module-convene)/0.12)] text-[hsl(var(--module-convene))]',
               )}
-              onClick={() => setViewMode(viewMode === 'list' ? 'map' : 'list')}
+              onClick={() => updateFilters({ view: viewMode === 'list' ? 'map' : null })}
               aria-label={viewMode === 'list' ? 'Switch to map view' : 'Switch to list view'}
             >
               {viewMode === 'list' ? <Map className="w-4.5 h-4.5" /> : <List className="w-4.5 h-4.5" />}
@@ -398,84 +400,29 @@ export function ConveneDiscovery() {
             </div>
           ) : (
             <div className="space-y-2">
-              {upcomingEvents.map((event: Record<string, unknown>) => {
-                const attendeeCount = (event.event_attendees as Array<{ count: number }>)?.[0]?.count ?? 0;
-                const status = getEventStatus(
-                  {
-                    start_time: event.start_time as string | undefined,
+          {upcomingEvents.map((event: Record<string, unknown>) => (
+                <ConveneEventCard
+                  key={event.id as string}
+                  event={{
+                    id: event.id as string,
+                    title: event.title as string,
+                    start_time: event.start_time as string,
                     end_time: event.end_time as string | undefined,
+                    location_name: event.location_name as string | undefined,
+                    location_city: event.location_city as string | undefined,
+                    cover_image_url: event.cover_image_url as string | undefined,
+                    event_type: event.event_type as string | undefined,
+                    format: event.format as string | undefined,
                     is_cancelled: event.is_cancelled as boolean | undefined,
+                    slug: event.slug as string | undefined,
                     max_attendees: event.max_attendees as number | undefined,
-                  },
-                  attendeeCount,
-                );
-                const organizer = event.organizer as { id?: string; full_name: string; avatar_url?: string | null; username?: string } | undefined;
-
-                return (
-                  <div
-                    key={event.id as string}
-                    className="flex items-start gap-3 p-3 rounded-xl border border-border hover:border-[hsl(var(--module-convene)/0.3)] bg-card hover:bg-accent/30 cursor-pointer transition-all group"
-                    onClick={() => navigate(`/dna/convene/events/${(event.slug as string) || (event.id as string)}`)}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        navigate(`/dna/convene/events/${(event.slug as string) || (event.id as string)}`);
-                      }
-                    }}
-                  >
-                    {/* Thumbnail */}
-                    <div className="w-[60px] h-[60px] rounded-lg overflow-hidden flex-shrink-0 bg-[hsl(var(--module-convene)/0.1)]">
-                      {(event.cover_image_url as string) ? (
-                        <img
-                          src={event.cover_image_url as string}
-                          alt={event.title as string}
-                          className="w-full h-full object-cover"
-                          loading="lazy"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Calendar className="w-5 h-5 text-[hsl(var(--module-convene)/0.5)]" />
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-sm leading-tight line-clamp-1 text-foreground group-hover:text-[hsl(var(--module-convene))] transition-colors">
-                        {event.title as string}
-                      </h4>
-
-                      {/* Organizer */}
-                      {organizer && (
-                        <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                          {organizer.full_name}
-                        </p>
-                      )}
-
-                      {/* Time + Location */}
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        {formatEventTime(event.start_time as string | undefined, event.end_time as string | undefined)}
-                        {(event.location_city as string) && (
-                          <> · {event.location_city as string}</>
-                        )}
-                        {!(event.location_city as string) && (event.format as string) === 'virtual' && (
-                          <> · Virtual</>
-                        )}
-                      </p>
-
-                      {/* Mutual attendees */}
-                      <MutualAttendeesLine eventId={event.id as string} />
-                    </div>
-
-                    {/* Status badge */}
-                    <div className="flex-shrink-0 pt-0.5">
-                      {status && <ConveneEventBadge status={status} />}
-                    </div>
-                  </div>
-                );
-              })}
+                    organizer: event.organizer as { id: string; full_name: string; avatar_url?: string | null; username?: string } | undefined,
+                    event_attendees: event.event_attendees as Array<{ count: number }> | undefined,
+                  }}
+                  variant="compact"
+                  showMutualAttendees
+                />
+              ))}
             </div>
           )}
         </div>
@@ -502,6 +449,7 @@ export function ConveneDiscovery() {
         </div>
       </div>
 
+      <ConveneSearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
       <MobileBottomNav />
       <UniversalComposer
         isOpen={composer.isOpen}
