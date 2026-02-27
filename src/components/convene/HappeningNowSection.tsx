@@ -28,6 +28,7 @@ export function HappeningNowSection() {
           event_attendees(count)
         `)
         .eq('is_cancelled', false)
+        .eq('is_published', true)
         .lte('start_time', now)
         .gte('end_time', now)
         .order('start_time', { ascending: true })
