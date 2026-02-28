@@ -1,5 +1,5 @@
 /**
- * FeedUpcomingEvents - Beautiful upcoming events widget for left sidebar
+ * FeedUpcomingEvents - Warm, CONVENE-branded upcoming events widget
  * Cross-C moment: CONVENE surfaces on every feed visit
  */
 
@@ -7,9 +7,11 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Calendar, MapPin, ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { Badge } from '@/components/ui/badge';
 import { format, isToday, isTomorrow } from 'date-fns';
 
 interface UpcomingEvent {
@@ -53,8 +55,6 @@ export const FeedUpcomingEvents: React.FC = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  if (isLoading || !events || events.length === 0) return null;
-
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     if (isToday(date)) return `Today, ${format(date, 'h:mm a')}`;
@@ -70,14 +70,46 @@ export const FeedUpcomingEvents: React.FC = () => {
     };
   };
 
+  if (isLoading) return null;
+
+  // Empty state — warm invitation
+  if (!events || events.length === 0) {
+    return (
+      <Card className="overflow-hidden border-0 shadow-sm">
+        {/* Amber accent stripe */}
+        <div className="h-1 bg-[hsl(var(--dna-gold))]" />
+        <div className="px-3 pt-3 pb-4 text-center">
+          <Calendar className="h-8 w-8 mx-auto text-[hsl(var(--dna-gold))] opacity-60 mb-2" />
+          <p className="text-sm font-medium text-foreground">No upcoming events</p>
+          <p className="text-xs text-muted-foreground mt-0.5">Discover what's happening in the diaspora</p>
+          <Button
+            size="sm"
+            variant="outline"
+            className="mt-3 text-xs border-[hsl(var(--dna-gold)/0.4)] text-[hsl(var(--dna-gold))] hover:bg-amber-50 dark:hover:bg-amber-950/20"
+            onClick={() => navigate('/dna/convene')}
+          >
+            Explore Events
+            <ChevronRight className="h-3 w-3 ml-1" />
+          </Button>
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <Card className="overflow-hidden border-0 shadow-sm">
-      {/* Header */}
+      {/* Amber accent stripe */}
+      <div className="h-1 bg-[hsl(var(--dna-gold))]" />
+
+      {/* Header with count badge */}
       <div className="flex items-center justify-between px-3 pt-3 pb-1.5">
         <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-          <Calendar className="h-3.5 w-3.5 text-[hsl(var(--dna-amber,40,90%,50%))]" />
+          <Calendar className="h-3.5 w-3.5 text-[hsl(var(--dna-gold))]" />
           Upcoming For You
         </h3>
+        <Badge variant="convene" className="text-[10px] px-1.5 py-0">
+          {events.length}
+        </Badge>
       </div>
 
       {/* Event list */}
@@ -87,21 +119,21 @@ export const FeedUpcomingEvents: React.FC = () => {
           return (
             <button
               key={evt.id}
-              className="w-full flex items-start gap-2.5 p-2 rounded-lg hover:bg-muted/60 transition-colors group text-left"
+              className="w-full flex items-start gap-2.5 p-2 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-950/20 transition-colors group text-left"
               onClick={() => navigate(`/dna/convene/events/${evt.id}`)}
             >
-              {/* Luma-style date box */}
-              <div className="shrink-0 w-10 h-10 rounded-lg bg-[hsl(var(--dna-amber,40,90%,50%)/0.1)] border border-[hsl(var(--dna-amber,40,90%,50%)/0.2)] flex flex-col items-center justify-center">
-                <span className="text-[9px] font-bold text-[hsl(var(--dna-amber,40,90%,50%))] leading-none">
+              {/* Luma-style date box — 48x48 */}
+              <div className="shrink-0 w-12 h-12 rounded-lg bg-[hsl(var(--dna-gold)/0.12)] border border-[hsl(var(--dna-gold)/0.25)] flex flex-col items-center justify-center">
+                <span className="text-[10px] font-bold text-[hsl(var(--dna-gold))] leading-none">
                   {dateParts.month}
                 </span>
-                <span className="text-sm font-bold text-foreground leading-none mt-0.5">
+                <span className="text-base font-bold text-foreground leading-none mt-0.5">
                   {dateParts.day}
                 </span>
               </div>
               {/* Event info */}
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium line-clamp-1 group-hover:text-[hsl(var(--dna-emerald))] transition-colors">
+                <p className="text-sm font-medium line-clamp-1 group-hover:text-[hsl(var(--dna-gold))] transition-colors">
                   {evt.title}
                 </p>
                 <div className="flex items-center gap-1 mt-0.5 text-xs text-muted-foreground">
@@ -122,7 +154,7 @@ export const FeedUpcomingEvents: React.FC = () => {
 
       {/* Footer link */}
       <button
-        className="w-full flex items-center justify-center gap-1 py-2 border-t border-border/50 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
+        className="w-full flex items-center justify-center gap-1 py-2 border-t border-border/50 text-xs font-medium text-muted-foreground hover:text-[hsl(var(--dna-gold))] hover:bg-amber-50/60 dark:hover:bg-amber-950/10 transition-colors"
         onClick={() => navigate('/dna/convene')}
       >
         View All Events

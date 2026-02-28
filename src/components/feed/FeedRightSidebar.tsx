@@ -196,7 +196,7 @@ const TrendingInDNA: React.FC = () => {
               return (
                 <button
                   key={tagName}
-                  className="w-full flex items-center gap-2.5 p-2 rounded-lg hover:bg-muted/60 transition-colors group text-left"
+                  className="w-full flex items-center gap-2.5 p-2 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors group text-left"
                   onClick={() => navigate(`/dna/hashtag/${tagName}`)}
                 >
                   <div className="flex items-center justify-center h-7 w-7 rounded-full bg-[hsl(var(--dna-copper,25,70%,45%)/0.1)] text-[hsl(var(--dna-copper,25,70%,45%))] font-bold text-xs shrink-0">
