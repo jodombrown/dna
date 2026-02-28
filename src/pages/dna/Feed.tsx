@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { PenSquare, Sparkles, Users, Newspaper, TrendingUp, Search } from 'lucide-react';
@@ -40,7 +40,10 @@ const DnaFeed = () => {
   const [rankingMode, setRankingMode] = useState<RankingMode>('latest');
   const [showSearchDialog, setShowSearchDialog] = useState(false);
   const [newPostCount, setNewPostCount] = useState(0);
+  const [tabsVisible, setTabsVisible] = useState(true);
   const feedContainerRef = useRef<HTMLDivElement>(null);
+  const mainScrollRef = useRef<HTMLElement>(null);
+  const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const composer = useUniversalComposer();
   const { isMobile } = useMobile();
 
@@ -75,6 +78,25 @@ const DnaFeed = () => {
       sessionStorage.setItem(FEED_SCROLL_KEY, String(window.scrollY));
     };
   }, []);
+
+  // Auto-hide tabs while scrolling, reappear 3s after scroll stops
+  useEffect(() => {
+    if (isMobile) return;
+    const el = mainScrollRef.current;
+    if (!el) return;
+
+    const onScroll = () => {
+      setTabsVisible(false);
+      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+      scrollTimerRef.current = setTimeout(() => setTabsVisible(true), 3000);
+    };
+
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      el.removeEventListener('scroll', onScroll);
+      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+    };
+  }, [isMobile]);
 
   // New posts handler
   const handleNewPostsClick = useCallback(() => {
@@ -213,6 +235,7 @@ const DnaFeed = () => {
 
         {/* Center Column - Main Feed */}
         <main
+          ref={mainScrollRef}
           className="min-w-0 flex-1 overflow-y-auto scrollbar-thin"
           data-scroll-container="main"
         >
@@ -270,58 +293,71 @@ const DnaFeed = () => {
               </div>
             </Card>
 
-            {/* Filter Tabs */}
-            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
-              <TabsList className="w-full grid grid-cols-5 h-10">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <TabsTrigger value="all" className="text-xs">
-                      <Newspaper className="h-4 w-4 mr-1.5" />
-                      All
-                    </TabsTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent>All posts from across DNA</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <TabsTrigger value="for_you" className="text-xs">
-                      <Sparkles className="h-4 w-4 mr-1.5" />
-                      For You
-                    </TabsTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent>Personalized based on your interests</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <TabsTrigger value="network" className="text-xs">
-                      <Users className="h-4 w-4 mr-1.5" />
-                      Network
-                    </TabsTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent>Posts from your connections</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <TabsTrigger value="my_posts" className="text-xs">
-                      <PenSquare className="h-4 w-4 mr-1.5" />
-                      Mine
-                    </TabsTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent>Your posts and stories</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <TabsTrigger value="bookmarks" className="text-xs">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                      </svg>
-                      Saved
-                    </TabsTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent>Bookmarked posts and stories</TooltipContent>
-                </Tooltip>
-              </TabsList>
-            </Tabs>
+            {/* Filter Tabs - auto-hide on scroll */}
+            <div
+              className="transition-all duration-500 ease-in-out overflow-hidden"
+              style={{
+                maxHeight: tabsVisible ? '48px' : '0px',
+                opacity: tabsVisible ? 1 : 0,
+              }}
+            >
+              <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
+                <TabsList className="w-full grid grid-cols-5 h-10 relative">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <TabsTrigger value="all" className="text-xs relative">
+                        <Newspaper className="h-4 w-4 mr-1.5" />
+                        All
+                        {activeTab === 'all' && <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-primary rounded-full" />}
+                      </TabsTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>All posts from across DNA</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <TabsTrigger value="for_you" className="text-xs relative">
+                        <Sparkles className="h-4 w-4 mr-1.5" />
+                        For You
+                        {activeTab === 'for_you' && <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-primary rounded-full" />}
+                      </TabsTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>Personalized based on your interests</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <TabsTrigger value="network" className="text-xs relative">
+                        <Users className="h-4 w-4 mr-1.5" />
+                        Network
+                        {activeTab === 'network' && <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-primary rounded-full" />}
+                      </TabsTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>Posts from your connections</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <TabsTrigger value="my_posts" className="text-xs relative">
+                        <PenSquare className="h-4 w-4 mr-1.5" />
+                        Mine
+                        {activeTab === 'my_posts' && <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-primary rounded-full" />}
+                      </TabsTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>Your posts and stories</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <TabsTrigger value="bookmarks" className="text-xs relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                        </svg>
+                        Saved
+                        {activeTab === 'bookmarks' && <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-primary rounded-full" />}
+                      </TabsTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>Bookmarked posts and stories</TooltipContent>
+                  </Tooltip>
+                </TabsList>
+              </Tabs>
+            </div>
           </div>
 
           {/* Tab Explainer */}
