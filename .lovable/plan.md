@@ -1,89 +1,43 @@
 
 
-# Feed Desktop Overhaul: From Boring to Best-in-Class
+# Feed Left Sidebar Polish: Upcoming Events & Profile Card
 
-## The Problem
+## What's Changing
 
-The current `/dna/feed` desktop layout is a static LinkedIn clone: three columns that don't scroll independently, a left sidebar that's mostly dead space (profile card + 5 links), a right sidebar with **hardcoded fake trending data**, and a center column that does all the heavy lifting alone. It feels like a template, not a living social network.
+### 1. FeedUpcomingEvents — Richer, More Self-Explanatory Card
 
-## What Top Social Networks Get Right
+The current card is minimal: a tiny header, compact rows, and a faint hover. Here's the redesign:
 
-The best feeds share three principles:
-1. **The feed IS the product** -- everything else orbits it, not the other way around
-2. **Right sidebar earns its space** -- it surfaces dynamic, actionable content (not static links)
-3. **Independent column scrolling** -- each column is its own world (your Connect Hub already nails this)
+- **Card header**: Add a warm amber/gold accent stripe at the top (4px, like Convene's module color `#C4942A`). Include a count badge showing number of upcoming events (e.g., "CONVENE 2").
+- **Event rows**: Make the Luma-style date boxes larger (48x48 instead of 40x40) with stronger amber background. Add a subtle left border accent on hover instead of the washed-out `bg-muted/60`. Hover state uses `bg-amber-50 dark:bg-amber-950/20` for warmth.
+- **Empty state**: When user has no upcoming events, show a warm invitation card: "No upcoming events — Discover what's happening" with a button linking to CONVENE hub, instead of just returning null.
+- **Footer**: "View All Events" gets a chevron and slightly bolder styling.
 
-## The Plan
+### 2. FeedProfileCard — Less LinkedIn, More DNA
 
-### 1. Independent Column Scrolling (Like Connect Hub)
+- **Remove** the generic stats pill badges ("X connections", "Y posts") — these are the most LinkedIn-ish element.
+- **Replace with** a single warm tagline area below the headline, showing the user's `current_city` if available (e.g., "Based in London") — contextual and personal.
+- **Saved Items**: Keep but with a warmer icon color (amber bookmark instead of gray).
+- **Header band**: Keep the Kente pattern but make it slightly taller (20px instead of 16px) for more visual presence.
 
-Apply the same `ConnectHubLayout` pattern: each column gets `height: calc(100vh - 7.5rem)` and `overflow-y-auto`, so left/center/right scroll independently. The center feed scrolls infinitely while sidebars stay accessible.
+### 3. FeedActiveSpaces — Better Hover States
 
-**Technical approach:** Replace the current `sticky top-[...] h-fit` pattern on both `<aside>` elements with the Connect Hub's `height: columnHeight` + `overflow-y-auto` approach. The outer container becomes a flex row with fixed height instead of a scrollable page.
+- Match the same warm hover treatment as events: `hover:bg-emerald-50 dark:hover:bg-emerald-950/20` instead of the generic `hover:bg-muted`.
+- Add a Forest Green (`#2D5A3D`) accent stripe at top to match COLLABORATE module color.
 
-### 2. Left Sidebar: Make It Useful
+### 4. Trending in DNA — Stronger Hover
 
-**Keep:** Profile card (it's well-built), Saved Items link.
+- Change hover from `hover:bg-muted/60` to `hover:bg-orange-50 dark:hover:bg-orange-950/20` (copper-warm) for each trending item row.
 
-**Remove:** "Explore DNA" quick links card -- it duplicates the top navigation bar and adds nothing. Every user already sees CONNECT / CONVENE / COLLABORATE / CONTRIBUTE / CONVEY in the header.
+## Technical Details
 
-**Add -- "Upcoming For You" mini-widget:**
-- Show 2-3 upcoming events the user is attending (from `event_attendees`), with compact date + title
-- If none, show next upcoming event from their city
-- Links to CONVENE -- this creates a **CONVENE cross-C moment** on every feed visit
+| File | Action |
+|------|--------|
+| `src/components/feed/FeedUpcomingEvents.tsx` | Redesign with accent stripe, larger date boxes, warm hover, empty state, count badge |
+| `src/components/feed/FeedProfileCard.tsx` | Remove stats pills, add city line, warmer saved items icon, taller header |
+| `src/components/feed/FeedActiveSpaces.tsx` | Warm hover states, green accent stripe |
+| `src/components/feed/FeedRightSidebar.tsx` | Warmer hover on trending items |
 
-**Add -- "Active Spaces" mini-widget:**
-- Show 2-3 spaces the user is a member of with recent activity indicators
-- Links to COLLABORATE -- another **cross-C circulation moment**
+## Design Rationale
 
-This turns the left sidebar from "navigation I already have" into "personalized context that makes me feel the platform is alive."
-
-### 3. Right Sidebar: Fix Trending + Add Life
-
-**Fix "Trending in DNA":**
-- The current `FeedRightSidebar` uses **hardcoded fake data** (`trendingTopics` array with static numbers like "234 posts"). The real `TrendingHashtags` component exists and calls `get_trending_hashtags` RPC -- but it's not used here.
-- Replace the fake trending section with the real `<TrendingHashtags />` component.
-- If the RPC returns empty results (likely in alpha), show a graceful "Trending topics coming soon" state instead of nothing.
-
-**Enhance "People to Connect":**
-- Currently fetches random profiles. Should exclude existing connections and prioritize mutual connections (2nd-degree).
-- Add a compact "Connect" button inline (1-tap connect, not navigate-away).
-
-**Add -- "Happening Now" widget:**
-- Show events currently live or starting within 2 hours
-- Green pulse dot for live events
-- Creates urgency and FOMO -- key engagement driver
-
-**Keep:** DIA promo card and footer links (they're appropriate here).
-
-### 4. Center Column: Small but Impactful Polish
-
-- **Composer card:** Already good. No changes needed.
-- **Tab bar:** Already good. Keep as-is.
-- **Feed content:** Already good with infinite scroll.
-- **One addition -- "Welcome back" greeting:** Above the composer, show a contextual one-liner: "Good morning, Jaune" with a subtle DIA insight like "3 new posts from your network since yesterday." This personalizes the experience and makes the feed feel warm vs. clinical.
-
-### 5. Mobile: Keep Current (It's Good)
-
-You said you love the mobile look. The mobile layout with its fixed header, compact tabs, and full-width feed cards is solid. No changes to mobile.
-
-## Files to Create/Modify
-
-| File | Action | What |
-|------|--------|------|
-| `src/pages/dna/Feed.tsx` | Modify | Independent scrolling columns, remove FeedQuickLinks, add new widgets, contextual greeting |
-| `src/components/feed/FeedRightSidebar.tsx` | Modify | Replace hardcoded trending with real `TrendingHashtags`, add Happening Now widget, improve People to Connect query |
-| `src/components/feed/FeedUpcomingEvents.tsx` | Create | Compact "Upcoming For You" widget for left sidebar |
-| `src/components/feed/FeedActiveSpaces.tsx` | Create | Compact "Active Spaces" widget for left sidebar |
-| `src/components/feed/FeedHappeningNow.tsx` | Create | Live/imminent events widget for right sidebar |
-| `src/components/feed/FeedGreeting.tsx` | Create | Contextual "Good morning" + network activity summary |
-
-## What This Achieves
-
-- **Not boring:** Every sidebar section is dynamic, personalized, and connected to real data
-- **Independent scrolling:** Matches Connect Hub quality -- each column is its own scroll context
-- **Cross-C circulation:** Left sidebar surfaces CONVENE + COLLABORATE content on every feed visit
-- **Trending fixed:** Real hashtag data replaces fake numbers
-- **Alive feel:** Happening Now creates urgency; Active Spaces shows the platform is breathing
-- **No mobile changes:** The mobile experience you love stays untouched
-
+The current hover color (`bg-muted/60`) is essentially transparent gray — it's invisible. Social platforms like Instagram, Twitter/X, and Threads all use warmer, module-colored hover states that feel intentional. Each sidebar card should immediately communicate which C-module it belongs to through its accent color, making the Five C's system tangible in the UI.
