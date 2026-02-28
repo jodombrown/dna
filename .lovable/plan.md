@@ -1,125 +1,113 @@
 
 
-# Feed Page Redesign: "The Informed Stream"
+# Desktop Feed Redesign: Breaking Away from LinkedIn
 
 ## The Problem
 
-The current layout stacks 4 full-width sections (hero, stats bar, events carousel + sponsor, completion nudge) before the user ever sees a single post. The feed -- the main reason people visit -- is buried below the fold. The right sidebar widgets feel bolted on rather than integral.
+The current desktop feed follows a classic "LinkedIn 3-column" pattern: narrow left sidebar with profile card + widgets, center feed of stacked cards, narrow right sidebar with suggestions. While functional, this is the exact template LinkedIn, Facebook, and every corporate social network uses. DNA deserves its own visual identity.
 
-## The New Layout Philosophy
+## Design Direction: "The Living Room"
 
-**Feed-first, features woven in.** The feed stream takes center stage immediately. Supporting features (events, stats, community pulse, sponsor) surround and complement the feed rather than precede it. Think Twitter's clean center column but with DNA's warmth and extra utility panels.
+Instead of a corporate social feed, DNA's desktop should feel like walking into a warm, curated community space -- more like a blend of **Notion's workspace feel**, **Are.na's visual discovery**, and **Discord's lively community pulse**, all wrapped in DNA's heritage warmth.
 
-## New Structure
+## Proposed Changes (Phase 1 -- Feed Page Overhaul)
 
-```text
-+------------------------------------------------------------------+
-|  COMPACT GREETING BAR (name + pulse text + quick actions) inline  |
-+------------------------------------------------------------------+
-|                    |                          |                    |
-|  LEFT RAIL (w-72)  |  CENTER FEED (flex-1)    |  RIGHT RAIL (w-80)|
-|                    |                          |                    |
-|  - Profile card    |  - Composer bar          |  - Events carousel |
-|    (compact)       |  - Feed tabs + sort      |    (vertical mini) |
-|  - Five C's stats  |  - Feed stream           |  - Sponsor card    |
-|  - Active Spaces   |    (posts)               |  - Trending topics |
-|  - DIA bubble      |                          |  - Community Pulse |
-|                    |                          |  - Spotlight       |
-|                    |                          |  - Footer links    |
-+------------------------------------------------------------------+
-```
+### 1. Hero Greeting Zone (replaces plain "Good morning" text)
 
-### Key Differences from Current
+Replace the small text greeting with a warm, full-width greeting banner at the top of the center column that includes:
+- Time-contextual greeting with the user's first name in Lora (heritage font)
+- A subtle animated heritage pattern background (Kente at 5% opacity)
+- Quick-action chips: "Start a Post", "Create Event", "Share a Story" -- horizontally scrollable
+- A "pulse" line showing today's platform activity ("42 events this week, 128 new connections today")
 
-1. **Greeting becomes a compact inline bar** -- not a big hero block. One line: greeting text, pulse stats, and quick-action chips all in a single slim row at the very top. Heritage warmth via subtle background tint, not a large banner.
+This immediately breaks the "stacked cards" monotony and gives the feed a warm, editorial feel.
 
-2. **Feed is immediately visible** -- The composer and first posts appear above the fold. No scrolling past 3+ dashboard sections.
+### 2. Mosaic Feed Layout (replaces uniform card stack)
 
-3. **Three-column layout returns but differently** -- Instead of the old LinkedIn pattern, the left rail is a slim personal panel, the center is the feed, and the right rail holds discovery/utility content (events, trending, community pulse). All three scroll together as one page (no fixed/independent scrolling).
+Instead of every post being the same rectangular card stacked vertically, introduce a **mosaic/magazine-style layout** for the feed:
+- **Standard posts**: Full-width card (like now)
+- **Image/media posts**: Can span as a larger visual card with the image prominent and text overlaid
+- **Story previews**: Horizontal scrollable row of circular story avatars (Instagram-style) inserted between feed items periodically
+- **Event cards**: Rendered as horizontal "ticket-style" cards with the date box on the left and a colored accent border matching CONVENE
+- **DIA Insights**: Rendered as a distinct "wisdom card" with Adinkra pattern background and a gold border
 
-4. **Events move to the right rail** -- Rendered as a compact vertical list (3-4 mini event cards stacked) rather than a full-width horizontal carousel. This keeps them visible alongside the feed instead of above it.
+The key: **not every card looks the same**. Content type drives visual treatment.
 
-5. **Stats bar folds into the left rail** -- The Five C's stats become part of the left personal panel, not a separate full-width bar.
+### 3. Left Sidebar: "My DNA" Navigation Panel
 
-6. **Sponsor integrates into the right rail** -- Between events and trending, naturally positioned as a discovery element.
+Replace the LinkedIn-style profile card + widget stack with a cohesive **navigation panel** that feels like a personal dashboard:
+- **Compact profile strip** at top (avatar + name + headline in one line, not a full card)
+- **Five C's quick stats** as a mini horizontal bar (connections count, events attended, spaces active, contributions, stories published)
+- **Pinned items** section: User can pin their favorite spaces, events, or connections for quick access
+- **Sidebar widgets** (Upcoming Events, Active Spaces, Sponsor) remain but are rendered as **collapsible sections** rather than separate cards, reducing visual noise
 
-## Detailed Section Specs
+### 4. Right Sidebar: "Community Pulse"
 
-### Compact Greeting Bar (top, full-width)
-- Single row, `max-w-7xl mx-auto`, ~48px tall
-- Left: Lora greeting ("Good evening, Jaune") + pulse text ("42 events this week")
-- Right: Quick-action chips (Post, Event, Story) as small pill buttons
-- Background: Very subtle warm tint `bg-[hsl(var(--dna-cream))]` with faint Kente at 3% opacity
-- This replaces the tall `FeedHeroGreeting` banner
+Redesign the right sidebar as a live, dynamic community panel:
+- **Live Activity Stream**: A real-time ticker showing "Amara just joined", "New event: Lagos Tech Meetup", "Trending: #AfricanInnovation" -- feels alive
+- **"Spotlight" Card**: A rotating featured member, event, or story with a warm photo treatment (not just a list of suggested people)
+- **Trending Topics** stays but rendered as **word cloud** or **tag pills** instead of a numbered list
+- **DIA prompt card** with a warm conversation bubble aesthetic instead of a generic promo card
 
-### Left Rail (w-72, sticky)
-- **Compact profile card**: Avatar (48px), name, headline, "View Profile" link
-- **Five C's mini stats**: 2x2 grid of stat boxes (Connections, Events, Spaces, Posts) with counts and icons
-- **Active Spaces**: Existing `FeedActiveSpaces` component, rendered inline
-- **DIA bubble**: "Ask DIA anything" card at the bottom
-- Sticky positioning (`sticky top-20`) so it stays visible while scrolling the feed
+### 5. Visual Refinements Across All Columns
 
-### Center Feed (flex-1, max-w-2xl)
-- **Composer bar**: The existing chat-style pill composer
-- **Tab row**: Filter tabs (All, For You, Network, Mine, Saved) + sort toggle (Top/Latest) on same row
-- **Feed stream**: `UniversalFeedInfinite` or `PersonalizedFeed` immediately below tabs
-- No extra sections between composer and feed -- content starts fast
+- **Remove all hard card borders**: Use subtle shadows and warm background tints instead of bordered cards. This is the single biggest thing that makes it look like LinkedIn.
+- **Warm cream background**: Change the feed background from pure white to the DNA cream (#F9F7F4) for a warmer, less corporate feel
+- **Rounded, softer everything**: Increase border-radius to 16px on cards, use more rounded avatars, softer shadows
+- **Heritage accent moments**: Thin Kente or Mudcloth dividers between feed sections instead of plain gray lines
+- **Typography hierarchy**: Use Lora for section headers ("Upcoming For You", "Trending in DNA") to add warmth; Inter stays for body text
 
-### Right Rail (w-80, sticky)
-- **Upcoming Events**: Compact vertical stack of 3-4 mini event cards (date box + title + time), with "View All" link
-- **Sponsor Card**: Existing `FeedSponsorCard`, rendered between sections
-- **Trending Topics**: Tag pills from `FeedCommunityPulse`
-- **Live Activity Ticker**: Compact recent activity stream
-- **Spotlight Card**: Featured member
-- **Footer**: About/Privacy/Terms links
+### 6. Sticky Composer Redesign
 
-## Technical Changes
+Replace the LinkedIn "What's on your mind?" bar with a **floating action concept**:
+- A warm, rounded composer bar that looks more like a chat input than a form
+- The avatar sits inside the input area (like iMessage)
+- Quick-mode icons (Photo, Event, Story) appear as subtle pills inside the bar
+- On click, it expands into the full UniversalComposer
 
-### `src/pages/dna/Feed.tsx` -- Major Restructure
-- Replace the vertically-stacked dashboard layout with a 3-column flex layout
-- Top: Compact greeting bar (new inline component or simplified `FeedHeroGreeting`)
-- Below: `flex gap-6` with left rail, center feed, right rail
-- All columns scroll together (no `overflow: hidden` or independent scroll)
-- Left and right rails use `sticky top-20` for desktop visibility
+## Technical Approach
 
-### `src/components/feed/FeedHeroGreeting.tsx` -- Simplify to Compact Bar
-- Reduce from a padded banner to a slim single-line bar
-- Remove the cultural pattern background (or make it extremely subtle)
-- Greeting + pulse text on the left, quick-action chips on the right
-- Height target: ~48-56px instead of the current ~120px+
+### Files to Modify
+| File | Changes |
+|------|---------|
+| `src/pages/dna/Feed.tsx` | Major restructure of desktop layout: Hero zone, mosaic feed, sidebar redesigns |
+| `src/components/feed/FeedGreeting.tsx` | Upgrade to hero greeting with heritage pattern and quick actions |
+| `src/components/feed/FeedProfileCard.tsx` | Compact into a slim navigation strip |
+| `src/components/feed/FeedRightSidebar.tsx` | Redesign as "Community Pulse" with live stream and spotlight |
+| `src/components/feed/FeedUpcomingEvents.tsx` | Render as collapsible section, remove card wrapper |
+| `src/components/feed/FeedActiveSpaces.tsx` | Render as collapsible section, remove card wrapper |
+| `src/components/feed/FeedSponsorCard.tsx` | Adapt to collapsible sidebar section style |
+| `src/components/feed/UniversalFeedItem.tsx` | Add content-type-driven card variants (ticket, mosaic, wisdom) |
 
-### `src/components/feed/FeedStatsBar.tsx` -- Convert to Vertical Mini Grid
-- Change from horizontal full-width bar to a compact 2x2 grid card
-- Designed for the left rail width (w-72)
-- Remove the inline profile strip (profile card handles that separately)
+### New Files
+| File | Purpose |
+|------|---------|
+| `src/components/feed/FeedHeroGreeting.tsx` | Full-width hero greeting with heritage pattern and quick actions |
+| `src/components/feed/FeedStoryRow.tsx` | Horizontal scrollable story avatar row |
+| `src/components/feed/LiveActivityTicker.tsx` | Real-time community activity stream for right sidebar |
+| `src/components/feed/SpotlightCard.tsx` | Featured member/event/story rotating card |
+| `src/components/feed/FeedLeftPanel.tsx` | Unified left sidebar navigation panel with collapsible sections |
 
-### `src/components/feed/FeedEventsCarousel.tsx` -- Convert to Vertical Stack
-- Change from horizontal scroll carousel to a vertical stack of 3-4 compact event rows
-- Each row: date box (small) + title + time on one line
-- Fits the right rail width (w-80)
-- "Explore Events" link at bottom
-
-### Existing Components (Reused as-is)
-- `FeedCommunityPulse` -- reused in right rail (contains LiveActivityTicker, SpotlightCard, TrendingTagPills, DIA bubble)
-- `FeedSponsorCard` -- placed in right rail
-- `FeedActiveSpaces` -- placed in left rail
-- `UniversalFeedInfinite` / `PersonalizedFeed` -- unchanged in center
-- `MobileFeedTabs`, mobile layout -- unchanged
-
-### Components No Longer Needed at Page Level
-- `ProfileCompletionNudge` as a full-width banner -- move inside left rail or remove
-- The large widgets row grid (events carousel + sponsor side by side)
+### CSS/Design Token Changes
+- Add `bg-[#F9F7F4]` as feed page background
+- Increase default card `border-radius` to 16px
+- Remove `border` from sidebar cards, use `shadow-sm` only
+- Add Lora font to section headers via `font-heritage` class
 
 ## Implementation Priority
 
-1. Restructure `Feed.tsx` desktop layout to 3-column flex
-2. Simplify `FeedHeroGreeting` to compact inline bar
-3. Adapt `FeedStatsBar` for left rail (vertical mini grid)
-4. Adapt `FeedEventsCarousel` for right rail (vertical stack)
-5. Wire left rail: profile + stats + spaces + DIA
-6. Wire right rail: events + sponsor + community pulse
+1. **Visual refinements** (warm background, borderless cards, Lora headers) -- biggest visual impact, smallest code change
+2. **Hero Greeting Zone** -- replaces the plain greeting, sets the tone
+3. **Left sidebar consolidation** -- compact profile + collapsible sections
+4. **Right sidebar "Community Pulse"** -- live ticker + spotlight
+5. **Composer redesign** -- floating chat-style input
+6. **Mosaic feed cards** -- content-type-driven visual treatments (most complex)
 
-## Result
+## What This Achieves
 
-The feed loads with posts visible immediately. Users see their personal panel on the left, discover events and trending content on the right, and can scroll through the feed without any preamble. It feels like a real social feed with great utility -- not a dashboard you have to scroll past to reach the content.
+- **Warm, not corporate**: Cream backgrounds, heritage typography, soft shadows
+- **Alive, not static**: Live activity ticker, rotating spotlight, story rows
+- **Magazine, not spreadsheet**: Varied card sizes and treatments by content type
+- **Culturally rooted**: Heritage patterns as design elements, not decorations
+- **Unmistakably DNA**: No other platform will look like this
 
