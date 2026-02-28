@@ -121,3 +121,6 @@ verify_jwt = true
 
 [functions.send-push-notification]
 verify_jwt = false
+
+[functions.curate-diaspora-events]
+verify_jwt = false

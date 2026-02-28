@@ -11,7 +11,8 @@ import {
   Clock,
   Globe,
   CheckCircle2,
-  HelpCircle
+  HelpCircle,
+  Sparkles
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
@@ -91,24 +92,33 @@ export function EventCard({ event, onRSVP }: EventCardProps) {
           {event.title}
         </h3>
 
-        {/* Host info */}
-        <div 
-          className="flex items-center gap-2 mb-4 cursor-pointer hover:opacity-80 transition-opacity"
-          onClick={(e) => {
-            e.stopPropagation();
-            navigate(`/dna/${event.organizer_username}`);
-          }}
-        >
-          <Avatar className="h-6 w-6">
-            <AvatarImage src={event.organizer_avatar_url} alt={event.organizer_full_name} />
-            <AvatarFallback className="text-[10px] bg-muted text-muted-foreground">
-              {getInitials(event.organizer_full_name)}
-            </AvatarFallback>
-          </Avatar>
-          <span className="text-sm text-muted-foreground">
-            {event.organizer_full_name}
-          </span>
-        </div>
+        {/* Host info or Curated Badge */}
+        {(event as any).is_curated ? (
+          <div className="flex items-center gap-2 mb-4">
+            <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/15">
+              <Sparkles className="h-3 w-3 mr-1" />
+              Curated by DNA
+            </Badge>
+          </div>
+        ) : (
+          <div 
+            className="flex items-center gap-2 mb-4 cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/dna/${event.organizer_username}`);
+            }}
+          >
+            <Avatar className="h-6 w-6">
+              <AvatarImage src={event.organizer_avatar_url} alt={event.organizer_full_name} />
+              <AvatarFallback className="text-[10px] bg-muted text-muted-foreground">
+                {getInitials(event.organizer_full_name)}
+              </AvatarFallback>
+            </Avatar>
+            <span className="text-sm text-muted-foreground">
+              {event.organizer_full_name}
+            </span>
+          </div>
+        )}
 
         {/* Date & Time - Luma-style with calendar box */}
         <div className="flex items-center gap-3 mb-3">

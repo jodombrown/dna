@@ -31,3 +31,17 @@ SELECT cron.schedule(
     ) as request_id;
   $$
 );
+
+-- Schedule curate-diaspora-events to run every Sunday at 6 AM UTC
+SELECT cron.schedule(
+  'weekly-curate-diaspora-events',
+  '0 6 * * 0',
+  $$
+  SELECT
+    net.http_post(
+        url:='https://ybhssuehmfnxrzneobok.supabase.co/functions/v1/curate-diaspora-events',
+        headers:='{"Content-Type": "application/json", "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliaHNzdWVobWZueHJ6bmVvYm9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwMTI0NzMsImV4cCI6MjA2NDU4ODQ3M30.Uur_V4TYm4yCYtDQAa4diIpdsKoKb5Bkuo0cWNZAY-Y"}'::jsonb,
+        body:=concat('{"time": "', now(), '"}')::jsonb
+    ) as request_id;
+  $$
+);
