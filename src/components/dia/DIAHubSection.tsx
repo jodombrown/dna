@@ -25,6 +25,7 @@ interface DIAHubSectionProps {
   surface: DIACardSurface;
   limit?: number;
   className?: string;
+  onMessageUser?: (userId: string) => void;
 }
 
 // ── Component ──────────────────────────────────────
@@ -33,6 +34,7 @@ export function DIAHubSection({
   surface,
   limit = 2,
   className,
+  onMessageUser,
 }: DIAHubSectionProps) {
   const { user } = useAuth();
 
@@ -100,6 +102,7 @@ export function DIAHubSection({
           card={card}
           onAction={handleAction}
           onDismiss={handleDismiss}
+          onMessageUser={onMessageUser}
         />
       ))}
     </div>
