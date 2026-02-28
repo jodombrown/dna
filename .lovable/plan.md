@@ -1,97 +1,125 @@
 
 
-# Full-Page Dashboard Feed Redesign
+# Feed Page Redesign: "The Informed Stream"
 
-## The Concept
+## The Problem
 
-Replace the 3-column sidebar layout with a full-width, vertically-scrolling dashboard page. Think Notion's home view: a single scrolling canvas where content sections flow naturally across the full page width. No sidebars -- everything is woven into the main flow as horizontal sections.
+The current layout stacks 4 full-width sections (hero, stats bar, events carousel + sponsor, completion nudge) before the user ever sees a single post. The feed -- the main reason people visit -- is buried below the fold. The right sidebar widgets feel bolted on rather than integral.
 
-## New Page Structure (Top to Bottom)
+## The New Layout Philosophy
+
+**Feed-first, features woven in.** The feed stream takes center stage immediately. Supporting features (events, stats, community pulse, sponsor) surround and complement the feed rather than precede it. Think Twitter's clean center column but with DNA's warmth and extra utility panels.
+
+## New Structure
 
 ```text
 +------------------------------------------------------------------+
-| HERO GREETING (full-width, Kente pattern, quick actions)         |
+|  COMPACT GREETING BAR (name + pulse text + quick actions) inline  |
 +------------------------------------------------------------------+
-| PROFILE STRIP + FIVE C's STATS (horizontal bar, full-width)     |
-+------------------------------------------------------------------+
-| UPCOMING EVENTS (horizontal scroll carousel)  | SPONSOR CARD    |
-+------------------------------------------------------------------+
-| COMPOSER BAR (full-width, centered, max-w-2xl)                   |
-+------------------------------------------------------------------+
-| TABS (All | For You | Network | Mine | Saved)  + Sort (Top|New) |
-+------------------------------------------------------------------+
-|                          |                                        |
-|   FEED COLUMN            |   SIDEBAR WIDGETS (stacked)           |
-|   (max-w-2xl)            |   - Trending tags                     |
-|   Posts stream            |   - Live activity ticker              |
-|   here                   |   - Spotlight member                  |
-|                          |   - DIA bubble                        |
-|                          |   - Active spaces                     |
+|                    |                          |                    |
+|  LEFT RAIL (w-72)  |  CENTER FEED (flex-1)    |  RIGHT RAIL (w-80)|
+|                    |                          |                    |
+|  - Profile card    |  - Composer bar          |  - Events carousel |
+|    (compact)       |  - Feed tabs + sort      |    (vertical mini) |
+|  - Five C's stats  |  - Feed stream           |  - Sponsor card    |
+|  - Active Spaces   |    (posts)               |  - Trending topics |
+|  - DIA bubble      |                          |  - Community Pulse |
+|                    |                          |  - Spotlight       |
+|                    |                          |  - Footer links    |
 +------------------------------------------------------------------+
 ```
 
-### Key Layout Changes
+### Key Differences from Current
 
-1. **Full-width hero zone** -- The greeting, profile stats, upcoming events, and sponsor all span the full page width as horizontal sections at the top
-2. **Centered feed stream** -- Below the dashboard header sections, the feed posts sit in a comfortable `max-w-2xl` centered column
-3. **Widgets become a right rail only below the fold** -- Trending, spotlight, activity ticker, and DIA sit beside the feed stream in a 2-column grid (feed left, widgets right), but only once the user scrolls past the dashboard header
-4. **No fixed sidebars** -- The entire page scrolls as one unit (like Notion, not like LinkedIn)
-5. **Upcoming events as horizontal carousel** -- Full-width row of event cards you swipe/scroll through, not a cramped sidebar list
+1. **Greeting becomes a compact inline bar** -- not a big hero block. One line: greeting text, pulse stats, and quick-action chips all in a single slim row at the very top. Heritage warmth via subtle background tint, not a large banner.
 
-## Detailed Section Breakdown
+2. **Feed is immediately visible** -- The composer and first posts appear above the fold. No scrolling past 3+ dashboard sections.
 
-### Section 1: Hero Greeting (existing `FeedHeroGreeting`)
-- Stays as-is but stretched to full width (`max-w-7xl mx-auto`)
-- Kente pattern background, Lora greeting, quick-action chips
+3. **Three-column layout returns but differently** -- Instead of the old LinkedIn pattern, the left rail is a slim personal panel, the center is the feed, and the right rail holds discovery/utility content (events, trending, community pulse). All three scroll together as one page (no fixed/independent scrolling).
 
-### Section 2: Profile Stats Bar (extracted from `FeedLeftPanel`)
-- Full-width horizontal bar with: avatar, name, headline, then the Four C stats inline
-- Saved Items link on the far right
-- Compact single-line, not a card -- more like a status bar
+4. **Events move to the right rail** -- Rendered as a compact vertical list (3-4 mini event cards stacked) rather than a full-width horizontal carousel. This keeps them visible alongside the feed instead of above it.
 
-### Section 3: Dashboard Widgets Row
-- 2-column grid: left side = Upcoming Events (horizontal scroll of event mini-cards), right side = Sponsor card
-- Full width, visually separated with subtle background tint
+5. **Stats bar folds into the left rail** -- The Five C's stats become part of the left personal panel, not a separate full-width bar.
 
-### Section 4: Composer + Tabs + Feed
-- The composer bar, filter tabs, and sort toggle sit at the top of a 2-column area:
-  - **Left (flex-1, max-w-2xl)**: Feed stream
-  - **Right (w-80)**: Community Pulse widgets stacked (Trending, Live Activity, Spotlight, Active Spaces, DIA)
-- This 2-column area scrolls together as part of the full page (no independent scroll columns)
+6. **Sponsor integrates into the right rail** -- Between events and trending, naturally positioned as a discovery element.
+
+## Detailed Section Specs
+
+### Compact Greeting Bar (top, full-width)
+- Single row, `max-w-7xl mx-auto`, ~48px tall
+- Left: Lora greeting ("Good evening, Jaune") + pulse text ("42 events this week")
+- Right: Quick-action chips (Post, Event, Story) as small pill buttons
+- Background: Very subtle warm tint `bg-[hsl(var(--dna-cream))]` with faint Kente at 3% opacity
+- This replaces the tall `FeedHeroGreeting` banner
+
+### Left Rail (w-72, sticky)
+- **Compact profile card**: Avatar (48px), name, headline, "View Profile" link
+- **Five C's mini stats**: 2x2 grid of stat boxes (Connections, Events, Spaces, Posts) with counts and icons
+- **Active Spaces**: Existing `FeedActiveSpaces` component, rendered inline
+- **DIA bubble**: "Ask DIA anything" card at the bottom
+- Sticky positioning (`sticky top-20`) so it stays visible while scrolling the feed
+
+### Center Feed (flex-1, max-w-2xl)
+- **Composer bar**: The existing chat-style pill composer
+- **Tab row**: Filter tabs (All, For You, Network, Mine, Saved) + sort toggle (Top/Latest) on same row
+- **Feed stream**: `UniversalFeedInfinite` or `PersonalizedFeed` immediately below tabs
+- No extra sections between composer and feed -- content starts fast
+
+### Right Rail (w-80, sticky)
+- **Upcoming Events**: Compact vertical stack of 3-4 mini event cards (date box + title + time), with "View All" link
+- **Sponsor Card**: Existing `FeedSponsorCard`, rendered between sections
+- **Trending Topics**: Tag pills from `FeedCommunityPulse`
+- **Live Activity Ticker**: Compact recent activity stream
+- **Spotlight Card**: Featured member
+- **Footer**: About/Privacy/Terms links
 
 ## Technical Changes
 
 ### `src/pages/dna/Feed.tsx` -- Major Restructure
-- Remove the 3-column `overflow: hidden` flex container
-- Replace with a single scrolling `max-w-7xl mx-auto` page
-- Lay out sections vertically: Hero -> Stats Bar -> Widgets Row -> Feed+Sidebar Grid
-- The page scrolls naturally (no `height: calc(100vh)` or `overflow: hidden`)
+- Replace the vertically-stacked dashboard layout with a 3-column flex layout
+- Top: Compact greeting bar (new inline component or simplified `FeedHeroGreeting`)
+- Below: `flex gap-6` with left rail, center feed, right rail
+- All columns scroll together (no `overflow: hidden` or independent scroll)
+- Left and right rails use `sticky top-20` for desktop visibility
 
-### `src/components/feed/FeedStatsBar.tsx` -- New
-- Horizontal profile stats strip extracted from FeedLeftPanel
-- Avatar + name + headline + 4 stat counters + Saved Items link
-- Single row, no card wrapper, subtle bottom border
+### `src/components/feed/FeedHeroGreeting.tsx` -- Simplify to Compact Bar
+- Reduce from a padded banner to a slim single-line bar
+- Remove the cultural pattern background (or make it extremely subtle)
+- Greeting + pulse text on the left, quick-action chips on the right
+- Height target: ~48-56px instead of the current ~120px+
 
-### `src/components/feed/FeedEventsCarousel.tsx` -- New
-- Horizontal scrollable row of upcoming event mini-cards
-- Uses existing `FeedUpcomingEvents` data but renders as a carousel instead of a vertical list
-- Embla carousel or native CSS scroll-snap
+### `src/components/feed/FeedStatsBar.tsx` -- Convert to Vertical Mini Grid
+- Change from horizontal full-width bar to a compact 2x2 grid card
+- Designed for the left rail width (w-72)
+- Remove the inline profile strip (profile card handles that separately)
 
-### Existing Components (Reused, Not Rewritten)
-- `FeedHeroGreeting` -- used as-is, just wider container
-- `FeedCommunityPulse` -- reused for the sidebar widgets area beside the feed
-- `FeedSponsorCard` -- placed in the widgets row
-- `FeedLeftPanel` -- deprecated for desktop (still used on mobile if needed)
-- `LiveActivityTicker`, `SpotlightCard`, trending tags -- stay in CommunityPulse
+### `src/components/feed/FeedEventsCarousel.tsx` -- Convert to Vertical Stack
+- Change from horizontal scroll carousel to a vertical stack of 3-4 compact event rows
+- Each row: date box (small) + title + time on one line
+- Fits the right rail width (w-80)
+- "Explore Events" link at bottom
 
-### What Gets Removed
-- The fixed-height 3-column `overflow: hidden` container
-- Independent column scrolling on desktop
-- Left sidebar as a separate column
+### Existing Components (Reused as-is)
+- `FeedCommunityPulse` -- reused in right rail (contains LiveActivityTicker, SpotlightCard, TrendingTagPills, DIA bubble)
+- `FeedSponsorCard` -- placed in right rail
+- `FeedActiveSpaces` -- placed in left rail
+- `UniversalFeedInfinite` / `PersonalizedFeed` -- unchanged in center
+- `MobileFeedTabs`, mobile layout -- unchanged
 
-## Visual Impact
-- The page will feel open and spacious, like a personal homepage
-- Scrolling is natural (whole page), not trapped in columns
-- Content flows left-to-right in sections, then settles into a comfortable feed + widgets layout
-- Heritage patterns and warm backgrounds span the full width, not trapped in narrow columns
+### Components No Longer Needed at Page Level
+- `ProfileCompletionNudge` as a full-width banner -- move inside left rail or remove
+- The large widgets row grid (events carousel + sponsor side by side)
+
+## Implementation Priority
+
+1. Restructure `Feed.tsx` desktop layout to 3-column flex
+2. Simplify `FeedHeroGreeting` to compact inline bar
+3. Adapt `FeedStatsBar` for left rail (vertical mini grid)
+4. Adapt `FeedEventsCarousel` for right rail (vertical stack)
+5. Wire left rail: profile + stats + spaces + DIA
+6. Wire right rail: events + sponsor + community pulse
+
+## Result
+
+The feed loads with posts visible immediately. Users see their personal panel on the left, discover events and trending content on the right, and can scroll through the feed without any preamble. It feels like a real social feed with great utility -- not a dashboard you have to scroll past to reach the content.
 
