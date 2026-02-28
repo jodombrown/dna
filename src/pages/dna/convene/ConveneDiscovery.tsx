@@ -31,6 +31,7 @@ import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { UpcomingEventsSection } from '@/components/convene/UpcomingEventsSection';
 import { DIAHubSection } from '@/components/dia/DIAHubSection';
+import { ConveneDIADiscoveryCard } from '@/components/convene/ConveneDIADiscoveryCard';
 import { HappeningNowSection } from '@/components/convene/HappeningNowSection';
 import { logger } from '@/lib/logger';
 import { ConveneSearchOverlay } from '@/components/convene/ConveneSearchOverlay';
@@ -319,6 +320,16 @@ export function ConveneDiscovery() {
         />
 
         {/* ═══════════════════════════════════════════════════
+            DIA DISCOVERY CARD — between chips and events
+            ═══════════════════════════════════════════════════ */}
+        <ConveneDIADiscoveryCard
+          selectedCity={selectedCity}
+          eventCount={featuredEvents.length}
+          onOpenComposer={() => composer.open('event')}
+          onSetCategory={(cat) => updateFilters({ category: cat })}
+        />
+
+        {/* ═══════════════════════════════════════════════════
             MAP VIEW (lazy loaded) or LIST VIEW
             ═══════════════════════════════════════════════════ */}
         {viewMode === 'map' ? (
@@ -449,7 +460,7 @@ export function ConveneDiscovery() {
             {/* ═══════════════════════════════════════════════
                 UPCOMING EVENTS — Compact list cards
                 ═══════════════════════════════════════════════ */}
-            <div className="space-y-4">
+            <div id="convene-upcoming-events" className="space-y-4">
               <h3 className="text-lg font-bold text-foreground">Upcoming Events</h3>
 
               {upcomingEvents.length === 0 ? (
