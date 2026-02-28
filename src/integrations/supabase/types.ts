@@ -3115,7 +3115,7 @@ export type Database = {
           max_attendees: number | null
           meeting_platform: string | null
           meeting_url: string | null
-          organizer_id: string
+          organizer_id: string | null
           requires_approval: boolean
           short_description: string | null
           slug: string | null
@@ -3159,7 +3159,7 @@ export type Database = {
           max_attendees?: number | null
           meeting_platform?: string | null
           meeting_url?: string | null
-          organizer_id: string
+          organizer_id?: string | null
           requires_approval?: boolean
           short_description?: string | null
           slug?: string | null
@@ -3203,7 +3203,7 @@ export type Database = {
           max_attendees?: number | null
           meeting_platform?: string | null
           meeting_url?: string | null
-          organizer_id?: string
+          organizer_id?: string | null
           requires_approval?: boolean
           short_description?: string | null
           slug?: string | null
