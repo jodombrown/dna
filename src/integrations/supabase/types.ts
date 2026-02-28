@@ -8212,6 +8212,107 @@ export type Database = {
           },
         ]
       }
+      sponsor_placements: {
+        Row: {
+          click_count: number
+          created_at: string
+          cta_label: string | null
+          cta_url: string | null
+          ends_at: string | null
+          headline: string | null
+          id: string
+          impression_count: number
+          is_active: boolean
+          placement: string
+          priority: number
+          sponsor_id: string
+          starts_at: string | null
+        }
+        Insert: {
+          click_count?: number
+          created_at?: string
+          cta_label?: string | null
+          cta_url?: string | null
+          ends_at?: string | null
+          headline?: string | null
+          id?: string
+          impression_count?: number
+          is_active?: boolean
+          placement: string
+          priority?: number
+          sponsor_id: string
+          starts_at?: string | null
+        }
+        Update: {
+          click_count?: number
+          created_at?: string
+          cta_label?: string | null
+          cta_url?: string | null
+          ends_at?: string | null
+          headline?: string | null
+          id?: string
+          impression_count?: number
+          is_active?: boolean
+          placement?: string
+          priority?: number
+          sponsor_id?: string
+          starts_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sponsor_placements_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sponsors: {
+        Row: {
+          contact_email: string | null
+          contact_name: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          logo_url: string | null
+          name: string
+          slug: string
+          tier: string
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_name?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name: string
+          slug: string
+          tier?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          contact_email?: string | null
+          contact_name?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name?: string
+          slug?: string
+          tier?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       task_comments: {
         Row: {
           author_id: string
@@ -11188,6 +11289,14 @@ export type Database = {
           p_viewer_id?: string
         }
         Returns: string
+      }
+      track_sponsor_click: {
+        Args: { placement_id: string }
+        Returns: undefined
+      }
+      track_sponsor_impression: {
+        Args: { placement_id: string }
+        Returns: undefined
       }
       trigger_adin_prompt: {
         Args: { event_type: string; target_user_id: string }

@@ -13,6 +13,7 @@ const UserManagement = lazy(() => import('@/pages/admin/UserManagement'));
 const ContentModeration = lazy(() => import('@/pages/admin/ContentModeration'));
 const EngagementDashboard = lazy(() => import('@/pages/admin/EngagementDashboard'));
 const AlphaFeedbackDashboard = lazy(() => import('@/pages/admin/AlphaFeedbackDashboard'));
+const SponsorshipManagement = lazy(() => import('@/pages/admin/SponsorshipManagement'));
 
 // Placeholder pages for routes that will be implemented later
 const PlaceholderPage = ({ title }: { title: string }) => (
@@ -116,6 +117,11 @@ export const adminRoutes: RouteObject[] = [
       {
         path: 'alpha-feedback',
         element: withSuspense(AlphaFeedbackDashboard)
+      },
+      // Sponsorship Management
+      {
+        path: 'sponsorships',
+        element: withSuspense(SponsorshipManagement)
       },
       // Moderation
       {

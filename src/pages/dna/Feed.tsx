@@ -19,6 +19,7 @@ import { FeedProfileCard } from '@/components/feed/FeedProfileCard';
 import { FeedRightSidebar } from '@/components/feed/FeedRightSidebar';
 import { FeedUpcomingEvents } from '@/components/feed/FeedUpcomingEvents';
 import { FeedActiveSpaces } from '@/components/feed/FeedActiveSpaces';
+import { FeedSponsorCard } from '@/components/feed/FeedSponsorCard';
 import { FeedGreeting } from '@/components/feed/FeedGreeting';
 import { NewPostsIndicator } from '@/components/feed/NewPostsIndicator';
 import { FeedTab, RankingMode } from '@/types/feed';
@@ -244,6 +245,7 @@ const DnaFeed = () => {
         >
           <FeedProfileCard />
           <FeedUpcomingEvents />
+          <FeedSponsorCard />
           <FeedActiveSpaces />
         </aside>
 

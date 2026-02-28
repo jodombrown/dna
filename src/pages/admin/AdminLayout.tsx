@@ -60,6 +60,10 @@ export default function AdminLayout() {
                 <Settings className="h-4 w-4" />
                 Signals
               </NavLink>
+              <NavLink to="/app/admin/sponsorships" className={navLinkClass}>
+                <BarChart className="h-4 w-4" />
+                Sponsorships
+              </NavLink>
             </nav>
           </div>
         </div>
