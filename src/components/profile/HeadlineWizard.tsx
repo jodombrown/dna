@@ -197,27 +197,29 @@ const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
         )}
       </div>
 
-      {/* Step 3: Location Connection */}
-      <div className="space-y-2">
-        <Label className="text-xs text-muted-foreground">Step 3: Your connection (optional)</Label>
-        <div className="flex items-center gap-2">
-          <Input
-            placeholder="Current location"
-            value={locationFrom}
-            onChange={(e) => setLocationFrom(e.target.value)}
-            maxLength={30}
-            className="flex-1"
-          />
-          <span className="text-muted-foreground text-sm shrink-0">\u2194</span>
-          <Input
-            placeholder="Heritage"
-            value={locationTo}
-            onChange={(e) => setLocationTo(e.target.value)}
-            maxLength={30}
-            className="flex-1"
-          />
+      {/* Step 3: Location Connection — only show when countries differ */}
+      {locationFrom !== locationTo && (
+        <div className="space-y-2">
+          <Label className="text-xs text-muted-foreground">Step 3: Your connection (optional)</Label>
+          <div className="flex items-center gap-2">
+            <Input
+              placeholder="Current location"
+              value={locationFrom}
+              onChange={(e) => setLocationFrom(e.target.value)}
+              maxLength={30}
+              className="flex-1"
+            />
+            <span className="text-muted-foreground text-sm shrink-0">↔</span>
+            <Input
+              placeholder="Heritage"
+              value={locationTo}
+              onChange={(e) => setLocationTo(e.target.value)}
+              maxLength={30}
+              className="flex-1"
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Preview */}
       {role && (
