@@ -7,8 +7,6 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
 };
 
-const SYSTEM_EMAIL = "platform@diasporanetwork.africa";
-
 const PERPLEXITY_PROMPT = `Find 15-20 real upcoming events in 2026 relevant to the African diaspora community worldwide. Include conferences, summits, festivals, workshops, and networking events. Cover categories: tech, business/investment, culture/arts, healthcare, education, and social impact. Include events in Africa (Lagos, Nairobi, Accra, Kigali, Cape Town, Addis Ababa) AND diaspora cities (London, New York, Atlanta, Toronto, Paris, Dubai). For each event provide: title, description (2-3 sentences), event_type (one of: conference, workshop, meetup, networking, social, other), format (one of: in_person, virtual, hybrid), location_name (venue name), location_city, location_country, start_time (ISO 8601 datetime), end_time (ISO 8601 datetime), website_url (the event's actual website URL if known, otherwise null), tags (array of 2-4 relevant tags like "tech", "investment", "culture", "health", "education", "social"). Only include real events that are actually scheduled or have been announced. Do not invent fictional events.`;
 
 const EVENT_SCHEMA = {
@@ -42,63 +40,6 @@ const EVENT_SCHEMA = {
   required: ["events"],
 };
 
-/**
- * Find or create the invisible DNA Platform system user.
- * Uses the Supabase Admin API to create an auth user if needed,
- * then ensures a matching profile exists.
- */
-async function getOrCreateSystemUser(supabase: ReturnType<typeof createClient>): Promise<string> {
-  // 1. Check if profile already exists
-  const { data: existingProfile } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("email", SYSTEM_EMAIL)
-    .maybeSingle();
-
-  if (existingProfile) return existingProfile.id;
-
-  // 2. Check if auth user exists (might exist without profile)
-  const { data: userList } = await supabase.auth.admin.listUsers({ perPage: 1 });
-  // Search by email in a targeted way
-  const { data: authLookup } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("username", "dna-platform")
-    .maybeSingle();
-
-  if (authLookup) return authLookup.id;
-
-  // 3. Create auth user via admin API
-  const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
-    email: SYSTEM_EMAIL,
-    password: crypto.randomUUID(), // random password, never used for login
-    email_confirm: true,
-    user_metadata: {
-      full_name: "DNA Platform",
-      is_system_account: true,
-    },
-  });
-
-  if (createError || !newUser.user) {
-    throw new Error(`Failed to create system user: ${createError?.message}`);
-  }
-
-  const userId = newUser.user.id;
-
-  // 4. Ensure profile exists (trigger may have created it, but let's be safe)
-  await supabase.from("profiles").upsert({
-    id: userId,
-    full_name: "DNA Platform",
-    username: "dna-platform",
-    email: SYSTEM_EMAIL,
-    bio: "Curated content from the Diaspora Network of Africa",
-    onboarding_completed: true,
-  }, { onConflict: "id" });
-
-  console.log("Created DNA Platform system user:", userId);
-  return userId;
-}
-
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -118,12 +59,8 @@ Deno.serve(async (req: Request) => {
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Get or create the system user for curated events
-    const systemUserId = await getOrCreateSystemUser(supabase);
-    console.log("Using system user ID:", systemUserId);
-
     // Call Perplexity API
-    console.log("Calling Perplexity API...");
+    console.log("Calling Perplexity API for diaspora events...");
     const perplexityResponse = await fetch(
       "https://api.perplexity.ai/chat/completions",
       {
@@ -175,7 +112,7 @@ Deno.serve(async (req: Request) => {
 
     console.log(`Perplexity returned ${events.length} events`);
 
-    // Fetch existing events for deduplication
+    // Fetch existing curated events for deduplication
     const { data: existingEvents } = await supabase
       .from("events")
       .select("title, start_time")
@@ -188,7 +125,7 @@ Deno.serve(async (req: Request) => {
       )
     );
 
-    // Unsplash cover images by category
+    // Cover images by category
     const coverImages: Record<string, string> = {
       conference:
         "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=400&fit=crop",
@@ -229,6 +166,7 @@ Deno.serve(async (req: Request) => {
         .replace(/^-|-$/g, "")
         .slice(0, 80);
 
+      // Curated events have NO organizer_id — they belong to DNA itself
       const { error: insertError } = await supabase.from("events").insert({
         title: event.title,
         description: event.description,
@@ -241,7 +179,7 @@ Deno.serve(async (req: Request) => {
         end_time: event.end_time,
         cover_image_url: coverImage,
         slug: slug,
-        organizer_id: systemUserId,
+        organizer_id: null,
         is_public: true,
         is_published: true,
         status: "published",
@@ -267,7 +205,6 @@ Deno.serve(async (req: Request) => {
       inserted,
       skipped,
       errors,
-      system_user_id: systemUserId,
     };
 
     console.log("Curation complete:", JSON.stringify(summary));
