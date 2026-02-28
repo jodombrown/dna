@@ -216,13 +216,16 @@ const DnaFeed = () => {
           className="min-w-0 flex-1 overflow-y-auto scrollbar-thin"
           data-scroll-container="main"
         >
-          {/* Sticky header: Greeting + Composer + Tabs */}
-          <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm pb-2 space-y-3">
+          {/* Non-sticky: scrolls away */}
+          <div className="space-y-3 mb-3">
             <FeedGreeting />
             <ProfileCompletionNudge variant="banner" threshold={40} />
+          </div>
 
+          {/* Sticky header: Feed title + Composer + Tabs */}
+          <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm pb-2 space-y-3">
             {/* Compact Feed Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between pt-1">
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-semibold">Feed</h1>
                 <Button
