@@ -335,7 +335,7 @@ const EventDetail = () => {
       if (!user || !id) throw new Error('Not authenticated');
       const { error } = await supabase
         .from('event_attendees')
-        .upsert({ event_id: id, user_id: user.id, status });
+        .upsert({ event_id: id, user_id: user.id, status }, { onConflict: 'event_id,user_id' });
       if (error) throw error;
 
       if ((status === 'going' || status === 'maybe') && user?.id && id && event?.organizer_id) {
