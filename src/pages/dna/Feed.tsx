@@ -16,8 +16,10 @@ import { FeedTabExplainer } from '@/components/feed/FeedTabExplainer';
 import { MobileProfileCompletionBanner } from '@/components/feed/MobileProfileCompletionBanner';
 import { FirstTimeWalkthrough } from '@/components/onboarding/FirstTimeWalkthrough';
 import { FeedProfileCard } from '@/components/feed/FeedProfileCard';
-import { FeedQuickLinks } from '@/components/feed/FeedQuickLinks';
 import { FeedRightSidebar } from '@/components/feed/FeedRightSidebar';
+import { FeedUpcomingEvents } from '@/components/feed/FeedUpcomingEvents';
+import { FeedActiveSpaces } from '@/components/feed/FeedActiveSpaces';
+import { FeedGreeting } from '@/components/feed/FeedGreeting';
 import { NewPostsIndicator } from '@/components/feed/NewPostsIndicator';
 import { FeedTab, RankingMode } from '@/types/feed';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
@@ -181,33 +183,42 @@ const DnaFeed = () => {
     );
   }
  
-  // Desktop layout - LinkedIn-style 3-column
+  // Desktop layout - independent scrolling 3-column (like Connect Hub)
   return (
-    <div className="min-h-screen bg-background" ref={feedContainerRef}>
+    <div className="bg-background" ref={feedContainerRef}>
       {/* First-time user walkthrough */}
       <FirstTimeWalkthrough />
 
       {/* New Posts Indicator */}
       <NewPostsIndicator count={newPostCount} onClick={handleNewPostsClick} />
-      
-      {/* LinkedIn-style 3-column grid */}
-      <div 
-        className="max-w-7xl mx-auto px-4 py-6 grid gap-6"
-        style={{ 
-          gridTemplateColumns: '240px minmax(0, 1fr) 300px',
-          paddingTop: 'calc(var(--header-h, 96px) + 1.5rem)'
+
+      {/* Independent scrolling 3-column layout */}
+      <div
+        className="max-w-7xl mx-auto flex gap-5 px-4"
+        style={{
+          paddingTop: '1.5rem',
+          height: 'calc(100vh - 7.5rem)',
+          overflow: 'hidden',
         }}
       >
-        {/* Left Sidebar - Profile Card & Quick Links */}
-        <aside className="space-y-4 sticky top-[calc(var(--header-h,96px)+1.5rem)] h-fit">
+        {/* Left Sidebar - Profile + Cross-C Widgets */}
+        <aside
+          className="overflow-y-auto scrollbar-thin space-y-4 shrink-0"
+          style={{ width: '240px' }}
+        >
           <FeedProfileCard />
-          <FeedQuickLinks />
+          <FeedUpcomingEvents />
+          <FeedActiveSpaces />
         </aside>
 
         {/* Center Column - Main Feed */}
-        <main className="min-w-0 space-y-3">
+        <main
+          className="min-w-0 flex-1 overflow-y-auto scrollbar-thin space-y-3"
+          data-scroll-container="main"
+        >
+          <FeedGreeting />
           <ProfileCompletionNudge variant="banner" threshold={40} />
-          
+
           {/* Compact Feed Header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -236,7 +247,7 @@ const DnaFeed = () => {
           </div>
 
           {/* Compact Create Post Card */}
-          <Card 
+          <Card
             className="p-3 cursor-pointer hover:border-primary/50 transition-colors"
             onClick={() => composer.open('post')}
           >
@@ -338,8 +349,11 @@ const DnaFeed = () => {
           )}
         </main>
 
-        {/* Right Sidebar - Suggestions & Trending */}
-        <aside className="space-y-4 sticky top-[calc(var(--header-h,96px)+1.5rem)] h-fit">
+        {/* Right Sidebar - Trending, Suggestions, DIA */}
+        <aside
+          className="overflow-y-auto scrollbar-thin shrink-0"
+          style={{ width: '300px' }}
+        >
           <FeedRightSidebar />
         </aside>
       </div>

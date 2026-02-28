@@ -1,6 +1,6 @@
 /**
  * FeedRightSidebar - Right column for feed page
- * Contains trending topics, suggested connections, and promotional content
+ * Contains real trending hashtags, suggested connections, happening now, and DIA promo
  */
 
 import React from 'react';
@@ -8,45 +8,55 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { TrendingUp, UserPlus, Sparkles, ExternalLink } from 'lucide-react';
+import { UserPlus, Sparkles, ExternalLink, TrendingUp } from 'lucide-react';
+import { TrendingHashtags } from '@/components/feed/TrendingHashtags';
+import { FeedHappeningNow } from '@/components/feed/FeedHappeningNow';
 
 export const FeedRightSidebar: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Fetch suggested people
+  // Fetch suggested people, excluding existing connections
   const { data: suggestedPeople } = useQuery({
     queryKey: ['feed-suggested-people', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-      
+
+      // Get existing connection user IDs to exclude
+      const { data: connections } = await supabase
+        .from('connections')
+        .select('requester_id, recipient_id')
+        .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`)
+        .in('status', ['accepted', 'pending']);
+
+      const connectedIds = new Set<string>();
+      connectedIds.add(user.id);
+      if (connections) {
+        for (const c of connections) {
+          connectedIds.add(c.requester_id);
+          connectedIds.add(c.recipient_id);
+        }
+      }
+
       const { data } = await supabase
         .from('profiles')
         .select('id, display_name, username, avatar_url, headline')
-        .neq('id', user.id)
+        .not('id', 'in', `(${[...connectedIds].join(',')})`)
         .limit(4);
-      
+
       return data || [];
     },
     enabled: !!user?.id,
   });
 
-  // Fetch trending topics (mock for now, can be enhanced)
-  const trendingTopics = [
-    { tag: 'AfricaTech2025', posts: 234 },
-    { tag: 'DiasporaInvesting', posts: 189 },
-    { tag: 'RemittanceReform', posts: 156 },
-    { tag: 'PanAfricanTrade', posts: 142 },
-    { tag: 'AfricanStartups', posts: 128 },
-  ];
-
   return (
     <div className="space-y-4">
+      {/* Happening Now - live/imminent events */}
+      <FeedHappeningNow />
+
       {/* Suggested People */}
       <Card>
         <CardHeader className="pb-2 pt-3 px-3">
@@ -60,7 +70,7 @@ export const FeedRightSidebar: React.FC = () => {
             <div className="space-y-3">
               {suggestedPeople.map((person) => (
                 <div key={person.id} className="flex items-start gap-2.5">
-                  <Avatar 
+                  <Avatar
                     className="h-9 w-9 cursor-pointer shrink-0"
                     onClick={() => navigate(`/dna/${person.username || person.id}`)}
                   >
@@ -70,7 +80,7 @@ export const FeedRightSidebar: React.FC = () => {
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <p 
+                    <p
                       className="text-sm font-medium truncate cursor-pointer hover:text-primary hover:underline"
                       onClick={() => navigate(`/dna/${person.username || person.id}`)}
                     >
@@ -84,9 +94,9 @@ export const FeedRightSidebar: React.FC = () => {
                   </div>
                 </div>
               ))}
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 className="w-full mt-2"
                 onClick={() => navigate('/dna/connect')}
               >
@@ -101,29 +111,15 @@ export const FeedRightSidebar: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Trending Topics */}
-      <Card>
-        <CardHeader className="pb-2 pt-3 px-3">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-primary" />
-            Trending in DNA
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="px-3 pb-3">
-          <div className="space-y-2.5">
-            {trendingTopics.map((topic, index) => (
-              <button
-                key={topic.tag}
-                className="w-full text-left hover:bg-muted rounded-md p-1.5 -mx-1.5 transition-colors"
-                onClick={() => navigate(`/dna/feed?search=${topic.tag}`)}
-              >
-                <p className="text-sm font-medium text-primary">#{topic.tag}</p>
-                <p className="text-xs text-muted-foreground">{topic.posts} posts</p>
-              </button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Trending - Real data from get_trending_hashtags RPC */}
+      <TrendingHashtags
+        limit={5}
+        showHeader={false}
+        onHashtagClick={(tag) => navigate(`/dna/feed?search=${tag}`)}
+      />
+
+      {/* Trending fallback when RPC returns empty */}
+      <TrendingFallback />
 
       {/* DIA Promo Card */}
       <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
@@ -137,9 +133,9 @@ export const FeedRightSidebar: React.FC = () => {
               <p className="text-xs text-muted-foreground mt-0.5">
                 Get AI-powered insights about Africa and the diaspora
               </p>
-              <Button 
-                size="sm" 
-                variant="link" 
+              <Button
+                size="sm"
+                variant="link"
                 className="h-auto p-0 mt-1.5 text-xs"
                 onClick={() => navigate('/dna/dia')}
               >
@@ -165,5 +161,41 @@ export const FeedRightSidebar: React.FC = () => {
         <p className="mt-2">DNA © {new Date().getFullYear()}</p>
       </div>
     </div>
+  );
+};
+
+/**
+ * Fallback when TrendingHashtags returns nothing (alpha stage)
+ */
+const TrendingFallback: React.FC = () => {
+  const { data: trending } = useQuery({
+    queryKey: ['trending-hashtags-check'],
+    queryFn: async () => {
+      const { data } = await supabase.rpc('get_trending_hashtags', {
+        p_limit: 1,
+        p_days: 7,
+      });
+      return data;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // If real trending data exists, TrendingHashtags component renders it
+  if (trending && (trending as unknown[]).length > 0) return null;
+
+  return (
+    <Card>
+      <CardHeader className="pb-2 pt-3 px-3">
+        <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <TrendingUp className="h-4 w-4 text-primary" />
+          Trending in DNA
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="px-3 pb-3">
+        <p className="text-sm text-muted-foreground text-center py-3">
+          Trending topics coming soon — start posting to kick things off! 🚀
+        </p>
+      </CardContent>
+    </Card>
   );
 };
