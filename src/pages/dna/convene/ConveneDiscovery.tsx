@@ -21,6 +21,7 @@ import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures';
 import Autoplay from 'embla-carousel-autoplay';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
+import { CuratedEventCard } from '@/components/convene/CuratedEventCard';
 import { ConveneLocationSelector } from '@/components/convene/ConveneLocationSelector';
 import { ConveneCategoryChips } from '@/components/convene/ConveneCategoryChips';
 import { ConveneCitiesSection } from '@/components/convene/ConveneCitiesSection';
@@ -82,9 +83,9 @@ export function ConveneDiscovery() {
           .from('events')
           .select(`
             id, title, slug, start_time, end_time, location_name, location_city,
-            location_lat, location_lng,
+            location_lat, location_lng, description, short_description,
             cover_image_url, event_type, format, is_cancelled, max_attendees,
-            organizer_id,
+            organizer_id, is_curated, curated_source, curated_source_url,
             event_attendees(count)
           `)
           .eq('is_cancelled', false)
@@ -138,9 +139,9 @@ export function ConveneDiscovery() {
           .from('events')
           .select(`
             id, title, slug, start_time, end_time, location_name, location_city,
-            location_lat, location_lng,
+            location_lat, location_lng, description, short_description,
             cover_image_url, event_type, format, is_cancelled, max_attendees,
-            organizer_id,
+            organizer_id, is_curated, curated_source, curated_source_url,
             event_attendees(count)
           `)
           .eq('is_cancelled', false)
@@ -402,32 +403,52 @@ export function ConveneDiscovery() {
                         return (
                           <CarouselItem key={event.id as string} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
                             <div className="h-[420px] relative">
-                              {status && status.type !== 'free' && (
+                              {status && status.type !== 'free' && !event.is_curated && (
                                 <div className="absolute top-3 right-3 z-10">
                                   <ConveneEventBadge status={status} />
                                 </div>
                               )}
-                              <ConveneEventCard
-                                event={{
-                                  id: event.id as string,
-                                  title: event.title as string,
-                                  start_time: event.start_time as string,
-                                  end_time: event.end_time as string | undefined,
-                                  location_name: event.location_name as string | undefined,
-                                  location_city: event.location_city as string | undefined,
-                                  cover_image_url: event.cover_image_url as string | undefined,
-                                  event_type: event.event_type as string | undefined,
-                                  format: event.format as string | undefined,
-                                  is_cancelled: event.is_cancelled as boolean | undefined,
-                                  slug: event.slug as string | undefined,
-                                  max_attendees: event.max_attendees as number | undefined,
-                                  organizer: event.organizer as { id: string; full_name: string; avatar_url?: string; username?: string } | undefined,
-                                  event_attendees: event.event_attendees as Array<{ count: number }> | undefined,
-                                }}
-                                variant="full"
-                                showOrganizer
-                                showMutualAttendees
-                              />
+                              {event.is_curated ? (
+                                <CuratedEventCard
+                                  event={{
+                                    id: event.id as string,
+                                    title: event.title as string,
+                                    description: event.description as string | undefined,
+                                    short_description: event.short_description as string | undefined,
+                                    start_time: event.start_time as string,
+                                    end_time: event.end_time as string | undefined,
+                                    location_city: event.location_city as string | undefined,
+                                    cover_image_url: event.cover_image_url as string | undefined,
+                                    format: event.format as string | undefined,
+                                    slug: event.slug as string | undefined,
+                                    curated_source: event.curated_source as string | undefined,
+                                    curated_source_url: event.curated_source_url as string | undefined,
+                                  }}
+                                  variant="full"
+                                />
+                              ) : (
+                                <ConveneEventCard
+                                  event={{
+                                    id: event.id as string,
+                                    title: event.title as string,
+                                    start_time: event.start_time as string,
+                                    end_time: event.end_time as string | undefined,
+                                    location_name: event.location_name as string | undefined,
+                                    location_city: event.location_city as string | undefined,
+                                    cover_image_url: event.cover_image_url as string | undefined,
+                                    event_type: event.event_type as string | undefined,
+                                    format: event.format as string | undefined,
+                                    is_cancelled: event.is_cancelled as boolean | undefined,
+                                    slug: event.slug as string | undefined,
+                                    max_attendees: event.max_attendees as number | undefined,
+                                    organizer: event.organizer as { id: string; full_name: string; avatar_url?: string; username?: string } | undefined,
+                                    event_attendees: event.event_attendees as Array<{ count: number }> | undefined,
+                                  }}
+                                  variant="full"
+                                  showOrganizer
+                                  showMutualAttendees
+                                />
+                              )}
                             </div>
                           </CarouselItem>
                         );
@@ -482,27 +503,48 @@ export function ConveneDiscovery() {
               ) : (
                 <div className="space-y-2">
                   {upcomingEvents.map((event: Record<string, unknown>) => (
-                    <ConveneEventCard
-                      key={event.id as string}
-                      event={{
-                        id: event.id as string,
-                        title: event.title as string,
-                        start_time: event.start_time as string,
-                        end_time: event.end_time as string | undefined,
-                        location_name: event.location_name as string | undefined,
-                        location_city: event.location_city as string | undefined,
-                        cover_image_url: event.cover_image_url as string | undefined,
-                        event_type: event.event_type as string | undefined,
-                        format: event.format as string | undefined,
-                        is_cancelled: event.is_cancelled as boolean | undefined,
-                        slug: event.slug as string | undefined,
-                        max_attendees: event.max_attendees as number | undefined,
-                        organizer: event.organizer as { id: string; full_name: string; avatar_url?: string | null; username?: string } | undefined,
-                        event_attendees: event.event_attendees as Array<{ count: number }> | undefined,
-                      }}
-                      variant="compact"
-                      showMutualAttendees
-                    />
+                    event.is_curated ? (
+                      <CuratedEventCard
+                        key={event.id as string}
+                        event={{
+                          id: event.id as string,
+                          title: event.title as string,
+                          description: event.description as string | undefined,
+                          short_description: event.short_description as string | undefined,
+                          start_time: event.start_time as string,
+                          end_time: event.end_time as string | undefined,
+                          location_city: event.location_city as string | undefined,
+                          cover_image_url: event.cover_image_url as string | undefined,
+                          format: event.format as string | undefined,
+                          slug: event.slug as string | undefined,
+                          curated_source: event.curated_source as string | undefined,
+                          curated_source_url: event.curated_source_url as string | undefined,
+                        }}
+                        variant="compact"
+                      />
+                    ) : (
+                      <ConveneEventCard
+                        key={event.id as string}
+                        event={{
+                          id: event.id as string,
+                          title: event.title as string,
+                          start_time: event.start_time as string,
+                          end_time: event.end_time as string | undefined,
+                          location_name: event.location_name as string | undefined,
+                          location_city: event.location_city as string | undefined,
+                          cover_image_url: event.cover_image_url as string | undefined,
+                          event_type: event.event_type as string | undefined,
+                          format: event.format as string | undefined,
+                          is_cancelled: event.is_cancelled as boolean | undefined,
+                          slug: event.slug as string | undefined,
+                          max_attendees: event.max_attendees as number | undefined,
+                          organizer: event.organizer as { id: string; full_name: string; avatar_url?: string | null; username?: string } | undefined,
+                          event_attendees: event.event_attendees as Array<{ count: number }> | undefined,
+                        }}
+                        variant="compact"
+                        showMutualAttendees
+                      />
+                    )
                   ))}
                 </div>
               )}

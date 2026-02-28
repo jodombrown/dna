@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
+import { CuratedEventPreview } from '@/pages/dna/convene/CuratedEventPreview';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Calendar, MapPin, Users, ExternalLink, Share2, Clock, MoreHorizontal, XCircle, Trash2, Flag, QrCode, Loader2, Settings, Sparkles, MessageSquare, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -416,6 +417,15 @@ const EventDetail = () => {
             </CardContent>
           </Card>
         </div>
+      </div>
+    );
+  }
+
+  // ── Curated event → render lightweight preview ──
+  if (event.is_curated) {
+    return (
+      <div className="min-h-screen bg-background">
+        <CuratedEventPreview event={event} />
       </div>
     );
   }
