@@ -1,43 +1,118 @@
 
 
-# Feed Left Sidebar Polish: Upcoming Events & Profile Card
+# Sponsorship Widget + Sponsorship Management System
 
-## What's Changing
+## Overview
 
-### 1. FeedUpcomingEvents — Richer, More Self-Explanatory Card
+This plan adds a "Sponsored" widget to the Feed's left sidebar (below "Upcoming For You") and establishes the backend infrastructure and admin tooling for managing sponsors across the platform.
 
-The current card is minimal: a tiny header, compact rows, and a faint hover. Here's the redesign:
+## Part 1: Feed Sponsor Widget (GABA Center as First Sponsor)
 
-- **Card header**: Add a warm amber/gold accent stripe at the top (4px, like Convene's module color `#C4942A`). Include a count badge showing number of upcoming events (e.g., "CONVENE 2").
-- **Event rows**: Make the Luma-style date boxes larger (48x48 instead of 40x40) with stronger amber background. Add a subtle left border accent on hover instead of the washed-out `bg-muted/60`. Hover state uses `bg-amber-50 dark:bg-amber-950/20` for warmth.
-- **Empty state**: When user has no upcoming events, show a warm invitation card: "No upcoming events — Discover what's happening" with a button linking to CONVENE hub, instead of just returning null.
-- **Footer**: "View All Events" gets a chevron and slightly bolder styling.
+### New Component: `FeedSponsorCard.tsx`
 
-### 2. FeedProfileCard — Less LinkedIn, More DNA
+A compact, warm sidebar card placed between `FeedUpcomingEvents` and `FeedActiveSpaces` in `Feed.tsx`.
 
-- **Remove** the generic stats pill badges ("X connections", "Y posts") — these are the most LinkedIn-ish element.
-- **Replace with** a single warm tagline area below the headline, showing the user's `current_city` if available (e.g., "Based in London") — contextual and personal.
-- **Saved Items**: Keep but with a warmer icon color (amber bookmark instead of gray).
-- **Header band**: Keep the Kente pattern but make it slightly taller (20px instead of 16px) for more visual presence.
+**Design:**
+- Gold accent stripe at top (4px) to signal it's a premium/partner placement
+- "Sponsored" label in small muted text (top-right corner, transparent)
+- GABA Center logo (stored in Supabase Storage or as URL)
+- Sponsor name ("GABA Marketplace Center") in bold
+- One-line tagline: "Empowering African & Caribbean entrepreneurs"
+- CTA button: "Learn More" linking to sponsor's URL or a DNA partner page
+- Warm hover state (`bg-amber-50/40`) consistent with sidebar design language
+- "WBENC Certified" badge if applicable
 
-### 3. FeedActiveSpaces — Better Hover States
+**Data source:** Fetches from a new `sponsorships` table, filtered by `placement = 'feed_sidebar'` and `is_active = true`, ordered by priority.
 
-- Match the same warm hover treatment as events: `hover:bg-emerald-50 dark:hover:bg-emerald-950/20` instead of the generic `hover:bg-muted`.
-- Add a Forest Green (`#2D5A3D`) accent stripe at top to match COLLABORATE module color.
+### Feed.tsx Update
 
-### 4. Trending in DNA — Stronger Hover
+Insert `<FeedSponsorCard />` between `<FeedUpcomingEvents />` and `<FeedActiveSpaces />` in the left sidebar.
 
-- Change hover from `hover:bg-muted/60` to `hover:bg-orange-50 dark:hover:bg-orange-950/20` (copper-warm) for each trending item row.
+## Part 2: Database Schema (New Tables)
 
-## Technical Details
+### `sponsors` table
+| Column | Type | Purpose |
+|--------|------|---------|
+| id | uuid PK | |
+| name | text | "GABA Marketplace Center" |
+| slug | text UNIQUE | "gaba-center" |
+| logo_url | text | Logo image URL |
+| description | text | Short description |
+| website_url | text | External link |
+| tier | text | "gold", "silver", "bronze", "community" |
+| contact_name | text | Primary contact |
+| contact_email | text | Contact email |
+| is_active | boolean | Global active toggle |
+| created_at | timestamptz | |
+| updated_at | timestamptz | |
+
+### `sponsor_placements` table
+| Column | Type | Purpose |
+|--------|------|---------|
+| id | uuid PK | |
+| sponsor_id | uuid FK -> sponsors | |
+| placement | text | "feed_sidebar", "event_page", "convene_hub", "email_footer" |
+| headline | text | Contextual tagline for this placement |
+| cta_label | text | "Learn More", "Visit", etc. |
+| cta_url | text | Where CTA links to |
+| priority | int | Display order (lower = higher priority) |
+| starts_at | timestamptz | Campaign start |
+| ends_at | timestamptz | Campaign end (null = indefinite) |
+| is_active | boolean | Placement-level toggle |
+| impression_count | bigint default 0 | Basic analytics |
+| click_count | bigint default 0 | Basic analytics |
+| created_at | timestamptz | |
+
+**RLS:** Read access for all authenticated users (they see the ads). Write access restricted to admins via `is_admin` check on profiles.
+
+## Part 3: Admin Sponsorship Management
+
+### New Admin Page: `/app/admin/sponsorships`
+
+Added as a new tab in the existing `AdminLayout.tsx` navigation.
+
+**Features:**
+- **Sponsors List**: Table showing all sponsors with name, tier, status, active placements count
+- **Add/Edit Sponsor**: Dialog form for sponsor details (name, logo, tier, contact info)
+- **Placements Manager**: For each sponsor, manage where their content appears (feed sidebar, event pages, etc.)
+- **Basic Analytics**: Impression and click counts per placement
+- **Toggle Active/Inactive**: Quick switches for sponsors and individual placements
+
+### Impression/Click Tracking
+
+- `FeedSponsorCard` fires an impression track on mount (debounced, once per session per placement)
+- Click tracking increments `click_count` via an RPC or direct update when CTA is clicked
+
+## Part 4: Event Page Sponsor Integration
+
+Update the event detail page to optionally show sponsors from the `sponsors` JSON field on events, pulling richer data from the `sponsors` table when a match exists. This connects the existing event sponsor data with the new management system.
+
+## Files to Create/Modify
 
 | File | Action |
 |------|--------|
-| `src/components/feed/FeedUpcomingEvents.tsx` | Redesign with accent stripe, larger date boxes, warm hover, empty state, count badge |
-| `src/components/feed/FeedProfileCard.tsx` | Remove stats pills, add city line, warmer saved items icon, taller header |
-| `src/components/feed/FeedActiveSpaces.tsx` | Warm hover states, green accent stripe |
-| `src/components/feed/FeedRightSidebar.tsx` | Warmer hover on trending items |
+| `src/components/feed/FeedSponsorCard.tsx` | **Create** - New sidebar sponsor widget |
+| `src/pages/dna/Feed.tsx` | **Edit** - Insert FeedSponsorCard in left sidebar |
+| `supabase/migrations/[timestamp]_create_sponsorship_tables.sql` | **Create** - sponsors + sponsor_placements tables with RLS |
+| `src/pages/admin/SponsorshipManagement.tsx` | **Create** - Admin CRUD page for sponsors |
+| `src/pages/admin/AdminLayout.tsx` | **Edit** - Add "Sponsorships" nav link |
+| `src/App.tsx` | **Edit** - Add sponsorship admin route |
+| `src/hooks/useSponsorPlacements.ts` | **Create** - Hook to fetch active placements by location |
+| `src/services/sponsorshipService.ts` | **Create** - Service for sponsor CRUD + tracking |
+
+## Seed Data: GABA Center
+
+The migration will seed the first sponsor:
+- **Name:** GABA Marketplace Center
+- **Tier:** Gold
+- **Description:** Empowering African & Caribbean entrepreneurs. WBENC Certified.
+- **Website:** https://gabanetwork.com/
+- **Placement:** feed_sidebar, priority 1, CTA "Learn More"
 
 ## Design Rationale
 
-The current hover color (`bg-muted/60`) is essentially transparent gray — it's invisible. Social platforms like Instagram, Twitter/X, and Threads all use warmer, module-colored hover states that feel intentional. Each sidebar card should immediately communicate which C-module it belongs to through its accent color, making the Five C's system tangible in the UI.
+- The sponsor card uses the same visual language as other sidebar widgets (accent stripe, warm hover, compact layout) so it feels native, not intrusive
+- The `sponsor_placements` table decouples sponsor identity from where they appear, allowing the same sponsor to have different messaging in different contexts
+- Admin management lives in the existing admin section, following established patterns
+- Impression/click tracking provides basic ROI data for sponsors without adding external analytics dependencies
+
