@@ -14,6 +14,7 @@ import {
   BarChart3,
   CheckCircle2,
   HelpCircle,
+  Sparkles,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
@@ -58,6 +59,9 @@ export interface ConveneEventCardProps {
     organizer_full_name?: string;
     organizer_avatar_url?: string | null;
     organizer_username?: string;
+    is_curated?: boolean;
+    curated_source?: string | null;
+    curated_source_url?: string | null;
     attendee_count?: number;
     event_attendees?: Array<{ count: number }>;
     rsvp_status?: string | null;
@@ -305,8 +309,15 @@ export function ConveneEventCard({
           {event.title}
         </h3>
 
-        {/* Organizer */}
-        {showOrganizer && organizerName && (
+        {/* Organizer or Curated Badge */}
+        {event.is_curated ? (
+          <div className="flex items-center gap-2 mb-3">
+            <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/15">
+              <Sparkles className="h-3 w-3 mr-1" />
+              Curated by DNA
+            </Badge>
+          </div>
+        ) : showOrganizer && organizerName ? (
           <button
             className="flex items-center gap-2 mb-3 hover:opacity-80 transition-opacity text-left"
             onClick={handleOrganizerClick}
@@ -321,7 +332,7 @@ export function ConveneEventCard({
               {organizerName}
             </span>
           </button>
-        )}
+        ) : null}
 
         {/* Date & Time */}
         {startDate && (

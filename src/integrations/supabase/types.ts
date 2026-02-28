@@ -3091,6 +3091,9 @@ export type Database = {
           cancellation_reason: string | null
           cover_image_url: string | null
           created_at: string
+          curated_at: string | null
+          curated_source: string | null
+          curated_source_url: string | null
           description: string
           dress_code: string | null
           end_time: string
@@ -3099,6 +3102,7 @@ export type Database = {
           group_id: string | null
           id: string
           is_cancelled: boolean
+          is_curated: boolean | null
           is_flagship: boolean | null
           is_public: boolean
           is_published: boolean
@@ -3131,6 +3135,9 @@ export type Database = {
           cancellation_reason?: string | null
           cover_image_url?: string | null
           created_at?: string
+          curated_at?: string | null
+          curated_source?: string | null
+          curated_source_url?: string | null
           description: string
           dress_code?: string | null
           end_time: string
@@ -3139,6 +3146,7 @@ export type Database = {
           group_id?: string | null
           id?: string
           is_cancelled?: boolean
+          is_curated?: boolean | null
           is_flagship?: boolean | null
           is_public?: boolean
           is_published?: boolean
@@ -3171,6 +3179,9 @@ export type Database = {
           cancellation_reason?: string | null
           cover_image_url?: string | null
           created_at?: string
+          curated_at?: string | null
+          curated_source?: string | null
+          curated_source_url?: string | null
           description?: string
           dress_code?: string | null
           end_time?: string
@@ -3179,6 +3190,7 @@ export type Database = {
           group_id?: string | null
           id?: string
           is_cancelled?: boolean
+          is_curated?: boolean | null
           is_flagship?: boolean | null
           is_public?: boolean
           is_published?: boolean
