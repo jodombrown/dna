@@ -11,9 +11,10 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserPlus, Sparkles, ExternalLink, TrendingUp } from 'lucide-react';
-import { TrendingHashtags } from '@/components/feed/TrendingHashtags';
+import { UserPlus, Sparkles, ExternalLink, TrendingUp, Hash } from 'lucide-react';
 import { FeedHappeningNow } from '@/components/feed/FeedHappeningNow';
+import { useTrendingHashtags } from '@/hooks/useTrendingHashtags';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export const FeedRightSidebar: React.FC = () => {
   const { user } = useAuth();
@@ -25,7 +26,6 @@ export const FeedRightSidebar: React.FC = () => {
     queryFn: async () => {
       if (!user?.id) return [];
 
-      // Get existing connection user IDs to exclude
       const { data: connections } = await supabase
         .from('connections')
         .select('requester_id, recipient_id')
@@ -111,15 +111,8 @@ export const FeedRightSidebar: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Trending - Real data from get_trending_hashtags RPC */}
-      <TrendingHashtags
-        limit={5}
-        showHeader={false}
-        onHashtagClick={(tag) => navigate(`/dna/feed?search=${tag}`)}
-      />
-
-      {/* Trending fallback when RPC returns empty */}
-      <TrendingFallback />
+      {/* Trending in DNA - Real data with proper card title */}
+      <TrendingInDNA />
 
       {/* DIA Promo Card */}
       <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
@@ -165,36 +158,70 @@ export const FeedRightSidebar: React.FC = () => {
 };
 
 /**
- * Fallback when TrendingHashtags returns nothing (alpha stage)
+ * TrendingInDNA - Combined trending hashtags with proper card title
+ * Uses real data from get_trending_hashtags RPC
  */
-const TrendingFallback: React.FC = () => {
-  const { data: trending } = useQuery({
-    queryKey: ['trending-hashtags-check'],
-    queryFn: async () => {
-      const { data } = await supabase.rpc('get_trending_hashtags', {
-        p_limit: 1,
-        p_days: 7,
-      });
-      return data;
-    },
-    staleTime: 5 * 60 * 1000,
-  });
-
-  // If real trending data exists, TrendingHashtags component renders it
-  if (trending && (trending as unknown[]).length > 0) return null;
+const TrendingInDNA: React.FC = () => {
+  const navigate = useNavigate();
+  const { data: trending, isLoading } = useTrendingHashtags(5);
 
   return (
     <Card>
       <CardHeader className="pb-2 pt-3 px-3">
         <CardTitle className="text-sm font-semibold flex items-center gap-2">
-          <TrendingUp className="h-4 w-4 text-primary" />
+          <TrendingUp className="h-4 w-4 text-[hsl(var(--dna-copper,25,70%,45%))]" />
           Trending in DNA
         </CardTitle>
       </CardHeader>
-      <CardContent className="px-3 pb-3">
-        <p className="text-sm text-muted-foreground text-center py-3">
-          Trending topics coming soon — start posting to kick things off! 🚀
-        </p>
+      <CardContent className="px-2 pb-2">
+        {isLoading ? (
+          <div className="space-y-3 px-1">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <Skeleton className="h-7 w-7 rounded-full" />
+                <div className="flex-1">
+                  <Skeleton className="h-4 w-24 mb-1" />
+                  <Skeleton className="h-3 w-16" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : trending && trending.length > 0 ? (
+          <div className="space-y-0.5">
+            {trending.map((item, index) => {
+              const tagName = item.tag || '';
+              const recentCount = item.recent_usage_count || 0;
+              const followerCount = item.follower_count || 0;
+
+              return (
+                <button
+                  key={tagName}
+                  className="w-full flex items-center gap-2.5 p-2 rounded-lg hover:bg-muted/60 transition-colors group text-left"
+                  onClick={() => navigate(`/dna/hashtag/${tagName}`)}
+                >
+                  <div className="flex items-center justify-center h-7 w-7 rounded-full bg-[hsl(var(--dna-copper,25,70%,45%)/0.1)] text-[hsl(var(--dna-copper,25,70%,45%))] font-bold text-xs shrink-0">
+                    {index + 1}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1">
+                      <Hash className="h-3 w-3 text-muted-foreground shrink-0" />
+                      <span className="text-sm font-medium truncate group-hover:text-primary transition-colors">
+                        {tagName}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {recentCount} posts today{followerCount > 0 ? ` · ${followerCount} followers` : ''}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground text-center py-4">
+            Trending topics coming soon — start posting to kick things off! 🚀
+          </p>
+        )}
       </CardContent>
     </Card>
   );

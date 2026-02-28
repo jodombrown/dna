@@ -213,113 +213,118 @@ const DnaFeed = () => {
 
         {/* Center Column - Main Feed */}
         <main
-          className="min-w-0 flex-1 overflow-y-auto scrollbar-thin space-y-3"
+          className="min-w-0 flex-1 overflow-y-auto scrollbar-thin"
           data-scroll-container="main"
         >
-          <FeedGreeting />
-          <ProfileCompletionNudge variant="banner" threshold={40} />
+          {/* Sticky header: Greeting + Composer + Tabs */}
+          <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm pb-2 space-y-3">
+            <FeedGreeting />
+            <ProfileCompletionNudge variant="banner" threshold={40} />
 
-          {/* Compact Feed Header */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-semibold">Feed</h1>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowSearchDialog(true)}
-                className="h-8 w-8 p-0"
-              >
-                <Search className="h-4 w-4" />
-              </Button>
+            {/* Compact Feed Header */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl font-semibold">Feed</h1>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowSearchDialog(true)}
+                  className="h-8 w-8 p-0"
+                >
+                  <Search className="h-4 w-4" />
+                </Button>
+              </div>
+              <Tabs value={rankingMode} onValueChange={(v) => setRankingMode(v as RankingMode)} className="w-auto">
+                <TabsList className="h-8">
+                  <TabsTrigger value="top" className="flex items-center gap-1.5 text-xs px-2">
+                    <TrendingUp className="h-3 w-3" />
+                    <span>Top</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="latest" className="flex items-center gap-1.5 text-xs px-2">
+                    <Sparkles className="h-3 w-3" />
+                    <span>Latest</span>
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
             </div>
-            <Tabs value={rankingMode} onValueChange={(v) => setRankingMode(v as RankingMode)} className="w-auto">
-              <TabsList className="h-8">
-                <TabsTrigger value="top" className="flex items-center gap-1.5 text-xs px-2">
-                  <TrendingUp className="h-3 w-3" />
-                  <span>Top</span>
-                </TabsTrigger>
-                <TabsTrigger value="latest" className="flex items-center gap-1.5 text-xs px-2">
-                  <Sparkles className="h-3 w-3" />
-                  <span>Latest</span>
-                </TabsTrigger>
+
+            {/* Compact Create Post Card */}
+            <Card
+              className="p-3 cursor-pointer hover:border-primary/50 transition-colors"
+              onClick={() => composer.open('post')}
+            >
+              <div className="flex items-center gap-3">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src={profile.avatar_url || ''} />
+                  <AvatarFallback>{profile.display_name?.[0] || profile.username?.[0] || 'U'}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1 bg-muted rounded-full px-4 py-2 text-sm text-muted-foreground">
+                  What's on your mind?
+                </div>
+                <Button size="icon" variant="ghost" className="h-8 w-8">
+                  <PenSquare className="w-4 h-4" />
+                </Button>
+              </div>
+            </Card>
+
+            {/* Filter Tabs */}
+            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
+              <TabsList className="w-full grid grid-cols-5 h-10">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TabsTrigger value="all" className="text-xs">
+                      <Newspaper className="h-4 w-4 mr-1.5" />
+                      All
+                    </TabsTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent>All posts from across DNA</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TabsTrigger value="for_you" className="text-xs">
+                      <Sparkles className="h-4 w-4 mr-1.5" />
+                      For You
+                    </TabsTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent>Personalized based on your interests</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TabsTrigger value="network" className="text-xs">
+                      <Users className="h-4 w-4 mr-1.5" />
+                      Network
+                    </TabsTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent>Posts from your connections</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TabsTrigger value="my_posts" className="text-xs">
+                      <PenSquare className="h-4 w-4 mr-1.5" />
+                      Mine
+                    </TabsTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent>Your posts and stories</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TabsTrigger value="bookmarks" className="text-xs">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                      </svg>
+                      Saved
+                    </TabsTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent>Bookmarked posts and stories</TooltipContent>
+                </Tooltip>
               </TabsList>
             </Tabs>
           </div>
 
-          {/* Compact Create Post Card */}
-          <Card
-            className="p-3 cursor-pointer hover:border-primary/50 transition-colors"
-            onClick={() => composer.open('post')}
-          >
-            <div className="flex items-center gap-3">
-              <Avatar className="h-10 w-10">
-                <AvatarImage src={profile.avatar_url || ''} />
-                <AvatarFallback>{profile.display_name?.[0] || profile.username?.[0] || 'U'}</AvatarFallback>
-              </Avatar>
-              <div className="flex-1 bg-muted rounded-full px-4 py-2 text-sm text-muted-foreground">
-                What's on your mind?
-              </div>
-              <Button size="icon" variant="ghost" className="h-8 w-8">
-                <PenSquare className="w-4 h-4" />
-              </Button>
-            </div>
-          </Card>
-
-          {/* Filter Tabs */}
-          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
-            <TabsList className="w-full grid grid-cols-5 h-10">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <TabsTrigger value="all" className="text-xs">
-                    <Newspaper className="h-4 w-4 mr-1.5" />
-                    All
-                  </TabsTrigger>
-                </TooltipTrigger>
-                <TooltipContent>All posts from across DNA</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <TabsTrigger value="for_you" className="text-xs">
-                    <Sparkles className="h-4 w-4 mr-1.5" />
-                    For You
-                  </TabsTrigger>
-                </TooltipTrigger>
-                <TooltipContent>Personalized based on your interests</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <TabsTrigger value="network" className="text-xs">
-                    <Users className="h-4 w-4 mr-1.5" />
-                    Network
-                  </TabsTrigger>
-                </TooltipTrigger>
-                <TooltipContent>Posts from your connections</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <TabsTrigger value="my_posts" className="text-xs">
-                    <PenSquare className="h-4 w-4 mr-1.5" />
-                    Mine
-                  </TabsTrigger>
-                </TooltipTrigger>
-                <TooltipContent>Your posts and stories</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <TabsTrigger value="bookmarks" className="text-xs">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                    </svg>
-                    Saved
-                  </TabsTrigger>
-                </TooltipTrigger>
-                <TooltipContent>Bookmarked posts and stories</TooltipContent>
-              </Tooltip>
-            </TabsList>
-          </Tabs>
-
           {/* Tab Explainer */}
-          <FeedTabExplainer activeTab={activeTab} />
+          <div className="mt-2">
+            <FeedTabExplainer activeTab={activeTab} />
+          </div>
 
           {/* Feed Content */}
           {activeTab === 'for_you' ? (
