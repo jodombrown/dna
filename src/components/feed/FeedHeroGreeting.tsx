@@ -1,7 +1,6 @@
 /**
- * FeedHeroGreeting — Warm, heritage-infused greeting banner
- * Replaces the plain "Good morning" text with an editorial hero zone
- * Features: Lora typography, Kente pattern, quick-action chips, platform pulse
+ * FeedHeroGreeting — Compact inline greeting bar
+ * Single row: greeting + pulse text on left, quick-action chips on right
  */
 
 import React from 'react';
@@ -10,7 +9,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { PenSquare, Calendar, BookOpen, Sparkles } from 'lucide-react';
-import { CulturalPattern } from '@/components/shared/CulturalPattern';
 
 interface FeedHeroGreetingProps {
   onComposerOpen: (mode: string) => void;
@@ -51,48 +49,43 @@ export const FeedHeroGreeting: React.FC<FeedHeroGreetingProps> = ({ onComposerOp
   const firstName = profile?.display_name?.split(' ')[0] || profile?.username || '';
 
   const quickActions = [
-    { label: 'Start a Post', icon: PenSquare, mode: 'post' },
-    { label: 'Create Event', icon: Calendar, mode: 'event' },
-    { label: 'Share a Story', icon: BookOpen, mode: 'story' },
+    { label: 'Post', icon: PenSquare, mode: 'post' },
+    { label: 'Event', icon: Calendar, mode: 'event' },
+    { label: 'Story', icon: BookOpen, mode: 'story' },
   ];
 
-  const pulseItems = [];
-  if (pulse?.upcomingEvents) pulseItems.push(`${pulse.upcomingEvents} upcoming events`);
-  if (pulse?.newConnections) pulseItems.push(`${pulse.newConnections} new connections this week`);
+  const pulseItems: string[] = [];
+  if (pulse?.upcomingEvents) pulseItems.push(`${pulse.upcomingEvents} events`);
+  if (pulse?.newConnections) pulseItems.push(`${pulse.newConnections} connections this week`);
   if (pulse?.newPosts) pulseItems.push(`${pulse.newPosts} posts today`);
 
   return (
-    <div className="relative overflow-hidden rounded-dna-xl bg-gradient-to-br from-[hsl(var(--dna-emerald)/0.08)] via-[hsl(var(--dna-cream))] to-[hsl(var(--dna-gold)/0.06)] px-6 py-5">
-      {/* Heritage pattern overlay */}
-      <CulturalPattern pattern="kente" opacity={0.04} />
-
-      <div className="relative z-10">
-        {/* Greeting */}
-        <h2 className="font-heritage text-2xl font-semibold text-foreground tracking-tight">
+    <div className="flex items-center justify-between gap-4 rounded-dna-lg bg-[hsl(var(--dna-cream))] px-5 py-3">
+      {/* Left: greeting + pulse */}
+      <div className="flex items-center gap-3 min-w-0">
+        <h2 className="font-heritage text-lg font-semibold text-foreground whitespace-nowrap">
           {getGreeting()}, {firstName} 👋
         </h2>
-
-        {/* Platform pulse */}
         {pulseItems.length > 0 && (
-          <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5 text-dna-gold" />
-            {pulseItems.join(' · ')}
-          </p>
+          <span className="hidden md:flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Sparkles className="h-3 w-3 text-dna-gold shrink-0" />
+            <span className="truncate">{pulseItems.join(' · ')}</span>
+          </span>
         )}
+      </div>
 
-        {/* Quick action chips */}
-        <div className="flex items-center gap-2 mt-4">
-          {quickActions.map((action) => (
-            <button
-              key={action.mode}
-              onClick={() => onComposerOpen(action.mode)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-card border border-border/60 text-foreground hover:border-primary/40 hover:shadow-dna-1 transition-all duration-200"
-            >
-              <action.icon className="h-3.5 w-3.5 text-muted-foreground" />
-              {action.label}
-            </button>
-          ))}
-        </div>
+      {/* Right: quick actions */}
+      <div className="flex items-center gap-1.5 shrink-0">
+        {quickActions.map((action) => (
+          <button
+            key={action.mode}
+            onClick={() => onComposerOpen(action.mode)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-card border border-border/60 text-foreground hover:border-primary/40 hover:shadow-dna-1 transition-all duration-200"
+          >
+            <action.icon className="h-3.5 w-3.5 text-muted-foreground" />
+            {action.label}
+          </button>
+        ))}
       </div>
     </div>
   );
