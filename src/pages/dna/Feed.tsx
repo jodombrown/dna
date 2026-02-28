@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { PenSquare, Sparkles, Users, Newspaper, TrendingUp, Search, Clock } from 'lucide-react';
+import { PenSquare, Sparkles, Users, Newspaper, TrendingUp, Search, Clock, Camera, Calendar, BookOpen } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
@@ -15,12 +15,9 @@ import { MobileFeedTabs } from '@/components/feed/MobileFeedTabs';
 import { FeedTabExplainer } from '@/components/feed/FeedTabExplainer';
 import { MobileProfileCompletionBanner } from '@/components/feed/MobileProfileCompletionBanner';
 import { FirstTimeWalkthrough } from '@/components/onboarding/FirstTimeWalkthrough';
-import { FeedProfileCard } from '@/components/feed/FeedProfileCard';
-import { FeedRightSidebar } from '@/components/feed/FeedRightSidebar';
-import { FeedUpcomingEvents } from '@/components/feed/FeedUpcomingEvents';
-import { FeedActiveSpaces } from '@/components/feed/FeedActiveSpaces';
-import { FeedSponsorCard } from '@/components/feed/FeedSponsorCard';
-import { FeedGreeting } from '@/components/feed/FeedGreeting';
+import { FeedHeroGreeting } from '@/components/feed/FeedHeroGreeting';
+import { FeedLeftPanel } from '@/components/feed/FeedLeftPanel';
+import { FeedCommunityPulse } from '@/components/feed/FeedCommunityPulse';
 import { NewPostsIndicator } from '@/components/feed/NewPostsIndicator';
 import { FeedTab, RankingMode } from '@/types/feed';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
@@ -238,35 +235,68 @@ const DnaFeed = () => {
           overflow: 'hidden',
         }}
       >
-        {/* Left Sidebar - Profile + Cross-C Widgets */}
+        {/* Left Sidebar — "My DNA" Panel */}
         <aside
-          className="overflow-y-auto scrollbar-thin space-y-4 shrink-0"
-          style={{ width: '240px' }}
+          className="overflow-y-auto scrollbar-thin shrink-0"
+          style={{ width: '260px' }}
         >
-          <FeedProfileCard />
-          <FeedUpcomingEvents />
-          <FeedSponsorCard />
-          <FeedActiveSpaces />
+          <FeedLeftPanel />
         </aside>
 
-        {/* Center Column - Main Feed */}
+        {/* Center Column — Main Feed */}
         <main
           ref={mainScrollRef}
           className="min-w-0 flex-1 overflow-y-auto scrollbar-thin"
           data-scroll-container="main"
         >
-          {/* Non-sticky: scrolls away */}
+          {/* Hero Greeting Zone */}
           <div className="space-y-3 mb-3">
-            <FeedGreeting />
+            <FeedHeroGreeting onComposerOpen={(mode) => composer.open(mode as 'post' | 'event' | 'story')} />
             <ProfileCompletionNudge variant="banner" threshold={40} />
           </div>
 
-          {/* Sticky header: Feed title + Composer + Tabs */}
+          {/* Sticky header: Composer + Tabs */}
           <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm pb-2 space-y-3">
-            {/* Compact Feed Header */}
-            <div className="flex items-center justify-between pt-1">
+            {/* Chat-style Composer Bar */}
+            <div
+              className="flex items-center gap-3 bg-card rounded-full px-3 py-2 shadow-dna-1 border border-border/40 cursor-pointer hover:shadow-dna-2 transition-all duration-200"
+              onClick={() => composer.open('post')}
+            >
+              <Avatar className="h-8 w-8 shrink-0">
+                <AvatarImage src={profile.avatar_url || ''} />
+                <AvatarFallback className="text-xs">{profile.display_name?.[0] || profile.username?.[0] || 'U'}</AvatarFallback>
+              </Avatar>
+              <span className="flex-1 text-sm text-muted-foreground">
+                What's on your mind?
+              </span>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={(e) => { e.stopPropagation(); composer.open('post'); }}
+                  className="p-1.5 rounded-full hover:bg-muted transition-colors"
+                  title="Photo"
+                >
+                  <Camera className="h-4 w-4 text-dna-convey" />
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); composer.open('event'); }}
+                  className="p-1.5 rounded-full hover:bg-muted transition-colors"
+                  title="Event"
+                >
+                  <Calendar className="h-4 w-4 text-dna-gold" />
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); composer.open('story'); }}
+                  className="p-1.5 rounded-full hover:bg-muted transition-colors"
+                  title="Story"
+                >
+                  <BookOpen className="h-4 w-4 text-dna-copper" />
+                </button>
+              </div>
+            </div>
+
+            {/* Feed Header + Ranking Toggle */}
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <h1 className="text-xl font-semibold">Feed</h1>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -277,37 +307,18 @@ const DnaFeed = () => {
                 </Button>
               </div>
               <Tabs value={rankingMode} onValueChange={(v) => setRankingMode(v as RankingMode)} className="w-auto">
-                <TabsList className="h-8">
-                   <TabsTrigger value="top" className="flex items-center gap-1.5 text-xs px-3 rounded-full data-[state=active]:bg-[hsl(var(--dna-emerald))] data-[state=active]:text-white">
+                <TabsList className="h-8 bg-muted/30 rounded-full">
+                   <TabsTrigger value="top" className="flex items-center gap-1.5 text-xs px-3 rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
                      <TrendingUp className="h-3 w-3" />
                      <span>Top</span>
                    </TabsTrigger>
-                   <TabsTrigger value="latest" className="flex items-center gap-1.5 text-xs px-3 rounded-full data-[state=active]:bg-[hsl(var(--dna-emerald))] data-[state=active]:text-white">
+                   <TabsTrigger value="latest" className="flex items-center gap-1.5 text-xs px-3 rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
                      <Clock className="h-3 w-3" />
                      <span>Latest</span>
                    </TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>
-
-            {/* Compact Create Post Card */}
-            <Card
-              className="p-3 cursor-pointer hover:border-primary/50 transition-colors"
-              onClick={() => composer.open('post')}
-            >
-              <div className="flex items-center gap-3">
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={profile.avatar_url || ''} />
-                  <AvatarFallback>{profile.display_name?.[0] || profile.username?.[0] || 'U'}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 bg-muted rounded-full px-4 py-2 text-sm text-muted-foreground">
-                  What's on your mind?
-                </div>
-                <Button size="icon" variant="ghost" className="h-8 w-8">
-                  <PenSquare className="w-4 h-4" />
-                </Button>
-              </div>
-            </Card>
 
             {/* Filter Tabs - auto-hide on scroll */}
             <div
@@ -318,11 +329,11 @@ const DnaFeed = () => {
               }}
             >
               <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
-                 <TabsList className="w-full grid grid-cols-5 h-10 bg-muted/30 rounded-xl p-1 border border-border/40">
+                 <TabsList className="w-full grid grid-cols-5 h-10 bg-muted/20 rounded-full p-1">
                    <Tooltip>
                      <TooltipTrigger asChild>
-                       <TabsTrigger value="all" className="text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:!text-[hsl(var(--dna-emerald))] data-[state=active]:font-semibold data-[state=active]:border data-[state=active]:border-[hsl(var(--dna-emerald))]/20">
-                         <Newspaper className="h-4 w-4 mr-1.5" />
+                       <TabsTrigger value="all" className="text-xs rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
+                         <Newspaper className="h-3.5 w-3.5 mr-1.5" />
                          All
                        </TabsTrigger>
                      </TooltipTrigger>
@@ -330,8 +341,8 @@ const DnaFeed = () => {
                    </Tooltip>
                    <Tooltip>
                      <TooltipTrigger asChild>
-                       <TabsTrigger value="for_you" className="text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:!text-[hsl(var(--dna-emerald))] data-[state=active]:font-semibold data-[state=active]:border data-[state=active]:border-[hsl(var(--dna-emerald))]/20">
-                         <Sparkles className="h-4 w-4 mr-1.5" />
+                       <TabsTrigger value="for_you" className="text-xs rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
+                         <Sparkles className="h-3.5 w-3.5 mr-1.5" />
                          For You
                        </TabsTrigger>
                      </TooltipTrigger>
@@ -339,8 +350,8 @@ const DnaFeed = () => {
                    </Tooltip>
                    <Tooltip>
                      <TooltipTrigger asChild>
-                       <TabsTrigger value="network" className="text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:!text-[hsl(var(--dna-emerald))] data-[state=active]:font-semibold data-[state=active]:border data-[state=active]:border-[hsl(var(--dna-emerald))]/20">
-                         <Users className="h-4 w-4 mr-1.5" />
+                       <TabsTrigger value="network" className="text-xs rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
+                         <Users className="h-3.5 w-3.5 mr-1.5" />
                          Network
                        </TabsTrigger>
                      </TooltipTrigger>
@@ -348,8 +359,8 @@ const DnaFeed = () => {
                    </Tooltip>
                    <Tooltip>
                      <TooltipTrigger asChild>
-                       <TabsTrigger value="my_posts" className="text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:!text-[hsl(var(--dna-emerald))] data-[state=active]:font-semibold data-[state=active]:border data-[state=active]:border-[hsl(var(--dna-emerald))]/20">
-                         <PenSquare className="h-4 w-4 mr-1.5" />
+                       <TabsTrigger value="my_posts" className="text-xs rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
+                         <PenSquare className="h-3.5 w-3.5 mr-1.5" />
                          Mine
                        </TabsTrigger>
                      </TooltipTrigger>
@@ -357,8 +368,8 @@ const DnaFeed = () => {
                    </Tooltip>
                    <Tooltip>
                      <TooltipTrigger asChild>
-                       <TabsTrigger value="bookmarks" className="text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:!text-[hsl(var(--dna-emerald))] data-[state=active]:font-semibold data-[state=active]:border data-[state=active]:border-[hsl(var(--dna-emerald))]/20">
-                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                       <TabsTrigger value="bookmarks" className="text-xs rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
+                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                          </svg>
                          Saved
@@ -404,12 +415,12 @@ const DnaFeed = () => {
           )}
         </main>
 
-        {/* Right Sidebar - Trending, Suggestions, DIA */}
+        {/* Right Sidebar — Community Pulse */}
         <aside
           className="overflow-y-auto scrollbar-thin shrink-0"
           style={{ width: '300px' }}
         >
-          <FeedRightSidebar />
+          <FeedCommunityPulse />
         </aside>
       </div>
 
