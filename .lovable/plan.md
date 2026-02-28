@@ -1,131 +1,100 @@
 
-
-# Curated Diaspora Events: Perplexity-Powered Event Pipeline
+# Curated by DNA: Editorial Event Cards
 
 ## Overview
 
-Three connected deliverables:
-1. An edge function that uses Perplexity to fetch real upcoming diaspora events and seed them into the `events` table
-2. Database changes to support "curated" events (no real organizer, source attribution)
-3. UI updates to show a "Curated by DNA" badge on event cards
+Curated events will have a completely distinct visual identity and interaction model from user-hosted events. They'll look like editorial content recommendations -- think "magazine picks" rather than community posts -- with a prominent external source link and a lightweight DNA preview page instead of the full event detail page.
 
----
+## What Changes
 
-## Part 1: Database Migration
+### 1. New Component: `CuratedEventCard`
 
-The `events` table has `organizer_id` as `NOT NULL`. Instead of making it nullable (which would break RLS and existing logic), we will:
+A dedicated card component (`src/components/convene/CuratedEventCard.tsx`) with an editorial / magazine aesthetic:
 
-- Add `is_curated BOOLEAN DEFAULT false` -- flags DNA-curated events
-- Add `curated_source TEXT` -- e.g. "Perplexity", "Manual"
-- Add `curated_source_url TEXT` -- link to original event page
-- Add `curated_at TIMESTAMPTZ` -- when the curation happened
+- **No amber left-border accent** -- instead uses a subtle DNA emerald gradient top-border (similar to DIA insight cards)
+- **"Curated by DNA" badge** with Sparkles icon in the header area (emerald tones, not amber)
+- **Source attribution line** showing the external source domain (e.g., "via diasporaafricaconference.com") with an ExternalLink icon
+- **Cover image** displayed as a smaller, rounded thumbnail on the left (compact editorial feel) rather than a full-width hero
+- **Key info** displayed cleanly: title, date, location, short description (2-line clamp)
+- **Two CTAs at the bottom:**
+  - "Interested" toggle button (maps to internal RSVP with `going` status) -- uses emerald accent
+  - "View Event" button with ExternalLink icon that opens `curated_source_url` in a new tab
+- **No organizer section** (since there's no organizer)
+- **No attendee count / social proof** on the card itself (kept lightweight)
+- Supports `full` and `compact` variants to match existing card system
 
-For curated events, `organizer_id` will be set to a **DNA Platform system user**. We will create a profile entry for this system account (or use the admin user's ID). The RLS INSERT policy will be bypassed by the edge function using the service role key.
+### 2. New Page: `CuratedEventPreview`
 
-Update RLS SELECT policy: curated events are always public (already handled by `is_public = true`).
+A lightweight preview page (`src/pages/dna/convene/CuratedEventPreview.tsx`) that replaces the full EventDetail for curated events:
 
----
+- Clean layout with cover image, title, date/time, location, and full description
+- Prominent "Register at Source" button linking to `curated_source_url` (opens new tab)
+- "Interested" / "Going" / "Maybe" RSVP buttons for internal tracking
+- Source attribution with link
+- "Curated by DNA" branding
+- NO tabs, activity feed, attendees list, organizer card, manage/edit buttons, or other host-specific UI
+- Share button retained
+- Back navigation retained
 
-## Part 2: Edge Function `curate-diaspora-events`
+### 3. Routing Update
 
-A new edge function that:
+Modify the EventDetail page or the router to detect `is_curated` and render `CuratedEventPreview` instead of the full detail page. The simplest approach: add a check at the top of `EventDetail.tsx` that redirects to/renders the preview component when `event.is_curated === true`.
 
-1. Calls Perplexity API (`sonar` model) with a structured output prompt asking for 15-20 real upcoming African diaspora events (conferences, festivals, summits, workshops)
-2. Uses `response_format: json_schema` to get structured event data matching the events table schema
-3. Deduplicates against existing events (title similarity + date match)
-4. Inserts new events using the service role key (bypasses RLS)
-5. Sets `is_curated = true`, `curated_source = 'perplexity'`, `is_published = true`, `status = 'published'`
+### 4. Card Usage Integration
 
-**Perplexity Prompt** (embedded in the edge function):
-```
-Find 15-20 real upcoming events in 2026 relevant to the African diaspora community worldwide. Include conferences, summits, festivals, workshops, and networking events. Cover categories: tech, business/investment, culture/arts, healthcare, education, and social. Include events in Africa (Lagos, Nairobi, Accra, Kigali, Cape Town, Addis Ababa) AND diaspora cities (London, New York, Atlanta, Toronto, Paris, Dubai). For each event provide: title, description (2-3 sentences), event_type, format (in_person/virtual/hybrid), location_name, location_city, location_country, start_time (ISO 8601), end_time (ISO 8601), cover image search term, website URL, tags array.
-```
+Update all surfaces where `ConveneEventCard` renders curated events to use `CuratedEventCard` instead:
 
-**Structured output schema** ensures clean JSON that maps directly to the events table columns.
+- `ConveneDiscovery` / `ConveneHub` listings
+- Feed cards (`EventFeedCard` in v2)
+- `PopularEventsSection`
+- Search results (`EventsResults`)
+- Any carousel or widget showing mixed events
 
-**Config**: `verify_jwt = false` (for cron invocation), but validates a shared secret header for security.
+The switching logic: check `event.is_curated` and render the appropriate card component.
 
----
+## Technical Details
 
-## Part 3: Cron Setup
-
-A `pg_cron` job that calls `curate-diaspora-events` weekly (every Sunday at 6 AM UTC) to keep the events fresh. This uses the same pattern as existing cron jobs (e.g., `send-event-reminders`).
-
----
-
-## Part 4: Update `sampleConveneEvents.ts`
-
-Replace the current mock data with the first batch of real events fetched from Perplexity. This ensures the marketing/landing page (`/convene`) also shows real events. The edge function will be called once manually to generate the initial seed, and the results will populate both the database and the static sample file.
-
----
-
-## Part 5: UI - "Curated by DNA" Badge
-
-Update `ConveneEventCard.tsx` to show a curated badge when `is_curated` is true:
-
-- A small badge reading "Curated by DNA" with the DNA Emerald color and a sparkle icon
-- Replaces the organizer avatar/name section -- instead shows "DNA Curated" with the DNA logo
-- If `curated_source_url` exists, the card title links to the original source
-
-Also update:
-- `EventCard.tsx` (events list card)
-- `ModernEventCard.tsx` (connect tab card)
-- Event detail page -- show source attribution ("Originally found on [source]") in event details
-
----
-
-## Files to Create/Modify
-
-| File | Action |
-|------|--------|
-| `supabase/migrations/[timestamp]_add_curated_events_fields.sql` | **Create** - Add is_curated, curated_source, curated_source_url, curated_at columns |
-| `supabase/functions/curate-diaspora-events/index.ts` | **Create** - Perplexity-powered event curation edge function |
-| `supabase/config.toml` | **Edit** - Add curate-diaspora-events function config |
-| `src/data/sampleConveneEvents.ts` | **Edit** - Replace mock data with real events from first Perplexity run |
-| `src/components/convene/ConveneEventCard.tsx` | **Edit** - Add curated badge and source attribution |
-| `src/components/events/EventCard.tsx` | **Edit** - Add curated badge |
-| `src/integrations/supabase/types.ts` | Auto-updated after migration |
-
----
-
-## Edge Function Flow
+### CuratedEventCard Visual Spec
 
 ```text
-curate-diaspora-events (weekly cron or manual trigger)
-    |
-    v
-Call Perplexity API (sonar model, structured JSON output)
-    |
-    v
-Parse 15-20 events with title, dates, location, type
-    |
-    v
-Deduplicate: check existing events by title similarity + date range
-    |
-    v
-Insert new events with is_curated=true, organizer_id=SYSTEM_USER
-    |
-    v
-Return summary: { inserted: N, skipped: N, errors: [] }
++--------------------------------------------------+
+| [2px emerald gradient top border]                 |
+|                                                   |
+|  [Sparkles] Curated by DNA                        |
+|                                                   |
+|  [60x80 thumbnail]  Title of the Event            |
+|                     Mar 15, 2026 - Houston, US    |
+|                     Short description text that    |
+|                     wraps to two lines max...      |
+|                                                   |
+|  via diasporaafricaconference.com [ExternalLink]  |
+|                                                   |
+|  [Interested]  [View Event ->]                    |
++--------------------------------------------------+
 ```
 
----
+- Top border: `linear-gradient(90deg, #4A8D77, #2A7A8C)` (emerald to teal)
+- Card background: subtle `from-emerald-50/30 via-transparent` gradient
+- Border radius: 16px (matches DNA standard)
+- Shadow: `shadow-dna-1` or `shadow-md`
 
-## Security
+### CuratedEventPreview Page Spec
 
-- Edge function uses `SUPABASE_SERVICE_ROLE_KEY` for inserts (bypasses RLS)
-- Cron invocation authenticated via Authorization header with anon key
-- Manual invocation also supported for initial seeding
-- `PERPLEXITY_API_KEY` already available as a secret
+- Route: same as regular events (`/dna/convene/events/:id`) but renders different component
+- Fetches event from Supabase, checks `is_curated`
+- Shows: cover image (full width), title, date/time, location, description, source link
+- RSVP uses the same `event_attendees` upsert pattern (already works with null organizer)
+- No organizer card, no activity feed, no attendees grid, no manage actions
 
----
+### Files to Create
 
-## Implementation Order
+- `src/components/convene/CuratedEventCard.tsx` -- the editorial card
+- `src/pages/dna/convene/CuratedEventPreview.tsx` -- the lightweight detail page
 
-1. Database migration (add curated columns)
-2. Create edge function with Perplexity integration
-3. Deploy and run manually to seed initial real events
-4. Update `sampleConveneEvents.ts` with the results
-5. Add curated badge to event card components
-6. Set up weekly cron job for auto-refresh
+### Files to Modify
 
+- `src/pages/dna/convene/EventDetail.tsx` -- add is_curated check to render CuratedEventPreview
+- `src/components/convene/ConveneEventCard.tsx` -- no changes needed (it won't render curated events anymore)
+- `src/pages/dna/convene/ConveneDiscovery.tsx` -- switch card component for curated events
+- `src/components/feed/v2/cards/EventFeedCard.tsx` -- handle curated events differently in feed
+- Any other surfaces rendering event cards with mixed curated/user events
