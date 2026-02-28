@@ -105,7 +105,7 @@ const ProfileEditInterests: React.FC<ProfileEditInterestsProps> = ({
           selected={interests}
           onChange={onInterestsChange}
           placeholder="Select your interests..."
-          colorClass="bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700"
+          colorClass="bg-dna-teal/10 text-dna-teal border-dna-teal/20"
           allowCustom={true}
         />
 
@@ -135,7 +135,7 @@ const ProfileEditInterests: React.FC<ProfileEditInterestsProps> = ({
           selected={industries}
           onChange={onIndustriesChange}
           placeholder="Select industries..."
-          colorClass="bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-700"
+          colorClass="bg-dna-copper/10 text-dna-copper border-dna-copper/20"
           allowCustom={true}
         />
       </CardContent>

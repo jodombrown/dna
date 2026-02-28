@@ -635,18 +635,20 @@ const ProfileEdit = () => {
           />
 
           {/* Submit Buttons */}
-          <div className="flex gap-4 justify-between pb-8">
+          <div className="flex flex-wrap gap-3 justify-between pb-8">
             <Button
               type="button"
               variant="outline"
+              className="shrink-0"
               onClick={() => navigate('/dna/feed')}
             >
               Cancel
             </Button>
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-3 items-center">
               <Button
                 type="button"
                 variant="ghost"
+                className="shrink-0"
                 onClick={handleSignOut}
               >
                 <LogOut className="w-4 h-4 mr-2" />
@@ -654,6 +656,7 @@ const ProfileEdit = () => {
               </Button>
               <Button
                 type="submit"
+                className="shrink-0"
                 disabled={updateMutation.isPending}
               >
                 {updateMutation.isPending ? (
