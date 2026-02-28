@@ -306,10 +306,14 @@ const PublicProfile = () => {
                   )}
                   
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    {profile.current_country && (
+                    {(profile.current_city || profile.current_country) && (
                       <div className="flex items-center">
                         <MapPin className="w-4 h-4 mr-1" />
-                        <span>{profile.current_country}</span>
+                        <span>
+                          {profile.current_city && profile.current_country
+                            ? `Based in ${profile.current_city}, ${profile.current_country}`
+                            : `Based in ${profile.current_city || profile.current_country}`}
+                        </span>
                       </div>
                     )}
                     {profile.country_of_origin && profile.country_of_origin !== profile.current_country && (

@@ -176,20 +176,31 @@ const CheckInDashboard: React.FC = () => {
     refetchInterval: 3000,
   });
 
-  // Initialize camera devices
+  // Initialize camera devices - request permission first to get labeled devices
   useEffect(() => {
     const getDevices = async () => {
       try {
+        // Request camera permission first so we get labeled device list
+        await navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+          stream.getTracks().forEach(t => t.stop());
+        });
         const deviceList = await navigator.mediaDevices.enumerateDevices();
         const cameras = deviceList.filter(d => d.kind === 'videoinput');
         setDevices(cameras);
         if (cameras.length > 0 && !selectedDevice) {
-          // Prefer back camera on mobile
           const backCamera = cameras.find(d => d.label.toLowerCase().includes('back'));
           setSelectedDevice(backCamera?.deviceId || cameras[0].deviceId);
         }
       } catch (err) {
-        console.error('Failed to enumerate devices:', err);
+        // Fallback: try enumerating without permission
+        try {
+          const deviceList = await navigator.mediaDevices.enumerateDevices();
+          const cameras = deviceList.filter(d => d.kind === 'videoinput');
+          setDevices(cameras);
+          if (cameras.length > 0 && !selectedDevice) {
+            setSelectedDevice(cameras[0].deviceId);
+          }
+        } catch {}
       }
     };
     getDevices();
@@ -422,10 +433,17 @@ const CheckInDashboard: React.FC = () => {
           size="lg"
           variant="outline"
           className="h-20 text-lg"
-          onClick={() => setActiveTab('search')}
+          onClick={() => {
+            setActiveTab('search');
+            // Focus the search input after tab switch
+            setTimeout(() => {
+              const input = document.getElementById('checkin-search-input');
+              input?.focus();
+            }, 100);
+          }}
         >
           <Search className="h-6 w-6 mr-3" />
-          Search
+          Find Attendee
         </Button>
       </div>
 
@@ -544,7 +562,8 @@ const CheckInDashboard: React.FC = () => {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search by name..."
+                  id="checkin-search-input"
+                  placeholder="Search by name or username..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"

@@ -172,25 +172,34 @@ const TeamManager: React.FC = () => {
   // Invite team member mutation
   const inviteMutation = useMutation({
     mutationFn: async () => {
-      // First, find user by email
-      const { data: profiles } = await supabase
-        .from('profiles')
-        .select('id')
-        .ilike('id', inviteEmail) // This is a simplification - in real app, query by email
-        .maybeSingle();
+      const input = inviteEmail.trim();
+      // Strip leading @ if present for username search
+      const usernameQuery = input.startsWith('@') ? input.slice(1) : input;
 
-      // For now, we'll search by username as email isn't directly queryable
+      // Try finding by username first
       const { data: userByUsername } = await supabase
         .from('profiles')
         .select('id')
-        .eq('username', inviteEmail.split('@')[0])
+        .eq('username', usernameQuery.toLowerCase())
         .maybeSingle();
 
-      const userId = profiles?.id || userByUsername?.id;
+      // If not found by username, try by email in auth (via full_name or other fields)
+      let userByEmail = null;
+      if (!userByUsername && input.includes('@')) {
+        // Search profiles that might match - email isn't directly in profiles table
+        // but we can check if input looks like an email
+        const { data } = await supabase
+          .from('profiles')
+          .select('id')
+          .ilike('username', usernameQuery)
+          .maybeSingle();
+        userByEmail = data;
+      }
+
+      const userId = userByUsername?.id || userByEmail?.id;
 
       if (!userId) {
-        // TODO: In production, send email invite
-        throw new Error('User not found. They must have a DNA account.');
+        throw new Error('User not found. Search by @username (e.g. @jaunelamarr). They must have a DNA account.');
       }
 
       // Check if already a team member
@@ -452,13 +461,16 @@ const TeamManager: React.FC = () => {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="invite-email">Email or Username</Label>
+              <Label htmlFor="invite-email">Username</Label>
               <Input
                 id="invite-email"
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
-                placeholder="email@example.com or username"
+                placeholder="@username"
               />
+              <p className="text-xs text-muted-foreground">
+                Search by DNA username (e.g. @jaunelamarr)
+              </p>
             </div>
             <div className="space-y-2">
               <Label>Role</Label>
