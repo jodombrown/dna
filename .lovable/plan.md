@@ -1,93 +1,89 @@
 
-# Enhancing the Introduction Experience
 
-You've built a beautiful introduction modal. Here's a plan to level it up on **both sides** -- making it more interactive for the sender and creating a rich, branded experience for the recipients.
+# Feed Desktop Overhaul: From Boring to Best-in-Class
 
----
+## The Problem
 
-## Part 1: Sender-Side Enhancements
+The current `/dna/feed` desktop layout is a static LinkedIn clone: three columns that don't scroll independently, a left sidebar that's mostly dead space (profile card + 5 links), a right sidebar with **hardcoded fake trending data**, and a center column that does all the heavy lifting alone. It feels like a template, not a living social network.
 
-### 1A. DIA-Powered "Why Connect" Suggestions
-Instead of just a blank message box, surface smart commonalities between the two people to help the introducer write a better message.
+## What Top Social Networks Get Right
 
-- Query shared skills, sectors, events attended, spaces, and heritage between Person A and Person B
-- Display clickable "insight chips" (e.g., "Both in FinTech", "Both attended Lagos Tech Week", "Shared skill: Python")
-- Clicking a chip auto-inserts a relevant sentence into the message (e.g., "You're both passionate about FinTech in West Africa!")
-- Shown above the textarea as a horizontal scrollable row of small badges
+The best feeds share three principles:
+1. **The feed IS the product** -- everything else orbits it, not the other way around
+2. **Right sidebar earns its space** -- it surfaces dynamic, actionable content (not static links)
+3. **Independent column scrolling** -- each column is its own world (your Connect Hub already nails this)
 
-### 1B. Message Templates / Tone Selector
-Add 2-3 quick-start tone options above the textarea:
+## The Plan
 
-- **Professional:** "I'd like to introduce you to each other. [Name] is..."
-- **Warm/Casual:** "Hey! I think you two would really hit it off..."
-- **Context-Specific:** "You both attended [Event] -- I thought you should connect!"
+### 1. Independent Column Scrolling (Like Connect Hub)
 
-Rendered as small pill buttons; clicking one replaces the message content.
+Apply the same `ConnectHubLayout` pattern: each column gets `height: calc(100vh - 7.5rem)` and `overflow-y-auto`, so left/center/right scroll independently. The center feed scrolls infinitely while sidebars stay accessible.
 
-### 1C. "Preview as Recipient" Toggle
-A small eye icon button that flips the card to show how the introduction will appear in the recipients' message thread -- giving the sender confidence before hitting Send.
+**Technical approach:** Replace the current `sticky top-[...] h-fit` pattern on both `<aside>` elements with the Connect Hub's `height: columnHeight` + `overflow-y-auto` approach. The outer container becomes a flex row with fixed height instead of a scrollable page.
 
----
+### 2. Left Sidebar: Make It Useful
 
-## Part 2: Recipient-Side Experience (The Big Win)
+**Keep:** Profile card (it's well-built), Saved Items link.
 
-Right now, recipients just see a plain text message in a group thread. This is where we can create a truly differentiated experience.
+**Remove:** "Explore DNA" quick links card -- it duplicates the top navigation bar and adds nothing. Every user already sees CONNECT / CONVENE / COLLABORATE / CONTRIBUTE / CONVEY in the header.
 
-### 2A. Introduction Card in Messages
-Create a new `IntroductionMessageCard` component that renders inside the message thread instead of plain text when the conversation `origin_type === 'introduction'`.
+**Add -- "Upcoming For You" mini-widget:**
+- Show 2-3 upcoming events the user is attending (from `event_attendees`), with compact date + title
+- If none, show next upcoming event from their city
+- Links to CONVENE -- this creates a **CONVENE cross-C moment** on every feed visit
 
-The card would include:
-- The Kente pattern header (matching the modal aesthetic)
-- DNA logo + "You've been introduced!" heading
-- Both profile photos with the animated connection arrow (reusing `ConnectionArrow`)
-- The introducer's name and avatar (smaller, as "Introduced by [Name]")
-- The introduction message text
-- Two CTA buttons: **"View Profile"** (navigates to the other person's profile) and **"Say Hello"** (focuses the reply input)
+**Add -- "Active Spaces" mini-widget:**
+- Show 2-3 spaces the user is a member of with recent activity indicators
+- Links to COLLABORATE -- another **cross-C circulation moment**
 
-### 2B. Introduction Notification Card
-Enhance the notification that recipients receive:
-- Instead of generic "You were introduced to someone", show a rich notification with both avatars stacked, the introducer's name, and a preview of the message
-- Tapping opens directly to the introduction conversation
+This turns the left sidebar from "navigation I already have" into "personalized context that makes me feel the platform is alive."
 
-### 2C. Introduction Status Tracking (Sender Dashboard)
-Enhance the existing `IntroductionRow` in the Network Panel:
-- Add a mini timeline: Sent -> Viewed -> Replied -> Connected
-- Show "Person A replied!" or "Both have responded!" status updates
-- Add a "Nudge" button if neither person has responded after 3+ days (sends a gentle reminder message)
-- When both people respond, auto-update status to "connected" and show a small confetti animation on the row
+### 3. Right Sidebar: Fix Trending + Add Life
 
-### 2D. Post-Introduction DIA Nudge
-After the introduction is sent, trigger a DIA nudge for each recipient:
-- "You were just introduced to [Name] by [Introducer]. They work in [Industry] -- check out their profile!"
-- Nudge appears in the recipient's notification center and optionally in their feed
+**Fix "Trending in DNA":**
+- The current `FeedRightSidebar` uses **hardcoded fake data** (`trendingTopics` array with static numbers like "234 posts"). The real `TrendingHashtags` component exists and calls `get_trending_hashtags` RPC -- but it's not used here.
+- Replace the fake trending section with the real `<TrendingHashtags />` component.
+- If the RPC returns empty results (likely in alpha), show a graceful "Trending topics coming soon" state instead of nothing.
 
----
+**Enhance "People to Connect":**
+- Currently fetches random profiles. Should exclude existing connections and prioritize mutual connections (2nd-degree).
+- Add a compact "Connect" button inline (1-tap connect, not navigate-away).
 
-## Part 3: Technical Implementation
+**Add -- "Happening Now" widget:**
+- Show events currently live or starting within 2 hours
+- Green pulse dot for live events
+- Creates urgency and FOMO -- key engagement driver
 
-### Files to Create
-| File | Purpose |
-|------|---------|
-| `src/components/messaging/IntroductionMessageCard.tsx` | Rich branded card rendered in message threads for introduction conversations |
-| `src/components/connect/IntroductionToneSelector.tsx` | Tone template pills for the modal composer |
-| `src/components/connect/IntroductionInsightChips.tsx` | DIA-powered commonality chips with auto-insert |
+**Keep:** DIA promo card and footer links (they're appropriate here).
 
-### Files to Modify
-| File | Change |
-|------|--------|
-| `src/components/connect/IntroductionModal.tsx` | Add tone selector, insight chips, preview toggle |
-| `src/components/messaging/MessageBubble.tsx` | Detect `origin_type: 'introduction'` and render `IntroductionMessageCard` instead of plain text |
-| `src/components/messaging/inbox/ChatBubble.tsx` | Same detection for the inbox view |
-| `src/components/connect/hub/NetworkPanel.tsx` | Enhance `IntroductionRow` with timeline, nudge button |
-| `src/services/introductionService.ts` | Add `getIntroductionCommonalities()` function for DIA chips, add nudge/reminder function |
-| `src/services/platformNotificationGenerator.ts` | Add richer introduction notification with avatar data |
+### 4. Center Column: Small but Impactful Polish
 
-### Suggested Priority Order
-1. **Introduction Message Card** (2A) -- highest impact, transforms the recipient experience
-2. **Tone Selector** (1B) -- quick win, improves sender UX immediately
-3. **DIA Insight Chips** (1A) -- adds intelligence layer
-4. **Status Tracking** (2C) -- completes the feedback loop for senders
-5. **Post-Introduction Nudge** (2D) -- deepens DIA integration
-6. **Preview Toggle** (1C) -- nice polish
+- **Composer card:** Already good. No changes needed.
+- **Tab bar:** Already good. Keep as-is.
+- **Feed content:** Already good with infinite scroll.
+- **One addition -- "Welcome back" greeting:** Above the composer, show a contextual one-liner: "Good morning, Jaune" with a subtle DIA insight like "3 new posts from your network since yesterday." This personalizes the experience and makes the feed feel warm vs. clinical.
 
-This plan keeps the beautiful Kente-branded aesthetic you've established and extends it across the full introduction lifecycle -- from composing, to receiving, to tracking outcomes.
+### 5. Mobile: Keep Current (It's Good)
+
+You said you love the mobile look. The mobile layout with its fixed header, compact tabs, and full-width feed cards is solid. No changes to mobile.
+
+## Files to Create/Modify
+
+| File | Action | What |
+|------|--------|------|
+| `src/pages/dna/Feed.tsx` | Modify | Independent scrolling columns, remove FeedQuickLinks, add new widgets, contextual greeting |
+| `src/components/feed/FeedRightSidebar.tsx` | Modify | Replace hardcoded trending with real `TrendingHashtags`, add Happening Now widget, improve People to Connect query |
+| `src/components/feed/FeedUpcomingEvents.tsx` | Create | Compact "Upcoming For You" widget for left sidebar |
+| `src/components/feed/FeedActiveSpaces.tsx` | Create | Compact "Active Spaces" widget for left sidebar |
+| `src/components/feed/FeedHappeningNow.tsx` | Create | Live/imminent events widget for right sidebar |
+| `src/components/feed/FeedGreeting.tsx` | Create | Contextual "Good morning" + network activity summary |
+
+## What This Achieves
+
+- **Not boring:** Every sidebar section is dynamic, personalized, and connected to real data
+- **Independent scrolling:** Matches Connect Hub quality -- each column is its own scroll context
+- **Cross-C circulation:** Left sidebar surfaces CONVENE + COLLABORATE content on every feed visit
+- **Trending fixed:** Real hashtag data replaces fake numbers
+- **Alive feel:** Happening Now creates urgency; Active Spaces shows the platform is breathing
+- **No mobile changes:** The mobile experience you love stays untouched
+
