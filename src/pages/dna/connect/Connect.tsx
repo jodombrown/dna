@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { messageService } from '@/services/messageService';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
@@ -92,9 +93,16 @@ const Connect = () => {
     }
   }, []);
 
-  // Handle message member from discovery feed
-  const handleMessageMember = useCallback((memberId: string) => {
-    setExpandedChat(true);
+  // Handle message member from discovery feed or DIA cards — open inline chat
+  const handleMessageMember = useCallback(async (memberId: string) => {
+    try {
+      const conversation = await messageService.getOrCreateConversation(memberId);
+      setSelectedConversationId(conversation.id);
+      setExpandedChat(true);
+    } catch {
+      // Fallback: just expand the chat panel
+      setExpandedChat(true);
+    }
   }, []);
 
   // Close inline chat
@@ -168,7 +176,7 @@ const Connect = () => {
       <ConnectHubLayout
         leftPanel={
           <div className="space-y-4">
-            <DIAHubSection surface="connect_hub" limit={2} />
+            <DIAHubSection surface="connect_hub" limit={2} onMessageUser={handleMessageMember} />
             <NetworkPanel
               onFilterChange={handleFilterChange}
               onSearchChange={handleNetworkSearch}

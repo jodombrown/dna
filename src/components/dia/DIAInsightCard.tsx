@@ -46,6 +46,7 @@ interface DIAInsightCardProps {
   card: DIACard;
   onAction: (action: DIACardAction) => void;
   onDismiss: (dismissKey: string) => void;
+  onMessageUser?: (userId: string) => void;
   compact?: boolean;
 }
 
@@ -53,6 +54,7 @@ export function DIAInsightCard({
   card,
   onAction,
   onDismiss,
+  onMessageUser,
   compact = false,
 }: DIAInsightCardProps) {
   const navigate = useNavigate();
@@ -89,7 +91,15 @@ export function DIAInsightCard({
     }
 
     if (action.type === 'navigate' && action.payload.url) {
-      navigate(action.payload.url as string);
+      const url = action.payload.url as string;
+      // Intercept message navigations to open inline chat instead
+      const messageMatch = url.match(/\/dna\/messages\?to=(.+)/);
+      if (messageMatch && onMessageUser) {
+        onMessageUser(messageMatch[1]);
+        onAction(action);
+        return;
+      }
+      navigate(url);
     }
     onAction(action);
   };
