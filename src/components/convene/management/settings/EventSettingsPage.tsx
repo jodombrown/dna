@@ -124,11 +124,25 @@ const EventSettingsPage: React.FC = () => {
   // Update visibility mutation
   const updateVisibilityMutation = useMutation({
     mutationFn: async () => {
+      if (slug) {
+        // Check slug uniqueness (exclude current event)
+        const { data: existing } = await supabase
+          .from('events')
+          .select('id')
+          .eq('slug', slug)
+          .neq('id', event.id)
+          .maybeSingle();
+
+        if (existing) {
+          throw new Error('This URL is already taken by another event. Please choose a different one.');
+        }
+      }
+
       const { error } = await supabase
         .from('events')
         .update({
           is_public: isPublic,
-          slug,
+          slug: slug || null,
         })
         .eq('id', event.id);
 
@@ -138,8 +152,8 @@ const EventSettingsPage: React.FC = () => {
       refetchEvent();
       toast({ title: 'Settings saved', description: 'Visibility settings have been updated.' });
     },
-    onError: () => {
-      toast({ title: 'Error', description: 'Failed to save settings.', variant: 'destructive' });
+    onError: (error: Error) => {
+      toast({ title: 'Error', description: error.message || 'Failed to save settings.', variant: 'destructive' });
     },
   });
 
@@ -194,7 +208,7 @@ const EventSettingsPage: React.FC = () => {
   });
 
   const canDelete = !event.is_cancelled; // Simplified check - in production check for registrations
-  const eventUrl = `${window.location.origin}/dna/convene/events/${event.slug || event.id}`;
+  const eventUrl = `${window.location.origin}/dna/convene/events/${slug || event.id}`;
 
   return (
     <div className="space-y-6">
@@ -422,21 +436,35 @@ const EventSettingsPage: React.FC = () => {
                   <Link2 className="h-5 w-5 text-muted-foreground" />
                   <div className="flex-1 min-w-0">
                     <p className="font-medium">Event URL</p>
-                    <p className="text-sm text-muted-foreground truncate">
+                    <a
+                      href={eventUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-primary hover:underline truncate block"
+                    >
                       {eventUrl}
-                    </p>
+                    </a>
                   </div>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    navigator.clipboard.writeText(eventUrl);
-                    toast({ title: 'Copied', description: 'Event URL copied to clipboard' });
-                  }}
-                >
-                  Copy
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      navigator.clipboard.writeText(eventUrl);
+                      toast({ title: 'Copied', description: 'Event URL copied to clipboard' });
+                    }}
+                  >
+                    Copy
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.open(eventUrl, '_blank')}
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
               </div>
 
               <div className="flex justify-end">
