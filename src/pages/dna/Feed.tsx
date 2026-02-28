@@ -316,10 +316,10 @@ const DnaFeed = () => {
               }}
             >
               <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
-                 <TabsList className="w-full grid grid-cols-5 h-10 bg-muted/50 rounded-lg p-1">
+                 <TabsList className="w-full grid grid-cols-5 h-10 bg-muted/30 rounded-xl p-1 border border-border/40">
                    <Tooltip>
                      <TooltipTrigger asChild>
-                       <TabsTrigger value="all" className="text-xs rounded-md data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-[hsl(var(--dna-emerald))]">
+                       <TabsTrigger value="all" className="text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:!text-[hsl(var(--dna-emerald))] data-[state=active]:font-semibold data-[state=active]:border data-[state=active]:border-[hsl(var(--dna-emerald))]/20">
                          <Newspaper className="h-4 w-4 mr-1.5" />
                          All
                        </TabsTrigger>
@@ -328,7 +328,7 @@ const DnaFeed = () => {
                    </Tooltip>
                    <Tooltip>
                      <TooltipTrigger asChild>
-                       <TabsTrigger value="for_you" className="text-xs rounded-md data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-[hsl(var(--dna-emerald))]">
+                       <TabsTrigger value="for_you" className="text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:!text-[hsl(var(--dna-emerald))] data-[state=active]:font-semibold data-[state=active]:border data-[state=active]:border-[hsl(var(--dna-emerald))]/20">
                          <Sparkles className="h-4 w-4 mr-1.5" />
                          For You
                        </TabsTrigger>
@@ -337,7 +337,7 @@ const DnaFeed = () => {
                    </Tooltip>
                    <Tooltip>
                      <TooltipTrigger asChild>
-                       <TabsTrigger value="network" className="text-xs rounded-md data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-[hsl(var(--dna-emerald))]">
+                       <TabsTrigger value="network" className="text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:!text-[hsl(var(--dna-emerald))] data-[state=active]:font-semibold data-[state=active]:border data-[state=active]:border-[hsl(var(--dna-emerald))]/20">
                          <Users className="h-4 w-4 mr-1.5" />
                          Network
                        </TabsTrigger>
@@ -346,7 +346,7 @@ const DnaFeed = () => {
                    </Tooltip>
                    <Tooltip>
                      <TooltipTrigger asChild>
-                       <TabsTrigger value="my_posts" className="text-xs rounded-md data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-[hsl(var(--dna-emerald))]">
+                       <TabsTrigger value="my_posts" className="text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:!text-[hsl(var(--dna-emerald))] data-[state=active]:font-semibold data-[state=active]:border data-[state=active]:border-[hsl(var(--dna-emerald))]/20">
                          <PenSquare className="h-4 w-4 mr-1.5" />
                          Mine
                        </TabsTrigger>
@@ -355,7 +355,7 @@ const DnaFeed = () => {
                    </Tooltip>
                    <Tooltip>
                      <TooltipTrigger asChild>
-                       <TabsTrigger value="bookmarks" className="text-xs rounded-md data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-[hsl(var(--dna-emerald))]">
+                       <TabsTrigger value="bookmarks" className="text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:!text-[hsl(var(--dna-emerald))] data-[state=active]:font-semibold data-[state=active]:border data-[state=active]:border-[hsl(var(--dna-emerald))]/20">
                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                          </svg>
