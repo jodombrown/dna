@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { PenSquare, Sparkles, Users, Newspaper, TrendingUp, Search } from 'lucide-react';
+import { PenSquare, Sparkles, Users, Newspaper, TrendingUp, Search, Clock } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
@@ -36,7 +36,10 @@ const DnaFeed = () => {
   const { user } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile();
 
-  const [activeTab, setActiveTab] = useState<FeedTab>('all');
+  // Read initial tab from URL params (e.g., ?tab=bookmarks)
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialTab = (urlParams.get('tab') as FeedTab) || 'all';
+  const [activeTab, setActiveTab] = useState<FeedTab>(initialTab);
   const [rankingMode, setRankingMode] = useState<RankingMode>('latest');
   const [showSearchDialog, setShowSearchDialog] = useState(false);
   const [newPostCount, setNewPostCount] = useState(0);
@@ -262,14 +265,14 @@ const DnaFeed = () => {
               </div>
               <Tabs value={rankingMode} onValueChange={(v) => setRankingMode(v as RankingMode)} className="w-auto">
                 <TabsList className="h-8">
-                  <TabsTrigger value="top" className="flex items-center gap-1.5 text-xs px-2">
-                    <TrendingUp className="h-3 w-3" />
-                    <span>Top</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="latest" className="flex items-center gap-1.5 text-xs px-2">
-                    <Sparkles className="h-3 w-3" />
-                    <span>Latest</span>
-                  </TabsTrigger>
+                   <TabsTrigger value="top" className="flex items-center gap-1.5 text-xs px-3 rounded-full data-[state=active]:bg-[hsl(var(--dna-emerald))] data-[state=active]:text-white">
+                     <TrendingUp className="h-3 w-3" />
+                     <span>Top</span>
+                   </TabsTrigger>
+                   <TabsTrigger value="latest" className="flex items-center gap-1.5 text-xs px-3 rounded-full data-[state=active]:bg-[hsl(var(--dna-emerald))] data-[state=active]:text-white">
+                     <Clock className="h-3 w-3" />
+                     <span>Latest</span>
+                   </TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>
@@ -302,60 +305,55 @@ const DnaFeed = () => {
               }}
             >
               <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
-                <TabsList className="w-full grid grid-cols-5 h-10 relative">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <TabsTrigger value="all" className="text-xs relative">
-                        <Newspaper className="h-4 w-4 mr-1.5" />
-                        All
-                        {activeTab === 'all' && <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-primary rounded-full" />}
-                      </TabsTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent>All posts from across DNA</TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <TabsTrigger value="for_you" className="text-xs relative">
-                        <Sparkles className="h-4 w-4 mr-1.5" />
-                        For You
-                        {activeTab === 'for_you' && <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-primary rounded-full" />}
-                      </TabsTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent>Personalized based on your interests</TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <TabsTrigger value="network" className="text-xs relative">
-                        <Users className="h-4 w-4 mr-1.5" />
-                        Network
-                        {activeTab === 'network' && <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-primary rounded-full" />}
-                      </TabsTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent>Posts from your connections</TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <TabsTrigger value="my_posts" className="text-xs relative">
-                        <PenSquare className="h-4 w-4 mr-1.5" />
-                        Mine
-                        {activeTab === 'my_posts' && <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-primary rounded-full" />}
-                      </TabsTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent>Your posts and stories</TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <TabsTrigger value="bookmarks" className="text-xs relative">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                        </svg>
-                        Saved
-                        {activeTab === 'bookmarks' && <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-primary rounded-full" />}
-                      </TabsTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent>Bookmarked posts and stories</TooltipContent>
-                  </Tooltip>
-                </TabsList>
+                 <TabsList className="w-full grid grid-cols-5 h-10 bg-muted/50 rounded-lg p-1">
+                   <Tooltip>
+                     <TooltipTrigger asChild>
+                       <TabsTrigger value="all" className="text-xs rounded-md data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-[hsl(var(--dna-emerald))]">
+                         <Newspaper className="h-4 w-4 mr-1.5" />
+                         All
+                       </TabsTrigger>
+                     </TooltipTrigger>
+                     <TooltipContent>All posts from across DNA</TooltipContent>
+                   </Tooltip>
+                   <Tooltip>
+                     <TooltipTrigger asChild>
+                       <TabsTrigger value="for_you" className="text-xs rounded-md data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-[hsl(var(--dna-emerald))]">
+                         <Sparkles className="h-4 w-4 mr-1.5" />
+                         For You
+                       </TabsTrigger>
+                     </TooltipTrigger>
+                     <TooltipContent>Personalized based on your interests</TooltipContent>
+                   </Tooltip>
+                   <Tooltip>
+                     <TooltipTrigger asChild>
+                       <TabsTrigger value="network" className="text-xs rounded-md data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-[hsl(var(--dna-emerald))]">
+                         <Users className="h-4 w-4 mr-1.5" />
+                         Network
+                       </TabsTrigger>
+                     </TooltipTrigger>
+                     <TooltipContent>Posts from your connections</TooltipContent>
+                   </Tooltip>
+                   <Tooltip>
+                     <TooltipTrigger asChild>
+                       <TabsTrigger value="my_posts" className="text-xs rounded-md data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-[hsl(var(--dna-emerald))]">
+                         <PenSquare className="h-4 w-4 mr-1.5" />
+                         Mine
+                       </TabsTrigger>
+                     </TooltipTrigger>
+                     <TooltipContent>Your posts and stories</TooltipContent>
+                   </Tooltip>
+                   <Tooltip>
+                     <TooltipTrigger asChild>
+                       <TabsTrigger value="bookmarks" className="text-xs rounded-md data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-[hsl(var(--dna-emerald))]">
+                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                         </svg>
+                         Saved
+                       </TabsTrigger>
+                     </TooltipTrigger>
+                     <TooltipContent>Bookmarked posts and stories</TooltipContent>
+                   </Tooltip>
+                 </TabsList>
               </Tabs>
             </div>
           </div>

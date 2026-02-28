@@ -25,17 +25,27 @@ export const FeedProfileCard: React.FC = () => {
 
   return (
     <Card className="overflow-hidden border-0 shadow-sm bg-card">
-      {/* Heritage-inspired header band — taller for more presence */}
+      {/* Profile banner — uses user's banner if set, otherwise heritage gradient */}
       <div className="h-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--dna-emerald))] via-[hsl(var(--dna-emerald)/0.7)] to-[hsl(var(--dna-gold)/0.6)]" />
-        {/* Subtle Kente-inspired pattern overlay */}
-        <svg className="absolute inset-0 w-full h-full opacity-[0.08]" viewBox="0 0 120 48" preserveAspectRatio="none">
-          <pattern id="kente-feed" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
-            <rect x="0" y="0" width="12" height="12" fill="white" />
-            <rect x="12" y="12" width="12" height="12" fill="white" />
-          </pattern>
-          <rect width="120" height="48" fill="url(#kente-feed)" />
-        </svg>
+        {(profile as Record<string, unknown>).banner_url ? (
+          <img
+            src={(profile as Record<string, unknown>).banner_url as string}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : (
+          <>
+            <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--dna-emerald))] via-[hsl(var(--dna-emerald)/0.7)] to-[hsl(var(--dna-gold)/0.6)]" />
+            {/* Subtle Kente-inspired pattern overlay */}
+            <svg className="absolute inset-0 w-full h-full opacity-[0.08]" viewBox="0 0 120 48" preserveAspectRatio="none">
+              <pattern id="kente-feed" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+                <rect x="0" y="0" width="12" height="12" fill="white" />
+                <rect x="12" y="12" width="12" height="12" fill="white" />
+              </pattern>
+              <rect width="120" height="48" fill="url(#kente-feed)" />
+            </svg>
+          </>
+        )}
       </div>
 
       <div className="px-3 pb-3 -mt-8">
@@ -76,7 +86,7 @@ export const FeedProfileCard: React.FC = () => {
         {/* Saved Items link — warm amber icon */}
         <button
           className="w-full flex items-center justify-between mt-3 px-2 py-1.5 rounded-md hover:bg-amber-50 dark:hover:bg-amber-950/20 transition-colors text-xs text-muted-foreground group"
-          onClick={() => navigate('/dna/feed?tab=bookmarks')}
+          onClick={() => navigate('/dna/saved')}
         >
           <span className="flex items-center gap-1.5">
             <Bookmark className="h-3.5 w-3.5 text-[hsl(var(--dna-gold))]" />
