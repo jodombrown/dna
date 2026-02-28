@@ -28,18 +28,29 @@ import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { useMobile } from '@/hooks/useMobile';
 import { incrementSessionCount } from '@/services/dia-feed-cadence';
+import { useLocation } from 'react-router-dom';
 
 // Scroll position storage key
 const FEED_SCROLL_KEY = 'dna_feed_scroll_position';
 
 const DnaFeed = () => {
   const { user } = useAuth();
+  const location = useLocation();
   const { data: profile, isLoading: profileLoading } = useProfile();
 
   // Read initial tab from URL params (e.g., ?tab=bookmarks)
-  const urlParams = new URLSearchParams(window.location.search);
+  const urlParams = new URLSearchParams(location.search);
   const initialTab = (urlParams.get('tab') as FeedTab) || 'all';
   const [activeTab, setActiveTab] = useState<FeedTab>(initialTab);
+
+  // Sync activeTab when URL search params change (e.g., sidebar "Saved Items" click)
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get('tab') as FeedTab | null;
+    if (tabParam && tabParam !== activeTab) {
+      setActiveTab(tabParam);
+    }
+  }, [location.search]);
   const [rankingMode, setRankingMode] = useState<RankingMode>('latest');
   const [showSearchDialog, setShowSearchDialog] = useState(false);
   const [newPostCount, setNewPostCount] = useState(0);

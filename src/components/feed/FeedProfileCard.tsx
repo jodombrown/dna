@@ -86,7 +86,7 @@ export const FeedProfileCard: React.FC = () => {
         {/* Saved Items link — warm amber icon */}
         <button
           className="w-full flex items-center justify-between mt-3 px-2 py-1.5 rounded-md hover:bg-amber-50 dark:hover:bg-amber-950/20 transition-colors text-xs text-muted-foreground group"
-          onClick={() => navigate('/dna/saved')}
+          onClick={() => navigate('/dna/feed?tab=bookmarks')}
         >
           <span className="flex items-center gap-1.5">
             <Bookmark className="h-3.5 w-3.5 text-[hsl(var(--dna-gold))]" />
