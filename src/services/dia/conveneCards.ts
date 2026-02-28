@@ -276,8 +276,51 @@ async function generateHostingNudge(userId: string): Promise<DIACard | null> {
   }
 }
 
+// ── Card Type 5: Curated Event Discovery ──────────
+
+async function generateCuratedEventCard(_userId: string): Promise<DIACard | null> {
+  try {
+    const now = new Date().toISOString();
+
+    const { data: curatedEvents } = await supabase
+      .from('events')
+      .select('id, title, description, location_city, location_country, start_time, event_type, tags')
+      .eq('is_curated', true)
+      .eq('is_public', true)
+      .gte('start_time', now)
+      .order('start_time', { ascending: true })
+      .limit(5);
+
+    if (!curatedEvents || curatedEvents.length === 0) return null;
+
+    // Pick the soonest curated event
+    const event = curatedEvents[0];
+    const location = [event.location_city, event.location_country].filter(Boolean).join(', ');
+    const tags = (event.tags as string[]) || [];
+
+    return {
+      id: `convene-curated-${event.id}`,
+      category: 'convene',
+      cardType: 'curated_event',
+      headline: event.title,
+      body: `${location ? `📍 ${location} · ` : ''}${event.event_type || 'Event'} curated by DNA for the diaspora community.${tags.length > 0 ? ` Tags: ${tags.join(', ')}` : ''}`,
+      accentColor: ACCENT,
+      icon: 'Sparkles',
+      priority: 55,
+      actions: [
+        { label: 'View Event', type: 'navigate' as const, payload: { url: `/dna/convene/events/${event.id}` }, isPrimary: true },
+        { label: 'Browse All', type: 'navigate' as const, payload: { url: '/dna/convene' }, isPrimary: false },
+      ],
+      metadata: { eventId: event.id, eventTitle: event.title, isCurated: true },
+      dismissKey: `curated-${event.id}`,
+    };
+  } catch {
+    return null;
+  }
+}
+
 // ── Export ──────────────────────────────────────────
 
 export function generateConveneCards(): Array<(userId: string) => Promise<DIACard | null>> {
-  return [generateEventOverlap, generateEventRecommendation, generatePostEventFollowUp, generateHostingNudge];
+  return [generateEventOverlap, generateEventRecommendation, generatePostEventFollowUp, generateHostingNudge, generateCuratedEventCard];
 }

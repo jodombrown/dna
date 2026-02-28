@@ -32,10 +32,10 @@ SELECT cron.schedule(
   $$
 );
 
--- Schedule curate-diaspora-events to run every Sunday at 6 AM UTC
+-- Schedule curate-diaspora-events to run every Sunday at 6 AM ET (11 AM UTC)
 SELECT cron.schedule(
   'weekly-curate-diaspora-events',
-  '0 6 * * 0',
+  '0 11 * * 0',
   $$
   SELECT
     net.http_post(
