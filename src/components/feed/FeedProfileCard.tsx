@@ -1,6 +1,6 @@
 /**
  * FeedProfileCard - Warm, heritage-infused profile card for feed left sidebar
- * DNA-branded with Kente-inspired accents, not a LinkedIn clone
+ * DNA-branded with Kente-inspired accents
  */
 
 import React from 'react';
@@ -9,55 +9,24 @@ import { Card } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useProfile } from '@/hooks/useProfile';
 import { useAuth } from '@/contexts/AuthContext';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { Bookmark, ChevronRight } from 'lucide-react';
+import { Bookmark, ChevronRight, MapPin } from 'lucide-react';
 
 export const FeedProfileCard: React.FC = () => {
   const { user } = useAuth();
   const { data: profile } = useProfile();
   const navigate = useNavigate();
 
-  const { data: stats } = useQuery({
-    queryKey: ['profile-quick-stats', user?.id],
-    queryFn: async () => {
-      if (!user?.id) return { connections: 0, posts: 0, events: 0 };
-
-      const [connectionsRes, postsRes, eventsRes] = await Promise.all([
-        supabase
-          .from('connections')
-          .select('id', { count: 'exact', head: true })
-          .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`)
-          .eq('status', 'accepted'),
-        supabase
-          .from('posts')
-          .select('id', { count: 'exact', head: true })
-          .eq('author_id', user.id),
-        supabase
-          .from('event_attendees')
-          .select('id', { count: 'exact', head: true })
-          .eq('user_id', user.id),
-      ]);
-
-      return {
-        connections: connectionsRes.count || 0,
-        posts: postsRes.count || 0,
-        events: eventsRes.count || 0,
-      };
-    },
-    enabled: !!user?.id,
-  });
-
   if (!profile) return null;
 
   const displayName = profile.display_name || profile.username || 'Member';
   const initials = displayName.charAt(0).toUpperCase();
   const username = profile.username || '';
+  const currentCity = (profile as Record<string, unknown>).current_city as string | undefined;
 
   return (
     <Card className="overflow-hidden border-0 shadow-sm bg-card">
-      {/* Heritage-inspired header band */}
-      <div className="h-16 relative overflow-hidden">
+      {/* Heritage-inspired header band — taller for more presence */}
+      <div className="h-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--dna-emerald))] via-[hsl(var(--dna-emerald)/0.7)] to-[hsl(var(--dna-gold)/0.6)]" />
         {/* Subtle Kente-inspired pattern overlay */}
         <svg className="absolute inset-0 w-full h-full opacity-[0.08]" viewBox="0 0 120 48" preserveAspectRatio="none">
@@ -83,7 +52,7 @@ export const FeedProfileCard: React.FC = () => {
           </Avatar>
         </div>
 
-        {/* Name and headline */}
+        {/* Name, headline, and city */}
         <div className="text-center mt-2.5">
           <h3
             className="font-semibold text-sm cursor-pointer hover:text-[hsl(var(--dna-emerald))] transition-colors"
@@ -96,33 +65,21 @@ export const FeedProfileCard: React.FC = () => {
               {profile.headline}
             </p>
           )}
+          {currentCity && (
+            <p className="flex items-center justify-center gap-1 text-xs text-muted-foreground mt-1">
+              <MapPin className="h-3 w-3" />
+              Based in {currentCity}
+            </p>
+          )}
         </div>
 
-        {/* Stats as warm pill badges */}
-        <div className="flex items-center justify-center gap-2 mt-3">
-          <button
-            className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-muted/60 hover:bg-muted transition-colors text-xs"
-            onClick={() => navigate(`/dna/${username}?tab=connections`)}
-          >
-            <span className="font-bold text-foreground">{stats?.connections || 0}</span>
-            <span className="text-muted-foreground">connections</span>
-          </button>
-          <button
-            className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-muted/60 hover:bg-muted transition-colors text-xs"
-            onClick={() => navigate(`/dna/${username}?tab=activity`)}
-          >
-            <span className="font-bold text-foreground">{stats?.posts || 0}</span>
-            <span className="text-muted-foreground">posts</span>
-          </button>
-        </div>
-
-        {/* Saved Items link */}
+        {/* Saved Items link — warm amber icon */}
         <button
-          className="w-full flex items-center justify-between mt-3 px-2 py-1.5 rounded-md hover:bg-muted/60 transition-colors text-xs text-muted-foreground group"
+          className="w-full flex items-center justify-between mt-3 px-2 py-1.5 rounded-md hover:bg-amber-50 dark:hover:bg-amber-950/20 transition-colors text-xs text-muted-foreground group"
           onClick={() => navigate('/dna/feed?tab=bookmarks')}
         >
           <span className="flex items-center gap-1.5">
-            <Bookmark className="h-3.5 w-3.5" />
+            <Bookmark className="h-3.5 w-3.5 text-[hsl(var(--dna-gold))]" />
             Saved Items
           </span>
           <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />

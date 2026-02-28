@@ -75,7 +75,9 @@ export const FeedActiveSpaces: React.FC = () => {
   };
 
   return (
-    <Card>
+    <Card className="overflow-hidden">
+      {/* Forest Green accent stripe — COLLABORATE module */}
+      <div className="h-1 bg-[hsl(var(--dna-forest))]" />
       <CardHeader className="pb-2 pt-3 px-3">
         <CardTitle className="text-sm font-semibold flex items-center gap-2">
           <Layers className="h-4 w-4 text-primary" />
@@ -87,7 +89,7 @@ export const FeedActiveSpaces: React.FC = () => {
           {spaces.map((space) => (
             <button
               key={space.id}
-              className="w-full text-left hover:bg-muted rounded-md p-2 -mx-0.5 transition-colors group"
+              className="w-full text-left hover:bg-emerald-50 dark:hover:bg-emerald-950/20 rounded-md p-2 -mx-0.5 transition-colors group"
               onClick={() => navigate(`/dna/collaborate/spaces/${space.id}`)}
             >
               <p className="text-sm font-medium line-clamp-1 group-hover:text-primary transition-colors">
