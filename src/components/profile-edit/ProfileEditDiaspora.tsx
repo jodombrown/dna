@@ -171,7 +171,7 @@ const ProfileEditDiaspora: React.FC<ProfileEditDiasporaProps> = ({
           selected={diasporaNetworks}
           onChange={onNetworksChange}
           placeholder="Select networks you belong to..."
-          colorClass="bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-700"
+          colorClass="bg-dna-forest/10 text-dna-forest border-dna-forest/20"
           allowCustom={true}
         />
 
@@ -195,7 +195,7 @@ const ProfileEditDiaspora: React.FC<ProfileEditDiasporaProps> = ({
             onIntentionsChange(values);
           }}
           placeholder="Select your intentions..."
-          colorClass="bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700"
+          colorClass="bg-dna-emerald/10 text-dna-emerald border-dna-emerald/20"
           allowCustom={true}
         />
 
@@ -206,7 +206,7 @@ const ProfileEditDiaspora: React.FC<ProfileEditDiasporaProps> = ({
           selected={mentorshipAreas}
           onChange={onMentorshipAreasChange}
           placeholder="Select mentorship areas..."
-          colorClass="bg-pink-100 text-pink-800 border-pink-200 dark:bg-pink-900/30 dark:text-pink-300 dark:border-pink-700"
+          colorClass="bg-dna-copper/10 text-dna-copper border-dna-copper/20"
           allowCustom={true}
         />
       </CardContent>
