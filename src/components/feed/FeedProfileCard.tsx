@@ -1,26 +1,23 @@
 /**
- * FeedProfileCard - Compact profile card for feed left sidebar
- * LinkedIn-style mini profile with quick stats and navigation
+ * FeedProfileCard - Warm, heritage-infused profile card for feed left sidebar
+ * DNA-branded with Kente-inspired accents, not a LinkedIn clone
  */
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { useProfile } from '@/hooks/useProfile';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, BookOpen, Calendar, Bookmark } from 'lucide-react';
+import { Bookmark, ChevronRight } from 'lucide-react';
 
 export const FeedProfileCard: React.FC = () => {
   const { user } = useAuth();
   const { data: profile } = useProfile();
   const navigate = useNavigate();
 
-  // Fetch user stats
   const { data: stats } = useQuery({
     queryKey: ['profile-quick-stats', user?.id],
     queryFn: async () => {
@@ -55,86 +52,82 @@ export const FeedProfileCard: React.FC = () => {
 
   const displayName = profile.display_name || profile.username || 'Member';
   const initials = displayName.charAt(0).toUpperCase();
+  const username = profile.username || '';
 
   return (
-    <Card className="overflow-hidden">
-      {/* Profile Header with gradient */}
-      <div className="h-14 bg-gradient-to-r from-primary/20 to-primary/5" />
-      
-      <CardContent className="pt-0 -mt-7 pb-4">
+    <Card className="overflow-hidden border-0 shadow-sm bg-card">
+      {/* Heritage-inspired header band */}
+      <div className="h-16 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--dna-emerald))] via-[hsl(var(--dna-emerald)/0.7)] to-[hsl(var(--dna-gold)/0.6)]" />
+        {/* Subtle Kente-inspired pattern overlay */}
+        <svg className="absolute inset-0 w-full h-full opacity-[0.08]" viewBox="0 0 120 48" preserveAspectRatio="none">
+          <pattern id="kente-feed" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+            <rect x="0" y="0" width="12" height="12" fill="white" />
+            <rect x="12" y="12" width="12" height="12" fill="white" />
+          </pattern>
+          <rect width="120" height="48" fill="url(#kente-feed)" />
+        </svg>
+      </div>
+
+      <div className="px-3 pb-3 -mt-8">
         {/* Avatar */}
         <div className="flex justify-center">
-          <Avatar 
-            className="h-14 w-14 border-4 border-background cursor-pointer"
-            onClick={() => navigate(`/dna/${profile.username}`)}
+          <Avatar
+            className="h-16 w-16 border-[3px] border-card cursor-pointer ring-2 ring-[hsl(var(--dna-emerald)/0.3)] hover:ring-[hsl(var(--dna-emerald)/0.6)] transition-all"
+            onClick={() => navigate(`/dna/${username}`)}
           >
             <AvatarImage src={profile.avatar_url || ''} alt={displayName} />
-            <AvatarFallback className="bg-primary text-primary-foreground text-lg">
+            <AvatarFallback className="bg-[hsl(var(--dna-emerald))] text-white text-lg font-bold">
               {initials}
             </AvatarFallback>
           </Avatar>
         </div>
 
         {/* Name and headline */}
-        <div className="text-center mt-2">
-          <h3 
-            className="font-semibold text-sm cursor-pointer hover:text-primary hover:underline transition-colors"
-            onClick={() => navigate(`/dna/${profile.username}`)}
+        <div className="text-center mt-2.5">
+          <h3
+            className="font-semibold text-sm cursor-pointer hover:text-[hsl(var(--dna-emerald))] transition-colors"
+            onClick={() => navigate(`/dna/${username}`)}
           >
             {displayName}
           </h3>
           {profile.headline && (
-            <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
+            <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5 leading-relaxed">
               {profile.headline}
             </p>
           )}
         </div>
 
-        <Separator className="my-3" />
-
-        {/* Quick Stats */}
-        <div className="grid grid-cols-3 gap-1 text-center">
-          <button 
-            className="p-1.5 rounded-md hover:bg-muted transition-colors"
-            onClick={() => navigate(`/dna/${profile.username}?tab=connections`)}
+        {/* Stats as warm pill badges */}
+        <div className="flex items-center justify-center gap-2 mt-3">
+          <button
+            className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-muted/60 hover:bg-muted transition-colors text-xs"
+            onClick={() => navigate(`/dna/${username}?tab=connections`)}
           >
-            <Users className="h-3.5 w-3.5 mx-auto text-muted-foreground" />
-            <p className="text-sm font-semibold mt-0.5">{stats?.connections || 0}</p>
-            <p className="text-[10px] text-muted-foreground">Connections</p>
+            <span className="font-bold text-foreground">{stats?.connections || 0}</span>
+            <span className="text-muted-foreground">connections</span>
           </button>
-          <button 
-            className="p-1.5 rounded-md hover:bg-muted transition-colors"
-            onClick={() => navigate(`/dna/${profile.username}?tab=activity`)}
+          <button
+            className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-muted/60 hover:bg-muted transition-colors text-xs"
+            onClick={() => navigate(`/dna/${username}?tab=activity`)}
           >
-            <BookOpen className="h-3.5 w-3.5 mx-auto text-muted-foreground" />
-            <p className="text-sm font-semibold mt-0.5">{stats?.posts || 0}</p>
-            <p className="text-[10px] text-muted-foreground">Posts</p>
-          </button>
-          <button 
-            className="p-1.5 rounded-md hover:bg-muted transition-colors"
-            onClick={() => navigate('/dna/convene')}
-          >
-            <Calendar className="h-3.5 w-3.5 mx-auto text-muted-foreground" />
-            <p className="text-sm font-semibold mt-0.5">{stats?.events || 0}</p>
-            <p className="text-[10px] text-muted-foreground">Events</p>
+            <span className="font-bold text-foreground">{stats?.posts || 0}</span>
+            <span className="text-muted-foreground">posts</span>
           </button>
         </div>
 
-        <Separator className="my-3" />
-
-        {/* Quick Links */}
-        <div className="space-y-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start h-8 text-xs"
-            onClick={() => navigate('/dna/feed?tab=bookmarks')}
-          >
-            <Bookmark className="h-3.5 w-3.5 mr-2" />
+        {/* Saved Items link */}
+        <button
+          className="w-full flex items-center justify-between mt-3 px-2 py-1.5 rounded-md hover:bg-muted/60 transition-colors text-xs text-muted-foreground group"
+          onClick={() => navigate('/dna/feed?tab=bookmarks')}
+        >
+          <span className="flex items-center gap-1.5">
+            <Bookmark className="h-3.5 w-3.5" />
             Saved Items
-          </Button>
-        </div>
-      </CardContent>
+          </span>
+          <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+        </button>
+      </div>
     </Card>
   );
 };
