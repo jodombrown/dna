@@ -688,7 +688,7 @@ html {
 
 /* Dynamic Bokeh Animation Keyframes */
 @keyframes bokeh-drift-1 {
-  0% { transform: translate(-20px, 100vh) scale(0.8); opacity: 0; }
+  0% { transform: translate(-20px, 100dvh) scale(0.8); opacity: 0; }
   10% { opacity: 0.6; }
   25% { transform: translate(40vw, 80vh) scale(1.2); opacity: 0.8; }
   50% { transform: translate(10vw, 40vh) scale(0.9); opacity: 0.4; }

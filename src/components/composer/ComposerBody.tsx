@@ -567,7 +567,7 @@ function EventModeFields({
             <button
               key={option.value}
               type="button"
-              onClick={() => onChange({ format: option.value as any })}
+              onClick={() => onChange({ format: option.value as ComposerFormData['format'] })}
               className={cn(
                 'flex flex-col items-center p-3 rounded-lg border-2 transition-all',
                 formData.format === option.value
@@ -966,7 +966,7 @@ function SpaceModeFields({
     'Legal', 'Sales', 'Product', 'Data', 'Content', 'Community'
   ];
 
-  const selectedSkills = (formData as any).skillsNeeded || [];
+  const selectedSkills = formData.skillsNeeded || [];
 
   return (
     <div className="space-y-4">
@@ -1048,7 +1048,7 @@ function SpaceModeFields({
                 name="visibility"
                 value={option.value}
                 checked={formData.visibility === option.value}
-                onChange={() => onChange({ visibility: option.value as any })}
+                onChange={() => onChange({ visibility: option.value as ComposerFormData['visibility'] })}
                 className="mt-1"
               />
               <div>
@@ -1073,7 +1073,7 @@ function SpaceModeFields({
                 const updated = current.includes(skill)
                   ? current.filter((s: string) => s !== skill)
                   : [...current, skill];
-                onChange({ ...formData, skillsNeeded: updated } as any);
+                onChange({ skillsNeeded: updated });
               }}
               className={cn(
                 'px-3 py-1.5 rounded-full text-sm border transition-colors',

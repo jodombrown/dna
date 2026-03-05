@@ -92,7 +92,7 @@ export const MobileFeedView: React.FC = () => {
           </TabsList>
         </div>
 
-        <div className="px-4 pt-4 pb-20">
+        <div className="px-4 pt-4 pb-bottom-nav md:pb-0">
           {/* All tabs use UniversalFeed now */}
           <UniversalFeed
             viewerId={user.id}
