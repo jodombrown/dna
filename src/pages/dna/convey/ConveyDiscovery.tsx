@@ -31,6 +31,7 @@ import { Loader2 } from 'lucide-react';
 
 // DIA Card System (Sprint 4A)
 import { DIAHubSection } from '@/components/dia/DIAHubSection';
+import { ConveyDIADiscoveryCard } from '@/components/convey/ConveyDIADiscoveryCard';
 
 export function ConveyDiscovery() {
   const navigate = useNavigate();
@@ -219,6 +220,12 @@ export function ConveyDiscovery() {
 
         {/* Sub Navigation */}
         <HubSubNav tabs={subNavTabs} basePath="/dna/convey" />
+
+        {/* DIA Discovery Card — between sub-nav and content */}
+        <ConveyDIADiscoveryCard
+          publishedCount={stats?.published || 0}
+          myStoriesCount={stats?.myStories || 0}
+        />
 
         {/* Two Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">

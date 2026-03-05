@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
+import { CollaborateDIADiscoveryCard } from './CollaborateDIADiscoveryCard';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -106,6 +107,13 @@ export function SpaceDirectory() {
           </SelectContent>
         </Select>
       </div>
+
+      {/* DIA Discovery Card — between filters and space grid */}
+      <CollaborateDIADiscoveryCard
+        spaceCount={filteredSpaces?.length || 0}
+        onCreateSpace={() => setShowCreateWizard(true)}
+        className="mb-2"
+      />
 
       {/* Space Grid */}
       {isLoading ? (
