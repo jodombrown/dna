@@ -1,14 +1,24 @@
 
-# Curated by DNA: Editorial Event Cards — IMPLEMENTED
 
-## Status: ✅ Complete
+# Fix: Composer Select Dropdowns Blocked on Mobile
 
-### What Was Built
+## Root Cause
 
-1. **`CuratedEventCard`** (`src/components/convene/CuratedEventCard.tsx`) — Editorial magazine-style card with emerald gradient top border, "Curated by DNA" badge, source attribution, compact thumbnail layout, and dual CTAs (Interested + View Event).
+The Universal Composer uses a `vaul` Drawer on mobile at `z-50`. Radix `<SelectContent>` renders via a **portal** at the document root. Without an explicit z-index higher than z-50, the dropdown appears behind the Drawer overlay and is unclickable.
 
-2. **`CuratedEventPreview`** (`src/pages/dna/convene/CuratedEventPreview.tsx`) — Lightweight detail page with cover image, date/time, location, description, prominent "Register at Source" button, and internal RSVP tracking. No organizer card, activity feed, or manage actions.
+**Story mode already has the fix** -- its `SelectContent` uses `z-[9999]`. Event and Need modes do not.
 
-3. **Routing** — `EventDetail.tsx` detects `is_curated` and renders `CuratedEventPreview` instead of the full detail page.
+## Changes
 
-4. **Card Switching** — `ConveneDiscovery.tsx` uses `CuratedEventCard` for curated events in both the featured carousel and upcoming events list.
+### File: `src/components/composer/ComposerBody.tsx`
+
+Add `className="z-[9999]"` to every `<SelectContent>` missing it inside the Event and Need mode fields:
+
+1. **Timezone Select** (line ~522): Add `z-[9999]` to existing `className`
+2. **Dress Code Select** (line ~702): Add `z-[9999]` to `<SelectContent>`
+3. **Category Select** (line ~1306): Add `z-[9999]` to `<SelectContent>`
+4. **Compensation Select** (line ~1340): Add `z-[9999]` to `<SelectContent>`
+5. **Duration Select** (line ~1427): Add `z-[9999]` to `<SelectContent>`
+
+Six total `<SelectContent>` edits. No structural changes, no new files.
+
