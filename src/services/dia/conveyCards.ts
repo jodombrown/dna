@@ -210,16 +210,24 @@ async function generateTrendingAlignment(userId: string): Promise<DIACard | null
 
     const { data: recentTagRows } = await supabase
       .from('post_hashtags')
-      .select('hashtag_id, hashtags(tag)')
+      .select('hashtag_id')
       .gte('created_at', sevenDaysAgo)
       .limit(200);
 
     if (!recentTagRows?.length) return null;
 
-    // Count hashtag frequency
+    const uniqueHashtagIds = [...new Set(recentTagRows.map(r => r.hashtag_id))];
+    const { data: hashtags } = await supabase
+      .from('hashtags')
+      .select('id, tag')
+      .in('id', uniqueHashtagIds);
+
+    if (!hashtags?.length) return null;
+
+    const tagById = new Map(hashtags.map(h => [h.id, h.tag]));
     const hashtagCounts: Record<string, number> = {};
     for (const row of recentTagRows) {
-      const tag = (row as any).hashtags?.tag;
+      const tag = tagById.get(row.hashtag_id);
       if (tag) {
         hashtagCounts[tag] = (hashtagCounts[tag] || 0) + 1;
       }
