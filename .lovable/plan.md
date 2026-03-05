@@ -1,149 +1,92 @@
 
 
-# DNA Mobile Experience Modernization Plan
+# DNA Platform Error Audit & Fix Plan
 
-## Assessment Summary
+## Issues Found (Prioritized by Impact)
 
-After auditing the codebase, researching 2026 mobile webapp best practices, and cross-referencing the existing mobile audit document, here are the systemic issues and the targeted fixes to make DNA feel like a truly progressive mobile webapp.
+### CRITICAL — Causes Crashes or Broken Features
 
----
+**1. Conditional Hook Violation in UniversalComposer**
+`src/components/composer/UniversalComposer.tsx` lines 98-103 wrap `useNavigate()` in a try/catch. This violates React's Rules of Hooks — hooks must not be called conditionally. While it may work in most cases, it can cause unpredictable crashes or stale closures, especially on hot reload or when React Strict Mode double-renders.
 
-## Issues Found
-
-### 1. Viewport Meta Tag is Outdated
-The current `index.html` viewport tag blocks accessibility and lacks modern keyboard handling:
-```
-width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no
-```
-- **`maximum-scale=1.0, user-scalable=no`** violates WCAG (prevents pinch-to-zoom for visually impaired users). iOS Safari ignores it anyway since iOS 10.
-- **Missing `viewport-fit=cover`** means safe-area environment variables (`env(safe-area-inset-*)`) that the CSS already references are **not activated** on notched devices. The safe-area padding defined in `index.css` is essentially dead code right now.
-- **Missing `interactive-widget=resizes-content`** means on Chrome Android the keyboard overlays content rather than resizing the layout viewport, which is likely contributing to the composer "moving around" issues.
-
-### 2. Using `100vh` Instead of `dvh` Units
-18 files use `100vh` or `calc(100vh - ...)`. On mobile browsers, `100vh` includes the browser chrome (URL bar), causing content to be hidden behind it. Modern approach is `dvh` (dynamic viewport height) which adjusts when the keyboard or browser UI appears/disappears. Tailwind supports `h-dvh` and `min-h-dvh` natively.
-
-### 3. Inconsistent Bottom Padding for Nav Bar
-36 files independently add `pb-16`, `pb-20`, or `pb-safe` to account for the bottom nav. There is no single source of truth. Some pages use `pb-20 md:pb-0`, others `pb-16 sm:pb-20 md:pb-6`. This causes either content clipping or excessive whitespace depending on the page.
-
-### 4. No `overscroll-behavior` on Scrollable Containers
-Scroll chaining (where scrolling inside a modal/drawer triggers the parent page to scroll) is not prevented globally. Only the composer has `overscroll-contain`. All bottom sheets, the More menu, and messaging views lack this.
-
-### 5. Missing Haptic Feedback on Key Interactions
-Only the QR check-in scanner uses `navigator.vibrate()`. Modern progressive webapps use haptic feedback on primary actions (tab switches, composer open, pull-to-refresh) for native-like feel. This is a low-effort, high-impact enhancement.
-
-### 6. No `prefers-reduced-motion` Respect for Animations
-The bokeh animations, breathing pulses, and card hover transforms run regardless of user preference. Users with motion sensitivity or low-end devices get unnecessary animation overhead.
+**Fix:** Move `useNavigate()` to the top level unconditionally (it will always be in a Router context in the real app). If test isolation is needed, mock the router in tests instead.
 
 ---
 
-## Plan: 6 Targeted Changes
+**2. Remaining `100vh` Usage (5 active files)**
+These files still use `100vh` which causes content to be hidden behind mobile browser chrome:
+- `src/components/convene/management/EventManagementLayout.tsx` — 5 instances of `h-[calc(100vh-64px)]`
+- `src/pages/PitchDeck.tsx` — `h-[calc(100vh-5rem)]`
+- `src/components/collaborations/CollaborationsMainContent.tsx` — `min-h-[calc(100vh-400px)]`
 
-### Change 1: Modernize Viewport Meta Tag
-**File:** `index.html`
-
-Replace the viewport meta tag:
-```html
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
-```
-- Removes `maximum-scale=1.0, user-scalable=no` (accessibility fix)
-- Adds `viewport-fit=cover` (activates `env(safe-area-inset-*)` on notched devices)
-- Adds `interactive-widget=resizes-content` (keyboard resizes layout viewport on Android Chrome, preventing fixed elements from being hidden)
-
-### Change 2: Replace `100vh` with `dvh` Units
-**Files:** ~10 active files (excluding `_archived/`)
-
-Key replacements:
-- `src/pages/dna/Feed.tsx`: `calc(100vh - 7.5rem)` → `calc(100dvh - 7.5rem)`
-- `src/layouts/DetailViewLayout.tsx`: `calc(100vh - 64px)` → `calc(100dvh - 64px)`
-- `src/layouts/TwoColumnLayout.tsx`: same pattern
-- `src/components/ui/sheet.tsx`: `max-h-[100vh]` → `max-h-[100dvh]`
-- `src/index.css`: `#root { min-height: 100vh }` → `min-height: 100dvh`
-- `src/index.css`: `.mobile-sheet max-h-[100vh]` → `max-h-[100dvh]`
-- Connect hub layout columns
-
-This gives correct full-height behavior on every mobile browser.
-
-### Change 3: Add Global `overscroll-behavior` Rules
-**File:** `src/index.css`
-
-Add to the global mobile styles:
-```css
-/* Prevent scroll chaining on modals, drawers, and sheets */
-[data-state="open"] [data-radix-scroll-area-viewport],
-[vaul-drawer] [data-vaul-drawer-content],
-.overflow-y-auto {
-  overscroll-behavior: contain;
-}
-
-/* Prevent pull-to-refresh on the app shell */
-html {
-  overscroll-behavior-y: contain;
-}
-```
-This prevents the entire page from bouncing or scrolling when users interact with drawers, sheets, or scrollable lists.
-
-### Change 4: Add `prefers-reduced-motion` Guard
-**File:** `src/index.css`
-
-Wrap all animations in a motion preference check:
-```css
-@media (prefers-reduced-motion: reduce) {
-  .animate-breathing-pulse,
-  .bokeh-drift-1, .bokeh-drift-2, .bokeh-drift-3, .bokeh-drift-4,
-  .interactive-element:hover,
-  .card-hover:hover {
-    animation: none !important;
-    transform: none !important;
-    transition: none !important;
-  }
-}
-```
-
-### Change 5: Create Haptic Feedback Utility
-**File:** `src/utils/haptics.ts` (new)
-
-A tiny utility for native-feel interactions:
-```typescript
-export function haptic(style: 'light' | 'medium' | 'heavy' = 'light') {
-  if (!('vibrate' in navigator)) return;
-  const patterns = { light: [10], medium: [20], heavy: [40] };
-  navigator.vibrate(patterns[style]);
-}
-```
-
-Then wire it into key touch points:
-- `MobileBottomNav.tsx`: tab switch → `haptic('light')`
-- `MobileFeedTabs.tsx`: tab switch → `haptic('light')`
-- Composer open → `haptic('medium')`
-
-### Change 6: Standardize Bottom Nav Padding
-**File:** `src/index.css`
-
-Create a single CSS custom property and utility class:
-```css
-:root {
-  --bottom-nav-height: 4rem;
-}
-
-.pb-bottom-nav {
-  padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px));
-}
-```
-
-Then migrate the most critical pages (`Feed.tsx`, `Connect.tsx`, `BaseLayout.tsx`, `FeedLayout.tsx`, `Notifications.tsx`, `ProfileV2.tsx`) from ad-hoc `pb-16`/`pb-20` to `pb-bottom-nav`. This creates one place to adjust if the nav height ever changes.
+**Fix:** Replace all `100vh` with `100dvh` in these files (matching the migration done in the previous sprint).
 
 ---
 
-## Impact Summary
+### HIGH — Inconsistent UX, User-Facing Issues
 
-| Change | Impact | Effort |
-|--------|--------|--------|
-| Viewport meta fix | Activates safe areas, fixes keyboard overlap | 1 line |
-| `dvh` migration | Fixes height on every mobile browser | ~10 edits |
-| `overscroll-behavior` | Eliminates scroll chaining globally | 5 lines CSS |
-| `prefers-reduced-motion` | Accessibility + performance for low-end devices | 8 lines CSS |
-| Haptic feedback | Native-like feel on interactions | New util + 3 wiring points |
-| Bottom nav padding standard | Eliminates inconsistent spacing | CSS var + 6 page edits |
+**3. 28 Files Still Using Ad-Hoc Bottom Padding**
+Despite creating the `pb-bottom-nav` utility class, 28 files still use hardcoded `pb-16`, `pb-20`, or `pb-safe` for bottom nav spacing. Key user-facing pages:
+- `src/pages/dna/Notifications.tsx` — `pb-20 md:pb-0`
+- `src/pages/dna/Messages.tsx` — `pb-16`
+- `src/pages/dna/convene/ConveneDiscovery.tsx` — `pb-20 md:pb-0`
+- `src/pages/dna/contribute/ContributeDiscovery.tsx` — `pb-20 md:pb-0`
+- `src/pages/dna/convey/ConveyDiscovery.tsx` — `pb-20 md:pb-0`
+- `src/pages/dna/FeedStoryDetail.tsx` — mixed `pb-16`/`pb-20`
+- `src/pages/dna/Username.tsx` — `pb-16`
+- `src/pages/dna/convey/ConveyStoryHub.tsx` — `pb-16 md:pb-0`
+- `src/components/mobile/MobileFeedView.tsx` — `pb-20`
 
-No new dependencies. No structural refactors. All changes are additive and backward-compatible.
+**Fix:** Replace with `pb-bottom-nav md:pb-0` in the 9 most critical user-facing pages listed above.
+
+---
+
+**4. Supabase Security Warnings (3 RLS Policies)**
+The Supabase linter flags 3 tables with `USING (true)` or `WITH CHECK (true)` on INSERT/UPDATE/DELETE operations, plus 1 function with a mutable search_path. These are security vulnerabilities that could allow unauthorized data modification.
+
+**Fix:** Identify the affected tables/functions via the SQL editor and tighten the policies. This requires a separate database investigation.
+
+---
+
+### MEDIUM — Code Quality & Maintainability
+
+**5. `as any` Casts in ComposerBody (4 instances)**
+`src/components/composer/ComposerBody.tsx` uses `as any` for form field types (`format`, `visibility`, `skillsNeeded`). These bypass TypeScript safety and can cause silent runtime errors.
+
+**Fix:** Extend the `ComposerFormData` type to properly include these fields, removing the need for `as any`.
+
+---
+
+**6. Bokeh Animation Keyframe Still Uses `100vh`**
+`src/index.css` line 691 — the `bokeh-drift-1` keyframe uses `translate(-20px, 100vh)`. While mostly cosmetic, it causes the animation start point to be off on mobile.
+
+**Fix:** Replace `100vh` with `100dvh` in the keyframe.
+
+---
+
+## Implementation Plan (Ordered by Priority)
+
+### Batch 1: Critical Fixes (3 files)
+1. **Fix conditional hook** in `UniversalComposer.tsx` — move `useNavigate()` to top level
+2. **Migrate `100vh` → `100dvh`** in `EventManagementLayout.tsx`, `PitchDeck.tsx`, `CollaborationsMainContent.tsx`
+
+### Batch 2: UX Consistency (10 files)
+3. **Standardize bottom padding** — replace `pb-16`/`pb-20` with `pb-bottom-nav md:pb-0` in the 9 key pages listed above
+4. **Fix bokeh keyframe** in `index.css`
+
+### Batch 3: Type Safety (1 file)
+5. **Remove `as any`** from `ComposerBody.tsx` by extending `ComposerFormData`
+
+### Batch 4: Security (Database)
+6. **Investigate and fix** the 3 overly-permissive RLS policies and 1 mutable search_path function
+
+---
+
+## What's NOT Broken (Good News)
+- Console.logs are clean (previous cleanup was thorough)
+- No imports from `_archived/` directory
+- Global overscroll-behavior is working
+- Viewport meta tag is modern
+- Feed, Composer (Share/Tell/Start modes), and core navigation are stable
+- `dvh` migration was applied to the 10 most critical layout files already
 
