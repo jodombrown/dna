@@ -3,6 +3,7 @@ import { Home, Users, Plus, Calendar, Menu, Sparkles } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useMobile } from '@/hooks/useMobile';
+import { haptic } from '@/utils/haptics';
 import { Badge } from '@/components/ui/badge';
 import { useUnreadNotificationCount } from '@/hooks/useUnreadNotificationCount';
 import {
@@ -156,7 +157,7 @@ const MobileBottomNav: React.FC = () => {
           {navItems.map((item) => (
             <button
               key={item.label}
-              onClick={() => handleItemClick(item)}
+              onClick={() => { haptic('light'); handleItemClick(item); }}
               className={cn(
                 "flex flex-col items-center justify-center flex-1 h-full gap-1 transition-colors relative",
                 isActive(item.path)

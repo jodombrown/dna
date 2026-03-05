@@ -50,8 +50,8 @@ export const MobileViewContainer: React.FC<MobileViewContainerProps> = ({
       
       <main 
         className={cn(
-          "pb-16 sm:pb-20", // Space for bottom nav
-          fullHeight && "min-h-[calc(100vh-3.5rem-4rem)]", // Full height minus header and nav
+          "pb-bottom-nav", // Space for bottom nav
+          fullHeight && "min-h-[calc(100dvh-3.5rem-4rem)]", // Full height minus header and nav
           !noPadding && "px-3 sm:px-4 py-3 sm:py-4",
           className
         )}

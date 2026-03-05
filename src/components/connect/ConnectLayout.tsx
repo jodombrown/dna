@@ -20,7 +20,7 @@ export const ConnectLayout = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <div className="min-h-screen bg-background pb-bottom-nav md:pb-bottom-nav-0">
         <div className="container max-w-7xl mx-auto px-4 py-6 pt-20">
           {/* Header with Profile Strength */}
           <div className="mb-6">

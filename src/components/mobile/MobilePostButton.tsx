@@ -12,6 +12,7 @@ import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { useMobile } from '@/hooks/useMobile';
 import { cn } from '@/lib/utils';
+import { haptic } from '@/utils/haptics';
 
 const MobilePostButton = () => {
   const { isMobile } = useMobile();
@@ -23,7 +24,7 @@ const MobilePostButton = () => {
     <>
       {/* Floating Action Button */}
       <Button
-        onClick={() => composer.open('post')}
+        onClick={() => { haptic('medium'); composer.open('post'); }}
         className={cn(
           "fixed bottom-20 right-4 z-40 h-14 w-14 rounded-full shadow-lg",
           "bg-[#4A8D77] hover:bg-[#3d7a66] text-white",
