@@ -94,13 +94,8 @@ export const UniversalComposer = ({
   // Sprint 3B: Onboarding
   const { isFirstTime, markComplete } = useComposerOnboarding();
 
-  // Navigation for DIA actions
-  let navigate: ReturnType<typeof useNavigate> | null = null;
-  try {
-    navigate = useNavigate();
-  } catch {
-    // May not be in a router context in tests
-  }
+  // Navigation for DIA actions — called unconditionally per Rules of Hooks
+  const navigate = useNavigate();
 
   // Mode switch text preservation
   useEffect(() => {

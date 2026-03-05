@@ -218,7 +218,7 @@ const DnaUserDashboard = () => {
         />
       )}
 
-      <div className="container max-w-6xl mx-auto px-4 pb-16">
+      <div className="container max-w-6xl mx-auto px-4 pb-bottom-nav md:pb-0">
         {!isOwnProfile && (
           <Button
             variant="ghost"

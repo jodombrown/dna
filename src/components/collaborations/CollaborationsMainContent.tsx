@@ -68,7 +68,7 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
 
   return (
     <div className="flex-1 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pb-8 overflow-x-hidden">
-      <div className={`flex gap-4 sm:gap-6 ${isMobile ? 'flex-col' : ''} min-h-[calc(100vh-400px)]`}>
+      <div className={`flex gap-4 sm:gap-6 ${isMobile ? 'flex-col' : ''} min-h-[calc(100dvh-400px)]`}>
         {/* Desktop Sidebar */}
         {!isMobile && (
           <div className="w-80 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col">

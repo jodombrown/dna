@@ -146,7 +146,7 @@ export default function FeedStoryDetail() {
   const author = story.author as { username?: string; full_name?: string; avatar_url?: string } | null;
 
   return (
-    <div className="min-h-screen bg-background pb-16 md:pb-0">
+    <div className="min-h-screen bg-background pb-bottom-nav md:pb-0">
       {/* Header Navigation */}
       <div className="border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">

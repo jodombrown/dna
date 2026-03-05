@@ -39,7 +39,7 @@ const DnaNotifications = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-20 md:pb-0">
+    <div className="min-h-screen bg-background pb-bottom-nav md:pb-0">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 max-w-3xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">

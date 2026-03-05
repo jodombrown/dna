@@ -194,7 +194,7 @@ export function ConveyDiscovery() {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-background pb-20 md:pb-0">
+    <div className="w-full min-h-screen bg-background pb-bottom-nav md:pb-0">
       <div className="container max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 space-y-6">
         {/* Hero Section */}
         <HubHero

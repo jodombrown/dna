@@ -102,7 +102,8 @@ export interface ComposerFormData {
   // Space specific
   spaceDescription?: string;
   spaceCategory?: string;
-  visibility?: 'public' | 'private';
+  visibility?: 'public' | 'private' | 'invite-only';
+  skillsNeeded?: string[];
   // Story specific (subtitle is shared with Event)
   subtitle?: string;
   heroImage?: string;

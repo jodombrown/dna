@@ -742,7 +742,7 @@ const PitchDeck = () => {
           // Desktop: Horizontal scroll with native scroll support
           <div
             ref={scrollContainerRef}
-            className="flex overflow-x-scroll snap-x snap-mandatory h-[calc(100vh-5rem)] scroll-smooth"
+            className="flex overflow-x-scroll snap-x snap-mandatory h-[calc(100dvh-5rem)] scroll-smooth"
             style={{ 
               scrollbarWidth: 'thin',
               scrollbarColor: 'hsl(var(--muted-foreground)) transparent',
