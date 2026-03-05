@@ -166,7 +166,7 @@ const DnaFeed = () => {
           <NewPostsIndicator count={newPostCount} onClick={handleNewPostsClick} />
 
           {/* Add top padding to account for fixed header height */}
-          <main className="pb-16 px-3 pt-[7.5rem] space-y-1">
+          <main className="pb-bottom-nav px-3 pt-[7.5rem] space-y-1">
             {/* Tab Explainer - shows once per day/login per tab */}
             <FeedTabExplainer activeTab={activeTab} />
 
@@ -231,7 +231,7 @@ const DnaFeed = () => {
         className="max-w-7xl mx-auto flex gap-5 px-4"
         style={{
           paddingTop: '1.5rem',
-          height: 'calc(100vh - 7.5rem)',
+          height: 'calc(100dvh - 7.5rem)',
           overflow: 'hidden',
         }}
       >

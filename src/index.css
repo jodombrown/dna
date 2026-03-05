@@ -12,6 +12,51 @@ html, body {
   -webkit-overflow-scrolling: touch;
 }
 
+/* Prevent pull-to-refresh on the app shell */
+html {
+  overscroll-behavior-y: contain;
+}
+
+/* Prevent scroll chaining on modals, drawers, and sheets */
+[data-state="open"] [data-radix-scroll-area-viewport],
+[vaul-drawer] [data-vaul-drawer-content],
+.overflow-y-auto,
+.overflow-auto {
+  overscroll-behavior: contain;
+}
+
+/* Standardized bottom nav height token */
+:root {
+  --bottom-nav-height: 4rem;
+}
+
+.pb-bottom-nav {
+  padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 768px) {
+  .md\:pb-bottom-nav-0 {
+    padding-bottom: 0;
+  }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .animate-breathing-pulse,
+  .bokeh-drift-1, .bokeh-drift-2, .bokeh-drift-3, .bokeh-drift-4,
+  .animate-float, .animate-kente-flow, .animate-shimmer,
+  .animate-waveform-idle, .animate-slide-up, .animate-slide-down {
+    animation: none !important;
+  }
+  .interactive-element:hover,
+  .card-hover:hover,
+  .mobile-interactive:active,
+  .mobile-card:active {
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
 /* Prevent iOS Safari auto-zoom on input focus */
 @media screen and (max-width: 768px) {
   input, textarea, select {
@@ -580,7 +625,7 @@ html, body {
   }
   
   .mobile-sheet {
-    @apply w-[90vw] max-w-sm max-h-[100vh] overflow-y-auto;
+    @apply w-[90vw] max-w-sm max-h-[100dvh] overflow-y-auto;
   }
   
   /* Mobile typography scale */

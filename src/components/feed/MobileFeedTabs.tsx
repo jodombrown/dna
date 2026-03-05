@@ -9,6 +9,7 @@ import React from 'react';
 import { Newspaper, Sparkles, Users, PenSquare, Bookmark } from 'lucide-react';
 import { FeedTab } from '@/types/feed';
 import { cn } from '@/lib/utils';
+import { haptic } from '@/utils/haptics';
 
 interface MobileFeedTabsProps {
   activeTab: FeedTab;
@@ -32,7 +33,7 @@ export function MobileFeedTabs({ activeTab, onTabChange }: MobileFeedTabsProps) 
         return (
           <button
             key={value}
-            onClick={() => onTabChange(value)}
+            onClick={() => { haptic('light'); onTabChange(value); }}
             className={cn(
               "flex items-center justify-center gap-1.5 py-2 rounded-md transition-all duration-200",
               "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",

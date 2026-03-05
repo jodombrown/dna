@@ -53,7 +53,7 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
 
   // Desktop: 2-column grid with independent scrolling
   return (
-    <div className={cn("flex w-full gap-4 p-4", className)} style={{ height: 'calc(100vh - 64px)' }}>
+    <div className={cn("flex w-full gap-4 p-4", className)} style={{ height: 'calc(100dvh - 64px)' }}>
       {left && (
         <main 
           id="main-content"

@@ -62,7 +62,7 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
       className={cn("flex w-full gap-4 px-4", className)}
       style={{
         paddingTop: '1.5rem',
-        height: 'calc(100vh - 7.5rem)',
+        height: 'calc(100dvh - 7.5rem)',
         overflow: 'hidden',
       }}
     >

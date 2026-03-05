@@ -104,7 +104,7 @@ const DetailViewLayout: React.FC<DetailViewLayoutProps> = ({
 
   // Desktop: Two-column with independent scrolling
   return (
-    <div className={`flex bg-background ${className}`} style={{ height: 'calc(100vh - 64px)' }}>
+    <div className={`flex bg-background ${className}`} style={{ height: 'calc(100dvh - 64px)' }}>
       {/* Main Content Column */}
       <main id="main-content" tabIndex={-1} className="flex-1 max-w-4xl mx-auto p-6 overflow-auto h-full focus:outline-none" style={{ minWidth: 0 }}>
         <div className="min-w-max">
