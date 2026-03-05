@@ -29,6 +29,7 @@ import OpportunityRecommendations from '@/components/contribute/OpportunityRecom
 
 // DIA Card System (Sprint 4A)
 import { DIAHubSection } from '@/components/dia/DIAHubSection';
+import { ContributeDIADiscoveryCard } from '@/components/contribute/ContributeDIADiscoveryCard';
 import { logger } from '@/lib/logger';
 
 export function ContributeDiscovery() {
@@ -253,6 +254,9 @@ export function ContributeDiscovery() {
 
         {/* Sub Navigation */}
         <HubSubNav tabs={subNavTabs} basePath="/dna/contribute" />
+
+        {/* DIA Discovery Card — between sub-nav and content */}
+        <ContributeDIADiscoveryCard openNeedsCount={stats?.openNeeds || 0} />
 
         {/* Two Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
