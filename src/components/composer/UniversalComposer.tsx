@@ -424,7 +424,9 @@ export const UniversalComposer = ({
           <Drawer.Overlay className="fixed inset-0 bg-black/40 z-50" />
           <Drawer.Content className="fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-2xl flex flex-col max-h-[90vh]">
             {/* Drag handle — only this triggers swipe-to-dismiss */}
-            <Drawer.Handle className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-muted mt-3 mb-2" />
+            <div className="pt-3 pb-2 flex-shrink-0">
+              <Drawer.Handle />
+            </div>
             {/* Scrollable content with safe area padding */}
             <div className="flex-1 overflow-y-auto overscroll-contain px-4 pb-safe">
               {composerContent}
