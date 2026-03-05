@@ -415,14 +415,18 @@ export const UniversalComposer = ({
   // Mobile: vaul Drawer bottom sheet (swipe to dismiss, drag handle)
   if (isMobile) {
     return (
-      <Drawer.Root open={isOpen} onOpenChange={handleOpenChange}>
+      <Drawer.Root
+        open={isOpen}
+        onOpenChange={handleOpenChange}
+        handleOnly={true}
+      >
         <Drawer.Portal>
           <Drawer.Overlay className="fixed inset-0 bg-black/40 z-50" />
-          <Drawer.Content className="fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-2xl">
-            {/* Drag handle */}
-            <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-muted mt-3 mb-2" />
+          <Drawer.Content className="fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-2xl flex flex-col max-h-[90vh]">
+            {/* Drag handle — only this triggers swipe-to-dismiss */}
+            <Drawer.Handle className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-muted mt-3 mb-2" />
             {/* Scrollable content with safe area padding */}
-            <div className="max-h-[85vh] overflow-y-auto px-4 pb-safe">
+            <div className="flex-1 overflow-y-auto overscroll-contain px-4 pb-safe">
               {composerContent}
               {/* Bottom safe area spacer for iOS home indicator */}
               <div className="h-6" />
