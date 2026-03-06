@@ -71,6 +71,8 @@ import type { EntityReferenceData } from '@/services/messageTypes';
 import { StickyRSVPBar } from '@/components/convene/StickyRSVPBar';
 import { EventSocialProof } from '@/components/convene/EventSocialProof';
 import { EventOrganizerCard } from '@/components/convene/EventOrganizerCard';
+import { PostRsvpDiaNudge } from '@/components/convene/PostRsvpDiaNudge';
+import { PastEventDiaNudge } from '@/components/convene/PastEventDiaNudge';
 import { cn } from '@/lib/utils';
 
 const REPORT_REASONS = [
@@ -91,6 +93,7 @@ const EventDetail = () => {
   const [resolvedEventId, setResolvedEventId] = useState<string | null>(null);
   const [showBanner, setShowBanner] = useState(false);
   const [showStickyHeader, setShowStickyHeader] = useState(false);
+  const [showPostRsvpNudge, setShowPostRsvpNudge] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
   
   const isLoggedIn = !!user;
@@ -360,6 +363,9 @@ const EventDetail = () => {
         title: 'RSVP Updated',
         description: `You've marked yourself as ${status === 'going' ? 'going' : status === 'maybe' ? 'maybe' : 'not going'}`,
       });
+      if (status === 'going') {
+        setShowPostRsvpNudge(true);
+      }
     },
     onError: () => {
       toast({ title: 'Error', description: 'Failed to update RSVP', variant: 'destructive' });
@@ -605,6 +611,27 @@ const EventDetail = () => {
                 eventId={id}
                 attendees={attendeeProfiles}
                 totalCount={registrationCount}
+              />
+            )}
+
+            {/* Post-RSVP DIA Nudge */}
+            {id && user && (
+              <PostRsvpDiaNudge
+                eventId={id}
+                eventTitle={event.title as string}
+                eventCity={event.location_city as string | null}
+                userId={user.id}
+                visible={showPostRsvpNudge}
+              />
+            )}
+
+            {/* Past Event DIA Nudge — CONVENE → CONVEY circulation */}
+            {isPastEvent && currentRsvp === 'going' && id && (
+              <PastEventDiaNudge
+                eventId={id}
+                eventTitle={event.title as string}
+                attendeeCount={registrationCount}
+                variant="share_story"
               />
             )}
 

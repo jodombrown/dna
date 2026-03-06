@@ -122,7 +122,7 @@ export function StickyRSVPBar({
       initial={{ y: 80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ type: 'spring', damping: 25, stiffness: 300, delay: 0.2 }}
-      className="fixed bottom-0 inset-x-0 z-50 lg:hidden"
+      className="fixed bottom-16 inset-x-0 z-50 lg:hidden"
     >
       <div className="bg-background/95 backdrop-blur-md border-t border-border px-4 py-3 flex items-center justify-between gap-3">
         <div className="min-w-0">

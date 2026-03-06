@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Search, X, TrendingUp, Clock } from 'lucide-react';
+import { ArrowLeft, Search, X, TrendingUp, Clock, Sparkles, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useEventSearch, useTrendingEvents, type EventSearchFilters } from '@/hooks/convene/useEventSearch';
@@ -171,12 +171,60 @@ export function ConveneSearchOverlay({ isOpen, onClose }: ConveneSearchOverlayPr
                   ))}
                 </div>
               ) : !isSearching ? (
-                <div className="text-center py-12">
-                  <Search className="h-8 w-8 text-muted-foreground/50 mx-auto mb-3" />
-                  <p className="text-sm text-muted-foreground">No events found</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Try a different search term or browse categories
-                  </p>
+                <div className="space-y-4 py-8">
+                  <div className="text-center">
+                    <Search className="h-8 w-8 text-muted-foreground/50 mx-auto mb-3" />
+                    <p className="text-sm text-muted-foreground">
+                      No events found for &ldquo;{searchTerm}&rdquo;
+                    </p>
+                  </div>
+
+                  {/* DIA suggestion card */}
+                  <div
+                    className="relative overflow-hidden rounded-xl border border-border/50 bg-card px-4 py-4"
+                    style={{
+                      borderLeftWidth: '3px',
+                      borderLeftColor: '#C4942A',
+                      backgroundColor: '#C4942A08',
+                    }}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <div
+                        className="flex items-center justify-center w-6 h-6 rounded-full"
+                        style={{ backgroundColor: '#C4942A20' }}
+                      >
+                        <Sparkles className="w-3 h-3" style={{ color: '#C4942A' }} />
+                      </div>
+                      <span
+                        className="text-[10px] font-bold tracking-widest"
+                        style={{ color: '#C4942A' }}
+                      >
+                        DIA &bull; CONVENE
+                      </span>
+                    </div>
+                    <div className="flex items-start gap-2 mb-1.5">
+                      <Calendar className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#C4942A' }} />
+                      <h4 className="font-semibold text-sm text-foreground leading-tight">
+                        Can&apos;t find what you&apos;re looking for?
+                      </h4>
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed ml-6">
+                      Host your own &ldquo;{searchTerm}&rdquo; event and bring the diaspora together!
+                    </p>
+                    <div className="flex items-center mt-3 ml-6">
+                      <Button
+                        size="sm"
+                        className="text-xs rounded-full px-4 text-white"
+                        style={{ backgroundColor: '#C4942A', minHeight: 44 }}
+                        onClick={() => {
+                          onClose();
+                          navigate('/dna/convene/events/create');
+                        }}
+                      >
+                        Host an Event
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               ) : null}
             </div>

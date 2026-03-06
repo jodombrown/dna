@@ -133,7 +133,7 @@ export function useTrendingEvents() {
   return useQuery({
     queryKey: ['convene-trending-events'],
     queryFn: async (): Promise<SearchEventResult[]> => {
-      // Get events with most attendees, upcoming only
+      // Fetch more events than needed so we can sort by attendee count client-side
       const { data, error } = await supabase
         .from('events')
         .select(`
@@ -146,7 +146,7 @@ export function useTrendingEvents() {
         .eq('is_published', true)
         .gte('start_time', new Date().toISOString())
         .order('start_time', { ascending: true })
-        .limit(5);
+        .limit(20);
 
       if (error) throw error;
 
@@ -162,7 +162,7 @@ export function useTrendingEvents() {
         }
       }
 
-      return (data || []).map((e: Record<string, unknown>) => {
+      const results = (data || []).map((e: Record<string, unknown>) => {
         const attendeesArr = e.event_attendees as Array<{ count: number }> | undefined;
         return {
           ...e,
@@ -170,7 +170,11 @@ export function useTrendingEvents() {
           organizer: organizerMap[e.organizer_id as string] ?? null,
         } as SearchEventResult;
       });
+
+      // Sort by attendee count descending (most popular first), then return top 5
+      results.sort((a, b) => b.attendee_count - a.attendee_count);
+      return results.slice(0, 5);
     },
-    staleTime: 60_000,
+    staleTime: 5 * 60_000,
   });
 }
