@@ -1,0 +1,369 @@
+/**
+ * DNA Platform — Design Token CSS Custom Properties
+ * 
+ * Generated from existing codebase audit (March 2026).
+ * Every value sourced from production index.css.
+ * 
+ * NAMING: --dna-[category]-[name]
+ * FORMAT: All colors in HSL channel format (H S% L%) for Tailwind hsl() wrapping.
+ * 
+ * USAGE: Drop this into src/index.css (inside @layer base) in a fresh project.
+ *        Pair with docs/rebuild/tailwind.config.ts.
+ */
+
+@layer base {
+  :root {
+    /* ══════════════════════════════════════════
+       PAGE FOUNDATIONS
+       ══════════════════════════════════════════ */
+    --background: 34 33% 97%;           /* Warm cream #F9F7F4 — primary page bg */
+    --foreground: 20 8% 15%;            /* Warm black #3D3833 — primary text */
+
+    --card: 0 0% 100%;                  /* White — card backgrounds */
+    --card-foreground: 20 8% 15%;       /* Same as foreground */
+
+    --popover: 0 0% 100%;              /* White — dropdown/popover bg */
+    --popover-foreground: 20 8% 15%;
+
+    /* ══════════════════════════════════════════
+       PRIMARY: DNA Emerald — signature brand color
+       ══════════════════════════════════════════ */
+    --primary: 153 31% 42%;             /* #4A8D77 — buttons, links, active states */
+    --primary-foreground: 0 0% 100%;    /* White text on primary */
+
+    /* ══════════════════════════════════════════
+       SECONDARY
+       ══════════════════════════════════════════ */
+    --secondary: 34 33% 94%;            /* Warm sand — secondary bg, outlined buttons */
+    --secondary-foreground: 20 8% 15%;
+
+    --muted: 34 20% 94%;               /* Muted bg — disabled areas, subtle fills */
+    --muted-foreground: 25 7% 49%;      /* #8A847D — captions, timestamps */
+
+    --accent: 25 51% 46%;              /* DNA Copper — accent highlights */
+    --accent-foreground: 0 0% 100%;
+
+    /* ══════════════════════════════════════════
+       DNA BRAND EMERALD (core identity)
+       ══════════════════════════════════════════ */
+    --dna-emerald: 153 31% 42%;         /* #4A8D77 — hero brand color */
+    --dna-emerald-light: 153 31% 54%;   /* #6BAF98 — hover state */
+    --dna-emerald-dark: 153 31% 34%;    /* #3A7262 — active/pressed state */
+    --dna-emerald-subtle: 153 31% 92%;  /* #E8F2EE — tinted backgrounds */
+
+    /* ══════════════════════════════════════════
+       FIVE C's MODULE COLORS
+       Each module has DEFAULT, light (bg tint), dark (pressed)
+       ══════════════════════════════════════════ */
+
+    /* CONNECT — Emerald (the network) */
+    --module-connect: 153 31% 42%;      /* #4A8D77 */
+    --module-connect-light: 153 31% 92%;
+    --module-connect-dark: 153 31% 34%;
+
+    /* CONVENE — Amber Gold (gathering warmth) */
+    --module-convene: 39 65% 47%;       /* #C4942A */
+    --module-convene-light: 39 50% 91%; /* #F5EDD8 */
+    --module-convene-dark: 39 65% 39%;  /* #A67B1E */
+
+    /* COLLABORATE — Forest Green (growth, depth) */
+    --module-collaborate: 147 33% 27%;  /* #2D5A3D */
+    --module-collaborate-light: 147 22% 90%; /* #E0EBE4 */
+    --module-collaborate-dark: 147 33% 18%; /* #1F4029 */
+
+    /* CONTRIBUTE — Copper (value, exchange) */
+    --module-contribute: 25 51% 46%;    /* #B87333 */
+    --module-contribute-light: 25 40% 90%; /* #F2E6D9 */
+    --module-contribute-dark: 25 51% 37%; /* #965E29 */
+
+    /* CONVEY — Deep Teal (voice, expression) */
+    --module-convey: 191 53% 35%;       /* #2A7A8C */
+    --module-convey-light: 191 40% 91%; /* #DFF0F4 */
+    --module-convey-dark: 191 53% 27%;  /* #1E5E6B */
+
+    /* ══════════════════════════════════════════
+       DIA (Diaspora Intelligence Agent) COLORS
+       ══════════════════════════════════════════ */
+    --dna-dia: 39 65% 47%;             /* Gold — intelligence, warmth */
+    --dna-dia-light: 39 50% 91%;       /* Subtle gold bg */
+    --dna-dia-glow: 39 65% 60%;        /* Glow effect on DIA elements */
+
+    /* ══════════════════════════════════════════
+       NEUTRAL PALETTE (warm, NOT cold grays)
+       Brown undertone throughout
+       ══════════════════════════════════════════ */
+    --dna-cream: 34 33% 97%;           /* #F9F7F4 — primary page bg */
+    --dna-sand: 34 8% 94%;             /* #F0EFED — secondary bg, card hover */
+    --dna-sand-light: 34 8% 97%;       /* Lighter sand variant */
+    --dna-sand-dark: 34 8% 88%;        /* Darker sand variant */
+    --dna-stone: 28 10% 89%;           /* #E8E4DF — borders, dividers */
+    --dna-gray400: 25 7% 60%;          /* #A09A93 — placeholder text */
+    --dna-gray500: 25 7% 52%;          /* #8A847D — secondary text, captions */
+    --dna-gray600: 0 0% 40%;           /* #666666 — body text secondary */
+    --dna-gray800: 20 8% 22%;          /* #3D3833 — primary text */
+    --dna-black: 0 0% 10%;             /* #1A1A1A — headings, bold text */
+
+    /* ══════════════════════════════════════════
+       CULTURAL ACCENT COLORS
+       Inspired by African heritage (Kente, Mud Cloth, Ndebele)
+       Use at 5-10% opacity for backgrounds, never for primary UI
+       ══════════════════════════════════════════ */
+    --dna-terra: 18 60% 55%;           /* Terra Cotta — African pottery */
+    --dna-terra-light: 18 60% 70%;
+    --dna-terra-dark: 18 60% 35%;
+
+    --dna-ochre: 38 70% 50%;           /* Golden earth — African landscapes */
+    --dna-ochre-light: 38 70% 70%;
+    --dna-ochre-dark: 38 70% 40%;
+
+    --dna-sunset: 25 85% 55%;          /* Vibrant warmth — African sunsets */
+    --dna-sunset-light: 25 85% 70%;
+    --dna-sunset-dark: 25 85% 40%;
+
+    --dna-mint: 170 45% 75%;           /* Soft green accent */
+    --dna-mint-light: 170 45% 85%;
+    --dna-mint-dark: 170 45% 65%;
+
+    --dna-earth: 30 35% 45%;           /* Deep earth brown */
+    --dna-earth-light: 30 35% 55%;
+    --dna-earth-dark: 30 35% 35%;
+
+    --dna-ocean: 191 53% 35%;          /* Deep teal (alias of Convey) */
+    --dna-ocean-light: 191 40% 91%;
+    --dna-ocean-dark: 191 53% 27%;
+
+    /* ══════════════════════════════════════════
+       SEMANTIC / STATE COLORS
+       ══════════════════════════════════════════ */
+    --dna-success: 153 31% 42%;        /* Emerald-aligned — success states */
+    --dna-warning: 39 65% 47%;         /* Amber Gold — warnings */
+    --dna-error: 0 70% 45%;            /* Warm red #CC3333 — errors, destructive */
+    --dna-info: 191 53% 35%;           /* Deep Teal — informational */
+
+    --dna-crimson: 0 70% 45%;          /* Warm red — destructive actions */
+    --dna-crimson-light: 0 70% 93%;    /* #FDEAEA — error backgrounds */
+    --dna-crimson-dark: 0 70% 35%;     /* Dark crimson — pressed state */
+
+    --destructive: 0 70% 45%;          /* Shadcn compat — same as crimson */
+    --destructive-foreground: 0 0% 100%;
+
+    /* ══════════════════════════════════════════
+       BRAND IDENTITY ALIASES
+       (copper, gold, forest as named brand tokens)
+       ══════════════════════════════════════════ */
+    --dna-forest: 147 33% 27%;         /* Forest Green — Collaborate */
+    --dna-forest-light: 147 22% 90%;
+    --dna-forest-dark: 147 33% 18%;
+
+    --dna-copper: 25 51% 46%;          /* Copper — Contribute */
+    --dna-copper-light: 25 40% 90%;
+    --dna-copper-dark: 25 51% 37%;
+
+    --dna-gold: 39 65% 47%;            /* Gold — Convene / DIA */
+    --dna-gold-light: 39 50% 91%;
+    --dna-gold-dark: 39 65% 35%;
+
+    /* ══════════════════════════════════════════
+       FEED CARD BEVEL COLORS
+       Left/top border accent per content type
+       ══════════════════════════════════════════ */
+    --bevel-post: 215 16% 47%;         /* Neutral slate — standard posts */
+    --bevel-story: 191 53% 35%;        /* Convey Deep Teal — stories */
+    --bevel-event: 39 65% 47%;         /* Convene Amber Gold — events */
+    --bevel-space: 147 33% 27%;        /* Collaborate Forest Green — spaces */
+    --bevel-opportunity: 25 51% 46%;   /* Contribute Copper — opportunities */
+
+    /* ══════════════════════════════════════════
+       ELEVATION / SHADOW SYSTEM
+       5 levels: 0 (flat) → 4 (modal)
+       ══════════════════════════════════════════ */
+    --shadow-level0: none;
+    --shadow-level1: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);   /* Cards at rest */
+    --shadow-level2: 0 4px 6px rgba(0,0,0,0.04), 0 2px 4px rgba(0,0,0,0.06);   /* Cards on hover */
+    --shadow-level3: 0 10px 15px rgba(0,0,0,0.05), 0 4px 6px rgba(0,0,0,0.05); /* Dropdowns, popovers */
+    --shadow-level4: 0 20px 25px rgba(0,0,0,0.06), 0 10px 10px rgba(0,0,0,0.04); /* Modals, sheets */
+    --shadow-inner: inset 0 1px 2px rgba(0,0,0,0.06);                            /* Input fields */
+    --shadow-focus: 0 0 0 3px hsla(153, 31%, 42%, 0.2);                           /* Focus ring (emerald) */
+    --shadow-glow: 0 0 20px hsla(39, 65%, 47%, 0.15);                             /* DIA gold glow */
+
+    /* ══════════════════════════════════════════
+       CARD SYSTEM TOKENS
+       ══════════════════════════════════════════ */
+    --card-radius: 12px;               /* Standard card border-radius */
+    --card-padding: 16px;              /* Standard card padding (mobile) */
+    --card-shadow: var(--shadow-level1);
+    --card-shadow-hover: var(--shadow-level2);
+    --bevel-width: 3px;                /* Feed card left/top accent border */
+
+    /* ══════════════════════════════════════════
+       BORDER RADIUS TOKENS
+       ══════════════════════════════════════════ */
+    --radius: 0.75rem;                 /* 12px — Shadcn base radius */
+    --radius-sm: 6px;                  /* Small elements, badges */
+    --radius-md: 10px;                 /* Inputs, medium elements */
+    --radius-lg: 12px;                 /* Cards (same as --radius) */
+    --radius-xl: 16px;                 /* Modals, hero cards */
+    --radius-full: 9999px;             /* Avatars, pills, full-round */
+
+    /* ══════════════════════════════════════════
+       INFRASTRUCTURE TOKENS
+       ══════════════════════════════════════════ */
+    --border: 28 10% 89%;             /* dna-stone — default border color */
+    --input: 28 10% 89%;              /* Same as border — input borders */
+    --ring: 153 31% 42%;              /* Emerald — focus ring color */
+
+    --bottom-nav-height: 4rem;        /* 64px — mobile bottom navigation */
+
+    /* ══════════════════════════════════════════
+       SIDEBAR TOKENS
+       ══════════════════════════════════════════ */
+    --sidebar-background: 34 33% 97%;
+    --sidebar-foreground: 20 8% 22%;
+    --sidebar-primary: 153 31% 42%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 34 20% 94%;
+    --sidebar-accent-foreground: 20 8% 15%;
+    --sidebar-border: 28 10% 89%;
+    --sidebar-ring: 153 31% 42%;
+  }
+
+  /* ══════════════════════════════════════════════════
+     DARK MODE OVERRIDES
+     
+     Strategy: Brand colors (emerald, module primaries) stay same.
+     Neutrals invert. Lights become dark-tinted. Shadows strengthen.
+     ══════════════════════════════════════════════════ */
+  .dark {
+    /* ── Page Foundations ── */
+    --background: 0 0% 10%;            /* #1A1A1A — dark page bg */
+    --foreground: 34 8% 94%;           /* #F0EFED — light text on dark */
+
+    --card: 20 6% 13%;                /* #262220 — elevated dark surface */
+    --card-foreground: 34 8% 94%;
+
+    --popover: 20 6% 13%;
+    --popover-foreground: 34 8% 94%;
+
+    /* ── Primary (unchanged in dark) ── */
+    --primary: 153 31% 42%;
+    --primary-foreground: 0 0% 100%;
+
+    /* ── Secondary ── */
+    --secondary: 20 6% 17%;
+    --secondary-foreground: 34 8% 94%;
+
+    --muted: 20 6% 15%;
+    --muted-foreground: 25 7% 60%;
+
+    --accent: 25 51% 55%;             /* Copper slightly lightened for dark */
+    --accent-foreground: 0 0% 100%;
+
+    /* ── Brand Emerald (dark) ── */
+    --dna-emerald: 153 31% 42%;       /* Stays same */
+    --dna-emerald-light: 153 31% 54%;
+    --dna-emerald-dark: 153 31% 34%;
+    --dna-emerald-subtle: 153 25% 18%; /* Darkened subtle tint */
+
+    /* ── Five C's Module Colors (dark — primaries same, lights darkened) ── */
+    --module-connect: 153 31% 42%;
+    --module-connect-light: 153 25% 18%;
+    --module-connect-dark: 153 31% 34%;
+
+    --module-convene: 39 65% 47%;
+    --module-convene-light: 39 40% 18%;
+    --module-convene-dark: 39 65% 39%;
+
+    --module-collaborate: 147 33% 27%;
+    --module-collaborate-light: 147 22% 16%;
+    --module-collaborate-dark: 147 33% 18%;
+
+    --module-contribute: 25 51% 46%;
+    --module-contribute-light: 25 30% 18%;
+    --module-contribute-dark: 25 51% 37%;
+
+    --module-convey: 191 53% 35%;
+    --module-convey-light: 191 35% 16%;
+    --module-convey-dark: 191 53% 27%;
+
+    /* ── DIA (dark) ── */
+    --dna-dia: 39 65% 55%;            /* Slightly brighter gold */
+    --dna-dia-light: 39 40% 18%;
+    --dna-dia-glow: 39 65% 65%;
+
+    /* ── Neutrals (inverted for dark) ── */
+    --dna-cream: 0 0% 10%;            /* Maps to dark bg */
+    --dna-sand: 20 6% 13%;            /* Maps to dark surface */
+    --dna-sand-light: 20 6% 15%;
+    --dna-sand-dark: 20 6% 10%;
+    --dna-stone: 20 6% 28%;           /* #4A4540 dark border */
+    --dna-gray400: 25 7% 45%;
+    --dna-gray500: 25 7% 55%;
+    --dna-gray600: 25 7% 65%;
+    --dna-gray800: 34 8% 88%;         /* Inverted — light for dark bg */
+    --dna-black: 34 8% 94%;           /* Inverted — lightest for dark bg */
+
+    /* ── Brand aliases (dark) ── */
+    --dna-forest: 147 33% 35%;        /* Slightly brighter in dark */
+    --dna-copper: 25 51% 55%;
+    --dna-gold: 39 65% 55%;
+    --dna-mint: 170 45% 80%;
+    --dna-crimson: 0 70% 50%;
+    --dna-crimson-light: 0 40% 18%;   /* Dark error background */
+
+    /* ── Semantic (dark — slightly brighter) ── */
+    --dna-success: 153 31% 45%;
+    --dna-warning: 39 65% 55%;
+    --dna-error: 0 70% 50%;
+    --dna-info: 191 53% 45%;
+
+    --destructive: 0 70% 40%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 20 6% 28%;              /* Dark mode border */
+    --input: 20 6% 28%;
+    --ring: 153 31% 42%;
+
+    /* ── Elevation (dark — stronger shadows) ── */
+    --shadow-level1: 0 1px 3px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.15);
+    --shadow-level2: 0 4px 6px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.15);
+    --shadow-level3: 0 10px 15px rgba(0,0,0,0.25), 0 4px 6px rgba(0,0,0,0.15);
+    --shadow-level4: 0 20px 25px rgba(0,0,0,0.3), 0 10px 10px rgba(0,0,0,0.15);
+    --shadow-glow: 0 0 20px hsla(39, 65%, 47%, 0.25);
+
+    /* ── Sidebar (dark) ── */
+    --sidebar-background: 0 0% 10%;
+    --sidebar-foreground: 34 8% 94%;
+    --sidebar-primary: 153 31% 42%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 20 6% 17%;
+    --sidebar-accent-foreground: 34 8% 94%;
+    --sidebar-border: 20 6% 28%;
+    --sidebar-ring: 153 31% 42%;
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   CONFLICTS & NOTES (from audit)
+   ══════════════════════════════════════════════════
+
+   1. DUPLICATE: --dna-sand is defined twice in the original (line 136 & 185).
+      Both have the same value (34 8% 94%). Consolidated here.
+
+   2. PURPLE WARNING: --dna-purple (270 60% 55%) exists in legacy but is
+      OFF-BRAND per style guidelines. Not included in rebuild config.
+      If needed for edge cases, add explicitly with // DEPRECATED comment.
+
+   3. COUNTRY FLAG COLORS: Morocco, Egypt, Algeria, Tunisia, Libya, Sudan
+      flag colors existed in the original. Omitted from rebuild — these are
+      niche and should be loaded on-demand if needed.
+
+   4. DIA = Gold = Convene: --dna-dia, --dna-gold, and --module-convene all
+      share the same base hue (39 65% 47%). This is intentional per spec
+      but worth noting for clarity.
+
+   5. --dna-ocean = --module-convey: Both are 191 53% 35%. Intentional alias.
+
+   6. TODO: VERIFY — stat font sizes (stat-lg: 36px, stat-md: 30px, stat-sm: 24px)
+      were estimated from Tailwind text-3xl/4xl usage patterns.
+      Confirm against actual dashboard implementations.
+*/
