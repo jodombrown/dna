@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 import HeroSection from '@/components/HeroSection';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
-import PrototypeBanner from '@/components/PrototypeBanner';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWaitlistPopup } from '@/hooks/useWaitlistPopup';
 import { PageSEO, getOrganizationSchema, getWebsiteSchema } from '@/components/seo/PageSEO';
@@ -52,9 +51,6 @@ const Index = () => {
         canonicalPath="/"
         structuredData={structuredData}
       />
-
-      {/* Prototype Banner */}
-      <PrototypeBanner />
 
       {/* Hero Section with improved layout */}
       <HeroSection />
