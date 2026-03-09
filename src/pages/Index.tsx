@@ -52,9 +52,6 @@ const Index = () => {
         structuredData={structuredData}
       />
 
-      {/* Prototype Banner */}
-      <PrototypeBanner />
-
       {/* Hero Section with improved layout */}
       <HeroSection />
 
