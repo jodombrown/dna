@@ -30,7 +30,8 @@ export const FeedUpcomingEvents: React.FC = () => {
     queryFn: async (): Promise<UpcomingEvent[]> => {
       if (!user?.id) return [];
 
-      const { data } = await supabase
+      // First try events user has RSVP'd to
+      const { data: rsvpData } = await supabase
         .from('event_attendees')
         .select('event_id, events!inner(id, title, start_time, location_name)')
         .eq('user_id', user.id)
@@ -39,17 +40,29 @@ export const FeedUpcomingEvents: React.FC = () => {
         .order('events(start_time)', { ascending: true })
         .limit(3);
 
-      if (!data) return [];
-
-      return data.map((row) => {
+      const rsvpEvents = (rsvpData || []).map((row) => {
         const evt = row.events as unknown as UpcomingEvent;
-        return {
-          id: evt.id,
-          title: evt.title,
-          start_time: evt.start_time,
-          location_name: evt.location_name,
-        };
+        return { id: evt.id, title: evt.title, start_time: evt.start_time, location_name: evt.location_name };
       });
+
+      // If user has RSVP'd events, show those
+      if (rsvpEvents.length > 0) return rsvpEvents;
+
+      // Otherwise show upcoming platform events as discovery
+      const { data: discoveryData } = await supabase
+        .from('events')
+        .select('id, title, start_time, location_name')
+        .eq('status', 'published')
+        .gt('start_time', new Date().toISOString())
+        .order('start_time', { ascending: true })
+        .limit(3);
+
+      return (discoveryData || []).map((evt) => ({
+        id: evt.id,
+        title: evt.title,
+        start_time: evt.start_time,
+        location_name: evt.location_name,
+      }));
     },
     enabled: !!user?.id,
     staleTime: 5 * 60 * 1000,
