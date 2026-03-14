@@ -280,7 +280,7 @@ export function DiscoveryFeed({
               secondaryAction: {
                 label: 'Learn More',
                 action: () => {
-                  window.location.href = `/dna/${rec.username}`;
+                  navigate(`/dna/${rec.username}`);
                 },
               },
             });
