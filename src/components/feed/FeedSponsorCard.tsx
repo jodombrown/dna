@@ -15,9 +15,9 @@ const SPONSOR_LOGO_FALLBACKS: Record<string, string> = {
 
 export function FeedSponsorCard() {
   const { placements, isLoading, trackClick } = useSponsorPlacements('feed_sidebar');
+  const [logoError, setLogoError] = useState(false);
 
   if (isLoading || placements.length === 0) return null;
-  const [logoError, setLogoError] = useState(false);
   
   const placement = placements[0];
   const sponsor = placement.sponsors;
