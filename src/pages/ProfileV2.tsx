@@ -242,7 +242,6 @@ const ProfileV2: React.FC = () => {
             </Card>
           </div>
         </div>
-        <MobileBottomNav />
       </div>
     );
   }
