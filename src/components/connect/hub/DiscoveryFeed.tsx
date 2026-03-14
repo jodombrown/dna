@@ -311,7 +311,7 @@ export function DiscoveryFeed({
               primaryAction: {
                 label: 'Explore Projects',
                 action: () => {
-                  window.location.href = '/dna/collaborate';
+                  navigate('/dna/collaborate');
                 },
               },
             });
