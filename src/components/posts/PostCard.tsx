@@ -364,7 +364,7 @@ export function PostCard({
                 <img
                   src={post.image_url}
                   alt="Post media"
-                  className="w-full min-h-[200px] object-cover max-h-[32rem]"
+                  className="w-full object-cover max-h-[32rem]"
                   loading="eager"
                   onError={(e) => {
                     // Hide the container if image fails to load
