@@ -292,7 +292,7 @@ export function ContributeDiscovery() {
           </div>
         </div>
       </div>
-      <MobileBottomNav />
+      
     </div>
   );
 }

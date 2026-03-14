@@ -575,7 +575,7 @@ export function ConveneDiscovery() {
       </div>
 
       <ConveneSearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
-      <MobileBottomNav />
+      
       <UniversalComposer
         isOpen={composer.isOpen}
         mode={composer.mode}

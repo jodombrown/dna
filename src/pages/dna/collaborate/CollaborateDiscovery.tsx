@@ -287,7 +287,7 @@ export function CollaborateDiscovery() {
           </div>
         </div>
       </div>
-      <MobileBottomNav />
+      
     </div>
   );
 }

@@ -494,7 +494,7 @@ export default function ConveyStoryHub() {
         />
       )}
 
-      <MobileBottomNav />
+      
       <UniversalComposer
         isOpen={composer.isOpen}
         mode={composer.mode}
