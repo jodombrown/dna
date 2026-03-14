@@ -349,7 +349,7 @@ export function DiscoveryFeed({
               primaryAction: {
                 label: 'View Attendees',
                 action: () => {
-                  window.location.href = `/dna/convene/events/${evt.id}`;
+                  navigate(`/dna/convene/events/${evt.id}`);
                 },
               },
             });
