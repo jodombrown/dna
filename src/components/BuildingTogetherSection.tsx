@@ -7,6 +7,7 @@ import PatternBackground from './ui/PatternBackground';
 import MainPageFeedbackPanel from './MainPageFeedbackPanel';
 
 const BuildingTogetherSection = () => {
+  const navigate = useNavigate();
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
   return (
