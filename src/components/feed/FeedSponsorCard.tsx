@@ -43,11 +43,12 @@ export function FeedSponsorCard() {
         {/* Header with Sponsored label */}
         <div className="flex items-start justify-between mb-2.5">
           <div className="flex items-center gap-2.5 min-w-0">
-            {sponsor.logo_url && (
+            {logoUrl && (
               <img
-                src={sponsor.logo_url}
+                src={logoUrl}
                 alt={`${sponsor.name} logo`}
                 className="w-9 h-9 rounded-lg object-contain bg-white border border-border/50 p-0.5 shrink-0"
+                onError={() => setLogoError(true)}
               />
             )}
             <div className="min-w-0">
