@@ -158,6 +158,8 @@ export default function OpportunityDetail() {
           </CardContent>
         </Card>
 
+        <DIADetailInsight surface="opportunity_detail" entityId={id} />
+
         {opportunity.description && (
           <Card className="mb-6">
             <CardHeader>
