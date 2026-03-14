@@ -84,7 +84,7 @@ const CONTENT_TEMPLATES: Partial<Record<NotificationType, ContentTemplate>> = {
     body: p.commentPreview ? (p.commentPreview as string).slice(0, 100) : null,
   }),
   post_liked: (p) => ({
-    headline: `${p.actorName} liked your post`,
+    headline: `${p.actorName} affirmed your post`,
     body: null,
   }),
   post_commented: (p) => ({
