@@ -220,7 +220,7 @@ const CONTENT_TEMPLATES: Partial<Record<NotificationType, ContentTemplate>> = {
 
   // CONVEY
   story_liked: (p) => ({
-    headline: `${p.actorName} liked your story`,
+    headline: `${p.actorName} affirmed your story`,
     body: p.targetTitle ? `"${p.targetTitle}"` : null,
   }),
   story_commented: (p) => ({
