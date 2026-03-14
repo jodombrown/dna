@@ -59,11 +59,20 @@ const DnaFeed = () => {
   const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const composer = useUniversalComposer();
   const { isMobile } = useMobile();
+  const { hideHeader, showHeader } = useHeaderVisibility();
 
   // Increment session count for DIA cadence engine
   useEffect(() => {
     incrementSessionCount();
   }, []);
+
+  // Hide unified header on mobile feed (has its own header)
+  useEffect(() => {
+    if (isMobile) {
+      hideHeader();
+      return () => showHeader();
+    }
+  }, [isMobile, hideHeader, showHeader]);
 
   // Scroll position preservation
   useEffect(() => {
