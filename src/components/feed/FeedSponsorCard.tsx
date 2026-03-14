@@ -4,8 +4,14 @@
  * Gold accent stripe, warm hover, native feel.
  */
 
+import { useState } from 'react';
 import { ExternalLink, Award } from 'lucide-react';
 import { useSponsorPlacements } from '@/hooks/useSponsorPlacements';
+
+// Fallback logos for known sponsors
+const SPONSOR_LOGO_FALLBACKS: Record<string, string> = {
+  'GABA Center': '/images/sponsors/gaba-center.png',
+};
 
 export function FeedSponsorCard() {
   const { placements, isLoading, trackClick } = useSponsorPlacements('feed_sidebar');
