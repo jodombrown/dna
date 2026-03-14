@@ -447,7 +447,7 @@ const ProfileV2: React.FC = () => {
           </div>
         </div>
       </div>
-      <MobileBottomNav />
+      
     </div>
   );
 };
