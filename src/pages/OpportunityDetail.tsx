@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowLeft, MapPin, Clock, Bookmark, Share2, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
 import { ApplicationForm } from '@/components/opportunities/ApplicationForm';
+import { DIADetailInsight } from '@/components/dia/DIADetailInsight';
 import InterestManager from '@/components/contribute/InterestManager';
 import FulfillmentModal from '@/components/contribute/FulfillmentModal';
 import { useToast } from '@/hooks/use-toast';
@@ -156,6 +157,8 @@ export default function OpportunityDetail() {
             </div>
           </CardContent>
         </Card>
+
+        <DIADetailInsight surface="opportunity_detail" entityId={id} />
 
         {opportunity.description && (
           <Card className="mb-6">

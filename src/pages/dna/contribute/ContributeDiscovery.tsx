@@ -1,13 +1,13 @@
 // src/pages/dna/contribute/ContributeDiscovery.tsx
 // Discovery mode for Contribute hub - full marketplace experience with PRD hub pattern
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { HandHeart, Plus, Search, Package, Users, Sparkles, DollarSign } from 'lucide-react';
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+
 
 // New Hub Components
 import {
@@ -183,33 +183,60 @@ export function ContributeDiscovery() {
     },
   ];
 
-  // DIA Recommendations
-  const diaRecommendations: DIARecommendation[] = [
-    {
-      id: 'skills-match',
-      title: 'Needs matching your skills',
-      description: 'Projects looking for expertise you have',
-      reason: 'Based on your profile expertise areas',
-      icon: Sparkles,
-      onClick: () => navigate('/dna/contribute/needs'),
-    },
-    {
-      id: 'network-offers',
-      title: 'Offers from your network',
-      description: 'See what your connections are offering',
-      reason: 'Based on your network connections',
-      icon: Users,
-      onClick: () => navigate('/dna/contribute/needs'),
-    },
-    {
-      id: 'high-impact',
-      title: 'High-impact opportunities',
-      description: 'Priority needs with community backing',
-      reason: 'Based on community engagement and urgency',
-      icon: HandHeart,
-      onClick: () => navigate('/dna/contribute/needs?sort=priority'),
-    },
-  ];
+  // DIA Recommendations — driven by real data
+  const diaRecommendations: DIARecommendation[] = useMemo(() => {
+    const recs: DIARecommendation[] = [];
+    const needsCount = stats?.openNeeds || 0;
+    const myCount = stats?.myRequests || 0;
+    const matchesCount = stats?.matchesMade || 0;
+
+    if (needsCount > 0 && myCount === 0) {
+      recs.push({
+        id: 'first-contribution',
+        title: `${needsCount} open need${needsCount !== 1 ? 's' : ''} waiting`,
+        description: 'The community has posted needs — see if any match your skills.',
+        reason: 'You haven\'t contributed yet — start here',
+        icon: Sparkles,
+        onClick: () => navigate('/dna/contribute/needs'),
+      });
+    }
+
+    if (matchesCount > 0) {
+      recs.push({
+        id: 'matches-celebrate',
+        title: `${matchesCount} match${matchesCount !== 1 ? 'es' : ''} made so far`,
+        description: 'The community is connecting needs with offers. Keep the momentum going.',
+        reason: 'Community impact metric',
+        icon: HandHeart,
+        onClick: () => navigate('/dna/contribute/needs'),
+      });
+    }
+
+    if (recentActivity && recentActivity.length > 0) {
+      const latest = recentActivity[0];
+      recs.push({
+        id: 'latest-need',
+        title: `New: "${latest.title}"`,
+        description: `${latest.type || 'Contribution'} need posted recently`,
+        reason: 'Latest community need',
+        icon: Package,
+        onClick: () => navigate(`/dna/contribute/needs/${latest.id}`),
+      });
+    }
+
+    if (recs.length === 0) {
+      recs.push({
+        id: 'explore-needs',
+        title: 'Explore contribution opportunities',
+        description: 'Browse needs or post your own to get started.',
+        reason: 'Get started with contributing on DNA',
+        icon: Sparkles,
+        onClick: () => navigate('/dna/contribute/needs'),
+      });
+    }
+
+    return recs;
+  }, [stats, recentActivity, navigate]);
 
   // Activity Feed items
   const activityItems: ActivityItem[] = (recentActivity || []).map(need => ({
@@ -229,8 +256,8 @@ export function ContributeDiscovery() {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-background pb-bottom-nav md:pb-0">
-      <div className="container max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 space-y-6">
+    <div className="w-full min-h-screen bg-background pb-20 md:pb-0">
+      <div className="container max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-3 lg:py-6 space-y-4 lg:space-y-6">
         {/* Hero Section */}
         <HubHero
           hub="contribute"
@@ -292,7 +319,7 @@ export function ContributeDiscovery() {
           </div>
         </div>
       </div>
-      <MobileBottomNav />
+      
     </div>
   );
 }

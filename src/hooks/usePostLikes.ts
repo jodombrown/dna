@@ -103,8 +103,8 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
           sendNotificationEmail({
             user_id: notificationContext.postAuthorId,
             notification_type: NOTIFICATION_TYPES.POST_LIKE,
-            title: 'Someone liked your post',
-            message: `${notificationContext.actorName || 'Someone'} liked your post`,
+            title: 'Someone affirmed your post',
+            message: `${notificationContext.actorName || 'Someone'} affirmed your post`,
             action_url: getPostUrl(postId),
             actor_name: notificationContext.actorName,
             actor_avatar_url: notificationContext.actorAvatarUrl,

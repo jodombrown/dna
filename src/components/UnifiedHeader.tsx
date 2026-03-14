@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useDashboard } from '@/contexts/DashboardContext';
+import { useOptionalDashboard } from '@/contexts/DashboardContext';
 import { useAccountDrawer } from '@/contexts/AccountDrawerContext';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -93,17 +93,10 @@ const UnifiedHeader = () => {
   // Query unread message count
   const { data: unreadMessageCount = 0 } = useUnreadMessageCount();
   
-  // Conditionally use dashboard context only for authenticated users
-  let setActiveView: any = () => {};
-  let activeView: any = 'dashboard';
-  
-  try {
-    const dashboard = useDashboard();
-    setActiveView = dashboard.setActiveView;
-    activeView = dashboard.activeView;
-  } catch (error) {
-    // DashboardProvider not available (marketing pages)
-  }
+  // Use optional dashboard context (safe when DashboardProvider is absent)
+  const dashboard = useOptionalDashboard();
+  const setActiveView = dashboard?.setActiveView ?? (() => {});
+  const activeView = dashboard?.activeView ?? 'dashboard';
   
   // Hide UnifiedHeader on mobile for Connect routes (has its own header)
   // Also hide when header visibility is set to hidden (e.g., during mobile chat)

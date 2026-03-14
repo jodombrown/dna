@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Input } from '@/components/ui/input';
@@ -50,6 +51,7 @@ export function DiscoveryFeed({
   className,
 }: DiscoveryFeedProps) {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
@@ -278,7 +280,7 @@ export function DiscoveryFeed({
               secondaryAction: {
                 label: 'Learn More',
                 action: () => {
-                  window.location.href = `/dna/${rec.username}`;
+                  navigate(`/dna/${rec.username}`);
                 },
               },
             });
@@ -309,7 +311,7 @@ export function DiscoveryFeed({
               primaryAction: {
                 label: 'Explore Projects',
                 action: () => {
-                  window.location.href = '/dna/collaborate';
+                  navigate('/dna/collaborate');
                 },
               },
             });
@@ -347,7 +349,7 @@ export function DiscoveryFeed({
               primaryAction: {
                 label: 'View Attendees',
                 action: () => {
-                  window.location.href = `/dna/convene/events/${evt.id}`;
+                  navigate(`/dna/convene/events/${evt.id}`);
                 },
               },
             });
@@ -394,7 +396,7 @@ export function DiscoveryFeed({
               primaryAction: {
                 label: 'View Need',
                 action: () => {
-                  window.location.href = `/dna/contribute/needs/${need.id}`;
+                  navigate(`/dna/contribute/needs/${need.id}`);
                 },
               },
             });

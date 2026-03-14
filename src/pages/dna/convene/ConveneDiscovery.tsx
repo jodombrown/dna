@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/carousel';
 import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures';
 import Autoplay from 'embla-carousel-autoplay';
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
 import { CuratedEventCard } from '@/components/convene/CuratedEventCard';
 import { ConveneLocationSelector } from '@/components/convene/ConveneLocationSelector';
@@ -575,7 +575,7 @@ export function ConveneDiscovery() {
       </div>
 
       <ConveneSearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
-      <MobileBottomNav />
+      
       <UniversalComposer
         isOpen={composer.isOpen}
         mode={composer.mode}

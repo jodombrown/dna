@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -79,6 +80,7 @@ export function ConversationsPanel({
   className,
 }: ConversationsPanelProps) {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const composer = useUniversalComposer();
   const [searchQuery, setSearchQuery] = useState('');
@@ -445,7 +447,7 @@ export function ConversationsPanel({
                 variant="ghost"
                 size="sm"
                 className="w-full text-xs text-muted-foreground"
-                onClick={() => (window.location.href = '/dna/messages')}
+                onClick={() => navigate('/dna/messages')}
               >
                 View all messages
                 <ChevronRight className="h-3 w-3 ml-1" />

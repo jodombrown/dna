@@ -34,7 +34,7 @@ import ProfileV2Events from '@/components/profile-v2/ProfileV2Events';
 import ProfileV2Spaces from '@/components/profile-v2/ProfileV2Spaces';
 import ProfileV2Opportunities from '@/components/profile-v2/ProfileV2Opportunities';
 import ProfileV2Stories from '@/components/profile-v2/ProfileV2Stories';
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+
 import { MutualConnectionsWidget } from '@/components/connections/MutualConnectionsWidget';
 import PublicProfileLandingView from '@/components/profile-v2/PublicProfileLandingView';
 
@@ -242,7 +242,6 @@ const ProfileV2: React.FC = () => {
             </Card>
           </div>
         </div>
-        <MobileBottomNav />
       </div>
     );
   }
@@ -448,7 +447,7 @@ const ProfileV2: React.FC = () => {
           </div>
         </div>
       </div>
-      <MobileBottomNav />
+      
     </div>
   );
 };

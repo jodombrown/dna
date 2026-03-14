@@ -84,7 +84,7 @@ const CONTENT_TEMPLATES: Partial<Record<NotificationType, ContentTemplate>> = {
     body: p.commentPreview ? (p.commentPreview as string).slice(0, 100) : null,
   }),
   post_liked: (p) => ({
-    headline: `${p.actorName} liked your post`,
+    headline: `${p.actorName} affirmed your post`,
     body: null,
   }),
   post_commented: (p) => ({
@@ -220,7 +220,7 @@ const CONTENT_TEMPLATES: Partial<Record<NotificationType, ContentTemplate>> = {
 
   // CONVEY
   story_liked: (p) => ({
-    headline: `${p.actorName} liked your story`,
+    headline: `${p.actorName} affirmed your story`,
     body: p.targetTitle ? `"${p.targetTitle}"` : null,
   }),
   story_commented: (p) => ({
@@ -305,10 +305,10 @@ const CONTENT_TEMPLATES: Partial<Record<NotificationType, ContentTemplate>> = {
 
 function generateBatchHeadline(type: NotificationType, count: number, targetTitle: string): string {
   const templates: Record<string, string> = {
-    post_liked: `${count} people liked your post`,
+    post_liked: `${count} people affirmed your post`,
     post_commented: `${count} people commented on your post`,
     post_reshared: `${count} people reshared your post`,
-    story_liked: `${count} people liked "${targetTitle}"`,
+    story_liked: `${count} people affirmed "${targetTitle}"`,
     story_reshared: `${count} people shared "${targetTitle}"`,
     story_commented: `${count} people commented on "${targetTitle}"`,
     event_new_attendee: `${count} new attendees for ${targetTitle}`,

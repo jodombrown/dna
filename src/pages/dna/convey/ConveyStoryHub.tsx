@@ -12,7 +12,7 @@ import {
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { Badge } from '@/components/ui/badge';
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+
 import { useMobile } from '@/hooks/useMobile';
 import { STORY_TYPE_CONFIG, type StoryType } from '@/types/storyTypes';
 import { cn } from '@/lib/utils';
@@ -494,7 +494,7 @@ export default function ConveyStoryHub() {
         />
       )}
 
-      <MobileBottomNav />
+      
       <UniversalComposer
         isOpen={composer.isOpen}
         mode={composer.mode}

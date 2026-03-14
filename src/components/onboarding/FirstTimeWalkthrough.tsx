@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Users, MessageCircle, PenSquare, BookOpen, 
@@ -106,6 +107,7 @@ export function FirstTimeWalkthrough() {
     updateStep 
   } = useTourProgress();
   
+  const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [hasCompletedLocally, setHasCompletedLocally] = useState(() => {
@@ -149,7 +151,7 @@ export function FirstTimeWalkthrough() {
     completeTour();
     
     // Navigate to feed after completion
-    window.location.href = '/dna/feed';
+    navigate('/dna/feed');
   };
 
   const handleNext = () => {

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MessageCircle, Eye, BookOpen } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
@@ -6,6 +7,7 @@ import PatternBackground from './ui/PatternBackground';
 import MainPageFeedbackPanel from './MainPageFeedbackPanel';
 
 const BuildingTogetherSection = () => {
+  const navigate = useNavigate();
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
   return (
@@ -73,7 +75,7 @@ const BuildingTogetherSection = () => {
               </p>
               <Button 
                 variant="default"
-                onClick={() => window.location.href = '/about'}
+                onClick={() => navigate('/about')}
               >
                 Learn More
               </Button>

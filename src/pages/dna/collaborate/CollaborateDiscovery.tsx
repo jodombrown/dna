@@ -1,13 +1,13 @@
 // src/pages/dna/collaborate/CollaborateDiscovery.tsx
 // Discovery mode for Collaborate hub - full spaces experience with PRD hub pattern
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Users, Plus, Search, FolderKanban, CheckSquare, UserPlus, Sparkles } from 'lucide-react';
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+
 
 // New Hub Components
 import {
@@ -181,33 +181,61 @@ export function CollaborateDiscovery() {
     },
   ];
 
-  // DIA Recommendations
-  const diaRecommendations: DIARecommendation[] = [
-    {
-      id: 'skills-match',
-      title: 'Spaces needing your skills',
-      description: 'Projects looking for expertise matching your profile',
-      reason: 'Based on your expertise areas and skills',
-      icon: Sparkles,
-      onClick: () => navigate('/dna/collaborate/spaces'),
-    },
-    {
-      id: 'network-projects',
-      title: 'Your connections\' active projects',
-      description: 'See what people in your network are building',
-      reason: 'Based on your network activity',
-      icon: Users,
-      onClick: () => navigate('/dna/collaborate/spaces'),
-    },
-    {
-      id: 'due-tasks',
-      title: 'Tasks due this week',
-      description: 'Don\'t miss your upcoming deadlines',
-      reason: 'Urgency nudge based on task due dates',
-      icon: CheckSquare,
-      onClick: () => navigate('/dna/collaborate/my-spaces'),
-    },
-  ];
+  // DIA Recommendations — driven by real data
+  const diaRecommendations: DIARecommendation[] = useMemo(() => {
+    const recs: DIARecommendation[] = [];
+    const activeCount = stats?.activeSpaces || 0;
+    const myCount = stats?.mySpaces || 0;
+    const taskCount = stats?.openTasks || 0;
+
+    if (myCount === 0 && activeCount > 0) {
+      recs.push({
+        id: 'join-first-space',
+        title: `${activeCount} active spaces to explore`,
+        description: 'You haven\'t joined any spaces yet — find one that matches your expertise.',
+        reason: 'You have no spaces — joining one unlocks collaboration',
+        icon: Sparkles,
+        onClick: () => navigate('/dna/collaborate/spaces'),
+      });
+    }
+
+    if (taskCount > 0) {
+      recs.push({
+        id: 'due-tasks',
+        title: `${taskCount} task${taskCount !== 1 ? 's' : ''} assigned to you`,
+        description: 'Stay on track with your commitments.',
+        reason: 'Based on your current task assignments',
+        icon: CheckSquare,
+        onClick: () => navigate('/dna/collaborate/my-spaces'),
+      });
+    }
+
+    if (recentActivity && recentActivity.length > 0) {
+      const latest = recentActivity[0];
+      recs.push({
+        id: 'trending-space',
+        title: `"${latest.name}" is active now`,
+        description: latest.tagline || 'Recently updated collaboration space',
+        reason: 'Trending in the community',
+        icon: Users,
+        onClick: () => navigate(`/dna/collaborate/spaces/${latest.slug}`),
+      });
+    }
+
+    // Fallback if no data-driven recs
+    if (recs.length === 0) {
+      recs.push({
+        id: 'explore-spaces',
+        title: 'Discover collaboration spaces',
+        description: 'Browse projects that need your skills and expertise.',
+        reason: 'Get started with collaboration on DNA',
+        icon: Sparkles,
+        onClick: () => navigate('/dna/collaborate/spaces'),
+      });
+    }
+
+    return recs;
+  }, [stats, recentActivity, navigate]);
 
   // Activity Feed items
   const activityItems: ActivityItem[] = (recentActivity || []).map(space => ({
@@ -228,7 +256,7 @@ export function CollaborateDiscovery() {
 
   return (
     <div className="w-full min-h-screen bg-background pb-20 md:pb-0">
-      <div className="container max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 space-y-6">
+      <div className="container max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-3 lg:py-6 space-y-4 lg:space-y-6">
         {/* Hero Section */}
         <HubHero
           hub="collaborate"
@@ -287,7 +315,7 @@ export function CollaborateDiscovery() {
           </div>
         </div>
       </div>
-      <MobileBottomNav />
+      
     </div>
   );
 }

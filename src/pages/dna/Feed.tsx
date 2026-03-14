@@ -25,6 +25,7 @@ import { MobileHeader } from '@/components/mobile/MobileHeader';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { useMobile } from '@/hooks/useMobile';
+import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
 import { incrementSessionCount } from '@/services/dia-feed-cadence';
 import { useLocation } from 'react-router-dom';
 
@@ -58,11 +59,20 @@ const DnaFeed = () => {
   const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const composer = useUniversalComposer();
   const { isMobile } = useMobile();
+  const { hideHeader, showHeader } = useHeaderVisibility();
 
   // Increment session count for DIA cadence engine
   useEffect(() => {
     incrementSessionCount();
   }, []);
+
+  // Hide unified header on mobile feed (has its own header)
+  useEffect(() => {
+    if (isMobile) {
+      hideHeader();
+      return () => showHeader();
+    }
+  }, [isMobile, hideHeader, showHeader]);
 
   // Scroll position preservation
   useEffect(() => {
@@ -136,16 +146,7 @@ const DnaFeed = () => {
         {/* First-time user walkthrough */}
         <FirstTimeWalkthrough />
         
-        {/* Hide BaseLayout's UnifiedHeader for mobile feed */}
-        <style>{`
-          body:has([data-mobile-feed="true"]) header[data-unified-header] {
-            display: none !important;
-          }
-          body:has([data-mobile-feed="true"]) > div > div {
-            padding-top: 0 !important;
-          }
-        `}</style>
-        <div className="min-h-screen bg-background" data-mobile-feed="true">
+        <div className="min-h-screen bg-background">
           {/* Fixed header + profile banner + tabs container (mobile feed only) */}
           <div className="fixed top-0 left-0 right-0 z-40 bg-background">
             <MobileHeader
