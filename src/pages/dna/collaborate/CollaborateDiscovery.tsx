@@ -1,7 +1,7 @@
 // src/pages/dna/collaborate/CollaborateDiscovery.tsx
 // Discovery mode for Collaborate hub - full spaces experience with PRD hub pattern
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
