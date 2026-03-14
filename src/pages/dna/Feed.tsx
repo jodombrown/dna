@@ -25,6 +25,7 @@ import { MobileHeader } from '@/components/mobile/MobileHeader';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { useMobile } from '@/hooks/useMobile';
+import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
 import { incrementSessionCount } from '@/services/dia-feed-cadence';
 import { useLocation } from 'react-router-dom';
 
