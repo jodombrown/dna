@@ -305,7 +305,7 @@ const CONTENT_TEMPLATES: Partial<Record<NotificationType, ContentTemplate>> = {
 
 function generateBatchHeadline(type: NotificationType, count: number, targetTitle: string): string {
   const templates: Record<string, string> = {
-    post_liked: `${count} people liked your post`,
+    post_liked: `${count} people affirmed your post`,
     post_commented: `${count} people commented on your post`,
     post_reshared: `${count} people reshared your post`,
     story_liked: `${count} people liked "${targetTitle}"`,
