@@ -107,6 +107,7 @@ export function FirstTimeWalkthrough() {
     updateStep 
   } = useTourProgress();
   
+  const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [hasCompletedLocally, setHasCompletedLocally] = useState(() => {
