@@ -17,10 +17,15 @@ export function FeedSponsorCard() {
   const { placements, isLoading, trackClick } = useSponsorPlacements('feed_sidebar');
 
   if (isLoading || placements.length === 0) return null;
-
+  const [logoError, setLogoError] = useState(false);
+  
   const placement = placements[0];
   const sponsor = placement.sponsors;
   if (!sponsor) return null;
+
+  const logoUrl = logoError
+    ? SPONSOR_LOGO_FALLBACKS[sponsor.name] || null
+    : sponsor.logo_url || SPONSOR_LOGO_FALLBACKS[sponsor.name] || null;
 
   const handleCtaClick = () => {
     trackClick(placement.id);
