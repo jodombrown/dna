@@ -84,8 +84,8 @@ export function usePostReactions(postId: string, userId?: string, notificationCo
         sendNotificationEmail({
           user_id: notificationContext.postAuthorId,
           notification_type: NOTIFICATION_TYPES.REACTION,
-          title: 'Someone reacted to your post',
-          message: `${notificationContext.actorName || 'Someone'} reacted ${emoji} to your post`,
+          title: 'New reaction on your post',
+          message: `${notificationContext.actorName || 'Someone'} reacted ${emoji === 'asante' ? 'Asante' : emoji === 'inspired' ? 'Inspired' : emoji === 'lets_build' ? "Let's Build" : emoji === 'powerful' ? 'Powerful' : emoji === 'insightful' ? 'Insightful' : emoji} on your post`,
           action_url: getPostUrl(postId),
           actor_name: notificationContext.actorName,
           actor_avatar_url: notificationContext.actorAvatarUrl,

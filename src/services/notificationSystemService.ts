@@ -308,7 +308,7 @@ function generateBatchHeadline(type: NotificationType, count: number, targetTitl
     post_liked: `${count} people affirmed your post`,
     post_commented: `${count} people commented on your post`,
     post_reshared: `${count} people reshared your post`,
-    story_liked: `${count} people liked "${targetTitle}"`,
+    story_liked: `${count} people affirmed "${targetTitle}"`,
     story_reshared: `${count} people shared "${targetTitle}"`,
     story_commented: `${count} people commented on "${targetTitle}"`,
     event_new_attendee: `${count} new attendees for ${targetTitle}`,
