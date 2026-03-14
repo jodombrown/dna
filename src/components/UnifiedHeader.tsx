@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useDashboard } from '@/contexts/DashboardContext';
+import { useOptionalDashboard } from '@/contexts/DashboardContext';
 import { useAccountDrawer } from '@/contexts/AccountDrawerContext';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';

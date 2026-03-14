@@ -19,6 +19,15 @@ export const useDashboard = () => {
   return context;
 };
 
+/**
+ * Optional dashboard context hook — returns null when DashboardProvider
+ * is not in the component tree (e.g. marketing pages).
+ * Safe to call unconditionally (no Rules of Hooks violation).
+ */
+export const useOptionalDashboard = (): DashboardContextType | null => {
+  return useContext(DashboardContext) ?? null;
+};
+
 interface DashboardProviderProps {
   children: ReactNode;
 }

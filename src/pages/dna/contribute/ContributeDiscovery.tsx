@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { HandHeart, Plus, Search, Package, Users, Sparkles, DollarSign } from 'lucide-react';
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+
 
 // New Hub Components
 import {
