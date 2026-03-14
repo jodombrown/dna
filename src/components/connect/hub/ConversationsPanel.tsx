@@ -445,7 +445,7 @@ export function ConversationsPanel({
                 variant="ghost"
                 size="sm"
                 className="w-full text-xs text-muted-foreground"
-                onClick={() => (window.location.href = '/dna/messages')}
+                onClick={() => navigate('/dna/messages')}
               >
                 View all messages
                 <ChevronRight className="h-3 w-3 ml-1" />
