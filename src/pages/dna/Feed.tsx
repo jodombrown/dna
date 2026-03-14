@@ -146,16 +146,7 @@ const DnaFeed = () => {
         {/* First-time user walkthrough */}
         <FirstTimeWalkthrough />
         
-        {/* Hide BaseLayout's UnifiedHeader for mobile feed */}
-        <style>{`
-          body:has([data-mobile-feed="true"]) header[data-unified-header] {
-            display: none !important;
-          }
-          body:has([data-mobile-feed="true"]) > div > div {
-            padding-top: 0 !important;
-          }
-        `}</style>
-        <div className="min-h-screen bg-background" data-mobile-feed="true">
+        <div className="min-h-screen bg-background">
           {/* Fixed header + profile banner + tabs container (mobile feed only) */}
           <div className="fixed top-0 left-0 right-0 z-40 bg-background">
             <MobileHeader
