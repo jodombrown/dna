@@ -396,7 +396,7 @@ export function DiscoveryFeed({
               primaryAction: {
                 label: 'View Need',
                 action: () => {
-                  window.location.href = `/dna/contribute/needs/${need.id}`;
+                  navigate(`/dna/contribute/needs/${need.id}`);
                 },
               },
             });
