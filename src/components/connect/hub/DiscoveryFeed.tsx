@@ -51,6 +51,7 @@ export function DiscoveryFeed({
   className,
 }: DiscoveryFeedProps) {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
