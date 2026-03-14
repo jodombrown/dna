@@ -149,7 +149,7 @@ export function FirstTimeWalkthrough() {
     completeTour();
     
     // Navigate to feed after completion
-    window.location.href = '/dna/feed';
+    navigate('/dna/feed');
   };
 
   const handleNext = () => {

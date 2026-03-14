@@ -74,7 +74,7 @@ const BuildingTogetherSection = () => {
               </p>
               <Button 
                 variant="default"
-                onClick={() => window.location.href = '/about'}
+                onClick={() => navigate('/about')}
               >
                 Learn More
               </Button>

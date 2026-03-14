@@ -80,6 +80,7 @@ export function ConversationsPanel({
   className,
 }: ConversationsPanelProps) {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const composer = useUniversalComposer();
   const [searchQuery, setSearchQuery] = useState('');
