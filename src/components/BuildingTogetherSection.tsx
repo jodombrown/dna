@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MessageCircle, Eye, BookOpen } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
