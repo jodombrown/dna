@@ -3,6 +3,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Edit, MapPin, Globe, Briefcase, MessageCircle, UserPlus, Clock, Check, UserCheck, Users } from 'lucide-react';
 import { ProfileV2Data, ProfileV2Permissions, VerificationStatus, ConnectionStatus } from '@/types/profileV2';
+import { getFlag, getDiasporaRegionTag } from '@/lib/countryFlags';
+import { ProfilePresenceDot } from './ProfilePresenceDot';
 import { useToast } from '@/hooks/use-toast';
 import { ProfileShareDropdown } from '@/components/profile/ProfileShareDropdown';
 import { BANNER_GRADIENTS, BannerGradientKey } from '@/lib/constants/bannerGradients';
@@ -202,9 +204,12 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
           <div className="flex flex-col gap-2 sm:gap-3">
             {/* Name & Username */}
             <div>
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-tight">
-                {profile.full_name}
-              </h1>
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-tight">
+                  {profile.full_name}
+                </h1>
+                <ProfilePresenceDot lastSeenAt={(profile as any).last_seen_at} size="md" />
+              </div>
               <p className="text-muted-foreground text-sm">@{profile.username}</p>
             </div>
 
@@ -233,14 +238,23 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                     <span className="text-muted-foreground/70">Based in </span>
                     {profile.location || profile.current_country}
                   </span>
+                  {/* Large country flag next to location */}
+                  {profile.current_country && (
+                    <span className="text-2xl leading-none" aria-label={profile.current_country}>
+                      {getFlag(profile.current_country)}
+                    </span>
+                  )}
                 </div>
               )}
-              {profile.country_of_origin && (
+              {profile.country_of_origin && profile.country_of_origin !== profile.current_country && (
                 <div className="flex items-center gap-1.5">
                   <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
                   <span className="truncate max-w-[150px] sm:max-w-none">
                     <span className="text-muted-foreground/70">From </span>
                     {profile.country_of_origin}
+                  </span>
+                  <span className="text-2xl leading-none" aria-label={profile.country_of_origin}>
+                    {getFlag(profile.country_of_origin)}
                   </span>
                 </div>
               )}
@@ -256,6 +270,14 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                 </div>
               )}
             </div>
+
+            {/* Diaspora Region Tag */}
+            {(() => {
+              const tag = getDiasporaRegionTag(profile.country_of_origin, profile.current_country);
+              return tag ? (
+                <p className="text-xs text-muted-foreground">{tag}</p>
+              ) : null;
+            })()}
 
             {/* Mobile Action Buttons - Preserved original simple UI */}
             <div className="flex gap-2 md:hidden pt-2">

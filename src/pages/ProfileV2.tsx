@@ -34,6 +34,9 @@ import ProfileV2Events from '@/components/profile-v2/ProfileV2Events';
 import ProfileV2Spaces from '@/components/profile-v2/ProfileV2Spaces';
 import ProfileV2Opportunities from '@/components/profile-v2/ProfileV2Opportunities';
 import ProfileV2Stories from '@/components/profile-v2/ProfileV2Stories';
+import { DiasporaFootprint } from '@/components/profile-v2/DiasporaFootprint';
+import { ProfileConnectionContext } from '@/components/profile-v2/ProfileConnectionContext';
+import { ProfileRecentPosts } from '@/components/profile-v2/ProfileRecentPosts';
 
 import { MutualConnectionsWidget } from '@/components/connections/MutualConnectionsWidget';
 import PublicProfileLandingView from '@/components/profile-v2/PublicProfileLandingView';
@@ -343,6 +346,21 @@ const ProfileV2: React.FC = () => {
               isOwner={permissions.is_owner}
               onUpdate={handleUpdateAbout}
             />
+
+            {/* Enhancement 2: Diaspora Footprint — Five C's Activity Bar */}
+            <DiasporaFootprint userId={profile.id} />
+
+            {/* Enhancement 5: Recent Activity Preview */}
+            <ProfileRecentPosts userId={profile.id} username={profile.username} />
+
+            {/* Enhancement 4: Connection Context */}
+            {!permissions.is_owner && user?.id && profile?.id && (
+              <ProfileConnectionContext
+                currentUserId={user.id}
+                targetUserId={profile.id}
+                targetName={profile.full_name || 'this member'}
+              />
+            )}
 
             <ProfileV2Connection
               profile={profile}
