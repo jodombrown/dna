@@ -142,8 +142,11 @@ const Connect = () => {
   if (isMobile) {
     return (
       <div className="min-h-screen bg-background pb-20 overflow-x-hidden">
-        {/* Mobile Fixed Header */}
-        <div className="fixed top-0 left-0 right-0 z-40 bg-background">
+        {/* Mobile Fixed Header - hides on scroll down */}
+        <div className={cn(
+          "fixed top-0 left-0 right-0 z-40 bg-background transition-all duration-300",
+          headerHidden ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
+        )}>
           <ConnectMobileHeader
             activeTab={mobileView}
             onTabChange={handleMobileTabChange}
@@ -155,7 +158,10 @@ const Connect = () => {
         </div>
 
         {/* Mobile Content - Render child routes via Outlet */}
-        <div className="pt-[4.5rem] px-3 sm:px-4 overflow-x-hidden">
+        <div className={cn(
+          "px-3 sm:px-4 overflow-x-hidden transition-[padding] duration-300",
+          headerHidden ? "pt-[0.5rem]" : "pt-[4.5rem]"
+        )}>
           <Outlet context={{
             mobileSearchQuery,
             showMobileFilters,
