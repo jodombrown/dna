@@ -237,12 +237,21 @@ export function ConnectMemberCard({ member, onConnectionSent, onMessage }: Conne
 
       {/* Action row */}
       <div className="flex items-center justify-between pt-1">
-        {/* Location */}
-        <div className="flex items-center gap-1 text-xs text-muted-foreground truncate min-w-0">
+        {/* Location & Member since */}
+        <div className="flex items-center gap-2 text-xs text-muted-foreground truncate min-w-0">
           {member.location && (
             <>
               <MapPin className="h-3 w-3 shrink-0" />
               <span className="truncate">{member.location}</span>
+            </>
+          )}
+          {member.created_at && (
+            <>
+              {member.location && <span className="text-muted-foreground/40">·</span>}
+              <Calendar className="h-3 w-3 shrink-0" />
+              <span className="truncate">
+                {new Date(member.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+              </span>
             </>
           )}
         </div>

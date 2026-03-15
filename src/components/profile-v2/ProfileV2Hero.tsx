@@ -269,6 +269,18 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                   </span>
                 </div>
               )}
+              {/* Member since */}
+              {profile.created_at && (
+                <div className="flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+                  <span>
+                    Member since{' '}
+                    <strong>
+                      {new Date(profile.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                    </strong>
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Diaspora Region Tag */}
