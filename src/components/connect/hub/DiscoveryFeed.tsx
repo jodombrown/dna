@@ -28,6 +28,28 @@ interface DiscoveryFeedProps {
   className?: string;
 }
 
+/** Typed shape for members returned by profile queries and discover_members RPC */
+interface DiscoveryMember {
+  id: string;
+  full_name: string;
+  username: string;
+  avatar_url?: string | null;
+  headline?: string | null;
+  profession?: string | null;
+  location?: string | null;
+  country_of_origin?: string | null;
+  current_country?: string | null;
+  focus_areas?: string[] | null;
+  industries?: string[] | null;
+  bio?: string | null;
+  tagline?: string | null;
+  last_seen_at?: string | null;
+  created_at?: string | null;
+  match_score?: number | null;
+  connections_count?: number | null;
+  [key: string]: unknown;
+}
+
 /**
  * DiscoveryFeed — Intelligent lane-based member discovery
  *
