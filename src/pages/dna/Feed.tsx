@@ -151,9 +151,9 @@ const DnaFeed = () => {
         <FirstTimeWalkthrough />
         
         <div className="min-h-screen bg-background">
-          {/* Fixed mobile header row - hides on scroll down */}
+          {/* Fixed mobile header row - hides on scroll down, z-50 to sit above UnifiedHeader */}
           <div className={cn(
-            "fixed top-0 left-0 right-0 z-40 bg-background transition-all duration-300",
+            "fixed top-0 left-0 right-0 z-50 bg-background transition-all duration-300",
             headerHidden ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
           )}>
             <MobileHeader
@@ -178,10 +178,10 @@ const DnaFeed = () => {
           {/* New Posts Indicator */}
           <NewPostsIndicator count={newPostCount} onClick={handleNewPostsClick} />
 
-          {/* Add top padding to account for fixed header + tabs */}
+          {/* Add top padding to account for fixed header (56px) + tabs (~44px) = ~100px */}
           <main className={cn(
             "pb-bottom-nav px-3 space-y-0 transition-[padding] duration-300",
-            headerHidden ? "pt-[1rem]" : "pt-[4.5rem]"
+            headerHidden ? "pt-[3rem]" : "pt-[6.25rem]"
           )}>
             {/* Profile completion banner */}
             <MobileProfileCompletionBanner threshold={100} />
