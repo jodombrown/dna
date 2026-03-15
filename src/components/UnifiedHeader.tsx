@@ -115,7 +115,7 @@ const UnifiedHeader = () => {
     return (
       <header className="bg-background border-b border-border fixed top-0 left-0 right-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-20">
             <div className="flex items-center space-x-4">
               <NavLink 
                 to="/" 
@@ -136,11 +136,11 @@ const UnifiedHeader = () => {
                 <SheetTrigger asChild>
                   <Button 
                     variant="ghost" 
-                    size="sm"
-                    className="p-2 md:hidden"
+                    size="icon"
+                    className="p-1 md:hidden h-auto w-auto"
                     aria-label="Open menu"
                   >
-                    <Menu className="w-16 h-16" />
+                    <Menu className="!w-10 !h-10" />
                   </Button>
                 </SheetTrigger>
                 <SheetContent
@@ -238,7 +238,7 @@ const UnifiedHeader = () => {
         className="bg-background border-b border-border fixed top-0 left-0 right-0 z-50 shadow-sm"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-20">
             {/* Left section - Logo and Search */}
             <div className="flex items-center space-x-4">
               <NavLink 
