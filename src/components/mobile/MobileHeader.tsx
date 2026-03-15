@@ -56,12 +56,12 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
           className
         )}
       >
-        <div className="flex items-center justify-between h-14 px-3 gap-2">
+        <div className="flex items-center justify-between h-14 px-1 gap-1.5">
           {/* DNA Logo */}
           <img 
             src={dnaLogo}
             alt="DNA" 
-            className="h-[80px] w-auto cursor-pointer flex-shrink-0"
+            className="h-[80px] w-auto cursor-pointer flex-shrink-0 -ml-4"
             width={57}
             height={32}
             onClick={() => navigate('/dna/feed')}
@@ -71,23 +71,23 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
           {onComposerClick && (
             <div 
               onClick={onComposerClick}
-              className="flex-1 bg-muted rounded-full px-4 py-2 text-sm text-muted-foreground cursor-pointer hover:bg-muted/80 transition-colors"
+              className="flex-1 min-w-0 bg-muted rounded-full px-3 py-2 text-sm text-muted-foreground cursor-pointer hover:bg-muted/80 transition-colors"
             >
-              <span className="truncate">What's on your mind?</span>
+              <span className="truncate block">What's on your mind?</span>
             </div>
           )}
 
-      {/* Right: Notification + Profile */}
-       <div className="flex items-center gap-2 flex-shrink-0">
-         <UnifiedNotificationBell />
-         <Avatar 
-           className="h-8 w-8 cursor-pointer" 
-           onClick={openAccountDrawer}
-         >
-           <AvatarImage src={profile.avatar_url || ''} />
-           <AvatarFallback>{profile.display_name?.[0] || profile.username?.[0] || 'U'}</AvatarFallback>
-         </Avatar>
-       </div>
+          {/* Right: Notification + Profile */}
+          <div className="flex items-center gap-1.5 flex-shrink-0 pr-1">
+            <UnifiedNotificationBell />
+            <Avatar 
+              className="h-9 w-9 cursor-pointer" 
+              onClick={openAccountDrawer}
+            >
+              <AvatarImage src={profile.avatar_url || ''} />
+              <AvatarFallback>{profile.display_name?.[0] || profile.username?.[0] || 'U'}</AvatarFallback>
+            </Avatar>
+          </div>
         </div>
       </header>
     );
