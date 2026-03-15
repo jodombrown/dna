@@ -170,7 +170,7 @@ const DnaFeed = () => {
             "fixed left-0 right-0 z-30 bg-background border-b border-border transition-all duration-300",
             headerHidden ? "top-0" : "top-14"
           )}>
-            <div className="px-3 py-1 overflow-x-auto">
+            <div className="px-3 py-0.5 overflow-x-auto">
               <MobileFeedTabs activeTab={activeTab} onTabChange={setActiveTab} />
             </div>
           </div>
@@ -180,8 +180,8 @@ const DnaFeed = () => {
 
           {/* Add top padding to account for fixed header + tabs */}
           <main className={cn(
-            "pb-bottom-nav px-3 space-y-0.5 transition-[padding] duration-300",
-            headerHidden ? "pt-[2.75rem]" : "pt-[6.25rem]"
+            "pb-bottom-nav px-3 space-y-0 transition-[padding] duration-300",
+            headerHidden ? "pt-[2.25rem]" : "pt-[5.75rem]"
           )}>
             {/* Profile completion banner */}
             <MobileProfileCompletionBanner threshold={100} />
