@@ -47,6 +47,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   // Check if we're on routes that manage their own mobile headers
   const isConnectRoute = location.pathname.includes('/dna/connect');
   const isFeedRoute = location.pathname.includes('/dna/feed');
+  const hasCustomMobileHeader = isFeedRoute || isConnectRoute;
 
   // Unique gradient for each of the 5 Cs + Feed when logged in
   // All using DNA brand colors: mint, terra, ochre, sunset, purple, copper
