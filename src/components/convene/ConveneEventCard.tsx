@@ -344,8 +344,9 @@ export function ConveneEventCard({
           </div>
         )}
 
-        {/* Gradient overlay — strengthened for chip legibility */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/5" />
+        {/* Two-layer gradient overlay — bulletproof chip legibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/30 to-transparent" />
 
         {/* Category chip — top left */}
         {event.event_type && (
@@ -361,12 +362,13 @@ export function ConveneEventCard({
           <div className="absolute top-3 right-3">
             <span
               className={cn(
-                'px-2.5 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1',
+                'px-2.5 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1 backdrop-blur-sm shadow-lg',
                 urgency.variant === 'today' && 'bg-destructive text-white',
                 urgency.variant === 'tomorrow' && 'bg-destructive/90 text-white',
                 urgency.variant === 'urgent' && 'bg-module-convene text-white',
                 urgency.variant === 'soon' && 'bg-module-convene text-white',
               )}
+              style={{ textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}
             >
               {urgency.pulse && <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />}
               <Clock className="h-3 w-3" />
