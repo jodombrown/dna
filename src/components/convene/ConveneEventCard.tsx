@@ -97,7 +97,7 @@ export function ConveneEventCard({
   showActions = false,
   isOrganizer = false,
   onClick,
-  showMutualAttendees = false,
+  showMutualAttendees = true,
   className,
 }: ConveneEventCardProps) {
   const navigate = useNavigate();
