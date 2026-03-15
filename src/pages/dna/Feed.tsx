@@ -151,8 +151,11 @@ const DnaFeed = () => {
         <FirstTimeWalkthrough />
         
         <div className="min-h-screen bg-background">
-          {/* Fixed mobile header - matches Connect hub pattern */}
-          <div className="fixed top-0 left-0 right-0 z-40 bg-background">
+          {/* Fixed mobile header row - hides on scroll down */}
+          <div className={cn(
+            "fixed top-0 left-0 right-0 z-50 bg-background transition-all duration-300",
+            headerHidden ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
+          )}>
             <MobileHeader
               variant="feed"
               showSearch={true}
@@ -160,8 +163,14 @@ const DnaFeed = () => {
               onComposerClick={() => composer.open('post')}
               className="border-b-0"
             />
-            {/* Tabs row */}
-            <div className="px-3 py-1.5 bg-background border-b border-border">
+          </div>
+
+          {/* Fixed mobile tabs row - slides up when header hides */}
+          <div className={cn(
+            "fixed left-0 right-0 z-30 bg-background border-b border-border transition-all duration-300",
+            headerHidden ? "top-0" : "top-14"
+          )}>
+            <div className="px-3 py-1.5">
               <MobileFeedTabs activeTab={activeTab} onTabChange={setActiveTab} />
             </div>
           </div>
@@ -169,8 +178,11 @@ const DnaFeed = () => {
           {/* New Posts Indicator */}
           <NewPostsIndicator count={newPostCount} onClick={handleNewPostsClick} />
 
-          {/* Static top padding to account for fixed header + tabs */}
-          <main className="pb-bottom-nav px-3 space-y-0 pt-[4.5rem]">
+          {/* Top padding for fixed header + tabs */}
+          <main className={cn(
+            "pb-bottom-nav px-3 space-y-0 transition-[padding] duration-300",
+            headerHidden ? "pt-[3rem]" : "pt-[4.5rem]"
+          )}>
             {/* Profile completion banner */}
             <MobileProfileCompletionBanner threshold={100} />
             {/* Tab Explainer - shows once per day/login per tab */}
