@@ -253,7 +253,7 @@ export function ConnectMemberCard({ member, onConnectionSent, onMessage }: Conne
             size="sm"
             variant="outline"
             onClick={handleMessage}
-            className="rounded-full px-4 py-1.5 h-auto text-xs font-semibold border-dna-emerald-dark text-dna-emerald-dark hover:bg-dna-emerald-subtle shrink-0"
+            className="rounded-full px-4 py-1.5 h-auto text-xs font-semibold border-dna-forest text-dna-forest hover:bg-dna-emerald-subtle shrink-0"
           >
             <MessageSquare className="h-3.5 w-3.5 mr-1" />
             Message
