@@ -274,13 +274,13 @@ export function DiscoveryFeed({
         p_sort_by: 'match',
         p_limit: 20,
         p_offset: 0,
-      } as any);
+      });
 
       if (error) {
         logger.warn('DiscoveryFeed', 'Search query failed:', error);
         return [];
       }
-      return (data || []) as any[];
+      return (data || []) as DiscoveryMember[];
     },
     enabled: !!user?.id && searchQuery.length > 1,
     staleTime: 30000,
