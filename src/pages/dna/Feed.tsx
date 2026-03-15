@@ -152,45 +152,37 @@ const DnaFeed = () => {
         
         <div className="min-h-screen bg-background">
           {/* Fixed mobile header row - hides on scroll down */}
-          {(() => {
-            const { isScrollingDown, isAtTop } = useScrollDirection(30);
-            const hideHeader = isScrollingDown && !isAtTop;
-            return (
-              <>
-                <div className={cn(
-                  "fixed top-0 left-0 right-0 z-40 bg-background transition-all duration-300",
-                  hideHeader ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
-                )}>
-                  <MobileHeader
-                    variant="feed"
-                    showSearch={true}
-                    onSearchClick={() => setShowSearchDialog(true)}
-                    onComposerClick={() => composer.open('post')}
-                    className="border-b-0"
-                  />
-                </div>
+          <div className={cn(
+            "fixed top-0 left-0 right-0 z-40 bg-background transition-all duration-300",
+            headerHidden ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
+          )}>
+            <MobileHeader
+              variant="feed"
+              showSearch={true}
+              onSearchClick={() => setShowSearchDialog(true)}
+              onComposerClick={() => composer.open('post')}
+              className="border-b-0"
+            />
+          </div>
 
-                {/* Fixed mobile tabs row - slides up when header hides */}
-                <div className={cn(
-                  "fixed left-0 right-0 z-30 bg-background border-b border-border transition-all duration-300",
-                  hideHeader ? "top-0" : "top-14"
-                )}>
-                  <div className="px-3 py-1.5 overflow-x-auto">
-                    <MobileFeedTabs activeTab={activeTab} onTabChange={setActiveTab} />
-                  </div>
-                </div>
+          {/* Fixed mobile tabs row - slides up when header hides */}
+          <div className={cn(
+            "fixed left-0 right-0 z-30 bg-background border-b border-border transition-all duration-300",
+            headerHidden ? "top-0" : "top-14"
+          )}>
+            <div className="px-3 py-1.5 overflow-x-auto">
+              <MobileFeedTabs activeTab={activeTab} onTabChange={setActiveTab} />
+            </div>
+          </div>
 
-                {/* New Posts Indicator */}
-                <NewPostsIndicator count={newPostCount} onClick={handleNewPostsClick} />
+          {/* New Posts Indicator */}
+          <NewPostsIndicator count={newPostCount} onClick={handleNewPostsClick} />
 
-                {/* Add top padding to account for fixed header + tabs */}
-                <main className={cn(
-                  "pb-bottom-nav px-3 space-y-1 transition-[padding] duration-300",
-                  hideHeader ? "pt-[3.25rem]" : "pt-[6.75rem]"
-                )}>
-              </>
-            );
-          })()}
+          {/* Add top padding to account for fixed header + tabs */}
+          <main className={cn(
+            "pb-bottom-nav px-3 space-y-1 transition-[padding] duration-300",
+            headerHidden ? "pt-[3.25rem]" : "pt-[6.75rem]"
+          )}>
             {/* Profile completion banner */}
             <MobileProfileCompletionBanner threshold={100} />
             {/* Tab Explainer - shows once per day/login per tab */}
