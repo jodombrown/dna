@@ -85,7 +85,7 @@ export function DiscoveryFeed({
 
   // Helper to exclude self + already-connected members
   const excludeConnected = useCallback(
-    (members: any[]) => {
+    (members: DiscoveryMember[]) => {
       if (!user?.id) return members;
       return members.filter(
         (m) => m.id !== user.id && !connectedUserIds?.has(m.id)
