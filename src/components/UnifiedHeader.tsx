@@ -154,7 +154,7 @@ const UnifiedHeader = () => {
                         <img 
                           src={dnaLogo}
                           alt="Logo" 
-                  className="h-[60px] w-auto"
+                  className="h-[90px] w-auto"
                   width={57}
                   height={32}
                         />
@@ -475,7 +475,7 @@ const UnifiedHeader = () => {
                         <img 
                           src={dnaLogo}
                           alt="Logo" 
-                          className="h-[60px] w-auto"
+                          className="h-[90px] w-auto"
                           width={57}
                           height={32}
                         />
