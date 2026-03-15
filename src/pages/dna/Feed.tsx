@@ -181,7 +181,7 @@ const DnaFeed = () => {
           {/* Top padding for fixed header + tabs */}
           <main className={cn(
             "pb-bottom-nav px-3 space-y-0 transition-[padding] duration-300",
-            headerHidden ? "pt-[3rem]" : "pt-[4.5rem]"
+            headerHidden ? "pt-[3rem]" : "pt-[6.5rem]"
           )}>
             {/* Profile completion banner */}
             <MobileProfileCompletionBanner threshold={100} />
