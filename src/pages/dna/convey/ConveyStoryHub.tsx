@@ -212,10 +212,10 @@ export default function ConveyStoryHub() {
       {/* Sticky Header */}
       <div className={cn(
         "bg-background/95 backdrop-blur-sm z-10",
-        isMobile ? "sticky top-0 pt-2 pb-3 border-b border-border/50 -mx-4 px-4" : "pb-2"
+        isMobile ? "sticky top-0 pt-1 pb-2 border-b border-border/50 -mx-4 px-4" : "pb-2"
       )}>
         {/* Header Row */}
-        <div className="flex items-center justify-between gap-3 mb-4">
+        <div className="flex items-center justify-between gap-3 mb-2">
           <div className="flex items-center gap-3">
             <div className={cn(
               "rounded-xl bg-gradient-to-br from-dna-gold to-amber-600 shadow-lg shrink-0",

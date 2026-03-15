@@ -28,11 +28,11 @@ const DnaMe = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pt-20">
-      <div className="container max-w-7xl mx-auto px-4 py-8">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">My DNA Hub</h1>
-          <p className="text-muted-foreground">
+    <div className="min-h-screen bg-background">
+      <div className="container max-w-7xl mx-auto px-3 sm:px-4 py-3 lg:py-6">
+        <div className="mb-3 lg:mb-6">
+          <h1 className="text-2xl lg:text-3xl font-bold mb-1">My DNA Hub</h1>
+          <p className="text-sm text-muted-foreground">
             Your personal dashboard for the DNA platform
           </p>
         </div>
