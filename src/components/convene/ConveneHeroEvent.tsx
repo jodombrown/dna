@@ -93,7 +93,7 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
         {/* Urgency — top right */}
         {urgency && (
           <div className="absolute top-4 right-4">
-            <Badge className={cn(urgency.color, 'text-white border-0 text-xs font-semibold px-3 py-1 shadow-lg')}>
+            <Badge className={cn(urgency.color, 'text-white border-0 text-xs font-semibold px-3 py-1 shadow-lg backdrop-blur-sm')}>
               <Clock className="h-3 w-3 mr-1" />
               {urgency.label}
             </Badge>
