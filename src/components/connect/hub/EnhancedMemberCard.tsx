@@ -45,30 +45,7 @@ import { FiveCsEngagement } from './FiveCsEngagement';
 import { cn } from '@/lib/utils';
 import { getErrorMessage } from '@/lib/errorLogger';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
-
-// Country name to flag emoji
-const COUNTRY_FLAGS: Record<string, string> = {
-  'Nigeria': '🇳🇬', 'Ghana': '🇬🇭', 'Kenya': '🇰🇪', 'South Africa': '🇿🇦',
-  'Ethiopia': '🇪🇹', 'Tanzania': '🇹🇿', 'Uganda': '🇺🇬', 'Rwanda': '🇷🇼',
-  'Cameroon': '🇨🇲', 'Senegal': '🇸🇳', 'Côte d\'Ivoire': '🇨🇮', 'Mali': '🇲🇱',
-  'Democratic Republic of the Congo': '🇨🇩', 'Angola': '🇦🇴', 'Mozambique': '🇲🇿',
-  'Madagascar': '🇲🇬', 'Zimbabwe': '🇿🇼', 'Zambia': '🇿🇲', 'Botswana': '🇧🇼',
-  'Namibia': '🇳🇦', 'Malawi': '🇲🇼', 'Benin': '🇧🇯', 'Togo': '🇹🇬',
-  'Sierra Leone': '🇸🇱', 'Liberia': '🇱🇷', 'Gambia': '🇬🇲', 'Guinea': '🇬🇳',
-  'Burkina Faso': '🇧🇫', 'Niger': '🇳🇪', 'Chad': '🇹🇩', 'Somalia': '🇸🇴',
-  'Eritrea': '🇪🇷', 'Djibouti': '🇩🇯', 'Sudan': '🇸🇩', 'South Sudan': '🇸🇸',
-  'Egypt': '🇪🇬', 'Morocco': '🇲🇦', 'Tunisia': '🇹🇳', 'Algeria': '🇩🇿', 'Libya': '🇱🇾',
-  'United States': '🇺🇸', 'United Kingdom': '🇬🇧', 'Canada': '🇨🇦', 'France': '🇫🇷',
-  'Germany': '🇩🇪', 'Brazil': '🇧🇷', 'Jamaica': '🇯🇲', 'Trinidad and Tobago': '🇹🇹',
-  'Barbados': '🇧🇧', 'Haiti': '🇭🇹', 'Australia': '🇦🇺', 'Netherlands': '🇳🇱',
-  'Belgium': '🇧🇪', 'Portugal': '🇵🇹', 'Italy': '🇮🇹', 'Spain': '🇪🇸',
-  'Sweden': '🇸🇪', 'Norway': '🇳🇴', 'Denmark': '🇩🇰', 'Switzerland': '🇨🇭',
-  'UAE': '🇦🇪', 'Saudi Arabia': '🇸🇦', 'India': '🇮🇳', 'China': '🇨🇳', 'Japan': '🇯🇵',
-};
-const getFlag = (country: string | null | undefined): string => {
-  if (!country) return '';
-  return COUNTRY_FLAGS[country] || '🌍';
-};
+import { getFlag } from '@/lib/countryFlags';
 
 // Sector color mapping
 const SECTOR_COLORS: Record<string, string> = {

@@ -551,6 +551,7 @@ function EmptySearch({ onClear }: { onClear: () => void }) {
 }
 
 function AllEmptyState() {
+  const navigate = useNavigate();
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
       <div className="h-16 w-16 rounded-full bg-dna-emerald/10 flex items-center justify-center mb-4">
@@ -564,7 +565,7 @@ function AllEmptyState() {
       </p>
       <Button
         className="mt-6 bg-dna-emerald hover:bg-dna-forest text-white rounded-full px-6"
-        onClick={() => (window.location.href = '/dna/settings/profile')}
+        onClick={() => navigate('/dna/settings/profile')}
       >
         Complete Profile
       </Button>

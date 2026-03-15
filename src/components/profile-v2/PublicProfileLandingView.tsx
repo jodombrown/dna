@@ -28,94 +28,9 @@ import { ProfileV2Bundle } from '@/types/profileV2';
 import { BANNER_GRADIENTS, BannerGradientKey } from '@/lib/constants/bannerGradients';
 import { PublicProfileSEO } from '@/components/public-profile';
 import { motion } from 'framer-motion';
+import { getFlag } from '@/lib/countryFlags';
 
-// Country to flag emoji mapping
-const COUNTRY_FLAGS: Record<string, string> = {
-  'Nigeria': '🇳🇬',
-  'Ghana': '🇬🇭',
-  'Kenya': '🇰🇪',
-  'South Africa': '🇿🇦',
-  'Ethiopia': '🇪🇹',
-  'Tanzania': '🇹🇿',
-  'Uganda': '🇺🇬',
-  'Senegal': '🇸🇳',
-  'Cameroon': '🇨🇲',
-  'Egypt': '🇪🇬',
-  'Morocco': '🇲🇦',
-  'Algeria': '🇩🇿',
-  'Tunisia': '🇹🇳',
-  'Rwanda': '🇷🇼',
-  'Ivory Coast': '🇨🇮',
-  "Côte d'Ivoire": '🇨🇮',
-  'Zimbabwe': '🇿🇼',
-  'Zambia': '🇿🇲',
-  'Botswana': '🇧🇼',
-  'Namibia': '🇳🇦',
-  'Mozambique': '🇲🇿',
-  'Angola': '🇦🇴',
-  'DRC': '🇨🇩',
-  'Democratic Republic of the Congo': '🇨🇩',
-  'Congo': '🇨🇬',
-  'Mali': '🇲🇱',
-  'Burkina Faso': '🇧🇫',
-  'Niger': '🇳🇪',
-  'Chad': '🇹🇩',
-  'Sudan': '🇸🇩',
-  'Somalia': '🇸🇴',
-  'Eritrea': '🇪🇷',
-  'Liberia': '🇱🇷',
-  'Sierra Leone': '🇸🇱',
-  'Gambia': '🇬🇲',
-  'Guinea': '🇬🇳',
-  'Togo': '🇹🇬',
-  'Benin': '🇧🇯',
-  'Mauritius': '🇲🇺',
-  'Madagascar': '🇲🇬',
-  'Malawi': '🇲🇼',
-  'Lesotho': '🇱🇸',
-  'Eswatini': '🇸🇿',
-  'Gabon': '🇬🇦',
-  'Equatorial Guinea': '🇬🇶',
-  'Central African Republic': '🇨🇫',
-  'South Sudan': '🇸🇸',
-  'Djibouti': '🇩🇯',
-  'Comoros': '🇰🇲',
-  'Cape Verde': '🇨🇻',
-  'Cabo Verde': '🇨🇻',
-  'São Tomé and Príncipe': '🇸🇹',
-  'Seychelles': '🇸🇨',
-  'Guinea-Bissau': '🇬🇼',
-  'Mauritania': '🇲🇷',
-  'Libya': '🇱🇾',
-  // Common diaspora destinations
-  'United States': '🇺🇸',
-  'USA': '🇺🇸',
-  'United Kingdom': '🇬🇧',
-  'UK': '🇬🇧',
-  'Canada': '🇨🇦',
-  'France': '🇫🇷',
-  'Germany': '🇩🇪',
-  'Netherlands': '🇳🇱',
-  'Belgium': '🇧🇪',
-  'Italy': '🇮🇹',
-  'Spain': '🇪🇸',
-  'Portugal': '🇵🇹',
-  'Australia': '🇦🇺',
-  'UAE': '🇦🇪',
-  'United Arab Emirates': '🇦🇪',
-  'Saudi Arabia': '🇸🇦',
-  'China': '🇨🇳',
-  'Japan': '🇯🇵',
-  'Brazil': '🇧🇷',
-  'India': '🇮🇳',
-  'Jamaica': '🇯🇲',
-  'Trinidad and Tobago': '🇹🇹',
-};
-
-const getCountryFlag = (country: string | null | undefined): string => {
-  if (!country) return '';
-  return COUNTRY_FLAGS[country] || '';
-};
+const getCountryFlag = getFlag;
 
 const BIO_TRUNCATE_LENGTH = 500;
 

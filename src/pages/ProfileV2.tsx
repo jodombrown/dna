@@ -261,8 +261,8 @@ const ProfileV2: React.FC = () => {
         bio={profile.bio}
         avatarUrl={profile.avatar_url}
         company={profile.company}
-        linkedinUrl={(profile as any).linkedin_url}
-        websiteUrl={(profile as any).website_url}
+        linkedinUrl={(profile as unknown as { linkedin_url?: string }).linkedin_url}
+        websiteUrl={(profile as unknown as { website_url?: string }).website_url}
         memberSince={profile.created_at}
       />
 
