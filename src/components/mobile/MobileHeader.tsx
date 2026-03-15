@@ -117,7 +117,7 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
             <img 
               src={dnaLogo}
               alt="DNA" 
-              className="h-[60px] w-auto cursor-pointer"
+              className="h-[90px] w-auto cursor-pointer"
               width={57}
               height={32}
               onClick={() => navigate('/dna/feed')}
