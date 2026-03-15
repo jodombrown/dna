@@ -115,7 +115,7 @@ const UnifiedHeader = () => {
     return (
       <header className="bg-background border-b border-border fixed top-0 left-0 right-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-20">
             <div className="flex items-center space-x-4">
               <NavLink 
                 to="/" 
