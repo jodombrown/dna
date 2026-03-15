@@ -3,6 +3,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Edit, MapPin, Globe, Briefcase, MessageCircle, UserPlus, Clock, Check, UserCheck, Users } from 'lucide-react';
 import { ProfileV2Data, ProfileV2Permissions, VerificationStatus, ConnectionStatus } from '@/types/profileV2';
+import { getFlag, getDiasporaRegionTag } from '@/lib/countryFlags';
+import { ProfilePresenceDot } from './ProfilePresenceDot';
 import { useToast } from '@/hooks/use-toast';
 import { ProfileShareDropdown } from '@/components/profile/ProfileShareDropdown';
 import { BANNER_GRADIENTS, BannerGradientKey } from '@/lib/constants/bannerGradients';
