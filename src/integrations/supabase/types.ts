@@ -8239,6 +8239,7 @@ export type Database = {
           priority: number
           sponsor_id: string
           starts_at: string | null
+          status: string
         }
         Insert: {
           click_count?: number
@@ -8254,6 +8255,7 @@ export type Database = {
           priority?: number
           sponsor_id: string
           starts_at?: string | null
+          status?: string
         }
         Update: {
           click_count?: number
@@ -8269,6 +8271,7 @@ export type Database = {
           priority?: number
           sponsor_id?: string
           starts_at?: string | null
+          status?: string
         }
         Relationships: [
           {

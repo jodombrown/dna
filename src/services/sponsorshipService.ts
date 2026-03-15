@@ -31,6 +31,7 @@ export interface SponsorPlacement {
   starts_at: string | null;
   ends_at: string | null;
   is_active: boolean;
+  status: string;
   impression_count: number;
   click_count: number;
   created_at: string;
@@ -41,8 +42,6 @@ export interface SponsorWithPlacements extends Sponsor {
   sponsor_placements?: SponsorPlacement[];
 }
 
-const db = supabase as ReturnType<typeof supabase['from']> extends never ? typeof supabase : typeof supabase;
-
 export const sponsorshipService = {
   /** Fetch active placements for a given location with sponsor data */
   async getActivePlacements(placement: string): Promise<SponsorPlacement[]> {
@@ -52,6 +51,7 @@ export const sponsorshipService = {
       .select('*, sponsors(*)')
       .eq('placement', placement)
       .eq('is_active', true)
+      .eq('status', 'active')
       .lte('starts_at', now)
       .or(`ends_at.is.null,ends_at.gte.${now}`)
       .order('priority', { ascending: true });
