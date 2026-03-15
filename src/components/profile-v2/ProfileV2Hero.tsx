@@ -208,7 +208,7 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                 <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-tight">
                   {profile.full_name}
                 </h1>
-                <ProfilePresenceDot lastSeenAt={(profile as any).last_seen_at} size="md" />
+                <ProfilePresenceDot lastSeenAt={(profile as unknown as { last_seen_at?: string }).last_seen_at} size="md" />
               </div>
               <p className="text-muted-foreground text-sm">@{profile.username}</p>
             </div>

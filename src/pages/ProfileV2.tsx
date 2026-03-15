@@ -165,7 +165,7 @@ const ProfileV2: React.FC = () => {
   const activity = bundle.activity ?? { spaces: [], events: [] };
   
   // Handle flat isOwner from RPC vs nested permissions object
-  const rawIsOwner = (bundle as any).isOwner ?? bundle.permissions?.is_owner ?? false;
+  const rawIsOwner = (bundle as unknown as { isOwner?: boolean }).isOwner ?? bundle.permissions?.is_owner ?? false;
   const permissions = bundle.permissions ?? {
     is_owner: rawIsOwner,
     can_edit: rawIsOwner,
@@ -261,8 +261,8 @@ const ProfileV2: React.FC = () => {
         bio={profile.bio}
         avatarUrl={profile.avatar_url}
         company={profile.company}
-        linkedinUrl={(profile as any).linkedin_url}
-        websiteUrl={(profile as any).website_url}
+        linkedinUrl={(profile as unknown as { linkedin_url?: string }).linkedin_url}
+        websiteUrl={(profile as unknown as { website_url?: string }).website_url}
         memberSince={profile.created_at}
       />
 

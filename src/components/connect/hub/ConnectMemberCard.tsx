@@ -11,26 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { cn } from '@/lib/utils';
 import { getErrorMessage } from '@/lib/errorLogger';
-
-// Country flags map
-const COUNTRY_FLAGS: Record<string, string> = {
-  'Nigeria': '🇳🇬', 'Ghana': '🇬🇭', 'Kenya': '🇰🇪', 'South Africa': '🇿🇦',
-  'Ethiopia': '🇪🇹', 'Tanzania': '🇹🇿', 'Uganda': '🇺🇬', 'Rwanda': '🇷🇼',
-  'Cameroon': '🇨🇲', 'Senegal': '🇸🇳', "Côte d'Ivoire": '🇨🇮', 'Mali': '🇲🇱',
-  'Democratic Republic of the Congo': '🇨🇩', 'Angola': '🇦🇴', 'Mozambique': '🇲🇿',
-  'Madagascar': '🇲🇬', 'Zimbabwe': '🇿🇼', 'Zambia': '🇿🇲', 'Botswana': '🇧🇼',
-  'Namibia': '🇳🇦', 'Malawi': '🇲🇼', 'Benin': '🇧🇯', 'Togo': '🇹🇬',
-  'Sierra Leone': '🇸🇱', 'Liberia': '🇱🇷', 'Gambia': '🇬🇲', 'Guinea': '🇬🇳',
-  'Burkina Faso': '🇧🇫', 'Niger': '🇳🇪', 'Chad': '🇹🇩', 'Somalia': '🇸🇴',
-  'Eritrea': '🇪🇷', 'Djibouti': '🇩🇯', 'Sudan': '🇸🇩', 'South Sudan': '🇸🇸',
-  'Egypt': '🇪🇬', 'Morocco': '🇲🇦', 'Tunisia': '🇹🇳', 'Algeria': '🇩🇿', 'Libya': '🇱🇾',
-  'United States': '🇺🇸', 'United Kingdom': '🇬🇧', 'Canada': '🇨🇦', 'France': '🇫🇷',
-  'Germany': '🇩🇪', 'Brazil': '🇧🇷', 'Jamaica': '🇯🇲', 'Trinidad and Tobago': '🇹🇹',
-  'Barbados': '🇧🇧', 'Haiti': '🇭🇹', 'Australia': '🇦🇺', 'Netherlands': '🇳🇱',
-  'Belgium': '🇧🇪', 'Portugal': '🇵🇹', 'Italy': '🇮🇹', 'Spain': '🇪🇸',
-  'Sweden': '🇸🇪', 'Norway': '🇳🇴', 'Denmark': '🇩🇰', 'Switzerland': '🇨🇭',
-  'UAE': '🇦🇪', 'Saudi Arabia': '🇸🇦', 'India': '🇮🇳', 'China': '🇨🇳', 'Japan': '🇯🇵',
-};
+import { getFlag } from '@/lib/countryFlags';
 
 interface ConnectMemberCardProps {
   member: {
@@ -87,7 +68,7 @@ export function ConnectMemberCard({ member, onConnectionSent, onMessage }: Conne
   }, [member.industries, member.focus_areas]);
 
   // --- Country flag ---
-  const flag = member.country_of_origin ? (COUNTRY_FLAGS[member.country_of_origin] || '🌍') : null;
+  const flag = member.country_of_origin ? getFlag(member.country_of_origin) || null : null;
 
   // --- Value line: first sentence of bio, max 60 chars ---
   const valueLine = useMemo(() => {
@@ -225,7 +206,7 @@ export function ConnectMemberCard({ member, onConnectionSent, onMessage }: Conne
       )}
 
       {/* Layer 4: Social proof */}
-      {(mutualCount > 0) && (
+      {mutualCount > 0 ? (
         <div className="flex items-center gap-2">
           {displayedMutuals.length > 0 && (
             <div className="flex -space-x-1.5">
@@ -248,7 +229,11 @@ export function ConnectMemberCard({ member, onConnectionSent, onMessage }: Conne
             {mutualCount} mutual {mutualCount === 1 ? 'connection' : 'connections'}
           </span>
         </div>
-      )}
+      ) : (member as { connections_count?: number }).connections_count ? (
+        <span className="text-xs text-muted-foreground">
+          {(member as { connections_count?: number }).connections_count} connections
+        </span>
+      ) : null}
 
       {/* Action row */}
       <div className="flex items-center justify-between pt-1">
@@ -268,7 +253,7 @@ export function ConnectMemberCard({ member, onConnectionSent, onMessage }: Conne
             size="sm"
             variant="outline"
             onClick={handleMessage}
-            className="rounded-full px-4 py-1.5 h-auto text-xs font-semibold border-dna-emerald-dark text-dna-emerald-dark hover:bg-dna-emerald-subtle shrink-0"
+            className="rounded-full px-4 py-1.5 h-auto text-xs font-semibold border-dna-forest text-dna-forest hover:bg-dna-emerald-subtle shrink-0"
           >
             <MessageSquare className="h-3.5 w-3.5 mr-1" />
             Message
@@ -288,7 +273,7 @@ export function ConnectMemberCard({ member, onConnectionSent, onMessage }: Conne
             size="sm"
             onClick={handleConnect}
             disabled={isSending}
-            className="rounded-full px-4 py-1.5 h-auto text-xs font-semibold bg-primary text-primary-foreground hover:bg-dna-emerald-light shrink-0"
+            className="rounded-full px-4 py-1.5 h-auto text-xs font-semibold bg-dna-emerald text-white hover:bg-dna-emerald-light shrink-0"
           >
             <UserPlus className="h-3.5 w-3.5 mr-1" />
             Connect

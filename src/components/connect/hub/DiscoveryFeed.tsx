@@ -28,6 +28,28 @@ interface DiscoveryFeedProps {
   className?: string;
 }
 
+/** Typed shape for members returned by profile queries and discover_members RPC */
+interface DiscoveryMember {
+  id: string;
+  full_name: string;
+  username: string;
+  avatar_url?: string | null;
+  headline?: string | null;
+  profession?: string | null;
+  location?: string | null;
+  country_of_origin?: string | null;
+  current_country?: string | null;
+  focus_areas?: string[] | null;
+  industries?: string[] | null;
+  bio?: string | null;
+  tagline?: string | null;
+  last_seen_at?: string | null;
+  created_at?: string | null;
+  match_score?: number | null;
+  connections_count?: number | null;
+  [key: string]: unknown;
+}
+
 /**
  * DiscoveryFeed — Intelligent lane-based member discovery
  *
@@ -85,7 +107,7 @@ export function DiscoveryFeed({
 
   // Helper to exclude self + already-connected members
   const excludeConnected = useCallback(
-    (members: any[]) => {
+    (members: DiscoveryMember[]) => {
       if (!user?.id) return members;
       return members.filter(
         (m) => m.id !== user.id && !connectedUserIds?.has(m.id)
@@ -154,13 +176,13 @@ export function DiscoveryFeed({
         p_sort_by: 'match',
         p_limit: 12,
         p_offset: 0,
-      } as any);
+      });
 
       if (error) {
         logger.warn('DiscoveryFeed', 'Sector query failed:', error);
         return [];
       }
-      return (data || []) as any[];
+      return (data || []) as DiscoveryMember[];
     },
     enabled: !!user?.id && userSectors.length > 0,
     staleTime: 120000,
@@ -186,7 +208,7 @@ export function DiscoveryFeed({
           p_sort_by: 'match',
           p_limit: 12,
           p_offset: 0,
-        } as any);
+        });
 
         if (error) {
           logger.warn('DiscoveryFeed', 'Network Knows query failed:', error);
@@ -194,8 +216,8 @@ export function DiscoveryFeed({
         }
 
         // Filter to those with match_score > 0 (indicating shared attributes)
-        const scored = ((data || []) as any[]).filter(
-          (m: any) => (m.match_score || 0) > 0
+        const scored = ((data || []) as DiscoveryMember[]).filter(
+          (m: DiscoveryMember) => (m.match_score || 0) > 0
         );
         return scored;
       },
@@ -252,13 +274,13 @@ export function DiscoveryFeed({
         p_sort_by: 'match',
         p_limit: 20,
         p_offset: 0,
-      } as any);
+      });
 
       if (error) {
         logger.warn('DiscoveryFeed', 'Search query failed:', error);
         return [];
       }
-      return (data || []) as any[];
+      return (data || []) as DiscoveryMember[];
     },
     enabled: !!user?.id && searchQuery.length > 1,
     staleTime: 30000,
@@ -529,6 +551,7 @@ function EmptySearch({ onClear }: { onClear: () => void }) {
 }
 
 function AllEmptyState() {
+  const navigate = useNavigate();
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
       <div className="h-16 w-16 rounded-full bg-dna-emerald/10 flex items-center justify-center mb-4">
@@ -542,7 +565,7 @@ function AllEmptyState() {
       </p>
       <Button
         className="mt-6 bg-dna-emerald hover:bg-dna-forest text-white rounded-full px-6"
-        onClick={() => (window.location.href = '/dna/settings/profile')}
+        onClick={() => navigate('/dna/settings/profile')}
       >
         Complete Profile
       </Button>
