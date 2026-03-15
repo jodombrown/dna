@@ -351,7 +351,7 @@ const Auth = () => {
   return (
     <>
       {/* Mobile Layout */}
-      <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-background to-dna-copper/10 flex flex-col px-3 pt-1 pb-6 lg:hidden">
+      <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-background to-dna-copper/10 flex flex-col px-3 pt-6 pb-6 lg:hidden">
         <div className="w-full max-w-md mx-auto">
 
           <Card className="border-border/50 shadow-xl">
