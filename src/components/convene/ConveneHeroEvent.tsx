@@ -110,12 +110,12 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
           )}
 
           {/* Title */}
-          <h2 className="text-xl sm:text-2xl font-bold text-white leading-tight line-clamp-2 mb-2">
+          <h2 className="text-xl sm:text-2xl font-bold text-white leading-tight line-clamp-2 mb-2" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.7)' }}>
             {event.title}
           </h2>
 
           {/* Meta row */}
-          <div className="flex flex-wrap items-center gap-3 text-white/80 text-sm mb-3">
+          <div className="flex flex-wrap items-center gap-3 text-white/80 text-sm mb-3" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.6)' }}>
             {startDate && (
               <span className="flex items-center gap-1">
                 <Calendar className="h-3.5 w-3.5" />
