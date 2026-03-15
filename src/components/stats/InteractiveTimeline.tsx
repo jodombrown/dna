@@ -53,7 +53,7 @@ const InteractiveTimeline = () => {
   const canNavigateNext = currentIndex < timelineData.length - 1;
 
   return (
-    <section className="mb-16 w-full -mx-4 sm:-mx-6 lg:-mx-8">
+    <section className="mb-16 w-full overflow-x-hidden">
       <div className="text-center mb-8 px-4">
         <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold font-serif text-dna-forest mb-2">Interactive Timeline</h3>
         <p className="text-lg sm:text-xl md:text-2xl font-semibold text-dna-emerald mb-4">(2014 – 2026)</p>
