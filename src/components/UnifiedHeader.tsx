@@ -457,11 +457,11 @@ const UnifiedHeader = () => {
                   <SheetTrigger asChild>
                     <Button 
                       variant="ghost" 
-                      size="sm"
-                      className="p-2 md:hidden"
+                      size="icon"
+                      className="p-1 md:hidden h-auto w-auto"
                       aria-label="Open menu"
                     >
-                      <Menu className="w-6 h-6" />
+                      <Menu className="!w-10 !h-10" />
                     </Button>
                   </SheetTrigger>
                 <SheetContent
