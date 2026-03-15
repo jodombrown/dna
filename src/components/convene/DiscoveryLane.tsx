@@ -55,7 +55,7 @@ export function DiscoveryLane({
   events,
   onSeeAll,
   seeAllLabel = 'See all',
-  showMutualAttendees = false,
+  showMutualAttendees = true,
   emptyMessage,
   className,
 }: DiscoveryLaneProps) {
