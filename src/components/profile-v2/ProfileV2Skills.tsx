@@ -135,13 +135,43 @@ const ProfileV2Skills: React.FC<ProfileV2SkillsProps> = ({
             </div>
           </div>
         ) : (
-          <div className="flex flex-wrap gap-2">
+          <div className="space-y-3">
+            {/* Primary sectors — large Forest chips */}
+            {(tags.industries || tags.professional_sectors || []).length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {(tags.industries || tags.professional_sectors || []).slice(0, 1).map((sector, idx) => (
+                  <Badge key={`primary-${idx}`} className="bg-dna-forest text-white rounded-full px-3 py-1 text-sm">
+                    {sector}
+                  </Badge>
+                ))}
+                {(tags.industries || tags.professional_sectors || []).slice(1).map((sector, idx) => (
+                  <Badge key={`secondary-${idx}`} variant="outline" className="border-dna-forest text-dna-forest rounded-full text-xs">
+                    {sector}
+                  </Badge>
+                ))}
+              </div>
+            )}
+
+            {/* Focus areas — Forest outline */}
+            {(tags.focus_areas || []).length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {tags.focus_areas?.map((area, idx) => (
+                  <Badge key={idx} variant="outline" className="border-dna-forest text-dna-forest rounded-full text-xs">
+                    {area}
+                  </Badge>
+                ))}
+              </div>
+            )}
+
+            {/* Skills — small muted chips */}
             {hasSkills ? (
-              tags.skills?.map((skill, idx) => (
-                <Badge key={idx} variant="secondary" className="bg-primary/10 text-primary text-xs sm:text-sm">
-                  {skill}
-                </Badge>
-              ))
+              <div className="flex flex-wrap gap-1.5">
+                {tags.skills?.map((skill, idx) => (
+                  <Badge key={idx} className="bg-muted text-foreground rounded-full text-xs font-normal">
+                    {skill}
+                  </Badge>
+                ))}
+              </div>
             ) : (
               isOwner && (
                 <button

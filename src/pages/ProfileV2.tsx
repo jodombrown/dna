@@ -34,6 +34,9 @@ import ProfileV2Events from '@/components/profile-v2/ProfileV2Events';
 import ProfileV2Spaces from '@/components/profile-v2/ProfileV2Spaces';
 import ProfileV2Opportunities from '@/components/profile-v2/ProfileV2Opportunities';
 import ProfileV2Stories from '@/components/profile-v2/ProfileV2Stories';
+import { DiasporaFootprint } from '@/components/profile-v2/DiasporaFootprint';
+import { ProfileConnectionContext } from '@/components/profile-v2/ProfileConnectionContext';
+import { ProfileRecentPosts } from '@/components/profile-v2/ProfileRecentPosts';
 
 import { MutualConnectionsWidget } from '@/components/connections/MutualConnectionsWidget';
 import PublicProfileLandingView from '@/components/profile-v2/PublicProfileLandingView';
