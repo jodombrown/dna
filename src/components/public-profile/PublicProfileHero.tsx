@@ -170,7 +170,7 @@ export const PublicProfileHero = ({
               <span>Events</span>
             </div>
             {memberSince && (
-              <div className="hidden sm:flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5">
                 <span>Member since</span>
                 <span className="font-semibold text-foreground">{memberSince}</span>
               </div>

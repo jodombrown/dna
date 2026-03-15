@@ -1,7 +1,7 @@
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Edit, MapPin, Globe, Briefcase, MessageCircle, UserPlus, Clock, Check, UserCheck, Users } from 'lucide-react';
+import { Edit, MapPin, Globe, Briefcase, MessageCircle, UserPlus, Clock, Check, UserCheck, Users, Calendar } from 'lucide-react';
 import { ProfileV2Data, ProfileV2Permissions, VerificationStatus, ConnectionStatus } from '@/types/profileV2';
 import { getFlag, getDiasporaRegionTag } from '@/lib/countryFlags';
 import { ProfilePresenceDot } from './ProfilePresenceDot';
@@ -266,6 +266,18 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                     <strong>{followerCount}</strong> followers
                     <span className="mx-1">·</span>
                     <strong>{followingCount}</strong> following
+                  </span>
+                </div>
+              )}
+              {/* Member since */}
+              {profile.created_at && (
+                <div className="flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+                  <span>
+                    Member since{' '}
+                    <strong>
+                      {new Date(profile.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                    </strong>
                   </span>
                 </div>
               )}
