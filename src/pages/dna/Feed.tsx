@@ -25,7 +25,9 @@ import { MobileHeader } from '@/components/mobile/MobileHeader';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { useMobile } from '@/hooks/useMobile';
+import { cn } from '@/lib/utils';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
+import { useScrollDirection } from '@/hooks/useScrollDirection';
 import { incrementSessionCount } from '@/services/dia-feed-cadence';
 import { useLocation } from 'react-router-dom';
 
@@ -59,7 +61,9 @@ const DnaFeed = () => {
   const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const composer = useUniversalComposer();
   const { isMobile } = useMobile();
-  const { hideHeader, showHeader } = useHeaderVisibility();
+  const { hideHeader: hideUnifiedHeader, showHeader } = useHeaderVisibility();
+  const { isScrollingDown, isAtTop } = useScrollDirection(30);
+  const headerHidden = isMobile && isScrollingDown && !isAtTop;
 
   // Increment session count for DIA cadence engine
   useEffect(() => {
@@ -69,10 +73,10 @@ const DnaFeed = () => {
   // Hide unified header on mobile feed (has its own header)
   useEffect(() => {
     if (isMobile) {
-      hideHeader();
+      hideUnifiedHeader();
       return () => showHeader();
     }
-  }, [isMobile, hideHeader, showHeader]);
+  }, [isMobile, hideUnifiedHeader, showHeader]);
 
   // Scroll position preservation
   useEffect(() => {
@@ -147,8 +151,11 @@ const DnaFeed = () => {
         <FirstTimeWalkthrough />
         
         <div className="min-h-screen bg-background">
-          {/* Fixed mobile header row */}
-          <div className="fixed top-0 left-0 right-0 z-40 bg-background">
+          {/* Fixed mobile header row - hides on scroll down */}
+          <div className={cn(
+            "fixed top-0 left-0 right-0 z-40 bg-background transition-all duration-300",
+            headerHidden ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
+          )}>
             <MobileHeader
               variant="feed"
               showSearch={true}
@@ -158,8 +165,11 @@ const DnaFeed = () => {
             />
           </div>
 
-          {/* Fixed mobile tabs row (always visible) */}
-          <div className="fixed top-14 left-0 right-0 z-30 bg-background border-b border-border">
+          {/* Fixed mobile tabs row - slides up when header hides */}
+          <div className={cn(
+            "fixed left-0 right-0 z-30 bg-background border-b border-border transition-all duration-300",
+            headerHidden ? "top-0" : "top-14"
+          )}>
             <div className="px-3 py-1.5 overflow-x-auto">
               <MobileFeedTabs activeTab={activeTab} onTabChange={setActiveTab} />
             </div>
@@ -169,7 +179,10 @@ const DnaFeed = () => {
           <NewPostsIndicator count={newPostCount} onClick={handleNewPostsClick} />
 
           {/* Add top padding to account for fixed header + tabs */}
-          <main className="pb-bottom-nav px-3 pt-[6.75rem] space-y-1">
+          <main className={cn(
+            "pb-bottom-nav px-3 space-y-1 transition-[padding] duration-300",
+            headerHidden ? "pt-[3.25rem]" : "pt-[6.75rem]"
+          )}>
             {/* Profile completion banner */}
             <MobileProfileCompletionBanner threshold={100} />
             {/* Tab Explainer - shows once per day/login per tab */}
