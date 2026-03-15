@@ -124,7 +124,7 @@ const UnifiedHeader = () => {
                 <img 
                   src={dnaLogo}
                   alt="DNA Logo" 
-                   className="h-[90px] md:h-[90px] w-auto"
+                   className="h-[80px] md:h-[80px] w-auto"
                    width={86}
                    height={48}
                 />
@@ -154,7 +154,7 @@ const UnifiedHeader = () => {
                         <img 
                           src={dnaLogo}
                           alt="Logo" 
-                  className="h-[90px] w-auto"
+                  className="h-[80px] w-auto"
                   width={57}
                   height={32}
                         />
@@ -248,7 +248,7 @@ const UnifiedHeader = () => {
                 <img 
                   src={dnaLogo}
                   alt="DNA Logo" 
-                   className="h-[90px] md:h-[90px] w-auto"
+                   className="h-[80px] md:h-[80px] w-auto"
                    width={86}
                    height={48}
                 />
@@ -475,7 +475,7 @@ const UnifiedHeader = () => {
                         <img 
                           src={dnaLogo}
                           alt="Logo" 
-                          className="h-[90px] w-auto"
+                          className="h-[80px] w-auto"
                           width={57}
                           height={32}
                         />
