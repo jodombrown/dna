@@ -79,8 +79,9 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
           </div>
         )}
 
-        {/* Gradient overlay — heavier for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+        {/* Two-layer gradient overlay — bulletproof text legibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/45 to-black/10" />
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/40 to-transparent" />
 
         {/* Featured label — top left */}
         <div className="absolute top-4 left-4">
