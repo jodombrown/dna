@@ -25,6 +25,7 @@ import { MobileHeader } from '@/components/mobile/MobileHeader';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { useMobile } from '@/hooks/useMobile';
+import { cn } from '@/lib/utils';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
 import { incrementSessionCount } from '@/services/dia-feed-cadence';
