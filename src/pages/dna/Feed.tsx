@@ -178,10 +178,10 @@ const DnaFeed = () => {
           {/* New Posts Indicator */}
           <NewPostsIndicator count={newPostCount} onClick={handleNewPostsClick} />
 
-          {/* Add top padding to account for fixed header + tabs */}
+          {/* Add top padding to account for fixed header (56px) + tabs (~44px) = ~100px */}
           <main className={cn(
             "pb-bottom-nav px-3 space-y-0 transition-[padding] duration-300",
-            headerHidden ? "pt-[1rem]" : "pt-[4.5rem]"
+            headerHidden ? "pt-[3rem]" : "pt-[6.25rem]"
           )}>
             {/* Profile completion banner */}
             <MobileProfileCompletionBanner threshold={100} />
