@@ -68,7 +68,7 @@ export function ConnectMemberCard({ member, onConnectionSent, onMessage }: Conne
   }, [member.industries, member.focus_areas]);
 
   // --- Country flag ---
-  const flag = member.country_of_origin ? (COUNTRY_FLAGS[member.country_of_origin] || '🌍') : null;
+  const flag = member.country_of_origin ? getFlag(member.country_of_origin) || null : null;
 
   // --- Value line: first sentence of bio, max 60 chars ---
   const valueLine = useMemo(() => {
