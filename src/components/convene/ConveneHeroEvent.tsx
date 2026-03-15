@@ -85,7 +85,7 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
 
         {/* Featured label — top left */}
         <div className="absolute top-4 left-4">
-          <Badge className="bg-dna-copper hover:bg-dna-copper text-white border-0 text-xs font-semibold px-3 py-1 shadow-lg">
+          <Badge className="bg-dna-copper hover:bg-dna-copper text-white border-0 text-xs font-semibold px-3 py-1 shadow-lg backdrop-blur-sm">
             Featured Event
           </Badge>
         </div>
