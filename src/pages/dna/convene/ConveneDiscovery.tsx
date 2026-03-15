@@ -172,10 +172,10 @@ export function ConveneDiscovery() {
       const organizerIds = [
         ...new Set(
           (data || [])
-            .map((e: Record<string, unknown>) => e.organizer_id)
-            .filter(Boolean),
+            .map((e) => e.organizer_id)
+            .filter((id): id is string => !!id),
         ),
-      ] as string[];
+      ];
       let organizerMap: Record<
         string,
         { id: string; full_name: string; avatar_url: string | null; username: string | null }
@@ -189,9 +189,9 @@ export function ConveneDiscovery() {
           organizerMap = Object.fromEntries(profiles.map((p) => [p.id, p]));
         }
       }
-      return (data || []).map((e: Record<string, unknown>) => ({
+      return (data || []).map((e) => ({
         ...e,
-        organizer: organizerMap[e.organizer_id as string] ?? null,
+        organizer: organizerMap[e.organizer_id ?? ''] ?? null,
       }));
     },
     enabled: activePill !== 'all' && activePill !== 'network',
