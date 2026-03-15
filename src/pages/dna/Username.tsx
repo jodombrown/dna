@@ -82,8 +82,8 @@ const DnaUserDashboard = () => {
   // Graceful fallback for missing profile OR any query error
   if (!profile || error) {
     return (
-      <div className="min-h-screen bg-background pt-20">
-        <div className="container max-w-4xl mx-auto px-4 py-16 text-center">
+      <div className="min-h-screen bg-background">
+        <div className="container max-w-4xl mx-auto px-4 py-8 text-center">
           <User className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
           <h1 className="text-3xl font-bold mb-4">Profile Not Found</h1>
           <p className="text-muted-foreground mb-6">
