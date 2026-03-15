@@ -28,6 +28,14 @@ import { useMobile } from '@/hooks/useMobile';
 import { cn } from '@/lib/utils';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
+import {
+  MOBILE_STACKED_HEADER_VISIBLE,
+  MOBILE_STACKED_HEADER_HIDDEN,
+  MOBILE_HEADER_Z,
+  MOBILE_TABS_Z,
+  MOBILE_TABS_TOP_VISIBLE,
+  MOBILE_TABS_TOP_HIDDEN,
+} from '@/lib/mobileHeaderSpacing';
 import { incrementSessionCount } from '@/services/dia-feed-cadence';
 import { useLocation } from 'react-router-dom';
 
@@ -153,7 +161,8 @@ const DnaFeed = () => {
         <div className="min-h-screen bg-background">
           {/* Fixed mobile header row - hides on scroll down */}
           <div className={cn(
-            "fixed top-0 left-0 right-0 z-50 bg-background transition-all duration-300",
+            "fixed top-0 left-0 right-0 bg-background transition-all duration-300",
+            MOBILE_HEADER_Z,
             headerHidden ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
           )}>
             <MobileHeader
@@ -167,8 +176,9 @@ const DnaFeed = () => {
 
           {/* Fixed mobile tabs row - slides up when header hides */}
           <div className={cn(
-            "fixed left-0 right-0 z-30 bg-background border-b border-border transition-all duration-300",
-            headerHidden ? "top-0" : "top-14"
+            "fixed left-0 right-0 bg-background border-b border-border transition-all duration-300",
+            MOBILE_TABS_Z,
+            headerHidden ? MOBILE_TABS_TOP_HIDDEN : MOBILE_TABS_TOP_VISIBLE
           )}>
             <div className="px-3 py-1.5">
               <MobileFeedTabs activeTab={activeTab} onTabChange={setActiveTab} />
@@ -181,7 +191,7 @@ const DnaFeed = () => {
           {/* Top padding for fixed header + tabs */}
           <main className={cn(
             "pb-bottom-nav px-3 space-y-0 transition-[padding] duration-300",
-            headerHidden ? "pt-[3rem]" : "pt-[6.5rem]"
+            headerHidden ? MOBILE_STACKED_HEADER_HIDDEN : MOBILE_STACKED_HEADER_VISIBLE
           )}>
             {/* Profile completion banner */}
             <MobileProfileCompletionBanner threshold={100} />

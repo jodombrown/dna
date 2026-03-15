@@ -1,11 +1,17 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { messageService } from '@/services/messageService';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useMobile } from '@/hooks/useMobile';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
+import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
 import { cn } from '@/lib/utils';
+import {
+  MOBILE_STACKED_HEADER_VISIBLE,
+  MOBILE_STACKED_HEADER_HIDDEN,
+  MOBILE_HEADER_Z,
+} from '@/lib/mobileHeaderSpacing';
 
 // New Hub Components
 import {
@@ -39,8 +45,17 @@ const Connect = () => {
   const { user } = useAuth();
   const { data: profile, isLoading } = useProfile();
   const { isMobile } = useMobile();
-  const { isScrollingDown } = useScrollDirection();
-  const headerHidden = isScrollingDown;
+  const { isScrollingDown, isAtTop } = useScrollDirection(30);
+  const { hideHeader: hideUnifiedHeader, showHeader } = useHeaderVisibility();
+  const headerHidden = isMobile && isScrollingDown && !isAtTop;
+
+  // Hide unified header on mobile connect (has its own header)
+  useEffect(() => {
+    if (isMobile) {
+      hideUnifiedHeader();
+      return () => showHeader();
+    }
+  }, [isMobile, hideUnifiedHeader, showHeader]);
 
   // Hub state - always declare all hooks regardless of mobile/desktop
   const [expandedChat, setExpandedChat] = useState(false);
@@ -146,7 +161,8 @@ const Connect = () => {
       <div className="min-h-screen bg-background pb-20 overflow-x-hidden">
         {/* Mobile Fixed Header - hides on scroll down */}
         <div className={cn(
-          "fixed top-0 left-0 right-0 z-40 bg-background transition-all duration-300",
+          "fixed top-0 left-0 right-0 bg-background transition-all duration-300",
+          MOBILE_HEADER_Z,
           headerHidden ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
         )}>
           <ConnectMobileHeader
@@ -162,7 +178,7 @@ const Connect = () => {
         {/* Mobile Content - Render child routes via Outlet */}
         <div className={cn(
           "px-3 sm:px-4 overflow-x-hidden transition-[padding] duration-300",
-          headerHidden ? "pt-[0.5rem]" : "pt-[6.5rem]"
+          headerHidden ? MOBILE_STACKED_HEADER_HIDDEN : MOBILE_STACKED_HEADER_VISIBLE
         )}>
           <Outlet context={{
             mobileSearchQuery,

@@ -47,6 +47,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   // Check if we're on routes that manage their own mobile headers
   const isConnectRoute = location.pathname.includes('/dna/connect');
   const isFeedRoute = location.pathname.includes('/dna/feed');
+  const hasCustomMobileHeader = isFeedRoute || isConnectRoute;
 
   // Unique gradient for each of the 5 Cs + Feed when logged in
   // All using DNA brand colors: mint, terra, ochre, sunset, purple, copper
@@ -101,7 +102,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
           // Top padding: header (56px mobile / 64px desktop) + PulseBar (~60px on desktop for authed users)
           // Skip mobile padding on feed route — it manages its own fixed headers
           user
-            ? isFeedRoute
+            ? hasCustomMobileHeader
               ? "pt-0 sm:pt-16 lg:pt-[7.5rem]"
               : "pt-14 sm:pt-16 lg:pt-[7.5rem]"
             : "pt-14 sm:pt-16",
