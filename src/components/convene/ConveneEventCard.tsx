@@ -344,13 +344,13 @@ export function ConveneEventCard({
           </div>
         )}
 
-        {/* Gradient overlay on bottom */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+        {/* Gradient overlay — strengthened for chip legibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/5" />
 
         {/* Category chip — top left */}
         {event.event_type && (
           <div className="absolute top-3 left-3">
-            <span className="px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-sm text-white text-xs font-medium capitalize">
+            <span className="px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-sm text-white text-xs font-medium capitalize" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>
               {event.event_type}
             </span>
           </div>

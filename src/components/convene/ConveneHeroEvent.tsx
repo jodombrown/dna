@@ -79,12 +79,13 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
           </div>
         )}
 
-        {/* Gradient overlay — heavier for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+        {/* Two-layer gradient overlay — bulletproof text legibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/45 to-black/10" />
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/40 to-transparent" />
 
         {/* Featured label — top left */}
         <div className="absolute top-4 left-4">
-          <Badge className="bg-dna-copper hover:bg-dna-copper text-white border-0 text-xs font-semibold px-3 py-1 shadow-lg">
+          <Badge className="bg-dna-copper hover:bg-dna-copper text-white border-0 text-xs font-semibold px-3 py-1 shadow-lg backdrop-blur-sm">
             Featured Event
           </Badge>
         </div>
@@ -92,7 +93,7 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
         {/* Urgency — top right */}
         {urgency && (
           <div className="absolute top-4 right-4">
-            <Badge className={cn(urgency.color, 'text-white border-0 text-xs font-semibold px-3 py-1 shadow-lg')}>
+            <Badge className={cn(urgency.color, 'text-white border-0 text-xs font-semibold px-3 py-1 shadow-lg backdrop-blur-sm')}>
               <Clock className="h-3 w-3 mr-1" />
               {urgency.label}
             </Badge>
@@ -103,18 +104,18 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
         <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
           {/* Category */}
           {event.event_type && (
-            <span className="text-[11px] font-medium text-dna-copper uppercase tracking-wider mb-1.5 block">
+            <span className="text-[11px] font-medium text-dna-copper uppercase tracking-wider mb-1.5 block" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.6)' }}>
               {event.event_type}
             </span>
           )}
 
           {/* Title */}
-          <h2 className="text-xl sm:text-2xl font-bold text-white leading-tight line-clamp-2 mb-2">
+          <h2 className="text-xl sm:text-2xl font-bold text-white leading-tight line-clamp-2 mb-2" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.7)' }}>
             {event.title}
           </h2>
 
           {/* Meta row */}
-          <div className="flex flex-wrap items-center gap-3 text-white/80 text-sm mb-3">
+          <div className="flex flex-wrap items-center gap-3 text-white/80 text-sm mb-3" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.6)' }}>
             {startDate && (
               <span className="flex items-center gap-1">
                 <Calendar className="h-3.5 w-3.5" />
