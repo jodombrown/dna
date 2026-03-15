@@ -39,6 +39,8 @@ const Connect = () => {
   const { user } = useAuth();
   const { data: profile, isLoading } = useProfile();
   const { isMobile } = useMobile();
+  const { direction: scrollDirection } = useScrollDirection();
+  const headerHidden = scrollDirection === 'down';
 
   // Hub state - always declare all hooks regardless of mobile/desktop
   const [expandedChat, setExpandedChat] = useState(false);
