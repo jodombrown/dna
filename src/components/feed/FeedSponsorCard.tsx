@@ -2,30 +2,20 @@
  * DNA Platform — Feed Sponsor Card
  * Displays sponsored content in the feed left sidebar.
  * Gold accent stripe, warm hover, native feel.
+ * Trusts database logo_url — no hardcoded fallbacks needed.
  */
 
-import { useState } from 'react';
-import { ExternalLink, Award } from 'lucide-react';
+import { ExternalLink, Award, Image as ImageIcon } from 'lucide-react';
 import { useSponsorPlacements } from '@/hooks/useSponsorPlacements';
-
-// Fallback logos for known sponsors
-const SPONSOR_LOGO_FALLBACKS: Record<string, string> = {
-  'GABA Center': '/images/sponsors/gaba-center.png',
-};
 
 export function FeedSponsorCard() {
   const { placements, isLoading, trackClick } = useSponsorPlacements('feed_sidebar');
-  const [logoError, setLogoError] = useState(false);
 
   if (isLoading || placements.length === 0) return null;
   
   const placement = placements[0];
   const sponsor = placement.sponsors;
   if (!sponsor) return null;
-
-  const logoUrl = logoError
-    ? SPONSOR_LOGO_FALLBACKS[sponsor.name] || null
-    : sponsor.logo_url || SPONSOR_LOGO_FALLBACKS[sponsor.name] || null;
 
   const handleCtaClick = () => {
     trackClick(placement.id);
@@ -43,13 +33,16 @@ export function FeedSponsorCard() {
         {/* Header with Sponsored label */}
         <div className="flex items-start justify-between mb-2.5">
           <div className="flex items-center gap-2.5 min-w-0">
-            {logoUrl && (
+            {sponsor.logo_url ? (
               <img
-                src={logoUrl}
+                src={sponsor.logo_url}
                 alt={`${sponsor.name} logo`}
                 className="w-9 h-9 rounded-lg object-contain bg-white border border-border/50 p-0.5 shrink-0"
-                onError={() => setLogoError(true)}
               />
+            ) : (
+              <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                <ImageIcon className="h-4 w-4 text-muted-foreground" />
+              </div>
             )}
             <div className="min-w-0">
               <p className="text-sm font-semibold text-foreground truncate leading-tight">
