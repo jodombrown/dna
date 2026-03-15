@@ -649,7 +649,7 @@ export function DiscoveryFeed({
                   layout
                 >
                   {item.type === 'member' ? (
-                    <EnhancedMemberCard
+                    <ConnectMemberCard
                       member={item.data}
                       onConnectionSent={() => refetchMembers()}
                       onMessage={onMessageMember}

@@ -6,6 +6,7 @@ export { NetworkPanel, type FilterState } from './NetworkPanel';
 export { DiscoveryFeed } from './DiscoveryFeed';
 export { ConversationsPanel } from './ConversationsPanel';
 export { EnhancedMemberCard } from './EnhancedMemberCard';
+export { ConnectMemberCard } from './ConnectMemberCard';
 export { FiveCsEngagement } from './FiveCsEngagement';
 export { DiaInsightCard, type DiaInsightData, type DiaInsightType } from './DiaInsightCard';
 export { NetworkActivityFeed } from './NetworkActivityFeed';
