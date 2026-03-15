@@ -352,14 +352,7 @@ const Auth = () => {
     <>
       {/* Mobile Layout */}
       <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-background to-dna-copper/10 flex flex-col px-3 pt-1 pb-6 lg:hidden">
-        <div className="w-full max-w-md mx-auto space-y-1.5">
-          <Link 
-            to="/" 
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-dna-copper transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
-          </Link>
+        <div className="w-full max-w-md mx-auto">
 
           <Card className="border-border/50 shadow-xl">
             <CardHeader className="text-center pb-3">
