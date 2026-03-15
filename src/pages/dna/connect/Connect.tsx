@@ -45,8 +45,17 @@ const Connect = () => {
   const { user } = useAuth();
   const { data: profile, isLoading } = useProfile();
   const { isMobile } = useMobile();
-  const { isScrollingDown } = useScrollDirection();
-  const headerHidden = isScrollingDown;
+  const { isScrollingDown, isAtTop } = useScrollDirection(30);
+  const { hideHeader: hideUnifiedHeader, showHeader } = useHeaderVisibility();
+  const headerHidden = isMobile && isScrollingDown && !isAtTop;
+
+  // Hide unified header on mobile connect (has its own header)
+  useEffect(() => {
+    if (isMobile) {
+      hideUnifiedHeader();
+      return () => showHeader();
+    }
+  }, [isMobile, hideUnifiedHeader, showHeader]);
 
   // Hub state - always declare all hooks regardless of mobile/desktop
   const [expandedChat, setExpandedChat] = useState(false);
