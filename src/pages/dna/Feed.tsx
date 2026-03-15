@@ -161,7 +161,8 @@ const DnaFeed = () => {
         <div className="min-h-screen bg-background">
           {/* Fixed mobile header row - hides on scroll down */}
           <div className={cn(
-            "fixed top-0 left-0 right-0 z-50 bg-background transition-all duration-300",
+            "fixed top-0 left-0 right-0 bg-background transition-all duration-300",
+            MOBILE_HEADER_Z,
             headerHidden ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
           )}>
             <MobileHeader
