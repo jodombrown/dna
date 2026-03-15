@@ -170,7 +170,7 @@ const DnaFeed = () => {
             "fixed left-0 right-0 z-30 bg-background border-b border-border transition-all duration-300",
             headerHidden ? "top-0" : "top-14"
           )}>
-            <div className="px-3 py-1.5 overflow-x-auto">
+            <div className="px-3 py-1 overflow-x-auto">
               <MobileFeedTabs activeTab={activeTab} onTabChange={setActiveTab} />
             </div>
           </div>
