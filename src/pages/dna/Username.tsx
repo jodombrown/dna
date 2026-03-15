@@ -208,7 +208,7 @@ const DnaUserDashboard = () => {
 
   // Mobile: Use simplified profile view
   return (
-    <div className="min-h-screen bg-background pt-20">
+    <div className="min-h-screen bg-background">
       
       {/* Banner */}
       {profile.banner_url && (
