@@ -347,6 +347,21 @@ const ProfileV2: React.FC = () => {
               onUpdate={handleUpdateAbout}
             />
 
+            {/* Enhancement 2: Diaspora Footprint — Five C's Activity Bar */}
+            <DiasporaFootprint userId={profile.id} />
+
+            {/* Enhancement 5: Recent Activity Preview */}
+            <ProfileRecentPosts userId={profile.id} username={profile.username} />
+
+            {/* Enhancement 4: Connection Context */}
+            {!permissions.is_owner && user?.id && profile?.id && (
+              <ProfileConnectionContext
+                currentUserId={user.id}
+                targetUserId={profile.id}
+                targetName={profile.full_name || 'this member'}
+              />
+            )}
+
             <ProfileV2Connection
               profile={profile}
               isOwner={permissions.is_owner}
