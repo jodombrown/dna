@@ -73,10 +73,10 @@ const DnaFeed = () => {
   // Hide unified header on mobile feed (has its own header)
   useEffect(() => {
     if (isMobile) {
-      hideHeader();
+      hideUnifiedHeader();
       return () => showHeader();
     }
-  }, [isMobile, hideHeader, showHeader]);
+  }, [isMobile, hideUnifiedHeader, showHeader]);
 
   // Scroll position preservation
   useEffect(() => {
