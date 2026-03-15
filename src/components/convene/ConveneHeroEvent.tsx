@@ -104,7 +104,7 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
         <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
           {/* Category */}
           {event.event_type && (
-            <span className="text-[11px] font-medium text-dna-copper uppercase tracking-wider mb-1.5 block">
+            <span className="text-[11px] font-medium text-dna-copper uppercase tracking-wider mb-1.5 block" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.6)' }}>
               {event.event_type}
             </span>
           )}
