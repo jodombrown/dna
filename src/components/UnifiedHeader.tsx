@@ -140,7 +140,7 @@ const UnifiedHeader = () => {
                     className="p-2 md:hidden"
                     aria-label="Open menu"
                   >
-                    <Menu className="w-8 h-8" />
+                    <Menu className="w-16 h-16" />
                   </Button>
                 </SheetTrigger>
                 <SheetContent
