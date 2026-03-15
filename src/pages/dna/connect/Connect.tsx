@@ -162,7 +162,7 @@ const Connect = () => {
         {/* Mobile Content - Render child routes via Outlet */}
         <div className={cn(
           "px-3 sm:px-4 overflow-x-hidden transition-[padding] duration-300",
-          headerHidden ? "pt-[0.5rem]" : "pt-[4.5rem]"
+          headerHidden ? "pt-[0.5rem]" : "pt-[6.5rem]"
         )}>
           <Outlet context={{
             mobileSearchQuery,
