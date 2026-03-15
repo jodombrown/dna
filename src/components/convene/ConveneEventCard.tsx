@@ -362,12 +362,13 @@ export function ConveneEventCard({
           <div className="absolute top-3 right-3">
             <span
               className={cn(
-                'px-2.5 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1',
+                'px-2.5 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1 backdrop-blur-sm shadow-lg',
                 urgency.variant === 'today' && 'bg-destructive text-white',
                 urgency.variant === 'tomorrow' && 'bg-destructive/90 text-white',
                 urgency.variant === 'urgent' && 'bg-module-convene text-white',
                 urgency.variant === 'soon' && 'bg-module-convene text-white',
               )}
+              style={{ textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}
             >
               {urgency.pulse && <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />}
               <Clock className="h-3 w-3" />
