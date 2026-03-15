@@ -176,8 +176,9 @@ const DnaFeed = () => {
 
           {/* Fixed mobile tabs row - slides up when header hides */}
           <div className={cn(
-            "fixed left-0 right-0 z-30 bg-background border-b border-border transition-all duration-300",
-            headerHidden ? "top-0" : "top-14"
+            "fixed left-0 right-0 bg-background border-b border-border transition-all duration-300",
+            MOBILE_TABS_Z,
+            headerHidden ? MOBILE_TABS_TOP_HIDDEN : MOBILE_TABS_TOP_VISIBLE
           )}>
             <div className="px-3 py-1.5">
               <MobileFeedTabs activeTab={activeTab} onTabChange={setActiveTab} />
