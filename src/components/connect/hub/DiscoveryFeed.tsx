@@ -208,7 +208,7 @@ export function DiscoveryFeed({
           p_sort_by: 'match',
           p_limit: 12,
           p_offset: 0,
-        } as any);
+        });
 
         if (error) {
           logger.warn('DiscoveryFeed', 'Network Knows query failed:', error);
@@ -216,8 +216,8 @@ export function DiscoveryFeed({
         }
 
         // Filter to those with match_score > 0 (indicating shared attributes)
-        const scored = ((data || []) as any[]).filter(
-          (m: any) => (m.match_score || 0) > 0
+        const scored = ((data || []) as DiscoveryMember[]).filter(
+          (m: DiscoveryMember) => (m.match_score || 0) > 0
         );
         return scored;
       },
