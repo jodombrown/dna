@@ -10,7 +10,7 @@ import { Search, Loader2, Users, Filter, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { EnhancedMemberCard } from './EnhancedMemberCard';
+import { ConnectMemberCard } from './ConnectMemberCard';
 import { DiaInsightCard, DiaInsightData, DiaInsightType } from './DiaInsightCard';
 import { FilterState } from './NetworkPanel';
 import { ConnectionRequestModal } from '@/components/connect/ConnectionRequestModal';
@@ -649,7 +649,7 @@ export function DiscoveryFeed({
                   layout
                 >
                   {item.type === 'member' ? (
-                    <EnhancedMemberCard
+                    <ConnectMemberCard
                       member={item.data}
                       onConnectionSent={() => refetchMembers()}
                       onMessage={onMessageMember}
