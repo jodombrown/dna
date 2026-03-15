@@ -344,7 +344,7 @@ export function ConveneDiscovery() {
 
             <DiscoveryLane
               title={`${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)} Events`}
-              events={filteredEvents as unknown as import('@/components/convene/DiscoveryLane').DiscoveryLane extends React.FC<infer P> ? never : never}
+              events={filteredEvents as any[]}
               emptyMessage={`No ${activeCategory} events found. Try a different category or host one!`}
               onSeeAll={() => navigate(`/dna/convene/events?category=${activeCategory}`)}
             />
