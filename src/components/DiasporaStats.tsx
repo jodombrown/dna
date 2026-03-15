@@ -7,7 +7,7 @@ import CallToActionSection from './stats/CallToActionSection';
 
 const DiasporaStats = () => {
   return (
-    <div>
+    <div className="overflow-hidden">
       {/* Hero Section with Background Image */}
       <div className="max-w-7xl mx-auto">
         <AnimatedStatsSection />
