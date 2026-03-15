@@ -240,7 +240,7 @@ const UnifiedHeader = () => {
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Left section - Logo and Search */}
-            <div className="flex items-center space-x-4 -ml-4">
+            <div className="flex items-center space-x-4 -ml-8">
               <NavLink 
                 to="/" 
                 className="flex items-center hover:opacity-80 transition-opacity"
