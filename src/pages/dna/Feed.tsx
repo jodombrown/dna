@@ -147,7 +147,7 @@ const DnaFeed = () => {
         <FirstTimeWalkthrough />
         
         <div className="min-h-screen bg-background">
-          {/* Fixed header + profile banner + tabs container (mobile feed only) */}
+          {/* Fixed mobile header row */}
           <div className="fixed top-0 left-0 right-0 z-40 bg-background">
             <MobileHeader
               variant="feed"
@@ -156,9 +156,11 @@ const DnaFeed = () => {
               onComposerClick={() => composer.open('post')}
               className="border-b-0"
             />
-            {/* Profile completion banner - above tabs */}
-            <MobileProfileCompletionBanner threshold={100} />
-            <div className="px-3 pb-1.5 pt-0.5 overflow-x-auto border-b border-border">
+          </div>
+
+          {/* Fixed mobile tabs row (always visible) */}
+          <div className="fixed top-14 left-0 right-0 z-30 bg-background border-b border-border">
+            <div className="px-3 py-1.5 overflow-x-auto">
               <MobileFeedTabs activeTab={activeTab} onTabChange={setActiveTab} />
             </div>
           </div>
@@ -166,8 +168,10 @@ const DnaFeed = () => {
           {/* New Posts Indicator */}
           <NewPostsIndicator count={newPostCount} onClick={handleNewPostsClick} />
 
-          {/* Add top padding to account for fixed header height */}
-          <main className="pb-bottom-nav px-3 pt-[7.5rem] space-y-1">
+          {/* Add top padding to account for fixed header + tabs */}
+          <main className="pb-bottom-nav px-3 pt-[6.75rem] space-y-1">
+            {/* Profile completion banner */}
+            <MobileProfileCompletionBanner threshold={100} />
             {/* Tab Explainer - shows once per day/login per tab */}
             <FeedTabExplainer activeTab={activeTab} />
 
