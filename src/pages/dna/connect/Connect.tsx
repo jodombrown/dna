@@ -1,11 +1,17 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { messageService } from '@/services/messageService';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useMobile } from '@/hooks/useMobile';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
+import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
 import { cn } from '@/lib/utils';
+import {
+  MOBILE_STACKED_HEADER_VISIBLE,
+  MOBILE_STACKED_HEADER_HIDDEN,
+  MOBILE_HEADER_Z,
+} from '@/lib/mobileHeaderSpacing';
 
 // New Hub Components
 import {
