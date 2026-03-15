@@ -499,7 +499,7 @@ export function ConveneDiscovery() {
             <HappeningNowSection />
             <DiscoveryLane
               title={`${PILLS.find((p) => p.id === activePill)?.label ?? 'Filtered'} Events`}
-              events={filteredEvents as any[]}
+              events={filteredEvents}
               emptyMessage={`No events found for this filter. Try another or host one!`}
               onSeeAll={() => navigate('/dna/convene/events')}
             />
