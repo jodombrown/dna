@@ -124,9 +124,9 @@ const UnifiedHeader = () => {
                 <img 
                   src={dnaLogo}
                   alt="DNA Logo" 
-                   className="h-[60px] md:h-[80px] w-auto"
-                   width={57}
-                   height={32}
+                   className="h-[80px] md:h-[100px] w-auto"
+                   width={72}
+                   height={40}
                 />
               </NavLink>
             </div>
@@ -140,7 +140,7 @@ const UnifiedHeader = () => {
                     className="p-2 md:hidden"
                     aria-label="Open menu"
                   >
-                    <Menu className="w-6 h-6" />
+                    <Menu className="w-8 h-8" />
                   </Button>
                 </SheetTrigger>
                 <SheetContent
