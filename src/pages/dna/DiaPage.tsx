@@ -25,21 +25,21 @@ export default function DiaPage() {
   };
 
   return (
-    <div className="container mx-auto py-4 sm:py-8 px-3 sm:px-4 max-w-5xl pb-24 sm:pb-8">
+    <div className="container mx-auto py-2 sm:py-8 px-3 sm:px-4 max-w-5xl pb-24 sm:pb-8">
       {/* Header */}
-      <div className="text-center mb-6 sm:mb-8">
-        <div className="relative inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-emerald-500/10 mb-3 sm:mb-4">
-          <Sparkles className="h-6 w-6 sm:h-8 sm:w-8 text-emerald-600" />
+      <div className="text-center mb-3 sm:mb-8">
+        <div className="relative inline-flex items-center justify-center w-10 h-10 sm:w-16 sm:h-16 rounded-full bg-emerald-500/10 mb-2 sm:mb-4">
+          <Sparkles className="h-5 w-5 sm:h-8 sm:w-8 text-emerald-600" />
           <Badge className="absolute -top-1 -right-1 bg-dna-copper text-white text-[10px] px-1.5 py-0 h-4 font-semibold">
             New
           </Badge>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold mb-2 flex items-center justify-center gap-2">
+        <h1 className="text-xl sm:text-3xl font-bold mb-1 flex items-center justify-center gap-2">
           DIA
           <span className="text-xs font-medium text-dna-copper bg-dna-copper/10 px-2 py-0.5 rounded-full">Alpha</span>
         </h1>
-        <p className="text-muted-foreground max-w-lg mx-auto text-sm sm:text-base px-2">
-          Your AI agent for Africa and its global diaspora. Get intelligence about markets, opportunities, and connect with your network.
+        <p className="text-muted-foreground max-w-lg mx-auto text-xs sm:text-base px-2">
+          Your AI agent for Africa and its global diaspora.
         </p>
       </div>
 

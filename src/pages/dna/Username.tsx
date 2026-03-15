@@ -231,7 +231,7 @@ const DnaUserDashboard = () => {
         )}
         
         {/* Header Card */}
-        <Card className={profile.banner_url ? '-mt-16 relative' : 'mt-8'}>
+        <Card className={profile.banner_url ? '-mt-16 relative' : 'mt-2'}>
           <CardContent className="pt-6">
             <div className="flex flex-col sm:flex-row gap-6">
               {/* Avatar */}
