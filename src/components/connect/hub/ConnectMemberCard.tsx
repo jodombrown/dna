@@ -206,7 +206,7 @@ export function ConnectMemberCard({ member, onConnectionSent, onMessage }: Conne
       )}
 
       {/* Layer 4: Social proof */}
-      {(mutualCount > 0) && (
+      {mutualCount > 0 ? (
         <div className="flex items-center gap-2">
           {displayedMutuals.length > 0 && (
             <div className="flex -space-x-1.5">
@@ -229,7 +229,11 @@ export function ConnectMemberCard({ member, onConnectionSent, onMessage }: Conne
             {mutualCount} mutual {mutualCount === 1 ? 'connection' : 'connections'}
           </span>
         </div>
-      )}
+      ) : (member as { connections_count?: number }).connections_count ? (
+        <span className="text-xs text-muted-foreground">
+          {(member as { connections_count?: number }).connections_count} connections
+        </span>
+      ) : null}
 
       {/* Action row */}
       <div className="flex items-center justify-between pt-1">
