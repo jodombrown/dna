@@ -26,6 +26,7 @@ import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { useMobile } from '@/hooks/useMobile';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
+import { useScrollDirection } from '@/hooks/useScrollDirection';
 import { incrementSessionCount } from '@/services/dia-feed-cadence';
 import { useLocation } from 'react-router-dom';
 
