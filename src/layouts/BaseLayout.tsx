@@ -102,7 +102,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
           // Top padding: header (56px mobile / 64px desktop) + PulseBar (~60px on desktop for authed users)
           // Skip mobile padding on feed route — it manages its own fixed headers
           user
-            ? isFeedRoute
+            ? hasCustomMobileHeader
               ? "pt-0 sm:pt-16 lg:pt-[7.5rem]"
               : "pt-14 sm:pt-16 lg:pt-[7.5rem]"
             : "pt-14 sm:pt-16",
