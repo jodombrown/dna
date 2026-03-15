@@ -154,7 +154,7 @@ export function ConveneDiscovery() {
     const result: MapEventData[] = [];
     const allEvents = [...(heroEvent ? [heroEvent] : []), ...weekendEvents, ...networkEvents, ...diasporaEvents];
     for (const e of allEvents) {
-      const event = e as Record<string, unknown>;
+      const event = e as unknown as Record<string, unknown>;
       const id = event.id as string;
       if (seen.has(id)) continue;
       seen.add(id);
