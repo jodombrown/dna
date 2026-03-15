@@ -124,9 +124,9 @@ const UnifiedHeader = () => {
                 <img 
                   src={dnaLogo}
                   alt="DNA Logo" 
-                   className="h-[60px] md:h-[80px] w-auto"
-                   width={57}
-                   height={32}
+                   className="h-[80px] md:h-[100px] w-auto"
+                   width={72}
+                   height={40}
                 />
               </NavLink>
             </div>
