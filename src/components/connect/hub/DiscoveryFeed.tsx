@@ -176,13 +176,13 @@ export function DiscoveryFeed({
         p_sort_by: 'match',
         p_limit: 12,
         p_offset: 0,
-      } as any);
+      });
 
       if (error) {
         logger.warn('DiscoveryFeed', 'Sector query failed:', error);
         return [];
       }
-      return (data || []) as any[];
+      return (data || []) as DiscoveryMember[];
     },
     enabled: !!user?.id && userSectors.length > 0,
     staleTime: 120000,
