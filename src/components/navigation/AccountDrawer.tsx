@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Edit, Share2, FileText, Bookmark, Users, Calendar, Settings, HelpCircle, LogOut, Copy, MessageSquare, Linkedin, Twitter, Download, Loader2, Sparkles } from 'lucide-react';
+import { User, Edit, Share2, FileText, Bookmark, Users, Calendar, Settings, HelpCircle, LogOut, Copy, MessageSquare, Linkedin, Twitter, Download, Loader2, Sparkles, ClipboardCheck } from 'lucide-react';
 import { useTourProgress } from '@/hooks/useTourProgress';
 import OnboardingTour from '@/components/onboarding/OnboardingTour';
+import { AlphaTestGuide } from '@/components/alpha/AlphaTestGuide';
+import { FeedbackDrawer } from '@/components/feedback/FeedbackDrawer';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
