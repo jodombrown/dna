@@ -9,6 +9,7 @@ import { Activity } from '@/types/activity';
 import { format, formatDistanceToNow } from 'date-fns';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { invalidateAllEventCaches } from '@/lib/eventCacheInvalidation';
 import {
   DropdownMenu,
   DropdownMenuContent,
