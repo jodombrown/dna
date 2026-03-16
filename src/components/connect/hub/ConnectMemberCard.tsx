@@ -235,8 +235,8 @@ export function ConnectMemberCard({ member, onConnectionSent, onMessage }: Conne
         </span>
       ) : null}
 
-      {/* Action row */}
-      <div className="flex items-center justify-between pt-1">
+      {/* Action row — pushed to bottom */}
+      <div className="flex items-center justify-between pt-1 mt-auto">
         {/* Location & Member since */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground truncate min-w-0">
           {member.location && (
