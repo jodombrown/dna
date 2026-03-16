@@ -410,8 +410,8 @@ const PublicPostPage = () => {
                       className="bg-dna-copper hover:bg-dna-gold text-white h-8 text-xs"
                       asChild
                     >
-                      <Link to="/auth?mode=signup">
-                        Create Your Free Account
+                      <Link to="/waitlist">
+                        Join the Waitlist
                       </Link>
                     </Button>
                     <Button 

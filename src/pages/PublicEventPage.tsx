@@ -683,8 +683,8 @@ const PublicEventPage = () => {
                         className="bg-dna-copper hover:bg-dna-gold text-white"
                         asChild
                       >
-                        <Link to={`/auth?mode=signup&redirect=/event/${event.slug || event.id}`}>
-                          Create Your Free Account
+                        <Link to="/waitlist">
+                          Join the Waitlist
                         </Link>
                       </Button>
                       <Button 

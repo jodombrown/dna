@@ -47,10 +47,10 @@ const HeroSection = () => {
                   <Button 
                     variant="outline"
                     size="lg" 
-                    onClick={() => navigate('/auth?mode=signup')}
+                    onClick={() => navigate('/waitlist')}
                     className="border-2 border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white text-base lg:text-xl px-6 lg:px-10 py-3 lg:py-6 h-auto font-medium"
                   >
-                    Join Now
+                    Join Waitlist
                   </Button>
                 </div>
 
