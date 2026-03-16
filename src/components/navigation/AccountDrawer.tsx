@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Edit, Share2, FileText, Bookmark, Users, Calendar, Settings, HelpCircle, LogOut, Copy, MessageSquare, Linkedin, Twitter, Download, Loader2, Sparkles } from 'lucide-react';
+import { User, Edit, Share2, FileText, Bookmark, Users, Calendar, Settings, HelpCircle, LogOut, Copy, MessageSquare, Linkedin, Twitter, Download, Loader2, Sparkles, ClipboardCheck } from 'lucide-react';
 import { useTourProgress } from '@/hooks/useTourProgress';
 import OnboardingTour from '@/components/onboarding/OnboardingTour';
+import { AlphaTestGuide } from '@/components/alpha/AlphaTestGuide';
+import { FeedbackDrawer } from '@/components/feedback/FeedbackDrawer';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -28,6 +30,8 @@ export const AccountDrawer: React.FC = () => {
   const navigate = useNavigate();
   const [isDownloading, setIsDownloading] = useState(false);
   const [showTour, setShowTour] = useState(false);
+  const [showTestGuide, setShowTestGuide] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
   const { isCompleted: tourCompleted, resetTour } = useTourProgress();
 
   const handleTakeTour = () => {
@@ -328,6 +332,15 @@ export const AccountDrawer: React.FC = () => {
             <Button
               variant="ghost"
               className="w-full justify-start"
+              onClick={() => { close(); setShowTestGuide(true); }}
+            >
+              <ClipboardCheck className="h-4 w-4 mr-3" />
+              Alpha Test Guide
+            </Button>
+
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
               onClick={() => window.open('mailto:aweh@diasporanetwork.africa', '_blank')}
             >
               <HelpCircle className="h-4 w-4 mr-3" />
@@ -349,6 +362,20 @@ export const AccountDrawer: React.FC = () => {
 
     {/* Platform Tour Dialog */}
     <OnboardingTour open={showTour} onClose={() => setShowTour(false)} />
+
+    {/* Alpha Test Guide */}
+    <AlphaTestGuide
+      isOpen={showTestGuide}
+      onClose={() => setShowTestGuide(false)}
+      onOpenFeedback={() => {
+        setShowTestGuide(false);
+        setShowFeedback(true);
+      }}
+    />
+    <FeedbackDrawer
+      isOpen={showFeedback}
+      onClose={() => setShowFeedback(false)}
+    />
   </>
   );
 };
