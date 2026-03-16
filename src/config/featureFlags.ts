@@ -17,8 +17,8 @@ interface FeatureFlags {
 }
 
 export const FEATURE_FLAGS: FeatureFlags = {
-  isAlphaTest: true,
-  showAlphaWatermark: true,
+  isAlphaTest: false,
+  showAlphaWatermark: false,
   enableTestGuide: true,
   showDIADebugInfo: false,
 };

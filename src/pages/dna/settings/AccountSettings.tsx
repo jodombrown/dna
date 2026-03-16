@@ -369,6 +369,20 @@ export default function AccountSettings() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Platform Tour Drawer */}
+      <AlphaTestGuide
+        isOpen={isTourOpen}
+        onClose={() => setIsTourOpen(false)}
+        onOpenFeedback={() => {
+          setIsTourOpen(false);
+          setIsFeedbackOpen(true);
+        }}
+      />
+      <FeedbackDrawer
+        isOpen={isFeedbackOpen}
+        onClose={() => setIsFeedbackOpen(false)}
+      />
     </SettingsLayout>
   );
 }

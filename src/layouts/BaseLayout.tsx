@@ -114,16 +114,6 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
         data-view-state={viewState}
         data-layout-type={layoutConfig.type}
       >
-        {/* Alpha Welcome Banner - hidden on mobile feed (has its own fixed header layout) */}
-        {FEATURE_FLAGS.isAlphaTest && user && (
-          <div className="px-3 pt-1 sm:px-4 sm:pt-4 [body:has([data-mobile-feed='true'])_&]:hidden hidden md:block">
-            <AlphaWelcomeBanner
-              testerName={profile?.first_name ?? profile?.full_name ?? 'Tester'}
-              onOpenTestGuide={() => setIsTestGuideOpen(true)}
-              onOpenFeedback={() => setIsFeedbackDrawerOpen(true)}
-            />
-          </div>
-        )}
         {children}
       </div>
       {/* Feedback FAB - side chevron on all /dna routes */}
