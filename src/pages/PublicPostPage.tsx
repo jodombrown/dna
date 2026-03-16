@@ -176,8 +176,8 @@ const PublicPostPage = () => {
               Visit DNA
             </Button>
             {!isLoggedIn && (
-              <Button variant="outline" onClick={() => navigate('/auth')}>
-                Sign Up for DNA
+              <Button variant="outline" onClick={() => navigate('/waitlist')}>
+                Join Waitlist
               </Button>
             )}
           </div>
