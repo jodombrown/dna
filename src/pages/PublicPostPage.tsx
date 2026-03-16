@@ -235,8 +235,8 @@ const PublicPostPage = () => {
                   className="bg-white text-dna-forest hover:bg-white/90 shrink-0 h-7 text-xs px-3"
                   asChild
                 >
-                  <Link to="/auth?mode=signup">
-                    Join DNA
+                  <Link to="/waitlist">
+                    Join Waitlist
                   </Link>
                 </Button>
               </div>
