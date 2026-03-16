@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { invalidateAllEventCaches } from '@/lib/eventCacheInvalidation';
 import {
   Settings,
   Calendar,
