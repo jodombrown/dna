@@ -299,10 +299,16 @@ export function DiscoveryFeed({
     () => excludeConnected(networkKnowsMembers),
     [networkKnowsMembers, excludeConnected]
   );
-  const filteredDiaspora = useMemo(
-    () => excludeConnected(diasporaMembers),
-    [diasporaMembers, excludeConnected]
-  );
+
+  // Deduplicate lane 4: exclude members already shown in lanes 1-3
+  const filteredDiaspora = useMemo(() => {
+    const shownIds = new Set<string>();
+    filteredActiveNow.forEach((m) => shownIds.add(m.id));
+    filteredSector.forEach((m) => shownIds.add(m.id));
+    filteredNetworkKnows.forEach((m) => shownIds.add(m.id));
+    return excludeConnected(diasporaMembers).filter((m) => !shownIds.has(m.id));
+  }, [diasporaMembers, excludeConnected, filteredActiveNow, filteredSector, filteredNetworkKnows]);
+
   const filteredSearch = useMemo(
     () => excludeConnected(searchResults),
     [searchResults, excludeConnected]
