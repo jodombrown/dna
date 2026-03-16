@@ -15,11 +15,10 @@ const Auth = () => {
   useScrollToTop();
   const navigate = useNavigate();
   const location = useLocation();
-  const { signIn, signUp } = useAuth();
+  const { signIn } = useAuth();
 
   // Where to redirect after login (passed via state.from by OnboardingGuard / protected routes)
   const redirectTo = (location.state as { from?: string })?.from || '/dna/feed';
-  const { registrationEnabled } = useFeatureFlags();
   const { toast } = useToast();
   
   // Sign In State
