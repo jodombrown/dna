@@ -310,8 +310,8 @@ export function DiscoveryFeed({
   }, [diasporaMembers, excludeConnected, filteredActiveNow, filteredSector, filteredNetworkKnows]);
 
   const filteredSearch = useMemo(
-    () => excludeConnected(searchResults),
-    [searchResults, excludeConnected]
+    () => searchResults.filter((m) => m.id !== user?.id),
+    [searchResults, user?.id]
   );
 
   // Check if all lanes are empty
