@@ -175,7 +175,7 @@ const EventSettingsPage: React.FC = () => {
     },
     onSuccess: () => {
       refetchEvent();
-      queryClient.invalidateQueries({ queryKey: ['events'] });
+      invalidateAllEventCaches(queryClient, event.id);
       toast({ title: 'Event Cancelled', description: 'Your event has been cancelled. Attendees will be notified.' });
       setShowCancelDialog(false);
     },
