@@ -188,7 +188,7 @@ export function DiscoveryFeed({
     staleTime: 120000,
   });
 
-  // ─── Lane 3: Your Network Knows (members with mutual connections) ───
+  // ─── Lane 3: Your Network Knows (members with mutual connections / high match) ───
   const { data: networkKnowsMembers = [], isLoading: networkLoading } =
     useQuery({
       queryKey: ['connect-network-knows', user?.id],
@@ -215,9 +215,9 @@ export function DiscoveryFeed({
           return [];
         }
 
-        // Filter to those with match_score > 0 (indicating shared attributes)
+        // Filter to those with calc_match_score > 0 (indicating shared attributes)
         const scored = ((data || []) as DiscoveryMember[]).filter(
-          (m: DiscoveryMember) => (m.match_score || 0) > 0
+          (m) => ((m as Record<string, unknown>).calc_match_score as number || 0) > 0
         );
         return scored;
       },
