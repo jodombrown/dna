@@ -55,9 +55,9 @@ export const PublicProfileHeader = ({ username }: PublicProfileHeaderProps) => {
                 variant="default"
                 size="sm"
                 className="bg-dna-copper hover:bg-dna-gold"
-                onClick={() => navigate('/auth?mode=signup')}
+                onClick={() => navigate('/waitlist')}
               >
-                Join DNA
+                Join Waitlist
               </Button>
             </>
           )}

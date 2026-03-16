@@ -440,10 +440,10 @@ const UnifiedHeader = () => {
                       </Button>
                       <Button
                         variant="default"
-                        onClick={() => navigate('/auth?mode=signup')}
+                        onClick={() => navigate('/waitlist')}
                         className="hidden md:inline-flex bg-dna-copper text-white hover:bg-dna-gold transition-all duration-200"
                       >
-                        Join Now
+                        Join Waitlist
                       </Button>
                     </>
                   )}
@@ -528,9 +528,9 @@ const UnifiedHeader = () => {
                             <Button
                               variant="default"
                               className="justify-start text-left bg-dna-copper hover:bg-dna-gold transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                              onClick={() => navigate('/auth?mode=signup')}
+                              onClick={() => navigate('/waitlist')}
                             >
-                              Join Now
+                              Join Waitlist
                             </Button>
                           </>
                         ) : null}

@@ -84,10 +84,10 @@ const WhoIsDNAForSection = () => {
           </p>
           <Button 
             size="lg"
-            onClick={() => navigate('/auth?mode=signup')}
+            onClick={() => navigate('/waitlist')}
             className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-3"
           >
-            Join Now
+            Join the Waitlist
           </Button>
         </div>
       </div>

@@ -56,10 +56,10 @@ const PartnerWithDna = () => {
                   variant="outline" 
                   size="lg"
                   asChild
-                  onClick={() => handleCTAClick('join-dna', '/auth')}
+                  onClick={() => handleCTAClick('join-dna', '/waitlist')}
                 >
-                  <Link to="/auth">
-                    Join DNA Today
+                  <Link to="/waitlist">
+                    Join the Waitlist
                   </Link>
                 </EnhancedButton>
               </div>
@@ -229,10 +229,10 @@ const PartnerWithDna = () => {
               variant="outline" 
               size="lg"
               asChild
-              onClick={() => handleCTAClick('join-now', '/auth')}
+              onClick={() => handleCTAClick('join-now', '/waitlist')}
             >
-              <Link to="/auth">
-                Join DNA Now
+              <Link to="/waitlist">
+                Join the Waitlist
               </Link>
             </EnhancedButton>
           </div>

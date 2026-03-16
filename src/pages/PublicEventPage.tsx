@@ -253,8 +253,8 @@ const PublicEventPage = () => {
               Browse Events
             </Button>
             {!isLoggedIn && (
-              <Button variant="outline" onClick={() => navigate('/auth')}>
-                Sign Up for DNA
+              <Button variant="outline" onClick={() => navigate('/waitlist')}>
+                Join Waitlist
               </Button>
             )}
           </div>
@@ -361,8 +361,8 @@ const PublicEventPage = () => {
                   className="bg-white text-dna-forest hover:bg-white/90 shrink-0 h-7 text-xs px-3"
                   asChild
                 >
-                  <Link to={`/auth?mode=signup&redirect=/event/${event.slug || event.id}`}>
-                    Join DNA Free
+                  <Link to="/waitlist">
+                    Join Waitlist
                   </Link>
                 </Button>
               </div>
@@ -683,8 +683,8 @@ const PublicEventPage = () => {
                         className="bg-dna-copper hover:bg-dna-gold text-white"
                         asChild
                       >
-                        <Link to={`/auth?mode=signup&redirect=/event/${event.slug || event.id}`}>
-                          Create Your Free Account
+                        <Link to="/waitlist">
+                          Join the Waitlist
                         </Link>
                       </Button>
                       <Button 

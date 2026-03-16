@@ -14,9 +14,9 @@ export function ManifestoCTA() {
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       transition={{ duration: 0.3, delay: 0.2 }}
     >
-      <Link to="/auth">
+      <Link to="/waitlist">
         <button className="bg-[#4A8D77] text-white text-xl md:text-2xl font-bold px-8 py-4 rounded-lg hover:bg-[#2D5A4A] transition-colors animate-pulse">
-          JOIN THE NETWORK
+          JOIN THE WAITLIST
         </button>
       </Link>
     </motion.div>
