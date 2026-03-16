@@ -5,6 +5,7 @@ import { CuratedEventPreview } from '@/pages/dna/convene/CuratedEventPreview';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Calendar, MapPin, Users, ExternalLink, Share2, Clock, MoreHorizontal, XCircle, Trash2, Flag, QrCode, Loader2, Settings, Sparkles, MessageSquare, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { invalidateAllEventCaches } from '@/lib/eventCacheInvalidation';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -273,8 +274,7 @@ const EventDetail = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['event-detail', id] });
-      queryClient.invalidateQueries({ queryKey: ['events'] });
+      invalidateAllEventCaches(queryClient, id);
       toast({ title: 'Event Cancelled', description: 'Your event has been cancelled. Attendees will be notified.' });
       setShowCancelDialog(false);
     },
@@ -291,7 +291,7 @@ const EventDetail = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['events'] });
+      invalidateAllEventCaches(queryClient, id);
       toast({ title: 'Event Deleted', description: 'Your event has been permanently deleted.' });
       navigate('/dna/convene/events');
     },

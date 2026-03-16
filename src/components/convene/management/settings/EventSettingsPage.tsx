@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { invalidateAllEventCaches } from '@/lib/eventCacheInvalidation';
 import {
   Settings,
   Calendar,
@@ -174,7 +175,7 @@ const EventSettingsPage: React.FC = () => {
     },
     onSuccess: () => {
       refetchEvent();
-      queryClient.invalidateQueries({ queryKey: ['events'] });
+      invalidateAllEventCaches(queryClient, event.id);
       toast({ title: 'Event Cancelled', description: 'Your event has been cancelled. Attendees will be notified.' });
       setShowCancelDialog(false);
     },
@@ -194,11 +195,7 @@ const EventSettingsPage: React.FC = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['events'] });
-      queryClient.invalidateQueries({ queryKey: ['events-index'] });
-      queryClient.invalidateQueries({ queryKey: ['convene-featured-events'] });
-      queryClient.invalidateQueries({ queryKey: ['convene-category-counts'] });
-      queryClient.invalidateQueries({ queryKey: ['event-recommendations'] });
+      invalidateAllEventCaches(queryClient, event.id);
       toast({ title: 'Event Deleted', description: 'Your event has been permanently deleted.' });
       navigate('/dna/convene/events');
     },

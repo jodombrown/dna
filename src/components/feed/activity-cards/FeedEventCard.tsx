@@ -9,6 +9,7 @@ import { Activity } from '@/types/activity';
 import { format, formatDistanceToNow } from 'date-fns';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { invalidateAllEventCaches } from '@/lib/eventCacheInvalidation';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -74,8 +75,7 @@ export const FeedEventCard: React.FC<FeedEventCardProps> = ({ activity }) => {
 
       if (error) throw error;
       toast.success('Event deleted');
-      queryClient.invalidateQueries({ queryKey: ['activities'] });
-      queryClient.invalidateQueries({ queryKey: ['events'] });
+      invalidateAllEventCaches(queryClient, eventData.event_id);
       setShowDeleteDialog(false);
     } catch (error) {
       toast.error('Failed to delete event');
