@@ -267,7 +267,7 @@ const Auth = () => {
               </p>
             </CardHeader>
             <CardContent>
-              {authTabsContent}
+              {authContent}
             </CardContent>
           </Card>
         </div>
