@@ -195,7 +195,7 @@ const PublicProfileLandingView: React.FC<PublicProfileLandingViewProps> = ({ bun
             <span className="font-semibold text-sm">DNA</span>
           </Link>
           <Button 
-            onClick={() => navigate('/auth')}
+            onClick={() => navigate('/waitlist')}
             size="sm"
             className="bg-primary hover:bg-primary/90"
           >
