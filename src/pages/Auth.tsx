@@ -335,7 +335,7 @@ const Auth = () => {
             <div className="text-center space-y-2">
               <h2 className="text-3xl font-bold text-foreground">Welcome</h2>
               <p className="text-muted-foreground">
-                Sign in to your account or create a new one
+                Sign in to your account
               </p>
             </div>
 
