@@ -361,8 +361,8 @@ const PublicEventPage = () => {
                   className="bg-white text-dna-forest hover:bg-white/90 shrink-0 h-7 text-xs px-3"
                   asChild
                 >
-                  <Link to={`/auth?mode=signup&redirect=/event/${event.slug || event.id}`}>
-                    Join DNA Free
+                  <Link to="/waitlist">
+                    Join Waitlist
                   </Link>
                 </Button>
               </div>
