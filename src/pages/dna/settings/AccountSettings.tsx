@@ -44,6 +44,10 @@ export default function AccountSettings() {
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
   const [deleteLoading, setDeleteLoading] = useState(false);
 
+  // Platform tour state
+  const [isTourOpen, setIsTourOpen] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+
   const handleEmailChange = async (e: React.FormEvent) => {
     e.preventDefault();
 
