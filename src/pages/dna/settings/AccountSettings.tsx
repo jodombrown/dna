@@ -20,8 +20,10 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { SettingsLayout } from '@/components/settings/SettingsLayout';
-import { Loader2, Mail, Lock, Trash2, AlertTriangle } from 'lucide-react';
+import { Loader2, Mail, Lock, Trash2, AlertTriangle, Compass } from 'lucide-react';
 import { getErrorMessage } from '@/lib/errorLogger';
+import { AlphaTestGuide } from '@/components/alpha/AlphaTestGuide';
+import { FeedbackDrawer } from '@/components/feedback/FeedbackDrawer';
 
 export default function AccountSettings() {
   const { user, signOut } = useAuth();
@@ -41,6 +43,10 @@ export default function AccountSettings() {
   // Delete account state
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  // Platform tour state
+  const [isTourOpen, setIsTourOpen] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
   const handleEmailChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -191,6 +197,24 @@ export default function AccountSettings() {
       description="Manage your email, password, and account"
     >
       <div className="space-y-6">
+        {/* Platform Tour */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Compass className="h-5 w-5" />
+              Platform Tour
+            </CardTitle>
+            <CardDescription>
+              Take a guided tour of the DNA platform to explore key features and testing scenarios.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={() => setIsTourOpen(true)} variant="outline">
+              Take Platform Tour
+            </Button>
+          </CardContent>
+        </Card>
+
         {/* Email Section */}
         <Card>
           <CardHeader>
@@ -363,6 +387,20 @@ export default function AccountSettings() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Platform Tour Drawer */}
+      <AlphaTestGuide
+        isOpen={isTourOpen}
+        onClose={() => setIsTourOpen(false)}
+        onOpenFeedback={() => {
+          setIsTourOpen(false);
+          setIsFeedbackOpen(true);
+        }}
+      />
+      <FeedbackDrawer
+        isOpen={isFeedbackOpen}
+        onClose={() => setIsFeedbackOpen(false)}
+      />
     </SettingsLayout>
   );
 }
