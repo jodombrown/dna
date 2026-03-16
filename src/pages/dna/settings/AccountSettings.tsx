@@ -191,24 +191,6 @@ export default function AccountSettings() {
       description="Manage your email, password, and account"
     >
       <div className="space-y-6">
-        {/* Platform Tour */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Compass className="h-5 w-5" />
-              Platform Tour
-            </CardTitle>
-            <CardDescription>
-              Take a guided tour of the DNA platform to explore key features and testing scenarios.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button onClick={() => setIsTourOpen(true)} variant="outline">
-              Take Platform Tour
-            </Button>
-          </CardContent>
-        </Card>
-
         {/* Email Section */}
         <Card>
           <CardHeader>
