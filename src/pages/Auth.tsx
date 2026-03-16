@@ -74,47 +74,6 @@ const Auth = () => {
     }
   };
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Client-side validation
-    if (signUpPassword.length < 8) {
-      toast({
-        title: 'Password too short',
-        description: 'Password must be at least 8 characters long.',
-        variant: 'destructive',
-      });
-      return;
-    }
-    
-    setIsSignUpLoading(true);
-
-    try {
-      const { error } = await signUp(signUpEmail, signUpPassword, signUpFullName);
-      
-      if (error) {
-        toast({
-          title: 'Sign up failed',
-          description: getErrorMessage(error),
-          variant: 'destructive',
-        });
-      } else {
-        toast({
-          title: 'Account created!',
-          description: 'Please check your email to verify your account.',
-        });
-      }
-    } catch (error: unknown) {
-      toast({
-        title: 'Error',
-        description: getErrorMessage(error) || 'An unexpected error occurred',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsSignUpLoading(false);
-    }
-  };
-
   const handleLinkedInSignIn = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
