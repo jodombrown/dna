@@ -207,16 +207,13 @@ export function AlphaTestGuide({ isOpen, onClose, onOpenFeedback }: AlphaTestGui
     saveProgress(completedScenarios);
   }, [completedScenarios]);
 
-  // Auto-dismiss when all scenarios are complete
   const allComplete = Object.values(completedScenarios).filter(Boolean).length >= TEST_SCENARIOS.length;
-  useEffect(() => {
-    if (allComplete && isOpen) {
-      const timer = setTimeout(() => {
-        onClose();
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [allComplete, isOpen, onClose]);
+
+  const handleRestart = useCallback(() => {
+    const reset: Record<string, boolean> = {};
+    TEST_SCENARIOS.forEach((s) => { reset[s.id] = false; });
+    setCompletedScenarios(reset);
+  }, []);
 
   const toggleScenario = useCallback((id: string) => {
     setExpandedId((prev) => (prev === id ? null : id));
