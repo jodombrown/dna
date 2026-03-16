@@ -412,11 +412,11 @@ const PublicProfileLandingView: React.FC<PublicProfileLandingViewProps> = ({ bun
                 are building bridges between Africa and its global diaspora.
               </p>
               <Button 
-                onClick={() => navigate('/auth')}
+                onClick={() => navigate('/waitlist')}
                 className="bg-primary hover:bg-primary/90"
               >
                 <UserPlus className="w-4 h-4 mr-2" />
-                Get Started - It's Free
+                Join the Waitlist
               </Button>
             </CardContent>
           </Card>
