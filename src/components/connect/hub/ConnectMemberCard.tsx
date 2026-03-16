@@ -150,7 +150,7 @@ export function ConnectMemberCard({ member, onConnectionSent, onMessage }: Conne
       className={cn(
         'relative bg-card border border-border rounded-2xl p-4 cursor-pointer',
         'hover:shadow-md hover:border-dna-emerald/30 transition-all duration-200',
-        'flex flex-col gap-3'
+        'flex flex-col gap-3 min-h-[220px]'
       )}
     >
       {/* Country flag — top right */}
@@ -235,8 +235,8 @@ export function ConnectMemberCard({ member, onConnectionSent, onMessage }: Conne
         </span>
       ) : null}
 
-      {/* Action row */}
-      <div className="flex items-center justify-between pt-1">
+      {/* Action row — pushed to bottom */}
+      <div className="flex items-center justify-between pt-1 mt-auto">
         {/* Location & Member since */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground truncate min-w-0">
           {member.location && (
