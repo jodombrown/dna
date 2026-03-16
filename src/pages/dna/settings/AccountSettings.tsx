@@ -20,8 +20,10 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { SettingsLayout } from '@/components/settings/SettingsLayout';
-import { Loader2, Mail, Lock, Trash2, AlertTriangle } from 'lucide-react';
+import { Loader2, Mail, Lock, Trash2, AlertTriangle, Compass } from 'lucide-react';
 import { getErrorMessage } from '@/lib/errorLogger';
+import { AlphaTestGuide } from '@/components/alpha/AlphaTestGuide';
+import { FeedbackDrawer } from '@/components/feedback/FeedbackDrawer';
 
 export default function AccountSettings() {
   const { user, signOut } = useAuth();
