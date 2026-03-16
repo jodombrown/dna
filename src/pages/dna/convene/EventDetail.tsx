@@ -291,7 +291,7 @@ const EventDetail = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['events'] });
+      invalidateAllEventCaches(queryClient, id);
       toast({ title: 'Event Deleted', description: 'Your event has been permanently deleted.' });
       navigate('/dna/convene/events');
     },

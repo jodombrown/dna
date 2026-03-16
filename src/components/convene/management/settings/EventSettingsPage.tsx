@@ -195,11 +195,7 @@ const EventSettingsPage: React.FC = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['events'] });
-      queryClient.invalidateQueries({ queryKey: ['events-index'] });
-      queryClient.invalidateQueries({ queryKey: ['convene-featured-events'] });
-      queryClient.invalidateQueries({ queryKey: ['convene-category-counts'] });
-      queryClient.invalidateQueries({ queryKey: ['event-recommendations'] });
+      invalidateAllEventCaches(queryClient, event.id);
       toast({ title: 'Event Deleted', description: 'Your event has been permanently deleted.' });
       navigate('/dna/convene/events');
     },
