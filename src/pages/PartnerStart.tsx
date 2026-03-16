@@ -140,9 +140,9 @@ ${formData.interest}
               size="lg" 
               className="w-full"
               asChild
-              onClick={() => handleCTAClick('join-dna', '/auth')}
+              onClick={() => handleCTAClick('join-dna', '/waitlist')}
             >
-              <Link to="/auth">Partner With DNA Today</Link>
+              <Link to="/waitlist">Join the Waitlist</Link>
             </EnhancedButton>
           </div>
         </div>
