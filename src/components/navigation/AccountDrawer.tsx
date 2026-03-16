@@ -332,6 +332,15 @@ export const AccountDrawer: React.FC = () => {
             <Button
               variant="ghost"
               className="w-full justify-start"
+              onClick={() => { close(); setShowTestGuide(true); }}
+            >
+              <ClipboardCheck className="h-4 w-4 mr-3" />
+              Alpha Test Guide
+            </Button>
+
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
               onClick={() => window.open('mailto:aweh@diasporanetwork.africa', '_blank')}
             >
               <HelpCircle className="h-4 w-4 mr-3" />
