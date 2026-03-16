@@ -30,6 +30,8 @@ export const AccountDrawer: React.FC = () => {
   const navigate = useNavigate();
   const [isDownloading, setIsDownloading] = useState(false);
   const [showTour, setShowTour] = useState(false);
+  const [showTestGuide, setShowTestGuide] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
   const { isCompleted: tourCompleted, resetTour } = useTourProgress();
 
   const handleTakeTour = () => {
