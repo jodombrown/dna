@@ -286,26 +286,32 @@ export function DiscoveryFeed({
     staleTime: 30000,
   });
 
-  // Apply connected-user exclusion to all lanes
+  // Apply connected-user exclusion + progressive deduplication across all lanes
+  // Each lane excludes members already shown in earlier lanes
   const filteredActiveNow = useMemo(
     () => excludeConnected(activeNowMembers),
     [activeNowMembers, excludeConnected]
   );
-  const filteredSector = useMemo(
-    () => excludeConnected(sectorMembers),
-    [sectorMembers, excludeConnected]
-  );
-  const filteredNetworkKnows = useMemo(
-    () => excludeConnected(networkKnowsMembers),
-    [networkKnowsMembers, excludeConnected]
-  );
 
-  // Deduplicate lane 4: exclude members already shown in lanes 1-3
+  const filteredSector = useMemo(() => {
+    const shownIds = new Set(filteredActiveNow.map((m) => m.id));
+    return excludeConnected(sectorMembers).filter((m) => !shownIds.has(m.id));
+  }, [sectorMembers, excludeConnected, filteredActiveNow]);
+
+  const filteredNetworkKnows = useMemo(() => {
+    const shownIds = new Set([
+      ...filteredActiveNow.map((m) => m.id),
+      ...filteredSector.map((m) => m.id),
+    ]);
+    return excludeConnected(networkKnowsMembers).filter((m) => !shownIds.has(m.id));
+  }, [networkKnowsMembers, excludeConnected, filteredActiveNow, filteredSector]);
+
   const filteredDiaspora = useMemo(() => {
-    const shownIds = new Set<string>();
-    filteredActiveNow.forEach((m) => shownIds.add(m.id));
-    filteredSector.forEach((m) => shownIds.add(m.id));
-    filteredNetworkKnows.forEach((m) => shownIds.add(m.id));
+    const shownIds = new Set([
+      ...filteredActiveNow.map((m) => m.id),
+      ...filteredSector.map((m) => m.id),
+      ...filteredNetworkKnows.map((m) => m.id),
+    ]);
     return excludeConnected(diasporaMembers).filter((m) => !shownIds.has(m.id));
   }, [diasporaMembers, excludeConnected, filteredActiveNow, filteredSector, filteredNetworkKnows]);
 
