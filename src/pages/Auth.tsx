@@ -7,11 +7,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { useFeatureFlags } from '@/hooks/useFeatureFlags';
-import { BetaWaitlist } from '@/components/auth/BetaWaitlist';
 import { getErrorMessage } from '@/lib/errorLogger';
 
 const Auth = () => {
