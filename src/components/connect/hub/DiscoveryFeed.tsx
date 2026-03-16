@@ -188,7 +188,7 @@ export function DiscoveryFeed({
     staleTime: 120000,
   });
 
-  // ─── Lane 3: Your Network Knows (members with mutual connections) ───
+  // ─── Lane 3: Your Network Knows (members with mutual connections / high match) ───
   const { data: networkKnowsMembers = [], isLoading: networkLoading } =
     useQuery({
       queryKey: ['connect-network-knows', user?.id],
@@ -215,9 +215,9 @@ export function DiscoveryFeed({
           return [];
         }
 
-        // Filter to those with match_score > 0 (indicating shared attributes)
+        // Filter to those with calc_match_score > 0 (indicating shared attributes)
         const scored = ((data || []) as DiscoveryMember[]).filter(
-          (m: DiscoveryMember) => (m.match_score || 0) > 0
+          (m) => ((m as Record<string, unknown>).calc_match_score as number || 0) > 0
         );
         return scored;
       },
@@ -225,32 +225,32 @@ export function DiscoveryFeed({
       staleTime: 120000,
     });
 
-  // ─── Lane 4: Across the Diaspora (different country) ───
+  // ─── Lane 4: Across the Diaspora (all other members) ───
   const { data: diasporaMembers = [], isLoading: diasporaLoading } = useQuery({
-    queryKey: ['connect-across-diaspora', user?.id, profile?.country_of_origin],
+    queryKey: ['connect-across-diaspora', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
 
-      let query = supabase
-        .from('profiles')
-        .select('*')
-        .neq('id', user.id)
-        .eq('is_public', true)
-        .order('updated_at', { ascending: false })
-        .limit(12);
-
-      // Exclude user's own country to show diversity
-      if (profile?.country_of_origin) {
-        query = query.neq('country_of_origin', profile.country_of_origin);
-      }
-
-      const { data, error } = await query;
+      // Use discover_members RPC with no filters to get all members
+      const { data, error } = await supabase.rpc('discover_members', {
+        p_current_user_id: user.id,
+        p_focus_areas: null,
+        p_regional_expertise: null,
+        p_industries: null,
+        p_country_of_origin: null,
+        p_location_country: null,
+        p_skills: null,
+        p_search_query: null,
+        p_sort_by: 'recent',
+        p_limit: 30,
+        p_offset: 0,
+      });
 
       if (error) {
         logger.warn('DiscoveryFeed', 'Diaspora query failed:', error);
         return [];
       }
-      return data || [];
+      return (data || []) as DiscoveryMember[];
     },
     enabled: !!user?.id,
     staleTime: 120000,
@@ -299,10 +299,16 @@ export function DiscoveryFeed({
     () => excludeConnected(networkKnowsMembers),
     [networkKnowsMembers, excludeConnected]
   );
-  const filteredDiaspora = useMemo(
-    () => excludeConnected(diasporaMembers),
-    [diasporaMembers, excludeConnected]
-  );
+
+  // Deduplicate lane 4: exclude members already shown in lanes 1-3
+  const filteredDiaspora = useMemo(() => {
+    const shownIds = new Set<string>();
+    filteredActiveNow.forEach((m) => shownIds.add(m.id));
+    filteredSector.forEach((m) => shownIds.add(m.id));
+    filteredNetworkKnows.forEach((m) => shownIds.add(m.id));
+    return excludeConnected(diasporaMembers).filter((m) => !shownIds.has(m.id));
+  }, [diasporaMembers, excludeConnected, filteredActiveNow, filteredSector, filteredNetworkKnows]);
+
   const filteredSearch = useMemo(
     () => excludeConnected(searchResults),
     [searchResults, excludeConnected]
