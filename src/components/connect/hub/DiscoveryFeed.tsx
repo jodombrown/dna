@@ -272,7 +272,7 @@ export function DiscoveryFeed({
         p_skills: null,
         p_search_query: searchQuery,
         p_sort_by: 'match',
-        p_limit: 20,
+        p_limit: 50,
         p_offset: 0,
       });
 
