@@ -362,6 +362,20 @@ export const AccountDrawer: React.FC = () => {
 
     {/* Platform Tour Dialog */}
     <OnboardingTour open={showTour} onClose={() => setShowTour(false)} />
+
+    {/* Alpha Test Guide */}
+    <AlphaTestGuide
+      isOpen={showTestGuide}
+      onClose={() => setShowTestGuide(false)}
+      onOpenFeedback={() => {
+        setShowTestGuide(false);
+        setShowFeedback(true);
+      }}
+    />
+    <FeedbackDrawer
+      isOpen={showFeedback}
+      onClose={() => setShowFeedback(false)}
+    />
   </>
   );
 };
