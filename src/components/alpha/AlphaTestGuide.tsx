@@ -282,6 +282,26 @@ export function AlphaTestGuide({ isOpen, onClose, onOpenFeedback }: AlphaTestGui
           </div>
         </div>
 
+        {/* Completion Banner */}
+        {allComplete && (
+          <div className="mx-4 mt-3 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-center space-y-2">
+            <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-200">
+              🎉 All {totalCount} scenarios completed!
+            </p>
+            <p className="text-xs text-emerald-600 dark:text-emerald-400">
+              Thank you for testing. You can restart anytime.
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRestart}
+              className="mt-1 border-emerald-300 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-700 dark:text-emerald-300 dark:hover:bg-emerald-900/40"
+            >
+              Restart Test
+            </Button>
+          </div>
+        )}
+
         {/* Scenario List */}
         <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
           {TEST_SCENARIOS.map((scenario) => {
