@@ -30,18 +30,8 @@ const Auth = () => {
   const [signInPassword, setSignInPassword] = useState('');
   const [isSignInLoading, setIsSignInLoading] = useState(false);
   
-  // Sign Up State
-  const [signUpEmail, setSignUpEmail] = useState('');
-  const [signUpPassword, setSignUpPassword] = useState('');
-  const [signUpFullName, setSignUpFullName] = useState('');
-  const [isSignUpLoading, setIsSignUpLoading] = useState(false);
-  
   // Password visibility toggles
   const [showSignInPassword, setShowSignInPassword] = useState(false);
-  const [showSignUpPassword, setShowSignUpPassword] = useState(false);
-  
-  // Tab state
-  const [activeTab, setActiveTab] = useState('signin');
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
