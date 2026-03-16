@@ -5,6 +5,7 @@ import { CuratedEventPreview } from '@/pages/dna/convene/CuratedEventPreview';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Calendar, MapPin, Users, ExternalLink, Share2, Clock, MoreHorizontal, XCircle, Trash2, Flag, QrCode, Loader2, Settings, Sparkles, MessageSquare, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { invalidateAllEventCaches } from '@/lib/eventCacheInvalidation';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
