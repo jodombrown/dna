@@ -440,10 +440,10 @@ const UnifiedHeader = () => {
                       </Button>
                       <Button
                         variant="default"
-                        onClick={() => navigate('/auth?mode=signup')}
+                        onClick={() => navigate('/waitlist')}
                         className="hidden md:inline-flex bg-dna-copper text-white hover:bg-dna-gold transition-all duration-200"
                       >
-                        Join Now
+                        Join Waitlist
                       </Button>
                     </>
                   )}
