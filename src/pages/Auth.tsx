@@ -342,7 +342,7 @@ const Auth = () => {
             {/* Auth Card */}
             <Card className="border-border/50 shadow-lg">
               <CardContent className="pt-6">
-                {authTabsContent}
+                {authContent}
               </CardContent>
             </Card>
 
