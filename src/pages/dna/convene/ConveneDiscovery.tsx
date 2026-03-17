@@ -105,7 +105,7 @@ export function ConveneDiscovery() {
 
   // Mobile header measurement & scroll behavior
   const mobileHeaderRef = useRef<HTMLDivElement>(null);
-  const headerHeight = useMobileHeaderHeight(mobileHeaderRef);
+  const headerHeight = useMobileHeaderHeight(mobileHeaderRef, 4);
   const { isScrollingDown, isAtTop } = useScrollDirection();
   const { hideHeader, showHeader } = useHeaderVisibility();
 
@@ -296,7 +296,7 @@ export function ConveneDiscovery() {
       )}
 
       <div
-        className="container max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 pt-0 pb-0 lg:py-6 space-y-4 lg:space-y-5"
+        className="container max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 pt-0 pb-0 lg:py-6 space-y-0 md:space-y-4 lg:space-y-5"
         style={isMobile ? { paddingTop: headerHeight } : undefined}
       >
         {/* ═══════════════════════════════════════
