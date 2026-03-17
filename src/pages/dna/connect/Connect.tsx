@@ -20,8 +20,8 @@ import {
   FilterState,
 } from '@/components/connect/hub';
 
-// Mobile components (legacy support)
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+// Mobile components
+
 import { ConnectMobileHeader } from '@/components/connect/ConnectMobileHeader';
 
 // DIA Card System (Sprint 4A)
@@ -157,7 +157,7 @@ const Connect = () => {
   // Mobile view - use Outlet for child routes to prevent hook count issues
   if (isMobile) {
     return (
-      <div className="min-h-screen bg-background pb-20 overflow-x-hidden">
+      <div className="min-h-screen bg-background pb-bottom-nav overflow-x-hidden">
         {/* Single measured container for fixed header */}
         <div
           ref={connectHeaderRef}
@@ -192,7 +192,7 @@ const Connect = () => {
           }} />
         </div>
 
-        <MobileBottomNav />
+        
       </div>
     );
   }
