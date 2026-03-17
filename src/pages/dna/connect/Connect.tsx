@@ -47,6 +47,8 @@ const Connect = () => {
   const { isScrollingDown, isAtTop } = useScrollDirection(30);
   const { hideHeader: hideUnifiedHeader, showHeader } = useHeaderVisibility();
   const headerHidden = isMobile && isScrollingDown && !isAtTop;
+  const connectHeaderRef = useRef<HTMLDivElement>(null);
+  const connectHeaderPadding = useMobileHeaderHeight(connectHeaderRef);
 
   // Hide unified header on mobile connect (has its own header)
   useEffect(() => {
