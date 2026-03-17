@@ -267,6 +267,12 @@ const LegacySpaceSlugRedirect = () => {
   return <Navigate to={`/dna/collaborate/spaces/${slug}`} replace />;
 };
 
+/** Redirect legacy /dna/convey/post/:id emails to /dna/story/:id */
+function ConveyPostRedirect() {
+  const { id } = useParams<{ id: string }>();
+  return <Navigate to={`/dna/story/${id}`} replace />;
+}
+
 function App() {
   return (
     <ErrorBoundary>
