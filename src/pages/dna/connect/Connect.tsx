@@ -157,7 +157,7 @@ const Connect = () => {
   // Mobile view - use Outlet for child routes to prevent hook count issues
   if (isMobile) {
     return (
-      <div className="min-h-screen bg-background pb-20 overflow-x-hidden">
+      <div className="min-h-screen bg-background pb-bottom-nav overflow-x-hidden">
         {/* Single measured container for fixed header */}
         <div
           ref={connectHeaderRef}
