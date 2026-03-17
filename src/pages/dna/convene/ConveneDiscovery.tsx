@@ -27,6 +27,7 @@ import { ConveneDIADiscoveryCard } from '@/components/convene/ConveneDIADiscover
 import { DIAHubSection } from '@/components/dia/DIAHubSection';
 import { UpcomingEventsSection } from '@/components/convene/UpcomingEventsSection';
 import { ConveneMobileHeader } from '@/components/convene/ConveneMobileHeader';
+import { ConveneTabExplainer } from '@/components/convene/ConveneTabExplainer';
 import { useConveneCities, useUserCity } from '@/hooks/convene/useConveneCities';
 import {
   useHeroEvent,
