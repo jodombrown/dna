@@ -19,7 +19,7 @@ const PULSE_KEYS: PulseKey[] = ['connect', 'convene', 'collaborate', 'contribute
 
 function PulseBarSkeleton() {
   return (
-    <div className="w-full bg-background/80 backdrop-blur-md border-b border-border/50 px-4 py-2 fixed top-14 sm:top-16 z-40 left-0">
+    <div className="w-full bg-background/80 backdrop-blur-md border-b border-border/50 px-4 py-2 fixed z-40 left-0" style={{ top: 'var(--unified-header-height, 56px)' }}>
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
         {PULSE_KEYS.map((key) => (
           <div key={key} className="flex-1 animate-pulse">
