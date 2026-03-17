@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import LayoutController from '@/components/LayoutController';
@@ -21,16 +21,36 @@ import { ConveyTrendingSection } from '@/components/convey/ConveyTrendingSection
 import { ConveyStoryCard } from '@/components/convey/ConveyStoryCard';
 import { ConveyCategorySection, ConveyDiscussionPrompt, ConveyMiniCard } from '@/components/convey/ConveyCategorySection';
 import { DiaContextual } from '@/components/dia';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
-type StoryTab = 'all' | 'my_stories' | 'saved';
+// ─── CONVEY Editorial Tabs ───────────────────────────────────────────
+type ConveyTab = 'pulse' | 'curated' | 'my_circle' | 'my_voice' | 'saved';
 
-// Category pills for navigation
+interface TabConfig {
+  id: ConveyTab;
+  label: string;
+  descriptor: string;
+}
+
+const CONVEY_TABS: TabConfig[] = [
+  { id: 'pulse', label: 'Pulse', descriptor: 'Everything happening across the diaspora right now' },
+  { id: 'curated', label: 'Curated', descriptor: "DIA's picks based on your interests and connections" },
+  { id: 'my_circle', label: 'My Circle', descriptor: 'Dispatches from the people in your world' },
+  { id: 'my_voice', label: 'My Voice', descriptor: 'Your contribution to the diaspora\'s story' },
+  { id: 'saved', label: 'Saved', descriptor: 'Posts you\'ve bookmarked to read later or reference again' },
+];
+
+// Map editorial tabs to feed query params
+function tabToFeedParams(tab: ConveyTab, userId?: string) {
+  switch (tab) {
+    case 'pulse': return { tab: 'all' as const };
+    case 'curated': return { tab: 'for_you' as const };
+    case 'my_circle': return { tab: 'network' as const };
+    case 'my_voice': return { tab: 'my_posts' as const, authorId: userId };
+    case 'saved': return { tab: 'bookmarks' as const };
+  }
+}
+
+// Category pills for story type filtering
 const categoryPills = [
   { id: 'all' as const, label: 'All', icon: Sparkles },
   { id: 'impact' as StoryType, label: 'Impact', icon: Target },
@@ -39,21 +59,96 @@ const categoryPills = [
   { id: 'photo_essay' as StoryType, label: 'Photos', icon: Camera },
 ];
 
-// Tab options
-const tabOptions = [
-  { id: 'all' as StoryTab, label: 'All Stories', icon: Newspaper },
-  { id: 'my_stories' as StoryTab, label: 'My Stories', icon: PenSquare },
-  { id: 'saved' as StoryTab, label: 'Saved', icon: BookOpen },
-];
+// ─── Editorial Tab Bar Component ─────────────────────────────────────
+function ConveyEditorialTabs({
+  activeTab,
+  onTabChange,
+  isMobile,
+}: {
+  activeTab: ConveyTab;
+  onTabChange: (tab: ConveyTab) => void;
+  isMobile: boolean;
+}) {
+  const tabBarRef = useRef<HTMLDivElement>(null);
+  const activeTabRef = useRef<HTMLButtonElement>(null);
+  const [descriptorKey, setDescriptorKey] = useState(0);
 
+  // Scroll active tab into view on mobile
+  useEffect(() => {
+    if (isMobile && activeTabRef.current && tabBarRef.current) {
+      const container = tabBarRef.current;
+      const tab = activeTabRef.current;
+      const scrollLeft = tab.offsetLeft - container.offsetWidth / 2 + tab.offsetWidth / 2;
+      container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+    }
+  }, [activeTab, isMobile]);
+
+  const handleTabChange = (tab: ConveyTab) => {
+    onTabChange(tab);
+    setDescriptorKey((k) => k + 1);
+  };
+
+  const activeConfig = CONVEY_TABS.find((t) => t.id === activeTab)!;
+
+  return (
+    <div className="border-b border-border">
+      {/* Tab bar */}
+      <div
+        ref={tabBarRef}
+        className={cn(
+          "flex gap-6 overflow-x-auto scrollbar-hide",
+          isMobile ? "px-4" : "px-0"
+        )}
+      >
+        {CONVEY_TABS.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              ref={isActive ? activeTabRef : undefined}
+              onClick={() => handleTabChange(tab.id)}
+              className={cn(
+                "relative whitespace-nowrap pb-3 pt-1 text-sm font-medium transition-colors shrink-0",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                isActive
+                  ? "text-[hsl(var(--dna-forest))]"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {tab.label}
+              {/* Active underline */}
+              {isActive && (
+                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[hsl(var(--dna-forest))] rounded-full" />
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Descriptor text */}
+      <p
+        key={descriptorKey}
+        className="text-xs text-muted-foreground italic px-0 pt-2 pb-3 animate-in fade-in duration-300"
+        style={{ paddingLeft: isMobile ? '1rem' : undefined }}
+      >
+        {activeConfig.descriptor}
+      </p>
+    </div>
+  );
+}
+
+// ─── Main Hub ────────────────────────────────────────────────────────
 export default function ConveyStoryHub() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<StoryTab>('all');
+  const [activeTab, setActiveTab] = useState<ConveyTab>('pulse');
   const [selectedCategory, setSelectedCategory] = useState<StoryType | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const composer = useUniversalComposer();
   const { isMobile, isTablet } = useMobile();
+
+  // Derive feed params from editorial tab
+  const feedParams = tabToFeedParams(activeTab, user?.id);
 
   // Fetch stories
   const {
@@ -61,27 +156,27 @@ export default function ConveyStoryHub() {
     isLoading,
     fetchNextPage,
     hasNextPage,
-    isFetchingNextPage
+    isFetchingNextPage,
   } = useInfiniteUniversalFeed({
     viewerId: user?.id || '',
-    tab: activeTab === 'my_stories' ? 'my_posts' : activeTab === 'saved' ? 'bookmarks' : 'all',
-    authorId: activeTab === 'my_stories' ? user?.id : undefined,
+    tab: feedParams.tab,
+    authorId: feedParams.authorId,
     postType: 'story',
     rankingMode: 'latest',
   });
 
-  // Filter stories by category (using story_type field for story categories)
+  // Filter stories by category
   const filteredStories = useMemo(() => {
     let result = stories;
     if (selectedCategory !== 'all') {
-      // Filter by story_type field (which contains 'update', 'impact', 'spotlight', 'photo_essay')
-      result = result.filter(s => s.story_type === selectedCategory);
+      result = result.filter((s) => s.story_type === selectedCategory);
     }
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      result = result.filter(s =>
-        s.content?.toLowerCase().includes(query) ||
-        s.author_display_name?.toLowerCase().includes(query)
+      result = result.filter(
+        (s) =>
+          s.content?.toLowerCase().includes(query) ||
+          s.author_display_name?.toLowerCase().includes(query)
       );
     }
     return result;
@@ -95,11 +190,9 @@ export default function ConveyStoryHub() {
   }, [stories]);
 
   // Group by story_type for sections
-  const impactStories = stories.filter(s => s.story_type === 'impact').slice(0, 3);
-  const spotlightStories = stories.filter(s => s.story_type === 'spotlight').slice(0, 4);
-  const updateStories = stories.filter(s => s.story_type === 'update').slice(0, 4);
-
-  const currentTabOption = tabOptions.find(t => t.id === activeTab) || tabOptions[0];
+  const impactStories = stories.filter((s) => s.story_type === 'impact').slice(0, 3);
+  const spotlightStories = stories.filter((s) => s.story_type === 'spotlight').slice(0, 4);
+  const updateStories = stories.filter((s) => s.story_type === 'update').slice(0, 4);
 
   if (!user) {
     return (
@@ -118,10 +211,10 @@ export default function ConveyStoryHub() {
     );
   }
 
-  // Desktop Left Sidebar
+  // ─── Desktop Left Sidebar ──────────────────────────────────────────
   const leftColumn = isMobile ? null : (
     <div className="space-y-6">
-      {/* Quick Navigation */}
+      {/* Categories */}
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-sm flex items-center gap-2">
@@ -138,45 +231,14 @@ export default function ConveyStoryHub() {
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
                 className={cn(
-                  "w-full flex items-center gap-3 p-2.5 rounded-xl text-sm transition-all",
+                  'w-full flex items-center gap-3 p-2.5 rounded-xl text-sm transition-all',
                   isActive
-                    ? "bg-dna-gold/10 text-dna-gold font-medium"
-                    : "text-muted-foreground hover:bg-muted/50"
+                    ? 'bg-dna-gold/10 text-dna-gold font-medium'
+                    : 'text-muted-foreground hover:bg-muted/50'
                 )}
               >
                 <Icon className="h-4 w-4" />
                 {cat.label}
-              </button>
-            );
-          })}
-        </CardContent>
-      </Card>
-
-      {/* Your Stories Navigation */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm flex items-center gap-2">
-            <Users className="h-4 w-4 text-dna-gold" />
-            Your Stories
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-1">
-          {tabOptions.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={cn(
-                  "w-full flex items-center gap-2 p-2.5 rounded-lg text-sm transition-colors",
-                  isActive
-                    ? "bg-dna-gold/10 text-dna-gold font-medium"
-                    : "text-muted-foreground hover:bg-muted/50"
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                {tab.label}
               </button>
             );
           })}
@@ -206,109 +268,90 @@ export default function ConveyStoryHub() {
     </div>
   );
 
-  // Main Center Content
+  // ─── Main Center Content ───────────────────────────────────────────
   const centerColumn = (
     <div className="space-y-4">
       {/* Sticky Header */}
-      <div className={cn(
-        "bg-background/95 backdrop-blur-sm z-10",
-        isMobile ? "sticky top-0 pt-1 pb-2 border-b border-border/50 -mx-4 px-4" : "pb-2"
-      )}>
-        {/* Header Row */}
-        <div className="flex items-center justify-between gap-3 mb-2">
+      <div
+        className={cn(
+          'bg-background/95 backdrop-blur-sm z-10',
+          isMobile ? 'sticky top-0 pt-1 pb-0 -mx-4 px-4' : 'pb-0'
+        )}
+      >
+        {/* Title Row */}
+        <div className="flex items-center justify-between gap-3 mb-3">
           <div className="flex items-center gap-3">
-            <div className={cn(
-              "rounded-xl bg-gradient-to-br from-dna-gold to-amber-600 shadow-lg shrink-0",
-              isMobile ? "p-2" : "p-2.5"
-            )}>
-              <BookOpen className={cn("text-white", isMobile ? "h-5 w-5" : "h-6 w-6")} />
+            <div
+              className={cn(
+                'rounded-xl bg-gradient-to-br from-dna-gold to-amber-600 shadow-lg shrink-0',
+                isMobile ? 'p-2' : 'p-2.5'
+              )}
+            >
+              <BookOpen className={cn('text-white', isMobile ? 'h-5 w-5' : 'h-6 w-6')} />
             </div>
             <div>
-              <h1 className={cn("font-bold tracking-tight", isMobile ? "text-xl" : "text-2xl")}>
+              <h1 className={cn('font-bold tracking-tight', isMobile ? 'text-xl' : 'text-2xl')}>
                 Convey
               </h1>
               <p className="text-xs text-muted-foreground hidden md:block">
-                Stories that inspire the movement
+                The diaspora's living publication
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* Mobile Tab Dropdown */}
-            {(isMobile || isTablet) && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-1 h-8 px-2">
-                    <currentTabOption.icon className="h-4 w-4" />
-                    <ChevronDown className="h-3 w-3 opacity-60" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-background border shadow-lg z-50">
-                  {tabOptions.map((tab) => {
-                    const Icon = tab.icon;
-                    return (
-                      <DropdownMenuItem
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        className={cn(
-                          "gap-2 cursor-pointer",
-                          activeTab === tab.id && "bg-dna-gold/10 text-dna-gold"
-                        )}
-                      >
-                        <Icon className="h-4 w-4" />
-                        {tab.label}
-                      </DropdownMenuItem>
-                    );
-                  })}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
+          <Button
+            onClick={() => composer.open('story')}
+            size="sm"
+            className="bg-dna-gold hover:bg-dna-gold/90 text-white shadow-md h-8 px-3"
+          >
+            <PenSquare className="h-4 w-4" />
+            {!isMobile && <span className="ml-2">Write</span>}
+          </Button>
+        </div>
 
-            <Button
-              onClick={() => composer.open('story')}
-              size="sm"
-              className="bg-dna-gold hover:bg-dna-gold/90 text-white shadow-md h-8 px-3"
-            >
-              <PenSquare className="h-4 w-4" />
-              {!isMobile && <span className="ml-2">Write</span>}
-            </Button>
+        {/* Editorial Tab Bar */}
+        <ConveyEditorialTabs
+          activeTab={activeTab}
+          onTabChange={(tab) => {
+            setActiveTab(tab);
+            setSelectedCategory('all');
+          }}
+          isMobile={!!isMobile}
+        />
+
+        {/* Category Pills (only on Pulse tab) */}
+        {activeTab === 'pulse' && (
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide py-2">
+            {categoryPills.map((cat) => {
+              const Icon = cat.icon;
+              const isActive = selectedCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={cn(
+                    'flex items-center gap-1.5 rounded-full whitespace-nowrap transition-all',
+                    'text-xs font-medium border shrink-0 px-3 py-1.5',
+                    isActive
+                      ? 'bg-dna-gold text-white border-dna-gold'
+                      : 'bg-background border-border hover:border-dna-gold/50'
+                  )}
+                >
+                  <Icon className={cn('h-3.5 w-3.5', isActive ? 'text-white' : 'text-muted-foreground')} />
+                  {cat.label}
+                </button>
+              );
+            })}
           </div>
-        </div>
-
-        {/* Category Pills - Horizontal Scroll */}
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
-          {categoryPills.map((cat) => {
-            const Icon = cat.icon;
-            const isActive = selectedCategory === cat.id;
-            return (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-full whitespace-nowrap transition-all",
-                  "text-xs font-medium border shrink-0 px-3 py-1.5",
-                  isActive
-                    ? "bg-dna-gold text-white border-dna-gold"
-                    : "bg-background border-border hover:border-dna-gold/50"
-                )}
-              >
-                <Icon className={cn("h-3.5 w-3.5", isActive ? "text-white" : "text-muted-foreground")} />
-                {cat.label}
-              </button>
-            );
-          })}
-        </div>
+        )}
       </div>
 
-      {/* Trending Section - BuzzFeed Style (self-contained with hook) */}
-      {activeTab === 'all' && selectedCategory === 'all' && (
-        <ConveyTrendingSection />
-      )}
+      {/* Trending Section (Pulse tab, All category only) */}
+      {activeTab === 'pulse' && selectedCategory === 'all' && <ConveyTrendingSection />}
 
-      {/* Category Sections when viewing "All" */}
-      {activeTab === 'all' && selectedCategory === 'all' && !isLoading && (
+      {/* Category Sections when viewing Pulse + All */}
+      {activeTab === 'pulse' && selectedCategory === 'all' && !isLoading && (
         <>
-          {/* Impact Stories Section */}
           {impactStories.length > 0 && (
             <ConveyCategorySection
               title="Impact Stories"
@@ -319,8 +362,6 @@ export default function ConveyStoryHub() {
               onSeeAll={() => setSelectedCategory('impact')}
             />
           )}
-
-          {/* Updates Section */}
           {updateStories.length > 0 && (
             <ConveyCategorySection
               title="Latest Updates"
@@ -331,8 +372,6 @@ export default function ConveyStoryHub() {
               onSeeAll={() => setSelectedCategory('update')}
             />
           )}
-
-          {/* Spotlights Section */}
           {spotlightStories.length > 0 && (
             <ConveyCategorySection
               title="Community Spotlights"
@@ -346,9 +385,17 @@ export default function ConveyStoryHub() {
         </>
       )}
 
-      {/* Filtered Feed */}
-      {(selectedCategory !== 'all' || activeTab !== 'all') && (
+      {/* Filtered Feed (non-Pulse tabs or filtered category) */}
+      {(selectedCategory !== 'all' || activeTab !== 'pulse') && (
         <div className="space-y-4">
+          {/* Curated tab header */}
+          {activeTab === 'curated' && (
+            <p className="text-xs text-muted-foreground italic flex items-center gap-1.5">
+              <Sparkles className="h-3 w-3 text-[hsl(var(--dna-forest))]" />
+              Selected by DIA based on your diaspora profile and engagement
+            </p>
+          )}
+
           {isLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[1, 2, 3, 4].map((i) => (
@@ -360,15 +407,29 @@ export default function ConveyStoryHub() {
               <div className="p-4 rounded-full bg-muted/50 w-fit mx-auto mb-4">
                 <BookOpen className="h-8 w-8 text-muted-foreground" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">No stories yet</h3>
-              <p className="text-muted-foreground mb-4">
-                {activeTab === 'my_stories'
-                  ? "Share your first story with the community"
+              <h3 className="text-lg font-semibold mb-2">
+                {activeTab === 'my_voice'
+                  ? 'Your voice matters'
                   : activeTab === 'saved'
-                  ? "Bookmark stories you want to revisit"
-                  : "Be the first to share in this category"}
+                  ? 'Nothing saved yet'
+                  : activeTab === 'my_circle'
+                  ? 'Your circle is quiet'
+                  : activeTab === 'curated'
+                  ? 'Building your curation'
+                  : 'No stories yet'}
+              </h3>
+              <p className="text-muted-foreground mb-4">
+                {activeTab === 'my_voice'
+                  ? 'Share your first story with the diaspora'
+                  : activeTab === 'saved'
+                  ? 'Bookmark stories you want to revisit'
+                  : activeTab === 'my_circle'
+                  ? 'Stories from your connections will appear here'
+                  : activeTab === 'curated'
+                  ? 'DIA is learning your interests to surface relevant stories'
+                  : 'Be the first to share in this category'}
               </p>
-              {activeTab !== 'saved' && (
+              {(activeTab === 'my_voice' || activeTab === 'pulse') && (
                 <Button onClick={() => composer.open('story')} className="bg-dna-gold hover:bg-dna-gold/90">
                   <PenSquare className="h-4 w-4 mr-2" />
                   Write a Story
@@ -400,15 +461,10 @@ export default function ConveyStoryHub() {
     </div>
   );
 
-  // Right Sidebar
+  // ─── Right Sidebar ─────────────────────────────────────────────────
   const rightColumn = isMobile ? null : (
     <div className="space-y-6">
-      {/* DIA Contextual for CONVEY */}
-      <DiaContextual
-        pillar="convey"
-        collapsed={false}
-        compact
-      />
+      <DiaContextual pillar="convey" collapsed={false} compact />
 
       {/* Write CTA Card */}
       <Card className="overflow-hidden border-0 shadow-lg">
@@ -420,10 +476,7 @@ export default function ConveyStoryHub() {
           </div>
         </div>
         <CardContent className="pt-4">
-          <Button
-            onClick={() => composer.open('story')}
-            className="w-full bg-dna-gold hover:bg-dna-gold/90"
-          >
+          <Button onClick={() => composer.open('story')} className="w-full bg-dna-gold hover:bg-dna-gold/90">
             <PenSquare className="h-4 w-4 mr-2" />
             Start Writing
           </Button>
@@ -487,14 +540,8 @@ export default function ConveyStoryHub() {
       </div>
 
       {/* Mobile: Floating DIA button */}
-      {isMobile && (
-        <DiaContextual
-          pillar="convey"
-          floatingButton
-        />
-      )}
+      {isMobile && <DiaContextual pillar="convey" floatingButton />}
 
-      
       <UniversalComposer
         isOpen={composer.isOpen}
         mode={composer.mode}
