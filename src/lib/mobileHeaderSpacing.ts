@@ -13,11 +13,11 @@
  * fixed at top-0, so the content offset shrinks.
  */
 
-/** Tailwind class for content padding when both header rows are visible */
-export const MOBILE_STACKED_HEADER_VISIBLE = 'pt-[6.5rem]'; // 104px
+/** Tailwind class for content padding when both header rows are visible (fallback) */
+export const MOBILE_STACKED_HEADER_VISIBLE = 'pt-[7.25rem]'; // 116px (105px measured + 11px buffer)
 
-/** Tailwind class for content padding when top header row is hidden */
-export const MOBILE_STACKED_HEADER_HIDDEN = 'pt-[3rem]'; // 48px
+/** Tailwind class for content padding when top header row is hidden (fallback) */
+export const MOBILE_STACKED_HEADER_HIDDEN = 'pt-[3.75rem]'; // 60px (48px measured + 12px buffer)
 
 /** z-index for the top header row (must beat UnifiedHeader) */
 export const MOBILE_HEADER_Z = 'z-50';

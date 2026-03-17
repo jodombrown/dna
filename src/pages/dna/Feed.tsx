@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { PenSquare, Sparkles, Users, Newspaper, TrendingUp, Search, Clock, Camera, Calendar, BookOpen } from 'lucide-react';
@@ -28,14 +28,8 @@ import { useMobile } from '@/hooks/useMobile';
 import { cn } from '@/lib/utils';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
-import {
-  MOBILE_STACKED_HEADER_VISIBLE,
-  MOBILE_STACKED_HEADER_HIDDEN,
-  MOBILE_HEADER_Z,
-  MOBILE_TABS_Z,
-  MOBILE_TABS_TOP_VISIBLE,
-  MOBILE_TABS_TOP_HIDDEN,
-} from '@/lib/mobileHeaderSpacing';
+// Dynamic header spacing replaces hardcoded constants from mobileHeaderSpacing
+import { useMobileHeaderHeight } from '@/hooks/useMobileHeaderHeight';
 import { incrementSessionCount } from '@/services/dia-feed-cadence';
 import { useLocation } from 'react-router-dom';
 
@@ -65,8 +59,10 @@ const DnaFeed = () => {
   const [newPostCount, setNewPostCount] = useState(0);
   const [tabsVisible, setTabsVisible] = useState(true);
   const feedContainerRef = useRef<HTMLDivElement>(null);
+  const mobileHeaderRef = useRef<HTMLDivElement>(null);
   const mainScrollRef = useRef<HTMLElement>(null);
   const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mobileHeaderPadding = useMobileHeaderHeight(mobileHeaderRef);
   const composer = useUniversalComposer();
   const { isMobile } = useMobile();
   const { hideHeader: hideUnifiedHeader, showHeader } = useHeaderVisibility();
@@ -159,40 +155,42 @@ const DnaFeed = () => {
         <FirstTimeWalkthrough />
         
         <div className="min-h-screen bg-background">
-          {/* Fixed mobile header row - hides on scroll down */}
-          <div className={cn(
-            "fixed top-0 left-0 right-0 bg-background transition-all duration-300",
-            MOBILE_HEADER_Z,
-            headerHidden ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
-          )}>
-            <MobileHeader
-              variant="feed"
-              showSearch={true}
-              onSearchClick={() => setShowSearchDialog(true)}
-              onComposerClick={() => composer.open('post')}
-              className="border-b-0"
-            />
-          </div>
+          {/* Single measured container for both fixed header rows */}
+          <div
+            ref={mobileHeaderRef}
+            className="fixed top-0 left-0 right-0"
+            style={{ zIndex: 50 }}
+          >
+            {/* Header row - hides on scroll down */}
+            <div className={cn(
+              "bg-background transition-all duration-300 overflow-hidden",
+              headerHidden ? "max-h-0 opacity-0" : "max-h-20 opacity-100"
+            )}>
+              <MobileHeader
+                variant="feed"
+                showSearch={true}
+                onSearchClick={() => setShowSearchDialog(true)}
+                onComposerClick={() => composer.open('post')}
+                className="border-b-0"
+              />
+            </div>
 
-          {/* Fixed mobile tabs row - slides up when header hides */}
-          <div className={cn(
-            "fixed left-0 right-0 bg-background border-b border-border transition-all duration-300",
-            MOBILE_TABS_Z,
-            headerHidden ? MOBILE_TABS_TOP_HIDDEN : MOBILE_TABS_TOP_VISIBLE
-          )}>
-            <div className="px-3 py-1.5">
-              <MobileFeedTabs activeTab={activeTab} onTabChange={setActiveTab} />
+            {/* Tabs row - always visible */}
+            <div className="bg-background border-b border-border">
+              <div className="px-3 py-1.5">
+                <MobileFeedTabs activeTab={activeTab} onTabChange={setActiveTab} />
+              </div>
             </div>
           </div>
 
           {/* New Posts Indicator */}
           <NewPostsIndicator count={newPostCount} onClick={handleNewPostsClick} />
 
-          {/* Top padding for fixed header + tabs */}
-          <main className={cn(
-            "pb-bottom-nav px-3 space-y-0 transition-[padding] duration-300",
-            headerHidden ? MOBILE_STACKED_HEADER_HIDDEN : MOBILE_STACKED_HEADER_VISIBLE
-          )}>
+          {/* Content with dynamic padding from measured header */}
+          <main
+            className="pb-bottom-nav px-3 space-y-0 transition-[padding] duration-300"
+            style={{ paddingTop: mobileHeaderPadding || undefined }}
+          >
             {/* Profile completion banner */}
             <MobileProfileCompletionBanner threshold={100} />
             {/* Tab Explainer - shows once per day/login per tab */}

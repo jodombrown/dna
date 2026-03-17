@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { messageService } from '@/services/messageService';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -7,11 +7,8 @@ import { useMobile } from '@/hooks/useMobile';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
 import { cn } from '@/lib/utils';
-import {
-  MOBILE_STACKED_HEADER_VISIBLE,
-  MOBILE_STACKED_HEADER_HIDDEN,
-  MOBILE_HEADER_Z,
-} from '@/lib/mobileHeaderSpacing';
+// Dynamic header spacing replaces hardcoded constants from mobileHeaderSpacing
+import { useMobileHeaderHeight } from '@/hooks/useMobileHeaderHeight';
 
 // New Hub Components
 import {
@@ -48,6 +45,8 @@ const Connect = () => {
   const { isScrollingDown, isAtTop } = useScrollDirection(30);
   const { hideHeader: hideUnifiedHeader, showHeader } = useHeaderVisibility();
   const headerHidden = isMobile && isScrollingDown && !isAtTop;
+  const connectHeaderRef = useRef<HTMLDivElement>(null);
+  const connectHeaderPadding = useMobileHeaderHeight(connectHeaderRef);
 
   // Hide unified header on mobile connect (has its own header)
   useEffect(() => {
@@ -159,27 +158,32 @@ const Connect = () => {
   if (isMobile) {
     return (
       <div className="min-h-screen bg-background pb-20 overflow-x-hidden">
-        {/* Mobile Fixed Header - hides on scroll down */}
-        <div className={cn(
-          "fixed top-0 left-0 right-0 bg-background transition-all duration-300",
-          MOBILE_HEADER_Z,
-          headerHidden ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
-        )}>
-          <ConnectMobileHeader
-            activeTab={mobileView}
-            onTabChange={handleMobileTabChange}
-            searchQuery={mobileSearchQuery}
-            onSearchChange={setMobileSearchQuery}
-            onFiltersClick={() => setShowMobileFilters(true)}
-            activeFilterCount={mobileActiveFilterCount}
-          />
+        {/* Single measured container for fixed header */}
+        <div
+          ref={connectHeaderRef}
+          className="fixed top-0 left-0 right-0"
+          style={{ zIndex: 50 }}
+        >
+          <div className={cn(
+            "bg-background transition-all duration-300 overflow-hidden",
+            headerHidden ? "max-h-0 opacity-0" : "max-h-40 opacity-100"
+          )}>
+            <ConnectMobileHeader
+              activeTab={mobileView}
+              onTabChange={handleMobileTabChange}
+              searchQuery={mobileSearchQuery}
+              onSearchChange={setMobileSearchQuery}
+              onFiltersClick={() => setShowMobileFilters(true)}
+              activeFilterCount={mobileActiveFilterCount}
+            />
+          </div>
         </div>
 
-        {/* Mobile Content - Render child routes via Outlet */}
-        <div className={cn(
-          "px-3 sm:px-4 overflow-x-hidden transition-[padding] duration-300",
-          headerHidden ? MOBILE_STACKED_HEADER_HIDDEN : MOBILE_STACKED_HEADER_VISIBLE
-        )}>
+        {/* Mobile Content - dynamic padding from measured header */}
+        <div
+          className="px-3 sm:px-4 overflow-x-hidden transition-[padding] duration-300"
+          style={{ paddingTop: connectHeaderPadding || undefined }}
+        >
           <Outlet context={{
             mobileSearchQuery,
             showMobileFilters,
