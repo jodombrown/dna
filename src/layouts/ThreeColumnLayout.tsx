@@ -56,13 +56,13 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
   }
 
   // Desktop: 3-column grid with independent scrolling
-  // PulseBar is fixed at ~top-14/16 + ~60px = ~7.5rem total from top
+  // Height reads from CSS vars set by UnifiedHeader + PulseBar ResizeObservers
   return (
     <div
       className={cn("flex w-full gap-4 px-4", className)}
       style={{
         paddingTop: '1.5rem',
-        height: 'calc(100dvh - 7.5rem)',
+        height: 'calc(100dvh - var(--total-header-height, 7.5rem) - 1.5rem)',
         overflow: 'hidden',
       }}
     >
