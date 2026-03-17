@@ -7,12 +7,16 @@
  * Desktop: max-w-6xl centered, grid lanes.
  */
 
-import React, { useState, useMemo, Suspense, lazy } from 'react';
+import React, { useState, useMemo, useRef, useEffect, Suspense, lazy } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Calendar, Plus, Search, Map, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/useMobile';
+import { useMobileHeaderHeight } from '@/hooks/useMobileHeaderHeight';
+import { useScrollDirection } from '@/hooks/useScrollDirection';
+import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
 
 import { ConveneLocationSelector } from '@/components/convene/ConveneLocationSelector';
 import { ConveneCitiesSection } from '@/components/convene/ConveneCitiesSection';
@@ -22,6 +26,7 @@ import { HappeningNowSection } from '@/components/convene/HappeningNowSection';
 import { ConveneDIADiscoveryCard } from '@/components/convene/ConveneDIADiscoveryCard';
 import { DIAHubSection } from '@/components/dia/DIAHubSection';
 import { UpcomingEventsSection } from '@/components/convene/UpcomingEventsSection';
+import { ConveneMobileHeader } from '@/components/convene/ConveneMobileHeader';
 import { useConveneCities, useUserCity } from '@/hooks/convene/useConveneCities';
 import {
   useHeroEvent,
@@ -39,7 +44,7 @@ import type { MapEventData } from '@/components/convene/ConveneEventPin';
 const LazyMapView = lazy(() => import('@/components/convene/ConveneMapView'));
 
 /* ──────────────────────────────────────────────
-   Pill Filter Bar
+   Pill Filter Bar (Desktop only now)
    ────────────────────────────────────────────── */
 const PILLS = [
   { id: 'all', label: 'All' },
@@ -96,6 +101,23 @@ export function ConveneDiscovery() {
   const { user } = useAuth();
   const composer = useUniversalComposer();
   const [searchParams, setSearchParams] = useSearchParams();
+  const isMobile = useIsMobile();
+
+  // Mobile header measurement & scroll behavior
+  const mobileHeaderRef = useRef<HTMLDivElement>(null);
+  const headerHeight = useMobileHeaderHeight(mobileHeaderRef);
+  const { isScrollingDown, isAtTop } = useScrollDirection();
+  const { hideHeader, showHeader } = useHeaderVisibility();
+
+  // Hide global UnifiedHeader on mobile for this page
+  useEffect(() => {
+    if (isMobile) {
+      hideHeader();
+      return () => showHeader();
+    }
+  }, [isMobile, hideHeader, showHeader]);
+
+  const isRow1Visible = isMobile ? (isAtTop || !isScrollingDown) : true;
 
   const selectedCity = searchParams.get('city');
   const activePill = searchParams.get('pill') || 'all';
@@ -115,6 +137,10 @@ export function ConveneDiscovery() {
       }
     }
     setSearchParams(next, { replace: true });
+  };
+
+  const handlePillChange = (pill: string) => {
+    updateFilters({ pill: pill === 'all' ? null : pill });
   };
 
   // ── Discovery Lane Queries ──────────────────────
@@ -255,68 +281,84 @@ export function ConveneDiscovery() {
 
   return (
     <div className="w-full min-h-screen bg-background pb-bottom-nav md:pb-0">
-      <div className="container max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-2 lg:py-6 space-y-4 lg:space-y-5">
-        {/* ═══════════════════════════════════════
-            HEADER: Location + Actions
-            ═══════════════════════════════════════ */}
-        <div className="flex items-center justify-between gap-3">
-          <ConveneLocationSelector
-            selectedCity={selectedCity}
-            userCity={userLocation?.city ?? null}
-            cities={cities}
-            onCityChange={(city) => updateFilters({ city })}
+      {/* ═══════════════════════════════════════
+          MOBILE FIXED HEADER
+          ═══════════════════════════════════════ */}
+      {isMobile && (
+        <div ref={mobileHeaderRef} className="fixed top-0 left-0 right-0 z-50">
+          <ConveneMobileHeader
+            activePill={activePill}
+            onPillChange={handlePillChange}
+            onComposerClick={() => composer.open('event')}
+            isRow1Visible={isRow1Visible}
           />
-          <div className="flex items-center gap-1.5">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9 rounded-full"
-              onClick={() => setIsSearchOpen(true)}
-              aria-label="Search events"
-            >
-              <Search className="w-4.5 h-4.5" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className={cn(
-                'h-9 w-9 rounded-full',
-                viewMode === 'map' &&
-                  'bg-dna-copper/12 text-dna-copper',
-              )}
-              onClick={() =>
-                updateFilters({ view: viewMode === 'list' ? 'map' : null })
-              }
-              aria-label={viewMode === 'list' ? 'Map view' : 'List view'}
-            >
-              {viewMode === 'list' ? (
-                <Map className="w-4.5 h-4.5" />
-              ) : (
-                <List className="w-4.5 h-4.5" />
-              )}
-            </Button>
-            <Button
-              size="sm"
-              className="bg-dna-copper hover:bg-dna-copper-dark text-white rounded-full h-9 px-4"
-              onClick={() => composer.open('event')}
-            >
-              <Plus className="w-4 h-4 mr-1" />
-              <span className="hidden sm:inline">Host</span>
-            </Button>
-          </div>
         </div>
+      )}
 
+      <div
+        className="container max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-2 lg:py-6 space-y-4 lg:space-y-5"
+        style={isMobile ? { paddingTop: headerHeight } : undefined}
+      >
         {/* ═══════════════════════════════════════
-            PILL FILTER BAR
+            DESKTOP HEADER: Location + Actions
             ═══════════════════════════════════════ */}
-        <PillFilterBar
-          active={activePill}
-          onSelect={(pill) =>
-            updateFilters({ pill: pill === 'all' ? null : pill })
-          }
-        />
+        {!isMobile && (
+          <>
+            <div className="flex items-center justify-between gap-3">
+              <ConveneLocationSelector
+                selectedCity={selectedCity}
+                userCity={userLocation?.city ?? null}
+                cities={cities}
+                onCityChange={(city) => updateFilters({ city })}
+              />
+              <div className="flex items-center gap-1.5">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 rounded-full"
+                  onClick={() => setIsSearchOpen(true)}
+                  aria-label="Search events"
+                >
+                  <Search className="w-4.5 h-4.5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={cn(
+                    'h-9 w-9 rounded-full',
+                    viewMode === 'map' &&
+                      'bg-dna-copper/12 text-dna-copper',
+                  )}
+                  onClick={() =>
+                    updateFilters({ view: viewMode === 'list' ? 'map' : null })
+                  }
+                  aria-label={viewMode === 'list' ? 'Map view' : 'List view'}
+                >
+                  {viewMode === 'list' ? (
+                    <Map className="w-4.5 h-4.5" />
+                  ) : (
+                    <List className="w-4.5 h-4.5" />
+                  )}
+                </Button>
+                <Button
+                  size="sm"
+                  className="bg-dna-copper hover:bg-dna-copper-dark text-white rounded-full h-9 px-4"
+                  onClick={() => composer.open('event')}
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  <span className="hidden sm:inline">Host</span>
+                </Button>
+              </div>
+            </div>
 
-        <CopperDivider />
+            <PillFilterBar
+              active={activePill}
+              onSelect={handlePillChange}
+            />
+
+            <CopperDivider />
+          </>
+        )}
 
         {/* ═══════════════════════════════════════
             MAP VIEW
