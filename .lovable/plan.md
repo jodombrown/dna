@@ -1,17 +1,34 @@
 
 
-# Five C's Hub Pages — DIA Integration Audit Results
+# Add Tab Explainer to Convene (Matching Feed & Connect Pattern)
 
-## Audit Matrix (UPDATED)
+## What Already Exists
+- **Feed** has `FeedTabExplainer` — shows animated explainer on first tab click per day
+- **Connect** has `ConnectTabExplainer` — identical pattern, already wired into `ConnectLayout`
+- **Convene** has nothing — needs a new `ConveneTabExplainer` component
 
-| Module | `DIAHubSection` (sidebar) | `HubDIAPanel` (sidebar recommendations) | Contextual Discovery Card (inline) |
-|---|---|---|---|
-| **CONNECT** | ✅ `surface="connect_hub"` | No (custom inline instead) | ✅ `DiaInsightCard` in DiscoveryFeed |
-| **CONVENE** | ✅ `surface="convene_hub"` | No (custom inline instead) | ✅ `ConveneDIADiscoveryCard` |
-| **COLLABORATE** | ✅ `surface="collaborate_hub"` | ✅ `HubDIAPanel hub="collaborate"` | ✅ `CollaborateDIADiscoveryCard` |
-| **CONTRIBUTE** | ✅ `surface="contribute_hub"` | ✅ `HubDIAPanel hub="contribute"` | ✅ `ContributeDIADiscoveryCard` |
-| **CONVEY** | ✅ `surface="convey_hub"` | ✅ `HubDIAPanel hub="convey"` | ✅ `ConveyDIADiscoveryCard` |
+## Plan
 
-## Status: COMPLETE
+### 1. Create `src/components/convene/ConveneTabExplainer.tsx`
+Clone the exact same pattern from `ConnectTabExplainer` with Convene-specific tabs and descriptions:
 
-All five hubs now have full DIA integration — sidebar cards AND inline contextual discovery cards. Each inline card follows the same pattern: priority-based content selection, 7-day dismiss cooldown via localStorage (per-user), positioned between filters/sub-nav and main content.
+| Tab | Title | Description | Icon | Gradient |
+|-----|-------|-------------|------|----------|
+| `all` | All Events | Browse every upcoming event across the diaspora community | `CalendarDays` | primary gradient |
+| `near_me` | Near Me | Events happening close to your current location | `MapPin` | emerald gradient |
+| `this_week` | This Week | Events taking place within the next seven days | `Clock` | copper/gold gradient |
+| `online` | Online | Virtual events you can join from anywhere in the world | `Globe` | terracotta gradient |
+| `free` | Free Events | No-cost events open to all community members | `Ticket` | ochre gradient |
+| `network` | My Network | Events hosted by or attended by people in your network | `Users` | emerald gradient |
+
+- Storage key prefix: `dna_convene_explainer_`
+- Same animation, timing (10s display), and session-aware logic
+
+### 2. Wire into `ConveneDiscovery.tsx`
+- Import `ConveneTabExplainer`
+- Render `<ConveneTabExplainer activeTab={activePill} />` immediately after the header padding area (inside the content container, before the first content section) on mobile only
+- Wrap in `px-3` for proper horizontal alignment with content
+
+### Scope
+- 1 new file, 1 small edit to `ConveneDiscovery.tsx`
+- No prop changes needed — `activePill` is already a string matching
