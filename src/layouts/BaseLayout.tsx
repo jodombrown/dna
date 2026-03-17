@@ -99,21 +99,33 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
         className={cn(
           "min-h-screen w-full max-w-full",
           getAuthGradient(),
-          // Top padding: header (56px mobile / 64px desktop) + PulseBar (~60px on desktop for authed users)
-          // Skip mobile padding on feed route — it manages its own fixed headers
-          user
-            ? hasCustomMobileHeader
-              ? "pt-0 sm:pt-16 lg:pt-[7.5rem]"
-              : "pt-14 sm:pt-16 lg:pt-[7.5rem]"
-            : "pt-14 sm:pt-16",
           // Add bottom padding on mobile to account for PulseDock
           "pb-20 lg:pb-0",
           "transition-colors duration-300 ease-in-out",
           "overflow-x-hidden"
         )}
+        style={{
+          // Dynamic top padding from measured header heights
+          // Skip mobile padding on feed/connect — they manage their own fixed headers
+          paddingTop: hasCustomMobileHeader
+            ? undefined  // mobile: managed by useMobileHeaderHeight; desktop handled below
+            : undefined, // set below for all cases
+        }}
         data-view-state={viewState}
         data-layout-type={layoutConfig.type}
       >
+        {/* Spacer div that reads CSS vars for top padding */}
+        <div
+          aria-hidden
+          style={{
+            height: hasCustomMobileHeader
+              ? 'var(--total-header-height, 0px)'  // desktop only; mobile pages set pt=0
+              : 'var(--total-header-height, 56px)',
+          }}
+          className={cn(
+            hasCustomMobileHeader ? 'hidden sm:block' : 'block',
+          )}
+        />
         {children}
       </div>
       {/* Feedback FAB - side chevron on all /dna routes */}
