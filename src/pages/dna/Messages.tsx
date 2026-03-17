@@ -110,7 +110,6 @@ const DnaMessages = () => {
               onBack={() => setSelectedConversationId(null)}
             />
           </div>
-          <MobileBottomNav />
         </div>
       );
     }
