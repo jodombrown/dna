@@ -5,12 +5,13 @@
  * bar that shows real-time status across all Five C's.
  */
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePulseBar } from '@/hooks/usePulseBar';
 import { useMobile } from '@/hooks/useMobile';
+import { useSetCSSHeaderHeight } from '@/hooks/useSetCSSHeaderHeight';
 import { PulseItem } from './PulseItem';
 import { PULSE_CONFIG, type PulseKey } from '@/types/pulse';
 
