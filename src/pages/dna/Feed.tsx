@@ -64,8 +64,10 @@ const DnaFeed = () => {
   const [newPostCount, setNewPostCount] = useState(0);
   const [tabsVisible, setTabsVisible] = useState(true);
   const feedContainerRef = useRef<HTMLDivElement>(null);
+  const mobileHeaderRef = useRef<HTMLDivElement>(null);
   const mainScrollRef = useRef<HTMLElement>(null);
   const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mobileHeaderPadding = useMobileHeaderHeight(mobileHeaderRef);
   const composer = useUniversalComposer();
   const { isMobile } = useMobile();
   const { hideHeader: hideUnifiedHeader, showHeader } = useHeaderVisibility();
