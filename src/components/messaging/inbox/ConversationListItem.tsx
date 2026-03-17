@@ -67,8 +67,8 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
               <Pin className="h-3 w-3 text-amber-600 dark:text-amber-400 flex-shrink-0" />
             )}
             <span className={cn(
-              "font-medium truncate text-sm",
-              hasUnread && "font-semibold text-foreground"
+              "truncate text-sm font-normal",
+              hasUnread && "font-medium text-foreground"
             )}>
               {conversation.other_user_full_name || 'Unknown User'}
             </span>
