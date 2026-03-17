@@ -38,7 +38,18 @@ function estimateReadTime(content: string | null | undefined): number {
 
 function getExcerpt(content: string | null | undefined, max = 140): string {
   if (!content) return '';
-  const plain = content.replace(/[#*_\[\]()>`~]/g, '').trim();
+  let plain = content.replace(/[#*_\[\]()>`~]/g, '').trim();
+  // Strip metadata headers like "Read Time: X min | Tags: ..."
+  plain = plain.replace(/^Read\s*Time:\s*\d+\s*min\s*\|?\s*Tags?:\s*[^\n]*/i, '').trim();
+  // Strip concatenated hashtag blocks (3+ capitalized words jammed together)
+  plain = plain.replace(/(?:[A-Z][a-z]+){3,}/g, '').trim();
+  // If first block looks like metadata (contains pipes), skip to first real paragraph
+  if (plain.startsWith('|') || /^[^.\n]{0,20}\|/.test(plain)) {
+    const parts = plain.split(/\n\n+/);
+    plain = parts.length > 1 ? parts.slice(1).join(' ').trim() : plain;
+  }
+  // Clean up extra whitespace
+  plain = plain.replace(/\s+/g, ' ').trim();
   if (plain.length <= max) return plain;
   return plain.substring(0, max).trim() + '…';
 }
@@ -231,9 +242,9 @@ export function ConveyStoryPostCard({ story }: ConveyCardProps) {
           {/* Gradient overlay bottom 30% */}
           <div className="absolute inset-x-0 bottom-0 h-[30%] bg-gradient-to-t from-black/60 to-transparent" />
           {/* Story badge */}
-          <Badge className="absolute top-3 left-3 bg-dna-copper/90 text-white text-xs backdrop-blur-sm border-0">
+          <div className="absolute top-3 left-3 inline-flex items-center rounded-full bg-dna-copper/90 text-white text-xs font-semibold px-2.5 py-0.5 backdrop-blur-sm">
             Story
-          </Badge>
+          </div>
         </div>
       )}
 
@@ -282,8 +293,8 @@ export function ConveyStoryPostCard({ story }: ConveyCardProps) {
           isBookmarked={eng.isBookmarked}
           isTogglingBookmark={eng.isTogglingBookmark}
           onComment={eng.handleClick}
-          onBookmark={(e?: unknown) => eng.handleBookmark(e as React.MouseEvent)}
-          onShare={(e?: unknown) => eng.handleShare(e as React.MouseEvent)}
+          onBookmark={() => eng.handleBookmark({ stopPropagation: () => {} } as React.MouseEvent)}
+          onShare={() => eng.handleShare({ stopPropagation: () => {} } as React.MouseEvent)}
         />
       </div>
     </div>
@@ -347,8 +358,8 @@ export function ConveyUpdatePostCard({ story }: ConveyCardProps) {
           isBookmarked={eng.isBookmarked}
           isTogglingBookmark={eng.isTogglingBookmark}
           onComment={eng.handleClick}
-          onBookmark={(e?: unknown) => eng.handleBookmark(e as React.MouseEvent)}
-          onShare={(e?: unknown) => eng.handleShare(e as React.MouseEvent)}
+          onBookmark={() => eng.handleBookmark({ stopPropagation: () => {} } as React.MouseEvent)}
+          onShare={() => eng.handleShare({ stopPropagation: () => {} } as React.MouseEvent)}
         />
       </div>
     </div>
@@ -422,8 +433,8 @@ export function ConveyQuestionPostCard({ story }: ConveyCardProps) {
           isBookmarked={eng.isBookmarked}
           isTogglingBookmark={eng.isTogglingBookmark}
           onComment={eng.handleClick}
-          onBookmark={(e?: unknown) => eng.handleBookmark(e as React.MouseEvent)}
-          onShare={(e?: unknown) => eng.handleShare(e as React.MouseEvent)}
+          onBookmark={() => eng.handleBookmark({ stopPropagation: () => {} } as React.MouseEvent)}
+          onShare={() => eng.handleShare({ stopPropagation: () => {} } as React.MouseEvent)}
         />
       </div>
     </div>
@@ -445,9 +456,9 @@ export function ConveyOpportunityPostCard({ story }: ConveyCardProps) {
       <div className="p-4 space-y-3">
         {/* Badge row */}
         <div className="flex items-center gap-2 flex-wrap">
-          <Badge className="bg-amber-500/15 text-amber-700 dark:text-amber-400 border-0 text-xs">
+          <div className="inline-flex items-center rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-400 text-xs font-semibold px-2.5 py-0.5">
             Opportunity
-          </Badge>
+          </div>
           {story.story_type && (
             <Badge variant="outline" className="text-dna-forest border-dna-forest/30 text-xs">
               {story.story_type}
@@ -500,8 +511,8 @@ export function ConveyOpportunityPostCard({ story }: ConveyCardProps) {
           isBookmarked={eng.isBookmarked}
           isTogglingBookmark={eng.isTogglingBookmark}
           onComment={eng.handleClick}
-          onBookmark={(e?: unknown) => eng.handleBookmark(e as React.MouseEvent)}
-          onShare={(e?: unknown) => eng.handleShare(e as React.MouseEvent)}
+          onBookmark={() => eng.handleBookmark({ stopPropagation: () => {} } as React.MouseEvent)}
+          onShare={() => eng.handleShare({ stopPropagation: () => {} } as React.MouseEvent)}
         />
       </div>
     </div>
