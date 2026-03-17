@@ -59,6 +59,8 @@ const UnifiedHeader = () => {
   const { user, profile, signOut, loading } = useAuth();
   const { open: openAccountDrawer } = useAccountDrawer();
   const { isMobile } = useMobile();
+  const headerRef = useRef<HTMLElement>(null);
+  useSetCSSHeaderHeight(headerRef, '--unified-header-height');
   
   const navigate = useNavigate();
   const location = useLocation();
