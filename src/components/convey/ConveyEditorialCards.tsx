@@ -456,9 +456,9 @@ export function ConveyOpportunityPostCard({ story }: ConveyCardProps) {
       <div className="p-4 space-y-3">
         {/* Badge row */}
         <div className="flex items-center gap-2 flex-wrap">
-          <Badge className="bg-amber-500/15 text-amber-700 dark:text-amber-400 border-0 text-xs">
+          <div className="inline-flex items-center rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-400 text-xs font-semibold px-2.5 py-0.5">
             Opportunity
-          </Badge>
+          </div>
           {story.story_type && (
             <Badge variant="outline" className="text-dna-forest border-dna-forest/30 text-xs">
               {story.story_type}
