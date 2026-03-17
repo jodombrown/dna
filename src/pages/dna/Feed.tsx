@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { PenSquare, Sparkles, Users, Newspaper, TrendingUp, Search, Clock, Camera, Calendar, BookOpen } from 'lucide-react';
