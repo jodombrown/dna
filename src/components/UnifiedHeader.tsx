@@ -235,6 +235,7 @@ const UnifiedHeader = () => {
   return (
     <>
       <header 
+        ref={headerRef}
         data-unified-header
         className="bg-background border-b border-border fixed top-0 left-0 right-0 z-50 shadow-sm"
       >
