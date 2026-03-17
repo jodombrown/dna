@@ -9,6 +9,7 @@ import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
 import { cn } from '@/lib/utils';
 // Dynamic header spacing replaces hardcoded constants from mobileHeaderSpacing
 import { useMobileHeaderHeight } from '@/hooks/useMobileHeaderHeight';
+import { ConnectTabExplainer } from '@/components/connect/ConnectTabExplainer';
 
 // New Hub Components
 import {
@@ -184,6 +185,7 @@ const Connect = () => {
           className="px-3 sm:px-4 overflow-x-hidden transition-[padding] duration-300"
           style={{ paddingTop: connectHeaderPadding || undefined }}
         >
+          <ConnectTabExplainer activeTab={mobileView} />
           <Outlet context={{
             mobileSearchQuery,
             showMobileFilters,

@@ -301,7 +301,7 @@ export function ConveneDiscovery() {
         style={isMobile ? { paddingTop: headerHeight } : undefined}
       >
         {/* Tab Explainer — mobile only */}
-        {isMobile && <div className="pt-2"><ConveneTabExplainer activeTab={activePill} /></div>}
+        {isMobile && <ConveneTabExplainer activeTab={activePill} />}
         {/* ═══════════════════════════════════════
             DESKTOP HEADER: Location + Actions
             ═══════════════════════════════════════ */}
