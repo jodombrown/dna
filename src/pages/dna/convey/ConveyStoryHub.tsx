@@ -391,7 +391,7 @@ export default function ConveyStoryHub() {
           {/* Curated tab header */}
           {activeTab === 'curated' && (
             <p className="text-xs text-muted-foreground italic flex items-center gap-1.5">
-              <Sparkles className="h-3 w-3 text-[hsl(var(--dna-forest))]" />
+              <Sparkles className="h-3 w-3 text-dna-forest" />
               Selected by DIA based on your diaspora profile and engagement
             </p>
           )}
