@@ -595,6 +595,8 @@ function App() {
               <Route path="/dna/story/:slug" element={<FeedStoryDetail />} />
               {/* Convey Items - legacy slug-based detail view (public, no auth required) */}
               <Route path="/dna/convey/stories/:slug" element={<StoryDetail />} />
+              {/* Legacy post detail redirect - for emails already sent with old URL format */}
+              <Route path="/dna/convey/post/:id" element={<Navigate to={window.location.pathname.replace('/dna/convey/post/', '/dna/story/')} replace />} />
               
               {/* Legacy convene route redirects */}
               <Route path="/dna/events" element={<Navigate to="/dna/convene/events" replace />} />
