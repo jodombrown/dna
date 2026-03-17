@@ -111,7 +111,7 @@ function ConveyEditorialTabs({
                 "relative whitespace-nowrap pb-3 pt-1 text-sm font-medium transition-colors shrink-0",
                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 isActive
-                  ? "text-[hsl(var(--dna-forest))]"
+                  ? "text-dna-forest font-semibold"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
