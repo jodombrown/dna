@@ -300,6 +300,8 @@ export function ConveneDiscovery() {
         className="container max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 pt-0 pb-0 lg:py-6 space-y-0 md:space-y-4 lg:space-y-5"
         style={isMobile ? { paddingTop: headerHeight } : undefined}
       >
+        {/* Tab Explainer — mobile only */}
+        {isMobile && <div className="pt-2"><ConveneTabExplainer activeTab={activePill} /></div>}
         {/* ═══════════════════════════════════════
             DESKTOP HEADER: Location + Actions
             ═══════════════════════════════════════ */}
