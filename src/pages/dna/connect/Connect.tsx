@@ -9,6 +9,7 @@ import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
 import { cn } from '@/lib/utils';
 // Dynamic header spacing replaces hardcoded constants from mobileHeaderSpacing
 import { useMobileHeaderHeight } from '@/hooks/useMobileHeaderHeight';
+import { ConnectTabExplainer } from '@/components/connect/ConnectTabExplainer';
 
 // New Hub Components
 import {
