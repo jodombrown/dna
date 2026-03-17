@@ -18,7 +18,7 @@ import { STORY_TYPE_CONFIG, type StoryType } from '@/types/storyTypes';
 import { cn } from '@/lib/utils';
 import { useInfiniteUniversalFeed } from '@/hooks/useInfiniteUniversalFeed';
 import { ConveyTrendingSection } from '@/components/convey/ConveyTrendingSection';
-import { ConveyStoryCard } from '@/components/convey/ConveyStoryCard';
+import { ConveyEditorialCard } from '@/components/convey/ConveyEditorialCards';
 import { ConveyCategorySection, ConveyDiscussionPrompt, ConveyMiniCard } from '@/components/convey/ConveyCategorySection';
 import { DiaContextual } from '@/components/dia';
 
