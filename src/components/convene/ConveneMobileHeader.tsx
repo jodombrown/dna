@@ -2,11 +2,12 @@
  * DNA | CONVENE — Mobile Header
  * Two-row fixed header matching Feed & Connect patterns.
  * Row 1: DNA logo | Composer bubble | Notification bell | Profile avatar
- * Row 2: Pill filter bar with copper accent
+ * Row 2: Segmented icon+label tab bar (matching Feed & Connect)
  */
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { CalendarDays, MapPin, Clock, Globe, Ticket, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import dnaLogo from '@/assets/dna-logo.png';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -14,14 +15,15 @@ import { UnifiedNotificationBell } from '@/components/notifications/UnifiedNotif
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useAccountDrawer } from '@/contexts/AccountDrawerContext';
+import { haptic } from '@/utils/haptics';
 
-const PILLS = [
-  { id: 'all', label: 'All' },
-  { id: 'near_me', label: 'Near Me' },
-  { id: 'this_week', label: 'This Week' },
-  { id: 'online', label: 'Online' },
-  { id: 'free', label: 'Free' },
-  { id: 'network', label: 'My Network' },
+const TABS = [
+  { id: 'all', icon: CalendarDays, label: 'All' },
+  { id: 'near_me', icon: MapPin, label: 'Near Me' },
+  { id: 'this_week', icon: Clock, label: 'This Week' },
+  { id: 'online', icon: Globe, label: 'Online' },
+  { id: 'free', icon: Ticket, label: 'Free' },
+  { id: 'network', icon: Users, label: 'Network' },
 ] as const;
 
 interface ConveneMobileHeaderProps {
@@ -51,7 +53,6 @@ export function ConveneMobileHeader({
           isRow1Visible ? 'max-h-14 opacity-100' : 'max-h-0 opacity-0',
         )}
       >
-        {/* DNA Logo */}
         <img
           src={dnaLogo}
           alt="DNA"
@@ -61,7 +62,6 @@ export function ConveneMobileHeader({
           onClick={() => navigate('/dna/feed')}
         />
 
-        {/* Composer Bubble */}
         <div
           onClick={onComposerClick}
           className="flex-1 min-w-0 bg-muted rounded-full px-3 py-2 text-sm text-muted-foreground cursor-pointer hover:bg-muted/80 transition-colors"
@@ -69,7 +69,6 @@ export function ConveneMobileHeader({
           <span className="truncate block">Host or find an event...</span>
         </div>
 
-        {/* Right: Notification + Profile */}
         <div className="flex items-center gap-1.5 flex-shrink-0 pr-1">
           <UnifiedNotificationBell />
           {user && profile && (
@@ -86,24 +85,27 @@ export function ConveneMobileHeader({
         </div>
       </div>
 
-      {/* Row 2: Pill Filter Bar — always visible */}
+      {/* Row 2: Segmented Tab Bar — matches Feed & Connect */}
       <div className="px-3 py-1.5 bg-background border-b border-border">
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-0.5">
-          {PILLS.map((pill) => {
-            const isActive = activePill === pill.id;
+        <div className="flex items-center justify-between gap-1 p-1 bg-muted/50 rounded-lg">
+          {TABS.map(({ id, icon: Icon, label }) => {
+            const isActive = activePill === id;
             return (
               <button
-                key={pill.id}
-                onClick={() => onPillChange(pill.id)}
+                key={id}
+                onClick={() => { haptic('light'); onPillChange(id); }}
                 className={cn(
-                  'px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all shrink-0',
-                  'border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                  'flex items-center justify-center gap-1.5 py-2 rounded-md transition-all duration-200',
+                  'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                   isActive
-                    ? 'bg-dna-copper text-white border-dna-copper shadow-sm'
-                    : 'bg-background text-foreground border-border hover:border-dna-copper/40 hover:bg-dna-copper/5',
+                    ? 'bg-background shadow-sm flex-1 px-3'
+                    : 'px-3 text-muted-foreground hover:text-foreground hover:bg-background/50',
                 )}
               >
-                {pill.label}
+                <Icon className={cn('h-4 w-4 shrink-0', isActive && 'text-primary')} />
+                {isActive && (
+                  <span className="text-xs font-medium truncate">{label}</span>
+                )}
               </button>
             );
           })}
