@@ -40,7 +40,7 @@ const getNotificationIcon = (type: string): string => {
     connection_request: '🤝',
     connection_accepted: '✅',
     comment: '💬',
-    reaction: '❤️',
+    reaction: '👍',
     message: '✉️',
     mention: '@',
     event_reminder: '📅',
