@@ -25,9 +25,13 @@ html {
   overscroll-behavior: contain;
 }
 
-/* Standardized bottom nav height token */
+/* Standardized layout height tokens — set dynamically by ResizeObserver hooks,
+   these are CSS-only fallbacks for first paint */
 :root {
   --bottom-nav-height: 4rem;
+  --unified-header-height: 56px;   /* mobile: h-14=56px, desktop: h-16=64px */
+  --pulse-bar-height: 0px;         /* set by PulseBar when visible */
+  --total-header-height: calc(var(--unified-header-height) + var(--pulse-bar-height));
 }
 
 .pb-bottom-nav {
