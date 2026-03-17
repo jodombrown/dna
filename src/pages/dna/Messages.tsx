@@ -135,7 +135,7 @@ const DnaMessages = () => {
           onOpenChange={setGroupDrawerOpen}
           onGroupCreated={handleGroupCreated}
         />
-        <MobileBottomNav />
+        
       </div>
     );
   }
