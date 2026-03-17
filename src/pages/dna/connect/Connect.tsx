@@ -192,7 +192,7 @@ const Connect = () => {
           }} />
         </div>
 
-        <MobileBottomNav />
+        
       </div>
     );
   }
