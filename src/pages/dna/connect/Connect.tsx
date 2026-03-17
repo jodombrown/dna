@@ -7,9 +7,7 @@ import { useMobile } from '@/hooks/useMobile';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
 import { cn } from '@/lib/utils';
-import {
-  MOBILE_HEADER_Z,
-} from '@/lib/mobileHeaderSpacing';
+// Dynamic header spacing replaces hardcoded constants from mobileHeaderSpacing
 import { useMobileHeaderHeight } from '@/hooks/useMobileHeaderHeight';
 
 // New Hub Components
