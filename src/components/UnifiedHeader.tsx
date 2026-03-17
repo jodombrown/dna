@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { useSetCSSHeaderHeight } from '@/hooks/useSetCSSHeaderHeight';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOptionalDashboard } from '@/contexts/DashboardContext';
 import { useAccountDrawer } from '@/contexts/AccountDrawerContext';
