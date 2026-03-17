@@ -358,8 +358,8 @@ export function ConveyUpdatePostCard({ story }: ConveyCardProps) {
           isBookmarked={eng.isBookmarked}
           isTogglingBookmark={eng.isTogglingBookmark}
           onComment={eng.handleClick}
-          onBookmark={(e?: unknown) => eng.handleBookmark(e as React.MouseEvent)}
-          onShare={(e?: unknown) => eng.handleShare(e as React.MouseEvent)}
+          onBookmark={() => eng.handleBookmark({ stopPropagation: () => {} } as React.MouseEvent)}
+          onShare={() => eng.handleShare({ stopPropagation: () => {} } as React.MouseEvent)}
         />
       </div>
     </div>
