@@ -35,6 +35,8 @@ export function PulseBar() {
   const { user } = useAuth();
   const { isMobile } = useMobile();
   const { pulseData, isLoading } = usePulseBar();
+  const pulseRef = useRef<HTMLDivElement>(null);
+  useSetCSSHeaderHeight(pulseRef, '--pulse-bar-height');
 
   if (isMobile || !user) return null;
 
