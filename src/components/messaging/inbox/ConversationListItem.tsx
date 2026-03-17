@@ -67,8 +67,8 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
               <Pin className="h-3 w-3 text-amber-600 dark:text-amber-400 flex-shrink-0" />
             )}
             <span className={cn(
-              "font-medium truncate text-sm",
-              hasUnread && "font-semibold text-foreground"
+              "truncate text-sm font-normal",
+              hasUnread && "font-medium text-foreground"
             )}>
               {conversation.other_user_full_name || 'Unknown User'}
             </span>
@@ -88,8 +88,8 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
         </div>
         <div className="flex items-center justify-between gap-2 mt-0.5">
           <p className={cn(
-            "text-sm truncate",
-            hasUnread ? "text-foreground font-medium" : "text-muted-foreground"
+            "text-sm truncate font-light",
+            hasUnread ? "text-foreground font-normal" : "text-muted-foreground"
           )}>
             {conversation.last_message_content || 'No messages yet'}
           </p>
