@@ -242,9 +242,9 @@ export function ConveyStoryPostCard({ story }: ConveyCardProps) {
           {/* Gradient overlay bottom 30% */}
           <div className="absolute inset-x-0 bottom-0 h-[30%] bg-gradient-to-t from-black/60 to-transparent" />
           {/* Story badge */}
-          <Badge className="absolute top-3 left-3 bg-dna-copper/90 text-white text-xs backdrop-blur-sm border-0">
+          <div className="absolute top-3 left-3 inline-flex items-center rounded-full bg-dna-copper/90 text-white text-xs font-semibold px-2.5 py-0.5 backdrop-blur-sm">
             Story
-          </Badge>
+          </div>
         </div>
       )}
 
