@@ -466,7 +466,7 @@ export function ConveneDiscovery() {
             </div>
 
             {/* RIGHT — Sticky sidebar (desktop only) */}
-            <div className="hidden lg:block sticky top-[80px] space-y-6">
+            <div className="hidden lg:block sticky space-y-6" style={{ top: 'var(--total-header-height, 80px)' }}>
               <UpcomingEventsSection
                 onCreateEvent={() => composer.open('event')}
               />
