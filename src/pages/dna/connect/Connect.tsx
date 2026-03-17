@@ -20,8 +20,8 @@ import {
   FilterState,
 } from '@/components/connect/hub';
 
-// Mobile components (legacy support)
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+// Mobile components
+
 import { ConnectMobileHeader } from '@/components/connect/ConnectMobileHeader';
 
 // DIA Card System (Sprint 4A)
