@@ -28,7 +28,7 @@ import { useMobile } from '@/hooks/useMobile';
 import { cn } from '@/lib/utils';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
-import {} from '@/lib/mobileHeaderSpacing';
+// Dynamic header spacing replaces hardcoded constants from mobileHeaderSpacing
 import { useMobileHeaderHeight } from '@/hooks/useMobileHeaderHeight';
 import { incrementSessionCount } from '@/services/dia-feed-cadence';
 import { useLocation } from 'react-router-dom';
