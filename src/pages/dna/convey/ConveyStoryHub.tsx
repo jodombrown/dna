@@ -437,9 +437,9 @@ export default function ConveyStoryHub() {
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-4">
               {filteredStories.map((story) => (
-                <ConveyStoryCard key={story.post_id} story={story} />
+                <ConveyEditorialCard key={story.post_id} story={story} />
               ))}
             </div>
           )}
