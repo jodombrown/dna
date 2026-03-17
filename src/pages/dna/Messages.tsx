@@ -10,7 +10,7 @@ import EmptyConversationState from '@/components/messaging/EmptyConversationStat
 import { CreateGroupDrawer } from '@/components/messaging/CreateGroupDrawer';
 import { LayoutTransitionLoader } from '@/components/LayoutTransitionLoader';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+
 import MessagesBreadcrumb from '@/components/messaging/MessagesBreadcrumb';
 /**
  * DnaMessages - Canonical Messages route (/dna/messages)
