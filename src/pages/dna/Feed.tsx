@@ -29,13 +29,12 @@ import { cn } from '@/lib/utils';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
 import {
-  MOBILE_STACKED_HEADER_VISIBLE,
-  MOBILE_STACKED_HEADER_HIDDEN,
   MOBILE_HEADER_Z,
   MOBILE_TABS_Z,
   MOBILE_TABS_TOP_VISIBLE,
   MOBILE_TABS_TOP_HIDDEN,
 } from '@/lib/mobileHeaderSpacing';
+import { useMobileHeaderHeight } from '@/hooks/useMobileHeaderHeight';
 import { incrementSessionCount } from '@/services/dia-feed-cadence';
 import { useLocation } from 'react-router-dom';
 

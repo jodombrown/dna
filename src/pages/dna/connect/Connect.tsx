@@ -8,10 +8,9 @@ import { useScrollDirection } from '@/hooks/useScrollDirection';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
 import { cn } from '@/lib/utils';
 import {
-  MOBILE_STACKED_HEADER_VISIBLE,
-  MOBILE_STACKED_HEADER_HIDDEN,
   MOBILE_HEADER_Z,
 } from '@/lib/mobileHeaderSpacing';
+import { useMobileHeaderHeight } from '@/hooks/useMobileHeaderHeight';
 
 // New Hub Components
 import {
