@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { useSetCSSHeaderHeight } from '@/hooks/useSetCSSHeaderHeight';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOptionalDashboard } from '@/contexts/DashboardContext';
 import { useAccountDrawer } from '@/contexts/AccountDrawerContext';
@@ -58,6 +59,8 @@ const UnifiedHeader = () => {
   const { user, profile, signOut, loading } = useAuth();
   const { open: openAccountDrawer } = useAccountDrawer();
   const { isMobile } = useMobile();
+  const headerRef = useRef<HTMLElement>(null);
+  useSetCSSHeaderHeight(headerRef, '--unified-header-height');
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -234,6 +237,7 @@ const UnifiedHeader = () => {
   return (
     <>
       <header 
+        ref={headerRef}
         data-unified-header
         className="bg-background border-b border-border fixed top-0 left-0 right-0 z-50 shadow-sm"
       >

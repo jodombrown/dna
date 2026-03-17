@@ -63,7 +63,7 @@ export const MobileFeedView: React.FC = () => {
       noPadding
     >
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <div className="sticky top-14 z-30 bg-background border-b border-border px-4">
+        <div className="sticky z-30 bg-background border-b border-border px-4" style={{ top: 'var(--unified-header-height, 56px)' }}>
           <TabsList className="w-full justify-start h-12 bg-transparent border-0 rounded-none overflow-x-auto">
             <TabsTrigger 
               value="all" 
