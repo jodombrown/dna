@@ -38,7 +38,18 @@ function estimateReadTime(content: string | null | undefined): number {
 
 function getExcerpt(content: string | null | undefined, max = 140): string {
   if (!content) return '';
-  const plain = content.replace(/[#*_\[\]()>`~]/g, '').trim();
+  let plain = content.replace(/[#*_\[\]()>`~]/g, '').trim();
+  // Strip metadata headers like "Read Time: X min | Tags: ..."
+  plain = plain.replace(/^Read\s*Time:\s*\d+\s*min\s*\|?\s*Tags?:\s*[^\n]*/i, '').trim();
+  // Strip concatenated hashtag blocks (3+ capitalized words jammed together)
+  plain = plain.replace(/(?:[A-Z][a-z]+){3,}/g, '').trim();
+  // If first block looks like metadata (contains pipes), skip to first real paragraph
+  if (plain.startsWith('|') || /^[^.\n]{0,20}\|/.test(plain)) {
+    const parts = plain.split(/\n\n+/);
+    plain = parts.length > 1 ? parts.slice(1).join(' ').trim() : plain;
+  }
+  // Clean up extra whitespace
+  plain = plain.replace(/\s+/g, ' ').trim();
   if (plain.length <= max) return plain;
   return plain.substring(0, max).trim() + '…';
 }
