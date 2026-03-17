@@ -416,8 +416,8 @@ export const UniversalComposer = ({
         handleOnly={true}
       >
         <Drawer.Portal>
-          <Drawer.Overlay className="fixed inset-0 bg-black/40 z-50" />
-          <Drawer.Content className="fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-2xl flex flex-col max-h-[90vh]">
+          <Drawer.Overlay className="fixed inset-0 bg-black/40 z-[9998]" />
+          <Drawer.Content className="fixed bottom-0 left-0 right-0 z-[9999] bg-background rounded-t-2xl flex flex-col max-h-[90vh]">
             {/* Drag handle — only this triggers swipe-to-dismiss */}
             <div
               className="pt-3 pb-2 flex-shrink-0 cursor-grab active:cursor-grabbing"
