@@ -88,8 +88,8 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
         </div>
         <div className="flex items-center justify-between gap-2 mt-0.5">
           <p className={cn(
-            "text-sm truncate",
-            hasUnread ? "text-foreground font-medium" : "text-muted-foreground"
+            "text-sm truncate font-light",
+            hasUnread ? "text-foreground font-normal" : "text-muted-foreground"
           )}>
             {conversation.last_message_content || 'No messages yet'}
           </p>
