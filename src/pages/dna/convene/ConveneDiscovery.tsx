@@ -106,7 +106,7 @@ export function ConveneDiscovery() {
 
   // Mobile header measurement & scroll behavior
   const mobileHeaderRef = useRef<HTMLDivElement>(null);
-  const headerHeight = useMobileHeaderHeight(mobileHeaderRef, 4);
+  const headerHeight = useMobileHeaderHeight(mobileHeaderRef, 0);
   const { isScrollingDown, isAtTop } = useScrollDirection();
   const { hideHeader, showHeader } = useHeaderVisibility();
 
