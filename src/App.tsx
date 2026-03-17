@@ -267,6 +267,12 @@ const LegacySpaceSlugRedirect = () => {
   return <Navigate to={`/dna/collaborate/spaces/${slug}`} replace />;
 };
 
+/** Redirect legacy /dna/convey/post/:id emails to /dna/story/:id */
+function ConveyPostRedirect() {
+  const { id } = useParams<{ id: string }>();
+  return <Navigate to={`/dna/story/${id}`} replace />;
+}
+
 function App() {
   return (
     <ErrorBoundary>
@@ -595,6 +601,8 @@ function App() {
               <Route path="/dna/story/:slug" element={<FeedStoryDetail />} />
               {/* Convey Items - legacy slug-based detail view (public, no auth required) */}
               <Route path="/dna/convey/stories/:slug" element={<StoryDetail />} />
+              {/* Legacy post detail redirect - for emails already sent with old URL format */}
+              <Route path="/dna/convey/post/:id" element={<ConveyPostRedirect />} />
               
               {/* Legacy convene route redirects */}
               <Route path="/dna/events" element={<Navigate to="/dna/convene/events" replace />} />

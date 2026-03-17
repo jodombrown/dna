@@ -116,7 +116,7 @@ export const getInternalEventUrl = (slugOrId: string): string => {
  * @returns Full post URL
  */
 export const getPostUrl = (postId: string): string => {
-  return getAppUrl(`/dna/convey/post/${postId}`);
+  return getAppUrl(`/dna/story/${postId}`);
 };
 
 /**
