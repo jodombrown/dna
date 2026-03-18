@@ -102,7 +102,7 @@ const DnaMessages = () => {
     if (selectedConversationId && otherUser) {
       // WhatsApp-style: Chat takes full screen, no header padding needed
       return (
-        <div className="fixed inset-0 flex flex-col bg-background pb-bottom-nav">
+        <div className="fixed inset-0 flex flex-col bg-background">
           <div className="flex-1 overflow-hidden">
             <ChatThread
               conversationId={selectedConversationId}
