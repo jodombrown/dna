@@ -153,7 +153,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   return (
-    <div className="border-t border-border/20 bg-muted/30 dark:bg-zinc-900/80">
+    <div className="border-t border-border/20 bg-muted/30 dark:bg-zinc-900/80 flex-shrink-0">
       {/* Reply Preview Bar */}
       {replyingTo && onCancelReply && (
         <ReplyPreviewBar
