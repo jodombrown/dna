@@ -352,7 +352,7 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
         )}
       </div>
 
-      {/* Input */}
+      {/* Input - fixed rail, never shrinks */}
       <ChatInput
         onSend={handleSend}
         onSendVoice={handleSendVoice}

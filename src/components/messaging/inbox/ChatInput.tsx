@@ -261,7 +261,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 disabled={disabled}
                 rows={1}
                 className={cn(
-                  "min-h-[38px] max-h-[100px] resize-none",
+                  "min-h-[38px] max-h-[100px] resize-none overflow-y-hidden",
                   "text-[15px] md:text-sm",
                   "bg-background border-border/50 focus-visible:ring-1 focus-visible:ring-primary/40 rounded-2xl py-2 px-3"
                 )}
