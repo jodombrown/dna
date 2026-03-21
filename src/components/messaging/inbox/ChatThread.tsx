@@ -274,7 +274,7 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full bg-background">
+    <div className="flex flex-col h-full min-h-0 overflow-hidden bg-background">
       {/* Header */}
       <ChatHeader 
         otherUser={otherUser} 
