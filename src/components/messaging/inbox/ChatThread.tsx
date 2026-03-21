@@ -275,7 +275,7 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
 
   return (
     <div className="flex flex-col h-full min-h-0 overflow-hidden bg-background">
-      {/* Header */}
+      {/* Header - fixed rail, never shrinks */}
       <ChatHeader 
         otherUser={otherUser} 
         conversationId={conversationId}
