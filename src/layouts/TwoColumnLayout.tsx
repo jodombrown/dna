@@ -58,7 +58,7 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
         <main 
           id="main-content"
           tabIndex={-1}
-          className="transition-all duration-300 ease-in-out overflow-hidden h-full focus:outline-none"
+          className="overflow-hidden h-full focus:outline-none"
           style={{ 
             width: leftWidth,
             minWidth: 0,
