@@ -12,6 +12,7 @@ import ComprehensiveLocationInput from '@/components/ui/comprehensive-location-i
 const PartnerStart = () => {
   const { toast } = useToast();
   const { trackEvent } = useAnalytics();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     organization: '',
