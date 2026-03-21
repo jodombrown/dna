@@ -28,7 +28,7 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
     queryFn: async () => {
       const { data, error } = await supabase
         .from('post_likes')
-        .select('user_id')
+        .select('user_id, profiles:user_id(full_name, username, avatar_url, headline)')
         .eq('post_id', postId);
 
       if (error) {
@@ -44,10 +44,10 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
       const userHasLiked = userId ? rows.some((like) => like.user_id === userId) : false;
       const likedBy: LikeUser[] = rows.map((like) => ({
         user_id: like.user_id,
-        full_name: '',
-        username: '',
-        avatar_url: undefined,
-        headline: undefined,
+        full_name: like.profiles?.full_name || '',
+        username: like.profiles?.username || '',
+        avatar_url: like.profiles?.avatar_url || undefined,
+        headline: like.profiles?.headline || undefined,
       }));
 
       return {
