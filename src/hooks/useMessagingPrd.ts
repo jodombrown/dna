@@ -74,7 +74,7 @@ export function useMessagingConversations(initialFilter?: Partial<ConversationFi
       return messagingPrdService.getTotalUnreadCount(user.id);
     },
     enabled: !!user?.id,
-    refetchInterval: 15000, // Refresh every 15s
+    refetchInterval: 60_000, // Refresh every 60s — badge is non-critical
   });
 
   return {

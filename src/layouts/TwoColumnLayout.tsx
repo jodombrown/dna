@@ -70,7 +70,7 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
       
       {right && (
         <div 
-          className="transition-all duration-300 ease-in-out overflow-hidden flex-1 h-full"
+          className="overflow-hidden flex-1 h-full"
           style={{ 
             width: rightWidth,
             minWidth: 0,
