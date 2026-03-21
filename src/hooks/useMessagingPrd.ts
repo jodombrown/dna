@@ -64,7 +64,7 @@ export function useMessagingConversations(initialFilter?: Partial<ConversationFi
       );
     },
     enabled: !!user?.id,
-    refetchInterval: 30000, // Refresh every 30s
+    refetchInterval: 120_000, // Refresh every 2min — realtime handles urgent updates
   });
 
   const totalUnreadQuery = useQuery({
@@ -74,7 +74,7 @@ export function useMessagingConversations(initialFilter?: Partial<ConversationFi
       return messagingPrdService.getTotalUnreadCount(user.id);
     },
     enabled: !!user?.id,
-    refetchInterval: 15000, // Refresh every 15s
+    refetchInterval: 60_000, // Refresh every 60s — badge is non-critical
   });
 
   return {

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { EnhancedButton } from '@/components/ui/enhanced-button';
 import { onboardingSteps } from '@/config/partnerContent';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,7 @@ import ComprehensiveLocationInput from '@/components/ui/comprehensive-location-i
 const PartnerStart = () => {
   const { toast } = useToast();
   const { trackEvent } = useAnalytics();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     organization: '',
@@ -70,8 +71,8 @@ ${formData.interest}
     if (href) {
       if (href.startsWith('#')) {
         document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        window.location.href = href;
+      } else if (href.startsWith('/')) {
+        navigate(href);
       }
     }
   };

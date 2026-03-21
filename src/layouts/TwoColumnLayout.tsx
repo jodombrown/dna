@@ -38,12 +38,12 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
     return (
       <div className={cn("flex flex-col w-full gap-4 p-4", className)}>
         {left && (
-          <div className="w-full transition-all duration-300 ease-in-out">
+          <div className="w-full">
             {left}
           </div>
         )}
         {right && (
-          <div className="w-full transition-all duration-300 ease-in-out">
+          <div className="w-full">
             {right}
           </div>
         )}
@@ -58,7 +58,7 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
         <main 
           id="main-content"
           tabIndex={-1}
-          className="transition-all duration-300 ease-in-out overflow-hidden h-full focus:outline-none"
+          className="overflow-hidden h-full focus:outline-none"
           style={{ 
             width: leftWidth,
             minWidth: 0,
@@ -70,7 +70,7 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
       
       {right && (
         <div 
-          className="transition-all duration-300 ease-in-out overflow-hidden flex-1 h-full"
+          className="overflow-hidden flex-1 h-full"
           style={{ 
             width: rightWidth,
             minWidth: 0,

@@ -44,12 +44,12 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
   const navigate = useNavigate();
   const [replyingTo, setReplyingTo] = useState<ReplyToData | null>(null);
 
-  // Fetch messages
+  // Fetch messages — realtime subscription below handles live updates, no polling needed
   const { data: messages = [], isLoading, isError, error } = useQuery({
     queryKey: ['messages', conversationId],
     queryFn: () => messageService.getMessages(conversationId),
-    refetchInterval: 5000, // Poll every 5s as backup
-    retry: 2, // Retry failed requests twice
+    staleTime: 60_000,
+    retry: 2,
   });
 
   // Send message mutation

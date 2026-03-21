@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { EnhancedButton } from '@/components/ui/enhanced-button';
 import { partnerPageContent, fiveCsContent } from '@/config/partnerContent';
 import { partnerSectors } from '@/config/partnerSectors';
@@ -6,6 +6,7 @@ import { useAnalytics } from '@/hooks/useAnalytics';
 
 const PartnerWithDna = () => {
   const { trackEvent } = useAnalytics();
+  const navigate = useNavigate();
 
   const handleCTAClick = (ctaName: string, href?: string) => {
     trackEvent('partner_page_cta_clicked', { 
@@ -16,7 +17,7 @@ const PartnerWithDna = () => {
       if (href.startsWith('#')) {
         document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
       } else if (href.startsWith('/')) {
-        window.location.href = href;
+        navigate(href);
       }
     }
   };
