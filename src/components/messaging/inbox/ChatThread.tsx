@@ -289,10 +289,10 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
         onDeleteConversation={() => deleteConversationMutation.mutate()}
       />
 
-      {/* Messages - Subtle pattern background */}
+      {/* Messages - only scrollable region */}
       <div 
         ref={containerRef}
-        className="flex-1 overflow-y-auto bg-gradient-to-b from-muted/20 to-muted/40 dark:from-zinc-900 dark:to-zinc-950"
+        className="flex-1 min-h-0 overflow-y-auto overscroll-y-contain bg-gradient-to-b from-muted/20 to-muted/40 dark:from-zinc-900 dark:to-zinc-950"
       >
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
