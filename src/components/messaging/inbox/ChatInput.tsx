@@ -57,13 +57,14 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const detectedUrl = extractFirstUrl(message);
   const linkPreview = previews[0];
 
-  // Auto-resize textarea
+  // Auto-resize textarea - WhatsApp style: grow up to ~100px then scroll internally
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       const scrollHeight = textareaRef.current.scrollHeight;
-      // Min height ~44px (1 row), max ~120px (~4 rows for ~150 chars)
-      textareaRef.current.style.height = `${Math.min(Math.max(scrollHeight, 44), 120)}px`;
+      const maxH = 100; // ~3-4 lines, then internal scroll
+      textareaRef.current.style.height = `${Math.min(Math.max(scrollHeight, 38), maxH)}px`;
+      textareaRef.current.style.overflowY = scrollHeight > maxH ? 'auto' : 'hidden';
     }
   }, [message]);
 
@@ -260,7 +261,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 disabled={disabled}
                 rows={1}
                 className={cn(
-                  "min-h-[38px] max-h-[100px] resize-none",
+                  "min-h-[38px] max-h-[100px] resize-none overflow-y-hidden",
                   "text-[15px] md:text-sm",
                   "bg-background border-border/50 focus-visible:ring-1 focus-visible:ring-primary/40 rounded-2xl py-2 px-3"
                 )}
