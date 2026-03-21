@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { EnhancedButton } from '@/components/ui/enhanced-button';
 import { partnerPageContent, fiveCsContent } from '@/config/partnerContent';
 import { partnerSectors } from '@/config/partnerSectors';
