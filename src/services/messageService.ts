@@ -537,19 +537,15 @@ async getConversations(
   },
 
   /**
-   * Delete a message (soft delete - marks as deleted)
-   * Message will show "This message was deleted" placeholder
+   * Delete a message (hard delete — removes the row)
    */
   async deleteMessage(messageId: string): Promise<void> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    // Soft delete by updating deleted_at timestamp
-    // Note: deleted_at column exists in database but may not be in generated types
-    const softDeleteData: MessageSoftDelete = { deleted_at: new Date().toISOString() };
     const { error } = await supabase
       .from('messages')
-      .update(softDeleteData as Database['public']['Tables']['messages']['Update'])
+      .delete()
       .eq('id', messageId)
       .eq('sender_id', user.id);
 
