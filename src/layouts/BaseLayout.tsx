@@ -128,6 +128,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
           )}
         />
         {children}
+        <Footer />
       </div>
       {/* Feedback FAB - side chevron on all /dna routes */}
       <FeedbackFAB onOpen={() => setIsFeedbackDrawerOpen(true)} />
