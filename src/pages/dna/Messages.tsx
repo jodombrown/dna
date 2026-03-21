@@ -103,15 +103,11 @@ const DnaMessages = () => {
       // WhatsApp-style: Chat takes full screen above the app shell/dock
       return (
         <div className="fixed inset-0 z-[60] h-[100dvh] overflow-hidden bg-background">
-          <div className="flex h-full min-h-0 flex-col">
-            <div className="flex-1 min-h-0">
-              <ChatThread
-                conversationId={selectedConversationId}
-                otherUser={otherUser}
-                onBack={() => setSelectedConversationId(null)}
-              />
-            </div>
-          </div>
+            <ChatThread
+              conversationId={selectedConversationId}
+              otherUser={otherUser}
+              onBack={() => setSelectedConversationId(null)}
+            />
         </div>
       );
     }
