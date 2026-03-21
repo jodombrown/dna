@@ -70,8 +70,8 @@ ${formData.interest}
     if (href) {
       if (href.startsWith('#')) {
         document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        window.location.href = href;
+      } else if (href.startsWith('/')) {
+        navigate(href);
       }
     }
   };

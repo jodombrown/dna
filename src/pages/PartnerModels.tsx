@@ -1,17 +1,22 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { partnershipModels } from '@/config/partnerModels';
 import { EnhancedButton } from '@/components/ui/enhanced-button';
 import { useAnalytics } from '@/hooks/useAnalytics';
 
 const PartnerModels = () => {
   const { trackEvent } = useAnalytics();
+  const navigate = useNavigate();
 
   const handleCTAClick = (href?: string) => {
     trackEvent('partner_models_cta_clicked', { 
       page: 'partner-models'
     });
     if (href) {
-      window.location.href = href;
+      if (href.startsWith('/')) {
+        navigate(href);
+      } else {
+        window.open(href, '_blank');
+      }
     }
   };
 
