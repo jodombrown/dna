@@ -45,13 +45,7 @@ import type {
  */
 type MessageInsert = Database['public']['Tables']['messages']['Insert'];
 
-/**
- * Extended message update type for soft delete functionality
- * Note: deleted_at column exists in the database but may not be in generated types
- */
-interface MessageSoftDelete {
-  deleted_at: string;
-}
+
 
 /**
  * messageService - SIMPLIFIED messaging using conversations/messages tables
