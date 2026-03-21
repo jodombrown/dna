@@ -71,6 +71,11 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
     mutationFn: (messageId: string) => messageService.deleteMessage(messageId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      toast({ title: 'Message deleted' });
+    },
+    onError: () => {
+      toast({ title: 'Failed to delete', description: 'Could not delete the message', variant: 'destructive' });
     },
   });
 
