@@ -64,7 +64,7 @@ export function useMessagingConversations(initialFilter?: Partial<ConversationFi
       );
     },
     enabled: !!user?.id,
-    refetchInterval: 30000, // Refresh every 30s
+    refetchInterval: 120_000, // Refresh every 2min — realtime handles urgent updates
   });
 
   const totalUnreadQuery = useQuery({
