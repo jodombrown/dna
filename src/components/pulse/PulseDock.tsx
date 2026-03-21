@@ -18,7 +18,7 @@ import { usePulseNavigation, type MoreButtonState } from '@/hooks/usePulseNaviga
 import type { PulseSection } from '@/types/pulse';
 import { useMobile } from '@/hooks/useMobile';
 import { useAuth } from '@/contexts/AuthContext';
-import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
+
 import { PulseDockItem } from './PulseDockItem';
 import { PulseDockTray } from './PulseDockTray';
 
@@ -42,14 +42,17 @@ const PRIMARY_ITEMS: PrimaryItemBase[] = [
 export function PulseDock() {
   const { isMobile } = useMobile();
   const { user } = useAuth();
-  const { isHeaderHidden } = useHeaderVisibility();
   const [trayOpen, setTrayOpen] = useState(false);
   const pulseNav = usePulseNavigation();
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Hide dock only in full-screen chat threads (Messages with active conversation)
+  const isFullScreenChat = location.pathname.includes('/dna/messages');
+
   // Only render on mobile and for authenticated users
-  if (!isMobile || !user || isHeaderHidden) return null;
+  if (!isMobile || !user) return null;
+  if (isFullScreenChat) return null;
 
   const handleItemClick = (item: PrimaryItemBase) => {
     if (item.isTrigger) {
