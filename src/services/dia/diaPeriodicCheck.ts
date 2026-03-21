@@ -213,10 +213,12 @@ const CHECK_INTERVAL_MS = 30 * 60 * 1000; // 30 minutes
  * Returns a cleanup function to stop the interval.
  */
 export function initDIAPeriodicChecks(userId: string): () => void {
-  // Run initial check (fire and forget)
-  runPeriodicChecks(userId).catch(() => {
-    // Silently fail — periodic checks are non-critical
-  });
+  // Defer initial check so it doesn't compete with page navigation queries
+  const initialTimeout = setTimeout(() => {
+    runPeriodicChecks(userId).catch(() => {
+      // Silently fail — periodic checks are non-critical
+    });
+  }, 10_000); // 10 second delay after mount
 
   // Set up recurring interval
   const interval = setInterval(() => {
@@ -226,7 +228,10 @@ export function initDIAPeriodicChecks(userId: string): () => void {
   }, CHECK_INTERVAL_MS);
 
   // Return cleanup function
-  return () => clearInterval(interval);
+  return () => {
+    clearTimeout(initialTimeout);
+    clearInterval(interval);
+  };
 }
 
 export const diaPeriodicCheck = {
