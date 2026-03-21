@@ -111,7 +111,7 @@ export function InlineChat({
       return (data || []) as Message[];
     },
     enabled: !!conversationId,
-    refetchInterval: 5000,
+    refetchInterval: 30_000, // Reduced from 5s — realtime handles live messages
   });
 
   // Mark messages as read
