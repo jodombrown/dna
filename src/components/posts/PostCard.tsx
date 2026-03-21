@@ -560,6 +560,13 @@ export function PostCard({
         />
       )}
 
+      {/* Liked By Modal */}
+      <LikedByModal
+        isOpen={showLikedByModal}
+        onClose={() => setShowLikedByModal(false)}
+        likedBy={likedBy}
+      />
+
       {/* Media Lightbox */}
       {post.image_url && (
         <MediaLightbox
