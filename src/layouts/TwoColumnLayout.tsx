@@ -38,12 +38,12 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
     return (
       <div className={cn("flex flex-col w-full gap-4 p-4", className)}>
         {left && (
-          <div className="w-full transition-all duration-300 ease-in-out">
+          <div className="w-full">
             {left}
           </div>
         )}
         {right && (
-          <div className="w-full transition-all duration-300 ease-in-out">
+          <div className="w-full">
             {right}
           </div>
         )}
