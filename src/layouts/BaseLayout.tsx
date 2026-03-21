@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import UnifiedHeader from '@/components/UnifiedHeader';
+import Footer from '@/components/Footer';
 import { AccountDrawer } from '@/components/navigation/AccountDrawer';
 import { PulseBar, PulseDock } from '@/components/pulse';
 import { initDIAPeriodicChecks } from '@/services/dia/diaPeriodicCheck';
