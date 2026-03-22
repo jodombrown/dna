@@ -16,6 +16,7 @@ interface ProfileV2HeroProps {
   profile: ProfileV2Data;
   permissions: ProfileV2Permissions;
   connectionStatus?: ConnectionStatus;
+  connectionsCount?: number;
   onEdit?: () => void;
   onConnect?: () => void;
   onAcceptConnection?: () => void;
