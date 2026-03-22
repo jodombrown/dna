@@ -145,8 +145,10 @@ export function NotificationItem({
       case 'reaction':
       case 'mention':
       case 'reshare':
-        // Navigate to specific post if entity_id exists
-        if (notification.entity_type === 'post' && notification.entity_id) {
+        // Prefer action_url (link_url from DB) which contains post deep-link
+        if (notification.action_url && notification.action_url.includes('post=')) {
+          targetRoute = notification.action_url;
+        } else if (notification.entity_type === 'post' && notification.entity_id) {
           targetRoute = `/dna/feed?post=${notification.entity_id}`;
         } else if (notification.action_url && notification.action_url.startsWith('/dna')) {
           targetRoute = notification.action_url;
@@ -212,7 +214,7 @@ export function NotificationItem({
     <div
       onClick={handleClick}
       className={cn(
-        'group flex gap-3 p-4 hover:bg-accent cursor-pointer transition-colors relative',
+        'group flex gap-3 p-4 hover:bg-muted/50 cursor-pointer transition-colors relative',
         !notification.is_read && 'bg-primary/5'
       )}
     >
