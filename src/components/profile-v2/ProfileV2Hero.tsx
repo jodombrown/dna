@@ -57,6 +57,7 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
   profile,
   permissions,
   connectionStatus = 'none',
+  connectionsCount = 0,
   onEdit,
   onConnect,
   onAcceptConnection,
