@@ -214,7 +214,7 @@ export function NotificationItem({
     <div
       onClick={handleClick}
       className={cn(
-        'group flex gap-3 p-4 hover:bg-accent cursor-pointer transition-colors relative',
+        'group flex gap-3 p-4 hover:bg-muted/50 cursor-pointer transition-colors relative',
         !notification.is_read && 'bg-primary/5'
       )}
     >

@@ -260,14 +260,24 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                   </span>
                 </div>
               )}
-              {/* Sprint 12D.2: Follower/Following counts */}
-              {(followerCount > 0 || followingCount > 0) && (
+              {/* Connection & follower counts */}
+              {(connectionsCount > 0 || followerCount > 0 || followingCount > 0) && (
                 <div className="flex items-center gap-1.5">
                   <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
                   <span>
-                    <strong>{followerCount}</strong> followers
-                    <span className="mx-1">·</span>
-                    <strong>{followingCount}</strong> following
+                    {connectionsCount > 0 && (
+                      <>
+                        <strong>{connectionsCount}</strong> connections
+                        {(followerCount > 0 || followingCount > 0) && <span className="mx-1">·</span>}
+                      </>
+                    )}
+                    {(followerCount > 0 || followingCount > 0) && (
+                      <>
+                        <strong>{followerCount}</strong> followers
+                        <span className="mx-1">·</span>
+                        <strong>{followingCount}</strong> following
+                      </>
+                    )}
                   </span>
                 </div>
               )}
