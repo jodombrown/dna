@@ -274,6 +274,7 @@ const ProfileV2: React.FC = () => {
           can_connect: connectionStatus === 'none' && !permissions.is_owner,
         }}
         connectionStatus={connectionStatus}
+        connectionsCount={activity.connections_count ?? 0}
         onEdit={() => permissions.is_owner && navigate('/dna/profile/edit')}
         onConnect={async () => {
           if (!user || permissions.is_owner || connectionStatus !== 'none') return;
