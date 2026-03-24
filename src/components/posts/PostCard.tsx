@@ -438,7 +438,7 @@ export function PostCard({
       )}
 
       {/* Actions */}
-      <div className="flex items-center justify-between gap-2 pt-3 border-t">
+      <div className="flex items-center justify-between gap-2 pt-3 border-t [&>button]:min-h-[44px]">
         {/* Simple Like Button */}
         <Button
           variant="ghost"

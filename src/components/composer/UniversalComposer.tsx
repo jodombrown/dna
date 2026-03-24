@@ -361,7 +361,10 @@ export const UniversalComposer = ({
       onDismiss={handleDismissSuccess}
       onDIAAction={handleDIAAction}
     />
-  ) : (
+  ) : null;
+
+  // Separated scrollable body from sticky footer for mobile
+  const composerBody = !successData ? (
     <div className="space-y-4">
       {/* Header: Mode Selector + Draft Indicator */}
       <div className="flex items-center justify-between gap-2">
@@ -422,18 +425,19 @@ export const UniversalComposer = ({
           onDismiss={handleDIASuggestionDismiss}
         />
       )}
-
-      {/* Footer */}
-      <ComposerFooter
-        mode={mode}
-        isSubmitting={isSubmitting}
-        isValid={formIsValid}
-        validationMessage={validationMessage}
-        onCancel={onClose}
-        onSubmit={handleSubmit}
-      />
     </div>
-  );
+  ) : null;
+
+  const composerFooter = !successData ? (
+    <ComposerFooter
+      mode={mode}
+      isSubmitting={isSubmitting}
+      isValid={formIsValid}
+      validationMessage={validationMessage}
+      onCancel={onClose}
+      onSubmit={handleSubmit}
+    />
+  ) : null;
 
   // Handle dismiss for both close and success screen dismiss
   const handleOpenChange = useCallback((open: boolean) => {
@@ -487,16 +491,22 @@ export const UniversalComposer = ({
             >
               <div className="mx-auto w-12 h-1.5 rounded-full bg-muted-foreground/30" />
             </div>
-            {/* Scrollable content with safe area padding */}
+            {/* Scrollable content */}
             <div
               ref={mobileScrollRef}
               onFocusCapture={handleMobileFocusCapture}
-              className="flex-1 overflow-y-auto overscroll-contain px-4 pb-safe"
+              className="flex-1 overflow-y-auto overscroll-contain px-4 min-h-0"
             >
-              {composerContent}
-              {/* Bottom safe area spacer for iOS home indicator */}
-              <div className="h-6" />
+              {composerContent || composerBody}
+              {/* Bottom spacer */}
+              <div className="h-4" />
             </div>
+            {/* Sticky footer - stays visible above keyboard */}
+            {composerFooter && (
+              <div className="flex-shrink-0 px-4 pb-safe border-t bg-background pt-2">
+                {composerFooter}
+              </div>
+            )}
           </Drawer.Content>
         </Drawer.Portal>
       </Drawer.Root>
@@ -515,7 +525,12 @@ export const UniversalComposer = ({
             {successData ? 'Published!' : 'Share something with the diaspora'}
           </SheetTitle>
         </SheetHeader>
-        {composerContent}
+        {composerContent || (
+          <>
+            {composerBody}
+            {composerFooter}
+          </>
+        )}
       </SheetContent>
     </Sheet>
   );

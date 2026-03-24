@@ -237,7 +237,7 @@ const PublicProfile = () => {
 
   // Main profile view
   return (
-    <div className="min-h-screen bg-background pt-20">
+    <div className="min-h-screen bg-background pt-20 pb-bottom-nav md:pb-0">
       {/* Banner - supports gradients, images, and overlay */}
       {(() => {
         const bannerType = profile.banner_type || 'gradient';

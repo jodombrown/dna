@@ -105,16 +105,16 @@ export const ComposerModeSelector = ({
             onClick={() => onModeChange(chip.id)}
             disabled={disabled}
             className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap',
+              'flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-semibold whitespace-nowrap',
               'transition-all duration-200 ease-out min-h-[44px]',
               'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
               isActive
-                ? `${chip.activeBgClass} text-white shadow-sm`
-                : 'bg-transparent border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30',
+                ? `${chip.activeBgClass} text-white shadow-md ring-1 ring-white/20`
+                : 'bg-muted/60 border border-border text-muted-foreground hover:text-foreground hover:bg-muted',
               disabled && 'opacity-40 cursor-not-allowed pointer-events-none'
             )}
           >
-            <Icon className="h-3.5 w-3.5 shrink-0" />
+            <Icon className="h-4 w-4 shrink-0" />
             <span>{chipLabel}</span>
           </button>
         );
