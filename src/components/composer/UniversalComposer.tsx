@@ -81,10 +81,13 @@ export const UniversalComposer = ({
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [diaSuggestion, setDiaSuggestion] = useState<DIASuggestion | null>(null);
   const [isDraftSaved, setIsDraftSaved] = useState(false);
+  const [mobileViewportHeight, setMobileViewportHeight] = useState<number | null>(null);
+  const [mobileKeyboardInset, setMobileKeyboardInset] = useState(0);
   const { isMobile } = useMobile();
   const diaDebounceRef = useRef<ReturnType<typeof setTimeout>>();
   const autoSaveRef = useRef<ReturnType<typeof setTimeout>>();
   const prevModeRef = useRef<ComposerMode>(mode);
+  const mobileScrollRef = useRef<HTMLDivElement>(null);
 
   // Sprint 3B: Intent detection state
   const [intentSuggestion, setIntentSuggestion] = useState<IntentSuggestion | null>(null);
@@ -169,6 +172,42 @@ export const UniversalComposer = ({
       setDismissedModes(new Set());
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isMobile || !isOpen) {
+      setMobileViewportHeight(null);
+      setMobileKeyboardInset(0);
+      return;
+    }
+
+    const updateViewportMetrics = () => {
+      const vv = window.visualViewport;
+
+      if (!vv) {
+        setMobileViewportHeight(window.innerHeight);
+        setMobileKeyboardInset(0);
+        return;
+      }
+
+      const nextViewportHeight = Math.max(320, Math.floor(vv.height));
+      const nextKeyboardInset = Math.max(0, Math.floor(window.innerHeight - vv.height - vv.offsetTop));
+
+      setMobileViewportHeight(nextViewportHeight);
+      setMobileKeyboardInset(nextKeyboardInset);
+    };
+
+    updateViewportMetrics();
+
+    window.visualViewport?.addEventListener('resize', updateViewportMetrics);
+    window.visualViewport?.addEventListener('scroll', updateViewportMetrics);
+    window.addEventListener('orientationchange', updateViewportMetrics);
+
+    return () => {
+      window.visualViewport?.removeEventListener('resize', updateViewportMetrics);
+      window.visualViewport?.removeEventListener('scroll', updateViewportMetrics);
+      window.removeEventListener('orientationchange', updateViewportMetrics);
+    };
+  }, [isMobile, isOpen]);
 
   // Auto-save draft every 10 seconds when content changes
   useEffect(() => {
@@ -407,8 +446,24 @@ export const UniversalComposer = ({
     }
   }, [successData, handleDismissSuccess, onClose]);
 
+  const handleMobileFocusCapture = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLElement | null;
+    if (!target) return;
+
+    const isFormField = target.matches('textarea, input, [contenteditable="true"]');
+    if (!isFormField) return;
+
+    window.setTimeout(() => {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+    }, 180);
+  }, []);
+
   // Mobile: vaul Drawer bottom sheet (swipe to dismiss, drag handle)
   if (isMobile) {
+    const mobileDrawerHeight = mobileViewportHeight
+      ? `${Math.min(Math.max(mobileViewportHeight - 8, 320), window.innerHeight)}px`
+      : '85dvh';
+
     return (
       <Drawer.Root
         open={isOpen}
@@ -417,7 +472,14 @@ export const UniversalComposer = ({
       >
         <Drawer.Portal>
           <Drawer.Overlay className="fixed inset-0 bg-black/40 z-[9998]" />
-          <Drawer.Content className="fixed bottom-0 left-0 right-0 z-[9999] bg-background rounded-t-2xl flex flex-col max-h-[90vh]">
+          <Drawer.Content
+            className="fixed bottom-0 left-0 right-0 z-[9999] bg-background rounded-t-2xl flex flex-col overflow-hidden"
+            style={{
+              height: mobileDrawerHeight,
+              maxHeight: mobileDrawerHeight,
+              paddingBottom: mobileKeyboardInset ? `${mobileKeyboardInset}px` : undefined,
+            }}
+          >
             {/* Drag handle — only this triggers swipe-to-dismiss */}
             <div
               className="pt-3 pb-2 flex-shrink-0 cursor-grab active:cursor-grabbing"
@@ -426,7 +488,11 @@ export const UniversalComposer = ({
               <div className="mx-auto w-12 h-1.5 rounded-full bg-muted-foreground/30" />
             </div>
             {/* Scrollable content with safe area padding */}
-            <div className="flex-1 overflow-y-auto overscroll-contain px-4 pb-safe">
+            <div
+              ref={mobileScrollRef}
+              onFocusCapture={handleMobileFocusCapture}
+              className="flex-1 overflow-y-auto overscroll-contain px-4 pb-safe"
+            >
               {composerContent}
               {/* Bottom safe area spacer for iOS home indicator */}
               <div className="h-6" />
