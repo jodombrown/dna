@@ -172,41 +172,8 @@ export const UniversalComposer = ({
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (!isMobile || !isOpen) {
-      setMobileViewportHeight(null);
-      setMobileKeyboardInset(0);
-      return;
-    }
-
-    const updateViewportMetrics = () => {
-      const vv = window.visualViewport;
-
-      if (!vv) {
-        setMobileViewportHeight(window.innerHeight);
-        setMobileKeyboardInset(0);
-        return;
-      }
-
-      const nextViewportHeight = Math.max(320, Math.floor(vv.height));
-      const nextKeyboardInset = Math.max(0, Math.floor(window.innerHeight - vv.height - vv.offsetTop));
-
-      setMobileViewportHeight(nextViewportHeight);
-      setMobileKeyboardInset(nextKeyboardInset);
-    };
-
-    updateViewportMetrics();
-
-    window.visualViewport?.addEventListener('resize', updateViewportMetrics);
-    window.visualViewport?.addEventListener('scroll', updateViewportMetrics);
-    window.addEventListener('orientationchange', updateViewportMetrics);
-
-    return () => {
-      window.visualViewport?.removeEventListener('resize', updateViewportMetrics);
-      window.visualViewport?.removeEventListener('scroll', updateViewportMetrics);
-      window.removeEventListener('orientationchange', updateViewportMetrics);
-    };
-  }, [isMobile, isOpen]);
+  // Removed: visualViewport tracking — was causing layout thrashing when keyboard opens on iOS.
+  // Using stable CSS units (dvh) instead, which the OS handles natively.
 
   // Auto-save draft every 10 seconds when content changes
   useEffect(() => {
