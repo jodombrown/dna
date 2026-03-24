@@ -81,8 +81,7 @@ export const UniversalComposer = ({
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [diaSuggestion, setDiaSuggestion] = useState<DIASuggestion | null>(null);
   const [isDraftSaved, setIsDraftSaved] = useState(false);
-  const [mobileViewportHeight, setMobileViewportHeight] = useState<number | null>(null);
-  const [mobileKeyboardInset, setMobileKeyboardInset] = useState(0);
+  // Removed: mobileViewportHeight and mobileKeyboardInset state — using stable CSS units instead
   const { isMobile } = useMobile();
   const diaDebounceRef = useRef<ReturnType<typeof setTimeout>>();
   const autoSaveRef = useRef<ReturnType<typeof setTimeout>>();
@@ -173,41 +172,8 @@ export const UniversalComposer = ({
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (!isMobile || !isOpen) {
-      setMobileViewportHeight(null);
-      setMobileKeyboardInset(0);
-      return;
-    }
-
-    const updateViewportMetrics = () => {
-      const vv = window.visualViewport;
-
-      if (!vv) {
-        setMobileViewportHeight(window.innerHeight);
-        setMobileKeyboardInset(0);
-        return;
-      }
-
-      const nextViewportHeight = Math.max(320, Math.floor(vv.height));
-      const nextKeyboardInset = Math.max(0, Math.floor(window.innerHeight - vv.height - vv.offsetTop));
-
-      setMobileViewportHeight(nextViewportHeight);
-      setMobileKeyboardInset(nextKeyboardInset);
-    };
-
-    updateViewportMetrics();
-
-    window.visualViewport?.addEventListener('resize', updateViewportMetrics);
-    window.visualViewport?.addEventListener('scroll', updateViewportMetrics);
-    window.addEventListener('orientationchange', updateViewportMetrics);
-
-    return () => {
-      window.visualViewport?.removeEventListener('resize', updateViewportMetrics);
-      window.visualViewport?.removeEventListener('scroll', updateViewportMetrics);
-      window.removeEventListener('orientationchange', updateViewportMetrics);
-    };
-  }, [isMobile, isOpen]);
+  // Removed: visualViewport tracking — was causing layout thrashing when keyboard opens on iOS.
+  // Using stable CSS units (dvh) instead, which the OS handles natively.
 
   // Auto-save draft every 10 seconds when content changes
   useEffect(() => {
@@ -464,10 +430,6 @@ export const UniversalComposer = ({
 
   // Mobile: vaul Drawer bottom sheet (swipe to dismiss, drag handle)
   if (isMobile) {
-    const mobileDrawerHeight = mobileViewportHeight
-      ? `${Math.min(Math.max(mobileViewportHeight - 8, 320), window.innerHeight)}px`
-      : '85dvh';
-
     return (
       <Drawer.Root
         open={isOpen}
@@ -479,9 +441,8 @@ export const UniversalComposer = ({
           <Drawer.Content
             className="fixed bottom-0 left-0 right-0 z-[9999] bg-background rounded-t-2xl flex flex-col overflow-hidden"
             style={{
-              height: mobileDrawerHeight,
-              maxHeight: mobileDrawerHeight,
-              paddingBottom: mobileKeyboardInset ? `${mobileKeyboardInset}px` : undefined,
+              height: '85dvh',
+              maxHeight: '85dvh',
             }}
           >
             {/* Drag handle — only this triggers swipe-to-dismiss */}
