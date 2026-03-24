@@ -457,6 +457,7 @@ export const UniversalComposer = ({
               ref={mobileScrollRef}
               onFocusCapture={handleMobileFocusCapture}
               className="flex-1 overflow-y-auto overscroll-contain px-4 min-h-0"
+              style={{ isolation: 'isolate', scrollPaddingTop: '16px' }}
             >
               {composerContent || composerBody}
               {/* Bottom spacer */}

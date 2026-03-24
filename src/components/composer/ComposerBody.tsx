@@ -129,30 +129,47 @@ function PostModeFields({
         placeholder="What's on your mind?"
         value={formData.content}
         onChange={(e) => handleTextChange(e.target.value)}
-        className="min-h-[120px] resize-none"
+        className="min-h-[100px] resize-none"
       />
       
-      {/* Video/Link Preview */}
+      {/* Compact inline link preview - never dominates the drawer */}
       {loading && (
-        <div className="flex items-center gap-2 text-sm text-muted-foreground p-3 bg-muted/50 rounded-lg">
-          <Loader2 className="h-4 w-4 animate-spin" />
-          Loading preview...
+        <div className="flex items-center gap-2 text-sm text-muted-foreground px-3 py-2 bg-muted/50 rounded-lg">
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          <span className="text-xs">Detecting link...</span>
         </div>
       )}
       {hasPreview && previewData && !loading && (
-        <LinkPreviewCard
-          data={{
-            url: previewData.url,
-            title: previewData.title,
-            description: previewData.author_name,
-            thumbnail_url: previewData.thumbnail_url,
-            provider_name: previewData.provider_name,
-          }}
-          showRemoveButton={true}
-          onRemove={handleRemovePreview}
-          size="compact"
-          disableLightbox={true}
-        />
+        <div className="flex items-center gap-2 px-3 py-2 bg-muted/40 rounded-lg border border-border/50 max-h-[52px] overflow-hidden">
+          {previewData.thumbnail_url ? (
+            <img
+              src={previewData.thumbnail_url}
+              alt=""
+              className="h-8 w-8 rounded object-cover flex-shrink-0"
+            />
+          ) : (
+            <div className="h-8 w-8 rounded bg-muted flex items-center justify-center flex-shrink-0">
+              <span className="text-xs text-muted-foreground">🔗</span>
+            </div>
+          )}
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-medium text-foreground truncate">
+              {previewData.title || previewData.provider_name || new URL(previewData.url).hostname.replace('www.', '')}
+            </p>
+            <p className="text-[11px] text-muted-foreground truncate">
+              {previewData.provider_name || new URL(previewData.url).hostname.replace('www.', '')}
+            </p>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 flex-shrink-0"
+            onClick={handleRemovePreview}
+          >
+            <X className="h-3.5 w-3.5" />
+          </Button>
+        </div>
       )}
       
       <MediaUploadButton 
