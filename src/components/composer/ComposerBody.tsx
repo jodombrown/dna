@@ -12,7 +12,7 @@ import { useState, useRef, useEffect } from 'react';
 import { uploadMedia } from '@/lib/uploadMedia';
 import { useToast } from '@/hooks/use-toast';
 import { useAutoEmbedDetection } from '@/hooks/useAutoEmbedDetection';
-import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
+
 import { getStoryTypeOptions, getStoryTypeConfig, type StoryType } from '@/types/storyTypes';
 import { RichTextEditor } from '@/components/convey/RichTextEditor';
 import { cn } from '@/lib/utils';
