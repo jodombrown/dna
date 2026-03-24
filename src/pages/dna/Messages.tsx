@@ -114,7 +114,7 @@ const DnaMessages = () => {
 
     // Mobile: Conversation list — reduced top gap
     return (
-      <div className="min-h-screen bg-background" style={{ paddingTop: 'var(--total-header-height, 56px)' }}>
+      <div className="min-h-screen bg-background pb-bottom-nav" style={{ paddingTop: 'var(--total-header-height, 56px)' }}>
         <div className="container mx-auto px-3 py-2">
           <ConversationListPanel
             conversations={conversations || []}
