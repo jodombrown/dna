@@ -361,7 +361,10 @@ export const UniversalComposer = ({
       onDismiss={handleDismissSuccess}
       onDIAAction={handleDIAAction}
     />
-  ) : (
+  ) : null;
+
+  // Separated scrollable body from sticky footer for mobile
+  const composerBody = !successData ? (
     <div className="space-y-4">
       {/* Header: Mode Selector + Draft Indicator */}
       <div className="flex items-center justify-between gap-2">
@@ -422,18 +425,19 @@ export const UniversalComposer = ({
           onDismiss={handleDIASuggestionDismiss}
         />
       )}
-
-      {/* Footer */}
-      <ComposerFooter
-        mode={mode}
-        isSubmitting={isSubmitting}
-        isValid={formIsValid}
-        validationMessage={validationMessage}
-        onCancel={onClose}
-        onSubmit={handleSubmit}
-      />
     </div>
-  );
+  ) : null;
+
+  const composerFooter = !successData ? (
+    <ComposerFooter
+      mode={mode}
+      isSubmitting={isSubmitting}
+      isValid={formIsValid}
+      validationMessage={validationMessage}
+      onCancel={onClose}
+      onSubmit={handleSubmit}
+    />
+  ) : null;
 
   // Handle dismiss for both close and success screen dismiss
   const handleOpenChange = useCallback((open: boolean) => {
