@@ -430,10 +430,6 @@ export const UniversalComposer = ({
 
   // Mobile: vaul Drawer bottom sheet (swipe to dismiss, drag handle)
   if (isMobile) {
-    const mobileDrawerHeight = mobileViewportHeight
-      ? `${Math.min(Math.max(mobileViewportHeight - 8, 320), window.innerHeight)}px`
-      : '85dvh';
-
     return (
       <Drawer.Root
         open={isOpen}
@@ -445,9 +441,8 @@ export const UniversalComposer = ({
           <Drawer.Content
             className="fixed bottom-0 left-0 right-0 z-[9999] bg-background rounded-t-2xl flex flex-col overflow-hidden"
             style={{
-              height: mobileDrawerHeight,
-              maxHeight: mobileDrawerHeight,
-              paddingBottom: mobileKeyboardInset ? `${mobileKeyboardInset}px` : undefined,
+              height: '85dvh',
+              maxHeight: '85dvh',
             }}
           >
             {/* Drag handle — only this triggers swipe-to-dismiss */}
