@@ -81,8 +81,7 @@ export const UniversalComposer = ({
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [diaSuggestion, setDiaSuggestion] = useState<DIASuggestion | null>(null);
   const [isDraftSaved, setIsDraftSaved] = useState(false);
-  const [mobileViewportHeight, setMobileViewportHeight] = useState<number | null>(null);
-  const [mobileKeyboardInset, setMobileKeyboardInset] = useState(0);
+  // Removed: mobileViewportHeight and mobileKeyboardInset state — using stable CSS units instead
   const { isMobile } = useMobile();
   const diaDebounceRef = useRef<ReturnType<typeof setTimeout>>();
   const autoSaveRef = useRef<ReturnType<typeof setTimeout>>();
