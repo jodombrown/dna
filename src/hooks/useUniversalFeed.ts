@@ -121,6 +121,7 @@ export function useUniversalFeed(filters: FeedFilters) {
           original_image_url: item.original_image_url || null,
           original_created_at: item.original_created_at || null,
           slug: item.slug || null,
+          gallery_urls: item.gallery_urls || null,
         })) as UniversalFeedItem[];
       } catch (err: unknown) {
         logHighError(err, 'feed', 'get_universal_feed threw', { filters });
