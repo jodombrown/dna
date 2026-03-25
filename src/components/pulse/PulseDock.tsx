@@ -48,15 +48,15 @@ export function PulseDock() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Activate keyboard detection to auto-hide dock when typing
+  useKeyboardDetection();
+
   // Hide dock only in full-screen chat threads (Messages with active conversation)
   const isFullScreenChat = location.pathname.includes('/dna/messages');
 
   // Only render on mobile and for authenticated users
   if (!isMobile || !user) return null;
   if (isFullScreenChat) return null;
-
-  // Activate keyboard detection to auto-hide dock when typing
-  useKeyboardDetection();
 
   const handleItemClick = (item: PrimaryItemBase) => {
     if (item.isTrigger) {
