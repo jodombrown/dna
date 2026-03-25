@@ -255,7 +255,7 @@ export function CollaborateDiscovery() {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-background pb-bottom-nav md:pb-0">
+    <div className="w-full min-h-dvh bg-background pb-36 md:pb-0">
       <div className="container max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-2 lg:py-6 space-y-3 lg:space-y-6">
         {/* Hero Section */}
         <HubHero

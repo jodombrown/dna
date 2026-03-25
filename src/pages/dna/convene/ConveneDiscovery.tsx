@@ -281,7 +281,7 @@ export function ConveneDiscovery() {
     : filteredEvents.length;
 
   return (
-    <div className="w-full min-h-screen bg-background pb-bottom-nav md:pb-0">
+    <div className="w-full min-h-dvh bg-background pb-36 md:pb-0">
       {/* ═══════════════════════════════════════
           MOBILE FIXED HEADER
           ═══════════════════════════════════════ */}
