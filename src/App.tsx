@@ -598,6 +598,11 @@ function App() {
                   <FulfillmentTrackerPage />
                 </OnboardingGuard>
               } />
+              <Route path="/dna/contribute/impact" element={
+                <OnboardingGuard>
+                  <ImpactDashboardPage />
+                </OnboardingGuard>
+              } />
               
               {/* CONVEY M1-M4 - Story Feed, Details, Authoring & Analytics */}
               <Route path="/dna/convey" element={
