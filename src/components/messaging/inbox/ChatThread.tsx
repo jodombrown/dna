@@ -362,6 +362,17 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
         )}
       </div>
 
+      {/* Typing Indicator */}
+      {typingUsers.length > 0 && (
+        <TypingIndicatorDisplay
+          typingUsers={typingUsers.map(u => ({
+            profile_id: u.user_id,
+            display_name: u.display_name,
+            started_at: Date.now(),
+          }))}
+        />
+      )}
+
       {/* Input - fixed rail, never shrinks */}
       <ChatInput
         onSend={handleSend}
