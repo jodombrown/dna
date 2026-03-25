@@ -144,6 +144,32 @@ export const StoryCard: React.FC<StoryCardProps> = ({
           </div>
         )}
 
+        {/* Gallery Preview */}
+        {item.gallery_urls && item.gallery_urls.length > 0 && (
+          <div
+            className="grid grid-cols-3 gap-1 rounded-lg overflow-hidden cursor-pointer"
+            onClick={() => navigate(`/dna/story/${item.slug || item.post_id}`)}
+          >
+            {item.gallery_urls.slice(0, 3).map((url, idx) => (
+              <div key={idx} className="relative aspect-square overflow-hidden bg-muted/30">
+                <img
+                  src={url}
+                  alt={`Gallery ${idx + 1}`}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                />
+                {idx === 2 && item.gallery_urls && item.gallery_urls.length > 3 && (
+                  <div className="absolute inset-0 bg-foreground/50 flex items-center justify-center">
+                    <span className="text-background font-semibold text-lg">
+                      +{item.gallery_urls.length - 3}
+                    </span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Link Preview */}
         {item.link_url && (
           <LinkPreviewCard
