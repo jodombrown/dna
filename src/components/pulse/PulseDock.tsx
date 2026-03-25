@@ -78,6 +78,12 @@ export function PulseDock() {
     if (href === '/dna/connect') {
       return path.startsWith('/dna/profile') || path.startsWith('/dna/discover') || path.startsWith('/dna/network');
     }
+    if (href === '/dna/convene') {
+      return path.startsWith('/dna/convene');
+    }
+    if (href === '/dna/collaborate') {
+      return path.startsWith('/dna/collaborate') || path.startsWith('/dna/spaces');
+    }
     return false;
   };
 

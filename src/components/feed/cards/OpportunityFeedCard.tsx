@@ -111,14 +111,14 @@ export const OpportunityFeedCard: React.FC<OpportunityFeedCardProps> = ({
       </div>
 
       {/* Title */}
-      <h3 className="text-lg font-bold mb-2">
+      <h3 className="text-base sm:text-lg font-bold mb-2 line-clamp-2">
         {isNeed ? 'Seeking: ' : 'Offering: '}
         {item.title || item.content?.slice(0, 50)}
       </h3>
 
       {/* Description */}
       {item.content && (
-        <p className="text-muted-foreground mb-4 line-clamp-3">
+        <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
           {linkifyContent(item.content)}
         </p>
       )}
