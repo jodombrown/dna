@@ -37,34 +37,16 @@ export const DIAIntentBar = ({
   const autoDismissRef = useRef<ReturnType<typeof setTimeout>>();
   const prevSuggestionId = useRef<string | null>(null);
 
-  // Animate in when suggestion appears, auto-dismiss after 10s
+  // Animate in when suggestion appears - no auto-dismiss
   useEffect(() => {
     if (suggestion && suggestion.id !== prevSuggestionId.current) {
       prevSuggestionId.current = suggestion.id;
       setIsVisible(true);
-
-      // Clear any existing auto-dismiss timer
-      if (autoDismissRef.current) {
-        clearTimeout(autoDismissRef.current);
-      }
-
-      // Auto-dismiss after 10 seconds
-      autoDismissRef.current = setTimeout(() => {
-        setIsVisible(false);
-        // Small delay for fade-out animation before calling onDismiss
-        setTimeout(onDismiss, 200);
-      }, AUTO_DISMISS_MS);
     } else if (!suggestion) {
       setIsVisible(false);
       prevSuggestionId.current = null;
     }
-
-    return () => {
-      if (autoDismissRef.current) {
-        clearTimeout(autoDismissRef.current);
-      }
-    };
-  }, [suggestion, onDismiss]);
+  }, [suggestion]);
 
   if (!suggestion) return null;
 
