@@ -41,7 +41,7 @@ export const groupMessageService = {
       p_before_id: beforeId || null,
     });
     if (error) {
-      logger.error('groupMessageService', 'Failed to get messages', error);
+      logger.error('groupMessageService', 'Failed to get messages', error as unknown);
       throw error;
     }
     // RPC returns DESC order; reverse for chronological display
