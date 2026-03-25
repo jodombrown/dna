@@ -30,6 +30,7 @@ export interface MessageLinkPreview {
 interface ChatInputProps {
   onSend: (content: string, attachment?: MessageAttachment, linkPreview?: MessageLinkPreview) => void;
   onSendVoice?: (audioBlob: Blob, duration: number) => Promise<void>;
+  onTyping?: () => void;
   disabled?: boolean;
   placeholder?: string;
   replyingTo?: ReplyToData | null;
