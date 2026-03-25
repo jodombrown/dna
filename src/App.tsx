@@ -148,6 +148,7 @@ const NeedsIndex = lazy(() => import("./pages/dna/contribute/NeedsIndex"));
 const NeedDetail = lazy(() => import("./pages/dna/contribute/NeedDetail"));
 const OpportunityDetail = lazy(() => import("./pages/dna/contribute/OpportunityDetail"));
 const MyContributions = lazy(() => import("./pages/dna/contribute/MyContributions"));
+const FulfillmentTrackerPage = lazy(() => import("./components/contribute/FulfillmentTracker"));
 
 // Convey M1-M4 pages
 const Convey = lazy(() => import("./pages/dna/Convey"));
