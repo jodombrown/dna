@@ -162,6 +162,21 @@ export default function OpportunityDetail() {
             Back to Contribute
           </Button>
 
+          {/* Fulfillment Banner */}
+          {id && <FulfillmentBanner opportunityId={id} />}
+
+          {/* View Applications (poster only) */}
+          {isPoster && (
+            <Button
+              variant="outline"
+              onClick={() => setShowApplications(true)}
+              className="mb-4 border-[#B87333] text-[#B87333] hover:bg-[#B87333]/10"
+            >
+              <ClipboardList className="h-4 w-4 mr-2" />
+              View Applications {appCount ? `(${appCount})` : ''}
+            </Button>
+          )}
+
           {/* Main need card */}
           <Card className="mb-6">
             <CardHeader>
