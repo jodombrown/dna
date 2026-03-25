@@ -4,7 +4,6 @@ import { useToast } from '@/hooks/use-toast';
 import { sendNotificationEmail, NOTIFICATION_TYPES } from '@/services/notificationService';
 import { getPostUrl } from '@/lib/config';
 import { diaEventBus } from '@/services/dia/diaEventBus';
-import { supabaseClient } from '@/lib/supabaseHelpers';
 
 interface LikeUser {
   user_id: string;
@@ -27,12 +26,13 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
   const { data: likeData, isLoading } = useQuery({
     queryKey: ['post-likes', postId],
     queryFn: async () => {
-      const { data, error } = await supabaseClient
+      // Step 1: Fetch likes (no join - post_likes has no FK to profiles)
+      const { data: likesData, error: likesError } = await supabase
         .from('post_likes')
-        .select('user_id, profiles:user_id(full_name, username, avatar_url, headline)')
+        .select('user_id')
         .eq('post_id', postId);
 
-      if (error) {
+      if (likesError) {
         return {
           likeCount: 0,
           userHasLiked: false,
@@ -40,16 +40,29 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
         };
       }
 
-      const rows = (data || []) as any[];
+      const rows = likesData || [];
       const likeCount = rows.length;
       const userHasLiked = userId ? rows.some((like) => like.user_id === userId) : false;
-      const likedBy: LikeUser[] = rows.map((like) => ({
-        user_id: like.user_id,
-        full_name: like.profiles?.full_name || '',
-        username: like.profiles?.username || '',
-        avatar_url: like.profiles?.avatar_url || undefined,
-        headline: like.profiles?.headline || undefined,
-      }));
+
+      // Step 2: Fetch profile data for likedBy users (separate query)
+      let likedBy: LikeUser[] = [];
+      if (rows.length > 0) {
+        const userIds = rows.map((r) => r.user_id);
+        const { data: profilesData } = await supabase
+          .from('profiles')
+          .select('id, full_name, username, avatar_url, headline')
+          .in('id', userIds);
+
+        if (profilesData) {
+          likedBy = profilesData.map((p) => ({
+            user_id: p.id,
+            full_name: p.full_name || '',
+            username: p.username || '',
+            avatar_url: p.avatar_url || undefined,
+            headline: p.headline || undefined,
+          }));
+        }
+      }
 
       return {
         likeCount,
@@ -67,7 +80,7 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
 
       if (likeData?.userHasLiked) {
         // Unlike
-        const { error } = await supabaseClient
+        const { error } = await supabase
           .from('post_likes')
           .delete()
           .eq('post_id', postId)
@@ -77,22 +90,18 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
           throw error;
         }
       } else {
-        // Like - insert with conflict handling
-        const { error } = await supabaseClient
+        // Like
+        const { error } = await supabase
           .from('post_likes')
           .insert({
             post_id: postId,
             user_id: userId,
-          })
-          .select()
-          .single();
+          });
 
         if (error) {
-          const code = (error as any).code || (error as any).details;
-          const message = (error as any).message || '';
-
+          const message = (error as { message?: string }).message || '';
           // Treat unique constraint violations as success (idempotent like)
-          if (code === '23505' || message.includes('duplicate key value')) {
+          if (error.code === '23505' || message.includes('duplicate key value')) {
             // Idempotent - like already exists
           } else {
             throw error;
@@ -109,7 +118,7 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
             action_url: getPostUrl(postId),
             actor_name: notificationContext.actorName,
             actor_avatar_url: notificationContext.actorAvatarUrl,
-          }).catch(err => {
+          }).catch(() => {
             // Silently ignore notification email errors
           });
         }
@@ -137,8 +146,7 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
     },
-    onError: (error) => {
-      // DNA v1.0 LOCKDOWN: Gentle feedback only, no red banners
+    onError: () => {
       toast({
         description: 'Could not update like. Please try again.',
         variant: 'default',
