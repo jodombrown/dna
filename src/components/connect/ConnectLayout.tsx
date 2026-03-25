@@ -68,7 +68,7 @@ export const ConnectLayout = () => {
           <Outlet />
         </div>
       </div>
-      <MobileBottomNav />
+      {/* PulseDock handles mobile nav globally */}
     </>
   );
 };
