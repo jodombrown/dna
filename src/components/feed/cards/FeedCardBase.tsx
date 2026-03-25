@@ -47,7 +47,7 @@ export const FeedCardBase: React.FC<FeedCardBaseProps> = ({
         // Full 2px border (color applied via inline style)
         'border-2',
         // Padding per design system
-        'p-5',
+        'px-4 py-3 sm:p-5',
         // Shadow system
         'shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)]',
         // Hover effects

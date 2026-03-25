@@ -64,7 +64,17 @@ export function PulseDock() {
 
   const isActive = (href: string | null) => {
     if (!href) return false;
-    return location.pathname.startsWith(href);
+    const path = location.pathname;
+    // Direct prefix match
+    if (path.startsWith(href)) return true;
+    // Map related routes to their parent module
+    if (href === '/dna/feed') {
+      return path.startsWith('/dna/story') || path.startsWith('/dna/hashtag') || path.startsWith('/dna/debug/feed');
+    }
+    if (href === '/dna/connect') {
+      return path.startsWith('/dna/profile') || path.startsWith('/dna/discover') || path.startsWith('/dna/network');
+    }
+    return false;
   };
 
   const getPulseData = (item: PrimaryItemBase): PulseSection | MoreButtonState | null => {

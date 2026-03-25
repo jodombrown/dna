@@ -26,7 +26,7 @@ const MobilePostButton = () => {
       <Button
         onClick={() => { haptic('medium'); composer.open('post'); }}
         className={cn(
-          "fixed bottom-20 right-4 z-40 h-14 w-14 rounded-full shadow-lg",
+          "fixed bottom-24 right-4 z-40 h-14 w-14 rounded-full shadow-lg",
           "bg-[#4A8D77] hover:bg-[#3d7a66] text-white",
           "transition-all duration-200 hover:scale-105 active:scale-95"
         )}
