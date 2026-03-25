@@ -592,6 +592,11 @@ function App() {
                   <MyContributions />
                 </OnboardingGuard>
               } />
+              <Route path="/dna/contribute/fulfillment/:fulfillmentId" element={
+                <OnboardingGuard>
+                  <FulfillmentTrackerPage />
+                </OnboardingGuard>
+              } />
               
               {/* CONVEY M1-M4 - Story Feed, Details, Authoring & Analytics */}
               <Route path="/dna/convey" element={
