@@ -209,9 +209,9 @@ export const groupMessageService = {
    * Get conversation details
    */
   async getConversation(conversationId: string): Promise<GroupConversation | null> {
-    const { data, error } = await (supabase as ReturnType<typeof supabase.from>)
+    const { data, error } = await supabase
       .from('conversations_new')
-      .select('id, title, description, avatar_url, conversation_type, created_by, created_at, last_message_at')
+      .select('id, title, conversation_type, created_by, created_at, last_message_at, metadata')
       .eq('id', conversationId)
       .maybeSingle();
 
