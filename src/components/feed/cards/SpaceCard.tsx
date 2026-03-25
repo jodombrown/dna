@@ -76,9 +76,9 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({ item, currentUserId, onUpd
       {/* Space Content */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-xl font-bold mb-2">{item.space_title || item.title}</h3>
+          <h3 className="text-lg sm:text-xl font-bold mb-2 line-clamp-2">{item.space_title || item.title}</h3>
           {item.content && (
-            <p className="text-muted-foreground line-clamp-3">{linkifyContent(item.content)}</p>
+            <p className="text-sm text-muted-foreground line-clamp-3">{linkifyContent(item.content)}</p>
           )}
         </div>
 
