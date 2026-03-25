@@ -231,7 +231,7 @@ export const EventCard: React.FC<EventCardProps> = ({ item, currentUserId, onUpd
         {startDate && (
           <div className="flex items-center gap-3 mb-3">
             <div className="flex-shrink-0 w-12 h-12 border border-border rounded-lg overflow-hidden bg-background flex flex-col items-center justify-center">
-              <span className="text-[10px] font-semibold text-primary uppercase leading-none">
+              <span className="text-xs font-semibold text-primary uppercase leading-none">
                 {monthAbbrev}
               </span>
               <span className="text-lg font-bold leading-none mt-0.5">
