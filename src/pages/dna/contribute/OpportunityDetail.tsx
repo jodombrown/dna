@@ -10,10 +10,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ArrowLeft, DollarSign, Users, Clock, Key, Package, AlertCircle, MessageSquare } from 'lucide-react';
+import { ArrowLeft, DollarSign, Users, Clock, Key, Package, AlertCircle, MessageSquare, ClipboardList } from 'lucide-react';
 import OpportunityThreadCTA from '@/components/contribute/OpportunityThreadCTA';
 import { DIADetailInsight } from '@/components/dia/DIADetailInsight';
 import { ConversationPicker } from '@/components/messaging/ConversationPicker';
+import { ApplicationsDrawer } from '@/components/contribute/ApplicationsDrawer';
+import { FulfillmentBanner } from '@/components/contribute/FulfillmentBanner';
+import { contributeApplicationService } from '@/services/contributeApplicationService';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import type { ContributionNeedWithSpace } from '@/types/contributeTypes';
@@ -33,6 +36,7 @@ export default function OpportunityDetail() {
   const queryClient = useQueryClient();
   const [offerMessage, setOfferMessage] = useState('');
   const [showShareInChat, setShowShareInChat] = useState(false);
+  const [showApplications, setShowApplications] = useState(false);
 
   const { data: need, isLoading } = useQuery({
     queryKey: ['contribution-need', id],
@@ -50,6 +54,14 @@ export default function OpportunityDetail() {
       return data as ContributionNeedWithSpace;
     },
     enabled: !!id,
+  });
+
+  const isPoster = user && need?.created_by === user.id;
+
+  const { data: appCount } = useQuery({
+    queryKey: ['app-count', id],
+    queryFn: () => contributeApplicationService.getApplicationCount(id!),
+    enabled: !!id && !!isPoster,
   });
 
   const createOfferMutation = useMutation({
@@ -149,6 +161,21 @@ export default function OpportunityDetail() {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Contribute
           </Button>
+
+          {/* Fulfillment Banner */}
+          {id && <FulfillmentBanner opportunityId={id} />}
+
+          {/* View Applications (poster only) */}
+          {isPoster && (
+            <Button
+              variant="outline"
+              onClick={() => setShowApplications(true)}
+              className="mb-4 border-[#B87333] text-[#B87333] hover:bg-[#B87333]/10"
+            >
+              <ClipboardList className="h-4 w-4 mr-2" />
+              View Applications {appCount ? `(${appCount})` : ''}
+            </Button>
+          )}
 
           {/* Main need card */}
           <Card className="mb-6">
@@ -292,6 +319,16 @@ export default function OpportunityDetail() {
               entityPreview: need.description?.slice(0, 100),
             }}
           />
+
+          {/* Applications Drawer */}
+          {isPoster && id && (
+            <ApplicationsDrawer
+              opportunityId={id}
+              opportunityTitle={need.title}
+              isOpen={showApplications}
+              onClose={() => setShowApplications(false)}
+            />
+          )}
         </div>
       }
       rightColumn={<RightWidgets variant="default" />}
