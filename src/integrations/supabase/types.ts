@@ -1488,6 +1488,75 @@ export type Database = {
         }
         Relationships: []
       }
+      contribution_acknowledgments: {
+        Row: {
+          created_at: string
+          from_profile_id: string
+          fulfillment_id: string
+          id: string
+          is_public: boolean
+          message: string
+          rating: number | null
+          to_profile_id: string
+        }
+        Insert: {
+          created_at?: string
+          from_profile_id: string
+          fulfillment_id: string
+          id?: string
+          is_public?: boolean
+          message: string
+          rating?: number | null
+          to_profile_id: string
+        }
+        Update: {
+          created_at?: string
+          from_profile_id?: string
+          fulfillment_id?: string
+          id?: string
+          is_public?: boolean
+          message?: string
+          rating?: number | null
+          to_profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contribution_acknowledgments_from_profile_id_fkey"
+            columns: ["from_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contribution_acknowledgments_from_profile_id_fkey"
+            columns: ["from_profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contribution_acknowledgments_fulfillment_id_fkey"
+            columns: ["fulfillment_id"]
+            isOneToOne: false
+            referencedRelation: "contribution_fulfillments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contribution_acknowledgments_to_profile_id_fkey"
+            columns: ["to_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contribution_acknowledgments_to_profile_id_fkey"
+            columns: ["to_profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contribution_cards: {
         Row: {
           amount_needed: number | null
@@ -1548,6 +1617,87 @@ export type Database = {
           {
             foreignKeyName: "contribution_cards_created_by_fkey"
             columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contribution_fulfillments: {
+        Row: {
+          completed_at: string | null
+          completion_notes: string | null
+          contributor_id: string
+          created_at: string
+          id: string
+          opportunity_id: string
+          poster_id: string
+          revision_notes: string | null
+          status: string
+          submission_attachments: Json | null
+          submission_notes: string | null
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          completion_notes?: string | null
+          contributor_id: string
+          created_at?: string
+          id?: string
+          opportunity_id: string
+          poster_id: string
+          revision_notes?: string | null
+          status?: string
+          submission_attachments?: Json | null
+          submission_notes?: string | null
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          completion_notes?: string | null
+          contributor_id?: string
+          created_at?: string
+          id?: string
+          opportunity_id?: string
+          poster_id?: string
+          revision_notes?: string | null
+          status?: string
+          submission_attachments?: Json | null
+          submission_notes?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contribution_fulfillments_contributor_id_fkey"
+            columns: ["contributor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contribution_fulfillments_contributor_id_fkey"
+            columns: ["contributor_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contribution_fulfillments_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contribution_fulfillments_poster_id_fkey"
+            columns: ["poster_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contribution_fulfillments_poster_id_fkey"
+            columns: ["poster_id"]
             isOneToOne: false
             referencedRelation: "public_profiles"
             referencedColumns: ["id"]
@@ -5372,12 +5522,14 @@ export type Database = {
           created_at: string | null
           id: string
           opportunity_id: string
+          poster_notes: string | null
           proposed_contribution_type: Database["public"]["Enums"]["contribution_type"]
           proposed_hours_per_month: number | null
           review_notes: string | null
           reviewed_at: string | null
           reviewed_by: string | null
           status: Database["public"]["Enums"]["application_status"] | null
+          status_updated_at: string | null
           updated_at: string | null
           withdrawn_at: string | null
         }
@@ -5387,12 +5539,14 @@ export type Database = {
           created_at?: string | null
           id?: string
           opportunity_id: string
+          poster_notes?: string | null
           proposed_contribution_type: Database["public"]["Enums"]["contribution_type"]
           proposed_hours_per_month?: number | null
           review_notes?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
           status?: Database["public"]["Enums"]["application_status"] | null
+          status_updated_at?: string | null
           updated_at?: string | null
           withdrawn_at?: string | null
         }
@@ -5402,12 +5556,14 @@ export type Database = {
           created_at?: string | null
           id?: string
           opportunity_id?: string
+          poster_notes?: string | null
           proposed_contribution_type?: Database["public"]["Enums"]["contribution_type"]
           proposed_hours_per_month?: number | null
           review_notes?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
           status?: Database["public"]["Enums"]["application_status"] | null
+          status_updated_at?: string | null
           updated_at?: string | null
           withdrawn_at?: string | null
         }
@@ -9543,6 +9699,16 @@ export type Database = {
         Returns: number
       }
       cosine_similarity: { Args: { vec1: Json; vec2: Json }; Returns: number }
+      create_acknowledgment: {
+        Args: {
+          p_fulfillment_id: string
+          p_is_public?: boolean
+          p_message: string
+          p_rating?: number
+          p_to_profile_id: string
+        }
+        Returns: string
+      }
       create_admin_notification: {
         Args: {
           p_admin_id: string
@@ -9788,6 +9954,33 @@ export type Database = {
           query_count: number
           query_limit: number
           resets_at: string
+        }[]
+      }
+      get_applications_for_opportunity: {
+        Args: {
+          p_cursor?: string
+          p_limit?: number
+          p_opportunity_id: string
+          p_status_filter?: string
+        }
+        Returns: {
+          applicant_avatar: string
+          applicant_headline: string
+          applicant_id: string
+          applicant_name: string
+          applicant_username: string
+          cover_letter: string
+          created_at: string
+          id: string
+          opportunity_id: string
+          poster_notes: string
+          proposed_contribution_type: string
+          proposed_hours_per_month: number
+          review_notes: string
+          status: string
+          status_updated_at: string
+          updated_at: string
+          withdrawn_at: string
         }[]
       }
       get_blocked_users: {
@@ -10431,6 +10624,46 @@ export type Database = {
         }[]
       }
       get_post_share_count: { Args: { p_post_id: string }; Returns: number }
+      get_profile_acknowledgments: {
+        Args: { p_cursor?: string; p_limit?: number; p_profile_id: string }
+        Returns: {
+          created_at: string
+          from_avatar: string
+          from_name: string
+          from_profile_id: string
+          from_username: string
+          fulfillment_id: string
+          id: string
+          is_public: boolean
+          message: string
+          opportunity_title: string
+          rating: number
+          to_profile_id: string
+        }[]
+      }
+      get_profile_contribution_history: {
+        Args: {
+          p_cursor?: string
+          p_limit?: number
+          p_profile_id: string
+          p_type?: string
+        }
+        Returns: {
+          completed_at: string
+          contributor_avatar: string
+          contributor_id: string
+          contributor_name: string
+          created_at: string
+          has_acknowledgment: boolean
+          id: string
+          opportunity_id: string
+          opportunity_title: string
+          poster_avatar: string
+          poster_id: string
+          poster_name: string
+          status: string
+        }[]
+      }
       get_profile_viewers: {
         Args: { p_limit?: number; p_offset?: number; p_profile_id: string }
         Returns: {
@@ -11016,6 +11249,10 @@ export type Database = {
         Args: { p_nudge: string; p_snooze_until?: string; p_status: string }
         Returns: undefined
       }
+      respond_to_fulfillment: {
+        Args: { p_action: string; p_fulfillment_id: string; p_notes?: string }
+        Returns: undefined
+      }
       review_hashtag_request: {
         Args: {
           p_approved: boolean
@@ -11333,6 +11570,29 @@ export type Database = {
           usage_count: number
         }[]
       }
+      search_opportunities: {
+        Args: {
+          p_cursor?: string
+          p_filters?: Json
+          p_limit?: number
+          p_query?: string
+        }
+        Returns: {
+          created_at: string
+          description: string
+          id: string
+          image_url: string
+          location: string
+          poster_avatar: string
+          poster_id: string
+          poster_name: string
+          poster_username: string
+          status: string
+          tags: string[]
+          title: string
+          type: string
+        }[]
+      }
       send_group_message: {
         Args: {
           p_client_id?: string
@@ -11377,6 +11637,14 @@ export type Database = {
         Args: { p_message_id: string }
         Returns: undefined
       }
+      submit_fulfillment: {
+        Args: {
+          p_attachments?: Json
+          p_fulfillment_id: string
+          p_notes: string
+        }
+        Returns: undefined
+      }
       toggle_hashtag_follow: {
         Args: { p_hashtag_id: string; p_user_id: string }
         Returns: boolean
@@ -11415,6 +11683,14 @@ export type Database = {
         Returns: undefined
       }
       update_all_influence_scores: { Args: never; Returns: undefined }
+      update_application_status: {
+        Args: {
+          p_application_id: string
+          p_new_status: string
+          p_poster_notes?: string
+        }
+        Returns: string
+      }
       update_dna_points: {
         Args: { pillar: string; points?: number; target_user_id: string }
         Returns: undefined
@@ -11514,6 +11790,7 @@ export type Database = {
       app_role: "user" | "moderator" | "admin"
       application_status:
         | "pending"
+        | "shortlisted"
         | "reviewing"
         | "accepted"
         | "rejected"
@@ -11700,6 +11977,7 @@ export const Constants = {
       app_role: ["user", "moderator", "admin"],
       application_status: [
         "pending",
+        "shortlisted",
         "reviewing",
         "accepted",
         "rejected",
