@@ -12,6 +12,8 @@ import { format } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { useTypingIndicator } from '@/hooks/useTypingIndicator';
+import { TypingIndicatorDisplay } from '@/components/messaging/group/TypingIndicatorDisplay';
 
 interface ChatThreadProps {
   conversationId: string;
@@ -43,6 +45,9 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
   const { toast } = useToast();
   const navigate = useNavigate();
   const [replyingTo, setReplyingTo] = useState<ReplyToData | null>(null);
+
+  // Typing indicator
+  const { typingUsers, startTyping } = useTypingIndicator(conversationId);
 
   // Fetch messages — realtime subscription below handles live updates, no polling needed
   const { data: messages = [], isLoading, isError, error } = useQuery({
@@ -357,10 +362,22 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
         )}
       </div>
 
+      {/* Typing Indicator */}
+      {typingUsers.length > 0 && (
+        <TypingIndicatorDisplay
+          typingUsers={typingUsers.map(u => ({
+            profile_id: u.user_id,
+            display_name: u.display_name,
+            started_at: Date.now(),
+          }))}
+        />
+      )}
+
       {/* Input - fixed rail, never shrinks */}
       <ChatInput
         onSend={handleSend}
         onSendVoice={handleSendVoice}
+        onTyping={startTyping}
         disabled={sendMutation.isPending}
         replyingTo={replyingTo}
         onCancelReply={handleCancelReply}

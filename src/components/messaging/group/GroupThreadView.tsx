@@ -10,7 +10,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Loader2, ArrowLeft, Users, ChevronUp } from 'lucide-react';
+import { Loader2, ArrowLeft, Users, ChevronUp, Image as ImageIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
@@ -22,8 +22,9 @@ import { GroupChatInput } from './GroupChatInput';
 import { RealtimeStatusBanner } from './RealtimeStatusBanner';
 import { TypingIndicatorDisplay } from './TypingIndicatorDisplay';
 import { GroupInfoDrawer } from './GroupInfoDrawer';
+import { MediaGalleryDrawer } from './MediaGalleryDrawer';
 import { DateSeparator } from '../inbox/DateSeparator';
-import type { GroupMessage, GroupConversation } from '@/types/groupMessaging';
+import type { GroupMessage, MediaItem } from '@/types/groupMessaging';
 
 export function GroupThreadView() {
   const { groupId } = useParams<{ groupId: string }>();
@@ -33,6 +34,7 @@ export function GroupThreadView() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [showGroupInfo, setShowGroupInfo] = useState(false);
+  const [showMediaGallery, setShowMediaGallery] = useState(false);
 
   // Fetch conversation details
   const { data: conversation } = useQuery({
@@ -96,8 +98,8 @@ export function GroupThreadView() {
     return groups;
   }, [messages]);
 
-  const handleSend = useCallback(async (content: string) => {
-    await sendMessage(content);
+  const handleSend = useCallback(async (content: string, mediaUrls?: MediaItem[]) => {
+    await sendMessage(content, { mediaUrls });
   }, [sendMessage]);
 
   const handleBack = useCallback(() => {
@@ -143,6 +145,16 @@ export function GroupThreadView() {
             </p>
           </div>
         </button>
+
+        {/* Media gallery shortcut */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 flex-shrink-0"
+          onClick={() => setShowMediaGallery(true)}
+        >
+          <ImageIcon className="h-4 w-4 text-muted-foreground" />
+        </Button>
       </div>
 
       {/* Connection Status Banner */}
@@ -205,11 +217,15 @@ export function GroupThreadView() {
 
                     const isOwn = msg.sender_id === user?.id;
                     const prevMsg = msgIndex > 0 ? group.messages[msgIndex - 1] : null;
+                    const nextMsg = msgIndex < group.messages.length - 1 ? group.messages[msgIndex + 1] : null;
                     const showSenderInfo =
                       !isOwn &&
                       (!prevMsg ||
                         prevMsg.sender_id !== msg.sender_id ||
                         prevMsg.message_type === 'system');
+
+                    // Is this the last message in a run from the same sender?
+                    const isLastInRun = !nextMsg || nextMsg.sender_id !== msg.sender_id || nextMsg.message_type === 'system';
 
                     return (
                       <GroupMessageBubble
@@ -217,6 +233,8 @@ export function GroupThreadView() {
                         message={msg}
                         isOwn={isOwn}
                         showSenderInfo={showSenderInfo}
+                        isLastInRun={isLastInRun}
+                        participants={participants}
                         onDelete={handleDeleteMessage}
                       />
                     );
@@ -237,6 +255,7 @@ export function GroupThreadView() {
         onSend={handleSend}
         onTyping={broadcastTyping}
         disabled={connectionStatus === 'offline'}
+        conversationId={groupId}
       />
 
       {/* Group Info Drawer */}
@@ -246,6 +265,13 @@ export function GroupThreadView() {
         conversationId={groupId}
         conversation={conversation || undefined}
         participants={participants}
+      />
+
+      {/* Media Gallery Drawer */}
+      <MediaGalleryDrawer
+        open={showMediaGallery}
+        onOpenChange={setShowMediaGallery}
+        conversationId={groupId}
       />
     </div>
   );

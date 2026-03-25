@@ -2,8 +2,7 @@
  * GroupMessageBubble - Message bubble with sender attribution for group chats
  * 
  * Shows sender name + avatar above the first bubble in a consecutive run.
- * Own messages: right-aligned, primary background.
- * Others' messages: left-aligned, muted background.
+ * Renders media (images/documents) inline. Shows read receipts on last message.
  */
 
 import React from 'react';
@@ -12,7 +11,10 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { Clock, AlertCircle, Check, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import type { GroupMessage } from '@/types/groupMessaging';
+import { MessageMediaGrid } from './MessageMediaGrid';
+import { DocumentChip } from './DocumentChip';
+import { GroupReadReceipts } from './GroupReadReceipts';
+import type { GroupMessage, ConversationParticipant } from '@/types/groupMessaging';
 
 interface GroupMessageBubbleProps {
   message: GroupMessage;
@@ -20,6 +22,10 @@ interface GroupMessageBubbleProps {
   showSenderInfo: boolean;
   onDelete?: (messageId: string) => void;
   onRetry?: (message: GroupMessage) => void;
+  /** Whether this is the last message in a consecutive sender run (for read receipts) */
+  isLastInRun?: boolean;
+  /** Participants for read receipts */
+  participants?: ConversationParticipant[];
 }
 
 export function GroupMessageBubble({
@@ -28,6 +34,8 @@ export function GroupMessageBubble({
   showSenderInfo,
   onDelete,
   onRetry,
+  isLastInRun = false,
+  participants = [],
 }: GroupMessageBubbleProps) {
   const initials = message.sender_full_name
     .split(' ')
@@ -35,6 +43,10 @@ export function GroupMessageBubble({
     .join('')
     .slice(0, 2)
     .toUpperCase();
+
+  // Separate media types
+  const images = (message.media_urls || []).filter(m => m.type === 'image');
+  const documents = (message.media_urls || []).filter(m => m.type === 'document');
 
   if (message.is_deleted) {
     return (
@@ -59,7 +71,7 @@ export function GroupMessageBubble({
               </AvatarFallback>
             </Avatar>
           ) : (
-            <div className="w-7" /> /* Spacer for alignment */
+            <div className="w-7" />
           )}
         </div>
       )}
@@ -81,7 +93,18 @@ export function GroupMessageBubble({
               : 'bg-muted rounded-2xl rounded-bl-sm'
           )}
         >
+          {/* Text content */}
           {message.content && <p className="whitespace-pre-wrap">{message.content}</p>}
+
+          {/* Image grid */}
+          {images.length > 0 && (
+            <MessageMediaGrid media={images} isOwn={isOwn} />
+          )}
+
+          {/* Document chips */}
+          {documents.map((doc, i) => (
+            <DocumentChip key={i} doc={doc} isOwn={isOwn} />
+          ))}
 
           {/* Timestamp + status */}
           <div className={cn(
@@ -99,10 +122,7 @@ export function GroupMessageBubble({
             {isOwn && message._status === 'pending' && (
               <Clock className="h-3 w-3 text-primary-foreground/50" />
             )}
-            {isOwn && message._status === 'sent' && (
-              <Check className="h-3 w-3 text-primary-foreground/60" />
-            )}
-            {isOwn && !message._status && (
+            {isOwn && (message._status === 'sent' || !message._status) && (
               <Check className="h-3 w-3 text-primary-foreground/60" />
             )}
           </div>
@@ -119,6 +139,15 @@ export function GroupMessageBubble({
             </Button>
           )}
         </div>
+
+        {/* Group read receipts - only on last message in run for own messages */}
+        {isOwn && isLastInRun && !message._status && participants.length > 0 && (
+          <GroupReadReceipts
+            messageCreatedAt={message.created_at}
+            senderId={message.sender_id}
+            participants={participants}
+          />
+        )}
 
         {/* Failed state */}
         {message._status === 'failed' && (

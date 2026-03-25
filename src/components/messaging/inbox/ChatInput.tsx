@@ -30,6 +30,7 @@ export interface MessageLinkPreview {
 interface ChatInputProps {
   onSend: (content: string, attachment?: MessageAttachment, linkPreview?: MessageLinkPreview) => void;
   onSendVoice?: (audioBlob: Blob, duration: number) => Promise<void>;
+  onTyping?: () => void;
   disabled?: boolean;
   placeholder?: string;
   replyingTo?: ReplyToData | null;
@@ -39,6 +40,7 @@ interface ChatInputProps {
 export const ChatInput: React.FC<ChatInputProps> = ({
   onSend,
   onSendVoice,
+  onTyping,
   disabled = false,
   placeholder = "Type a message...",
   replyingTo,
@@ -102,6 +104,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
+    } else {
+      onTyping?.();
     }
     if (e.key === 'Escape' && replyingTo && onCancelReply) {
       e.preventDefault();
