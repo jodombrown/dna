@@ -217,11 +217,12 @@ export const groupMessageService = {
 
     if (error || !data) return null;
 
+    const metadata = data.metadata as Record<string, unknown> | null;
     return {
       conversation_id: data.id,
       title: data.title,
-      description: (data as Record<string, unknown>).description as string | null,
-      avatar_url: (data as Record<string, unknown>).avatar_url as string | null,
+      description: (metadata?.description as string) || null,
+      avatar_url: (metadata?.avatar_url as string) || null,
       conversation_type: data.conversation_type,
       created_by: data.created_by,
       created_at: data.created_at,
