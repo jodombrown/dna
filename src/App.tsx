@@ -51,6 +51,7 @@ const HashtagFeed = lazy(() => import("./pages/dna/HashtagFeed"));
 const DebugUniversalFeed = lazy(() => import("./pages/dna/DebugUniversalFeed"));
 const DnaEvents = lazy(() => import("./pages/dna/Events"));
 const DnaMessages = lazy(() => import("./pages/dna/Messages"));
+const GroupThreadPage = lazy(() => import("./pages/dna/GroupThread"));
 const DnaImpact = lazy(() => import("./pages/dna/Impact"));
 const DnaNotifications = lazy(() => import("./pages/dna/Notifications"));
 const DnaAnalytics = lazy(() => import("./pages/dna/Analytics"));
