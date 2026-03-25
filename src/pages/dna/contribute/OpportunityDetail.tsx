@@ -318,6 +318,8 @@ export default function OpportunityDetail() {
               entityTitle: need.title,
               entityPreview: need.description?.slice(0, 100),
             }}
+          />
+
           {/* Applications Drawer */}
           {isPoster && id && (
             <ApplicationsDrawer
