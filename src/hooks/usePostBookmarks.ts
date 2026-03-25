@@ -52,6 +52,7 @@ export function usePostBookmarks(postId: string, userId?: string) {
   // Toggle bookmark mutation
   const toggleBookmarkMutation = useMutation({
     mutationFn: async () => {
+      if (!userId) throw new Error('Not authenticated');
       const isCurrentlyBookmarked = userBookmarkData?.bookmarked || false;
 
       if (isCurrentlyBookmarked) {
