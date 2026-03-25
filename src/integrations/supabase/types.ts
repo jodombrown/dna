@@ -1758,9 +1758,11 @@ export type Database = {
       }
       conversations_new: {
         Row: {
+          avatar_url: string | null
           conversation_type: string
           created_at: string
           created_by: string | null
+          description: string | null
           id: string
           last_message_at: string
           metadata: Json | null
@@ -1770,9 +1772,11 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          avatar_url?: string | null
           conversation_type?: string
           created_at?: string
           created_by?: string | null
+          description?: string | null
           id?: string
           last_message_at?: string
           metadata?: Json | null
@@ -1782,9 +1786,11 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          avatar_url?: string | null
           conversation_type?: string
           created_at?: string
           created_by?: string | null
+          description?: string | null
           id?: string
           last_message_at?: string
           metadata?: Json | null
@@ -4940,29 +4946,50 @@ export type Database = {
       }
       messages_new: {
         Row: {
+          client_id: string | null
           content: string
           conversation_id: string
           created_at: string
+          deleted_at: string | null
+          edited_at: string | null
           id: string
           is_deleted: boolean
+          media_urls: Json | null
+          message_type: string
+          payload: Json | null
+          reply_to_id: string | null
           sender_id: string
           updated_at: string
         }
         Insert: {
+          client_id?: string | null
           content: string
           conversation_id: string
           created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
           id?: string
           is_deleted?: boolean
+          media_urls?: Json | null
+          message_type?: string
+          payload?: Json | null
+          reply_to_id?: string | null
           sender_id: string
           updated_at?: string
         }
         Update: {
+          client_id?: string | null
           content?: string
           conversation_id?: string
           created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
           id?: string
           is_deleted?: boolean
+          media_urls?: Json | null
+          message_type?: string
+          payload?: Json | null
+          reply_to_id?: string | null
           sender_id?: string
           updated_at?: string
         }
@@ -4972,6 +4999,13 @@ export type Database = {
             columns: ["conversation_id"]
             isOneToOne: false
             referencedRelation: "conversations_new"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_new_reply_to_id_fkey"
+            columns: ["reply_to_id"]
+            isOneToOne: false
+            referencedRelation: "messages_new"
             referencedColumns: ["id"]
           },
         ]
@@ -10013,6 +10047,21 @@ export type Database = {
               user_has_liked: boolean
             }[]
           }
+      get_group_conversations_for_user: {
+        Args: never
+        Returns: {
+          avatar_url: string
+          conversation_id: string
+          conversation_type: string
+          created_at: string
+          created_by: string
+          description: string
+          last_message_at: string
+          participant_count: number
+          title: string
+          unread_count: number
+        }[]
+      }
       get_group_details: {
         Args: { p_group_id: string; p_user_id: string }
         Returns: {
@@ -10052,6 +10101,29 @@ export type Database = {
           username: string
         }[]
       }
+      get_group_messages: {
+        Args: {
+          p_before_id?: string
+          p_conversation_id: string
+          p_limit?: number
+        }
+        Returns: {
+          client_id: string
+          content: string
+          created_at: string
+          edited_at: string
+          is_deleted: boolean
+          media_urls: Json
+          message_id: string
+          message_type: string
+          payload: Json
+          reply_to_id: string
+          sender_avatar_url: string
+          sender_full_name: string
+          sender_id: string
+          sender_username: string
+        }[]
+      }
       get_group_posts: {
         Args: {
           p_group_id: string
@@ -10073,6 +10145,10 @@ export type Database = {
           post_id: string
           user_has_liked: boolean
         }[]
+      }
+      get_group_unread_count: {
+        Args: { p_conversation_id: string }
+        Returns: number
       }
       get_groups: {
         Args: {
@@ -11257,6 +11333,18 @@ export type Database = {
           usage_count: number
         }[]
       }
+      send_group_message: {
+        Args: {
+          p_client_id?: string
+          p_content: string
+          p_conversation_id: string
+          p_media_urls?: Json
+          p_message_type?: string
+          p_payload?: Json
+          p_reply_to_id?: string
+        }
+        Returns: string
+      }
       send_message: {
         Args: {
           p_content: string
@@ -11284,6 +11372,10 @@ export type Database = {
           p_visibility?: string
         }
         Returns: string
+      }
+      soft_delete_group_message: {
+        Args: { p_message_id: string }
+        Returns: undefined
       }
       toggle_hashtag_follow: {
         Args: { p_hashtag_id: string; p_user_id: string }
@@ -11329,6 +11421,19 @@ export type Database = {
       }
       update_event_attendee_count: {
         Args: { p_event: string }
+        Returns: undefined
+      }
+      update_group_info: {
+        Args: {
+          p_avatar_url?: string
+          p_conversation_id: string
+          p_description?: string
+          p_title?: string
+        }
+        Returns: undefined
+      }
+      update_group_read_cursor: {
+        Args: { p_conversation_id: string }
         Returns: undefined
       }
       update_last_view_state: {
