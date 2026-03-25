@@ -8,7 +8,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
-export function usePostBookmarks(postId: string, userId: string) {
+export function usePostBookmarks(postId: string, userId?: string) {
   const queryClient = useQueryClient();
 
   // Query for bookmark count
@@ -33,6 +33,7 @@ export function usePostBookmarks(postId: string, userId: string) {
     queryKey: ['post-user-bookmarked', postId, userId],
     enabled: !!userId,
     queryFn: async () => {
+      if (!userId) return { bookmarked: false };
       const { data, error } = await supabase
         .from('post_bookmarks')
         .select('id')
@@ -51,6 +52,7 @@ export function usePostBookmarks(postId: string, userId: string) {
   // Toggle bookmark mutation
   const toggleBookmarkMutation = useMutation({
     mutationFn: async () => {
+      if (!userId) throw new Error('Not authenticated');
       const isCurrentlyBookmarked = userBookmarkData?.bookmarked || false;
 
       if (isCurrentlyBookmarked) {
