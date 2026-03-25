@@ -40,6 +40,7 @@ interface ChatInputProps {
 export const ChatInput: React.FC<ChatInputProps> = ({
   onSend,
   onSendVoice,
+  onTyping,
   disabled = false,
   placeholder = "Type a message...",
   replyingTo,
