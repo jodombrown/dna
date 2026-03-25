@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  ResponsiveModal,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+} from '@/components/ui/responsive-modal';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
@@ -45,17 +51,17 @@ const CommunityJoinDialog: React.FC<CommunityJoinDialogProps> = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>Join {community.name}</DialogTitle>
-          <DialogDescription>
-            Choose your reason for connecting. This helps the community welcome you appropriately.
-          </DialogDescription>
-        </DialogHeader>
+    <ResponsiveModal open={open} onOpenChange={onOpenChange} className="sm:max-w-lg">
+      <ResponsiveModalHeader>
+        <ResponsiveModalTitle>Join {community.name}</ResponsiveModalTitle>
+        <ResponsiveModalDescription>
+          Choose your reason for connecting. This helps the community welcome you appropriately.
+        </ResponsiveModalDescription>
+      </ResponsiveModalHeader>
 
+      <div className="px-4">
         {!isLoggedIn && (
-          <div className="rounded-md border border-dna-emerald/30 bg-dna-emerald/5 p-3 text-sm">
+          <div className="rounded-md border border-dna-emerald/30 bg-dna-emerald/5 p-3 text-sm mb-4">
             You need to sign in to continue.
             <div className="mt-2">
               <Button variant="default" size="sm" onClick={onOpenLogin}>
@@ -82,13 +88,13 @@ const CommunityJoinDialog: React.FC<CommunityJoinDialogProps> = ({
             <Label htmlFor="note" className="mb-2 block">Optional note</Label>
             <Textarea
               id="note"
-              placeholder="Add context (interests, goals, how you’d like to contribute)"
+              placeholder="Add context (interests, goals, how you'd like to contribute)"
               value={note}
               onChange={(e) => setNote(e.target.value)}
             />
           </section>
 
-          <DialogFooter>
+          <ResponsiveModalFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
@@ -99,10 +105,10 @@ const CommunityJoinDialog: React.FC<CommunityJoinDialogProps> = ({
             >
               Join
             </Button>
-          </DialogFooter>
+          </ResponsiveModalFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </ResponsiveModal>
   );
 };
 

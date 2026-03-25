@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  ResponsiveModal,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+} from '@/components/ui/responsive-modal';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -15,7 +21,15 @@ const CATEGORIES = [
   { value: 'other', label: 'Other' },
 ];
 
-export const ReportDialog: React.FC<any> = ({ open, onOpenChange, targetUserId, conversationId, context }) => {
+interface ReportDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  targetUserId?: string;
+  conversationId?: string;
+  context?: string;
+}
+
+export const ReportDialog: React.FC<ReportDialogProps> = ({ open, onOpenChange, targetUserId, conversationId, context }) => {
   const [category, setCategory] = useState('');
   const [reason, setReason] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -27,7 +41,7 @@ export const ReportDialog: React.FC<any> = ({ open, onOpenChange, targetUserId, 
     try {
       const { data: { user } } = await supabase.auth.getUser();
       const contentId = conversationId || targetUserId || '';
-      await supabase.from('content_flags').insert({ content_id: contentId, content_type: context, flagged_by: user?.id, reason: `[${category}] ${reason}` });
+      await supabase.from('content_flags').insert({ content_id: contentId, content_type: context || 'unknown', flagged_by: user?.id, reason: `[${category}] ${reason}` });
       toast.success('Report submitted');
       await trackEvent('connect_content_reported', { category, context, target_user_id: targetUserId });
       onOpenChange(false);
@@ -41,30 +55,28 @@ export const ReportDialog: React.FC<any> = ({ open, onOpenChange, targetUserId, 
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Report {context}</DialogTitle>
-          <DialogDescription>Help us keep DNA safe.</DialogDescription>
-        </DialogHeader>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>Category</Label>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
-              <SelectContent>{CATEGORIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label>Details</Label>
-            <Textarea placeholder="Details..." value={reason} onChange={(e) => setReason(e.target.value)} rows={4} />
-          </div>
+    <ResponsiveModal open={open} onOpenChange={onOpenChange}>
+      <ResponsiveModalHeader>
+        <ResponsiveModalTitle>Report {context}</ResponsiveModalTitle>
+        <ResponsiveModalDescription>Help us keep DNA safe.</ResponsiveModalDescription>
+      </ResponsiveModalHeader>
+      <div className="space-y-4 px-4">
+        <div className="space-y-2">
+          <Label>Category</Label>
+          <Select value={category} onValueChange={setCategory}>
+            <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+            <SelectContent>{CATEGORIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
+          </Select>
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={submitting}>Cancel</Button>
-          <Button onClick={handleSubmit} disabled={submitting}>{submitting ? 'Submitting...' : 'Submit'}</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        <div className="space-y-2">
+          <Label>Details</Label>
+          <Textarea placeholder="Details..." value={reason} onChange={(e) => setReason(e.target.value)} rows={4} />
+        </div>
+      </div>
+      <ResponsiveModalFooter>
+        <Button variant="outline" onClick={() => onOpenChange(false)} disabled={submitting}>Cancel</Button>
+        <Button onClick={handleSubmit} disabled={submitting}>{submitting ? 'Submitting...' : 'Submit'}</Button>
+      </ResponsiveModalFooter>
+    </ResponsiveModal>
   );
 };
