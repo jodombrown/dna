@@ -38,14 +38,6 @@ export default function OpportunityDetail() {
   const [showShareInChat, setShowShareInChat] = useState(false);
   const [showApplications, setShowApplications] = useState(false);
 
-  const isPoster = user && need?.created_by === user.id;
-
-  const { data: appCount } = useQuery({
-    queryKey: ['app-count', id],
-    queryFn: () => contributeApplicationService.getApplicationCount(id!),
-    enabled: !!id && !!isPoster,
-  });
-
   const { data: need, isLoading } = useQuery({
     queryKey: ['contribution-need', id],
     queryFn: async () => {
