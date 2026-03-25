@@ -14,11 +14,15 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowLeft, Loader2, BookOpen, Share2, X } from 'lucide-react';
+import { ArrowLeft, Loader2, BookOpen, Share2, X, MessageCircle, Bookmark } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from '@/hooks/use-toast';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { HashtagText } from '@/components/feed/HashtagText';
+import { usePostLikes } from '@/hooks/usePostLikes';
+import { usePostBookmarks } from '@/hooks/usePostBookmarks';
+import { ThreadedComments } from '@/components/posts/ThreadedComments';
+import { cn } from '@/lib/utils';
 
 export default function FeedStoryDetail() {
   const { slug } = useParams<{ slug: string }>();
