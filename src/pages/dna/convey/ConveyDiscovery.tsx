@@ -278,7 +278,7 @@ export function ConveyDiscovery() {
           </div>
         </div>
       </div>
-      <MobileBottomNav />
+      {/* PulseDock handles mobile nav globally */}
     </div>
   );
 }
