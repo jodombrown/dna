@@ -56,6 +56,14 @@ export default function OpportunityDetail() {
     enabled: !!id,
   });
 
+  const isPoster = user && need?.created_by === user.id;
+
+  const { data: appCount } = useQuery({
+    queryKey: ['app-count', id],
+    queryFn: () => contributeApplicationService.getApplicationCount(id!),
+    enabled: !!id && !!isPoster,
+  });
+
   const createOfferMutation = useMutation({
     mutationFn: async (message: string) => {
       const { data, error } = await supabaseClient
