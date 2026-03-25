@@ -190,10 +190,10 @@ export default function FeedStoryDetail() {
             titleElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }}
         >
-          <h1 className="text-2xl md:text-3xl font-semibold text-primary leading-tight transition-colors duration-200 group-hover:text-primary/80">
+          <h1 className="text-2xl md:text-3xl font-semibold text-primary leading-tight transition-opacity duration-200 group-hover:opacity-80">
             {story.title}
           </h1>
-          <ArrowRight className="mt-1 h-5 w-5 flex-shrink-0 text-primary/70 transition-transform duration-200 group-hover:translate-x-1" />
+          <ArrowRight className="mt-1 h-5 w-5 flex-shrink-0 text-primary/80 transition-transform duration-200 group-hover:translate-x-1" />
         </button>
 
         {story.subtitle && (
@@ -258,7 +258,7 @@ export default function FeedStoryDetail() {
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     loading="lazy"
                   />
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/70 via-foreground/25 to-transparent px-4 py-3 text-sm font-medium text-background">
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-transparent px-4 py-3 text-sm font-medium text-background">
                     Photo {idx + 1} of {galleryUrls.length}
                   </div>
                 </button>
@@ -303,7 +303,7 @@ export default function FeedStoryDetail() {
               className="flex items-center gap-2 text-sm"
               onClick={() => setShowComments(!showComments)}
             >
-              <MessageCircle className={cn('h-4 w-4', showComments && 'text-teal-600')} />
+              <MessageCircle className={cn('h-4 w-4', showComments && 'text-primary')} />
               <span>Comment</span>
             </Button>
             <Button
@@ -315,7 +315,7 @@ export default function FeedStoryDetail() {
               <Bookmark
                 className={cn(
                   'h-4 w-4',
-                  userHasBookmarked ? 'fill-current text-teal-600' : 'text-muted-foreground'
+                  userHasBookmarked ? 'fill-current text-primary' : 'text-muted-foreground'
                 )}
               />
             </Button>

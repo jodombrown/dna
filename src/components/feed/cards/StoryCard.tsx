@@ -83,7 +83,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
             >
               {item.author_display_name || item.author_username}
             </span>
-            <Badge className="gap-1 bg-teal-500/10 text-teal-600 border-teal-200">
+            <Badge className="gap-1 border-primary/20 bg-primary/10 text-primary">
               <FileText className="h-3 w-3" />
               Story
             </Badge>
@@ -121,10 +121,10 @@ export const StoryCard: React.FC<StoryCardProps> = ({
           className="group inline-flex w-full items-start justify-between gap-3 text-left"
           onClick={() => navigate(`/dna/story/${item.slug || item.post_id}`)}
         >
-          <h3 className="text-lg md:text-xl font-semibold font-serif leading-tight text-primary transition-colors duration-200 group-hover:text-primary/80 group-focus-visible:text-primary/80">
+          <h3 className="text-lg md:text-xl font-semibold font-serif leading-tight text-primary transition-opacity duration-200 group-hover:opacity-80 group-focus-visible:opacity-80">
             {item.title || 'Featured Story'}
           </h3>
-          <ArrowRight className="mt-1 h-4 w-4 flex-shrink-0 text-primary/70 transition-transform duration-200 group-hover:translate-x-1 group-focus-visible:translate-x-1" />
+          <ArrowRight className="mt-1 h-4 w-4 flex-shrink-0 text-primary/80 transition-transform duration-200 group-hover:translate-x-1 group-focus-visible:translate-x-1" />
         </button>
 
         {/* Subtitle */}
@@ -222,7 +222,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => setIsExpanded(true)}
-            className="text-teal-600"
+            className="text-primary"
           >
             Read Full Story
           </Button>
@@ -232,7 +232,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => setIsExpanded(false)}
-            className="text-teal-600"
+            className="text-primary"
           >
             Show Less
           </Button>
@@ -266,7 +266,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
           <BookOpen
             className={cn(
               'h-4 w-4',
-              userHasLiked ? 'fill-teal-500 text-teal-500' : 'text-muted-foreground'
+               userHasLiked ? 'fill-primary text-primary' : 'text-muted-foreground'
             )}
           />
           <span className="hidden xs:inline">{likeCount > 0 ? likeCount : 'Appreciate'}</span>
@@ -278,7 +278,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
           className="flex items-center gap-2 text-xs sm:text-sm"
           onClick={handleCommentClick}
         >
-          <MessageCircle className={cn('h-4 w-4', commentsVisible && 'text-teal-600')} />
+          <MessageCircle className={cn('h-4 w-4', commentsVisible && 'text-primary')} />
           <span className="hidden xs:inline">{item.comment_count > 0 ? item.comment_count : 'Comment'}</span>
           <span className="xs:hidden">{item.comment_count > 0 ? item.comment_count : ''}</span>
         </Button>
@@ -291,7 +291,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
           <Bookmark
             className={cn(
               'h-4 w-4',
-              userHasBookmarked ? 'fill-current text-teal-600' : 'text-muted-foreground'
+               userHasBookmarked ? 'fill-current text-primary' : 'text-muted-foreground'
             )}
           />
         </Button>
