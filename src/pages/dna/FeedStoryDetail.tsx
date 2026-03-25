@@ -14,27 +14,31 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowLeft, Loader2, BookOpen, Share2, X } from 'lucide-react';
+import { ArrowLeft, Loader2, BookOpen, Share2, X, MessageCircle, Bookmark } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from '@/hooks/use-toast';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { HashtagText } from '@/components/feed/HashtagText';
+import { usePostLikes } from '@/hooks/usePostLikes';
+import { usePostBookmarks } from '@/hooks/usePostBookmarks';
+import { ThreadedComments } from '@/components/posts/ThreadedComments';
+import { cn } from '@/lib/utils';
 
 export default function FeedStoryDetail() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
   const [showImagePreview, setShowImagePreview] = useState(false);
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+  const [showComments, setShowComments] = useState(false);
 
   const { data: story, isLoading, error } = useQuery({
     queryKey: ['feed-story', slug],
     queryFn: async () => {
       if (!slug) throw new Error('No story identifier provided');
 
-      // Check if slug looks like a UUID (for backward compatibility)
       const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
 
-      // First fetch the post
       let query = supabase
         .from('posts')
         .select(`
@@ -43,6 +47,7 @@ export default function FeedStoryDetail() {
           subtitle,
           content,
           image_url,
+          gallery_urls,
           post_type,
           created_at,
           space_id,
@@ -53,7 +58,6 @@ export default function FeedStoryDetail() {
         .eq('is_deleted', false)
         .in('post_type', ['story', 'update', 'impact', 'reshare', 'post']);
 
-      // Query by slug or UUID
       if (isUUID) {
         query = query.eq('id', slug);
       } else {
@@ -65,7 +69,6 @@ export default function FeedStoryDetail() {
       if (postError) throw postError;
       if (!postData) throw new Error('Content not found');
 
-      // Fetch author profile separately
       let author = null;
       if (postData.author_id) {
         const { data: profileData } = await supabase
@@ -83,16 +86,22 @@ export default function FeedStoryDetail() {
     },
     enabled: !!slug,
     retry: 1,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 5,
   });
+
+  // Hooks must be called unconditionally
+  const postId = story?.id || '';
+  const { likeCount, userHasLiked, toggleLike } = usePostLikes(postId, user?.id, {
+    postAuthorId: story?.author_id,
+    actorName: user?.user_metadata?.full_name,
+    actorAvatarUrl: user?.user_metadata?.avatar_url,
+  });
+  const { userHasBookmarked, toggleBookmark } = usePostBookmarks(postId, user?.id);
 
   const handleShare = () => {
     const url = window.location.href;
     if (navigator.share) {
-      navigator.share({
-        title: story?.title || 'DNA Story',
-        url,
-      });
+      navigator.share({ title: story?.title || 'DNA Story', url });
     } else {
       navigator.clipboard.writeText(url);
       toast({ description: 'Link copied to clipboard' });
@@ -105,6 +114,11 @@ export default function FeedStoryDetail() {
     } else {
       navigate('/dna/convey');
     }
+  };
+
+  const openImagePreview = (url: string) => {
+    setPreviewImageUrl(url);
+    setShowImagePreview(true);
   };
 
   if (isLoading) {
@@ -141,30 +155,19 @@ export default function FeedStoryDetail() {
   }
 
   const isStory = story.post_type === 'story';
-
-  // Author comes from the separate query
   const author = story.author as { username?: string; full_name?: string; avatar_url?: string } | null;
+  const galleryUrls = (story.gallery_urls as string[] | null) || [];
 
   return (
     <div className="min-h-screen bg-background pb-bottom-nav md:pb-0">
       {/* Header Navigation */}
       <div className="border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleBack}
-            className="gap-2 -ml-2"
-          >
+          <Button variant="ghost" size="sm" onClick={handleBack} className="gap-2 -ml-2">
             <ArrowLeft className="h-4 w-4" />
             <span className="hidden sm:inline">Back</span>
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleShare}
-            className="h-8 w-8"
-          >
+          <Button variant="ghost" size="icon" onClick={handleShare} className="h-8 w-8">
             <Share2 className="h-4 w-4" />
           </Button>
         </div>
@@ -190,7 +193,7 @@ export default function FeedStoryDetail() {
         )}
 
         <div className="flex items-center gap-2 pb-4 mb-6 border-b">
-          <Avatar 
+          <Avatar
             className="h-10 w-10 cursor-pointer"
             onClick={() => navigate(`/dna/${author?.username}`)}
           >
@@ -198,7 +201,7 @@ export default function FeedStoryDetail() {
             <AvatarFallback>{author?.full_name?.[0] || 'U'}</AvatarFallback>
           </Avatar>
           <div>
-            <p 
+            <p
               className="font-medium text-sm hover:underline cursor-pointer"
               onClick={() => navigate(`/dna/${author?.username}`)}
             >
@@ -210,10 +213,11 @@ export default function FeedStoryDetail() {
           </div>
         </div>
 
+        {/* Hero Image */}
         {story.image_url && (
           <div
             className="w-full rounded-xl overflow-hidden mb-6 cursor-pointer group bg-muted/30"
-            onClick={() => setShowImagePreview(true)}
+            onClick={() => openImagePreview(story.image_url!)}
           >
             <img
               src={story.image_url}
@@ -223,6 +227,37 @@ export default function FeedStoryDetail() {
           </div>
         )}
 
+        {/* Photo Gallery */}
+        {galleryUrls.length > 0 && (
+          <div className="mb-6">
+            <p className="text-sm font-medium text-muted-foreground mb-3">
+              {galleryUrls.length} photo{galleryUrls.length !== 1 ? 's' : ''}
+            </p>
+            <div className={cn(
+              'grid gap-2 rounded-xl overflow-hidden',
+              galleryUrls.length === 1 && 'grid-cols-1',
+              galleryUrls.length === 2 && 'grid-cols-2',
+              galleryUrls.length >= 3 && 'grid-cols-2 sm:grid-cols-3',
+            )}>
+              {galleryUrls.map((url, idx) => (
+                <div
+                  key={idx}
+                  className="relative aspect-square cursor-pointer group overflow-hidden rounded-lg bg-muted/30"
+                  onClick={() => openImagePreview(url)}
+                >
+                  <img
+                    src={url}
+                    alt={`Gallery photo ${idx + 1}`}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Body Content */}
         <div className="space-y-4">
           {story.content?.split('\n\n').map((paragraph, idx) => (
             <HashtagText
@@ -233,6 +268,55 @@ export default function FeedStoryDetail() {
             />
           ))}
         </div>
+
+        {/* Engagement Bar */}
+        {user && (
+          <div className="flex items-center gap-3 md:gap-4 pt-4 mt-8 border-t">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex items-center gap-2 text-sm"
+              onClick={() => toggleLike()}
+            >
+              <BookOpen
+                className={cn(
+                  'h-4 w-4',
+                  userHasLiked ? 'fill-teal-500 text-teal-500' : 'text-muted-foreground'
+                )}
+              />
+              <span>{likeCount > 0 ? likeCount : 'Appreciate'}</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex items-center gap-2 text-sm"
+              onClick={() => setShowComments(!showComments)}
+            >
+              <MessageCircle className={cn('h-4 w-4', showComments && 'text-teal-600')} />
+              <span>Comment</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="ml-auto"
+              onClick={() => toggleBookmark()}
+            >
+              <Bookmark
+                className={cn(
+                  'h-4 w-4',
+                  userHasBookmarked ? 'fill-current text-teal-600' : 'text-muted-foreground'
+                )}
+              />
+            </Button>
+          </div>
+        )}
+
+        {/* Threaded Comments */}
+        {showComments && user && (
+          <div className="mt-4">
+            <ThreadedComments postId={story.id} currentUserId={user.id} />
+          </div>
+        )}
       </article>
 
       {/* Footer CTA */}
@@ -248,21 +332,21 @@ export default function FeedStoryDetail() {
       </div>
 
       {/* Image Preview Dialog */}
-      {showImagePreview && story.image_url && (
-        <div 
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+      {showImagePreview && previewImageUrl && (
+        <div
+          className="fixed inset-0 z-50 bg-background/95 flex items-center justify-center p-4"
           onClick={() => setShowImagePreview(false)}
         >
           <button
-            className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors"
+            className="absolute top-4 right-4 text-foreground hover:text-muted-foreground transition-colors"
             onClick={() => setShowImagePreview(false)}
             aria-label="Close preview"
           >
             <X className="h-8 w-8" />
           </button>
           <img
-            src={story.image_url}
-            alt={story.title || 'Story image'}
+            src={previewImageUrl}
+            alt="Full size preview"
             className="max-w-full max-h-full object-contain"
             onClick={(e) => e.stopPropagation()}
           />
