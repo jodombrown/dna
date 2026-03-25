@@ -97,7 +97,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
       <PulseBar />
       <div
         className={cn(
-          "min-h-screen w-full max-w-full",
+          "min-h-dvh w-full max-w-full",
           getAuthGradient(),
           // Add bottom padding on mobile to account for PulseDock
           "pb-20 lg:pb-0",

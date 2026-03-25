@@ -858,3 +858,13 @@ html {
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
 }
+
+/* ── Keyboard Detection: Hide bottom nav when software keyboard is open ── */
+.keyboard-open nav[class*="fixed"][class*="bottom-0"] {
+  display: none !important;
+}
+
+/* Hide FAB when keyboard is open */
+.keyboard-open button[class*="fixed"][class*="bottom-24"] {
+  display: none !important;
+}
