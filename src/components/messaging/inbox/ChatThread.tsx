@@ -46,6 +46,9 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
   const navigate = useNavigate();
   const [replyingTo, setReplyingTo] = useState<ReplyToData | null>(null);
 
+  // Typing indicator
+  const { typingUsers, startTyping } = useTypingIndicator(conversationId);
+
   // Fetch messages — realtime subscription below handles live updates, no polling needed
   const { data: messages = [], isLoading, isError, error } = useQuery({
     queryKey: ['messages', conversationId],
