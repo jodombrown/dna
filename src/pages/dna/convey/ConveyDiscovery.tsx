@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Megaphone, Plus, BookOpen, PenLine, BarChart3, Users, Sparkles } from 'lucide-react';
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+// MobileBottomNav removed - PulseDock handles mobile nav globally
 
 // New Hub Components
 import {
