@@ -104,6 +104,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
+    } else {
+      onTyping?.();
     }
     if (e.key === 'Escape' && replyingTo && onCancelReply) {
       e.preventDefault();

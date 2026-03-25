@@ -377,6 +377,7 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
       <ChatInput
         onSend={handleSend}
         onSendVoice={handleSendVoice}
+        onTyping={startTyping}
         disabled={sendMutation.isPending}
         replyingTo={replyingTo}
         onCancelReply={handleCancelReply}
