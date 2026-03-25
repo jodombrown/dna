@@ -34,7 +34,6 @@ export const DIAIntentBar = ({
   onDismiss,
 }: DIAIntentBarProps) => {
   const [isVisible, setIsVisible] = useState(false);
-  const autoDismissRef = useRef<ReturnType<typeof setTimeout>>();
   const prevSuggestionId = useRef<string | null>(null);
 
   // Animate in when suggestion appears - no auto-dismiss
