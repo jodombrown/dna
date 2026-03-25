@@ -450,9 +450,7 @@ function App() {
               } />
               <Route path="/dna/messages/group/:groupId" element={
                 <OnboardingGuard>
-                  <Suspense fallback={<div className="flex items-center justify-center h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
-                    <GroupThreadPage />
-                  </Suspense>
+                  <GroupThreadPage />
                 </OnboardingGuard>
               } />
               
