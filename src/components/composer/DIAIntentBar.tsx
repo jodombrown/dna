@@ -53,17 +53,11 @@ export const DIAIntentBar = ({
   const accentColor = handler?.accentColor ?? '#4A8D77';
 
   const handleAccept = () => {
-    if (autoDismissRef.current) {
-      clearTimeout(autoDismissRef.current);
-    }
     setIsVisible(false);
     onAccept(suggestion.suggestedMode);
   };
 
   const handleDismiss = () => {
-    if (autoDismissRef.current) {
-      clearTimeout(autoDismissRef.current);
-    }
     setIsVisible(false);
     onDismiss();
   };
