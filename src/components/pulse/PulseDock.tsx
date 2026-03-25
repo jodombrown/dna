@@ -55,6 +55,9 @@ export function PulseDock() {
   if (!isMobile || !user) return null;
   if (isFullScreenChat) return null;
 
+  // Activate keyboard detection to auto-hide dock when typing
+  useKeyboardDetection();
+
   const handleItemClick = (item: PrimaryItemBase) => {
     if (item.isTrigger) {
       setTrayOpen(true);
