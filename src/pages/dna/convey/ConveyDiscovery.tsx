@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Megaphone, Plus, BookOpen, PenLine, BarChart3, Users, Sparkles } from 'lucide-react';
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+// MobileBottomNav removed - PulseDock handles mobile nav globally
 
 // New Hub Components
 import {
@@ -195,7 +195,7 @@ export function ConveyDiscovery() {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-background pb-bottom-nav md:pb-0">
+    <div className="w-full min-h-dvh bg-background pb-36 md:pb-0">
       <div className="container max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 space-y-6">
         {/* Hero Section */}
         <HubHero
@@ -278,7 +278,7 @@ export function ConveyDiscovery() {
           </div>
         </div>
       </div>
-      <MobileBottomNav />
+      {/* PulseDock handles mobile nav globally */}
     </div>
   );
 }

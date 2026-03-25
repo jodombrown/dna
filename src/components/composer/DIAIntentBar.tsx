@@ -26,7 +26,7 @@ interface DIAIntentBarProps {
   onDismiss: () => void;
 }
 
-const AUTO_DISMISS_MS = 10000;
+// No auto-dismiss - banner stays until user acts
 
 export const DIAIntentBar = ({
   suggestion,
@@ -34,37 +34,18 @@ export const DIAIntentBar = ({
   onDismiss,
 }: DIAIntentBarProps) => {
   const [isVisible, setIsVisible] = useState(false);
-  const autoDismissRef = useRef<ReturnType<typeof setTimeout>>();
   const prevSuggestionId = useRef<string | null>(null);
 
-  // Animate in when suggestion appears, auto-dismiss after 10s
+  // Animate in when suggestion appears - no auto-dismiss
   useEffect(() => {
     if (suggestion && suggestion.id !== prevSuggestionId.current) {
       prevSuggestionId.current = suggestion.id;
       setIsVisible(true);
-
-      // Clear any existing auto-dismiss timer
-      if (autoDismissRef.current) {
-        clearTimeout(autoDismissRef.current);
-      }
-
-      // Auto-dismiss after 10 seconds
-      autoDismissRef.current = setTimeout(() => {
-        setIsVisible(false);
-        // Small delay for fade-out animation before calling onDismiss
-        setTimeout(onDismiss, 200);
-      }, AUTO_DISMISS_MS);
     } else if (!suggestion) {
       setIsVisible(false);
       prevSuggestionId.current = null;
     }
-
-    return () => {
-      if (autoDismissRef.current) {
-        clearTimeout(autoDismissRef.current);
-      }
-    };
-  }, [suggestion, onDismiss]);
+  }, [suggestion]);
 
   if (!suggestion) return null;
 
@@ -72,17 +53,11 @@ export const DIAIntentBar = ({
   const accentColor = handler?.accentColor ?? '#4A8D77';
 
   const handleAccept = () => {
-    if (autoDismissRef.current) {
-      clearTimeout(autoDismissRef.current);
-    }
     setIsVisible(false);
     onAccept(suggestion.suggestedMode);
   };
 
   const handleDismiss = () => {
-    if (autoDismissRef.current) {
-      clearTimeout(autoDismissRef.current);
-    }
     setIsVisible(false);
     onDismiss();
   };
@@ -90,54 +65,42 @@ export const DIAIntentBar = ({
   return (
     <div
       className={cn(
-        'flex items-start gap-3 p-3 rounded-lg border-l-[3px] transition-all duration-200',
+        'mx-4 mb-3 p-3 rounded-xl border flex items-start gap-3 transition-all duration-200',
+        'border-amber-300 bg-amber-50',
         isVisible
-          ? 'opacity-100 translate-y-0'
+          ? 'opacity-100 translate-y-0 animate-in slide-in-from-top-2'
           : 'opacity-0 translate-y-2 pointer-events-none'
       )}
-      style={{
-        borderLeftColor: accentColor,
-        backgroundColor: `${accentColor}0A`,
-      }}
     >
       {/* DIA Icon */}
       <div
-        className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-        style={{ backgroundColor: `${accentColor}15` }}
+        className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 bg-[#B87333]/15"
       >
-        <Sparkles className="h-3.5 w-3.5" style={{ color: accentColor }} />
+        <Sparkles className="h-4 w-4 text-[#B87333]" />
       </div>
 
       {/* Message */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm text-foreground leading-snug">
+        <p className="text-sm font-medium text-amber-900 leading-snug">
           {suggestion.message}
         </p>
-        <div className="flex items-center gap-2 mt-2">
-          <Button
-            size="sm"
-            className="h-7 px-3 text-xs text-white"
-            style={{ backgroundColor: accentColor }}
-            onClick={handleAccept}
-          >
-            Switch
-            <ArrowRight className="h-3 w-3 ml-1" />
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            className="h-7 px-2 text-xs text-muted-foreground"
-            onClick={handleDismiss}
-          >
-            Dismiss
-          </Button>
-        </div>
+        <p className="text-xs text-amber-700 mt-0.5">
+          Detected: {handler?.label || suggestion.suggestedMode} mode
+        </p>
+        <Button
+          size="sm"
+          className="mt-2 w-full py-2 rounded-lg bg-[#B87333] hover:bg-[#A0622B] text-white text-sm font-semibold"
+          onClick={handleAccept}
+        >
+          Switch to {handler?.label || suggestion.suggestedMode} mode
+          <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
+        </Button>
       </div>
 
       {/* Close button */}
       <button
         onClick={handleDismiss}
-        className="flex-shrink-0 text-muted-foreground/60 hover:text-muted-foreground transition-colors"
+        className="flex-shrink-0 p-1 rounded-full text-amber-600 hover:text-amber-800 hover:bg-amber-100 transition-colors"
       >
         <X className="h-4 w-4" />
       </button>

@@ -18,6 +18,7 @@ import { usePulseNavigation, type MoreButtonState } from '@/hooks/usePulseNaviga
 import type { PulseSection } from '@/types/pulse';
 import { useMobile } from '@/hooks/useMobile';
 import { useAuth } from '@/contexts/AuthContext';
+import { useKeyboardDetection } from '@/hooks/useKeyboardDetection';
 
 import { PulseDockItem } from './PulseDockItem';
 import { PulseDockTray } from './PulseDockTray';
@@ -47,6 +48,9 @@ export function PulseDock() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Activate keyboard detection to auto-hide dock when typing
+  useKeyboardDetection();
+
   // Hide dock only in full-screen chat threads (Messages with active conversation)
   const isFullScreenChat = location.pathname.includes('/dna/messages');
 
@@ -64,7 +68,17 @@ export function PulseDock() {
 
   const isActive = (href: string | null) => {
     if (!href) return false;
-    return location.pathname.startsWith(href);
+    const path = location.pathname;
+    // Direct prefix match
+    if (path.startsWith(href)) return true;
+    // Map related routes to their parent module
+    if (href === '/dna/feed') {
+      return path.startsWith('/dna/story') || path.startsWith('/dna/hashtag') || path.startsWith('/dna/debug/feed');
+    }
+    if (href === '/dna/connect') {
+      return path.startsWith('/dna/profile') || path.startsWith('/dna/discover') || path.startsWith('/dna/network');
+    }
+    return false;
   };
 
   const getPulseData = (item: PrimaryItemBase): PulseSection | MoreButtonState | null => {
