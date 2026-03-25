@@ -18,6 +18,7 @@ import { usePulseNavigation, type MoreButtonState } from '@/hooks/usePulseNaviga
 import type { PulseSection } from '@/types/pulse';
 import { useMobile } from '@/hooks/useMobile';
 import { useAuth } from '@/contexts/AuthContext';
+import { useKeyboardDetection } from '@/hooks/useKeyboardDetection';
 
 import { PulseDockItem } from './PulseDockItem';
 import { PulseDockTray } from './PulseDockTray';
