@@ -48,37 +48,35 @@ const ContributeDialogs: React.FC<ContributeDialogsProps> = ({
   return (
     <>
       {/* Contribute Now Dialog */}
-      <Dialog open={isContributeDialogOpen} onOpenChange={setIsContributeDialogOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-dna-emerald" />
-              How We Envision Contributing
-            </DialogTitle>
-            <DialogDescription className="text-left space-y-4 pt-4">
-              <p>
-                In our fully built platform, clicking "Contribute Now" will take you through a seamless process where you can:
-              </p>
-              <ul className="list-disc pl-5 space-y-2 text-sm">
-                <li>Choose your contribution type (financial, skills, or time)</li>
-                <li>Set up secure payment processing for financial contributions</li>
-                <li>Connect with project coordinators for skills-based volunteering</li>
-                <li>Schedule time commitments that fit your availability</li>
-                <li>Track your impact in real-time through detailed analytics</li>
-                <li>Join project-specific communication channels</li>
-              </ul>
-              <p className="text-sm text-gray-600 bg-dna-emerald/10 p-3 rounded">
-                This is our vision for how contribution will work. We're building this experience to be as seamless and impactful as possible.
-              </p>
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex justify-end">
-            <Button onClick={() => setIsContributeDialogOpen(false)}>
-              Got it
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ResponsiveModal open={isContributeDialogOpen} onOpenChange={setIsContributeDialogOpen} className="max-w-md">
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle className="flex items-center gap-2">
+            <DollarSign className="w-5 h-5 text-dna-emerald" />
+            How We Envision Contributing
+          </ResponsiveModalTitle>
+          <ResponsiveModalDescription className="text-left space-y-4 pt-4">
+            <p>
+              In our fully built platform, clicking "Contribute Now" will take you through a seamless process where you can:
+            </p>
+            <ul className="list-disc pl-5 space-y-2 text-sm">
+              <li>Choose your contribution type (financial, skills, or time)</li>
+              <li>Set up secure payment processing for financial contributions</li>
+              <li>Connect with project coordinators for skills-based volunteering</li>
+              <li>Schedule time commitments that fit your availability</li>
+              <li>Track your impact in real-time through detailed analytics</li>
+              <li>Join project-specific communication channels</li>
+            </ul>
+            <p className="text-sm text-muted-foreground bg-dna-emerald/10 p-3 rounded">
+              This is our vision for how contribution will work. We're building this experience to be as seamless and impactful as possible.
+            </p>
+          </ResponsiveModalDescription>
+        </ResponsiveModalHeader>
+        <div className="flex justify-end px-4 pb-4">
+          <Button onClick={() => setIsContributeDialogOpen(false)}>
+            Got it
+          </Button>
+        </div>
+      </ResponsiveModal>
 
       {/* Learn More Sheet */}
       <Sheet open={isLearnMoreOpen} onOpenChange={setIsLearnMoreOpen}>
