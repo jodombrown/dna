@@ -83,7 +83,7 @@ export interface UniversalFeedItem {
   original_image_url: string | null;
   original_created_at: string | null;
   // Gallery
-  gallery_urls: string[] | null;
+  gallery_urls?: string[] | null;
 }
 
 /**
