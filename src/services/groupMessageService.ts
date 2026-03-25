@@ -45,8 +45,8 @@ export const groupMessageService = {
       throw error;
     }
     // RPC returns DESC order; reverse for chronological display
-    const messages = (data as GroupMessage[]) || [];
-    return messages.reverse();
+    const rawMessages = (data as unknown as GroupMessage[]) || [];
+    return rawMessages.reverse();
   },
 
   /**
