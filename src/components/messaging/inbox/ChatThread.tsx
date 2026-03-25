@@ -12,6 +12,8 @@ import { format } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { useTypingIndicator } from '@/hooks/useTypingIndicator';
+import { TypingIndicatorDisplay } from '@/components/messaging/group/TypingIndicatorDisplay';
 
 interface ChatThreadProps {
   conversationId: string;
