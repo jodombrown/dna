@@ -14,7 +14,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowLeft, Loader2, BookOpen, Share2, X, MessageCircle, Bookmark } from 'lucide-react';
+import { ArrowLeft, Loader2, BookOpen, Share2, X, MessageCircle, Bookmark, ArrowRight, Images } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from '@/hooks/use-toast';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
@@ -91,7 +91,7 @@ export default function FeedStoryDetail() {
 
   // Hooks must be called unconditionally
   const postId = story?.id || '';
-  const { likeCount, userHasLiked, toggleLike } = usePostLikes(postId, user?.id, {
+  const { likeCount, userHasLiked, toggleLike, isLoading: isLikePending } = usePostLikes(postId, user?.id, {
     postAuthorId: story?.author_id,
     actorName: user?.user_metadata?.full_name,
     actorAvatarUrl: user?.user_metadata?.avatar_url,
@@ -182,9 +182,19 @@ export default function FeedStoryDetail() {
           </Badge>
         )}
 
-        <h1 className="text-2xl md:text-3xl font-semibold text-foreground mb-2 leading-tight">
-          {story.title}
-        </h1>
+        <button
+          type="button"
+          className="group mb-2 inline-flex w-full items-start justify-between gap-3 text-left"
+          onClick={() => {
+            const titleElement = document.getElementById('story-body-start');
+            titleElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }}
+        >
+          <h1 className="text-2xl md:text-3xl font-semibold text-primary leading-tight transition-colors duration-200 group-hover:text-primary/80">
+            {story.title}
+          </h1>
+          <ArrowRight className="mt-1 h-5 w-5 flex-shrink-0 text-primary/70 transition-transform duration-200 group-hover:translate-x-1" />
+        </button>
 
         {story.subtitle && (
           <p className="text-base md:text-lg text-muted-foreground mb-4 leading-relaxed">
@@ -230,35 +240,35 @@ export default function FeedStoryDetail() {
         {/* Photo Gallery */}
         {galleryUrls.length > 0 && (
           <div className="mb-6">
-            <p className="text-sm font-medium text-muted-foreground mb-3">
-              {galleryUrls.length} photo{galleryUrls.length !== 1 ? 's' : ''}
-            </p>
-            <div className={cn(
-              'grid gap-2 rounded-xl overflow-hidden',
-              galleryUrls.length === 1 && 'grid-cols-1',
-              galleryUrls.length === 2 && 'grid-cols-2',
-              galleryUrls.length >= 3 && 'grid-cols-2 sm:grid-cols-3',
-            )}>
+            <div className="mb-3 flex items-center gap-2 text-sm font-medium text-muted-foreground">
+              <Images className="h-4 w-4" />
+              <span>{galleryUrls.length} photo{galleryUrls.length !== 1 ? 's' : ''}</span>
+            </div>
+            <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:px-6 story-scroll">
               {galleryUrls.map((url, idx) => (
-                <div
+                <button
                   key={idx}
-                  className="relative aspect-square cursor-pointer group overflow-hidden rounded-lg bg-muted/30"
+                  type="button"
+                  className="group relative h-56 w-[82%] min-w-[280px] snap-start overflow-hidden rounded-2xl bg-muted/30 text-left shadow-sm sm:h-64 sm:w-[420px]"
                   onClick={() => openImagePreview(url)}
                 >
                   <img
                     src={url}
                     alt={`Gallery photo ${idx + 1}`}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     loading="lazy"
                   />
-                </div>
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/70 via-foreground/25 to-transparent px-4 py-3 text-sm font-medium text-background">
+                    Photo {idx + 1} of {galleryUrls.length}
+                  </div>
+                </button>
               ))}
             </div>
           </div>
         )}
 
         {/* Body Content */}
-        <div className="space-y-4">
+        <div id="story-body-start" className="space-y-4">
           {story.content?.split('\n\n').map((paragraph, idx) => (
             <HashtagText
               key={idx}
@@ -275,16 +285,17 @@ export default function FeedStoryDetail() {
             <Button
               variant="ghost"
               size="sm"
-              className="flex items-center gap-2 text-sm"
+              className="flex min-h-11 items-center gap-2 text-sm"
               onClick={() => toggleLike()}
+              disabled={isLikePending}
             >
               <BookOpen
                 className={cn(
                   'h-4 w-4',
-                  userHasLiked ? 'fill-teal-500 text-teal-500' : 'text-muted-foreground'
+                  userHasLiked ? 'fill-primary text-primary' : 'text-muted-foreground'
                 )}
               />
-              <span>{likeCount > 0 ? likeCount : 'Appreciate'}</span>
+              <span>{likeCount > 0 ? `${likeCount} Appreciate${likeCount > 1 ? 's' : ''}` : 'Appreciate'}</span>
             </Button>
             <Button
               variant="ghost"

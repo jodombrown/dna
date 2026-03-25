@@ -4,6 +4,7 @@ import { useToast } from '@/hooks/use-toast';
 import { sendNotificationEmail, NOTIFICATION_TYPES } from '@/services/notificationService';
 import { getPostUrl } from '@/lib/config';
 import { diaEventBus } from '@/services/dia/diaEventBus';
+import { typedSupabase } from '@/lib/typedSupabase';
 
 interface LikeUser {
   user_id: string;
@@ -26,7 +27,7 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
   const { data: likeData, isLoading } = useQuery({
     queryKey: ['post-likes', postId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await typedSupabase
         .from('post_likes')
         .select('user_id, profiles:user_id(full_name, username, avatar_url, headline)')
         .eq('post_id', postId);
@@ -66,7 +67,7 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
 
       if (likeData?.userHasLiked) {
         // Unlike
-        const { error } = await supabase
+        const { error } = await typedSupabase
           .from('post_likes')
           .delete()
           .eq('post_id', postId)
@@ -77,7 +78,7 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
         }
       } else {
         // Like - insert with conflict handling
-        const { error } = await supabase
+        const { error } = await typedSupabase
           .from('post_likes')
           .insert({
             post_id: postId,

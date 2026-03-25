@@ -13,7 +13,7 @@ import { FeedCardBase } from './FeedCardBase';
 import { linkifyContent } from '@/utils/linkifyContent';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageCircle, Bookmark, FileText, BookOpen } from 'lucide-react';
+import { MessageCircle, Bookmark, FileText, BookOpen, ArrowRight, Images } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -116,12 +116,16 @@ export const StoryCard: React.FC<StoryCardProps> = ({
       {/* Story Content */}
       <div className="space-y-3">
         {/* Title - navigates to full story view */}
-        <h3 
-          className="text-lg md:text-xl font-semibold font-serif leading-tight cursor-pointer hover:text-teal-600 transition-colors"
+        <button
+          type="button"
+          className="group inline-flex w-full items-start justify-between gap-3 text-left"
           onClick={() => navigate(`/dna/story/${item.slug || item.post_id}`)}
         >
-          {item.title || 'Featured Story'}
-        </h3>
+          <h3 className="text-lg md:text-xl font-semibold font-serif leading-tight text-primary transition-colors duration-200 group-hover:text-primary/80 group-focus-visible:text-primary/80">
+            {item.title || 'Featured Story'}
+          </h3>
+          <ArrowRight className="mt-1 h-4 w-4 flex-shrink-0 text-primary/70 transition-transform duration-200 group-hover:translate-x-1 group-focus-visible:translate-x-1" />
+        </button>
 
         {/* Subtitle */}
         {item.subtitle && (
@@ -146,27 +150,34 @@ export const StoryCard: React.FC<StoryCardProps> = ({
 
         {/* Gallery Preview */}
         {item.gallery_urls && item.gallery_urls.length > 0 && (
-          <div
-            className="grid grid-cols-3 gap-1 rounded-lg overflow-hidden cursor-pointer"
-            onClick={() => navigate(`/dna/story/${item.slug || item.post_id}`)}
-          >
-            {item.gallery_urls.slice(0, 3).map((url, idx) => (
-              <div key={idx} className="relative aspect-square overflow-hidden bg-muted/30">
-                <img
-                  src={url}
-                  alt={`Gallery ${idx + 1}`}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                  loading="lazy"
-                />
-                {idx === 2 && item.gallery_urls && item.gallery_urls.length > 3 && (
-                  <div className="absolute inset-0 bg-foreground/50 flex items-center justify-center">
-                    <span className="text-background font-semibold text-lg">
-                      +{item.gallery_urls.length - 3}
-                    </span>
-                  </div>
-                )}
-              </div>
-            ))}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+              <Images className="h-3.5 w-3.5" />
+              <span>{item.gallery_urls.length} photos</span>
+            </div>
+            <div
+              className="-mx-1 flex snap-x snap-mandatory gap-2 overflow-x-auto px-1 pb-1 story-scroll"
+              onClick={() => navigate(`/dna/story/${item.slug || item.post_id}`)}
+            >
+              {item.gallery_urls.map((url, idx) => (
+                <div
+                  key={idx}
+                  className="relative h-36 w-[78%] max-w-[280px] min-w-[220px] snap-start overflow-hidden rounded-xl bg-muted/30 sm:h-40 sm:w-[240px]"
+                >
+                  <img
+                    src={url}
+                    alt={`Gallery ${idx + 1}`}
+                    className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+                    loading="lazy"
+                  />
+                  {idx === item.gallery_urls.length - 1 && item.gallery_urls.length > 1 && (
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/70 to-transparent px-3 py-2 text-right text-xs font-medium text-background">
+                      View full gallery
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
