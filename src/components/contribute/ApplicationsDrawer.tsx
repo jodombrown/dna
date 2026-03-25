@@ -9,7 +9,7 @@ import { ApplicationDetailDrawer } from './ApplicationDetailDrawer';
 import { contributeApplicationService } from '@/services/contributeApplicationService';
 import type { OpportunityApplication, ApplicationStatus } from '@/types/applicationTypes';
 import { toast } from 'sonner';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/useMobile';
 import { Users } from 'lucide-react';
 
 interface ApplicationsDrawerProps {
