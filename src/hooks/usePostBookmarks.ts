@@ -33,6 +33,7 @@ export function usePostBookmarks(postId: string, userId?: string) {
     queryKey: ['post-user-bookmarked', postId, userId],
     enabled: !!userId,
     queryFn: async () => {
+      if (!userId) return { bookmarked: false };
       const { data, error } = await supabase
         .from('post_bookmarks')
         .select('id')
