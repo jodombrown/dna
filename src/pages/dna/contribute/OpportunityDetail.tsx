@@ -318,7 +318,15 @@ export default function OpportunityDetail() {
               entityTitle: need.title,
               entityPreview: need.description?.slice(0, 100),
             }}
-          />
+          {/* Applications Drawer */}
+          {isPoster && id && (
+            <ApplicationsDrawer
+              opportunityId={id}
+              opportunityTitle={need.title}
+              isOpen={showApplications}
+              onClose={() => setShowApplications(false)}
+            />
+          )}
         </div>
       }
       rightColumn={<RightWidgets variant="default" />}
