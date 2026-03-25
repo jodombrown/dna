@@ -3,7 +3,7 @@ import { useProfile } from '@/hooks/useProfile';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProfileStrengthCard } from '@/components/profile/ProfileStrengthCard';
 import { Users, Network, MessageCircle } from 'lucide-react';
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+// MobileBottomNav removed - PulseDock handles mobile nav globally
 import { calculateProfileCompletionPts } from '@/lib/profileCompletion';
 import { ConnectTabExplainer, ConnectTab } from './ConnectTabExplainer';
 
