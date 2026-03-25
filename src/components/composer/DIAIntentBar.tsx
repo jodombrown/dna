@@ -26,7 +26,7 @@ interface DIAIntentBarProps {
   onDismiss: () => void;
 }
 
-const AUTO_DISMISS_MS = 10000;
+// No auto-dismiss - banner stays until user acts
 
 export const DIAIntentBar = ({
   suggestion,
