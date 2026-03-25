@@ -47,6 +47,7 @@ interface UniversalFeedRpcItem {
   original_image_url?: string | null;
   original_created_at?: string | null;
   slug?: string | null;
+  gallery_urls?: string[] | null;
 }
 
 export function useUniversalFeed(filters: FeedFilters) {
