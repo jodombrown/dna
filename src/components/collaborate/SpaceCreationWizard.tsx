@@ -150,8 +150,8 @@ export function SpaceCreationWizard({
             {step === 'details' && 'Space Details'}
             {step === 'privacy' && 'Privacy Settings'}
             {step === 'review' && 'Review & Create'}
-          </DialogTitle>
-        </DialogHeader>
+          </ResponsiveModalTitle>
+        </ResponsiveModalHeader>
 
         {/* Progress Indicator */}
         <div className="flex items-center justify-center gap-2 py-4">
