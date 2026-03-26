@@ -142,10 +142,10 @@ export function SpaceCreationWizard({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>
+    <ResponsiveModal open={open} onOpenChange={onOpenChange} className="max-w-xl">
+        <div className="overflow-y-auto max-h-[80dvh] p-4 sm:p-6">
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle>
             {step === 'template' && 'Choose a Template'}
             {step === 'details' && 'Space Details'}
             {step === 'privacy' && 'Privacy Settings'}
