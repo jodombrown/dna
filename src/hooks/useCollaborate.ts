@@ -149,6 +149,8 @@ export function useCreateSpace() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
+      const slug = generateSlug(input.name);
+
       // Use supabaseClient for new columns not yet in generated types
       const { data: space, error } = await supabaseClient
         .from('spaces')
@@ -161,6 +163,8 @@ export function useCreateSpace() {
           created_by: user.id,
           status: 'active',
           visibility: input.privacy_level === 'private' ? 'invite_only' : 'public',
+          slug,
+          space_type: 'community_project',
         })
         .select()
         .single();
