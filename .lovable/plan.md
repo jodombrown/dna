@@ -1,59 +1,28 @@
 
 
-# Fix: Space Creation Fails with RLS Policy Error
+# Fix: Space Creation Wizard Not Mobile-Friendly
 
 ## Problem
-When a user completes the 4-step Space Creation Wizard and clicks "Create Space", it fails silently with error `42501` (RLS policy violation on `spaces` table). The button shows "Creating..." indefinitely.
+The `SpaceCreationWizard` uses a raw Radix `Dialog`, which on mobile renders as a floating centered overlay with a semi-transparent backdrop. This creates a confusing, barely-usable experience - the content appears too small, misaligned, and users see a blurred/empty page behind it. DNA standards require all creation flows to use a bottom-sheet Drawer on mobile.
 
 ## Root Cause
-The `spaces` table has two **required columns** (`NOT NULL`, no default) that the insert code never provides:
+`SpaceCreationWizard.tsx` imports `Dialog`/`DialogContent`/`DialogHeader`/`DialogTitle` directly instead of using the existing `ResponsiveModal` component (`src/components/ui/responsive-modal.tsx`), which automatically switches between Dialog (desktop) and vaul Drawer (mobile).
 
-1. **`slug`** (text, NOT NULL, no default) -- completely missing from insert
-2. **`space_type`** (text, NOT NULL, no default) -- completely missing from insert
+## Fix
 
-PostgreSQL evaluates the RLS `WITH CHECK` before the full constraint check, but the missing required columns cause the insert to fail, surfacing as an RLS violation error.
+### Single file change: `src/components/collaborate/SpaceCreationWizard.tsx`
 
-## Secondary Issue
-After successful creation, the wizard navigates to `/spaces/${space.id}` but the correct route is `/dna/collaborate/spaces/${space.slug}`.
+1. **Replace imports**: Swap `Dialog`, `DialogContent`, `DialogHeader`, `DialogTitle` with `ResponsiveModal`, `ResponsiveModalHeader`, `ResponsiveModalTitle` from `@/components/ui/responsive-modal`
 
-## Fix Plan
+2. **Replace JSX wrapper**: Change the outer `<Dialog>` / `<DialogContent>` / `<DialogHeader>` / `<DialogTitle>` to their `ResponsiveModal` equivalents
 
-### 1. Fix `useCreateSpace` in `src/hooks/useCollaborate.ts`
-- Generate a `slug` from the space name (lowercase, hyphenated, with random suffix for uniqueness)
-- Add `space_type` field (default to `'community_project'` for non-template creation)
-- Both `useCreateSpace` and `useCreateSpaceFromTemplate` need these fixes
+3. **Adjust content container**: Add `overflow-y-auto` and proper mobile padding to ensure the multi-step wizard scrolls properly inside the Drawer on mobile. The Drawer gets `max-h-[90dvh]` automatically from `ResponsiveModal`.
 
-### 2. Fix `useCreateSpaceFromTemplate` in `src/hooks/useCollaborate.ts`
-- Generate `slug` same way
-- Derive `space_type` from the template's `category` field (e.g., `learning` -> `mentorship_circle`, `investment` -> `investment_syndicate`, etc.)
+4. **Add custom drag handle**: Per the vaul v0.9.3 constraint, the Drawer needs a custom `div` with `vaul-drawer-handle=""` attribute (already handled by ResponsiveModal's DrawerContent).
 
-### 3. Update `SpaceCreationWizard` navigation
-- Change `navigate(/spaces/${space.id})` to `navigate(/dna/collaborate/spaces/${space.slug})`
-- The slug is available from the returned space object
+### No other files change. No data/logic changes. Pure presentation swap.
 
-### 4. Add user-facing error feedback
-- The wizard currently only does `console.error` on failure -- add a `toast.error` so the user knows something went wrong instead of the button just spinning
-
-### Files Modified
-| File | Change |
-|------|--------|
-| `src/hooks/useCollaborate.ts` | Add `slug` generation + `space_type` to both insert mutations |
-| `src/components/collaborate/SpaceCreationWizard.tsx` | Fix navigation path, add error toast |
-
-### Slug Generation Logic
-```text
-"Africa Tech Innovation Hub"
-  → "africa-tech-innovation-hub-a3f2"
-  (lowercase + hyphenate + 4-char random suffix)
-```
-
-### Template Category to Space Type Mapping
-```text
-learning        → mentorship_circle
-investment      → investment_syndicate
-community       → community_project
-advocacy        → advocacy_campaign
-professional    → startup
-(default)       → community_project
-```
+### What users will see after fix
+- **Mobile**: Full-width bottom sheet sliding up from bottom, easy to swipe dismiss, all 4 wizard steps properly scrollable within the sheet
+- **Desktop**: Same centered dialog as before (no change)
 
