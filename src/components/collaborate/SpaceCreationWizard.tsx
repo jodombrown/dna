@@ -2,11 +2,10 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle 
-} from '@/components/ui/dialog';
+  ResponsiveModal, 
+  ResponsiveModalHeader, 
+  ResponsiveModalTitle 
+} from '@/components/ui/responsive-modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -143,16 +142,16 @@ export function SpaceCreationWizard({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>
+    <ResponsiveModal open={open} onOpenChange={onOpenChange} className="max-w-xl">
+        <div className="overflow-y-auto max-h-[80dvh] p-4 sm:p-6">
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle>
             {step === 'template' && 'Choose a Template'}
             {step === 'details' && 'Space Details'}
             {step === 'privacy' && 'Privacy Settings'}
             {step === 'review' && 'Review & Create'}
-          </DialogTitle>
-        </DialogHeader>
+          </ResponsiveModalTitle>
+        </ResponsiveModalHeader>
 
         {/* Progress Indicator */}
         <div className="flex items-center justify-center gap-2 py-4">
@@ -449,7 +448,7 @@ export function SpaceCreationWizard({
             </Button>
           )}
         </div>
-      </DialogContent>
-    </Dialog>
+        </div>
+    </ResponsiveModal>
   );
 }
