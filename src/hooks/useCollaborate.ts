@@ -28,6 +28,25 @@ export function useSpaceTemplates() {
   });
 }
 
+function generateSlug(name: string): string {
+  const suffix = Math.random().toString(36).substring(2, 6);
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .substring(0, 80) + `-${suffix}`;
+}
+
+const TEMPLATE_CATEGORY_TO_SPACE_TYPE: Record<string, string> = {
+  learning: 'mentorship_circle',
+  investment: 'investment_syndicate',
+  community: 'community_project',
+  advocacy: 'advocacy_campaign',
+  professional: 'startup',
+};
+
 export function useCreateSpaceFromTemplate() {
   const queryClient = useQueryClient();
 
@@ -45,6 +64,9 @@ export function useCreateSpaceFromTemplate() {
 
       if (templateError) throw templateError;
 
+      const slug = generateSlug(input.name);
+      const space_type = TEMPLATE_CATEGORY_TO_SPACE_TYPE[template.category] || 'community_project';
+
       // Create space with template - use supabaseClient for new columns not yet in types
       const { data: space, error: spaceError } = await supabaseClient
         .from('spaces')
@@ -58,6 +80,8 @@ export function useCreateSpaceFromTemplate() {
           created_by: user.id,
           status: 'active',
           visibility: input.privacy_level === 'private' ? 'invite_only' : 'public',
+          slug,
+          space_type,
         })
         .select()
         .single();
@@ -125,6 +149,8 @@ export function useCreateSpace() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
+      const slug = generateSlug(input.name);
+
       // Use supabaseClient for new columns not yet in generated types
       const { data: space, error } = await supabaseClient
         .from('spaces')
@@ -137,6 +163,8 @@ export function useCreateSpace() {
           created_by: user.id,
           status: 'active',
           visibility: input.privacy_level === 'private' ? 'invite_only' : 'public',
+          slug,
+          space_type: 'community_project',
         })
         .select()
         .single();

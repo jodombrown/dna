@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { 
   Dialog, 
   DialogContent, 
@@ -114,9 +115,13 @@ export function SpaceCreationWizard({
         });
       }
       onOpenChange(false);
-      navigate(`/spaces/${space.id}`);
+      if (space?.slug) {
+        navigate(`/dna/collaborate/spaces/${space.slug}`);
+      } else {
+        navigate(`/dna/collaborate`);
+      }
     } catch (error) {
-      console.error('Failed to create space:', error);
+      toast.error('Failed to create space. Please try again.');
     }
   };
 
