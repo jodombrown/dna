@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMobile } from '@/hooks/useMobile';
 import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -37,6 +37,12 @@ const FullCanvasLayout: React.FC<FullCanvasLayoutProps> = ({
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
+
+  useEffect(() => {
+    if (isMobile || isTablet) {
+      setIsCollapsed(true);
+    }
+  }, [isMobile, isTablet]);
 
   // Mobile: Overlay sidebar or hide it
   if (isMobile || isTablet) {
@@ -77,7 +83,7 @@ const FullCanvasLayout: React.FC<FullCanvasLayoutProps> = ({
             variant="outline"
             size="icon"
             onClick={toggleSidebar}
-            className="fixed bottom-4 left-4 z-30 shadow-lg"
+            className="fixed bottom-20 left-4 z-30 shadow-lg"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
