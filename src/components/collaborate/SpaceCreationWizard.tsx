@@ -448,7 +448,7 @@ export function SpaceCreationWizard({
             </Button>
           )}
         </div>
-      </DialogContent>
-    </Dialog>
+        </div>
+    </ResponsiveModal>
   );
 }
