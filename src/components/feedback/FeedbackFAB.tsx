@@ -4,6 +4,7 @@ import { ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useFeedbackMembership } from '@/hooks/useFeedbackMembership';
+import { useMobile } from '@/hooks/useMobile';
 
 interface FeedbackFABProps {
   className?: string;
@@ -14,12 +15,13 @@ export function FeedbackFAB({ className, onOpen }: FeedbackFABProps) {
   const { user } = useAuth();
   const location = useLocation();
   const { isOptedIn, isLoading } = useFeedbackMembership();
+  const { isMobile } = useMobile();
 
   // Only show on authenticated /dna/* routes
   const isDnaRoute = location.pathname.startsWith('/dna');
 
   // Don't show if not authenticated, not on DNA routes, or opted out
-  if (!user || !isDnaRoute || isLoading || !isOptedIn) {
+  if (!user || !isDnaRoute || isLoading || !isOptedIn || isMobile) {
     return null;
   }
 
