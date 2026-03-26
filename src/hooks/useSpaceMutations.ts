@@ -174,9 +174,16 @@ export const useCreateSpace = () => {
   
   return useMutation({
     mutationFn: async (spaceData: CreateSpaceData) => {
+      const slug = spaceData.name
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-') + '-' + Date.now().toString(36);
+
       const { data, error } = await supabaseClient
         .from('spaces')
-        .insert(spaceData)
+        .insert({ ...spaceData, slug })
         .select()
         .single();
 
