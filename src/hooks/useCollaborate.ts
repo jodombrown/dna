@@ -40,11 +40,11 @@ function generateSlug(name: string): string {
 }
 
 const TEMPLATE_CATEGORY_TO_SPACE_TYPE: Record<string, string> = {
-  learning: 'mentorship_circle',
-  investment: 'investment_syndicate',
-  community: 'community_project',
-  advocacy: 'advocacy_campaign',
-  professional: 'startup',
+  learning: 'program',
+  investment: 'initiative',
+  community: 'project',
+  advocacy: 'working_group',
+  professional: 'project',
 };
 
 export function useCreateSpaceFromTemplate() {
@@ -65,7 +65,7 @@ export function useCreateSpaceFromTemplate() {
       if (templateError) throw templateError;
 
       const slug = generateSlug(input.name);
-      const space_type = TEMPLATE_CATEGORY_TO_SPACE_TYPE[template.category] || 'community_project';
+      const space_type = TEMPLATE_CATEGORY_TO_SPACE_TYPE[template.category] || 'project';
 
       // Create space with template - use supabaseClient for new columns not yet in types
       const { data: space, error: spaceError } = await supabaseClient
@@ -164,7 +164,7 @@ export function useCreateSpace() {
           status: 'active',
           visibility: input.privacy_level === 'private' ? 'invite_only' : 'public',
           slug,
-          space_type: 'community_project',
+          space_type: 'project',
         })
         .select()
         .single();
