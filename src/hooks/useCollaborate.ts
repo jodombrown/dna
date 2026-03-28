@@ -47,6 +47,68 @@ const TEMPLATE_CATEGORY_TO_SPACE_TYPE: Record<string, string> = {
   professional: 'project',
 };
 
+async function ensureCreatorMembership(spaceId: string, userId: string) {
+  const { error } = await supabase
+    .from('space_members')
+    .upsert(
+      {
+        space_id: spaceId,
+        user_id: userId,
+        role: 'lead',
+        status: 'active',
+      },
+      {
+        onConflict: 'space_id,user_id',
+      }
+    );
+
+  if (error) throw error;
+}
+
+async function seedTemplateContent(
+  spaceId: string,
+  userId: string,
+  template: Pick<SpaceTemplate, 'default_roles' | 'default_initiatives'>
+) {
+  const defaultRoles = template.default_roles;
+  if (defaultRoles && defaultRoles.length > 0) {
+    const roles = defaultRoles.map((role) => ({
+      space_id: spaceId,
+      title: role.title,
+      description: role.description || null,
+      is_lead: role.is_lead || false,
+      permissions: role.permissions || [],
+    }));
+
+    const { error: rolesError } = await supabase
+      .from('space_roles')
+      .insert(roles);
+
+    if (rolesError) {
+      console.error('Failed to create roles:', rolesError);
+    }
+  }
+
+  const defaultInitiatives = template.default_initiatives;
+  if (defaultInitiatives && defaultInitiatives.length > 0) {
+    const initiatives = defaultInitiatives.map((init) => ({
+      space_id: spaceId,
+      title: init.title,
+      description: init.description || null,
+      status: 'active',
+      creator_id: userId,
+    }));
+
+    const { error: initError } = await supabase
+      .from('initiatives')
+      .insert(initiatives);
+
+    if (initError) {
+      console.error('Failed to create initiatives:', initError);
+    }
+  }
+}
+
 export function useCreateSpaceFromTemplate() {
   const queryClient = useQueryClient();
 
@@ -88,45 +150,12 @@ export function useCreateSpaceFromTemplate() {
 
       if (spaceError) throw spaceError;
 
-      // Create default roles from template
-      const defaultRoles = (template.default_roles as unknown) as SpaceTemplateRole[] | null;
-      if (defaultRoles && defaultRoles.length > 0) {
-        const roles = defaultRoles.map((role) => ({
-          space_id: space.id,
-          title: role.title,
-          description: role.description || null,
-          is_lead: role.is_lead || false,
-          permissions: role.permissions || [],
-        }));
+      await ensureCreatorMembership(space.id, user.id);
 
-        const { error: rolesError } = await supabase
-          .from('space_roles')
-          .insert(roles);
-
-        if (rolesError) {
-          console.error('Failed to create roles:', rolesError);
-        }
-      }
-
-      // Create default initiatives from template
-      const defaultInitiatives = (template.default_initiatives as unknown) as SpaceTemplateInitiative[] | null;
-      if (defaultInitiatives && defaultInitiatives.length > 0) {
-        const initiatives = defaultInitiatives.map((init) => ({
-          space_id: space.id,
-          title: init.title,
-          description: init.description || null,
-          status: 'active',
-          creator_id: user.id,
-        }));
-
-        const { error: initError } = await supabase
-          .from('initiatives')
-          .insert(initiatives);
-
-        if (initError) {
-          console.error('Failed to create initiatives:', initError);
-        }
-      }
+      void seedTemplateContent(space.id, user.id, {
+        default_roles: (template.default_roles as unknown) as SpaceTemplateRole[] | null,
+        default_initiatives: (template.default_initiatives as unknown) as SpaceTemplateInitiative[] | null,
+      });
 
       return space;
     },
@@ -170,6 +199,9 @@ export function useCreateSpace() {
         .single();
 
       if (error) throw error;
+
+      await ensureCreatorMembership(space.id, user.id);
+
       return space;
     },
     onSuccess: () => {
