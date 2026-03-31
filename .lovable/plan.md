@@ -1,28 +1,50 @@
-
-
-# Fix: Space Creation Wizard Not Mobile-Friendly
-
-## Problem
-The `SpaceCreationWizard` uses a raw Radix `Dialog`, which on mobile renders as a floating centered overlay with a semi-transparent backdrop. This creates a confusing, barely-usable experience - the content appears too small, misaligned, and users see a blurred/empty page behind it. DNA standards require all creation flows to use a bottom-sheet Drawer on mobile.
+#  Fix: Space Creation Silently Fails Due to Broken Trigger
 
 ## Root Cause
-`SpaceCreationWizard.tsx` imports `Dialog`/`DialogContent`/`DialogHeader`/`DialogTitle` directly instead of using the existing `ResponsiveModal` component (`src/components/ui/responsive-modal.tsx`), which automatically switches between Dialog (desktop) and vaul Drawer (mobile).
+
+Found it in the Postgres error logs: `**record "new" has no field "title"**`
+
+The `trg_space_create_channel` trigger fires AFTER INSERT on the `spaces` table and runs the function `trg_auto_create_space_channel()`. This function tries to read `NEW.title` first (intended for the `collaboration_spaces` table which has a `title` column), but the `spaces` table uses `name` instead. Postgres raises an error because `NEW.title` does not exist on the `spaces` table, which rolls back the entire INSERT transaction silently.
+
+The code in `useCollaborate.ts` is correct. The wizard UI is correct. The RLS policies are correct. The trigger function is what kills the insert.
 
 ## Fix
 
-### Single file change: `src/components/collaborate/SpaceCreationWizard.tsx`
+One database migration to update the trigger function so it safely reads the correct column:
 
-1. **Replace imports**: Swap `Dialog`, `DialogContent`, `DialogHeader`, `DialogTitle` with `ResponsiveModal`, `ResponsiveModalHeader`, `ResponsiveModalTitle` from `@/components/ui/responsive-modal`
+```sql
+CREATE OR REPLACE FUNCTION trg_auto_create_space_channel()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_space_name text;
+BEGIN
+  -- spaces table uses 'name', not 'title'
+  v_space_name := NEW.name;
 
-2. **Replace JSX wrapper**: Change the outer `<Dialog>` / `<DialogContent>` / `<DialogHeader>` / `<DialogTitle>` to their `ResponsiveModal` equivalents
+  BEGIN
+    PERFORM create_space_messaging_channel(NEW.id, v_space_name || ' - Channel');
+  EXCEPTION WHEN OTHERS THEN
+    RAISE WARNING 'Auto-create space channel failed for space %: %', NEW.id, SQLERRM;
+  END;
+  RETURN NEW;
+END;
+$$;
+```
 
-3. **Adjust content container**: Add `overflow-y-auto` and proper mobile padding to ensure the multi-step wizard scrolls properly inside the Drawer on mobile. The Drawer gets `max-h-[90dvh]` automatically from `ResponsiveModal`.
+## What Changes
 
-4. **Add custom drag handle**: Per the vaul v0.9.3 constraint, the Drawer needs a custom `div` with `vaul-drawer-handle=""` attribute (already handled by ResponsiveModal's DrawerContent).
 
-### No other files change. No data/logic changes. Pure presentation swap.
+| Item                                       | Change                              |
+| ------------------------------------------ | ----------------------------------- |
+| `trg_auto_create_space_channel()` function | Replace `NEW.title` with `NEW.name` |
 
-### What users will see after fix
-- **Mobile**: Full-width bottom sheet sliding up from bottom, easy to swipe dismiss, all 4 wizard steps properly scrollable within the sheet
-- **Desktop**: Same centered dialog as before (no change)
 
+No code changes. No schema changes. No UI changes. Just fixing the trigger function so the insert stops rolling back.
+
+## After Fix
+
+Clicking "Create Space" on step 4 will successfully insert the row, the trigger will create a messaging channel using the space name, and the wizard will close and navigate to the new space page.
