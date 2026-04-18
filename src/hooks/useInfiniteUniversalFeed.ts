@@ -21,7 +21,6 @@ interface UniversalFeedRpcParams {
   p_limit: number;
   p_offset: number;
   p_ranking_mode: string;
-  p_cursor?: number;
 }
 
 /** Raw row shape from the RPC result */
@@ -76,6 +75,7 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
     queryKey: ['universal-feed-infinite', filters],
     queryFn: async ({ pageParam }) => {
       try {
+        const offset = typeof pageParam === 'number' ? pageParam : 0;
         // Build RPC params - DO NOT include p_post_type as it doesn't exist in the DB function
         const params: UniversalFeedRpcParams = {
           p_viewer_id: filters.viewerId,
@@ -84,12 +84,9 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
           p_space_id: filters.spaceId || null,
           p_event_id: filters.eventId || null,
           p_limit: PAGE_SIZE,
-          p_offset: 0,
+          p_offset: offset,
           p_ranking_mode: filters.rankingMode || 'latest',
         };
-        if (pageParam) {
-          params.p_cursor = pageParam;
-        }
 
         // Call RPC - spread params to match function signature
         const { data, error } = await supabase.rpc('get_universal_feed', { ...params });
@@ -145,27 +142,14 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
           original_created_at: item.original_created_at || null,
         })) as UniversalFeedItem[];
 
-        // Apply client-side postType filter ONLY when explicitly specified (e.g., for Convey hub)
-        // Use case-insensitive comparison to handle any database inconsistencies
-        const filteredItems = filters.postType
-          ? items.filter((item) => item.post_type?.toLowerCase() === filters.postType.toLowerCase())
-          : items;
-
-        // CRITICAL FIX: Calculate nextOffset from RAW items, not filtered
-        // This prevents premature pagination stops when filtering (e.g., Convey stories-only view)
-        const currentOffset = typeof pageParam === 'number' ? pageParam : 0;
-        const nextOffset = items.length === PAGE_SIZE ? currentOffset + PAGE_SIZE : null;
-
-        return {
-          items: filteredItems,
-          nextCursor: nextOffset,
-        };
+        return items;
       } catch (error) {
         logHighError(error, 'feed', 'Universal feed infinite query failed', { filters });
         throw error;
       }
     },
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getNextPageParam: (lastPage: UniversalFeedItem[], allPages: UniversalFeedItem[][]) =>
+      lastPage.length === PAGE_SIZE ? allPages.flat().length : undefined,
     initialPageParam: 0 as number,
     enabled: !!filters.viewerId,
   });
@@ -177,8 +161,13 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
   // 3. Periodic stale time expiration (2 minutes)
   // This significantly reduces database load and improves responsiveness.
 
-  // Flatten pages into single array
-  const feedItems = data?.pages.flatMap(page => page.items) || [];
+  // Flatten pages into single array, then apply client-side postType filter.
+  // Filtering happens after flattening so per-page length reflects the true
+  // DB page size (critical for pagination offsets to stay aligned).
+  const flattened = data?.pages.flatMap((page) => page) || [];
+  const feedItems = filters.postType
+    ? flattened.filter((item) => item.post_type?.toLowerCase() === filters.postType.toLowerCase())
+    : flattened;
 
   return {
     feedItems,

@@ -21,10 +21,7 @@ import { logHighError } from '@/lib/errorLogger';
 import type { UniversalFeedItem } from '@/types/feed';
 
 interface InfiniteFeedData {
-  pages: Array<{
-    items: UniversalFeedItem[];
-    nextCursor?: string;
-  }>;
+  pages: UniversalFeedItem[][];
   pageParams: unknown[];
 }
 
@@ -204,7 +201,7 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
             if (!old?.pages) return old;
             return {
               ...old,
-              pages: [{ items: [createdPost, ...(old.pages[0]?.items || [])], nextCursor: old.pages[0]?.nextCursor }, ...old.pages.slice(1)]
+              pages: [[createdPost, ...(old.pages[0] || [])], ...old.pages.slice(1)]
             };
           }
         );
@@ -216,7 +213,7 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
             if (!old?.pages) return old;
             return {
               ...old,
-              pages: [{ items: [createdPost, ...(old.pages[0]?.items || [])], nextCursor: old.pages[0]?.nextCursor }, ...old.pages.slice(1)]
+              pages: [[createdPost, ...(old.pages[0] || [])], ...old.pages.slice(1)]
             };
           }
         );
@@ -229,7 +226,7 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
               if (!old?.pages) return old;
               return {
                 ...old,
-                pages: [{ items: [createdPost, ...(old.pages[0]?.items || [])], nextCursor: old.pages[0]?.nextCursor }, ...old.pages.slice(1)]
+                pages: [[createdPost, ...(old.pages[0] || [])], ...old.pages.slice(1)]
               };
             }
           );
@@ -242,7 +239,7 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
               if (!old?.pages) return old;
               return {
                 ...old,
-                pages: [{ items: [createdPost, ...(old.pages[0]?.items || [])], nextCursor: old.pages[0]?.nextCursor }, ...old.pages.slice(1)]
+                pages: [[createdPost, ...(old.pages[0] || [])], ...old.pages.slice(1)]
               };
             }
           );
