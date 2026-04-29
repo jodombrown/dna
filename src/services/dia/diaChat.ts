@@ -30,8 +30,9 @@ import {
 } from '@/types/diaEngine';
 import { peopleMatchingService } from './peopleMatching';
 import { eventMatchingService } from './eventMatching';
-import { spaceMatchingService } from './spaceMatching';
-import { opportunityMatchingEngineService } from './opportunityMatching';
+// STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
+// spaceMatchingService and opportunityMatchingEngineService removed; the
+// COLLABORATE/CONTRIBUTE find-* handlers below now return empty results.
 
 // ============================================================
 // INTENT CLASSIFICATION
@@ -374,80 +375,33 @@ async function handleFindEvents(
 }
 
 async function handleFindSpaces(
-  text: string,
-  entities: DIAChatEntity[],
+  _text: string,
+  _entities: DIAChatEntity[],
   context: DIAChatContext,
 ): Promise<DIAChatMessage> {
-  const matches = await spaceMatchingService.matchUserToSpaces(context.userId, 5);
-
-  const spaceIds = matches.map(m => m.spaceId);
-  const { data: spaces } = spaceIds.length > 0
-    ? await supabase.from('collaboration_spaces').select('id, title, description').in('id', spaceIds)
-    : { data: [] };
-
-  const spaceMap = new Map((spaces || []).map(s => [s.id, s]));
-
-  const results: DIAChatResult[] = matches.map(m => {
-    const space = spaceMap.get(m.spaceId);
-    return {
-      type: 'space' as const,
-      id: m.spaceId,
-      title: (space?.title as string) || 'Space',
-      subtitle: m.matchReasons.map(r => r.text).join(' \u2022 '),
-      imageUrl: null,
-      matchScore: m.matchScore,
-      matchReasons: m.matchReasons.map(r => r.text),
-      actionLabel: 'Join',
-      actionPayload: { spaceId: m.spaceId },
-    };
-  });
-
-  const responseText = results.length > 0
-    ? 'Here are collaboration spaces that match your skills:'
-    : 'No matching spaces found. Consider starting your own. Your skills could attract great collaborators.';
-
-  return buildResponse(context, responseText, results.length > 0 ? 'results_list' : 'text', results, [
-    { label: 'Browse spaces', type: 'navigate', payload: { route: '/dna/collaborate' } },
-    { label: 'Start a space', type: 'create', payload: { mode: 'space' } },
-  ]);
+  // STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
+  return buildResponse(
+    context,
+    "Spaces are being reimagined right now. The COLLABORATE module will return shortly.",
+    'text',
+    [],
+    [{ label: 'Visit /collaborate', type: 'navigate', payload: { route: '/dna/collaborate' } }],
+  );
 }
 
 async function handleFindOpportunities(
-  text: string,
-  entities: DIAChatEntity[],
+  _text: string,
+  _entities: DIAChatEntity[],
   context: DIAChatContext,
 ): Promise<DIAChatMessage> {
-  const matches = await opportunityMatchingEngineService.matchUserToOpportunities(context.userId, 5);
-
-  const oppIds = matches.map(m => m.opportunityId);
-  const { data: opps } = oppIds.length > 0
-    ? await supabase.from('contribution_needs').select('id, title, description').in('id', oppIds)
-    : { data: [] };
-
-  const oppMap = new Map((opps || []).map(o => [o.id, o]));
-
-  const results: DIAChatResult[] = matches.map(m => {
-    const opp = oppMap.get(m.opportunityId);
-    return {
-      type: 'opportunity' as const,
-      id: m.opportunityId,
-      title: (opp?.title as string) || 'Opportunity',
-      subtitle: m.matchReasons.map(r => r.text).join(' \u2022 '),
-      imageUrl: null,
-      matchScore: m.matchScore,
-      matchReasons: m.matchReasons.map(r => r.text),
-      actionLabel: 'View',
-      actionPayload: { opportunityId: m.opportunityId },
-    };
-  });
-
-  const responseText = results.length > 0
-    ? 'Here are opportunities that match your skills and interests:'
-    : 'No strong matches right now. Adding more skills to your profile will improve opportunity matching.';
-
-  return buildResponse(context, responseText, results.length > 0 ? 'results_list' : 'text', results, [
-    { label: 'Browse Contribute Hub', type: 'navigate', payload: { route: '/dna/contribute' } },
-  ]);
+  // STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
+  return buildResponse(
+    context,
+    "Opportunities are being reimagined right now. The CONTRIBUTE module will return shortly.",
+    'text',
+    [],
+    [{ label: 'Visit /contribute', type: 'navigate', payload: { route: '/dna/contribute' } }],
+  );
 }
 
 async function handleNetworkAnalysis(

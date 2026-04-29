@@ -5,13 +5,20 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { Users, ArrowRight } from 'lucide-react';
+import { REBUILD_FLAGS } from '@/lib/rebuildFlags';
 
 interface ProfileSpacesSectionProps {
   userId: string;
   limit?: number;
 }
 
-export const ProfileSpacesSection: React.FC<ProfileSpacesSectionProps> = ({ userId, limit = 5 }) => {
+export const ProfileSpacesSection: React.FC<ProfileSpacesSectionProps> = (props) => {
+  // STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
+  if (REBUILD_FLAGS.collaborateContributeRebuild) return null;
+  return <ProfileSpacesSectionImpl {...props} />;
+};
+
+const ProfileSpacesSectionImpl: React.FC<ProfileSpacesSectionProps> = ({ userId, limit = 5 }) => {
   const navigate = useNavigate();
 
   const { data: spaces, isLoading } = useQuery({

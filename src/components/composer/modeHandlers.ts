@@ -12,8 +12,6 @@ import { supabase } from '@/integrations/supabase/client';
 import {
   createStandardPost,
   createStoryPost,
-  createNeedPost,
-  createSpacePost,
   createCommunityFeedPost,
 } from '@/lib/feedWriter';
 import type { UniversalFeedItem } from '@/types/feed';
@@ -419,50 +417,17 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
     accentClass: 'bg-[#2D5A3D]',
     hoverClass: 'hover:bg-[#244a32]',
     glowClass: 'shadow-[0_0_12px_rgba(45,90,61,0.4)]',
-    validate: (data) => {
-      const errors: Record<string, string> = {};
-      if (!data.title || data.title.trim().length === 0) {
-        errors.title = 'Name your space';
-      }
-      if (!data.spaceCategory) {
-        errors.spaceCategory = 'What kind of space is this?';
-      }
-      if (!data.content || data.content.trim().length === 0) {
-        errors.content = "Tell people what you're building";
-      }
-      return { isValid: Object.keys(errors).length === 0, errors };
-    },
-    submit: async (data, context) => {
-      const { data: spaceData, error: spaceError } = await supabase
-        .from('collaboration_spaces')
-        .insert({
-          title: data.title || '',
-          description: data.content,
-          created_by: context.userId,
-          visibility: data.visibility || 'public',
-          image_url: data.mediaUrl,
-        })
-        .select()
-        .single();
-
-      if (spaceError) throw spaceError;
-
-      await createSpacePost({
-        spaceId: spaceData.id,
-        spaceTitle: data.title || '',
-        spaceDescription: data.content,
-        authorId: context.userId,
-        imageUrl: data.mediaUrl,
-      });
-
+    // STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
+    validate: () => ({ isValid: true, errors: {} }),
+    submit: async () => {
       return { success: true, createdPost: null };
     },
     getDefaultValues: () => ({
       title: '', content: '', spaceCategory: undefined,
       visibility: 'public', mediaUrl: undefined,
     }),
-    successMessage: 'Space created!',
-    errorMessage: "We couldn't create this Space. Your information is safe\u2014please try again.",
+    successMessage: 'Spaces are being rebuilt \u2014 coming soon.',
+    errorMessage: 'Spaces are being rebuilt \u2014 coming soon.',
   },
 
   need: {
@@ -475,60 +440,17 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
     accentClass: 'bg-[#B87333]',
     hoverClass: 'hover:bg-[#9e632c]',
     glowClass: 'shadow-[0_0_12px_rgba(184,115,51,0.4)]',
-    validate: (data) => {
-      const errors: Record<string, string> = {};
-      if (!data.title || data.title.trim().length === 0) {
-        errors.title = 'What do you need or what are you offering?';
-      }
-      if (!data.content || data.content.trim().length === 0) {
-        errors.content = 'Give some details';
-      }
-      return { isValid: Object.keys(errors).length === 0, errors };
-    },
-    submit: async (data, context) => {
-      const needTypeMap: Record<string, 'funding' | 'skills' | 'time' | 'access' | 'resources'> = {
-        funding: 'funding',
-        expertise: 'skills',
-        resources: 'resources',
-        volunteers: 'time',
-        partnership: 'access',
-      };
-      const dbNeedType = needTypeMap[data.needType || 'expertise'] || 'skills';
-
-      const { data: needData, error: needError } = await supabase
-        .from('contribution_needs')
-        .insert([{
-          title: data.title || '',
-          description: data.content,
-          type: dbNeedType,
-          space_id: context.spaceId || context.relatedSpaceId || null,
-          created_by: context.userId,
-          target_amount: data.targetAmount ?? null,
-          currency: data.currency ?? null,
-          needed_by: data.neededBy ?? null,
-        }])
-        .select()
-        .single();
-
-      if (needError) throw needError;
-
-      await createNeedPost({
-        needId: needData.id,
-        needTitle: data.title || '',
-        needDescription: data.content,
-        needType: data.needType || 'expertise',
-        authorId: context.userId,
-        spaceId: context.spaceId || context.relatedSpaceId || '',
-      });
-
+    // STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
+    validate: () => ({ isValid: true, errors: {} }),
+    submit: async () => {
       return { success: true, createdPost: null };
     },
     getDefaultValues: () => ({
       title: '', content: '', needType: undefined,
       targetAmount: undefined, currency: undefined, neededBy: undefined,
     }),
-    successMessage: 'Opportunity posted!',
-    errorMessage: "We couldn't post this Opportunity. Your request is safe\u2014please try again.",
+    successMessage: 'Opportunities are being rebuilt \u2014 coming soon.',
+    errorMessage: 'Opportunities are being rebuilt \u2014 coming soon.',
   },
 
   community: {

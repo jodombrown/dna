@@ -11,6 +11,7 @@ import { supabaseClient } from '@/lib/supabaseHelpers';
 import { ProfileV2Data, ProfileV2Visibility } from '@/types/profileV2';
 import { ContributionNeedType, ContributionNeedStatus, ContributionOfferStatus } from '@/types/contributeTypes';
 import { formatDistanceToNow } from 'date-fns';
+import { REBUILD_FLAGS } from '@/lib/rebuildFlags';
 
 interface ProfileV2OpportunitiesProps {
   profile: ProfileV2Data;
@@ -94,7 +95,13 @@ const getOfferStatusVariant = (status: ContributionOfferStatus): 'default' | 'se
   }
 };
 
-const ProfileV2Opportunities: React.FC<ProfileV2OpportunitiesProps> = ({
+const ProfileV2Opportunities: React.FC<ProfileV2OpportunitiesProps> = (props) => {
+  // STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
+  if (REBUILD_FLAGS.collaborateContributeRebuild) return null;
+  return <ProfileV2OpportunitiesImpl {...props} />;
+};
+
+const ProfileV2OpportunitiesImpl: React.FC<ProfileV2OpportunitiesProps> = ({
   profile,
   visibility,
   isOwner,

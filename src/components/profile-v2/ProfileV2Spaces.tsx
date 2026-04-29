@@ -11,6 +11,7 @@ import { supabaseClient } from '@/lib/supabaseHelpers';
 import { ProfileV2Data, ProfileV2Visibility } from '@/types/profileV2';
 import { Space, SpaceMemberRole } from '@/types/spaceTypes';
 import { formatDistanceToNow } from 'date-fns';
+import { REBUILD_FLAGS } from '@/lib/rebuildFlags';
 
 interface ProfileV2SpacesProps {
   profile: ProfileV2Data;
@@ -22,7 +23,13 @@ interface SpaceDisplayItem extends Space {
   user_role?: SpaceMemberRole;
 }
 
-const ProfileV2Spaces: React.FC<ProfileV2SpacesProps> = ({
+const ProfileV2Spaces: React.FC<ProfileV2SpacesProps> = (props) => {
+  // STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
+  if (REBUILD_FLAGS.collaborateContributeRebuild) return null;
+  return <ProfileV2SpacesImpl {...props} />;
+};
+
+const ProfileV2SpacesImpl: React.FC<ProfileV2SpacesProps> = ({
   profile,
   visibility,
   isOwner,
