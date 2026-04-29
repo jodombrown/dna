@@ -60,7 +60,8 @@ import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { formatDistanceToNow, format } from 'date-fns';
 import { EventCountdown } from '@/components/convene/EventCountdown';
 import { AddToCalendarButton } from '@/components/convene/AddToCalendarButton';
-import { EventSpacesSection } from '@/components/collaboration/EventSpacesSection';
+// STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
+// import { EventSpacesSection } from '@/components/collaboration/EventSpacesSection';
 import { EventActivityFeed } from '@/components/events/EventActivityFeed';
 import { EventLocationMap } from '@/components/convene/EventLocationMap';
 import EventThreadCTA from '@/components/convene/EventThreadCTA';
@@ -739,7 +740,8 @@ const EventDetail = () => {
                 isOrganizer={isOrganizer}
               />
 
-              <EventSpacesSection eventId={id!} isOrganizer={isOrganizer} />
+              {/* STUBBED: Phase 2 teardown. EventSpacesSection removed while
+                  COLLABORATE is being rebuilt. Restore in Phase 3. */}
 
               <Card>
                 <CardContent className="pt-6">

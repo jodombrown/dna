@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { Heart, ArrowRight } from 'lucide-react';
+import { REBUILD_FLAGS } from '@/lib/rebuildFlags';
 
 interface ProfileContributionsSectionProps {
   userId: string;
@@ -24,9 +25,15 @@ interface ContributionItem {
   created_at: string;
 }
 
-export const ProfileContributionsSection: React.FC<ProfileContributionsSectionProps> = ({ 
-  userId, 
-  limit = 5 
+export const ProfileContributionsSection: React.FC<ProfileContributionsSectionProps> = (props) => {
+  // STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
+  if (REBUILD_FLAGS.collaborateContributeRebuild) return null;
+  return <ProfileContributionsSectionImpl {...props} />;
+};
+
+const ProfileContributionsSectionImpl: React.FC<ProfileContributionsSectionProps> = ({
+  userId,
+  limit = 5
 }) => {
   const navigate = useNavigate();
 

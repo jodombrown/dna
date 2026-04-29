@@ -26,6 +26,20 @@ import { storeNudge } from './diaNudgeStorage';
 
 type EventListener = (event: DIAPlatformEvent) => void;
 
+// STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
+// Emits matching these COLLABORATE/CONTRIBUTE event types no-op while their
+// modules are being reimagined; type definitions remain in diaEventTypes.ts.
+const STUBBED_EVENT_TYPES: ReadonlySet<DIAPlatformEventType> = new Set<DIAPlatformEventType>([
+  'space_inactive',
+  'task_overdue',
+  'task_completed',
+  'space_member_joined',
+  'space_milestone',
+  'opportunity_response',
+  'opportunity_match_found',
+  'opportunity_expiring',
+]);
+
 class DIAEventBus {
   private listeners: Map<string, EventListener[]> = new Map();
 
@@ -37,6 +51,11 @@ class DIAEventBus {
    * Non-blocking — fires and forgets. Nudge failures are silently caught.
    */
   emit(event: DIAPlatformEvent): void {
+    if (STUBBED_EVENT_TYPES.has(event.type)) {
+      console.debug('[DIA emitter stubbed during teardown]', event.type);
+      return;
+    }
+
     // Process through nudge engine (async, non-blocking)
     processEvent(event).then(nudges => {
       for (const nudge of nudges) {

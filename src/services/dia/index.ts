@@ -30,8 +30,8 @@ export { conversationIntelligenceService } from './conversationIntelligence';
 // ── Matching Services ────────────────────────────────────
 export { matchingEngineService } from './matchingEngine';
 export { peopleMatchingService } from './peopleMatching';
-export { opportunityMatchingEngineService } from './opportunityMatching';
-export { spaceMatchingService } from './spaceMatching';
+// STUBBED: Phase 2 teardown. opportunityMatching and spaceMatching removed
+// while CONTRIBUTE/COLLABORATE are being rebuilt. Restore in Phase 3.
 export { eventMatchingService } from './eventMatching';
 
 // ── Nudge & Trend Services ───────────────────────────────

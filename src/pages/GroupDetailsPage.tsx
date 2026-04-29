@@ -32,7 +32,8 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 import { GroupPostComments } from '@/components/groups/GroupPostComments';
 import { GroupJoinRequests } from '@/components/groups/GroupJoinRequests';
-import { GroupSpacesSection } from '@/components/collaboration/GroupSpacesSection';
+// STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
+// import { GroupSpacesSection } from '@/components/collaboration/GroupSpacesSection';
 import { cn } from '@/lib/utils';
 
 interface CommentDialogProps {
@@ -782,11 +783,8 @@ export default function GroupDetailsPage() {
                     )}
                   </Card>
 
-                  {/* Group Spaces Section */}
-                  <GroupSpacesSection 
-                    groupId={group.group_id}
-                    isAdmin={group.user_role === 'owner' || group.user_role === 'admin'}
-                  />
+                  {/* STUBBED: Phase 2 teardown. GroupSpacesSection removed
+                      while COLLABORATE is being rebuilt. Restore in Phase 3. */}
                 </TabsContent>
               </Tabs>
             </div>

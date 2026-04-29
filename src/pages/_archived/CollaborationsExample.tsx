@@ -1,16 +1,10 @@
+// STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
+// Public /collaborate landing now renders the rebuilding-state landing page.
 
-import React from 'react';
-import CollaborationsPageWrapper from '@/components/collaborations/CollaborationsPageWrapper';
-import { useScrollToTop } from '@/hooks/useScrollToTop';
+import { RebuildingLanding } from '@/components/shared/RebuildingPlaceholder';
 
 const CollaborationsExample = () => {
-  useScrollToTop();
-  
-  return (
-    <>
-      <CollaborationsPageWrapper />
-    </>
-  );
+  return <RebuildingLanding module="collaborate" />;
 };
 
 export default CollaborationsExample;

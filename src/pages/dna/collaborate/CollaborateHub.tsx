@@ -1,9 +1,9 @@
-// src/pages/dna/collaborate/CollaborateHub.tsx
-// Direct render of Collaborate discovery hub
+// STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
+// The COLLABORATE module is being reimagined; the authenticated hub now
+// shares the same rebuilding landing as the public /collaborate route.
 
-import React from 'react';
-import { CollaborateDiscovery } from './CollaborateDiscovery';
+import { RebuildingLanding } from '@/components/shared/RebuildingPlaceholder';
 
 export default function CollaborateHub() {
-  return <CollaborateDiscovery />;
+  return <RebuildingLanding module="collaborate" />;
 }

@@ -1,9 +1,6 @@
-import { SpaceDirectory } from '@/components/collaborate/SpaceDirectory';
+// STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
+import { RebuildingDetailPlaceholder } from '@/components/shared/RebuildingPlaceholder';
 
 export default function SpacesIndex() {
-  return (
-    <div className="container max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-2 lg:py-6">
-      <SpaceDirectory />
-    </div>
-  );
+  return <RebuildingDetailPlaceholder module="collaborate" />;
 }

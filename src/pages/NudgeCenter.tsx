@@ -6,21 +6,17 @@ import { Button } from '@/components/ui/button';
 import { Bell, Clock, CheckCircle2, Archive } from 'lucide-react';
 import { useDiaNudges, DiaNudge } from '@/hooks/useDiaNudges';
 import NudgeCard from '@/components/dia/NudgeCard';
-import { SpaceHealthNudgeCard, isSpaceHealthNudge } from '@/components/collaboration/SpaceHealthNudgeCard';
-import { ArchiveSpaceDialog } from '@/components/collaboration/ArchiveSpaceDialog';
-import { useArchiveSpace } from '@/hooks/useSpaceHealth';
+// STUBBED: Phase 2 teardown. SpaceHealthNudgeCard, ArchiveSpaceDialog, and
+// useSpaceHealth are removed while COLLABORATE is being rebuilt. Restore in
+// Phase 3.
 import { useNavigate } from 'react-router-dom';
 
 const NudgeCenter: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('sent');
-  const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
-  const [archiveSpaceData, setArchiveSpaceData] = useState<{ id: string; name: string } | null>(null);
-
   const { nudges, loading, acceptNudge, dismissNudge, snoozeNudge } = useDiaNudges(
     activeTab === 'sent' ? 'sent' : 'all'
   );
-  const archiveSpace = useArchiveSpace();
 
   const handleAccept = async (nudgeId: string) => {
     const nudge = nudges.find(n => n.id === nudgeId);
@@ -32,29 +28,7 @@ const NudgeCenter: React.FC = () => {
     return success;
   };
 
-  const handleArchiveFromNudge = (spaceId: string) => {
-    const nudge = nudges.find(n =>
-      n.payload?.space_id === spaceId && isSpaceHealthNudge(n)
-    );
-    if (nudge?.payload) {
-      setArchiveSpaceData({
-        id: nudge.payload.space_id as string,
-        name: nudge.payload.space_name as string,
-      });
-      setArchiveDialogOpen(true);
-    }
-  };
-
-  const handleArchiveConfirm = async (summary?: string, notifyMembers?: boolean) => {
-    if (!archiveSpaceData) return;
-    await archiveSpace.mutateAsync({
-      spaceId: archiveSpaceData.id,
-      summary,
-      notifyMembers,
-    });
-    setArchiveDialogOpen(false);
-    setArchiveSpaceData(null);
-  };
+  // STUBBED: Phase 2 teardown. Archive handlers removed with COLLABORATE.
 
   const sentNudges = nudges.filter(n => n.status === 'sent');
   const acceptedNudges = nudges.filter(n => n.status === 'accepted');
@@ -92,33 +66,20 @@ const NudgeCenter: React.FC = () => {
       <div className="space-y-4">
         {nudgeList.map((nudge) => (
           <div key={nudge.id} className="relative">
-            {/* Render space health nudges with special card */}
-            {isSpaceHealthNudge(nudge) ? (
-              <SpaceHealthNudgeCard
-                nudge={nudge}
-                onAccept={handleAccept}
-                onDismiss={dismissNudge}
-                onSnooze={snoozeNudge}
-                onArchive={handleArchiveFromNudge}
-              />
-            ) : (
-              <>
-                {nudge.priority && (
-                  <Badge
-                    variant={getPriorityColor(nudge.priority)}
-                    className="absolute -top-2 -right-2 z-10"
-                  >
-                    {nudge.priority}
-                  </Badge>
-                )}
-                <NudgeCard
-                  nudge={nudge}
-                  onAccept={handleAccept}
-                  onDismiss={dismissNudge}
-                  onSnooze={snoozeNudge}
-                />
-              </>
+            {nudge.priority && (
+              <Badge
+                variant={getPriorityColor(nudge.priority)}
+                className="absolute -top-2 -right-2 z-10"
+              >
+                {nudge.priority}
+              </Badge>
             )}
+            <NudgeCard
+              nudge={nudge}
+              onAccept={handleAccept}
+              onDismiss={dismissNudge}
+              onSnooze={snoozeNudge}
+            />
           </div>
         ))}
       </div>
@@ -205,17 +166,7 @@ const NudgeCenter: React.FC = () => {
         </p>
       </div>
 
-      {/* Archive Space Dialog */}
-      <ArchiveSpaceDialog
-        isOpen={archiveDialogOpen}
-        onClose={() => {
-          setArchiveDialogOpen(false);
-          setArchiveSpaceData(null);
-        }}
-        spaceName={archiveSpaceData?.name || ''}
-        onConfirm={handleArchiveConfirm}
-        isLoading={archiveSpace.isPending}
-      />
+      {/* STUBBED: Phase 2 teardown. ArchiveSpaceDialog removed with COLLABORATE. */}
     </div>
   );
 };
