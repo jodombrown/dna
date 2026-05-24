@@ -1,405 +1,623 @@
-# DNA Supabase Backend — Current Schema Inventory
+# DNA Platform — Current Schema Inventory
 
-**Derived from:** Auto-generated `types.ts` + 727 committed migrations  
-**Commit SHA:** e1cdc66  
-**Supabase Project Ref:** ybhssuehmfnxrzneobok  
-**Generated:** 2026-05-21
+**Compiled:** 2026-05-24
+**Cycle:** v0.0 planning (BD009)
+**Purpose:** Single, scannable reference for the live schema before the D054 identity-layer migration.
 
----
-
-## Overview
-
-This is a **static schema inventory** derived from committed source files:
-- `/src/integrations/supabase/types.ts` (12,040 lines) — auto-generated from the live DB schema, the SOURCE OF TRUTH
-- `/supabase/migrations/*.sql` (727 files) — committed migration history for defaults, constraints, and FK behavior
-
-**This is NOT a live `information_schema` query.** It reflects the committed schema as of this commit. It cannot tell you row counts, current RLS policies in effect, runtime-added indexes, or modified defaults. For authoritative runtime state, query the live Supabase project with service-role credentials.
+> ⚠️ **Source is static.** This inventory is derived from committed artifacts only —
+> `src/integrations/supabase/types.ts` (auto-generated against the live DB on its last regeneration),
+> the SQL files under `supabase/migrations/`, and `docs/DNA-SUPABASE-SCHEMA-EXPORT.md`
+> (dated 2026-03-09). It is **not** the result of a live `information_schema` query against
+> `ybhssuehmfnxrzneobok.supabase.co`. Treat anything time-sensitive (newly added columns,
+> policy edits made outside migration files, ad-hoc admin changes) as needing verification
+> against the live DB before the migration is authored.
 
 ---
 
-## Tables (public schema)
+## Conventions
 
-**Total: 189 public schema tables**
-
-Listed below in alphabetical order. For each table: column count, primary key(s), and key foreign key references.
-
-| Table | Columns | Notes |
-|-------|---------|-------|
-| ada_cohort_memberships | 6 | PK: id; FK: cohort_id → ada_cohorts |
-| ada_cohorts | 8 | PK: id; JSON: criteria |
-| ada_experiment_assignments | 6 | PK: id; FK: experiment_id → ada_experiments, variant_id → ada_experiment_variants |
-| ada_experiment_variants | 8 | PK: id; FK: experiment_id → ada_experiments; JSON: config |
-| ada_experiments | 12 | PK: id; JSON: config |
-| ada_policies | 10 | PK: id |
-| adin_contributor_requests | 13 | PK: id |
-| adin_cost_tracking | 57 | PK: id; Complex metrics table |
-| adin_daily_stats | 52 | PK: id; Analytics aggregations |
-| adin_nudges | 10 | PK: id |
-| adin_popular_queries | 45 | PK: id |
-| adin_preferences | 21 | PK: id |
-| adin_recommendations | 9 | PK: id |
-| adin_signals | 13 | PK: id |
-| admin_activity_log | 8 | PK: id; audit trail |
-| alpha_feedback | 10 | PK: id; user feedback |
-| analytics_events | 7 | PK: id; event tracking |
-| applications | 9 | PK: id; opportunity applications |
-| badge_definitions | 10 | PK: id; achievement badges |
-| beta_waitlist | 9 | PK: id; beta signup queue |
-| billing_transactions | 13 | PK: id; payment records |
-| blocked_users | 6 | PK: id; blocking relationships |
-| causes | 7 | PK: id; cause/SDG tags |
-| collaboration_memberships | 7 | PK: id; space participation |
-| collaboration_spaces | 11 | PK: id; collaborative workspaces |
-| comment_reactions | 6 | PK: id; emoji reactions |
-| comment_reports | 10 | PK: id; moderation |
-| comments | 9 | PK: id; nested discussions |
-| communities | 20 | PK: id; community groups |
-| community_event_attendees | 6 | PK: id; event RSVP |
-| community_events | 17 | PK: id; community events |
-| community_memberships | 10 | PK: id; community participation |
-| community_posts | 13 | PK: id; community content |
-| connections | 8 | PK: id; connection requests |
-| content_flags | 10 | PK: id; content moderation |
-| content_moderation | 10 | PK: id; moderation decisions |
-| **continents** | 6 | PK: id; **Geographic reference** |
-| contribution_acknowledgments | 9 | PK: id; recognition |
-| contribution_cards | 15 | PK: id; contribution needs display |
-| contribution_fulfillments | 13 | PK: id; matching offers to needs |
-| contribution_needs | 18 | PK: id; contribution requests |
-| contribution_offers | 11 | PK: id; contribution offers |
-| conversation_participants | 6 | PK: id; messaging participants |
-| conversations | 14 | PK: id; legacy 1:1 DMs |
-| conversations_new | 13 | PK: id; unified messaging |
-| **countries** | 30 | PK: id; FK: region_id → regions; **Geographic reference** |
-| cron_job_logs | 11 | PK: id; scheduled job logs |
-| dashboard_analytics | 9 | PK: id; dashboard metrics |
-| dia_insights | 15 | PK: id; diaspora insights |
-| dia_queries | 14 | PK: id; diaspora research queries |
-| dia_query_log | 8 | PK: id; query history |
-| dia_user_usage | 11 | PK: id; diaspora mode usage |
-| diaspora_data | 16 | PK: id; diaspora metadata |
-| economic_indicators | 13 | PK: id; economic data |
-| entity_vectors | 9 | PK: id; vector embeddings |
-| error_logs | 12 | PK: id; application errors |
-| event_analytics | 6 | PK: id; event metrics |
-| event_attendees | 13 | PK: id; attendance tracking |
-| event_blasts | 8 | PK: id; mass messaging |
-| event_checkins | 5 | PK: id; attendance verification |
-| event_comments | 8 | PK: id; event discussions |
-| event_promo_codes | 12 | PK: id; discount codes |
-| event_registration_questions | 9 | PK: id; dynamic form questions |
-| event_registrations | 15 | PK: id; ticket/registration records |
-| event_reminder_logs | 8 | PK: id; notification history |
-| event_reports | 10 | PK: id; post-event analytics |
-| event_roles | 8 | PK: id; speaker/organizer roles |
-| event_ticket_holds | 8 | PK: id; reserved inventory |
-| event_ticket_types | 15 | PK: id; ticket definitions |
-| event_tickets | 15 | PK: id; individual tickets |
-| event_waitlist | 6 | PK: id; waitlist queue |
-| **events** | 43 | PK: id; FK: organizer_id → profiles; **Major table** |
-| events_log | 6 | PK: id; event history |
-| events_old | 25 | PK: id; legacy events |
-| feature_flags | 6 | PK: id; feature toggling |
-| feed_bookmarks | 6 | PK: id; saved content |
-| feed_comments | 9 | PK: id; feed discussions |
-| feed_engagement_events | 12 | PK: id; engagement tracking |
-| feed_reactions | 7 | PK: id; likes/reactions |
-| feed_research_responses | 17 | PK: id; survey responses |
-| feed_reshares | 7 | PK: id; repost/share tracking |
-| feedback_attachments | 8 | PK: id; file attachments |
-| feedback_channel_memberships | 8 | PK: id; channel access |
-| feedback_channels | 10 | PK: id; feedback channels |
-| feedback_messages | 19 | PK: id; feedback messages |
-| feedback_reactions | 6 | PK: id; message reactions |
-| geographic_relevance | 9 | PK: id; geo-tagging |
-| group_conversations | 6 | PK: id; group messaging |
-| group_join_requests | 9 | PK: id; group invitations |
-| group_members | 11 | PK: id; group membership |
-| group_messages | 7 | PK: id; group DMs |
-| group_post_comments | 8 | PK: id; group post replies |
-| group_post_likes | 5 | PK: id; group post reactions |
-| group_posts | 12 | PK: id; group content |
-| groups | 19 | PK: id; user groups/circles |
-| hashtag_analytics | 9 | PK: id; hashtag usage metrics |
-| hashtag_followers | 5 | PK: id; hashtag followers |
-| hashtag_usage_requests | 10 | PK: id; hashtag usage approval |
-| hashtags | 17 | PK: id; hashtag definitions |
-| hidden_posts | 5 | PK: id; hidden content tracking |
-| hub_metrics | 13 | PK: id; hub/region metrics |
-| impact_attributions | 8 | PK: id; impact source tracking |
-| impact_badges | 9 | PK: id; achievement badges |
-| impact_log | 13 | PK: id; impact event log |
-| initiatives | 16 | PK: id; projects/initiatives |
-| innovation_data | 16 | PK: id; innovation metrics by country |
-| introductions | 11 | PK: id; user introductions |
-| invites | 11 | PK: id; signup invitations |
-| message_reactions | 6 | PK: id; DM reactions |
-| messages | 8 | PK: id; legacy DMs |
-| messages_new | 15 | PK: id; unified message records |
-| milestones | 15 | PK: id; project milestones |
-| monthly_reports | 15 | PK: id; regional monthly data |
-| muted_authors | 5 | PK: id; mute relationships |
-| newsletter_subscriptions | 10 | PK: id; email subscriptions |
-| notifications | 12 | PK: id; user notifications |
-| nudges | 12 | PK: id; engagement nudges |
-| opportunities | 15 | PK: id; opportunities/needs |
-| opportunity_applications | 16 | PK: id; applications to opportunities |
-| opportunity_bookmarks | 5 | PK: id; saved opportunities |
-| opportunity_contributions | 15 | PK: id; matched contributions |
-| opportunity_interests | 8 | PK: id; interest signaling |
-| organization_verification_requests | 22 | PK: id; org KYC |
-| **organizations** | 30 | PK: id; FK: country_id → countries, owner_user_id → users; **Major table** |
-| platform_fees | 10 | PK: id; fee records |
-| political_digest | 13 | PK: id; political news |
-| post_analytics | 14 | PK: id; post metrics |
-| post_bookmarks | 7 | PK: id; saved posts |
-| post_comments | 16 | PK: id; nested comments |
-| post_hashtags | 5 | PK: id; post-tag linking |
-| post_likes | 5 | PK: id; like tracking |
-| post_reactions | 6 | PK: id; emoji reactions |
-| post_reports | 10 | PK: id; abuse reports |
-| post_shares | 6 | PK: id; share tracking |
-| post_views | 5 | PK: id; view tracking |
-| **posts** | 39 | PK: id; FK: author_id → profiles; **Major table** |
-| profile_causes | 4 | PK: id; cause affiliations |
-| profile_completion | 7 | PK: id; onboarding progress |
-| profile_skills | 4 | PK: id; skill associations |
-| profile_views | 7 | PK: id; profile visitor tracking |
-| **profiles** | 210 | PK: id (FK → auth.users); FK: country_of_origin_id, current_country_id → countries; **CENTRAL TABLE — D054 focus** |
-| project_contributions | 11 | PK: id; contribution tracking |
-| projects | 9 | PK: id; project records |
-| **provinces** | 9 | PK: id; FK: country_id → countries; **Geographic reference** |
-| public_profiles | 39 | PK: id; denormalized public view |
-| push_subscriptions | 8 | PK: id; push notification subscriptions |
-| rate_limit_checks | 5 | PK: id; rate limit tracking |
-| **regions** | 21 | PK: id; FK: continent_id → continents; **Geographic reference** |
-| release_features | 6 | PK: id; release tracking |
-| releases | 24 | PK: id; version releases |
-| reserved_hashtags | 8 | PK: id; reserved/protected hashtags |
-| saved_posts | 5 | PK: id; post saves |
-| search_preferences | 7 | PK: id; user search history |
-| skill_analytics | 7 | PK: id; skill usage metrics |
-| skill_connections | 7 | PK: id; skill-based connections |
-| skills | 5 | PK: id; skill definitions |
-| space_activity_log | 9 | PK: id; space activity audit |
-| space_attachments | 11 | PK: id; file attachments |
-| space_members | 9 | PK: id; space membership |
-| space_roles | 10 | PK: id; space role definitions |
-| space_task_dependencies | 4 | PK: id; task dependencies |
-| space_tasks | 17 | PK: id; task records |
-| space_templates | 13 | PK: id; space templates |
-| space_updates | 7 | PK: id; space updates |
-| **spaces** | 27 | PK: id; **Collaboration/workspace table** |
-| sponsor_placements | 15 | PK: id; sponsorship placements |
-| sponsors | 13 | PK: id; sponsor records |
-| task_comments | 7 | PK: id; task discussions |
-| **tasks** | 20 | PK: id; FK: assignee_id → profiles; **Task management** |
-| user_adin_profile | 14 | PK: id; diaspora insights profile |
-| user_badges | 5 | PK: id; badge awards |
-| **user_communities** | 10 | PK: id; FK: owner_id → users; user community ownership |
-| user_connections | 5 | PK: id; follow relationships |
-| user_dashboard_preferences | 6 | PK: id; dashboard customization |
-| user_dna_points | 8 | PK: id; gamification points |
-| user_engagement_tracking | 14 | PK: id; engagement metrics |
-| user_feedback | 10 | PK: id; user feedback |
-| user_follows | 5 | PK: id; follower/following |
-| user_impact_summary | 724 | PK: id; denormalized impact metrics (WIDE TABLE) |
-| user_interactions | 10 | PK: id; interaction log |
-| user_last_view_state | 5 | PK: id; UI state persistence |
-| user_onboarding_selections | 8 | PK: id; onboarding choices |
-| user_recommendations | 12 | PK: id; recommendation engine |
-| **user_roles** | 6 | PK: id; FK: user_id → users; UNIQUE(user_id, role); **Platform role assignment** |
-| user_vectors | 7 | PK: id; embedding vectors |
-| username_history | 6 | PK: id; username change tracking |
-| **users** | 15 | PK: id; role column (denormalized); **Supplementary user table (prefer profiles)** |
-| verified_contributors | 7 | PK: id; verified user flags |
-| waitlist_signups | 10 | PK: id; waitlist queue |
+- Source-of-truth precedence when artifacts disagree:
+  1. `src/integrations/supabase/types.ts` (auto-generated; most current)
+  2. Latest `supabase/migrations/*.sql` that touches the table
+  3. `docs/DNA-SUPABASE-SCHEMA-EXPORT.md`
+- PKs are `uuid` with `gen_random_uuid()` default unless noted.
+- `nullable` column is `YES` unless explicitly `NO`.
+- RLS is enabled on every public-schema table; per-policy detail is given only where
+  it directly bears on D054 (auth, profile, role, geography, feed).
+- Column-level detail is given for D054-relevant tables (§1–§4). A complete alphabetical
+  table catalog is in §11.
 
 ---
 
-## Foreign Keys to auth.users
+## Module map
 
-**Count: 1 direct FK from public schema to auth.users**
-
-- **`profiles.id`** → `auth.users.id` (ON DELETE CASCADE)
-  - Primary link between platform user and authentication system
-  - Every auth user should have a corresponding profiles row (ensured by trigger)
-
-**Count: 2 FKs from public schema to public.users table** (different from auth.users):
-- **`communities.created_by`** → `users.id`
-- **`user_communities.owner_id`** → `users.id`
-
-**Note:** The `users` table appears to be supplementary/legacy. Primary user context lives in `profiles`.
+| Module | Tables of D054 interest | Other tables (summary in §11) |
+|---|---|---|
+| 1. Foundation / Auth | `profiles`, `user_roles`, `profile_completion`, `user_onboarding_selections` | `users`, `feature_flags`, `error_logs`, `invites` |
+| 2. Geography | `continents`, `regions`, `countries`, `provinces` | `diaspora_data`, `economic_indicators`, `geographic_relevance` |
+| 3. Feed / Convey | `posts`, `post_reactions`, `post_comments`, `post_bookmarks` | Engagement tables — §11 |
+| 4. Connect | `connections`, `blocked_users` | Messaging tables — §11 |
+| 5+ Convene, Collaborate, Contribute, Communities, DIA, Impact, Admin | (out of scope for D054) | §11 |
+| 6. Enums | §10 | — |
+| 7. RLS patterns | §9 | — |
 
 ---
 
-## D054-Relevant Detail
+## 1. FOUNDATION — Auth, Profiles, Onboarding
 
-### 1. Profiles Table — Role & User Type Columns
+### 1.1 `profiles` ⭐ (central table)
 
-#### Existing Role/Type Columns:
+`profiles.id` is also the FK back to `auth.users.id` — there is no separate "user row"
+the app reads from. Profile row is created on first session via a deferred trigger
+(see `docs/current-flows-audit.md` §1).
 
-**1.1 `user_type` (TEXT, nullable)**
-- Check constraint enforced:
-  ```sql
-  CHECK (user_type IN ('diaspora_professional', 'founder', 'ally'))
-  ```
-- Added in migration `20250805042946_4271ba21-b3cc-4c83-b506-8ea49f9f0b26.sql`
-- Three discrete user categories for the diaspora context
+Column list below is taken from `types.ts` lines 6757–6971 (Row shape). This is the
+**single source of truth** for the live shape; the older `CREATE TABLE` statements in
+`supabase/migrations/` predate many of these additive columns.
 
-**1.2 `roles` (TEXT[], nullable)**
-- Array of role strings (NOT a direct FK to user_roles)
-- Denormalized from user_roles table for convenience in queries
-- Migration `20250704020955` shows that a prior `user_role` column was **dropped** from profiles
-- User roles are now managed separately in the `user_roles` junction table (see below)
+#### Identity / display
 
-**1.3 `professional_role` (TEXT, nullable)**
-- Job title/career role, not a platform role
-- Example: 'Senior Product Manager', 'Founder', 'Student'
+| Column | Type | Nullable | Default / note |
+|---|---|---|---|
+| id | uuid | NO | PK, = `auth.users.id` |
+| username | text | NO | unique |
+| email | text | YES | |
+| first_name / last_name / middle_initial | text | YES | |
+| full_name / display_name | text | YES | |
+| pronouns | text | YES | |
+| avatar_url / profile_picture_url | text | YES | |
+| avatar_position | jsonb | YES | |
+| banner_url / banner_gradient / banner_overlay / banner_type | text/bool | YES | |
+| headline / bio / intro_text | text | YES | |
+| intro_audio_url / intro_video_url | text | YES | |
+| diaspora_story | text | YES | |
+| my_dna_statement | text | YES | free-form personal statement |
 
-#### User Roles Management (Separate Table):
+#### Professional / sectors
 
-- **Table:** `user_roles`
-  ```sql
-  CREATE TABLE public.user_roles (
-      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-      user_id uuid NOT NULL,
-      role app_role NOT NULL,
-      UNIQUE (user_id, role)
-  );
-  ```
-- **Enum:** `app_role` = `('user', 'moderator', 'admin')`
-- **Function:** `has_role(_user_id uuid, _role app_role)` → checks if user holds role
-- **Relationship:** Junction table linking users to platform roles (admin, moderator, user)
-- Users can hold multiple roles (enforced by UNIQUE constraint on user_id + role)
+| Column | Type | Nullable | Default / note |
+|---|---|---|---|
+| professional_role / profession / company / organization / organization_name / organization_category | text | YES | |
+| venture_name / venture_stage | text | YES | |
+| industry | text | YES | |
+| industries / industry_sectors / professional_sectors / sectors | text[] | YES | |
+| years_experience / years_of_experience | int4 | YES | |
+| professional_summary | text | YES | |
+| certifications / education / achievements | text | YES | |
+| skills / skills_offered / skills_needed | text[] | YES | |
+| skill_tags / collaboration_tags / availability_tags / event_interest_tags / intent_tags / region_tags / sector_tags / diaspora_tags / contribution_tags / language_tags | jsonb | YES | |
+| interests / interest_tags / advocacy_interests | text[] / jsonb | YES | |
+| impact_areas / impact_goals / impact_regions / sdg_focus / regional_expertise / focus_areas | text[] | YES | |
+| africa_focus_areas / african_causes / africa_visit_frequency | text[] / text | YES | |
+| home_country_projects / giving_back_initiatives / volunteer_experience / community_involvement / past_contributions | text | YES | |
+| return_intentions | text | YES | |
+
+#### Role / type (⚠️ D054-relevant overlap surface)
+
+| Column | Type | Nullable | Default / note |
+|---|---|---|---|
+| **roles** | text[] | YES | free-form labels; **not** an enum — D054 normalizes |
+| **user_role** | text | YES | single string variant; usage uneven |
+| **user_type** | text | YES | onboarding-set; observed values: `individual`, `organization`, `diaspora_professional`, `founder`, `ally`. Older schema export lists default `'member'`; current onboarding (`src/pages/Onboarding.tsx`) writes one of the five values. |
+| selected_pillars / engagement_intentions / intentions / intents | text[] | YES | |
+| collaboration_needs / available_for / offers / needs / networking_goals / contribution_types / support_areas / what_to_give / what_to_receive | text[] | YES | |
+| mentorship_areas / mentorship_interest | text[] | YES | |
+| mentorship_offering / seeking_mentorship / availability_for_mentoring | bool | YES | |
+| availability_hours_per_month / available_hours_per_month | int4 | YES | |
+| availability_visible / open_to_opportunities / looking_for_opportunities | bool | YES | |
+
+#### Place (⚠️ D054-relevant; many overlapping fields)
+
+| Column | Type | Nullable | Default / note |
+|---|---|---|---|
+| location | text | YES | free-form |
+| location_preference | text | YES | |
+| city / current_city | text | YES | |
+| current_region | text | YES | |
+| **current_country** | text | YES | free-form name string |
+| **current_country_code** | text | YES | likely ISO-2 (no FK declared in `types.ts`) |
+| **current_country_id** | uuid | YES | intended FK → `countries.id` (declared FK not visible in `types.ts` Relationships for `profiles`) |
+| **current_country_name** | text | YES | denormalized |
+| current_location | text | YES | |
+| **country_of_origin** | text | YES | free-form name string |
+| **country_of_origin_id** | uuid | YES | intended FK → `countries.id` |
+| **country_origin** | text | YES | legacy duplicate of `country_of_origin` |
+| **origin_country_code** | text | YES | |
+| **origin_country_name** | text | YES | |
+| **diaspora_origin** | text | YES | legacy origin label |
+| **diaspora_status** | text | YES | enum-like; set by onboarding `DiasporaOriginStep` |
+| diaspora_networks | text[] | YES | |
+| ethnic_heritage | text[] | YES | |
+| years_in_diaspora / years_in_diaspora_text | int4 / text | YES | |
+| languages | text[] | YES | |
+| timezone | text | YES | |
+
+#### Contact / consent / visibility
+
+| Column | Type | Nullable | Default / note |
+|---|---|---|---|
+| linkedin_url / twitter_url / twitter_handle / facebook_url / instagram_url / github_url / website_url | text | YES | |
+| phone / phone_number / whatsapp_number | text | YES | |
+| preferred_contact / preferred_contact_method | text | YES | |
+| contact_number_visibility | text | NO | required column |
+| email_visible / allow_profile_sharing | bool | YES | |
+| consent_event_invites / consent_marketing_emails / consent_partner_intros / consent_public_search / agrees_to_values | bool | YES | |
+| email_notifications / notifications_enabled / newsletter_emails | bool | YES | |
+| notification_preferences / profile_visibility_settings / visibility | jsonb | YES | |
+| account_visibility | text | YES | |
+| is_public | bool | YES | default `true` |
+| is_admin | bool | YES | legacy flag; admin actually checked via `user_roles` + RPC |
+| is_beta_tester / is_test_account | bool | YES | |
+| beta_status / beta_phase / beta_expires_at / beta_signup_data / beta_feedback_count / beta_features_tested | text/jsonb/etc | YES | |
+
+#### Verification
+
+| Column | Type | Nullable | Default / note |
+|---|---|---|---|
+| **verified** | bool | YES | default `false` |
+| **verification_status** | enum `verification_status` | YES | per `types.ts`: `pending_verification`, `soft_verified`, `fully_verified` (NULL = unverified). Older schema-export doc also lists `unverified` and `rejected` — verify against live DB. |
+| verification_method | text | YES | |
+| verification_updated_at / verified_at | timestamptz | YES | |
+| referral_code / referrer_id | text / uuid | YES | |
+
+#### Onboarding / progression
+
+| Column | Type | Nullable | Default / note |
+|---|---|---|---|
+| **onboarding_completed** | bool | YES | |
+| **onboarding_completed_at** | timestamptz | YES | **primary gate read by `OnboardingGuard`** |
+| **onboarding_progress** | jsonb | NO | required column |
+| onboarding_recommendations_viewed | bool | YES | |
+| onboarding_stage | text | YES | |
+| dashboard_version | text | YES | |
+| adin_mode / adin_prompt_status | text | YES | |
+
+#### Scores / counters / activity
+
+| Column | Type | Nullable | Default / note |
+|---|---|---|---|
+| connection_count / follower_count / following_count | int4 | YES | |
+| profile_completeness_score / profile_completion_percentage / profile_completion_score | int4 | YES | three parallel scoring cols — DIA consolidation target |
+| profile_views_count | int4 | YES | |
+| impact_scores | jsonb | YES | default `'{}'` (added `20260222_sprint13_profile_platform.sql`) |
+| impact_scores_updated_at | timestamptz | YES | |
+| dia_insight | text | YES | added sprint13 |
+| dia_insight_updated_at | timestamptz | YES | |
+| first_action_completed / first_action_type | bool / text | YES | |
+| tour_completed_at / tour_current_step / tour_last_shown_at / tour_skipped_at | timestamptz / int4 | YES | |
+| hidden_activity_ids / pinned_activity_ids / recent_searches | jsonb / text[] | YES | |
+| username_changes / username_change_count / username_changes_count / username_changes_left | int4 | YES | multiple legacy counters |
+| username_history | jsonb | YES | |
+| last_active / last_active_at / last_seen_at | timestamptz | YES | |
+| auto_connect_enabled | bool | YES | |
+| deleted_at | timestamptz | YES | soft-delete |
+| created_at | timestamptz | NO | `now()` |
+| updated_at | timestamptz | NO | `now()` |
+
+**FKs declared in `types.ts`:** the `profiles` Row Relationships array is `[]` —
+declared FKs from `profiles` to other tables are not visible in `types.ts`. The legacy
+schema export and the onboarding code reference `country_of_origin_id` / `current_country_id`
+→ `countries.id` as if they exist; verify against live DB before treating as enforced.
+
+**Notable RLS** (after consolidation in `20251111022747_…sql`, lines 113–132):
+- `profiles_insert` — `WITH CHECK auth.uid() = id`
+- `profiles_select` — `USING is_public = true OR auth.uid() = id`
+- `profiles_update` — owner-only (`auth.uid() = id`); set in older migrations, not dropped by the consolidation pass
+- No public DELETE policy
+
+**D054 implication:** The table already has overlapping role/type/place surface
+(`roles text[]`, `user_role text`, `user_type text`, 8+ country/origin columns). D054
+**extends** — it does not replace. The plan must declare which existing fields the new
+`dna_role` enum supersedes (none, for back-compat) and which it leaves intact.
 
 ---
 
-### 2. Profiles Table — Geographic Columns
+### 1.2 `user_roles`
 
-#### 2.1 Country/Origin Columns:
-- **`country_of_origin`** (TEXT, nullable) — Plain text (e.g., 'Nigeria', 'Ghana')
-- **`country_of_origin_id`** (UUID, nullable) — FK → `countries.id`
-- **`country_origin`** (TEXT, nullable) — Appears to be duplicate; added in migration `20250801062316_57e6f3d5-6b74-4d60-beee-4f1b8633ad3a.sql` with comment: "User's country of origin (e.g. Nigeria, Ghana)"
+Platform-role table (admin / moderator), distinct from the user-facing identity tier.
 
-#### 2.2 Current Location Columns:
-- **`current_country`** (TEXT, nullable)
-- **`current_country_code`** (TEXT, nullable)
-- **`current_country_id`** (UUID, nullable) — FK → `countries.id`
-- **`current_country_name`** (TEXT, nullable) — Denormalized copy of countries.name
-- **`current_city`** (TEXT, nullable)
-- **`current_region`** (TEXT, nullable) — Region name or code
-- **`current_location`** (TEXT, nullable) — Free-text: 'Lagos, Nigeria'
+| Column | Type | Nullable | Default |
+|---|---|---|---|
+| id | uuid | NO | PK |
+| user_id | uuid | NO | FK → `profiles.id` |
+| role | enum `app_role` | NO | values: `user`, `moderator`, `admin` |
+| granted_at | timestamptz | YES | `now()` |
+| granted_by | uuid | YES | FK → `profiles.id` |
 
-#### 2.3 Generic Location Columns:
-- **`location`** (TEXT, nullable) — Generic location field
-- **`city`** (TEXT, nullable)
-- **`location_preference`** (TEXT, nullable)
-- **`origin_country_code`** (TEXT, nullable)
-- **`origin_country_name`** (TEXT, nullable) — Denormalized
-
-#### 2.4 Region/Continent-Related:
-- **`impact_regions`** (TEXT[], nullable) — Array of region names/IDs where user drives impact
-- **`regional_expertise`** (TEXT[], nullable) — Regions of professional expertise
-- **`region_tags`** (JSON, nullable) — Structured region metadata
-
-#### 2.5 Africa-Specific Columns:
-- **`africa_focus_areas`** (TEXT[], nullable) — African regions/sectors of user's focus
-- **`africa_visit_frequency`** (TEXT, nullable) — e.g., 'annually', 'quarterly', 'never'
-- **`african_causes`** (TEXT[], nullable)
-
-#### 2.6 Diaspora Context Columns:
-- **`diaspora_origin`** (TEXT, nullable) — Origin diaspora identifier (e.g., 'nigerian-diaspora', 'ghanaian-diaspora')
-- **`diaspora_status`** (TEXT, nullable) — Lifecycle state: 'in-diaspora' | 'returning' | 'potential'
-- **`years_in_diaspora`** (NUMBER, nullable) — Numeric duration (e.g., 15 years)
-- **`years_in_diaspora_text`** (TEXT, nullable) — Text representation
-- **`diaspora_networks`** (TEXT[], nullable) — Array of diaspora network identifiers
-
-#### 2.7 Timezone:
-- **`timezone`** (TEXT, nullable) — IANA timezone string (e.g., 'Africa/Lagos', 'America/New_York')
+**Unique:** `(user_id, role)`
+**RLS:** Public SELECT (`USING true`); INSERT/UPDATE/DELETE gated by `has_role(auth.uid(),'admin')`.
+**D054 implication:** Untouched. D054 introduces a separate `dna_role` enum on `profiles`
+for identity tier (returnee / anchor / ally / exploring); `app_role` stays as the
+platform-permission ladder.
 
 ---
 
-### 3. Geographic Reference Tables (3-Level Hierarchy)
+### 1.3 `profile_completion`
 
-#### 3.1 **continents** (6 columns)
-- **Columns:** id (PK), name, description, created_at, updated_at
-- **Purpose:** Top-level geographic hierarchy
-- **Relationships:** Referenced by regions.continent_id
+| Column | Type | Nullable | Default |
+|---|---|---|---|
+| user_id | uuid | NO | PK |
+| steps_completed | text[] | YES | |
+| guide_dismissed | bool | YES | |
+| guide_minimized | bool | YES | |
+| completed_at | timestamptz | YES | |
+| updated_at | timestamptz | YES | |
 
-#### 3.2 **regions** (21 columns)
-- **Columns:** id (PK), name, continent_id (FK), description, description_short, description_full, region_code, region_slug, hero_image_url, map_coordinates (JSON), timezone_primary, languages_primary (array), diaspora_population_estimate, interest_tags, key_sectors, skill_relevance, status, tagline, created_at, updated_at
-- **Purpose:** Sub-continental regions (e.g., 'West Africa', 'East Africa', 'Southern Africa')
-- **Relationships:** FK → continents; referenced by countries
-
-#### 3.3 **countries** (30 columns)
-- **Columns:** id (PK), name, region_id (FK), country_code_iso2, country_code_iso3, iso_code, country_slug, population, gdp_usd, gdp_growth_rate, diaspora_population_estimate, diaspora_top_destinations (array), capital, capital_coordinates (JSON), currency_code, official_languages (array), flag_url, hero_image_url, timezone, description, description_short, description_full, tagline, interest_tags, key_sectors, skill_relevance, status, created_at, updated_at
-- **Purpose:** Country-level reference data with diaspora-specific metadata
-- **Relationships:** FK → regions; referenced by profiles (country_of_origin_id, current_country_id), organizations (country_id), and others
-- **Diaspora Fields:** diaspora_population_estimate, diaspora_top_destinations
-- **Key Fields:** country_code_iso2 (e.g., 'NG'), country_code_iso3 (e.g., 'NGA'), country_slug (e.g., 'nigeria')
-
-#### 3.4 **provinces** (9 columns)
-- **Columns:** id (PK), country_id (FK), name, province_code, description, created_at, updated_at, and 2 others
-- **Purpose:** Sub-national divisions (states, provinces)
-- **Relationships:** FK → countries
+No declared FK relationships in `types.ts` (`Relationships: []`) — joins by convention
+only. **Not** read by `OnboardingGuard`; tracks post-onboarding "complete your profile"
+nudges.
 
 ---
 
-### 4. Affirmations / Witness / Endorsement Tables
+### 1.4 `user_onboarding_selections`
 
-**Finding:** **NO** affirmations, witness, vouch, endorsement, attestation, or commendation tables currently exist in the schema.
+Free-form key/value pairs captured during the onboarding wizard for analytics /
+recommendations.
 
-**Searched for:** `affirmation*`, `witness*`, `vouch*`, `endorsement*`, `attestation*`, `commendation*`, `validate*`  
-**Result:** None found in types.ts or committed migrations.
-
-**Implication for D054:** If affirmation/witness functionality is required, a new table must be created. Currently, all endorsement/credibility tracking appears to be handled through the `verified_contributors` table and `verification_status` enum on profiles.
-
----
-
-### 5. Enum Types
-
-Defined enums in public schema (from types.ts Enums section):
-
-- **`app_role`**: 'user', 'moderator', 'admin'
-- **`verification_status`**: 'pending_verification', 'soft_verified', 'fully_verified'
-- **`application_status`**: 'pending', 'shortlisted', 'reviewing', 'accepted', 'rejected', 'withdrawn'
-- **`contribution_need_priority`**: 'normal', 'high'
-- **`contribution_need_status`**: 'open', 'in_progress', 'fulfilled', 'closed'
-- **`contribution_need_type`**: 'funding', 'skills', 'time', 'access', 'resources'
-- **`contribution_offer_status`**: 'pending', 'accepted', 'declined', 'completed'
-- **`contribution_type`**: 'time', 'expertise', 'network', 'capital'
-- **`event_format`**: 'in_person', 'virtual', 'hybrid'
-- **`event_type`**: 'conference', 'workshop', 'meetup', 'webinar', 'networking', 'social', 'other'
-- **`group_join_policy`**: 'open', 'approval_required', 'invite_only'
-- **`group_member_role`**: 'owner', 'admin', 'moderator', 'member'
-- **`group_privacy`**: 'public', 'private', 'secret'
-- **`hashtag_status`**: 'active', 'archived', 'suspended', 'reserved'
-- **`hashtag_type`**: 'community', 'personal'
-- **`linked_entity_type`**: 'event', 'space', 'need', 'story', 'community_post'
-- **`opportunity_status`**: 'draft', 'active', 'paused', 'closed', 'archived'
-- **`opportunity_visibility`**: 'public', 'network_only', 'private'
-- **`reserved_category`**: 'country', 'public_figure', 'company', 'government', 'offensive', 'system', 'trademark'
-- **`rsvp_status`**: 'going', 'maybe', 'not_going', 'pending', 'waitlist'
-- **`space_update_type`**: 'manual_update', 'milestone', 'auto_task_event'
-- **`task_status`**: 'open', 'in_progress', 'done'
+| Column | Type | Nullable | Default |
+|---|---|---|---|
+| id | uuid | NO | PK |
+| user_id | uuid | NO | FK → `profiles.id` (via `user_onboarding_selections_user_id_fkey`) |
+| selection_type | text | NO | e.g. `'role'`, `'pillar'`, `'sector'` |
+| target_id | text | NO | |
+| target_title | text | YES | |
+| selected_at | timestamptz | YES | `now()` |
+| created_at | timestamptz | YES | `now()` |
 
 ---
 
-## Caveats
+### 1.5 Other foundation tables (one-line)
 
-This inventory is a **static snapshot** derived from committed source files. It cannot tell you:
+- `users` — legacy proxy table (`id`, `email`, `created_at`). Not used by the app.
+- `feature_flags` — `key text NOT NULL, enabled bool NOT NULL DEFAULT false, description text`.
+- `error_logs` — `user_id, error_type NOT NULL, error_message NOT NULL, stack_trace, route, metadata jsonb`.
+- `invites` — invite code → signup tracking; used by `InviteSignup.tsx`.
 
-- **Row counts or cardinality** — requires live `SELECT COUNT(*)` queries
-- **Current RLS policies in effect** — defined in migrations but may have been altered at runtime
-- **Indexes** — only those created via migrations are tracked; ad-hoc indexes added via Supabase console are not captured
-- **Runtime-modified defaults** — DEFAULT clauses in migrations may differ from current runtime state due to ALTER TABLE commands not fully tracked
-- **Actual column order** — types.ts may reorder columns during auto-generation
-- **Computed or generated columns** — not fully represented in types.ts
-- **Current constraint state** — CHECK/UNIQUE constraints defined in migrations but altered since are not captured
-- **Materialized views or view definitions** — only base tables are inventoried
-- **Supabase-managed metadata** (storage buckets, function logs, JWT secrets)
-- **Live performance metrics** (query plans, slow queries, index utilization, table bloat)
+---
 
-**For authoritative runtime information,** query the live Supabase project's `information_schema` or consult the Supabase management API with service-role credentials.
+## 2. GEOGRAPHY — Reference Data
 
+D054's place layer reuses these. The `countries` table already carries ISO-2 and ISO-3
+codes — D054 does not need to create new geography tables, only to add columns to
+`profiles` that point at this data with stable conventions.
+
+### 2.1 `continents`
+
+| Column | Type | Nullable | Default |
+|---|---|---|---|
+| id | uuid | NO | PK |
+| name | text | NO | |
+| description | text | YES | |
+| created_at / updated_at | timestamptz | NO | `now()` |
+
+**No `code` column.** D054 must decide whether to add one (e.g. `AF`/`NA`/`EU`/…) before
+storing continent on `profiles` as a stable string. See plan doc §C.3.
+
+### 2.2 `regions`
+
+Africa-focused sub-continental regions (West / East / Central / Southern / North).
+
+| Column | Type | Nullable | Default |
+|---|---|---|---|
+| id | uuid | NO | PK |
+| name | text | NO | |
+| continent_id | uuid | YES | FK → `continents.id` |
+| description / description_short / description_full | text | YES | |
+| region_code / region_slug | text | YES | |
+| hero_image_url | text | YES | |
+| map_coordinates | jsonb | YES | |
+| timezone_primary | text | YES | |
+| languages_primary | text[] | YES | |
+| diaspora_population_estimate | int4 | YES | |
+| interest_tags / key_sectors / skill_relevance | text[] | YES | |
+| status / tagline | text | YES | |
+| created_at / updated_at | timestamptz | NO | `now()` |
+
+### 2.3 `countries`
+
+Rich country profile (used by `pages/africa/CountryHubPage`).
+
+| Column | Type | Nullable | Default |
+|---|---|---|---|
+| id | uuid | NO | PK |
+| name | text | NO | |
+| region_id | uuid | NO | FK → `regions.id` |
+| **country_code_iso2** | text | YES | ISO 3166-1 alpha-2 |
+| **country_code_iso3** | text | YES | ISO 3166-1 alpha-3 — **column D054 references** |
+| iso_code | text | YES | legacy duplicate of iso2 |
+| country_slug | text | YES | URL slug |
+| capital / capital_coordinates | text / jsonb | YES | |
+| currency_code / timezone | text | YES | |
+| official_languages | text[] | YES | |
+| population / gdp_usd / gdp_growth_rate | int4 / numeric | YES | |
+| diaspora_population_estimate / diaspora_top_destinations | int4 / text[] | YES | |
+| key_sectors / skill_relevance / interest_tags | text[] | YES | |
+| description / description_short / description_full / tagline | text | YES | |
+| flag_url / hero_image_url | text | YES | |
+| status | text | YES | |
+| created_at / updated_at | timestamptz | NO | `now()` |
+
+**Open question for D054:** Is there a UNIQUE index on `countries.country_code_iso3`?
+If yes, the new `profiles.dna_country_iso3` column can be a hard FK. If not, the plan
+uses a regex CHECK and defers the FK to a follow-up.
+
+### 2.4 `provinces`
+
+Sub-national divisions (FK → `countries.id`). Not needed for D054 v0.0 minimum (the
+region/state/city hierarchy lands later per D029/D030).
+
+---
+
+## 3. CONVEY — Feed surface
+
+### 3.1 `posts` ⭐
+
+| Column | Type | Nullable | Default |
+|---|---|---|---|
+| id | uuid | NO | PK |
+| author_id | uuid | NO | FK → `profiles.id` |
+| content | text | YES | |
+| post_type | text | YES | `'post'` (stories use `'story'`) |
+| media_urls / media_types | text[] | YES | |
+| image_url / link_url | text | YES | |
+| link_preview | jsonb | YES | |
+| original_post_id | uuid | YES | FK → `posts.id` (reshares) |
+| space_id / event_id / community_id | uuid | YES | |
+| tags | text[] | YES | |
+| visibility | text | YES | `'public'` |
+| is_pinned / is_deleted / is_featured | bool | YES | `false` |
+| like_count / comment_count / share_count / view_count | int4 | YES | `0` |
+| engagement_score | float8 | YES | `0` |
+| story_title / story_subtitle / story_hero_image_url / story_content | text | YES | story-specific |
+| story_reading_time | int4 | YES | |
+| story_published_at | timestamptz | YES | |
+| created_at / updated_at | timestamptz | NO | `now()` |
+
+**Notable RLS:** Public SELECT for `visibility='public' AND is_deleted=false`; owner
+SELECT always; INSERT/UPDATE/DELETE owner-gated by `author_id = auth.uid()`. Per-tab
+visibility (connections-only, network) is enforced inside the `get_universal_feed` RPC.
+
+### 3.2 `get_universal_feed` RPC (core to the feed; not a table)
+
+Defined in `supabase/migrations/20260418000000_fix_get_universal_feed_pagination.sql`.
+
+**Profile columns it joins and returns:** `username`, `full_name`, `avatar_url`,
+`headline` (for both primary author and reshared original author). It does **not**
+currently project `verified`, `verification_status`, `user_type`, `roles`, or any
+country column. If D054 wants the feed to surface a role/place badge, this RPC needs
+its column list extended. See `docs/current-flows-audit.md` §2 for the call graph.
+
+### 3.3 Other feed tables (one-line)
+
+- `post_comments` — `post_id, user_id, content, parent_id, is_deleted`.
+- `post_reactions` — `post_id, user_id, reaction_type`; unique `(post_id, user_id)`.
+- `post_bookmarks` — `post_id, user_id`.
+- `post_likes` — legacy; current code uses `post_reactions`.
+- `post_views` / `post_shares` / `post_analytics` — engagement telemetry.
+- `feed_bookmarks` / `feed_reactions` / `feed_reshares` / `feed_comments` /
+  `feed_engagement_events` — duplicate of `post_*` for the feed surface;
+  consolidation flagged in the schema export.
+- `hidden_posts` / `muted_authors` / `post_reports` — moderation.
+- `hashtags`, `post_hashtags`, `hashtag_followers`, `hashtag_analytics`,
+  `hashtag_usage_requests`, `reserved_hashtags` — hashtag subsystem (no D054 impact).
+
+---
+
+## 4. CONNECT — Connections (DMs out of scope for D054)
+
+### 4.1 `connections`
+
+| Column | Type | Nullable | Default |
+|---|---|---|---|
+| id | uuid | NO | PK |
+| requester_id | uuid | NO | FK → `profiles.id` |
+| recipient_id | uuid | NO | FK → `profiles.id` |
+| status | text | NO | `'pending'` → `'accepted'` / `'rejected'` |
+| message | text | YES | |
+| created_at / updated_at | timestamptz | NO | `now()` |
+
+Used by `get_universal_feed` to enforce connection-scoped visibility (`status='accepted'`
+either direction).
+
+### 4.2 `blocked_users`
+
+`blocker_id, blocked_id, reason, created_at`. Filtered into the feed via RLS / function.
+
+---
+
+## 5–8. Convene / Collaborate / Contribute / Communities
+
+Detail in `docs/DNA-SUPABASE-SCHEMA-EXPORT.md` §2.3–§2.8. **None are touched by D054**;
+they all read `profiles.id` only. Tables (one-line):
+
+- **Convene:** `events` ⭐, `event_registrations`, `event_ticket_types`, `event_roles`,
+  `event_checkins`, `event_comments`, `event_analytics`, plus 10+ ancillary.
+- **Collaborate:** `spaces` ⭐, `space_members`, `space_tasks`, `space_updates`,
+  `space_activity_log`, `space_attachments`, `space_roles`, `space_task_dependencies`,
+  `space_templates`, plus legacy `collaboration_*` and `tasks`.
+- **Contribute:** `opportunities` ⭐, `organizations`, `applications`,
+  `contribution_needs`, `contribution_offers`, `contribution_acknowledgments`,
+  `opportunity_*`, `organization_verification_requests`, `billing_transactions`,
+  `platform_fees`, `sponsors`.
+- **Communities & Groups:** `communities`, `community_memberships`, `community_posts`,
+  `community_events`, `community_event_attendees`, `groups`, `group_members`,
+  `group_messages`, `group_conversations`, `group_posts`, `group_post_comments`,
+  `group_post_likes`, `group_join_requests`.
+
+---
+
+## 9. RLS — patterns relevant to D054
+
+| Pattern | Used on | Logic |
+|---|---|---|
+| Owner-only | `profile_completion`, `user_onboarding_selections`, notification prefs | `auth.uid() = user_id` (or `= id`) |
+| Owner write, public read | `profiles` (when `is_public=true`), `posts`, `events`, `communities` | INSERT/UPDATE `auth.uid() = author_id`; SELECT either `true` or a visibility predicate |
+| Admin override | every table with admin write | `has_role(auth.uid(), 'admin')` via SECURITY DEFINER fn |
+| Member access | `space_*`, `group_*`, `conversation_participants` | JOIN against membership table |
+| Connection-based | DMs, introductions | `are_users_connected(u1, u2)` SECURITY DEFINER fn |
+
+**For D054:** Both new pieces (`affirmations` table; the new `dna_role` / `dna_country_iso3` /
+`dna_continent_id` columns on `profiles`) inherit the same shape — owner write,
+controlled read. Detail in the plan doc §6.
+
+---
+
+## 10. ENUMS — current
+
+From `types.ts` lines 11789–11849.
+
+```text
+app_role:                    user | moderator | admin
+application_status:          pending | shortlisted | reviewing | accepted | rejected | withdrawn
+attachment_type:             space | task | update
+contribution_need_priority:  normal | high
+contribution_need_status:    open | in_progress | fulfilled | closed
+contribution_need_type:      funding | skills | time | access | resources
+contribution_offer_status:   pending | accepted | declined | completed
+contribution_type:           time | expertise | network | capital
+event_format:                in_person | virtual | hybrid
+event_type:                  conference | workshop | meetup | webinar | networking | social | other
+group_join_policy:           open | approval_required | invite_only
+group_member_role:           owner | admin | moderator | member
+group_privacy:               public | private | secret
+hashtag_status:              active | archived | suspended | reserved
+hashtag_type:                community | personal
+linked_entity_type:          event | space | need | story | community_post
+opportunity_status:          draft | active | paused | closed | archived
+opportunity_visibility:      public | network_only | private
+reserved_category:           country | public_figure | company | government | offensive | system | trademark
+rsvp_status:                 going | maybe | not_going | pending | waitlist
+space_update_type:           manual_update | milestone | auto_task_event
+task_status:                 open | in_progress | done
+verification_status:         pending_verification | soft_verified | fully_verified
+```
+
+> Note: the older schema-export doc lists `verification_status` as also including
+> `unverified` and `rejected`. The live enum per `types.ts` does **not**. The app
+> appears to treat NULL as "unverified". D054 should confirm against the live DB
+> before relying on any single source.
+
+D054 adds **two new enums** (`dna_identity_role` — `returnee` | `anchor` | `ally` | `exploring`;
+`dna_affirmation_type` — `arrival` | `ally_crossing` | `role_change` | `witness`). See
+plan doc §A and §B.
+
+---
+
+## 11. Remaining tables — alphabetical catalog
+
+One-line entries for every public-schema table not already detailed above; included so
+this doc is a complete map. (Total public-schema tables observed in `types.ts`: ~189.)
+
+**A** — `ada_cohort_memberships`, `ada_cohorts`, `ada_experiment_assignments`,
+`ada_experiment_variants`, `ada_experiments`, `ada_policies`, `adin_contributor_requests`,
+`adin_cost_tracking`, `adin_daily_stats`, `adin_nudges`, `adin_popular_queries`,
+`adin_preferences`, `adin_recommendations`, `adin_signals`, `admin_activity_log`,
+`alpha_feedback`, `analytics_events`, `applications`.
+
+**B** — `badge_definitions`, `beta_waitlist`, `billing_transactions`.
+
+**C** — `causes`, `collaboration_memberships`, `collaboration_spaces`, `comment_reactions`,
+`comment_reports`, `comments`, `communities`, `community_event_attendees`,
+`community_events`, `community_memberships`, `community_posts`, `content_flags`,
+`content_moderation`, `contribution_acknowledgments`, `contribution_cards`,
+`contribution_fulfillments`, `conversation_participants`, `conversations`,
+`conversations_new`, `cron_job_logs`.
+
+**D** — `dashboard_analytics`, `dia_insights`, `dia_queries`, `dia_query_log`,
+`dia_user_usage`, `diaspora_data`.
+
+**E** — `economic_indicators`, `entity_vectors`, `event_analytics`, `event_attendees`,
+`event_blasts`, `event_checkins`, `event_comments`, `event_promo_codes`,
+`event_registration_questions`, `event_registrations`, `event_reminder_logs`,
+`event_reports`, `event_roles`, `event_ticket_holds`, `event_ticket_types`,
+`event_tickets`, `event_waitlist`, `events`, `events_log`, `events_old`.
+
+**F** — `feature_flags`, `feed_bookmarks`, `feed_comments`, `feed_engagement_events`,
+`feed_reactions`, `feed_research_responses`, `feed_reshares`, `feedback_attachments`,
+`feedback_channel_memberships`, `feedback_channels`, `feedback_messages`,
+`feedback_reactions`.
+
+**G** — `geographic_relevance`, `group_conversations`, `group_join_requests`,
+`group_members`, `group_messages`, `group_post_comments`, `group_post_likes`,
+`group_posts`, `groups`.
+
+**H** — `hashtag_analytics`, `hashtag_followers`, `hashtag_usage_requests`, `hashtags`,
+`hidden_posts`, `hub_metrics`.
+
+**I** — `impact_attributions`, `impact_badges`, `impact_log`, `initiatives`,
+`innovation_data`, `introductions`, `invites`.
+
+**M** — `message_reactions`, `messages`, `messages_new`, `milestones`, `monthly_reports`,
+`muted_authors`.
+
+**N** — `newsletter_subscriptions`, `notifications`, `nudges`.
+
+**O** — `opportunities`, `opportunity_applications`, `opportunity_bookmarks`,
+`opportunity_contributions`, `opportunity_interests`, `organization_verification_requests`,
+`organizations`.
+
+**P** — `platform_fees`, `political_digest`, `post_analytics`, `post_bookmarks`,
+`post_comments`, `post_hashtags`, `post_likes`, `post_reactions`, `post_reports`,
+`post_shares`, `post_views`, `profile_causes`, `profile_skills`, `profile_views`,
+`projects`, `project_contributions`, `provinces`, `public_profiles` (view), `push_subscriptions`.
+
+**R** — `rate_limit_checks`, `release_features`, `releases`, `reserved_hashtags`,
+`roadmap_subscribers`.
+
+**S** — `saved_posts`, `search_preferences`, `skill_analytics`, `skill_connections`,
+`skills`, `space_activity_log`, `space_attachments`, `space_members`, `space_roles`,
+`space_task_dependencies`, `space_tasks`, `space_templates`, `space_updates`, `spaces`,
+`sponsor_placements`, `sponsors`.
+
+**T** — `task_comments`, `tasks`.
+
+**U** — `user_adin_profile`, `user_badges`, `user_communities`, `user_connections`,
+`user_dashboard_preferences`, `user_dna_points`, `user_engagement_tracking`,
+`user_feedback`, `user_follows`, `user_impact_summary`, `user_interactions`,
+`user_last_view_state`, `user_recommendations`, `user_vectors`, `username_history`,
+`users`.
+
+**V** — `verified_contributors`.
+
+**W** — `waitlist_signups`.
+
+---
+
+## 12. Storage buckets (per schema export, 2026-03-09)
+
+| Bucket | Public | Size limit | Allowed types |
+|---|---|---|---|
+| `avatars` | ✅ | — | any |
+| `banners` | ✅ | — | any |
+| `event-images` | ✅ | 10 MB | image/*, video/* |
+| `event-media` | ✅ | — | any |
+| `feedback-media` | ✅ | — | any |
+| `message-attachments` | ✅ | — | any |
+| `messages` | ✅ | 50 MB | image/*, audio/*, video/*, pdf |
+| `organization-logos` | ✅ | 5 MB | image/* |
+| `post-media` | ✅ | 10 MB | image/*, video/*, pdf, docx |
+| `profile-images` | ✅ | 5 MB | image/* |
+| `profile-pictures` | ✅ | 5 MB | image/* |
+| `space-attachments` | ❌ | — | any |
+| `story-hero-images` | ✅ | — | any |
+| `user-posts` | ✅ | 10 MB | image/*, video/* |
+
+No D054 impact (no new bucket needed for affirmations at v0.0 — text-only declaration).
+
+---
+
+## 13. Open questions that need a live-DB query before D054 SQL is finalized
+
+1. Is `verification_status` really three-valued or five-valued today? (Conflict between
+   `types.ts` enum and the older schema export.)
+2. Are the FKs from `profiles.current_country_id` / `profiles.country_of_origin_id` to
+   `countries.id` actually declared in the live DB? `types.ts` does not list them under
+   the `profiles` Relationships, but onboarding and admin code treats them as if they exist.
+3. Is there a `CHECK` constraint on `profiles.user_type` today, and if so, what is its
+   exact value list? (Onboarding writes one of `individual` / `organization` /
+   `diaspora_professional` / `founder` / `ally`; older schema export said default `'member'`.)
+4. Is there a UNIQUE index on `countries.country_code_iso3`? If yes, D054's new
+   `dna_country_iso3` column can be a hard FK; if no, the plan stays with a CHECK regex.
+
+These should be verified with a read-only `\d+` and `pg_constraint` query in the next
+planning cycle before authoring the D054 migration SQL.
