@@ -243,7 +243,7 @@ Same four for the reshared `original_*` author.
 
 The migration introduces (per the D054 brief): a `dna_role` enum on `profiles`
 (`returnee` / `anchor` / `ally` / `exploring`), an `affirmations` table, and
-`dna_country_iso3` + `dna_continent_id` columns on `profiles`. The gaps below are
+`dna_country_iso3` + `dna_continent` columns on `profiles`. The gaps below are
 points where existing code makes assumptions that will need to be revisited.
 
 ### 3.1 Single-tier identity assumption
@@ -262,7 +262,7 @@ points where existing code makes assumptions that will need to be revisited.
 - The profile already has eight country-shaped columns: `current_country`, `current_country_code`, `current_country_id`, `current_country_name`, `country_of_origin`, `country_of_origin_id`, `country_origin`, plus `origin_country_code` / `origin_country_name`. None is consistently ISO-3.
 - `IdentityStep` and `DiasporaOriginStep` use `CountryCombobox` / `SearchableCountrySelect` to write `current_country` and `country_of_origin` as free-form strings (not codes).
 - D054's `dna_country_iso3` adds a single authoritative ISO-3 column rather than disturb the legacy ones. Backfill from existing columns must be a follow-up scripted pass (the legacy values are unreliable).
-- `continents` has no `code` column, so D054 must either add one to `continents` or carry the continent reference as a UUID FK. The plan currently uses the UUID FK.
+- `continents` has no `code` column, so D054 v0.0 stores a 2-letter continent code (`AF`/`EU`/…) as text on `profiles` (`dna_continent`), validated by CHECK. A UUID FK to `continents(id)` and a future `continents.code` column were both considered and deferred (see plan §C.3).
 
 ### 3.4 Profile completeness vs. identity-tier completeness
 
@@ -297,7 +297,7 @@ points where existing code makes assumptions that will need to be revisited.
 | `src/pages/Onboarding.tsx` | Where the new `dna_role` + `dna_country_iso3` selection UI plugs in |
 | `src/components/onboarding/steps/UserTypeStep.tsx` | Place to either add a new "DNA role" step or expand this one |
 | `src/components/onboarding/steps/DiasporaOriginStep.tsx` | Place to add ISO-3 country picker |
-| `src/components/onboarding/hooks/useOnboardingForm.ts` | New form fields (`dna_role`, `dna_country_iso3`, `dna_continent_id`) go here |
+| `src/components/onboarding/hooks/useOnboardingForm.ts` | New form fields (`dna_role`, `dna_country_iso3`, `dna_continent`) go here |
 | `src/integrations/supabase/client.ts` | No D054 change; mobile client (separate repo) needs distinct `storageKey` |
 | `src/pages/dna/Feed.tsx` | No D054 change unless feed UI gains a role badge |
 | `supabase/migrations/20260418000000_fix_get_universal_feed_pagination.sql` | RPC to extend if feed cards need role / country surfacing |

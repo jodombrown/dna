@@ -290,8 +290,10 @@ codes — D054 does not need to create new geography tables, only to add columns
 | description | text | YES | |
 | created_at / updated_at | timestamptz | NO | `now()` |
 
-**No `code` column.** D054 must decide whether to add one (e.g. `AF`/`NA`/`EU`/…) before
-storing continent on `profiles` as a stable string. See plan doc §C.3.
+**No `code` column.** D054 v0.0 stores a 2-letter continent code (`AF`/`AN`/`AS`/`EU`/`NA`/`OC`/`SA`)
+as text on `profiles` (`dna_continent`), validated by CHECK rather than FK because this table has no
+code column to reference yet. Adding a UNIQUE `code` column here later would let the plan promote
+that CHECK to a FK. See plan doc §C.3.
 
 ### 2.2 `regions`
 
@@ -457,7 +459,7 @@ they all read `profiles.id` only. Tables (one-line):
 | Connection-based | DMs, introductions | `are_users_connected(u1, u2)` SECURITY DEFINER fn |
 
 **For D054:** Both new pieces (`affirmations` table; the new `dna_role` / `dna_country_iso3` /
-`dna_continent_id` columns on `profiles`) inherit the same shape — owner write,
+`dna_continent` columns on `profiles`) inherit the same shape — owner write,
 controlled read. Detail in the plan doc §6.
 
 ---
