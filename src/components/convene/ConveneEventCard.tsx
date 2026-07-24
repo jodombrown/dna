@@ -67,7 +67,13 @@ export interface ConveneEventCardProps {
   onClick?: () => void;
   showMutualAttendees?: boolean;
   className?: string;
-  /** Distance from the viewer's near-me anchor, e.g. "1.2 km". Shown when set. */
+  /**
+   * Distance from the viewer's near-me anchor, e.g. "1.2 km". Shown when set.
+   * BD218: Feature-A-owned contract. The near-me sort is the ONLY caller, so a
+   * frame/Plate port that drops the meta row below regresses invisibly in every
+   * other view. Preserve it, and keep ConveneEventCard.distanceLabel.test.tsx
+   * green — that test is the only guard that will go red.
+   */
   distanceLabel?: string;
 }
 
