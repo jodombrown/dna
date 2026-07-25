@@ -1,10 +1,8 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { MapPin, Video, Globe, Users, Eye, Edit, BarChart3, CheckCircle2, HelpCircle, ExternalLink } from 'lucide-react';
-import { format, differenceInHours, differenceInDays, isToday, isTomorrow } from 'date-fns';
+import { MapPin, Video, Globe, Users, CheckCircle2, HelpCircle, ExternalLink } from 'lucide-react';
+import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { MutualAttendeesLine } from './MutualAttendeesLine';
@@ -64,7 +62,6 @@ export interface ConveneEventCardProps {
     rsvp_status?: string | null;
     user_rsvp_status?: string | null;
   };
-  variant?: 'full' | 'compact';
   showRsvp?: boolean;
   rsvpStatus?: 'going' | 'maybe' | 'not_going' | null;
   onRsvp?: (status: string) => void;
@@ -94,7 +91,6 @@ const getInitials = (name: string) =>
 
 export function ConveneEventCard({
   event,
-  variant = 'full',
   showRsvp = false,
   rsvpStatus: rsvpStatusProp,
   onRsvp,
@@ -128,29 +124,6 @@ export function ConveneEventCard({
   const dayNumber = startDate ? format(startDate, 'd') : '·';
   const isPast = startDate ? startDate < new Date() : false;
 
-  // Urgency calculation
-  const getUrgencyChip = () => {
-    if (!startDate || isPast) return null;
-    const now = new Date();
-    const hoursAway = differenceInHours(startDate, now);
-    const daysAway = differenceInDays(startDate, now);
-
-    if (isToday(startDate)) {
-      return { label: 'Today', variant: 'today' as const, pulse: true };
-    }
-    if (isTomorrow(startDate)) {
-      return { label: 'Tomorrow', variant: 'tomorrow' as const, pulse: false };
-    }
-    if (hoursAway <= 48) {
-      return { label: `In ${hoursAway}h`, variant: 'urgent' as const, pulse: false };
-    }
-    if (daysAway <= 7) {
-      return { label: `${daysAway} days away`, variant: 'soon' as const, pulse: false };
-    }
-    return null;
-  };
-  const urgency = getUrgencyChip();
-
   // Location
   const getLocationInfo = () => {
     const isVirtual = event.is_virtual || event.format === 'virtual';
@@ -180,151 +153,7 @@ export function ConveneEventCard({
 
   const imageUrl = event.cover_image_url || event.banner_url || event.image_url;
 
-  // ── COMPACT VARIANT ────────────────────────────────────
-  if (variant === 'compact') {
-    return (
-      <Card
-        className={cn(
-          'overflow-hidden hover:shadow-lg transition-all cursor-pointer group border-l-4 border-l-module-convene',
-          event.is_cancelled && 'opacity-60',
-          className,
-        )}
-        onClick={handleClick}
-      >
-        <div className="p-4 flex items-start gap-3">
-          {/* Date box */}
-          <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg bg-background flex flex-col items-center justify-center">
-            <span className="text-micro text-dna-convene uppercase leading-none">
-              {monthAbbrev}
-            </span>
-            <span className="text-lg font-bold leading-none mt-0.5">
-              {dayNumber}
-            </span>
-          </div>
-
-          {/* Content */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1 flex-wrap">
-              {event.event_type && (
-                <Badge variant="secondary" className="capitalize text-xs">
-                  {event.event_type}
-                </Badge>
-              )}
-              {urgency && (
-                <Badge
-                  className={cn(
-                    'text-xs border-0',
-                    urgency.variant === 'today' && 'bg-destructive text-destructive-foreground',
-                    urgency.variant === 'tomorrow' && 'bg-destructive/80 text-destructive-foreground',
-                    urgency.variant === 'urgent' && 'bg-dna-convene text-white',
-                    urgency.variant === 'soon' && 'bg-dna-convene/20 text-dna-convene-dark',
-                  )}
-                >
-                  {urgency.pulse && <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse mr-1" />}
-                  {urgency.label}
-                </Badge>
-              )}
-              {isPast && <Badge variant="secondary" className="text-xs">Past</Badge>}
-              {event.is_cancelled && (
-                <Badge variant="destructive" className="text-xs">Cancelled</Badge>
-              )}
-            </div>
-            <h3 className="font-semibold text-base leading-tight line-clamp-1 text-foreground">
-              {event.title}
-            </h3>
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground mt-1">
-              <EventTime
-                event={{
-                  start_time: rawDate,
-                  end_time: event.end_time,
-                  time_confirmed: event.time_confirmed,
-                  date_confirmed: event.date_confirmed,
-                }}
-                eventId={event.id}
-                variant="datetime"
-              />
-              {locationInfo && (
-                <span className="flex items-center gap-1">
-                  <locationInfo.icon className="h-3 w-3" />
-                  {locationInfo.text}
-                </span>
-              )}
-            </div>
-
-            {/* Mutual attendees in compact */}
-            {showMutualAttendees && <MutualAttendeesLine eventId={event.id} />}
-
-            {/* RSVP badge */}
-            {rsvpStatus && (
-              <Badge
-                variant={rsvpStatus === 'going' ? 'default' : 'outline'}
-                className={cn(
-                  'mt-2 text-xs capitalize',
-                  rsvpStatus === 'going' && 'bg-dna-copper text-white hover:bg-dna-copper-dark',
-                )}
-              >
-                {rsvpStatus === 'going' && <CheckCircle2 className="h-3 w-3 mr-1" />}
-                {rsvpStatus === 'maybe' && <HelpCircle className="h-3 w-3 mr-1" />}
-                {rsvpStatus === 'going' ? 'Going ✓' : rsvpStatus}
-              </Badge>
-            )}
-          </div>
-
-          {/* Actions (host mode) */}
-          {showActions && (
-            <div className="flex flex-col gap-1 flex-shrink-0">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(`/dna/convene/events/${event.slug || event.id}`);
-                }}
-              >
-                <Eye className="h-4 w-4" />
-              </Button>
-              {isOrganizer && (
-                <>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/dna/convene/events/${event.slug || event.id}/analytics`);
-                    }}
-                  >
-                    <BarChart3 className="h-4 w-4" />
-                  </Button>
-                  {!isPast && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/dna/convene/events/${event.slug || event.id}/edit`);
-                      }}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  )}
-                </>
-              )}
-            </div>
-          )}
-
-          {/* Attendee count (non-action mode) */}
-          {!showActions && attendeeCount > 0 && (
-            <div className="flex items-center gap-1 text-xs text-muted-foreground flex-shrink-0">
-              <Users className="h-3 w-3" />
-              {attendeeCount}
-            </div>
-          )}
-        </div>
-      </Card>
-    );
-  }
-
-  // ── FULL VARIANT — composes the shared four-band frame (BD190) ─────────
+  // ── Composes the shared four-band frame (BD190) ───────────────────────
   // Byte-identical in shape to CuratedEventCard and every other event surface:
   // Identity / Image / Fact / Action, geometry owned by EventCardFrame. The old
   // cinematic chassis (floating footer, rounded-lg, shadow-lg, gradient cover)
