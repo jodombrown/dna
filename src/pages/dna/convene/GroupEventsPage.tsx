@@ -1,20 +1,16 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Calendar, Plus, ArrowLeft, MapPin, Users as UsersIcon, Clock } from 'lucide-react';
+import { Calendar, Plus, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import LayoutController from '@/components/LayoutController';
 import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
-import { eventStartMs, formatEventDateTime } from '@/lib/events/eventTime';
-import { EventTime } from '@/components/events/EventTime';
-import { formatEventPlace } from '@/lib/events/formatPlace';
-import { formatEventFormat } from '@/lib/events/eventFormat';
+import { eventStartMs } from '@/lib/events/eventTime';
 import { Event } from '@/types/events';
+import { GroupEventCard } from '@/components/convene/GroupEventCard';
 
 export default function GroupEventsPage() {
   const { slug } = useParams();
@@ -84,57 +80,6 @@ export default function GroupEventsPage() {
     return (start !== null && start <= now.getTime()) || e.is_cancelled;
   });
 
-  const EventCard = ({ event }: { event: Event }) => {
-    const startMs = eventStartMs(event);
-    const isPast = startMs !== null && startMs < now.getTime();
-
-    return (
-      <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(`/dna/convene/events/${event.id}`)}>
-        <CardHeader>
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <Badge variant="secondary" className="capitalize">{event.event_type}</Badge>
-                <Badge variant="outline">{formatEventFormat(event.format)}</Badge>
-                {isPast && <Badge variant="secondary">Past</Badge>}
-                {event.is_cancelled && <Badge variant="destructive">Cancelled</Badge>}
-              </div>
-              <CardTitle className="text-lg">{event.title}</CardTitle>
-              <CardDescription className="mt-2 line-clamp-2">{event.description}</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              <EventTime
-                event={{ ...event, time_confirmed: event.time_confirmed ?? null, date_confirmed: event.date_confirmed ?? null }}
-                variant="date"
-              />
-            </div>
-            {formatEventDateTime({ ...event, time_confirmed: event.time_confirmed ?? null, date_confirmed: event.date_confirmed ?? null }, 'clock') && (
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4" />
-                <span>{formatEventDateTime({ ...event, time_confirmed: event.time_confirmed ?? null, date_confirmed: event.date_confirmed ?? null }, 'clock')}</span>
-              </div>
-            )}
-            {event.format !== 'virtual' && formatEventPlace(event, 'compact') && (
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                <span>{formatEventPlace(event, 'compact')}</span>
-              </div>
-            )}
-            <div className="flex items-center gap-2">
-              <UsersIcon className="h-4 w-4" />
-              <span>View attendees</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  };
-
   return (
     <LayoutController
       leftColumn={<LeftNav />}
@@ -188,7 +133,7 @@ export default function GroupEventsPage() {
               ) : upcomingEvents.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {upcomingEvents.map((event) => (
-                    <EventCard key={event.id} event={event} />
+                    <GroupEventCard key={event.id} event={event} />
                   ))}
                 </div>
               ) : (
@@ -215,7 +160,7 @@ export default function GroupEventsPage() {
               <TabsContent value="undated" className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {undatedEvents.map((event) => (
-                    <EventCard key={event.id} event={event} />
+                    <GroupEventCard key={event.id} event={event} />
                   ))}
                 </div>
               </TabsContent>
@@ -225,7 +170,7 @@ export default function GroupEventsPage() {
               {pastEvents.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {pastEvents.map((event) => (
-                    <EventCard key={event.id} event={event} />
+                    <GroupEventCard key={event.id} event={event} />
                   ))}
                 </div>
               ) : (
