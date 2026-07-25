@@ -21,6 +21,8 @@ export interface EventPlateEvent {
   event_type?: string | null;
   /** For host derivation (curatedHostName). */
   organizer_name?: string | null;
+  /** Provenance leg — curatedHostName keys on this OR curated_source_url (BD214). */
+  curated_source?: string | null;
   curated_source_url?: string | null;
   /** City for the micro line / tier-2 promotion. */
   location_city?: string | null;
