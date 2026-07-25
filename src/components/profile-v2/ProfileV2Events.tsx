@@ -10,7 +10,7 @@ import { Calendar, CalendarPlus, Compass, Clock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { EVENT_PLACE_SELECT, pickEventPlace } from '@/lib/events/formatPlace';
 import { eventStartMs } from '@/lib/events/eventTime';
-import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
+import { ConveneEventRow } from '@/components/convene/ConveneEventRow';
 import { EventListItem, EventType, EventFormat } from '@/types/events';
 import { ProfileV2Data, ProfileV2Visibility } from '@/types/profileV2';
 import { useUniversalComposer } from '@/contexts/ComposerContext';
@@ -313,9 +313,9 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
                 Upcoming ({upcoming.length})
               </h4>
             </div>
-            <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
+            <div className="divide-y divide-border">
               {upcoming.map((event) => (
-                <ConveneEventCard key={event.event_id} event={{ ...event, id: event.event_id }} variant="compact" />
+                <ConveneEventRow key={event.event_id} event={{ ...event, id: event.event_id }} />
               ))}
             </div>
           </div>
@@ -330,9 +330,9 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
                 Dates TBA ({undated.length})
               </h4>
             </div>
-            <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
+            <div className="divide-y divide-border">
               {undated.map((event) => (
-                <ConveneEventCard key={event.event_id} event={{ ...event, id: event.event_id }} variant="compact" />
+                <ConveneEventRow key={event.event_id} event={{ ...event, id: event.event_id }} />
               ))}
             </div>
           </div>
@@ -347,9 +347,9 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
                 Past ({past.length})
               </h4>
             </div>
-            <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
+            <div className="divide-y divide-border">
               {past.map((event) => (
-                <ConveneEventCard key={event.event_id} event={{ ...event, id: event.event_id }} variant="compact" />
+                <ConveneEventRow key={event.event_id} event={{ ...event, id: event.event_id }} />
               ))}
             </div>
           </div>

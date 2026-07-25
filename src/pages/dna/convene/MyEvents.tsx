@@ -13,8 +13,10 @@ import LayoutController from '@/components/LayoutController';
 import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { EventCalendarView } from '@/components/convene/EventCalendarView';
-import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
+import { ConveneEventRow } from '@/components/convene/ConveneEventRow';
 import { MyEventCard } from '@/components/convene/MyEventCard';
+import { EventListRow } from '@/components/cards/EventListRow';
+import { EventRowList } from '@/components/convene/EventRowList';
 import { MyEventsStatsHeader } from '@/components/convene/MyEventsStatsHeader';
 import { PastEventDiaNudge } from '@/components/convene/PastEventDiaNudge';
 import { ConveneShell } from '@/components/convene/ConveneShell';
@@ -290,7 +292,7 @@ const MyEvents = () => {
                         <p className="text-sm text-muted-foreground mb-3">
                           Not published yet — only you can see these.
                         </p>
-                        <div className="space-y-3">
+                        <div className="divide-y divide-border">
                           {draftHosting.map((event) => (
                             <MyEventCard key={event.id} event={event} />
                           ))}
@@ -304,7 +306,7 @@ const MyEvents = () => {
                         <h2 className="text-lg font-bold mb-3">
                           Published ({publishedHosting.length})
                         </h2>
-                        <div className="space-y-3">
+                        <div className="divide-y divide-border">
                           {publishedHosting.map((event) => (
                             <MyEventCard key={event.id} event={event} />
                           ))}
@@ -319,7 +321,7 @@ const MyEvents = () => {
                         <h2 className="text-lg font-bold mb-3">
                           Dates TBA ({undatedHosting.length})
                         </h2>
-                        <div className="space-y-3">
+                        <div className="divide-y divide-border">
                           {undatedHosting.map((event) => (
                             <MyEventCard key={event.id} event={event} />
                           ))}
@@ -341,10 +343,12 @@ const MyEvents = () => {
                             />
                           </button>
                         </CollapsibleTrigger>
-                        <CollapsibleContent className="mt-3 space-y-3">
-                          {pastHosting.map((event) => (
-                            <MyEventCard key={event.id} event={event} isPast />
-                          ))}
+                        <CollapsibleContent>
+                          <EventRowList>
+                            {pastHosting.map((event) => (
+                              <MyEventCard key={event.id} event={event} isPast />
+                            ))}
+                          </EventRowList>
                         </CollapsibleContent>
                       </Collapsible>
                     )}
@@ -365,10 +369,12 @@ const MyEvents = () => {
                             />
                           </button>
                         </CollapsibleTrigger>
-                        <CollapsibleContent className="mt-3 space-y-3">
-                          {cancelledHosting.map((event) => (
-                            <MyEventCard key={event.id} event={event} />
-                          ))}
+                        <CollapsibleContent>
+                          <EventRowList>
+                            {cancelledHosting.map((event) => (
+                              <MyEventCard key={event.id} event={event} />
+                            ))}
+                          </EventRowList>
                         </CollapsibleContent>
                       </Collapsible>
                     )}
@@ -399,55 +405,57 @@ const MyEvents = () => {
                         <h2 className="text-lg font-bold mb-3">
                           Upcoming ({upcomingAttending.length})
                         </h2>
-                        <div className="space-y-3">
+                        <div className="divide-y divide-border">
                           {upcomingAttending.map((event) => (
-                            <Card
+                            <EventListRow
                               key={event.id}
-                              className="overflow-hidden hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-module-convene"
                               onClick={() =>
                                 navigate(`/dna/convene/events/${event.slug || event.id}`)
                               }
-                            >
-                              <div className="p-4">
-                                <div className="flex items-center justify-between mb-1">
-                                  <h3 className="font-semibold text-base line-clamp-1">
-                                    {event.title}
-                                  </h3>
-                                  <EventTime
-                                    event={event}
-                                    variant="compact"
-                                    notifyAction={false}
-                                    className="text-xs text-muted-foreground flex-shrink-0 ml-2"
-                                  />
+                              title={
+                                <h3 className="text-h3 line-clamp-1 text-foreground">
+                                  {event.title}
+                                </h3>
+                              }
+                              titleTrailing={
+                                <EventTime
+                                  event={event}
+                                  variant="compact"
+                                  notifyAction={false}
+                                  className="text-meta text-muted-foreground"
+                                />
+                              }
+                              body={
+                                <div className="flex flex-col gap-3">
+                                  <MutualAttendeesLine eventId={event.id} />
+                                  <div className="flex items-center gap-2">
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigate(
+                                          `/dna/convene/events/${event.slug || event.id}`
+                                        );
+                                      }}
+                                    >
+                                      View Details
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-destructive hover:text-destructive"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        cancelRsvp.mutate(event.id);
+                                      }}
+                                    >
+                                      Cancel RSVP
+                                    </Button>
+                                  </div>
                                 </div>
-                                <MutualAttendeesLine eventId={event.id} />
-                                <div className="flex items-center gap-2 mt-3">
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      navigate(
-                                        `/dna/convene/events/${event.slug || event.id}`
-                                      );
-                                    }}
-                                  >
-                                    View Details
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-destructive hover:text-destructive"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      cancelRsvp.mutate(event.id);
-                                    }}
-                                  >
-                                    Cancel RSVP
-                                  </Button>
-                                </div>
-                              </div>
-                            </Card>
+                              }
+                            />
                           ))}
                         </div>
                       </section>
@@ -460,12 +468,11 @@ const MyEvents = () => {
                         <h2 className="text-lg font-bold mb-3">
                           Dates TBA ({undatedAttending.length})
                         </h2>
-                        <div className="space-y-3">
+                        <div className="divide-y divide-border">
                           {undatedAttending.map((event) => (
-                            <ConveneEventCard
+                            <ConveneEventRow
                               key={event.id}
                               event={event}
-                              variant="compact"
                               showMutualAttendees={false}
                             />
                           ))}
@@ -487,36 +494,36 @@ const MyEvents = () => {
                             />
                           </button>
                         </CollapsibleTrigger>
-                        <CollapsibleContent className="mt-3 space-y-3">
-                          {pastAttending.map((event) => (
+                        <CollapsibleContent>
+                          <EventRowList>
+                            {pastAttending.map((event) => (
                             <div key={event.id} className="space-y-2">
-                              <Card
-                                className="overflow-hidden hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-module-convene"
+                              <EventListRow
                                 onClick={() =>
                                   navigate(`/dna/convene/events/${event.slug || event.id}`)
                                 }
-                              >
-                                <div className="p-4">
-                                  <div className="flex items-center justify-between">
-                                    <h3 className="font-semibold text-base line-clamp-1">
-                                      {event.title}
-                                    </h3>
-                                    <EventTime
-                                      event={event}
-                                      variant="compact"
-                                      notifyAction={false}
-                                      className="text-xs text-muted-foreground flex-shrink-0 ml-2"
-                                    />
-                                  </div>
-                                </div>
-                              </Card>
+                                title={
+                                  <h3 className="text-h3 line-clamp-1 text-foreground">
+                                    {event.title}
+                                  </h3>
+                                }
+                                titleTrailing={
+                                  <EventTime
+                                    event={event}
+                                    variant="compact"
+                                    notifyAction={false}
+                                    className="text-meta text-muted-foreground"
+                                  />
+                                }
+                              />
                               <PastEventDiaNudge
                                 eventId={event.id}
                                 eventTitle={event.title}
                                 variant="share_story"
                               />
                             </div>
-                          ))}
+                            ))}
+                          </EventRowList>
                         </CollapsibleContent>
                       </Collapsible>
                     )}

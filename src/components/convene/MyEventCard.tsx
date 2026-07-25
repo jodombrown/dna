@@ -1,14 +1,22 @@
 /**
  * DNA | CONVENE — My Event Card (Hosting Tab)
- * Enhanced card with status badge, inline metrics, contextual actions.
+ *
+ * A thin composition over the `EventListRow` primitive. It owns the real
+ * organizer logic — the draft / cancelled / past action branching, the share
+ * and copy-link handlers, and the trailing `PastEventDiaNudge` — which is why
+ * it stays a component rather than migrating into the page. Geometry belongs to
+ * the primitive; this file only maps a hosted event onto the row's slots.
+ *
+ * BD176: the old four-thick left spine in the superseded Convene gold is gone.
+ * A row is not a card; the list owns a hairline divider, and the date box (now
+ * in the `--bevel-event` Convene copper) carries the C identity.
  */
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Eye, Edit, Share2, Copy, BarChart3, RefreshCw } from 'lucide-react';
+import { Eye, Edit, Share2, Copy, RefreshCw } from 'lucide-react';
 import { format } from 'date-fns';
 import { EventTime } from '@/components/events/EventTime';
 import { eventStartMs } from '@/lib/events/eventTime';
@@ -17,6 +25,7 @@ import { cn } from '@/lib/utils';
 import { ConveneEventBadge } from './ConveneEventBadge';
 import { getEventStatus } from '@/utils/convene/getEventStatus';
 import { PastEventDiaNudge } from './PastEventDiaNudge';
+import { EventListRow } from '@/components/cards/EventListRow';
 import { toast } from 'sonner';
 
 interface MyEventCardEvent {
@@ -87,96 +96,96 @@ export function MyEventCard({ event, isPast = false, className }: MyEventCardPro
     ? `${attendeeCount}/${event.max_attendees} registered`
     : `${attendeeCount} registered`;
 
+  // ── leading — the date box, the row's Convene anchor ─────────────
+  const leading = (
+    <div className="w-11 h-11 border border-border rounded-lg bg-background flex flex-col items-center justify-center">
+      <span className="text-micro text-bevel-event uppercase leading-none">{monthAbbrev}</span>
+      <span className="text-h2 leading-none mt-0.5">{dayNumber}</span>
+    </div>
+  );
+
+  // ── titleTrailing — the lifecycle status badge ───────────────────
+  const statusBadge = isCancelled ? (
+    <Badge variant="destructive">Cancelled</Badge>
+  ) : isCompleted ? (
+    <Badge variant="secondary">Completed</Badge>
+  ) : isDraft ? (
+    <Badge variant="outline">Draft</Badge>
+  ) : (
+    liveStatus && <ConveneEventBadge status={liveStatus} />
+  );
+
+  // ── meta — the organizer's own card, so no Notify-me ─────────────
+  const meta = (
+    <p className="text-meta text-muted-foreground">
+      <EventTime
+        event={{
+          start_time: event.start_time,
+          time_confirmed: event.time_confirmed,
+          date_confirmed: event.date_confirmed,
+        }}
+        variant="datetime"
+        notifyAction={false}
+      />
+    </p>
+  );
+
+  // ── body — registration count, then contextual actions ───────────
+  const body = (
+    <>
+      <p className="text-meta text-muted-foreground mt-1">{registrationLabel}</p>
+      <div className="flex items-center gap-2 mt-3 flex-wrap">
+        {isPast ? (
+          <>
+            <Button variant="outline" size="sm" onClick={navigateTo(eventPath)}>
+              <Eye className="h-3.5 w-3.5 mr-1.5" />
+              View Recap
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleShare}>
+              <Share2 className="h-3.5 w-3.5 mr-1.5" />
+              Share Recap
+            </Button>
+          </>
+        ) : isCancelled ? (
+          <Button variant="outline" size="sm" onClick={navigateTo('/dna/convene/events/new')}>
+            <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+            Duplicate
+          </Button>
+        ) : isDraft ? (
+          <Button variant="outline" size="sm" onClick={navigateTo(eventPath)}>
+            <Edit className="h-3.5 w-3.5 mr-1.5" />
+            Edit Draft
+          </Button>
+        ) : (
+          <>
+            <Button variant="outline" size="sm" onClick={navigateTo(eventPath)}>
+              <Eye className="h-3.5 w-3.5 mr-1.5" />
+              Manage
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleShare}>
+              <Share2 className="h-3.5 w-3.5 mr-1.5" />
+              Share
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleCopyLink}>
+              <Copy className="h-3.5 w-3.5 mr-1.5" />
+              Copy Link
+            </Button>
+          </>
+        )}
+      </div>
+    </>
+  );
+
   return (
     <div className={cn('space-y-2', className)}>
-      <Card
-        className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group border-l-4 border-l-module-convene"
+      <EventListRow
         onClick={() => navigate(eventPath)}
-      >
-        <div className="p-4 flex items-start gap-3">
-          {/* Date box */}
-          <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg bg-background flex flex-col items-center justify-center">
-            <span className="text-micro text-dna-convene uppercase leading-none">
-              {monthAbbrev}
-            </span>
-            <span className="text-lg font-bold leading-none mt-0.5">{dayNumber}</span>
-          </div>
-
-          {/* Content */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="font-semibold text-base leading-tight line-clamp-1 text-foreground">
-                {event.title}
-              </h3>
-              {isCancelled ? (
-                <Badge variant="destructive">Cancelled</Badge>
-              ) : isCompleted ? (
-                <Badge variant="secondary">Completed</Badge>
-              ) : isDraft ? (
-                <Badge variant="outline">Draft</Badge>
-              ) : (
-                liveStatus && <ConveneEventBadge status={liveStatus} />
-              )}
-            </div>
-
-            <p className="text-sm text-muted-foreground">
-              {/* The organizer's own card — no Notify-me on your own event. */}
-              <EventTime
-                event={{
-                  start_time: event.start_time,
-                  time_confirmed: event.time_confirmed,
-                  date_confirmed: event.date_confirmed,
-                }}
-                variant="datetime"
-                notifyAction={false}
-              />
-            </p>
-
-            <p className="text-xs text-muted-foreground mt-1">{registrationLabel}</p>
-
-            {/* Contextual actions */}
-            <div className="flex items-center gap-2 mt-3 flex-wrap">
-              {isPast ? (
-                <>
-                  <Button variant="outline" size="sm" onClick={navigateTo(eventPath)}>
-                    <Eye className="h-3.5 w-3.5 mr-1.5" />
-                    View Recap
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={handleShare}>
-                    <Share2 className="h-3.5 w-3.5 mr-1.5" />
-                    Share Recap
-                  </Button>
-                </>
-              ) : isCancelled ? (
-                <Button variant="outline" size="sm" onClick={navigateTo('/dna/convene/events/new')}>
-                  <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
-                  Duplicate
-                </Button>
-              ) : isDraft ? (
-                <Button variant="outline" size="sm" onClick={navigateTo(eventPath)}>
-                  <Edit className="h-3.5 w-3.5 mr-1.5" />
-                  Edit Draft
-                </Button>
-              ) : (
-                <>
-                  <Button variant="outline" size="sm" onClick={navigateTo(eventPath)}>
-                    <Eye className="h-3.5 w-3.5 mr-1.5" />
-                    Manage
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={handleShare}>
-                    <Share2 className="h-3.5 w-3.5 mr-1.5" />
-                    Share
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={handleCopyLink}>
-                    <Copy className="h-3.5 w-3.5 mr-1.5" />
-                    Copy Link
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </Card>
+        leading={leading}
+        title={<h3 className="text-h3 line-clamp-1 text-foreground">{event.title}</h3>}
+        titleTrailing={statusBadge}
+        meta={meta}
+        body={body}
+      />
 
       {/* CONVENE → CONVEY nudge for past events */}
       {isPast && !isCancelled && (

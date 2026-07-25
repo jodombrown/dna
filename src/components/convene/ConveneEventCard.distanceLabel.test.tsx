@@ -55,7 +55,6 @@ function renderCard(distanceLabel?: string) {
       <MemoryRouter>
         <ConveneEventCard
           event={baseEvent}
-          variant="full"
           showMutualAttendees={false}
           distanceLabel={distanceLabel}
         />
