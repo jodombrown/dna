@@ -67,6 +67,7 @@ export function CuratedEventPreview({ event, showBack = true }: CuratedEventPrev
 
   const hostName = curatedHostName({
     organizer_name: organizerName,
+    curated_source: event.curated_source as string | null,
     curated_source_url: curatedSourceUrl,
   });
   const sourceDomain = curatedSourceDomain(curatedSourceUrl);

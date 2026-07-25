@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Calendar, MapPin, Video, Globe, Users, Eye, Edit, BarChart3, CheckCircle2, HelpCircle, Clock } from 'lucide-react';
+import { MapPin, Video, Globe, Users, Eye, Edit, BarChart3, CheckCircle2, HelpCircle, ExternalLink } from 'lucide-react';
 import { format, differenceInHours, differenceInDays, isToday, isTomorrow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -12,6 +12,13 @@ import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace
 import { EventTime } from '@/components/events/EventTime';
 import { eventStartMs } from '@/lib/events/eventTime';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
+import { EventCardFrame } from '@/components/cards/EventCardFrame';
+import { EventPlate } from '@/components/cards/EventPlate';
+
+// The card-padding token steps with the viewport (16 / 14 / 12); it has no
+// Tailwind utility, so the identity band applies it inline — the one certified
+// way to read this token, matching CuratedEventCard.
+const CARD_PADDING = 'var(--card-padding)';
 
 export interface ConveneEventCardProps {
   event: EventPlaceInput & {
@@ -143,12 +150,6 @@ export function ConveneEventCard({
     return null;
   };
   const urgency = getUrgencyChip();
-
-  // Attendance capacity
-  const capacityPercent = event.max_attendees
-    ? Math.min(100, Math.round((attendeeCount / event.max_attendees) * 100))
-    : null;
-  const isNearCapacity = capacityPercent !== null && capacityPercent >= 80;
 
   // Location
   const getLocationInfo = () => {
@@ -323,240 +324,221 @@ export function ConveneEventCard({
     );
   }
 
-  // ── FULL VARIANT — MAGNETIC CINEMATIC CARD ─────────────
+  // ── FULL VARIANT — composes the shared four-band frame (BD190) ─────────
+  // Byte-identical in shape to CuratedEventCard and every other event surface:
+  // Identity / Image / Fact / Action, geometry owned by EventCardFrame. The old
+  // cinematic chassis (floating footer, rounded-lg, shadow-lg, gradient cover)
+  // is gone — the frame's copper bevel is the edge (BD176), the plate is the
+  // imageless cover (BD191/BD192), and the action band is fixed at 56px.
+  const timeInput = {
+    start_time: rawDate,
+    end_time: event.end_time,
+    time_confirmed: event.time_confirmed,
+    date_confirmed: event.date_confirmed,
+  };
+
+  // Band 1 — provenance leading, compact time trailing. Each sits on a
+  // token-card ground so it reads over a photo or a coloured plate alike.
+  const provenance = event.is_curated ? (
+    <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-border/60 bg-card/90 px-2 py-0.5 text-micro uppercase text-foreground backdrop-blur-sm">
+      <Nkonsonkonson className="h-2.5 w-2.5" />
+      Seen by DNA
+    </span>
+  ) : isOrganizer ? (
+    <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-border/60 bg-card/90 px-2 py-0.5 text-micro uppercase text-foreground backdrop-blur-sm">
+      You&apos;re hosting
+    </span>
+  ) : showOrganizer && organizerName ? (
+    <button
+      className="inline-flex min-w-0 items-center gap-1.5 rounded-full border border-border/60 bg-card/90 px-2 py-0.5 backdrop-blur-sm transition-opacity hover:opacity-80"
+      onClick={handleOrganizerClick}
+    >
+      <Avatar className="h-5 w-5 shrink-0">
+        <AvatarImage src={organizerAvatar} alt={organizerName} />
+        <AvatarFallback className="bg-muted text-micro text-muted-foreground">
+          {getInitials(organizerName)}
+        </AvatarFallback>
+      </Avatar>
+      <span className="truncate text-micro text-foreground">{organizerName}</span>
+    </button>
+  ) : (
+    <span />
+  );
+
+  const identity = (
+    <div
+      className="flex w-full items-center justify-between gap-2"
+      style={{ paddingLeft: CARD_PADDING, paddingRight: CARD_PADDING }}
+    >
+      {provenance}
+      <EventTime
+        event={timeInput}
+        eventId={event.id}
+        variant="compact"
+        notifyAction={false}
+        className="inline-flex shrink-0 items-center rounded-full border border-border/60 bg-card/90 px-2 py-0.5 text-micro text-foreground backdrop-blur-sm"
+      />
+    </div>
+  );
+
+  // Band 2 — the cover when there is one, else the generative plate. A member
+  // event resolves its host from the profile join (organizerName); a curated
+  // event resolves from curatedHostName inside the plate, which refuses that
+  // join (BD214) and forwards curated_source so both provenance legs are read.
+  const image = imageUrl ? (
+    <img
+      src={imageUrl}
+      alt={event.title}
+      className="h-full w-full object-cover"
+      loading="lazy"
+      onError={(e) => {
+        (e.currentTarget as HTMLImageElement).style.display = 'none';
+      }}
+    />
+  ) : (
+    <EventPlate
+      event={{
+        id: event.id,
+        event_type: event.event_type,
+        organizer_name: event.is_curated ? null : organizerName || null,
+        curated_source: event.curated_source,
+        curated_source_url: event.curated_source_url,
+        location_city: event.location_city,
+      }}
+    />
+  );
+
+  // Band 3 — title, place, the near-me distance (BD218), then the DNA layer
+  // pinned to the bottom. distanceLabel renders in the fact band alongside the
+  // place line: it is location meta, so it belongs with location.
+  const fact = (
+    <div className="flex h-full flex-col gap-2">
+      <h3 className="line-clamp-2 text-h3 text-foreground">{event.title}</h3>
+      {locationInfo && (
+        <p className="flex items-center gap-1.5 text-meta text-muted-foreground">
+          <locationInfo.icon className="h-3.5 w-3.5 shrink-0" />
+          <span className="truncate">{locationInfo.text}</span>
+        </p>
+      )}
+      {distanceLabel && (
+        <p className="flex items-center gap-1.5 text-meta font-medium text-dna-copper">
+          <MapPin className="h-3.5 w-3.5 shrink-0" />
+          {distanceLabel} away
+        </p>
+      )}
+      {showMutualAttendees && <MutualAttendeesLine eventId={event.id} />}
+      <p className="mt-auto flex flex-wrap items-center gap-x-1.5 gap-y-0 text-meta">
+        <Users className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+        {attendeeCount > 0 ? (
+          <span className="font-semibold text-foreground">{attendeeCount} going</span>
+        ) : (
+          <span className="text-muted-foreground">No Members yet. Be the first.</span>
+        )}
+      </p>
+    </div>
+  );
+
+  // Band 4 — two actions max (BD193). The going/maybe state is a confirmed
+  // indicator, inert on click; the RSVP, Manage and curated primaries carry the
+  // one action. Curated adds a Source ↗ secondary — a clean handoff.
+  const primaryAction =
+    rsvpStatus === 'going' ? (
+      <Button
+        variant="default"
+        size="sm"
+        className="flex-1"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <CheckCircle2 className="mr-1 h-3.5 w-3.5" /> Going
+      </Button>
+    ) : rsvpStatus === 'maybe' ? (
+      <Button
+        variant="outline"
+        size="sm"
+        className="flex-1"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <HelpCircle className="mr-1 h-3.5 w-3.5" /> Maybe
+      </Button>
+    ) : showRsvp && onRsvp ? (
+      <Button
+        variant="default"
+        size="sm"
+        className="flex-1"
+        onClick={(e) => {
+          e.stopPropagation();
+          onRsvp('going');
+        }}
+      >
+        I&apos;m going
+      </Button>
+    ) : showActions && isOrganizer ? (
+      <Button
+        variant="outline"
+        size="sm"
+        className="flex-1"
+        onClick={(e) => {
+          e.stopPropagation();
+          navigate(`/dna/convene/events/${event.slug || event.id}/edit`);
+        }}
+      >
+        Manage
+      </Button>
+    ) : (
+      <Button
+        variant="default"
+        size="sm"
+        className="flex-1"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleClick();
+        }}
+      >
+        I&apos;m going
+      </Button>
+    );
+
+  const secondaryAction =
+    event.is_curated && event.curated_source_url ? (
+      <Button
+        variant="ghost"
+        size="sm"
+        className="flex-1 text-muted-foreground hover:text-foreground"
+        onClick={(e) => {
+          e.stopPropagation();
+          window.open(event.curated_source_url!, '_blank', 'noopener,noreferrer');
+        }}
+      >
+        Source
+        <ExternalLink className="ml-1 h-3 w-3" />
+      </Button>
+    ) : null;
+
+  const action = (
+    <div className="flex w-full items-center gap-2">
+      {primaryAction}
+      {secondaryAction}
+    </div>
+  );
+
   return (
-    <Card
+    <div
       className={cn(
-        'overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group rounded-lg border-0 shadow-lg',
+        'group block h-full w-full cursor-pointer',
         event.is_cancelled && 'opacity-60',
         className,
       )}
       onClick={handleClick}
     >
-      {/* Cinematic Banner Image */}
-      <div className="relative aspect-[16/9] overflow-hidden">
-        {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt={event.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).style.display = 'none';
-            }}
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-module-convene/70 via-dna-copper/60 to-module-convene-dark/80 flex items-center justify-center">
-            <Calendar className="h-16 w-16 text-white/20" />
-          </div>
-        )}
-
-        {/* Two-layer gradient overlay — bulletproof chip legibility */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/30 to-transparent" />
-
-        {/* Category chip — top left */}
-        {event.event_type && (
-          <div className="absolute top-3 left-3">
-            <span className="px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-sm text-white text-xs font-medium capitalize" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>
-              {event.event_type}
-            </span>
-          </div>
-        )}
-
-        {/* Urgency chip — top right */}
-        {urgency && !isPast && (
-          <div className="absolute top-3 right-3">
-            <span
-              className={cn(
-                'px-2.5 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1 backdrop-blur-sm shadow-lg',
-                urgency.variant === 'today' && 'bg-destructive text-white',
-                urgency.variant === 'tomorrow' && 'bg-destructive/90 text-white',
-                urgency.variant === 'urgent' && 'bg-dna-convene text-white',
-                urgency.variant === 'soon' && 'bg-dna-convene text-white',
-              )}
-              style={{ textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}
-            >
-              {urgency.pulse && <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />}
-              <Clock className="h-3 w-3" />
-              {urgency.label}
-            </span>
-          </div>
-        )}
-
-        {/* Cancelled overlay */}
-        {event.is_cancelled && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-            <Badge variant="destructive" className="text-base px-4 py-1.5">Cancelled</Badge>
-          </div>
-        )}
-      </div>
-
-      {/* Card Body */}
-      <div className="p-4 sm:p-5 flex flex-col gap-2.5">
-        {/* Title — editorial typography */}
-        <h3 className="font-bold text-h3 leading-snug line-clamp-2 text-dna-forest group-hover:text-dna-convene transition-colors">
-          {event.title}
-        </h3>
-
-        {/* Location pill */}
-        {locationInfo && (
-          <div className="flex items-center gap-1.5">
-            <locationInfo.icon className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
-            <span className={cn(
-              'text-sm text-muted-foreground',
-              locationInfo.pill && 'bg-muted px-2 py-0.5 rounded-full text-xs',
-            )}>
-              {locationInfo.text}
-            </span>
-          </div>
-        )}
-
-        {/* Distance from the viewer's near-me anchor (only in the near-me sort) */}
-        {distanceLabel && (
-          <div className="flex items-center gap-1.5">
-            <MapPin className="h-3.5 w-3.5 text-dna-copper flex-shrink-0" />
-            <span className="text-meta font-medium text-dna-copper">{distanceLabel} away</span>
-          </div>
-        )}
-
-        {/* Date line — or the TBA line with its Notify-me action */}
-        {startDate ? (
-          <div className="flex items-center gap-2.5">
-            <div className="flex-shrink-0 w-10 h-10 border border-module-convene/30 rounded-lg bg-module-convene-light flex flex-col items-center justify-center">
-              <span className="text-micro text-dna-convene uppercase leading-none">
-                {monthAbbrev}
-              </span>
-              <span className="text-h3 font-bold leading-none mt-0.5 text-dna-convene-dark">
-                {dayNumber}
-              </span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-medium text-sm text-foreground">
-                {format(startDate, 'EEEE, MMM d')}
-              </p>
-              <EventTime
-                event={{
-                  start_time: rawDate,
-                  end_time: event.end_time,
-                  time_confirmed: event.time_confirmed,
-                  date_confirmed: event.date_confirmed,
-                }}
-                variant="clock"
-                className="block text-xs text-muted-foreground"
-              />
-            </div>
-          </div>
-        ) : (
-          <EventTime
-            event={{
-              start_time: rawDate,
-              end_time: event.end_time,
-              time_confirmed: event.time_confirmed,
-              date_confirmed: event.date_confirmed,
-            }}
-            eventId={event.id}
-            variant="datetime"
-            className="text-sm text-muted-foreground"
-          />
-        )}
-
-        {/* Social Proof — Mutual Attendees */}
-        {showMutualAttendees && <MutualAttendeesLine eventId={event.id} />}
-
-        {/* Attendance capacity bar */}
-        {event.max_attendees && attendeeCount > 0 && (
-          <div className="space-y-1">
-            <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
-              <div
-                className={cn(
-                  'h-full rounded-full transition-all duration-500',
-                  isNearCapacity ? 'bg-dna-copper' : 'bg-primary',
-                )}
-                style={{ width: `${capacityPercent}%` }}
-              />
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {attendeeCount} of {event.max_attendees} spots
-              {isNearCapacity && (
-                <span className="text-dna-copper font-medium ml-1">· Almost full</span>
-              )}
-            </p>
-          </div>
-        )}
-
-        {/* Footer — Organizer + CTA */}
-        <div className="flex items-center justify-between pt-1 mt-auto">
-          {/* Left: Organizer or attendee count */}
-          {event.is_curated ? (
-            <Badge
-              variant="outline"
-              className="gap-1 border-border/70 text-[10px] font-medium text-muted-foreground"
-            >
-              <Nkonsonkonson className="h-2.5 w-2.5" />
-              Seen by DNA
-            </Badge>
-          ) : showOrganizer && organizerName ? (
-            <button
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity text-left min-w-0"
-              onClick={handleOrganizerClick}
-            >
-              <Avatar className="h-6 w-6 flex-shrink-0">
-                <AvatarImage src={organizerAvatar} alt={organizerName} />
-                <AvatarFallback className="text-[9px] bg-muted text-muted-foreground">
-                  {getInitials(organizerName)}
-                </AvatarFallback>
-              </Avatar>
-              <span className="text-xs text-muted-foreground truncate max-w-[140px]">
-                {organizerName}
-              </span>
-            </button>
-          ) : attendeeCount > 0 && !event.max_attendees ? (
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Users className="h-3.5 w-3.5" />
-              <span>{attendeeCount} going</span>
-            </div>
-          ) : (
-            <span className="text-xs text-muted-foreground">Be the first to join</span>
-          )}
-
-          {/* Right: RSVP CTA */}
-          {rsvpStatus === 'going' ? (
-            <Badge className="bg-dna-copper hover:bg-dna-copper-dark text-white border-0 px-3 py-1 rounded-full text-xs font-semibold">
-              <CheckCircle2 className="h-3 w-3 mr-1" />
-              Going ✓
-            </Badge>
-          ) : rsvpStatus === 'maybe' ? (
-            <Badge variant="outline" className="rounded-full px-3 py-1">
-              <HelpCircle className="h-3 w-3 mr-1" />
-              Maybe
-            </Badge>
-          ) : showRsvp && onRsvp ? (
-            <Button
-              size="sm"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-5 text-xs font-semibold h-8"
-              onClick={(e) => {
-                e.stopPropagation();
-                onRsvp('going');
-              }}
-            >
-              I'm Going
-            </Button>
-          ) : showActions && isOrganizer ? (
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-full text-xs"
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(`/dna/convene/events/${event.slug || event.id}/edit`);
-              }}
-            >
-              Manage
-            </Button>
-          ) : null}
-        </div>
-      </div>
-    </Card>
+      <EventCardFrame
+        bevelToken="event"
+        identity={identity}
+        image={image}
+        fact={fact}
+        action={action}
+        className="h-full transition-colors"
+      />
+    </div>
   );
 }
 

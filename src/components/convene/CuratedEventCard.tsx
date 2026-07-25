@@ -127,6 +127,7 @@ export function CuratedEventCard({ event, className }: CuratedEventCardProps) {
         id: event.id,
         event_type: event.event_type,
         organizer_name: event.organizer_name,
+        curated_source: event.curated_source,
         curated_source_url: event.curated_source_url,
         location_city: event.location_city,
       }}
