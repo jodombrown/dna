@@ -60,8 +60,8 @@ export const DemoMovement = forwardRef<HTMLElement, DemoMovementProps>(
             animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.2, delay: 0.2 } as const}
           >
-            DNA is more than a platform. It is infrastructure for a movement: 
-            the operating system that transforms diaspora potential into Africa's economic transformation.
+            DNA is more than a platform. It is a movement — the mobilization infrastructure
+            that turns diaspora potential into Africa's economic transformation.
           </motion.p>
 
           {/* Mission & Vision */}

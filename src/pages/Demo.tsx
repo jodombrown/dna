@@ -65,7 +65,7 @@ export default function Demo() {
   return (
     <>
       <Helmet>
-        <title>DNA Demo | The Operating System for the Global African Diaspora</title>
+        <title>DNA Demo | The mobilization infrastructure for the Global African Diaspora's return</title>
         <meta name="description" content="Discover how DNA's Five C's methodology transforms scattered diaspora potential into coordinated collective power for Africa's economic transformation." />
       </Helmet>
 
