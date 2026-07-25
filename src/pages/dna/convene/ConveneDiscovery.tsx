@@ -51,7 +51,7 @@ const PILLS = [
   { id: 'all', label: 'All' },
   { id: 'near_me', label: 'Near Me' },
   { id: 'this_week', label: 'This Week' },
-  { id: 'online', label: 'Online' },
+  { id: 'online', label: 'Virtual' },
   { id: 'free', label: 'Free' },
   { id: 'network', label: 'My Network' },
 ] as const;
@@ -481,6 +481,7 @@ export function ConveneDiscovery() {
                   <DiscoveryLane
                     title="Dates not yet announced"
                     events={undatedEvents}
+                    suppressDateTbc
                   />
                 </>
               )}

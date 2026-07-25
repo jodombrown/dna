@@ -9,14 +9,15 @@ import { DATES_TBA, datesAnnounced, formatEventDateTime } from '@/lib/events/eve
 import { getEventStatus } from '@/utils/convene/getEventStatus';
 import { ConveneEventBadge } from '@/components/convene/ConveneEventBadge';
 import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
+import { formatEventFormat } from '@/lib/events/eventFormat';
 import { cn } from '@/lib/utils';
 
 const RECENT_SEARCHES_KEY = 'dna-convene-recent-searches';
 const MAX_RECENT = 5;
 
 const FILTER_CHIPS = [
-  { key: 'format', value: 'virtual', label: 'Virtual' },
-  { key: 'format', value: 'in_person', label: 'In-Person' },
+  { key: 'format', value: 'virtual', label: formatEventFormat('virtual') },
+  { key: 'format', value: 'in_person', label: formatEventFormat('in_person') },
   { key: 'timeRange', value: 'today', label: 'Today' },
   { key: 'timeRange', value: 'this_week', label: 'This Week' },
   { key: 'timeRange', value: 'this_month', label: 'This Month' },

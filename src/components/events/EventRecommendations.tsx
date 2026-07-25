@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { logger } from '@/lib/logger';
 import { EventTime } from '@/components/events/EventTime';
 import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
+import { formatEventFormat } from '@/lib/events/eventFormat';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
 
 interface RecommendedEvent extends EventPlaceInput {
@@ -163,8 +164,8 @@ export const EventRecommendations = () => {
                     <Badge variant="secondary" className="capitalize">
                       {event.event_type}
                     </Badge>
-                    <Badge variant="outline" className="capitalize">
-                      {event.format.replace('_', ' ')}
+                    <Badge variant="outline">
+                      {formatEventFormat(event.format)}
                     </Badge>
                     {event.recommendation_score >= 80 && (
                       <Badge className="bg-primary/20 text-primary">

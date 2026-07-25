@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import SwipeableCardStack from './SwipeableCardStack';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
 import PillarInfoSheet from './PillarInfoSheet';
+import { formatEventFormat } from '@/lib/events/eventFormat';
 
 const ConveneSection = () => {
   const [infoOpen, setInfoOpen] = useState(false);
@@ -19,7 +20,7 @@ const ConveneSection = () => {
       location: 'Lagos, Nigeria',
       attendees: '250+ attendees registered',
       host: 'African Tech Leaders',
-      format: 'Hybrid',
+      format: 'hybrid',
       gradient: 'from-dna-copper to-dna-gold',
       featured: true,
       categoryTitle: 'Innovation Summits',
@@ -34,7 +35,7 @@ const ConveneSection = () => {
       location: 'London, UK',
       attendees: '800+ attendees registered',
       host: 'UK Diaspora Cultural Alliance',
-      format: 'In-Person',
+      format: 'in_person',
       gradient: 'from-dna-gold to-dna-ochre',
       featured: true,
       categoryTitle: 'Cultural Gatherings',
@@ -49,7 +50,7 @@ const ConveneSection = () => {
       location: 'New York, USA',
       attendees: '120+ attendees registered',
       host: 'DNA NYC Chapter',
-      format: 'In-Person',
+      format: 'in_person',
       gradient: 'from-dna-ochre to-dna-emerald',
       featured: false,
       categoryTitle: 'Networking Meetups',
@@ -64,7 +65,7 @@ const ConveneSection = () => {
       location: 'Virtual Event',
       attendees: '600+ attendees registered',
       host: 'HealthTech Innovators Network',
-      format: 'Virtual',
+      format: 'virtual',
       gradient: 'from-dna-emerald to-dna-forest',
       featured: false,
       categoryTitle: 'Knowledge Sessions',
@@ -79,7 +80,7 @@ const ConveneSection = () => {
       location: 'Toronto, Canada',
       attendees: '45+ attendees registered',
       host: 'DNA Toronto Hub',
-      format: 'In-Person',
+      format: 'in_person',
       gradient: 'from-dna-forest to-dna-copper',
       featured: false,
       categoryTitle: 'Local Communities',
@@ -127,9 +128,9 @@ const ConveneSection = () => {
               <span className="text-sm font-medium">{event.time}</span>
             </div>
             <div className="flex items-center gap-3 text-neutral-700">
-              {event.format === 'Hybrid' ? (
+              {event.format === 'hybrid' ? (
                 <Globe className="w-4 h-4 text-dna-copper flex-shrink-0" />
-              ) : event.format === 'Virtual' ? (
+              ) : event.format === 'virtual' ? (
                 <Video className="w-4 h-4 text-dna-copper flex-shrink-0" />
               ) : (
                 <MapPin className="w-4 h-4 text-dna-copper flex-shrink-0" />
@@ -144,7 +145,7 @@ const ConveneSection = () => {
                 <Users className="w-4 h-4 text-dna-copper" />
                 <span className="text-sm font-semibold text-neutral-900">{event.attendees}</span>
               </div>
-              <Badge variant="secondary" className="text-xs">{event.format}</Badge>
+              <Badge variant="secondary">{formatEventFormat(event.format)}</Badge>
             </div>
             <p className="text-xs text-neutral-600">
               Hosted by {event.host}

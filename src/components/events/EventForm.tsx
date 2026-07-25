@@ -45,6 +45,7 @@ import { cn } from '@/lib/utils';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { useEventForm, type SubmitIntent } from '@/hooks/useEventForm';
 import type { EventStatus } from '@/lib/events/state';
+import { formatEventFormat } from '@/lib/events/eventFormat';
 import {
   EVENT_TYPES,
   type EventFormValues,
@@ -77,10 +78,12 @@ const EVENT_TYPE_LABELS: Record<(typeof EVENT_TYPES)[number], string> = {
   other: 'Other',
 };
 
+// Labels come from formatEventFormat at render — the single source for the
+// format enum's display strings (BD228). Only value + hint live here.
 const FORMAT_OPTIONS = [
-  { value: 'in_person', label: 'In person', hint: 'A room, a city' },
-  { value: 'virtual', label: 'Virtual', hint: 'A link, anywhere' },
-  { value: 'hybrid', label: 'Hybrid', hint: 'Both at once' },
+  { value: 'in_person', hint: 'A room, a city' },
+  { value: 'virtual', hint: 'A link, anywhere' },
+  { value: 'hybrid', hint: 'Both at once' },
 ] as const;
 
 const DRESS_CODES = [
@@ -637,7 +640,7 @@ export function EventForm({
                     : 'border-border hover:border-muted-foreground/50'
                 )}
               >
-                {opt.label}
+                {formatEventFormat(opt.value)}
               </button>
             ))}
           </div>

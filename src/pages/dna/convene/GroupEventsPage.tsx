@@ -13,6 +13,7 @@ import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { eventStartMs, formatEventDateTime } from '@/lib/events/eventTime';
 import { EventTime } from '@/components/events/EventTime';
 import { formatEventPlace } from '@/lib/events/formatPlace';
+import { formatEventFormat } from '@/lib/events/eventFormat';
 import { Event } from '@/types/events';
 
 export default function GroupEventsPage() {
@@ -94,7 +95,7 @@ export default function GroupEventsPage() {
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
                 <Badge variant="secondary" className="capitalize">{event.event_type}</Badge>
-                <Badge variant="outline" className="capitalize">{event.format.replace('_', ' ')}</Badge>
+                <Badge variant="outline">{formatEventFormat(event.format)}</Badge>
                 {isPast && <Badge variant="secondary">Past</Badge>}
                 {event.is_cancelled && <Badge variant="destructive">Cancelled</Badge>}
               </div>

@@ -26,7 +26,7 @@ const TABS = [
   { id: 'all', icon: CalendarDays, label: 'All' },
   { id: 'near_me', icon: MapPin, label: 'Near Me' },
   { id: 'this_week', icon: Clock, label: 'This Week' },
-  { id: 'online', icon: Globe, label: 'Online' },
+  { id: 'online', icon: Globe, label: 'Virtual' },
   { id: 'free', icon: Ticket, label: 'Free' },
   { id: 'network', icon: Users, label: 'Network' },
 ] as const;
