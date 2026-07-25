@@ -50,6 +50,12 @@ interface DiscoveryLaneProps {
   className?: string;
   /** eventId → distance label, rendered on the card when present (near-me sort) */
   distanceLabels?: Record<string, string>;
+  /**
+   * BD230: set true for a lane whose header already announces unannounced
+   * dates (the "Dates not yet announced" lane). The cards then leave their
+   * date slot empty rather than repeating the header string.
+   */
+  suppressDateTbc?: boolean;
 }
 
 export function DiscoveryLane({
@@ -61,6 +67,7 @@ export function DiscoveryLane({
   emptyMessage,
   className,
   distanceLabels,
+  suppressDateTbc,
 }: DiscoveryLaneProps) {
   if (events.length === 0 && !emptyMessage) return null;
 
@@ -115,6 +122,7 @@ export function DiscoveryLane({
                     curated_source: event.curated_source,
                     curated_source_url: event.curated_source_url,
                   }}
+                  suppressDateTbc={suppressDateTbc}
                 />
               ) : (
                 <ConveneEventCard
@@ -144,6 +152,7 @@ export function DiscoveryLane({
                   showOrganizer
                   showMutualAttendees={showMutualAttendees}
                   distanceLabel={distanceLabels?.[event.id]}
+                  suppressDateTbc={suppressDateTbc}
                 />
               )}
             </div>

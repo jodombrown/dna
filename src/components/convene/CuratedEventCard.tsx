@@ -52,6 +52,9 @@ export interface CuratedEventCardProps {
     curated_source_url?: string | null;
   };
   className?: string;
+  /** BD230: the undated lane already says "Dates not yet announced" — pass
+   *  true there so the card's date slot stays empty instead of repeating it. */
+  suppressDateTbc?: boolean;
 }
 
 // The card-padding token steps with the viewport (16 / 14 / 12); it has no
@@ -60,7 +63,7 @@ export interface CuratedEventCardProps {
 // same rhythm here — the one certified way to read this token.
 const CARD_PADDING = 'var(--card-padding)';
 
-export function CuratedEventCard({ event, className }: CuratedEventCardProps) {
+export function CuratedEventCard({ event, className, suppressDateTbc }: CuratedEventCardProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { pulse, setGoing, isSettingGoing } = useCuratedEventPulse(event.id);
@@ -97,7 +100,7 @@ export function CuratedEventCard({ event, className }: CuratedEventCardProps) {
       className="flex w-full items-center justify-between gap-2"
       style={{ paddingLeft: CARD_PADDING, paddingRight: CARD_PADDING }}
     >
-      <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-card/90 px-2 py-0.5 text-micro uppercase text-foreground backdrop-blur-sm">
+      <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-border/60 bg-card/90 px-2 py-0.5 text-micro uppercase text-foreground backdrop-blur-sm">
         <Nkonsonkonson className="h-2.5 w-2.5" />
         Seen by DNA
       </span>
@@ -105,6 +108,7 @@ export function CuratedEventCard({ event, className }: CuratedEventCardProps) {
         event={event}
         variant="compact"
         notifyAction={false}
+        suppressDateTbc={suppressDateTbc}
         className="inline-flex shrink-0 items-center rounded-full border border-border/60 bg-card/90 px-2 py-0.5 text-micro text-foreground backdrop-blur-sm"
       />
     </div>

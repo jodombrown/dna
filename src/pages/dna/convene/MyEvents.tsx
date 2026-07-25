@@ -30,6 +30,26 @@ import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { ChevronDown } from 'lucide-react';
+import { format } from 'date-fns';
+
+// The list-row date box — the same 44×44 Convene anchor MyEventCard and
+// ConveneEventRow carry (BD226). Dated → month abbrev over day number;
+// undated → "TBA" over a middot in the SAME box, never an omitted box and
+// never an invented date. The month/day gap rides on the flex parent, not a
+// child margin, so the page layout gate stays green while the box still
+// matches the reference rhythm.
+function eventDateBox(event: Parameters<typeof eventStartMs>[0]) {
+  const startMs = eventStartMs(event);
+  const startDate = startMs !== null ? new Date(startMs) : null;
+  const monthAbbrev = startDate ? format(startDate, 'MMM').toUpperCase() : 'TBA';
+  const dayNumber = startDate ? format(startDate, 'd') : '·';
+  return (
+    <div className="w-11 h-11 border border-border rounded-lg bg-background flex flex-col items-center justify-center gap-0.5">
+      <span className="text-micro text-bevel-event uppercase leading-none">{monthAbbrev}</span>
+      <span className="text-h2 leading-none">{dayNumber}</span>
+    </div>
+  );
+}
 
 const MyEvents = () => {
   const navigate = useNavigate();
@@ -409,6 +429,7 @@ const MyEvents = () => {
                           {upcomingAttending.map((event) => (
                             <EventListRow
                               key={event.id}
+                              leading={eventDateBox(event)}
                               onClick={() =>
                                 navigate(`/dna/convene/events/${event.slug || event.id}`)
                               }
@@ -499,6 +520,7 @@ const MyEvents = () => {
                             {pastAttending.map((event) => (
                             <div key={event.id} className="space-y-2">
                               <EventListRow
+                                leading={eventDateBox(event)}
                                 onClick={() =>
                                   navigate(`/dna/convene/events/${event.slug || event.id}`)
                                 }

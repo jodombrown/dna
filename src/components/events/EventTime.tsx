@@ -34,6 +34,13 @@ export interface EventTimeProps {
   eventId?: string;
   /** Set false to suppress the Notify-me action in dense contexts. */
   notifyAction?: boolean;
+  /**
+   * BD230: when the SECTION already announces "Dates not yet announced"
+   * (the undated discovery lane), the card must not repeat it. Set true and
+   * the TBA line renders nothing — an empty slot, never a stranded label
+   * (BD206). The section knows; the card is told, it never infers.
+   */
+  suppressDateTbc?: boolean;
 }
 
 export function EventTime({
@@ -42,8 +49,11 @@ export function EventTime({
   className,
   eventId,
   notifyAction = true,
+  suppressDateTbc = false,
 }: EventTimeProps) {
   if (!datesAnnounced(event)) {
+    // The section already carries the TBA copy — say nothing here.
+    if (suppressDateTbc) return null;
     // Nothing goes where a clock would be — the date line owns the TBA copy.
     if (variant === 'clock') return null;
     const id = eventId ?? event.id;

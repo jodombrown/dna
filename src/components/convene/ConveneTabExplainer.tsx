@@ -39,7 +39,7 @@ const TAB_EXPLAINERS: Record<ConveneTab, { title: string; description: string; i
     bgClass: 'bg-gradient-to-r from-dna-copper/10 to-dna-gold/10 border-dna-copper/20',
   },
   online: {
-    title: 'Online',
+    title: 'Virtual',
     description: 'Virtual events you can join from anywhere in the world',
     icon: Globe,
     bgClass: 'bg-gradient-to-r from-dna-terracotta/10 to-dna-terracotta/5 border-dna-terracotta/20',

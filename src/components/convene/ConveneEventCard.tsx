@@ -79,6 +79,9 @@ export interface ConveneEventCardProps {
    * green — that test is the only guard that will go red.
    */
   distanceLabel?: string;
+  /** BD230: the undated lane already says "Dates not yet announced" — pass
+   *  true there so the card's date slot stays empty instead of repeating it. */
+  suppressDateTbc?: boolean;
 }
 
 const getInitials = (name: string) =>
@@ -101,6 +104,7 @@ export function ConveneEventCard({
   showMutualAttendees = true,
   className,
   distanceLabel,
+  suppressDateTbc,
 }: ConveneEventCardProps) {
   const navigate = useNavigate();
 
@@ -205,6 +209,7 @@ export function ConveneEventCard({
         eventId={event.id}
         variant="compact"
         notifyAction={false}
+        suppressDateTbc={suppressDateTbc}
         className="inline-flex shrink-0 items-center rounded-full border border-border/60 bg-card/90 px-2 py-0.5 text-micro text-foreground backdrop-blur-sm"
       />
     </div>

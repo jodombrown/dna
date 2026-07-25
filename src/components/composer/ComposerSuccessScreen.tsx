@@ -11,6 +11,7 @@
  */
 
 import { CheckCircle2, ExternalLink } from 'lucide-react';
+import { formatEventFormat } from '@/lib/events/eventFormat';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { MODE_HANDLERS } from './modeHandlers';
@@ -226,7 +227,7 @@ function ModeMetadata({
               className="px-1.5 py-0.5 rounded text-white"
               style={{ backgroundColor: accentColor, fontSize: '10px' }}
             >
-              {formData.format.replace('_', ' ')}
+              {formatEventFormat(formData.format)}
             </span>
           )}
         </div>
