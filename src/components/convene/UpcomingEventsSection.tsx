@@ -9,7 +9,6 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { logger } from '@/lib/logger';
 import { EVENT_PLACE_SELECT, formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
-import { formatEventFormat } from '@/lib/events/eventFormat';
 import { EventTime } from '@/components/events/EventTime';
 
 interface EventItem extends EventPlaceInput {
@@ -220,19 +219,17 @@ export const UpcomingEventsSection = ({ onCreateEvent }: { onCreateEvent?: () =>
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-1">
-                  <Badge variant={event.format === 'virtual' ? 'secondary' : 'default'}>
-                    {formatEventFormat(event.format)}
-                  </Badge>
-                  {event.organizer_id === user?.id && (
-                    <Badge variant="outline" className="text-dna-emerald border-dna-emerald text-xs">
-                      Host
-                    </Badge>
-                  )}
-                  {event.rsvp_status && (
-                    <Badge variant={event.rsvp_status === 'going' ? 'default' : 'secondary'} className="text-xs capitalize">
-                      {event.rsvp_status}
-                    </Badge>
-                  )}
+                  {/* One pill, always about the viewer (BD227). Precedence:
+                      Hosting > Going > Maybe. An organizer does not RSVP to
+                      their own event, but the conditions are independent in the
+                      data, so precedence is explicit rather than assumed. */}
+                  {event.organizer_id === user?.id ? (
+                    <Badge variant="hosting">Hosting</Badge>
+                  ) : event.rsvp_status === 'going' ? (
+                    <Badge variant="going">Going</Badge>
+                  ) : event.rsvp_status === 'maybe' ? (
+                    <Badge variant="maybe">Maybe</Badge>
+                  ) : null}
                 </div>
               </div>
             </Card>
