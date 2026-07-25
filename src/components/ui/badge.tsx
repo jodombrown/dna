@@ -30,6 +30,14 @@ const badgeVariants = cva(
         // DIA
         dia:
           "border-transparent bg-dna-gold-light text-dna-gold-dark",
+        // Event status pills (BD227) — one per card, precedence hosting > going > maybe.
+        // Going is the subtle emerald pill, not the solid primary, so it does not read as a CTA.
+        hosting:
+          "border-transparent bg-dna-copper-light text-dna-copper-dark",
+        going:
+          "border-transparent bg-dna-emerald-subtle text-dna-emerald-dark",
+        maybe:
+          "border-transparent bg-muted text-muted-foreground",
         // Legacy
         virtual:
           "bg-dna-copper text-white border-transparent hover:bg-dna-forest hover:text-white",
