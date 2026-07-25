@@ -246,7 +246,7 @@ export function CuratedEventPreview({ event, showBack = true }: CuratedEventPrev
       {/* 3 — Who from the body is going (+ the DNA-side action). */}
       {!isPast && (
         <div className="space-y-3">
-          <h3 className="text-sm font-semibold text-foreground">From the body</h3>
+          <h3 className="text-h3 font-semibold text-foreground">Members going</h3>
           {goingCount > 0 ? (
             <div className="flex items-center gap-3">
               {attendeePreview.length > 0 && (
@@ -269,7 +269,7 @@ export function CuratedEventPreview({ event, showBack = true }: CuratedEventPrev
               </p>
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">No Members have signed on yet.</p>
+            <p className="text-meta text-muted-foreground">No Members yet. Be the first.</p>
           )}
           <Button
             variant={isGoing ? 'default' : 'outline'}
