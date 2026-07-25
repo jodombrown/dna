@@ -16,6 +16,7 @@ import { EventCalendarView } from '@/components/convene/EventCalendarView';
 import { ConveneEventRow } from '@/components/convene/ConveneEventRow';
 import { MyEventCard } from '@/components/convene/MyEventCard';
 import { EventListRow } from '@/components/cards/EventListRow';
+import { EventRowList } from '@/components/convene/EventRowList';
 import { MyEventsStatsHeader } from '@/components/convene/MyEventsStatsHeader';
 import { PastEventDiaNudge } from '@/components/convene/PastEventDiaNudge';
 import { ConveneShell } from '@/components/convene/ConveneShell';
@@ -342,10 +343,12 @@ const MyEvents = () => {
                             />
                           </button>
                         </CollapsibleTrigger>
-                        <CollapsibleContent className="mt-3 divide-y divide-border">
-                          {pastHosting.map((event) => (
-                            <MyEventCard key={event.id} event={event} isPast />
-                          ))}
+                        <CollapsibleContent>
+                          <EventRowList>
+                            {pastHosting.map((event) => (
+                              <MyEventCard key={event.id} event={event} isPast />
+                            ))}
+                          </EventRowList>
                         </CollapsibleContent>
                       </Collapsible>
                     )}
@@ -366,10 +369,12 @@ const MyEvents = () => {
                             />
                           </button>
                         </CollapsibleTrigger>
-                        <CollapsibleContent className="mt-3 divide-y divide-border">
-                          {cancelledHosting.map((event) => (
-                            <MyEventCard key={event.id} event={event} />
-                          ))}
+                        <CollapsibleContent>
+                          <EventRowList>
+                            {cancelledHosting.map((event) => (
+                              <MyEventCard key={event.id} event={event} />
+                            ))}
+                          </EventRowList>
                         </CollapsibleContent>
                       </Collapsible>
                     )}
@@ -421,9 +426,9 @@ const MyEvents = () => {
                                 />
                               }
                               body={
-                                <>
+                                <div className="flex flex-col gap-3">
                                   <MutualAttendeesLine eventId={event.id} />
-                                  <div className="flex items-center gap-2 mt-3">
+                                  <div className="flex items-center gap-2">
                                     <Button
                                       variant="outline"
                                       size="sm"
@@ -448,7 +453,7 @@ const MyEvents = () => {
                                       Cancel RSVP
                                     </Button>
                                   </div>
-                                </>
+                                </div>
                               }
                             />
                           ))}
@@ -489,8 +494,9 @@ const MyEvents = () => {
                             />
                           </button>
                         </CollapsibleTrigger>
-                        <CollapsibleContent className="mt-3 divide-y divide-border">
-                          {pastAttending.map((event) => (
+                        <CollapsibleContent>
+                          <EventRowList>
+                            {pastAttending.map((event) => (
                             <div key={event.id} className="space-y-2">
                               <EventListRow
                                 onClick={() =>
@@ -516,7 +522,8 @@ const MyEvents = () => {
                                 variant="share_story"
                               />
                             </div>
-                          ))}
+                            ))}
+                          </EventRowList>
                         </CollapsibleContent>
                       </Collapsible>
                     )}
