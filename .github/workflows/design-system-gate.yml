@@ -151,6 +151,34 @@ jobs:
             fi
           fi
 
+          # OS-framing tripwire (BD234). "operating system" is retired for DNA's
+          # positioning with no legitimate use, so a plain case-insensitive string
+          # match is safe here — unlike register terms ("the body"), which are
+          # surface-dependent and would fire falsely on the Manifesto. This gates
+          # ONLY the absolute OS ban, never register.
+          #
+          # Manifesto.tsx is allowlisted while its deliberate three-beat cadence
+          # line ("Not an app. Not a platform. An operating system for collective
+          # power.") is held for a founder ruling. Remove the allowlist when that
+          # line is retired.
+          #
+          # rc handled explicitly like every other check above: no new set +e/-e
+          # toggle is introduced (BD121), so the ambient errexit-off mode never
+          # turns a legitimate rc-1 "no match" into a silent pass.
+          OS_ADDED="$(printf '%s\n' "$ADDED" | grep -v '^src/pages/Manifesto.tsx:')"
+          if [ -n "$OS_ADDED" ]; then
+            out="$(printf '%s\n' "$OS_ADDED" | grep -iE 'operating system')"
+            rc=$?
+            if [ "$rc" -eq 0 ]; then
+              echo "::error::Retired OS framing. 'operating system' is retired for DNA's positioning. Use the canonical line: 'DNA is the mobilization infrastructure for the Global African Diaspora'\''s return.'"
+              printf '%s\n' "$out"
+              FAILED=1
+            elif [ "$rc" -gt 1 ]; then
+              echo "::error::grep errored (exit $rc) on OS-framing check. Failing closed."
+              FAILED=1
+            fi
+          fi
+
           if [ "$FAILED" -eq 1 ]; then
             echo "Design system gate FAILED."
             exit 1
