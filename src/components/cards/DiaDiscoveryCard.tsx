@@ -51,6 +51,12 @@ export interface DiaDiscoveryCardProps {
    *  7-day localStorage write, unchanged. */
   onDismiss: () => void;
 
+  /** When the card's content is an announcement (a "preparing" / "rebuilding"
+   *  state), mark it a live region so a screen reader announces its
+   *  appearance. A11y semantics only — it changes nothing visual, so it is
+   *  not the identity/colour category the frozen signature excludes. */
+  announce?: boolean;
+
   /** Layout positioning only — never restyling. */
   className?: string;
 }
@@ -79,6 +85,7 @@ export function DiaDiscoveryCard({
   body,
   cta,
   onDismiss,
+  announce,
   className,
 }: DiaDiscoveryCardProps) {
   const { bevelToken, Glyph, eyebrow } = MODULE_CONFIG[module];
@@ -86,6 +93,7 @@ export function DiaDiscoveryCard({
   return (
     <div className={cn('w-full', className)}>
       <div
+        role={announce ? 'status' : undefined}
         className="relative overflow-hidden rounded-xl border-bevel bg-card"
         style={{
           // Match the sibling exactly (EventCardFrame:55): four-sided bevel,
