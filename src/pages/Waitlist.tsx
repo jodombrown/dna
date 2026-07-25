@@ -164,8 +164,8 @@ const Waitlist = () => {
                 </h1>
 
                 <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-xl mx-auto lg:mx-0">
-                  The Diaspora Network of Africa is building the operating system for mobilizing 
-                  200M+ diaspora members toward Africa's economic transformation.
+                  The Diaspora Network of Africa is building the mobilization infrastructure
+                  for the Global African Diaspora's return.
                 </p>
 
                 {/* Benefits Grid - Mobile */}
