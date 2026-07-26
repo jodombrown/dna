@@ -9,8 +9,11 @@
  *   - Anon MUST NOT be able to upload / update / delete objects in the
  *     `sponsor-logos` storage bucket
  *
- * Tests skip themselves cleanly if the Supabase env vars are missing (e.g.
- * offline CI), so they never produce false failures.
+ * FAIL-CLOSED (BD238). This suite must never report success without having
+ * executed its assertions against the live instance. Missing credentials are a
+ * hard failure, not a skip: a green run that asserted nothing is worse than no
+ * gate (BD121, BD141). Excluded from the hermetic `npm test` run; executed by
+ * .github/workflows/security-tests.yml with repository secrets.
  */
 
 import { describe, it, expect } from 'vitest';
@@ -19,15 +22,29 @@ import { createClient } from '@supabase/supabase-js';
 const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
 
-const canRun = !!url && !!anonKey;
-const d = canRun ? describe : describe.skip;
+describe('security · harness preflight', () => {
+  it('has live Supabase credentials — fail-closed, never skipped', () => {
+    const missing = [
+      !url && 'VITE_SUPABASE_URL',
+      !anonKey && 'VITE_SUPABASE_PUBLISHABLE_KEY',
+    ].filter(Boolean);
+    if (missing.length > 0) {
+      throw new Error(
+        `Security suite cannot certify anything: missing ${missing.join(', ')}. ` +
+          'This is a hard failure by design (BD238). Populate the repository ' +
+          'secret(s); do not reintroduce describe.skip.',
+      );
+    }
+    expect(missing).toHaveLength(0);
+  });
+});
 
 const anonClient = () =>
   createClient(url as string, anonKey as string, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-d('security · SECURITY DEFINER functions are not callable by anon', () => {
+describe('security · SECURITY DEFINER functions are not callable by anon', () => {
   it('rejects rpc get_my_contact_info() for anon', async () => {
     const supabase = anonClient();
     const { data, error } = await supabase.rpc('get_my_contact_info');
@@ -54,7 +71,7 @@ d('security · SECURITY DEFINER functions are not callable by anon', () => {
   });
 });
 
-d('security · sponsor-logos storage bucket is write-locked for non-admins', () => {
+describe('security · sponsor-logos storage bucket is write-locked for non-admins', () => {
   const testPath = `security-test/${Date.now()}-anon.txt`;
 
   // Use raw fetch against the Storage REST endpoint. The supabase-js Blob
@@ -98,7 +115,7 @@ d('security · sponsor-logos storage bucket is write-locked for non-admins', () 
   });
 });
 
-d('security · sponsor_logo_audit_log is not readable by anon', () => {
+describe('security · sponsor_logo_audit_log is not readable by anon', () => {
   it('rejects direct REST SELECT on sponsor_logo_audit_log for anon', async () => {
     const res = await fetch(
       `${url}/rest/v1/sponsor_logo_audit_log?select=id&limit=1`,
