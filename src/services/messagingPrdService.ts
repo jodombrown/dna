@@ -34,7 +34,7 @@ import type {
   ParticipantRole,
   ParticipantPreview,
   DirectRecipientInfo,
-  TypingIndicator,
+  TypingSignal,
   SendMessageParams,
   OfflineQueueItem,
   MESSAGING_TIER_CONFIG,
@@ -564,7 +564,6 @@ export const messagingPrdService = {
   async sendTypingIndicator(
     conversationId: string,
     userId: string,
-    userName: string,
     isTyping: boolean
   ): Promise<void> {
     try {
@@ -932,6 +931,20 @@ export const messagingPrdService = {
   },
 
   /**
+   * Get a single message by id. RLS-governed; returns null when the row is
+   * absent or not visible to the caller.
+   */
+  async getMessageById(messageId: string): Promise<Message | null> {
+    const { data, error } = await db
+      .from('messaging_messages')
+      .select('*')
+      .eq('id', messageId)
+      .maybeSingle();
+    if (error || !data) return null;
+    return mapMessageRow(data as Record<string, unknown>);
+  },
+
+  /**
    * Get pinned messages for a conversation.
    */
   async getPinnedMessages(conversationId: string): Promise<Message[]> {
@@ -1124,17 +1137,20 @@ export const messagingPrdService = {
   ): () => void {
     const channel = db
       .channel(`messaging:${conversationId}`)
-      .on('broadcast', { event: 'new_message' }, (payload: { payload: unknown }) => {
-        callbacks.onMessage(payload.payload as Message);
+      .on('broadcast', { event: 'new_message' }, async (p: { payload: unknown }) => {
+        const { messageId } = (p.payload ?? {}) as { messageId?: string };
+        if (!messageId) return;
+        const message = await this.getMessageById(messageId);   // RLS-governed
+        if (message) callbacks.onMessage(message);
       })
-      .on('broadcast', { event: 'typing' }, (payload: { payload: unknown }) => {
-        callbacks.onTyping(payload.payload as TypingIndicator);
+      .on('broadcast', { event: 'typing' }, (p: { payload: unknown }) => {
+        callbacks.onTyping(p.payload as TypingSignal);
       })
-      .on('broadcast', { event: 'read_receipt' }, (payload: { payload: unknown }) => {
-        callbacks.onReadReceipt(payload.payload as { userId: string; lastReadMessageId: string });
+      .on('broadcast', { event: 'read_receipt' }, (p: { payload: unknown }) => {
+        callbacks.onReadReceipt(p.payload as { conversationId: string });
       })
-      .on('broadcast', { event: 'reaction_added' }, (payload: { payload: unknown }) => {
-        callbacks.onReaction(payload.payload as { messageId: string; userId: string; emoji: string });
+      .on('broadcast', { event: 'reaction_added' }, (p: { payload: unknown }) => {
+        callbacks.onReaction(p.payload as { messageId: string });
       })
       .subscribe();
 

@@ -927,6 +927,16 @@ export const notificationSystemService = {
     return { notifications: items, hasMore };
   },
 
+  async getNotificationById(id: string): Promise<NotificationRecord | null> {
+    const { data, error } = await db
+      .from('notification_records')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+    if (error || !data) return null;
+    return mapRecordFromDb(data as Record<string, unknown>);
+  },
+
   // ============================================
   // STATUS MUTATIONS
   // ============================================
@@ -1133,8 +1143,11 @@ export const notificationSystemService = {
   ) {
     return db
       .channel(`notif_system:${userId}`)
-      .on('broadcast', { event: 'new_notification' }, (payload: { payload: unknown }) => {
-        callbacks.onNew(payload.payload as NotificationRecord);
+      .on('broadcast', { event: 'new_notification' }, async (p: { payload: unknown }) => {
+        const { notificationId } = (p.payload ?? {}) as { notificationId?: string };
+        if (!notificationId) return;
+        const record = await this.getNotificationById(notificationId);  // RLS-governed
+        if (record) callbacks.onNew(record);
       })
       .on('broadcast', { event: 'badge_update' }, (payload: { payload: unknown }) => {
         callbacks.onBadgeUpdate(payload.payload as Record<string, number>);

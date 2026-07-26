@@ -220,6 +220,14 @@ export interface TypingIndicator {
   timestamp: Date;
 }
 
+/** BD241/BD242: the identifier-only signal carried over Realtime.
+ *  Distinct from TypingIndicator, which is the resolved view model. */
+export interface TypingSignal {
+  conversationId: string;
+  userId: string;
+  isTyping: boolean;
+}
+
 // ============================================================
 // CONVERSATION LIST (inbox view)
 // ============================================================
@@ -366,9 +374,9 @@ export interface GetMessagesParams {
 
 export interface ConversationSubscriptionCallbacks {
   onMessage: (message: Message) => void;
-  onTyping: (indicator: TypingIndicator) => void;
-  onReadReceipt: (data: { userId: string; lastReadMessageId: string }) => void;
-  onReaction: (data: { messageId: string; userId: string; emoji: string }) => void;
+  onTyping: (signal: TypingSignal) => void;
+  onReadReceipt: (data: { conversationId: string }) => void;
+  onReaction: (data: { messageId: string }) => void;
 }
 
 export interface ConversationListUpdatePayload {
