@@ -30,7 +30,6 @@ interface PublicPostAuthor {
   full_name: string | null;
   avatar_url: string | null;
   headline: string | null;
-  profession: string | null;
 }
 
 export interface PublicPostViewPost {
@@ -219,9 +218,9 @@ export const PublicPostView = ({ post, postId, isLoggedIn }: PublicPostViewProps
                   >
                     {authorName}
                   </Link>
-                  {(post.author?.headline || post.author?.profession) && (
+                  {post.author?.headline && (
                     <p className="text-body text-muted-foreground truncate">
-                      {post.author?.headline || post.author?.profession}
+                      {post.author?.headline}
                     </p>
                   )}
                   <p className="text-meta text-muted-foreground mt-0.5">
@@ -345,9 +344,9 @@ export const PublicPostView = ({ post, postId, isLoggedIn }: PublicPostViewProps
                     >
                       {authorName}
                     </Link>
-                    {(post.author.headline || post.author.profession) && (
+                    {post.author.headline && (
                       <p className="text-meta text-muted-foreground truncate">
-                        {post.author.headline || post.author.profession}
+                        {post.author.headline}
                       </p>
                     )}
                   </div>

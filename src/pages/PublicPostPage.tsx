@@ -46,13 +46,13 @@ const PublicPostPage = () => {
       }
 
       // Get author profile
-      const { data: authorData, error: authorError } = await supabase
-        .from('profiles')
-        .select('id, username, full_name, avatar_url, headline, profession')
-        .eq('id', postData.author_id)
-        .maybeSingle();
-
-      if (authorError) throw authorError;
+      // BD244/D089: anon-reachable reads go through a SECURITY DEFINER
+      // projection, never direct table access. profiles has no anon SELECT
+      // policy, so the old query silently returned an empty byline.
+      const { data: authorData } = await supabase.rpc(
+        'get_public_profile_by_id' as any,
+        { p_user_id: postData.author_id },
+      );
 
       // Get engagement counts — keyed on the resolved row's UUID, since the
       // route param may be a slug.
