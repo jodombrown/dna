@@ -830,7 +830,9 @@ export const notificationSystemService = {
     await channel.send({
       type: 'broadcast',
       event: 'new_notification',
-      payload: notification,
+      // BD241: identifier only. The client re-fetches through the RLS-governed
+      // read on public.notifications.
+      payload: { notificationId: notification.id },
     });
   },
 

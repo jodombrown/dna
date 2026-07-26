@@ -363,7 +363,9 @@ export const messagingPrdService = {
         .send({
           type: 'broadcast',
           event: 'new_message',
-          payload: sentMessage,
+          // BD241: identifier only. Content is re-fetched via the RLS-governed
+          // read on public.messages; it must not cross a public Realtime channel.
+          payload: { messageId: sentMessage.id, conversationId },
         });
     } catch (err) {
       logger.warn(LOG_TAG, 'Failed to broadcast message', err);
@@ -476,7 +478,7 @@ export const messagingPrdService = {
         .send({
           type: 'broadcast',
           event: 'reaction_added',
-          payload: { messageId, userId, emoji },
+          payload: { messageId },                       // BD241
         });
     } catch (err) {
       logger.warn(LOG_TAG, 'Failed to broadcast reaction', err);
@@ -545,7 +547,7 @@ export const messagingPrdService = {
         .send({
           type: 'broadcast',
           event: 'read_receipt',
-          payload: { userId, lastReadMessageId, timestamp: new Date() },
+          payload: { conversationId },                  // BD241
         });
     } catch (err) {
       logger.warn(LOG_TAG, 'Failed to broadcast read receipt', err);
@@ -571,7 +573,7 @@ export const messagingPrdService = {
         .send({
           type: 'broadcast',
           event: 'typing',
-          payload: { conversationId, userId, userName, isTyping, timestamp: new Date() },
+          payload: { conversationId, userId, isTyping },  // BD241: userName dropped
         });
     } catch (err) {
       logger.warn(LOG_TAG, 'Failed to send typing indicator', err);
