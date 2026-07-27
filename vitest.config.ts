@@ -15,7 +15,8 @@ export default defineConfig({
     // src/test/security/** is live-network too: it authenticates against the
     // deployed Supabase instance with the anon key. It is fail-closed (BD238),
     // so it MUST NOT run in the hermetic default suite where no credentials
-    // exist. It is executed by .github/workflows/security-tests.yml.
+    // exist. It runs via vitest.security.config.ts (see that file's include),
+    // which .github/workflows/security-tests.yml invokes with --config.
     exclude: [
       'node_modules/**',
       'dist/**',
