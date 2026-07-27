@@ -156,7 +156,7 @@ ON CONFLICT (name) DO NOTHING;
 INSERT INTO system_settings (setting_key, setting_value, setting_type, category, description, is_sensitive, requires_restart)
 VALUES
   ('platform_name', '"Diaspora Network of Africa"', 'string', 'general', 'Platform display name', false, false),
-  ('platform_tagline', '"The Operating System for the Global African Diaspora"', 'string', 'general', 'Platform tagline', false, false),
+  ('platform_tagline', '"DNA is the mobilization infrastructure for the Global African Diaspora''s return"', 'string', 'general', 'Platform tagline', false, false),
   ('maintenance_mode', 'false', 'boolean', 'general', 'Enable maintenance mode', false, false),
   ('registration_enabled', 'true', 'boolean', 'general', 'Allow new user registration', false, false),
   ('admin_session_timeout_minutes', '480', 'number', 'security', 'Admin session timeout in minutes', false, false),
