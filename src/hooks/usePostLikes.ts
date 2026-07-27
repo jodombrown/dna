@@ -32,21 +32,20 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
         .select('user_id')
         .eq('post_id', postId);
 
-      if (likesError) {
-        return {
-          likeCount: 0,
-          userHasLiked: false,
-          likedBy: [] as LikeUser[],
-        };
-      }
+      // A swallowed error on a read path is the same lie as on a write path:
+      // a zeroed result is indistinguishable from "no likes". Surface it so
+      // React Query can retry and callers can tell the difference.
+      if (likesError) throw likesError;
 
       const rows = likesData || [];
       const likeCount = rows.length;
       const userHasLiked = userId ? rows.some((like) => like.user_id === userId) : false;
 
-      // Step 2: Fetch profile data for likedBy users (separate query)
+      // Step 2: Fetch profile data for likedBy users (separate query).
+      // Gated on userId: signed-out visitors get a count, never an identity
+      // list — profiles has no anon SELECT policy anyway.
       let likedBy: LikeUser[] = [];
-      if (rows.length > 0) {
+      if (rows.length > 0 && userId) {
         const userIds = rows.map((r) => r.user_id);
         const { data: profilesData } = await supabase
           .from('profiles')

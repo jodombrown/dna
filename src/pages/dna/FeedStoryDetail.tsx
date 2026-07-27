@@ -37,51 +37,26 @@ export default function FeedStoryDetail() {
     queryFn: async () => {
       if (!slug) throw new Error('No story identifier provided');
 
-      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
-
-      let query = supabase
-        .from('posts')
-        .select(`
-          id,
-          title,
-          subtitle,
-          content,
-          image_url,
-          gallery_urls,
-          post_type,
-          created_at,
-          space_id,
-          event_id,
-          author_id,
-          slug
-        `)
-        .eq('is_deleted', false)
-        .in('post_type', ['story', 'update', 'impact', 'reshare', 'post']);
-
-      if (isUUID) {
-        query = query.eq('id', slug);
-      } else {
-        query = query.eq('slug', slug);
-      }
-
-      const { data: postData, error: postError } = await query.maybeSingle();
-
-      if (postError) throw postError;
-      if (!postData) throw new Error('Content not found');
-
-      let author = null;
-      if (postData.author_id) {
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('username, full_name, avatar_url')
-          .eq('id', postData.author_id)
-          .single();
-        author = profileData;
-      }
+      // Same SECURITY DEFINER projection as the public /post/:postId page:
+      // resolves slug-or-UUID, returns the flat author_* byline plus every
+      // field this page reads (title, subtitle, gallery_urls, post_type,
+      // space_id, event_id, slug), and never touches profiles directly.
+      const { data, error } = await supabase.rpc('get_public_post' as any, {
+        p_slug_or_id: slug,
+      });
+      if (error) throw error;
+      const row = data?.[0];
+      if (!row) throw new Error('Content not found');
 
       return {
-        ...postData,
-        author,
+        ...row,
+        author: row.author_name
+          ? {
+              username: row.author_username,
+              full_name: row.author_name,
+              avatar_url: row.author_avatar_url,
+            }
+          : null,
       };
     },
     enabled: !!slug,

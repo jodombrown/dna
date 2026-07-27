@@ -27,52 +27,26 @@ const PublicPostPage = () => {
   const { data: post, isLoading, error } = useQuery({
     queryKey: ['public-post', postId],
     queryFn: async () => {
-      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(postId!);
-
-      // First get the post
-      const { data: postData, error: postError } = await supabase
-        .from('posts')
-        .select('*')
-        .eq(isUUID ? 'id' : 'slug', postId!)
-        .eq('is_deleted', false)
-        .maybeSingle();
-
-      if (postError) throw postError;
-      if (!postData) throw new Error('Post not found');
-
-      // Check if post is public
-      if (postData.privacy_level !== 'public') {
-        throw new Error('This post is private');
-      }
-
-      // Get author profile
-      // BD244/D089: anon-reachable reads go through a SECURITY DEFINER
-      // projection, never direct table access. profiles has no anon SELECT
-      // policy, so the old query silently returned an empty byline.
-      const { data: authorData } = await supabase.rpc(
-        'get_public_profile_by_id' as any,
-        { p_user_id: postData.author_id },
-      );
-
-      // Get engagement counts — keyed on the resolved row's UUID, since the
-      // route param may be a slug.
-      const [likesResult, commentsResult] = await Promise.all([
-        supabase
-          .from('post_likes')
-          .select('id', { count: 'exact' })
-          .eq('post_id', postData.id),
-        supabase
-          .from('post_comments')
-          .select('id', { count: 'exact' })
-          .eq('post_id', postData.id)
-          .eq('is_deleted', false),
-      ]);
-
+      // Single SECURITY DEFINER projection: resolves slug-or-UUID, enforces
+      // privacy_level = 'public' and is_deleted = false, and returns the
+      // engagement counts and a flat author_* byline in one round trip.
+      // profiles has no anon SELECT policy, so direct table reads here would
+      // silently return an empty byline (BD244/D089).
+      const { data, error } = await supabase.rpc('get_public_post' as any, {
+        p_slug_or_id: postId!,
+      });
+      if (error) throw error;
+      const row = data?.[0];
+      if (!row) throw new Error('Post not found');
       return {
-        ...postData,
-        author: authorData,
-        likes_count: likesResult.count || 0,
-        comments_count: commentsResult.count || 0,
+        ...row,
+        author: row.author_name
+          ? {
+              username: row.author_username,
+              full_name: row.author_name,
+              avatar_url: row.author_avatar_url,
+            }
+          : null,
       };
     },
     enabled: !!postId,
