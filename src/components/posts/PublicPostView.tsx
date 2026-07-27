@@ -365,18 +365,22 @@ export const PublicPostView = ({ post, postId, isLoggedIn }: PublicPostViewProps
             </Card>
           )}
 
-          {/* Five C's discovery - signed-out visitors only */}
-          {!isLoggedIn && (
-            <div className="mt-8">
-              <FiveCsDiscoverySection
-                username={authorUsername}
-                memberFirstName={post.author?.full_name?.split(' ')[0] ?? null}
-                source="public_post"
-              />
-            </div>
-          )}
-
         </div>
+
+        {/* Five C's discovery - signed-out visitors only.
+            Rendered OUTSIDE the max-w-2xl post column so FiveCsDiscoveryRow's
+            own max-w-6xl applies and its lg:grid-cols-5 row gets its full
+            width, matching the public profile page. Inside the narrow column
+            the cards were crushed to one word per line. */}
+        {!isLoggedIn && (
+          <div className="px-4 mt-8">
+            <FiveCsDiscoverySection
+              username={authorUsername}
+              memberFirstName={post.author?.full_name?.split(' ')[0] ?? null}
+              source="public_post"
+            />
+          </div>
+        )}
         <Footer />
       </div>
 
