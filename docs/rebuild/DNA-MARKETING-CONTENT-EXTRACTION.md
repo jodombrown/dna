@@ -145,7 +145,7 @@
 > **What if we could see ourselves?** What if the nurse in Houston knew the tech founder in Lagos was building exactly what her community needs? What if the teacher in London could find the youth program in Dakar that's been waiting for her expertise? What if the investor in Atlanta could discover the social enterprise in Kigali that turns $10,000 into 100 jobs? What if the student in Berlin could mentor with the executive in Johannesburg who walked her same path twenty years ago? What if the grandmother in Kingston could finally teach the recipes she's been saving for family she's never met? **What if the diaspora could finally operate as one?**
 
 **Section VII:**
-> **This is why we built DNA.** Not an app. Not a platform. An operating system for collective power. A place to CONNECT. To find your people across borders and generations. A place to CONVENE. To gather, celebrate, strategize, and remember together. A place to COLLABORATE. To build together what none of us could build alone. A place to CONTRIBUTE. To give not just money, but time, knowledge, networks, and love. A place to CONVEY. To amplify the stories that have been whispered for too long.
+> **This is why we built DNA.** Not an app. Not a platform. DNA is the mobilization infrastructure for the Global African Diaspora's return. A place to CONNECT. To find your people across borders and generations. A place to CONVENE. To gather, celebrate, strategize, and remember together. A place to COLLABORATE. To build together what none of us could build alone. A place to CONTRIBUTE. To give not just money, but time, knowledge, networks, and love. A place to CONVEY. To amplify the stories that have been whispered for too long.
 
 **Section VIII:**
 > We named it DNA for a reason. Because this network is not optional. It is not a nice-to-have. **It is who we are.** The same code that kept our ancestors alive is the code that will transform our continent. DNA replicates. It passes itself forward. It carries instructions across generations. **So will we.**
@@ -496,7 +496,7 @@ Emails:
 | `/contact` | Contact DNA: Partner With the African Diaspora Network | contact diaspora network, DNA partnership |
 | `/manifesto` | The DNA Manifesto \| We Are the Code That Survived | manifesto, african diaspora, DNA movement |
 | `/fact-sheet` | Platform Fact Sheet | — |
-| `/pitch-deck` | DNA Demo \| The Operating System for the Global African Diaspora | — |
+| `/pitch-deck` | DNA Demo \| DNA is the mobilization infrastructure for the Global African Diaspora's return | — |
 | `/waitlist` | Join the Waitlist \| DNA - Diaspora Network of Africa | — |
 | `/privacy-policy` | Privacy Policy \| DNA Platform | — |
 | `/terms-of-service` | Terms of Service \| DNA Platform | — |

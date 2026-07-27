@@ -30,7 +30,7 @@ INSERT INTO events (
   'dna-platform-launch-party',
   'Join us for the official launch of the DNA Platform! Connect with diaspora professionals, learn about our Five C''s methodology, and celebrate our mission to mobilize the Global African Diaspora toward Africa''s economic transformation.
 
-This hybrid event welcomes both in-person and virtual attendees. Network with fellow diaspora members, hear from inspiring speakers, and be part of history as we launch the operating system for the Global African Diaspora.',
+This hybrid event welcomes both in-person and virtual attendees. Network with fellow diaspora members, hear from inspiring speakers, and be part of history as we launch the mobilization infrastructure for the Global African Diaspora''s return.',
   'Celebrate the launch of DNA Platform with networking and inspiring speakers.',
   'f2c1d415-254b-4881-99bc-988657ffc562',
   'networking',

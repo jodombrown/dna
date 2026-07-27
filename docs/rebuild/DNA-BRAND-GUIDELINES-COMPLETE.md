@@ -506,7 +506,7 @@ All interactive elements: `transition-all duration-200` (or `duration-150` per a
 - **Auth page size**: `h-36` (144px)
 - **No wordmark** in the header — logo is standalone
 - **Always links to** `/` via `NavLink`
-- **Tagline** (when shown): *"The Operating System for the Global African Diaspora"*
+- **Tagline** (when shown): *"DNA is the mobilization infrastructure for the Global African Diaspora's return"*
 
 ---
 
