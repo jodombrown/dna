@@ -177,7 +177,7 @@ const ProfileEdit = () => {
       setWebsiteUrl(profile.website_url || '');
 
       // Privacy
-      setIsPublic(profile.is_public || false);
+      setIsPublic(profile.account_visibility === 'public');
     }
   }, [profile]);
 
@@ -363,7 +363,7 @@ const ProfileEdit = () => {
       website_url: websiteUrl,
 
       // Privacy
-      is_public: isPublic,
+      account_visibility: isPublic ? 'public' : 'private',
 
       // Meta
       updated_at: new Date().toISOString(),

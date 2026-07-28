@@ -25,12 +25,12 @@ export function NetworkHighlights({
           supabase
             .from('profiles')
             .select('industries')
-            .eq('is_public', true)
+            .eq('account_visibility', 'public')
             .not('industries', 'is', null),
           supabase
             .from('profiles')
             .select('location')
-            .eq('is_public', true)
+            .eq('account_visibility', 'public')
             .not('location', 'is', null),
         ]);
 

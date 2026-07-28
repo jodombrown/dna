@@ -28,7 +28,7 @@ export default function PrivacySettings() {
 
   useEffect(() => {
     if (profile) {
-      setIsPublic(profile.is_public || false);
+      setIsPublic(profile.account_visibility === 'public');
       setAllowProfileSharing(profile.allow_profile_sharing !== false);
       // Load per-field visibility settings from profile (cast to any to access JSONB field)
       const profileVisibility = (profile as any).public_visibility;
@@ -101,7 +101,7 @@ export default function PrivacySettings() {
       const { error } = await supabase
         .from('profiles')
         .update({
-          is_public: checked,
+          account_visibility: checked ? 'public' : 'private',
           updated_at: new Date().toISOString(),
         })
         .eq('id', user?.id);
@@ -195,7 +195,7 @@ export default function PrivacySettings() {
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <Label htmlFor="is_public" className="text-base font-medium">
+                <Label htmlFor="account_visibility" className="text-base font-medium">
                   Public Profile
                 </Label>
                 <p className="text-sm text-muted-foreground">
@@ -203,7 +203,7 @@ export default function PrivacySettings() {
                 </p>
               </div>
               <Switch
-                id="is_public"
+                id="account_visibility"
                 checked={isPublic}
                 onCheckedChange={handleVisibilityChange}
                 disabled={saving}

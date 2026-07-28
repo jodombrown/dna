@@ -155,7 +155,7 @@ export default function Discover() {
             .from('profiles')
             .select('id, full_name, username, avatar_url, headline, profession, location, current_country, focus_areas, industries, skills, languages, available_for, regional_expertise, updated_at')
             .neq('id', user.id)
-            .eq('is_public', true);
+            .eq('account_visibility', 'public');
 
           if (filters?.focus_areas?.length) q = q.overlaps('focus_areas', filters.focus_areas);
           if (filters?.regional_expertise?.length) q = q.overlaps('regional_expertise', filters.regional_expertise);
