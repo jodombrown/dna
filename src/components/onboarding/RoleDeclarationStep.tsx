@@ -15,19 +15,19 @@ const ROLES: RoleOption[] = [
   {
     value: 'returnee',
     heading: 'Returnee',
-    body: "You're of the African Diaspora, and you're choosing return — however that looks for you. Visits, investments, networks, relocation, advocacy, building. Many paths. One direction.",
+    body: "You're of the African Diaspora, and you're choosing return, however that looks for you. Visits, investments, networks, relocation, advocacy, building. Many paths. One direction.",
     buttonLabel: 'I am a Returnee',
   },
   {
     value: 'anchor',
     heading: 'Anchor',
-    body: "You're on the continent, building from where you stand. The Diaspora is returning to the work — and you're the partner they build with.",
+    body: "You're on the continent, building from where you stand. The Diaspora is returning to the work, and you're the partner they build with.",
     buttonLabel: 'I am an Anchor',
   },
   {
     value: 'ally',
     heading: 'Ally',
-    body: "You're not of the Diaspora, and you're choosing to contribute. Capital, expertise, networks, time, advocacy — what you bring strengthens The Return. You walk alongside. You support and partner. You don't represent.",
+    body: "You're not of the Diaspora, and you're choosing to contribute. Capital, expertise, networks, time, advocacy. What you bring strengthens The Return. You walk alongside. You support and partner. You don't represent.",
     buttonLabel: 'I am an Ally',
   },
   {
