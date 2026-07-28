@@ -234,7 +234,7 @@ export async function executeTool(
         let q = supabase
           .from("profiles")
           .select("id, full_name, headline, avatar_url, location, industry, skills")
-          .eq("is_public", true);
+          .eq("account_visibility", "public");
         if (args.location) q = q.ilike("location", `%${args.location}%`);
         if (args.industry) q = q.ilike("industry", `%${args.industry}%`);
         if (args.query) {

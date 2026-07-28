@@ -185,7 +185,7 @@ serve(async (req) => {
       const { count: membersCount } = await supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true })
-        .eq('is_public', true);
+        .eq('account_visibility', 'public');
 
       const { count: eventsCount } = await supabase
         .from('events')
@@ -213,7 +213,7 @@ serve(async (req) => {
       const { data: members, count } = await supabase
         .from('profiles')
         .select('id, full_name, username, avatar_url, headline, location, skills, interests', { count: 'exact' })
-        .eq('is_public', true)
+        .eq('account_visibility', 'public')
         .order('created_at', { ascending: false })
         .range(offset, offset + limit - 1);
 
