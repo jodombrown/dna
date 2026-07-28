@@ -6,6 +6,16 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import CountryCombobox from '@/components/ui/country-combobox';
 import HeadlineWizard from '@/components/profile/HeadlineWizard';
+import { getCountryNameByAlpha3 } from '@/lib/dna-place';
+
+// BD274-C: a stored value may be an alpha-3 ISO code (e.g. 'USA') or already a
+// display name. Resolve codes to their canonical name for display only; leave
+// anything else untouched. Storage normalisation is deferred, so this never
+// changes what is stored — only what CountryCombobox renders.
+const resolveCountryLabel = (value: string): string => {
+  if (!value) return '';
+  return getCountryNameByAlpha3(value.toUpperCase()) ?? value;
+};
 
 interface ProfileEditBasicInfoProps {
   fullName: string;
@@ -128,7 +138,7 @@ const ProfileEditBasicInfo: React.FC<ProfileEditBasicInfoProps> = ({
         <div>
           <Label>Current Location</Label>
           <CountryCombobox
-            value={currentCountry}
+            value={resolveCountryLabel(currentCountry)}
             onValueChange={(value) => {
               onCurrentCountryChange(value);
               // Also update location to keep them in sync
@@ -144,7 +154,7 @@ const ProfileEditBasicInfo: React.FC<ProfileEditBasicInfoProps> = ({
         <div>
           <Label>Country of Origin *</Label>
           <CountryCombobox
-            value={countryOfOrigin}
+            value={resolveCountryLabel(countryOfOrigin)}
             onValueChange={onCountryOfOriginChange}
             placeholder="Select your country of origin"
           />

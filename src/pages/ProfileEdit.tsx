@@ -200,7 +200,10 @@ const ProfileEdit = () => {
         .from('profiles')
         .update(updates)
         .eq('id', user!.id)
-        .select();
+        // BD274-A: name a column instead of a bare .select() so PostgREST does
+        // not RETURNING * (which needs SELECT on withheld PII columns). The
+        // mutation only reads data.length below, so 'id' is sufficient.
+        .select('id');
 
       if (error) throw error;
       if (!data || data.length === 0) {
