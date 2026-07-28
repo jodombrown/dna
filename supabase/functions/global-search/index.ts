@@ -100,7 +100,7 @@ async function performDynamicSearch(supabase: any, query: string, searchType: st
       .from('profiles')
       .select('id, full_name, display_name, bio, professional_role, location, avatar_url')
       .or(`full_name.ilike.${searchTerm},display_name.ilike.${searchTerm},bio.ilike.${searchTerm},professional_role.ilike.${searchTerm}`)
-      .eq('is_public', true)
+      .eq('account_visibility', 'public')
       .limit(5);
 
     if (profiles) {

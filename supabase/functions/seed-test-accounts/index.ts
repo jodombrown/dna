@@ -250,7 +250,7 @@ Deno.serve(async (req) => {
         intro_text: profile.intro_text,
         selected_pillars: profile.selected_pillars,
         is_seeded: true,
-        is_public: true,
+        account_visibility: 'public',
         profile_completeness_score: 85
       };
 
