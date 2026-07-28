@@ -130,7 +130,7 @@ export function DiscoveryFeed({
         .from('profiles')
         .select(PROFILE_SELECT_COLUMNS)
         .neq('id', user.id)
-        .eq('is_public', true)
+        .eq('account_visibility', 'public')
         .gte('last_seen_at', twentyFourHoursAgo)
         .order('last_seen_at', { ascending: false })
         .limit(12);

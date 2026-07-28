@@ -20,22 +20,22 @@ export function PrivacySection({
       <CardContent>
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
-            <Label htmlFor="is_public">Public Profile</Label>
+            <Label htmlFor="account_visibility">Public Profile</Label>
             <p className="text-sm text-muted-foreground">
               Make your profile visible to other DNA members
             </p>
           </div>
           <Switch
-            id="is_public"
-            checked={formData.is_public}
-            onCheckedChange={(checked) => onUpdate('is_public', checked)}
+            id="account_visibility"
+            checked={formData.account_visibility === 'public'}
+            onCheckedChange={(checked) => onUpdate('account_visibility', checked ? 'public' : 'private')}
             disabled={disabled}
           />
         </div>
 
         <div className="mt-4 p-4 bg-muted/50 rounded-lg">
           <p className="text-sm text-muted-foreground">
-            {formData.is_public ? (
+            {formData.account_visibility === 'public' ? (
               <>
                 <strong className="text-foreground">Your profile is public.</strong> Other DNA members can discover you through search and recommendations.
               </>

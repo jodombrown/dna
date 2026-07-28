@@ -256,7 +256,7 @@ const Onboarding = () => {
           continentCode && countryCode
             ? (profileAny?.place_declared_at || nowIso)
             : null,
-        is_public: true,
+        account_visibility: 'public',
         updated_at: nowIso,
       };
 

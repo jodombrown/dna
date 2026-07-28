@@ -34,7 +34,7 @@ export default defineTool({
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: wrapHandler("get_profile", InputSchema, async ({ username }) => {
     const uname = encodeURIComponent(username.replace(/^@/, ""));
-    // D089: read through the SECURITY DEFINER projection (is_public + not-deleted gate),
+    // D089: read through the SECURITY DEFINER projection (account_visibility + not-deleted gate),
     // never the profiles table directly (which is TO authenticated and returns nothing to anon).
     const obj = (await supabaseRest({
       path: `rpc/get_public_profile?p_username=${uname}`,

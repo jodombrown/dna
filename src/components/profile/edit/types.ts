@@ -46,7 +46,7 @@ export interface ProfileEditFormData {
   website_url: string;
 
   // Privacy
-  is_public: boolean;
+  account_visibility: 'public' | 'private';
 }
 
 export interface ProfileEditSectionProps {

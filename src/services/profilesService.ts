@@ -13,7 +13,7 @@ interface PublicProfile {
   headline?: string | null;
   bio?: string | null;
   location?: string | null;
-  is_public?: boolean;
+  account_visibility?: string | null;
 }
 
 export const profilesService = {

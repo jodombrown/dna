@@ -158,7 +158,7 @@ export default function AccountSettings() {
           linkedin_url: null,
           twitter_url: null,
           website_url: null,
-          is_public: false,
+          account_visibility: 'private',
           deleted_at: new Date().toISOString(),
         })
         .eq('id', user?.id);

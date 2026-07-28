@@ -63,19 +63,19 @@ export function SearchTypeahead({
         supabase
           .from('profiles')
           .select('id, full_name, username, avatar_url, headline')
-          .eq('is_public', true)
+          .eq('account_visibility', 'public')
           .neq('id', user.id)
           .or(`full_name.ilike.%${searchQuery}%,headline.ilike.%${searchQuery}%,username.ilike.%${searchQuery}%`)
           .limit(3),
         supabase
           .from('profiles')
           .select('industries')
-          .eq('is_public', true)
+          .eq('account_visibility', 'public')
           .not('industries', 'is', null),
         supabase
           .from('profiles')
           .select('location')
-          .eq('is_public', true)
+          .eq('account_visibility', 'public')
           .not('location', 'is', null),
       ]);
 

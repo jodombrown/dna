@@ -80,7 +80,7 @@ class MatchingService {
         .from('profiles')
         .select(PROFILE_SELECT_COLUMNS)
         .neq('id', currentUserId)
-        .eq('is_public', true)
+        .eq('account_visibility', 'public')
         .limit(200);
 
       if (!professionals) return [];
