@@ -165,10 +165,31 @@ export function getProfileFieldChecks(profile: ProfileForCompletion | null): Pro
   ];
 }
 
+// Dev-only guard: a rubric key that is ABSENT from the object (never fetched)
+// is a different fact from a key that is present but blank (member left it
+// empty). Both score as "incomplete", so an under-fetched shape silently caps
+// the total. Warn loudly with the offending field name so the caller fixes the
+// query rather than the member's profile.
+function warnOnMissingRubricKeys(profile: ProfileForCompletion, fields: ProfileFieldCheck[]): void {
+  const bag = profile as Record<string, unknown>;
+  const absent = fields.map(f => f.field).filter(field => !(field in bag));
+  if (absent.length > 0) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `[profileCompletion] Scored an object missing rubric key(s): ${absent.join(', ')}. ` +
+      `These keys are absent (never fetched), not blank — they always score as ` +
+      `incomplete and silently cap the total. Score a shape that includes every rubric key.`
+    );
+  }
+}
+
 // Calculate total completion points (max 100)
 export function calculateProfileCompletionPts(profile: ProfileForCompletion | null): number {
   if (!profile) return 0;
   const fields = getProfileFieldChecks(profile);
+  if (import.meta.env.DEV) {
+    warnOnMissingRubricKeys(profile, fields);
+  }
   return Math.min(100, fields.filter(f => f.complete).reduce((sum, f) => sum + f.points, 0));
 }
 

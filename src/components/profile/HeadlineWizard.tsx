@@ -5,7 +5,7 @@
  * [Role/Title] | [Focus/Industry] | [Location <> Heritage Connection]
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -49,27 +49,37 @@ const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
   const [locationFrom, setLocationFrom] = useState('');
   const [locationTo, setLocationTo] = useState('');
 
-  // Parse existing headline into wizard parts on mount
+  // BD276: The saved headline arrives asynchronously - the prop is transiently
+  // empty on the first render before it hydrates. `hydrated` marks the single
+  // moment we have parsed that saved headline into wizard parts, so we never
+  // re-parse (which would fight the user's typing) and never emit a partial
+  // headline back over the saved one before we have read it.
+  const hydrated = useRef(false);
+
+  // Parse existing headline into wizard parts once the async headline arrives.
+  // Runs exactly once, on the first non-empty headline.
   useEffect(() => {
-    if (headline) {
-      const parts = headline.split('|').map(p => p.trim());
-      if (parts.length >= 2) {
-        setRole(parts[0] || '');
-        setFocus(parts[1] || '');
-        // Parse location part if exists
-        if (parts.length >= 3) {
-          const locParts = parts[2].split('\u2194').map(p => p.trim());
-          if (locParts.length === 2) {
-            setLocationFrom(locParts[0]);
-            setLocationTo(locParts[1]);
-          }
+    if (hydrated.current) return;
+    if (!headline) return; // wait for the saved headline to load before parsing
+    hydrated.current = true;
+
+    const parts = headline.split('|').map(p => p.trim());
+    if (parts.length >= 2) {
+      setRole(parts[0] || '');
+      setFocus(parts[1] || '');
+      // Parse location part if exists
+      if (parts.length >= 3) {
+        const locParts = parts[2].split('\u2194').map(p => p.trim());
+        if (locParts.length === 2) {
+          setLocationFrom(locParts[0]);
+          setLocationTo(locParts[1]);
         }
-      } else {
-        // Freeform headline that doesn't follow wizard format
-        setUseWizard(false);
       }
+    } else {
+      // Freeform headline that doesn't follow wizard format
+      setUseWizard(false);
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [headline]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto-fill location from profile
   useEffect(() => {
@@ -87,8 +97,13 @@ const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
     return parts.filter(Boolean).join(' | ');
   };
 
-  // Update parent when wizard fields change
+  // Update parent when wizard fields change.
+  // BD276: Do not emit while a saved headline is still waiting to be parsed —
+  // otherwise the first keystroke would overwrite the saved headline with a
+  // partial one (live data loss). Once hydrated (or when there was no saved
+  // headline to protect), emit normally.
   useEffect(() => {
+    if (!hydrated.current && headline) return;
     if (useWizard && role) {
       onHeadlineChange(buildHeadline());
     }
