@@ -195,7 +195,7 @@ export default function PrivacySettings() {
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <Label htmlFor="account_visibility" className="text-base font-medium">
+                <Label htmlFor="account_visibility" className="text-body font-medium">
                   Public Profile
                 </Label>
                 <p className="text-sm text-muted-foreground">

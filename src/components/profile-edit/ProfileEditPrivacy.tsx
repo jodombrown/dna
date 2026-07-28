@@ -25,7 +25,7 @@ const ProfileEditPrivacy: React.FC<ProfileEditPrivacyProps> = ({
       <CardContent>
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <Label htmlFor="account_visibility" className="flex items-center gap-2 text-base font-medium">
+            <Label htmlFor="account_visibility" className="flex items-center gap-2 text-body font-medium">
               {isPublic ? (
                 <Eye className="h-4 w-4 text-emerald-600" />
               ) : (
