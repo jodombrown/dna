@@ -195,7 +195,7 @@ export const ProfileCompletionNudge: React.FC<ProfileCompletionNudgeProps> = ({
             </div>
             <div>
               <h3 className="font-semibold text-sm">Profile Strength</h3>
-              <p className="text-xs text-muted-foreground">{pointsToGo}% to boost discovery</p>
+              <p className="text-meta text-muted-foreground">{pointsToGo}% to boost discovery</p>
             </div>
           </div>
           {dismissible && (
