@@ -65,8 +65,11 @@ export const profilesService = {
     const { data, error } = await supabase
       .from('profiles')
       .update(updates)
+      // BD274-A: name a column instead of a bare .select() so PostgREST does
+      // not RETURNING * (which needs SELECT on withheld PII columns). Callers
+      // only test for a returned row, so 'id' is sufficient.
       .eq('id', id)
-      .select()
+      .select('id')
       .maybeSingle();
     
     if (error) throw error;
