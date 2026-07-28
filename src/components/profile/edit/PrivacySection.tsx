@@ -22,7 +22,7 @@ export function PrivacySection({
           <div className="space-y-0.5">
             <Label htmlFor="account_visibility">Public Profile</Label>
             <p className="text-sm text-muted-foreground">
-              Make your profile visible to other DNA members
+              Let people who are not signed in to DNA see your profile.
             </p>
           </div>
           <Switch
@@ -37,11 +37,11 @@ export function PrivacySection({
           <p className="text-sm text-muted-foreground">
             {formData.account_visibility === 'public' ? (
               <>
-                <strong className="text-foreground">Your profile is public.</strong> Other DNA members can discover you through search and recommendations.
+                <strong className="text-foreground">Your profile is public.</strong> Anyone on the web can find and view it. DNA Members can always find you.
               </>
             ) : (
               <>
-                <strong className="text-foreground">Your profile is private.</strong> Only you can see your full profile. Other members will see "This profile is private" when they visit.
+                <strong className="text-foreground">Your profile is hidden from the public web.</strong> Only signed-in DNA Members can find and view you.
               </>
             )}
           </p>
