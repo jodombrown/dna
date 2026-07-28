@@ -42,8 +42,11 @@ describe('security · catalog invariants are all GREEN', () => {
 
     // Under-firing is not the safe direction for a gate. If the function is
     // replaced by one that returns fewer invariants, that must fail loudly
-    // rather than pass on a shorter list.
-    expect(data).toHaveLength(8);
+    // rather than pass on a shorter list. There are nine (INV9 added the
+    // authenticated-read-surface-shrank check). Bump this number whenever an
+    // invariant is added — that is the point of this assertion, not an
+    // inconvenience to route around.
+    expect(data).toHaveLength(9);
 
     const red = (data as Array<{ invariant: string; status: string; violations: number; detail: string; scope: string }>)
       .filter((r) => r.status !== 'GREEN');
