@@ -114,8 +114,8 @@ export default function PrivacySettings() {
       toast({
         title: checked ? 'Profile is now public' : 'Profile is now private',
         description: checked
-          ? 'Other DNA members can now discover and view your profile.'
-          : 'Your profile is now hidden from other members.',
+          ? 'Your profile is now visible on the public web.'
+          : 'Your profile is now hidden from the public web. DNA Members can still find you.',
       });
     } catch (error: unknown) {
       setIsPublic(!checked); // Revert on error
@@ -189,7 +189,7 @@ export default function PrivacySettings() {
               Profile Visibility
             </CardTitle>
             <CardDescription>
-              Choose whether your profile is visible to other DNA members
+              Control who outside DNA can see your profile
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -199,7 +199,7 @@ export default function PrivacySettings() {
                   Public Profile
                 </Label>
                 <p className="text-sm text-muted-foreground">
-                  When enabled, your profile can be discovered and viewed by other members
+                  Let people who are not signed in to DNA see your profile.
                 </p>
               </div>
               <Switch
@@ -220,12 +220,12 @@ export default function PrivacySettings() {
                 )}
                 <div>
                   <p className={`font-medium ${isPublic ? 'text-green-800 dark:text-green-200' : 'text-foreground'}`}>
-                    {isPublic ? 'Your profile is public' : 'Your profile is private'}
+                    {isPublic ? 'Your profile is public' : 'Your profile is hidden from the public web'}
                   </p>
                   <p className="text-sm text-muted-foreground mt-1">
                     {isPublic
-                      ? 'Other DNA members can find you through search and discovery, and view your full profile.'
-                      : 'Only you can see your profile. Others will see "This profile is private" when they visit.'}
+                      ? 'Anyone on the web can find and view it. DNA Members can always find you.'
+                      : 'Only signed-in DNA Members can find and view you.'}
                   </p>
                 </div>
               </div>

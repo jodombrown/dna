@@ -20,7 +20,7 @@ const ProfileEditPrivacy: React.FC<ProfileEditPrivacyProps> = ({
           <Shield className="h-5 w-5 text-primary" />
           Privacy Settings
         </CardTitle>
-        <CardDescription>Control who can see your profile</CardDescription>
+        <CardDescription>Control who outside DNA can see your profile</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex items-center justify-between">
@@ -34,9 +34,9 @@ const ProfileEditPrivacy: React.FC<ProfileEditPrivacyProps> = ({
               Public Profile
             </Label>
             <p className="text-sm text-muted-foreground">
-              {isPublic 
-                ? "Your profile is visible to all DNA members and appears in search results." 
-                : "Your profile is private. Only you can see it."}
+              {isPublic
+                ? "Your profile is public. Anyone on the web can find and view it."
+                : "Your profile is hidden from the public web. DNA Members can still find you."}
             </p>
           </div>
           <Switch
@@ -45,15 +45,6 @@ const ProfileEditPrivacy: React.FC<ProfileEditPrivacyProps> = ({
             onCheckedChange={onIsPublicChange}
           />
         </div>
-
-        {!isPublic && (
-          <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
-            <p className="text-sm text-amber-800 dark:text-amber-200">
-              <strong>Note:</strong> With a private profile, other members won't be able to find or connect with you. 
-              Consider making your profile public to get the most out of DNA.
-            </p>
-          </div>
-        )}
       </CardContent>
     </Card>
   );

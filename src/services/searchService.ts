@@ -157,7 +157,6 @@ export const searchContent = async (query: string, filters?: SearchFilters): Pro
       .from('profiles')
       .select('id, full_name, display_name, bio, avatar_url, location, professional_role, created_at')
       .or(`full_name.ilike.${searchTerm},display_name.ilike.${searchTerm},bio.ilike.${searchTerm},professional_role.ilike.${searchTerm}`)
-      .eq('account_visibility', 'public')
       .limit(10);
 
     if (!profilesError && profiles) {
