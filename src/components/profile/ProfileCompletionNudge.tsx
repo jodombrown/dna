@@ -56,7 +56,7 @@ export const ProfileCompletionNudge: React.FC<ProfileCompletionNudgeProps> = ({
   if (completenessScore >= threshold) return null;
 
   const missingFields = getMissingFields(profile);
-  const pointsToUnlock = threshold - completenessScore;
+  const pointsToGo = threshold - completenessScore;
   const topMissingField = missingFields[0];
 
   // Inline variant - single line nudge
@@ -111,7 +111,7 @@ export const ProfileCompletionNudge: React.FC<ProfileCompletionNudgeProps> = ({
         </div>
         <Progress value={completenessScore} className="h-2 mb-2" />
         <p className="text-xs text-muted-foreground mb-2">
-          Add {pointsToUnlock}% more to unlock discovery features
+          Add {pointsToGo}% more to boost your visibility
         </p>
         {showMissingFields && (
           <div className="mb-3">
@@ -150,7 +150,7 @@ export const ProfileCompletionNudge: React.FC<ProfileCompletionNudgeProps> = ({
               )}
             </div>
             <p className="text-sm text-muted-foreground mb-3">
-              Complete your profile to {threshold}% to appear in member discovery and unlock all DNA features.
+              Complete your profile to {threshold}% to boost your visibility in member discovery.
             </p>
             <div className="flex items-center gap-3 mb-3">
               <Progress value={completenessScore} className="flex-1 h-2" />
@@ -195,7 +195,7 @@ export const ProfileCompletionNudge: React.FC<ProfileCompletionNudgeProps> = ({
             </div>
             <div>
               <h3 className="font-semibold text-sm">Profile Strength</h3>
-              <p className="text-xs text-muted-foreground">{pointsToUnlock}% to unlock discovery</p>
+              <p className="text-xs text-muted-foreground">{pointsToGo}% to boost discovery</p>
             </div>
           </div>
           {dismissible && (

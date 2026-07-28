@@ -222,7 +222,7 @@ const ProfileEdit = () => {
 
       return data[0];
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       // Invalidate profile queries
       queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
       queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
@@ -232,12 +232,19 @@ const ProfileEdit = () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['user-posts'] });
       
-      // Use points-based calculation (100 pts total)
-      const completionPts = calculateProfileCompletionPts(data);
-      
+      // Score the same object the on-page ProfileCompletionBar scores: the
+      // merged profile plus local avatar/banner state. BD274-A narrowed the
+      // mutation's .select() to 'id' only, so `data` no longer carries the
+      // profile columns needed here — do not widen it back (reintroduces 42501).
+      const completionPts = calculateProfileCompletionPts({
+        ...profile,
+        avatar_url: avatarUrl,
+        banner_url: bannerUrl,
+      });
+
       toast({
         title: 'Profile updated!',
-        description: `You're at ${completionPts} pts. ${completionPts >= 40 ? '✅ All features unlocked!' : `Complete ${40 - completionPts} more pts to unlock all features.`}`,
+        description: `Your profile is at ${completionPts} pts.`,
       });
       
       navigate('/dna/feed');
@@ -471,7 +478,7 @@ const ProfileEdit = () => {
         <div className="mb-6">
           <h1 className="text-display font-bold">Edit Profile</h1>
           <p className="text-muted-foreground mt-2">
-            Complete your profile to unlock all DNA features and connect with the diaspora community
+            Complete your profile to connect with the diaspora community
           </p>
           
           {/* Quick nudges for incomplete fields */}

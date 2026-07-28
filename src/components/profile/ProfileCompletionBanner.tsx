@@ -63,7 +63,7 @@ export const ProfileCompletionBanner: React.FC<ProfileCompletionBannerProps> = (
               </button>
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              Add {pointsNeeded}% more to unlock all features and boost your visibility.
+              Add {pointsNeeded}% more to boost your visibility.
             </p>
             <div className="flex items-center gap-2 mt-3">
               <Progress value={completenessScore} className="flex-1 h-2" />
