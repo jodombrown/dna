@@ -347,6 +347,7 @@ export default function PrivacySettings() {
         )}
       </div>
 
+      <ThresholdConsentDialog
         open={thresholdDialogOpen}
         onOpenChange={setThresholdDialogOpen}
         readOnly={thresholdReadOnly}
