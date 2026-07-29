@@ -35,7 +35,6 @@ function thresholdSummary(fields: string[] | null | undefined): string {
   return `your handle plus ${labels.slice(0, -1).join(', ')} and ${labels[labels.length - 1]}`;
 }
 
-
 export default function PrivacySettings() {
   const { user } = useAuth();
   const { data: profile, isLoading } = useProfile();
@@ -49,7 +48,6 @@ export default function PrivacySettings() {
   const [thresholdDialogOpen, setThresholdDialogOpen] = useState(false);
   const [thresholdReadOnly, setThresholdReadOnly] = useState(false);
   const [savedThresholdFields, setSavedThresholdFields] = useState<string[]>([]);
-
 
   useEffect(() => {
     if (profile) {
@@ -164,7 +162,6 @@ export default function PrivacySettings() {
     }
   };
 
-
   const handleSharingChange = async (checked: boolean) => {
     setSaving(true);
     setAllowProfileSharing(checked);
@@ -272,7 +269,6 @@ export default function PrivacySettings() {
                 </Button>
               </div>
             )}
-
 
             {/* Status indicator */}
             <div className={`p-4 rounded-lg ${isPublic ? 'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900' : 'bg-muted border'}`}>
@@ -621,7 +617,6 @@ export default function PrivacySettings() {
           queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
         }}
       />
-
     </SettingsLayout>
   );
 }
