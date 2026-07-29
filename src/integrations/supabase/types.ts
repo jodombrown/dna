@@ -13704,6 +13704,13 @@ export type Database = {
             Args: { p_days_back: number; p_organizer_id: string }
             Returns: Json
           }
+      get_own_location: {
+        Args: never
+        Returns: {
+          current_lat: number | null
+          current_lng: number | null
+        }[]
+      }
       get_own_profile: {
         Args: never
         Returns: {
