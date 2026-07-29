@@ -9,11 +9,54 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { SettingsLayout } from '@/components/settings/SettingsLayout';
 import { Loader2, Eye, EyeOff, Globe, Lock, Info, Share2, Copy, ExternalLink } from 'lucide-react';
 import { PublicVisibilitySettings, DEFAULT_PUBLIC_VISIBILITY } from '@/types/profileV2';
 import { ROUTES, getProfileShareUrl } from '@/config/routes';
 import { getErrorMessage } from '@/lib/errorLogger';
+
+/** Threshold presets. Values must stay inside the CHECK constraint set:
+ *  'name', 'avatar', 'headline', 'role', 'place'. */
+type ThresholdPresetId = 'handle' | 'name_face' | 'name_face_role_place';
+
+const THRESHOLD_PRESETS: Array<{ id: ThresholdPresetId; label: string; fields: string[] }> = [
+  { id: 'handle', label: 'Just my handle', fields: [] },
+  { id: 'name_face', label: 'Name and face', fields: ['name', 'avatar'] },
+  {
+    id: 'name_face_role_place',
+    label: 'Name, face, role and place',
+    fields: ['name', 'avatar', 'role', 'place'],
+  },
+];
+
+function presetFromFields(fields: string[] | null | undefined): ThresholdPresetId {
+  const set = new Set(fields ?? []);
+  if (set.has('role') || set.has('place')) return 'name_face_role_place';
+  if (set.has('name') || set.has('avatar')) return 'name_face';
+  return 'handle';
+}
+
+function thresholdSummary(fields: string[] | null | undefined): string {
+  switch (presetFromFields(fields)) {
+    case 'name_face_role_place':
+      return 'name, face, role and place';
+    case 'name_face':
+      return 'name and face';
+    default:
+      return 'just your handle';
+  }
+}
+
 
 export default function PrivacySettings() {
   const { user } = useAuth();
@@ -25,11 +68,17 @@ export default function PrivacySettings() {
   const [allowProfileSharing, setAllowProfileSharing] = useState(true);
   const [saving, setSaving] = useState(false);
   const [publicVisibility, setPublicVisibility] = useState<PublicVisibilitySettings>(DEFAULT_PUBLIC_VISIBILITY);
+  const [thresholdDialogOpen, setThresholdDialogOpen] = useState(false);
+  const [thresholdPreset, setThresholdPreset] = useState<ThresholdPresetId>('handle');
+  const [savedThresholdFields, setSavedThresholdFields] = useState<string[]>([]);
 
   useEffect(() => {
     if (profile) {
       setIsPublic(profile.account_visibility === 'public');
       setAllowProfileSharing(profile.allow_profile_sharing !== false);
+      const fields = (profile as { threshold_fields?: string[] | null }).threshold_fields ?? [];
+      setSavedThresholdFields(fields);
+      setThresholdPreset(presetFromFields(fields));
       // Load per-field visibility settings from profile (cast to any to access JSONB field)
       const profileVisibility = (profile as any).public_visibility;
       if (profileVisibility) {
@@ -40,6 +89,7 @@ export default function PrivacySettings() {
       }
     }
   }, [profile]);
+
 
   // Copy profile URL to clipboard
   const handleCopyProfileUrl = async () => {
@@ -93,15 +143,23 @@ export default function PrivacySettings() {
     }
   };
 
+  // Going private is a two step decision: pick the threshold, then write both
+  // account_visibility and threshold_fields together. Going public writes now.
   const handleVisibilityChange = async (checked: boolean) => {
+    if (!checked) {
+      setThresholdPreset(presetFromFields(savedThresholdFields));
+      setThresholdDialogOpen(true);
+      return;
+    }
+
     setSaving(true);
-    setIsPublic(checked);
+    setIsPublic(true);
 
     try {
       const { error } = await supabase
         .from('profiles')
         .update({
-          account_visibility: checked ? 'public' : 'private',
+          account_visibility: 'public',
           updated_at: new Date().toISOString(),
         })
         .eq('id', user?.id);
@@ -112,13 +170,11 @@ export default function PrivacySettings() {
       queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
 
       toast({
-        title: checked ? 'Profile is now public' : 'Profile is now private',
-        description: checked
-          ? 'Your profile is now visible on the public web.'
-          : 'Your profile is now hidden from the public web. DNA Members can still find you.',
+        title: 'Profile is now public',
+        description: 'Your profile is now visible on the public web.',
       });
     } catch (error: unknown) {
-      setIsPublic(!checked); // Revert on error
+      setIsPublic(false); // Revert on error
       toast({
         title: 'Error updating privacy',
         description: getErrorMessage(error),
@@ -128,6 +184,46 @@ export default function PrivacySettings() {
       setSaving(false);
     }
   };
+
+  const handleGoPrivate = async () => {
+    const preset = THRESHOLD_PRESETS.find((p) => p.id === thresholdPreset);
+    if (!preset) return;
+
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          account_visibility: 'private',
+          threshold_fields: preset.fields,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', user?.id);
+
+      if (error) throw error;
+
+      setIsPublic(false);
+      setSavedThresholdFields(preset.fields);
+      setThresholdDialogOpen(false);
+
+      queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
+      queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
+
+      toast({
+        title: 'Profile is now private',
+        description: 'Your profile is now hidden from the public web. DNA Members can still find you.',
+      });
+    } catch (error: unknown) {
+      toast({
+        title: 'Error updating privacy',
+        description: getErrorMessage(error),
+        variant: 'destructive',
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
 
   const handleSharingChange = async (checked: boolean) => {
     setSaving(true);
@@ -209,6 +305,25 @@ export default function PrivacySettings() {
                 disabled={saving}
               />
             </div>
+
+            {!isPublic && (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>Visitors see: {thresholdSummary(savedThresholdFields)}</span>
+                <Button
+                  variant="link"
+                  size="sm"
+                  className="h-auto p-0"
+                  onClick={() => {
+                    setThresholdPreset(presetFromFields(savedThresholdFields));
+                    setThresholdDialogOpen(true);
+                  }}
+                >
+                  Edit
+                </Button>
+              </div>
+            )}
+
+
 
             {/* Status indicator */}
             <div className={`p-4 rounded-lg ${isPublic ? 'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900' : 'bg-muted border'}`}>
@@ -531,6 +646,79 @@ export default function PrivacySettings() {
           </CardContent>
         </Card>
       </div>
+
+      <Dialog
+        open={thresholdDialogOpen}
+        onOpenChange={(open) => {
+          // Any dismissal is a Cancel. Nothing was written, so the toggle stays on.
+          if (!open) setThresholdDialogOpen(false);
+        }}
+      >
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>What should someone see if they land on your link?</DialogTitle>
+            <DialogDescription>
+              Members always see your full profile. This is only for people who are not signed in to DNA.
+            </DialogDescription>
+          </DialogHeader>
+
+          <RadioGroup
+            value={thresholdPreset}
+            onValueChange={(value) => setThresholdPreset(value as ThresholdPresetId)}
+            className="space-y-2"
+          >
+            {THRESHOLD_PRESETS.map((preset) => (
+              <Label
+                key={preset.id}
+                htmlFor={`threshold_${preset.id}`}
+                className={`flex items-center gap-3 rounded-lg border p-3 cursor-pointer ${
+                  thresholdPreset === preset.id ? 'border-primary bg-muted' : 'border-border'
+                }`}
+              >
+                <RadioGroupItem value={preset.id} id={`threshold_${preset.id}`} />
+                <span className="font-normal">{preset.label}</span>
+              </Label>
+            ))}
+          </RadioGroup>
+
+          <div className="rounded-lg border p-4 space-y-2">
+            <p className="text-sm font-medium">What a visitor sees</p>
+            <div className="flex items-center gap-3">
+              {thresholdPreset !== 'handle' && (
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src={profile?.avatar_url ?? undefined} alt="" />
+                  <AvatarFallback>{(profile?.full_name ?? '?').charAt(0)}</AvatarFallback>
+                </Avatar>
+              )}
+              <div>
+                {thresholdPreset !== 'handle' && profile?.full_name && (
+                  <p className="font-medium">{profile.full_name}</p>
+                )}
+                <p className="text-sm text-muted-foreground">@{profile?.username}</p>
+              </div>
+            </div>
+            {thresholdPreset === 'name_face_role_place' && (
+              <div className="text-sm text-muted-foreground space-y-1">
+                {profile?.role && <p>{profile.role}</p>}
+                {profile?.current_country && <p>{profile.current_country}</p>}
+              </div>
+            )}
+            <p className="text-sm">Member of DNA</p>
+            <p className="text-sm text-muted-foreground">This Member is visible to Members.</p>
+          </div>
+
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setThresholdDialogOpen(false)} disabled={saving}>
+              Cancel
+            </Button>
+            <Button onClick={handleGoPrivate} disabled={saving}>
+              {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Go private
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </SettingsLayout>
   );
 }
+
