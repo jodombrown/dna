@@ -125,7 +125,7 @@ const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
 
   // The far end is degenerate when it matches where the Member already is, or
   // when there is no inherited far end at all.
-  const sameOrEmptyCorridor = !locationTo || locationFrom === locationTo;
+  const sameOrEmptyCorridor = !locationTo;
 
   const focusSuggestions = professionalSectors.length > 0
     ? professionalSectors
@@ -248,7 +248,7 @@ const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
           <span className="text-muted-foreground text-sm shrink-0">↔</span>
           <Input
             placeholder={sameOrEmptyCorridor ? 'Where you are building toward' : 'Heritage'}
-            value={sameOrEmptyCorridor ? '' : locationTo}
+            value={locationTo}
             onChange={(e) => setLocationTo(e.target.value)}
             maxLength={30}
             className="flex-1"
