@@ -46,6 +46,18 @@ function presetFromFields(fields: string[] | null | undefined): ThresholdPresetI
   return 'handle';
 }
 
+function thresholdSummary(fields: string[] | null | undefined): string {
+  switch (presetFromFields(fields)) {
+    case 'name_face_role_place':
+      return 'name, face, role and place';
+    case 'name_face':
+      return 'name and face';
+    default:
+      return 'just your handle';
+  }
+}
+
+
 export default function PrivacySettings() {
   const { user } = useAuth();
   const { data: profile, isLoading } = useProfile();
