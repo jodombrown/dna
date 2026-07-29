@@ -222,35 +222,6 @@ async function performEnhancedSearch(intent: SearchIntent, userId?: string) {
     }
   }
 
-  // Search communities
-  if (!intent.filters.types.length || intent.filters.types.includes('community')) {
-    const communityFilter = allSearchTerms.map(term => 
-      `name.ilike.%${term}%,description.ilike.%${term}%,category.ilike.%${term}%`
-    ).join(',');
-
-    const { data: communities } = await supabase
-      .from('communities')
-      .select('id, name, description, category, image_url, member_count, created_at')
-      .or(communityFilter)
-      .eq('is_active', true)
-      .limit(10);
-
-    if (communities) {
-      results.communities = communities.map(community => ({
-        id: community.id,
-        type: 'community',
-        title: community.name,
-        description: community.description || `${community.category} community`,
-        image_url: community.image_url,
-        created_at: community.created_at,
-        metadata: {
-          category: community.category,
-          member_count: community.member_count
-        }
-      }));
-    }
-  }
-
   // Search events with time filtering
   if (!intent.filters.types.length || intent.filters.types.includes('event')) {
     const eventQuery = supabase
