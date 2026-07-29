@@ -618,81 +618,32 @@ export default function PrivacySettings() {
         </Card>
       </div>
 
-      <Dialog
+      <ThresholdConsentDialog
         open={thresholdDialogOpen}
-        onOpenChange={(open) => {
-          // Any dismissal is a Cancel. Nothing was written, so the toggle stays on.
-          if (!open) setThresholdDialogOpen(false);
+        onOpenChange={setThresholdDialogOpen}
+        readOnly={thresholdReadOnly}
+        profile={
+          profile
+            ? {
+                id: profile.id,
+                username: profile.username,
+                full_name: profile.full_name,
+                display_name: profile.display_name,
+                avatar_url: profile.avatar_url,
+                headline: profile.headline,
+                role: (profile as { role?: string | null }).role ?? null,
+                current_country: profile.current_country,
+                threshold_fields: savedThresholdFields,
+              }
+            : null
+        }
+        onSaved={(fields) => {
+          setSavedThresholdFields(fields);
+          queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
+          queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
         }}
-      >
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>What should someone see if they land on your link?</DialogTitle>
-            <DialogDescription>
-              Members always see your full profile. This is only for people who are not signed in to DNA.
-            </DialogDescription>
-          </DialogHeader>
+      />
 
-          <RadioGroup
-            value={thresholdPreset}
-            onValueChange={(value) => setThresholdPreset(value as ThresholdPresetId)}
-            className="space-y-2"
-          >
-            {THRESHOLD_PRESETS.map((preset) => (
-              <Label
-                key={preset.id}
-                htmlFor={`threshold_${preset.id}`}
-                className={`flex items-center gap-3 rounded-lg border p-3 cursor-pointer ${
-                  thresholdPreset === preset.id ? 'border-primary bg-muted' : 'border-border'
-                }`}
-              >
-                <RadioGroupItem value={preset.id} id={`threshold_${preset.id}`} />
-                <span className="font-normal">{preset.label}</span>
-              </Label>
-            ))}
-          </RadioGroup>
-
-          <div className="rounded-lg border p-4 space-y-2">
-            <p className="text-sm font-medium">What a visitor sees</p>
-            <div className="flex items-center gap-3">
-              {thresholdPreset !== 'handle' && profile?.avatar_url && (
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={profile.avatar_url} alt="" />
-                  <AvatarFallback>
-                    {(profile?.full_name || profile?.display_name || profile?.username || '?').charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-              )}
-              <div>
-                {thresholdPreset !== 'handle' && (profile?.full_name || profile?.display_name) && (
-                  <p className="font-medium">{profile.full_name || profile.display_name}</p>
-                )}
-                <p className="text-sm text-muted-foreground">@{profile?.username}</p>
-              </div>
-            </div>
-            {thresholdPreset === 'name_face_role_place' && (
-              <div className="text-sm text-muted-foreground space-y-1">
-                {profile?.role && profile.role !== 'exploring' && getRoleLabel(profile.role) ? (
-                  <p>{getRoleLabel(profile.role)}</p>
-                ) : null}
-                {profile?.current_country && <p>{profile.current_country}</p>}
-              </div>
-            )}
-            <p className="text-sm">Member of DNA</p>
-            <p className="text-sm text-muted-foreground">This Member is visible to Members.</p>
-          </div>
-
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setThresholdDialogOpen(false)} disabled={saving}>
-              Cancel
-            </Button>
-            <Button onClick={handleGoPrivate} disabled={saving}>
-              {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              Go private
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </SettingsLayout>
   );
 }
