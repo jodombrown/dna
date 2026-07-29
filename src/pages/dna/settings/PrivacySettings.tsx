@@ -24,6 +24,7 @@ import { Loader2, Eye, EyeOff, Globe, Lock, Info, Share2, Copy, ExternalLink } f
 import { PublicVisibilitySettings, DEFAULT_PUBLIC_VISIBILITY } from '@/types/profileV2';
 import { ROUTES, getProfileShareUrl } from '@/config/routes';
 import { getErrorMessage } from '@/lib/errorLogger';
+import { getRoleLabel } from '@/components/onboarding/RoleDeclarationStep';
 
 /** Threshold presets. Values must stay inside the CHECK constraint set:
  *  'name', 'avatar', 'headline', 'role', 'place'. */
