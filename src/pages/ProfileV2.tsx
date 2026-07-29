@@ -143,7 +143,7 @@ const ProfileV2: React.FC = () => {
     return (
       <PageFrame contained>
         <Card>
-          <CardContent className="py-10 space-y-4">
+          <CardContent className="pt-10 pb-10 space-y-4">
             <h1 className="text-h2 font-display">We could not load this page.</h1>
             <p className="text-body text-muted-foreground">Something went wrong on our side.</p>
             <Button onClick={() => refetch()}>Try again</Button>
@@ -159,7 +159,7 @@ const ProfileV2: React.FC = () => {
     return (
       <PageFrame contained>
         <Card>
-          <CardContent className="py-10 space-y-4">
+          <CardContent className="pt-10 pb-10 space-y-4">
             <h1 className="text-h2 font-display">No Member at this address.</h1>
             <p className="text-body text-muted-foreground">
               {handle
@@ -186,7 +186,7 @@ const ProfileV2: React.FC = () => {
     return (
       <PageFrame contained>
         <Card>
-          <CardContent className="py-10 space-y-6">
+          <CardContent className="pt-10 pb-10 space-y-6">
             <div className="flex items-center gap-4">
               {threshold.avatar_url ? (
                 <Avatar className="h-16 w-16">
@@ -224,7 +224,7 @@ const ProfileV2: React.FC = () => {
           </CardContent>
         </Card>
 
-        <div className="mt-8">
+        <div className="pt-8">
           <FiveCsDiscoverySection username={threshold.username} memberFirstName={name} />
         </div>
       </PageFrame>
