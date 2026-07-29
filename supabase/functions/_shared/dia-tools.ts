@@ -233,8 +233,7 @@ export async function executeTool(
       case "search_platform_people": {
         let q = supabase
           .from("profiles")
-          .select("id, full_name, headline, avatar_url, location, industry, skills")
-          .eq("account_visibility", "public");
+          .select("id, full_name, headline, avatar_url, location, industry, skills");
         if (args.location) q = q.ilike("location", `%${args.location}%`);
         if (args.industry) q = q.ilike("industry", `%${args.industry}%`);
         if (args.query) {
