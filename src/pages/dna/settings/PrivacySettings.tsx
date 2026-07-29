@@ -131,15 +131,23 @@ export default function PrivacySettings() {
     }
   };
 
+  // Going private is a two step decision: pick the threshold, then write both
+  // account_visibility and threshold_fields together. Going public writes now.
   const handleVisibilityChange = async (checked: boolean) => {
+    if (!checked) {
+      setThresholdPreset(presetFromFields(savedThresholdFields));
+      setThresholdDialogOpen(true);
+      return;
+    }
+
     setSaving(true);
-    setIsPublic(checked);
+    setIsPublic(true);
 
     try {
       const { error } = await supabase
         .from('profiles')
         .update({
-          account_visibility: checked ? 'public' : 'private',
+          account_visibility: 'public',
           updated_at: new Date().toISOString(),
         })
         .eq('id', user?.id);
@@ -150,13 +158,11 @@ export default function PrivacySettings() {
       queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
 
       toast({
-        title: checked ? 'Profile is now public' : 'Profile is now private',
-        description: checked
-          ? 'Your profile is now visible on the public web.'
-          : 'Your profile is now hidden from the public web. DNA Members can still find you.',
+        title: 'Profile is now public',
+        description: 'Your profile is now visible on the public web.',
       });
     } catch (error: unknown) {
-      setIsPublic(!checked); // Revert on error
+      setIsPublic(false); // Revert on error
       toast({
         title: 'Error updating privacy',
         description: getErrorMessage(error),
@@ -166,6 +172,46 @@ export default function PrivacySettings() {
       setSaving(false);
     }
   };
+
+  const handleGoPrivate = async () => {
+    const preset = THRESHOLD_PRESETS.find((p) => p.id === thresholdPreset);
+    if (!preset) return;
+
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          account_visibility: 'private',
+          threshold_fields: preset.fields,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', user?.id);
+
+      if (error) throw error;
+
+      setIsPublic(false);
+      setSavedThresholdFields(preset.fields);
+      setThresholdDialogOpen(false);
+
+      queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
+      queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
+
+      toast({
+        title: 'Profile is now private',
+        description: 'Your profile is now hidden from the public web. DNA Members can still find you.',
+      });
+    } catch (error: unknown) {
+      toast({
+        title: 'Error updating privacy',
+        description: getErrorMessage(error),
+        variant: 'destructive',
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
 
   const handleSharingChange = async (checked: boolean) => {
     setSaving(true);
