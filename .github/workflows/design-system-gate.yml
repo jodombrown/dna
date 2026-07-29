@@ -120,6 +120,19 @@ jobs:
           check "Legacy font alias. Use font-display or font-body." \
                 '\bfont-(sans|ui|serif|heritage)\b'
 
+          # Raw Tailwind palette (BD291). The gate has never matched these, so
+          # 2,977 sites merged freely while BD289 described them as "the half the
+          # gate exists to prevent." Added-lines scoped like every other check, so
+          # this costs no burndown and blocks new violations from this merge on.
+          #
+          # Shape-anchored deliberately: utility-palette-NUMBER. That is what keeps
+          # dna-emerald, dna-stone and dna-sand out (the dna- segment breaks the
+          # shape) and what keeps file paths out (shared/ contains "red", but
+          # carries no numeric suffix). Prose is unaffected: "status GREEN, a red
+          # flag" does not fire.
+          check "Raw Tailwind palette colour (BD291). Use a token: module-connect|convene|collaborate|contribute|convey for Five C's surfaces, dna-* for brand, or the semantic set (primary, muted, destructive, accent, border, foreground)." \
+                '\b(!)?(text|bg|border|border-[trblxy]|from|via|to|ring|ring-offset|fill|stroke|shadow|divide|outline|decoration|accent|caret|placeholder)-(slate|gray|grey|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950)\b'
+
           # Arbitrary values, with the hsl(var(--x)) escape allowed.
           ARB='\b(text|bg|p|px|py|pt|pb|pl|pr|m|mx|my|mt|mb|ml|mr|w|h|min-w|min-h|max-w|max-h|gap|top|left|right|bottom|rounded|border|leading|tracking)-\['
           raw="$(printf '%s\n' "$ADDED" | grep -E "$ARB")"
