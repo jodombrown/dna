@@ -137,27 +137,6 @@ async function performDynamicSearch(supabase: any, query: string, searchType: st
       });
     }
 
-    // Search Communities/Organizations
-    const { data: communities } = await supabase
-      .from('communities')
-      .select('id, name, description, category, member_count')
-      .or(`name.ilike.${searchTerm},description.ilike.${searchTerm},category.ilike.${searchTerm}`)
-      .eq('is_active', true)
-      .limit(5);
-
-    if (communities) {
-      communities.forEach((community: any) => {
-        results.push({
-          title: community.name,
-          description: `${community.category} community with ${community.member_count} members. ${community.description || 'Connect and collaborate'}`,
-          url: `/app/communities?id=${community.id}`,
-          source: 'DNA Communities',
-          relevanceScore: 0.8,
-          type: 'organizations'
-        });
-      });
-    }
-
     // Search Projects/Opportunities
     const { data: projects } = await supabase
       .from('projects')
