@@ -69,8 +69,9 @@ export default function PrivacySettings() {
   const [saving, setSaving] = useState(false);
   const [publicVisibility, setPublicVisibility] = useState<PublicVisibilitySettings>(DEFAULT_PUBLIC_VISIBILITY);
   const [thresholdDialogOpen, setThresholdDialogOpen] = useState(false);
-  const [thresholdPreset, setThresholdPreset] = useState<ThresholdPresetId>('handle');
+  const [thresholdReadOnly, setThresholdReadOnly] = useState(false);
   const [savedThresholdFields, setSavedThresholdFields] = useState<string[]>([]);
+
 
   useEffect(() => {
     if (profile) {
