@@ -1,37 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { ProfileEditSectionProps } from './types';
-import {
-  ThresholdConsentDialog,
-  ThresholdConsentProfile,
-} from '@/components/profile/ThresholdConsentDialog';
-
-interface PrivacySectionProps extends ProfileEditSectionProps {
-  /**
-   * Minimal profile needed to ask the threshold consent question when the
-   * Member switches to private. Added here rather than fetching inside the
-   * section. Without it the dialog is skipped.
-   */
-  profile?: ThresholdConsentProfile | null;
-}
 
 export function PrivacySection({
   formData,
   onUpdate,
   disabled = false,
-  profile,
-}: PrivacySectionProps) {
-  const [thresholdOpen, setThresholdOpen] = useState(false);
-
-  const handleToggle = (checked: boolean) => {
-    onUpdate('account_visibility', checked ? 'public' : 'private');
-    if (!checked && profile?.id) {
-      setThresholdOpen(true);
-    }
-  };
-
+}: ProfileEditSectionProps) {
   return (
     <Card>
       <CardHeader>
@@ -51,7 +28,7 @@ export function PrivacySection({
           <Switch
             id="account_visibility"
             checked={formData.account_visibility === 'public'}
-            onCheckedChange={handleToggle}
+            onCheckedChange={(checked) => onUpdate('account_visibility', checked ? 'public' : 'private')}
             disabled={disabled}
           />
         </div>
@@ -70,12 +47,6 @@ export function PrivacySection({
           </p>
         </div>
       </CardContent>
-
-      <ThresholdConsentDialog
-        open={thresholdOpen}
-        onOpenChange={setThresholdOpen}
-        profile={profile ?? null}
-      />
     </Card>
   );
 }
