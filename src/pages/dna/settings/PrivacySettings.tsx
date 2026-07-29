@@ -294,6 +294,25 @@ export default function PrivacySettings() {
               />
             </div>
 
+            {!isPublic && (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>Visitors see: {thresholdSummary(savedThresholdFields)}</span>
+                <Button
+                  variant="link"
+                  size="sm"
+                  className="h-auto p-0"
+                  onClick={() => {
+                    setThresholdPreset(presetFromFields(savedThresholdFields));
+                    setThresholdDialogOpen(true);
+                  }}
+                >
+                  Edit
+                </Button>
+              </div>
+            )}
+
+
+
             {/* Status indicator */}
             <div className={`p-4 rounded-lg ${isPublic ? 'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900' : 'bg-muted border'}`}>
               <div className="flex items-start gap-3">
