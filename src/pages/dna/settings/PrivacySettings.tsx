@@ -9,11 +9,42 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { SettingsLayout } from '@/components/settings/SettingsLayout';
 import { Loader2, Eye, EyeOff, Globe, Lock, Info, Share2, Copy, ExternalLink } from 'lucide-react';
 import { PublicVisibilitySettings, DEFAULT_PUBLIC_VISIBILITY } from '@/types/profileV2';
 import { ROUTES, getProfileShareUrl } from '@/config/routes';
 import { getErrorMessage } from '@/lib/errorLogger';
+
+/** Threshold presets. Values must stay inside the CHECK constraint set:
+ *  'name', 'avatar', 'headline', 'role', 'place'. */
+type ThresholdPresetId = 'handle' | 'name_face' | 'name_face_role_place';
+
+const THRESHOLD_PRESETS: Array<{ id: ThresholdPresetId; label: string; fields: string[] }> = [
+  { id: 'handle', label: 'Just my handle', fields: [] },
+  { id: 'name_face', label: 'Name and face', fields: ['name', 'avatar'] },
+  {
+    id: 'name_face_role_place',
+    label: 'Name, face, role and place',
+    fields: ['name', 'avatar', 'role', 'place'],
+  },
+];
+
+function presetFromFields(fields: string[] | null | undefined): ThresholdPresetId {
+  const set = new Set(fields ?? []);
+  if (set.has('role') || set.has('place')) return 'name_face_role_place';
+  if (set.has('name') || set.has('avatar')) return 'name_face';
+  return 'handle';
+}
 
 export default function PrivacySettings() {
   const { user } = useAuth();
@@ -25,11 +56,17 @@ export default function PrivacySettings() {
   const [allowProfileSharing, setAllowProfileSharing] = useState(true);
   const [saving, setSaving] = useState(false);
   const [publicVisibility, setPublicVisibility] = useState<PublicVisibilitySettings>(DEFAULT_PUBLIC_VISIBILITY);
+  const [thresholdDialogOpen, setThresholdDialogOpen] = useState(false);
+  const [thresholdPreset, setThresholdPreset] = useState<ThresholdPresetId>('handle');
+  const [savedThresholdFields, setSavedThresholdFields] = useState<string[]>([]);
 
   useEffect(() => {
     if (profile) {
       setIsPublic(profile.account_visibility === 'public');
       setAllowProfileSharing(profile.allow_profile_sharing !== false);
+      const fields = (profile as { threshold_fields?: string[] | null }).threshold_fields ?? [];
+      setSavedThresholdFields(fields);
+      setThresholdPreset(presetFromFields(fields));
       // Load per-field visibility settings from profile (cast to any to access JSONB field)
       const profileVisibility = (profile as any).public_visibility;
       if (profileVisibility) {
@@ -40,6 +77,7 @@ export default function PrivacySettings() {
       }
     }
   }, [profile]);
+
 
   // Copy profile URL to clipboard
   const handleCopyProfileUrl = async () => {
