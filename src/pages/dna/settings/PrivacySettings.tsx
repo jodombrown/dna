@@ -85,39 +85,8 @@ export default function PrivacySettings() {
     }
   };
 
-  // Handle per-field visibility change
-  const handleVisibilityFieldChange = async (field: keyof PublicVisibilitySettings, checked: boolean) => {
-    const newVisibility = { ...publicVisibility, [field]: checked };
-    setPublicVisibility(newVisibility);
 
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          public_visibility: newVisibility,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', user?.id);
 
-      if (error) throw error;
-
-      queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
-      queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
-
-      toast({
-        title: 'Visibility updated',
-        description: `${field.replace(/_/g, ' ')} is now ${checked ? 'visible' : 'hidden'} on your public profile`,
-      });
-    } catch (error: unknown) {
-      // Revert on error
-      setPublicVisibility({ ...publicVisibility, [field]: !checked });
-      toast({
-        title: 'Error updating visibility',
-        description: getErrorMessage(error),
-        variant: 'destructive',
-      });
-    }
-  };
 
   // account_visibility is written straight away either way. Going private then
   // asks the threshold question, which writes threshold_fields on its own.
