@@ -18,6 +18,7 @@
     "lint:panels": "tsx scripts/check-panel-chrome.ts",
     "lint:scale": "tsx scripts/check-type-scale.ts",
     "probe:mapbox": "tsx scripts/mapbox-search-quality-probe.ts",
+    "sync:staging": "bash scripts/sync-lovable-staging.sh",
     "prebuild": "tsx scripts/check-forbidden-classes.ts && tsx scripts/check-icon-duplicates.ts",
     "preview": "vite preview"
   },
