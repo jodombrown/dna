@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { WAITLIST_MODE } from '@/config/featureFlags';
 
 export const useWaitlistPopup = () => {
   const [showWaitlistPopup, setShowWaitlistPopup] = useState(false);
@@ -7,6 +8,13 @@ export const useWaitlistPopup = () => {
   const location = useLocation();
 
   useEffect(() => {
+    // Waitlist closed: never schedule the popup. Keep all hooks unconditional
+    // (an early return before them would break the rules of hooks) and gate the
+    // trigger here so the scroll listener is never registered.
+    if (!WAITLIST_MODE) {
+      return;
+    }
+
     // Only work on home page
     if (location.pathname !== '/') {
       return;
