@@ -96,7 +96,9 @@ const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
   // Auto-fill location from profile
   useEffect(() => {
     if (!locationFrom && currentCountry) setLocationFrom(currentCountry);
-    if (!locationTo && countryOfOrigin) setLocationTo(countryOfOrigin);
+    if (!locationTo && countryOfOrigin && countryOfOrigin !== (locationFrom || currentCountry)) {
+      setLocationTo(countryOfOrigin);
+    }
   }, [currentCountry, countryOfOrigin]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Build headline from parts
