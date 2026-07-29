@@ -24,6 +24,7 @@ import { Loader2, Eye, EyeOff, Globe, Lock, Info, Share2, Copy, ExternalLink } f
 import { PublicVisibilitySettings, DEFAULT_PUBLIC_VISIBILITY } from '@/types/profileV2';
 import { ROUTES, getProfileShareUrl } from '@/config/routes';
 import { getErrorMessage } from '@/lib/errorLogger';
+import { getRoleLabel } from '@/components/onboarding/RoleDeclarationStep';
 
 /** Threshold presets. Values must stay inside the CHECK constraint set:
  *  'name', 'avatar', 'headline', 'role', 'place'. */
@@ -57,7 +58,6 @@ function thresholdSummary(fields: string[] | null | undefined): string {
   }
 }
 
-
 export default function PrivacySettings() {
   const { user } = useAuth();
   const { data: profile, isLoading } = useProfile();
@@ -89,7 +89,6 @@ export default function PrivacySettings() {
       }
     }
   }, [profile]);
-
 
   // Copy profile URL to clipboard
   const handleCopyProfileUrl = async () => {
@@ -224,7 +223,6 @@ export default function PrivacySettings() {
     }
   };
 
-
   const handleSharingChange = async (checked: boolean) => {
     setSaving(true);
     setAllowProfileSharing(checked);
@@ -322,8 +320,6 @@ export default function PrivacySettings() {
                 </Button>
               </div>
             )}
-
-
 
             {/* Status indicator */}
             <div className={`p-4 rounded-lg ${isPublic ? 'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900' : 'bg-muted border'}`}>
@@ -684,22 +680,26 @@ export default function PrivacySettings() {
           <div className="rounded-lg border p-4 space-y-2">
             <p className="text-sm font-medium">What a visitor sees</p>
             <div className="flex items-center gap-3">
-              {thresholdPreset !== 'handle' && (
+              {thresholdPreset !== 'handle' && profile?.avatar_url && (
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src={profile?.avatar_url ?? undefined} alt="" />
-                  <AvatarFallback>{(profile?.full_name ?? '?').charAt(0)}</AvatarFallback>
+                  <AvatarImage src={profile.avatar_url} alt="" />
+                  <AvatarFallback>
+                    {(profile?.full_name || profile?.display_name || profile?.username || '?').charAt(0)}
+                  </AvatarFallback>
                 </Avatar>
               )}
               <div>
-                {thresholdPreset !== 'handle' && profile?.full_name && (
-                  <p className="font-medium">{profile.full_name}</p>
+                {thresholdPreset !== 'handle' && (profile?.full_name || profile?.display_name) && (
+                  <p className="font-medium">{profile.full_name || profile.display_name}</p>
                 )}
                 <p className="text-sm text-muted-foreground">@{profile?.username}</p>
               </div>
             </div>
             {thresholdPreset === 'name_face_role_place' && (
               <div className="text-sm text-muted-foreground space-y-1">
-                {profile?.role && <p>{profile.role}</p>}
+                {profile?.role && profile.role !== 'exploring' && getRoleLabel(profile.role) ? (
+                  <p>{getRoleLabel(profile.role)}</p>
+                ) : null}
                 {profile?.current_country && <p>{profile.current_country}</p>}
               </div>
             )}
