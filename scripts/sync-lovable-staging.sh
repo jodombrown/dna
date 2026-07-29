@@ -21,9 +21,7 @@ if [ "$AHEAD" -gt 0 ]; then
   exit 1
 fi
 
-git checkout "$STAGING"
-git merge --ff-only origin/main
-git push origin "$STAGING"
+git push origin "origin/main:refs/heads/$STAGING"
 git fetch --quiet origin "$STAGING"
 NEW=$(git rev-parse "origin/$STAGING")
 if [ "$NEW" = "$M" ]; then
