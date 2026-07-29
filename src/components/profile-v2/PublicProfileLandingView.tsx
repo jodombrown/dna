@@ -379,7 +379,7 @@ const PublicProfileLandingView: React.FC<PublicProfileLandingViewProps> = ({ bun
                 className="bg-primary hover:bg-primary/90 animate-heartbeat"
               >
                 <UserPlus className="w-4 h-4 mr-2" />
-                Join the Waitlist
+                Sign up
               </Button>
             </CardContent>
           </Card>

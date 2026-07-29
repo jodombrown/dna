@@ -88,7 +88,7 @@ export const PublicPostNotFound = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
           </Button>
           {!isLoggedIn && (
             <Button variant="outline" onClick={() => navigate('/auth?mode=signup')}>
-              Join the Waitlist
+              Sign up
             </Button>
           )}
         </div>
