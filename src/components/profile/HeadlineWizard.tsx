@@ -241,7 +241,7 @@ const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
             maxLength={30}
             className="flex-1"
           />
-          <span className="text-muted-foreground text-sm shrink-0">\u2194</span>
+          <span className="text-muted-foreground text-sm shrink-0">↔</span>
           <Input
             placeholder={sameOrEmptyCorridor ? 'Where you are building toward' : 'Heritage'}
             value={sameOrEmptyCorridor ? '' : locationTo}
