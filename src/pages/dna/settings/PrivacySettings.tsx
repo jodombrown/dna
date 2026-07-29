@@ -9,43 +9,22 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from '@/components/ui/dialog';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { SettingsLayout } from '@/components/settings/SettingsLayout';
 import { Loader2, Eye, EyeOff, Globe, Lock, Info, Share2, Copy, ExternalLink } from 'lucide-react';
 import { PublicVisibilitySettings, DEFAULT_PUBLIC_VISIBILITY } from '@/types/profileV2';
 import { ROUTES, getProfileShareUrl } from '@/config/routes';
 import { getErrorMessage } from '@/lib/errorLogger';
-import { getRoleLabel } from '@/components/onboarding/RoleDeclarationStep';
+import { ThresholdConsentDialog } from '@/components/profile/ThresholdConsentDialog';
 
-/** Threshold presets. Values must stay inside the CHECK constraint set:
+/** Summary of the consent set. Values live inside the CHECK constraint set:
  *  'name', 'avatar', 'headline', 'role', 'place'. */
-type ThresholdPresetId = 'handle' | 'name_face' | 'name_face_role_place';
-
-const THRESHOLD_PRESETS: Array<{ id: ThresholdPresetId; label: string; fields: string[] }> = [
-  { id: 'handle', label: 'Just my handle', fields: [] },
-  { id: 'name_face', label: 'Name and face', fields: ['name', 'avatar'] },
-  {
-    id: 'name_face_role_place',
-    label: 'Name, face, role and place',
-    fields: ['name', 'avatar', 'role', 'place'],
-  },
-];
-
-function presetFromFields(fields: string[] | null | undefined): ThresholdPresetId {
+function presetFromFields(fields: string[] | null | undefined): 'handle' | 'name_face' | 'name_face_role_place' {
   const set = new Set(fields ?? []);
   if (set.has('role') || set.has('place')) return 'name_face_role_place';
   if (set.has('name') || set.has('avatar')) return 'name_face';
   return 'handle';
 }
+
 
 function thresholdSummary(fields: string[] | null | undefined): string {
   switch (presetFromFields(fields)) {
