@@ -86,10 +86,17 @@ export default {
 		},
 			height: {
 				// Bottom-sheet height: leaves a strip of the underlying surface visible.
-				sheet: '92vh',
+				sheet: '92dvh',   // dvh, not vh: accounts for mobile browser chrome
 				// Map surfaces (Convene discovery map, Diaspora density map).
 				map: '31.25rem',      // 500px — mobile map viewport
 				'map-lg': '37.5rem',  // 600px — desktop map viewport
+			},
+			maxHeight: {
+				sheet: '92dvh',   // must mirror height.sheet; same name, same unit
+			},
+			width: {
+				handle: '100px',      // default drawer drag handle
+				'handle-sm': '68px',  // compact handle on colored sheet headers
 			},
 			colors: {
 				border: 'hsl(var(--border))',
