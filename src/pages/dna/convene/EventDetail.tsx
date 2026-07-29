@@ -60,6 +60,7 @@ import { eventStateWrite } from '@/lib/events/state';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { EventCountdown } from '@/components/convene/EventCountdown';
+import { DraftBanner } from '@/components/convene/DraftBanner';
 import { AddToCalendarButton } from '@/components/convene/AddToCalendarButton';
 // STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
 // import { EventSpacesSection } from '@/components/collaboration/EventSpacesSection';
@@ -652,24 +653,11 @@ const EventDetail = () => {
           Back to Events
         </button>
 
-        {/* Draft banner — the anti-silent-failure control. A draft is invisible
-            to everyone but the organizer; without this banner an organizer can
-            share a link nobody else can open and never learn why. */}
         {isDraft && isOrganizer && (
-          <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-3 rounded-lg border-2 border-amber-500 bg-amber-500/10 p-4">
-            <p className="flex-1 font-semibold text-amber-700 dark:text-amber-400">
-              This event is a draft. Nobody can see it but you.
-            </p>
-            <Button
-              className="shrink-0"
-              onClick={() => publishEventMutation.mutate()}
-              disabled={publishEventMutation.isPending}
-            >
-              {publishEventMutation.isPending
-                ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Publishing...</>
-                : 'Publish Event'}
-            </Button>
-          </div>
+          <DraftBanner
+            onPublish={() => publishEventMutation.mutate()}
+            isPending={publishEventMutation.isPending}
+          />
         )}
 
         {/* Hero Image — only render when there's a real cover to avoid an empty banner that reads as a duplicate header */}
@@ -736,7 +724,7 @@ const EventDetail = () => {
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       {!isCancelled && !isCompleted && (
-                        <DropdownMenuItem onClick={() => setShowCancelDialog(true)} className="text-amber-600 focus:text-amber-600">
+                        <DropdownMenuItem onClick={() => setShowCancelDialog(true)} className="text-dna-warning focus:text-dna-warning">
                           <XCircle className="mr-2 h-4 w-4" /> Cancel Event
                         </DropdownMenuItem>
                       )}
