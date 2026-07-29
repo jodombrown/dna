@@ -81,8 +81,10 @@ const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
       if (parts.length >= 3) {
         const locParts = parts[2].split('\u2194').map(p => p.trim());
         if (locParts.length === 2) {
-          setLocationFrom(resolveCountryLabel(locParts[0]));
-          setLocationTo(resolveCountryLabel(locParts[1]));
+          const from = resolveCountryLabel(locParts[0]);
+          const to = resolveCountryLabel(locParts[1]);
+          setLocationFrom(from);
+          setLocationTo(from === to ? '' : to);
         }
       }
     } else {
