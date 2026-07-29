@@ -203,43 +203,6 @@ export const searchContent = async (query: string, filters?: SearchFilters): Pro
     }
   }
 
-  // Search posts
-  if (!filters?.types.length || filters.types.includes('post')) {
-    const { data: posts, error: postsError } = await supabase
-      .from('community_posts')
-      .select('id, title, content, created_at, post_type, author_id, community_id')
-      .or(`title.ilike.${searchTerm},content.ilike.${searchTerm}`)
-      .limit(10);
-
-    if (!postsError && posts) {
-      // Get author details separately
-      const authorIds = [...new Set(posts.map(post => post.author_id))];
-
-      const { data: authorsData } = await supabase
-        .from('profiles')
-        .select('id, full_name, display_name')
-        .in('id', authorIds);
-
-      const authors = authorsData || [];
-
-      results.push(...posts.map(post => {
-        const author = authors.find(a => a.id === post.author_id);
-
-        return {
-          id: post.id,
-          type: 'post' as const,
-          title: post.title || 'Community Post',
-          description: post.content?.substring(0, 150) + (post.content?.length > 150 ? '...' : ''),
-          created_at: post.created_at,
-          metadata: {
-            post_type: post.post_type,
-            author: author?.display_name || author?.full_name
-          }
-        };
-      }));
-    }
-  }
-
   return results.sort((a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime());
 };
 

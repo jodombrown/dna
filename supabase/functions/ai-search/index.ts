@@ -265,33 +265,5 @@ async function performEnhancedSearch(intent: SearchIntent, userId?: string) {
     }
   }
 
-  // Search posts
-  if (!intent.filters.types.length || intent.filters.types.includes('post')) {
-    const postFilter = allSearchTerms.map(term => 
-      `title.ilike.%${term}%,content.ilike.%${term}%`
-    ).join(',');
-
-    const { data: posts } = await supabase
-      .from('community_posts')
-      .select('id, title, content, created_at, post_type, author_id, community_id')
-      .or(postFilter)
-      .limit(10);
-
-    if (posts) {
-      results.posts = posts.map(post => ({
-        id: post.id,
-        type: 'post',
-        title: post.title || 'Community Post',
-        description: post.content?.substring(0, 150) + (post.content?.length > 150 ? '...' : ''),
-        created_at: post.created_at,
-        metadata: {
-          post_type: post.post_type,
-          author_id: post.author_id,
-          community_id: post.community_id
-        }
-      }));
-    }
-  }
-
   return results;
 }
