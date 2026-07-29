@@ -158,27 +158,6 @@ async function performDynamicSearch(supabase: any, query: string, searchType: st
       });
     }
 
-    // Search Posts/News
-    const { data: posts } = await supabase
-      .from('community_posts')
-      .select('id, title, content, created_at, community_id')
-      .or(`title.ilike.${searchTerm},content.ilike.${searchTerm}`)
-      .order('created_at', { ascending: false })
-      .limit(5);
-
-    if (posts) {
-      posts.forEach((post: any) => {
-        results.push({
-          title: post.title || 'Community Discussion',
-          description: `${post.content?.substring(0, 120) || 'Join the conversation'}...`,
-          url: `/app/communities?id=${post.community_id}`,
-          source: 'DNA Posts',
-          relevanceScore: 0.7,
-          type: 'news'
-        });
-      });
-    }
-
     console.log(`Found ${results.length} database results for query: ${query}`);
     
   } catch (error) {
