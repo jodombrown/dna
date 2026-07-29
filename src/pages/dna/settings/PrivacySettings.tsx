@@ -44,7 +44,7 @@ export default function PrivacySettings() {
   const [isPublic, setIsPublic] = useState(false);
   const [allowProfileSharing, setAllowProfileSharing] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [publicVisibility, setPublicVisibility] = useState<PublicVisibilitySettings>(DEFAULT_PUBLIC_VISIBILITY);
+  
   const [thresholdDialogOpen, setThresholdDialogOpen] = useState(false);
   const [thresholdReadOnly, setThresholdReadOnly] = useState(false);
   const [savedThresholdFields, setSavedThresholdFields] = useState<string[]>([]);
