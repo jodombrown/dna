@@ -58,7 +58,6 @@ function thresholdSummary(fields: string[] | null | undefined): string {
   }
 }
 
-
 export default function PrivacySettings() {
   const { user } = useAuth();
   const { data: profile, isLoading } = useProfile();
@@ -90,7 +89,6 @@ export default function PrivacySettings() {
       }
     }
   }, [profile]);
-
 
   // Copy profile URL to clipboard
   const handleCopyProfileUrl = async () => {
@@ -225,7 +223,6 @@ export default function PrivacySettings() {
     }
   };
 
-
   const handleSharingChange = async (checked: boolean) => {
     setSaving(true);
     setAllowProfileSharing(checked);
@@ -323,8 +320,6 @@ export default function PrivacySettings() {
                 </Button>
               </div>
             )}
-
-
 
             {/* Status indicator */}
             <div className={`p-4 rounded-lg ${isPublic ? 'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900' : 'bg-muted border'}`}>
