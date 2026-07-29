@@ -79,7 +79,7 @@ export default function PrivacySettings() {
       setAllowProfileSharing(profile.allow_profile_sharing !== false);
       const fields = (profile as { threshold_fields?: string[] | null }).threshold_fields ?? [];
       setSavedThresholdFields(fields);
-      setThresholdPreset(presetFromFields(fields));
+      // threshold_fields is recorded by ThresholdConsentDialog, not here.
       // Load per-field visibility settings from profile (cast to any to access JSONB field)
       const profileVisibility = (profile as any).public_visibility;
       if (profileVisibility) {
