@@ -56,15 +56,8 @@ export default function PrivacySettings() {
       const fields = (profile as { threshold_fields?: string[] | null }).threshold_fields ?? [];
       setSavedThresholdFields(fields);
       // threshold_fields is recorded by ThresholdConsentDialog, not here.
-      // Load per-field visibility settings from profile (cast to any to access JSONB field)
-      const profileVisibility = (profile as any).public_visibility;
-      if (profileVisibility) {
-        setPublicVisibility({
-          ...DEFAULT_PUBLIC_VISIBILITY,
-          ...(typeof profileVisibility === 'object' ? profileVisibility : {}),
-        } as PublicVisibilitySettings);
-      }
     }
+
   }, [profile]);
 
   // Copy profile URL to clipboard
