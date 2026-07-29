@@ -684,22 +684,26 @@ export default function PrivacySettings() {
           <div className="rounded-lg border p-4 space-y-2">
             <p className="text-sm font-medium">What a visitor sees</p>
             <div className="flex items-center gap-3">
-              {thresholdPreset !== 'handle' && (
+              {thresholdPreset !== 'handle' && profile?.avatar_url && (
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src={profile?.avatar_url ?? undefined} alt="" />
-                  <AvatarFallback>{(profile?.full_name ?? '?').charAt(0)}</AvatarFallback>
+                  <AvatarImage src={profile.avatar_url} alt="" />
+                  <AvatarFallback>
+                    {(profile?.full_name || profile?.display_name || profile?.username || '?').charAt(0)}
+                  </AvatarFallback>
                 </Avatar>
               )}
               <div>
-                {thresholdPreset !== 'handle' && profile?.full_name && (
-                  <p className="font-medium">{profile.full_name}</p>
+                {thresholdPreset !== 'handle' && (profile?.full_name || profile?.display_name) && (
+                  <p className="font-medium">{profile.full_name || profile.display_name}</p>
                 )}
                 <p className="text-sm text-muted-foreground">@{profile?.username}</p>
               </div>
             </div>
             {thresholdPreset === 'name_face_role_place' && (
               <div className="text-sm text-muted-foreground space-y-1">
-                {profile?.role && <p>{profile.role}</p>}
+                {profile?.role && profile.role !== 'exploring' && getRoleLabel(profile.role) ? (
+                  <p>{getRoleLabel(profile.role)}</p>
+                ) : null}
                 {profile?.current_country && <p>{profile.current_country}</p>}
               </div>
             )}
