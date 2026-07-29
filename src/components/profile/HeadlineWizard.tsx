@@ -81,8 +81,10 @@ const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
       if (parts.length >= 3) {
         const locParts = parts[2].split('\u2194').map(p => p.trim());
         if (locParts.length === 2) {
-          setLocationFrom(resolveCountryLabel(locParts[0]));
-          setLocationTo(resolveCountryLabel(locParts[1]));
+          const from = resolveCountryLabel(locParts[0]);
+          const to = resolveCountryLabel(locParts[1]);
+          setLocationFrom(from);
+          setLocationTo(from === to ? '' : to);
         }
       }
     } else {
@@ -94,7 +96,9 @@ const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
   // Auto-fill location from profile
   useEffect(() => {
     if (!locationFrom && currentCountry) setLocationFrom(currentCountry);
-    if (!locationTo && countryOfOrigin) setLocationTo(countryOfOrigin);
+    if (!locationTo && countryOfOrigin && countryOfOrigin !== (locationFrom || currentCountry)) {
+      setLocationTo(countryOfOrigin);
+    }
   }, [currentCountry, countryOfOrigin]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Build headline from parts
@@ -121,7 +125,7 @@ const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
 
   // The far end is degenerate when it matches where the Member already is, or
   // when there is no inherited far end at all.
-  const sameOrEmptyCorridor = !locationTo || locationFrom === locationTo;
+  const sameOrEmptyCorridor = !locationTo;
 
   const focusSuggestions = professionalSectors.length > 0
     ? professionalSectors
@@ -244,7 +248,7 @@ const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
           <span className="text-muted-foreground text-sm shrink-0">↔</span>
           <Input
             placeholder={sameOrEmptyCorridor ? 'Where you are building toward' : 'Heritage'}
-            value={sameOrEmptyCorridor ? '' : locationTo}
+            value={locationTo}
             onChange={(e) => setLocationTo(e.target.value)}
             maxLength={30}
             className="flex-1"
