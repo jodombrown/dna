@@ -232,6 +232,7 @@ export const ThresholdConsentDialog: React.FC<ThresholdConsentDialogProps> = ({
             <p className="text-sm text-muted-foreground">{profile.current_country}</p>
           )}
           <p className="text-sm">Member of DNA</p>
+          <p className="text-sm text-muted-foreground">This Member is visible to Members.</p>
         </div>
 
         <DialogFooter>
