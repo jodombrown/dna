@@ -7,12 +7,12 @@ Run this before every Lovable session so staging starts from the latest `main`:
 ```bash
 npm run sync:staging
 # or:  ./scripts/sync-lovable-staging.sh
-# preview without pushing:  ./scripts/sync-lovable-staging.sh --dry-run
 ```
 
 It fetches `main` and `dna-lovable-staging`, fast-forwards staging up to `main`, and
-pushes. It is fast-forward-only and refuses to run on a dirty tree; if staging has
-diverged from `main` it stops and asks you to reconcile by hand rather than guessing.
+pushes. It is fast-forward-only: if staging has commits `main` does not (unmerged
+Lovable work), it stops and tells you to PR staging into main and merge it first,
+rather than guessing.
 
 # DNA Platform Seeding Scripts
 
