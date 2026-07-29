@@ -8,10 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { SettingsLayout } from '@/components/settings/SettingsLayout';
 import { Loader2, Eye, EyeOff, Globe, Lock, Info, Share2, Copy, ExternalLink } from 'lucide-react';
-import { PublicVisibilitySettings, DEFAULT_PUBLIC_VISIBILITY } from '@/types/profileV2';
 import { ROUTES, getProfileShareUrl } from '@/config/routes';
 import { getErrorMessage } from '@/lib/errorLogger';
 import { ThresholdConsentDialog } from '@/components/profile/ThresholdConsentDialog';
@@ -44,7 +42,6 @@ export default function PrivacySettings() {
   const [isPublic, setIsPublic] = useState(false);
   const [allowProfileSharing, setAllowProfileSharing] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [publicVisibility, setPublicVisibility] = useState<PublicVisibilitySettings>(DEFAULT_PUBLIC_VISIBILITY);
   const [thresholdDialogOpen, setThresholdDialogOpen] = useState(false);
   const [thresholdReadOnly, setThresholdReadOnly] = useState(false);
   const [savedThresholdFields, setSavedThresholdFields] = useState<string[]>([]);
@@ -56,14 +53,6 @@ export default function PrivacySettings() {
       const fields = (profile as { threshold_fields?: string[] | null }).threshold_fields ?? [];
       setSavedThresholdFields(fields);
       // threshold_fields is recorded by ThresholdConsentDialog, not here.
-      // Load per-field visibility settings from profile (cast to any to access JSONB field)
-      const profileVisibility = (profile as any).public_visibility;
-      if (profileVisibility) {
-        setPublicVisibility({
-          ...DEFAULT_PUBLIC_VISIBILITY,
-          ...(typeof profileVisibility === 'object' ? profileVisibility : {}),
-        } as PublicVisibilitySettings);
-      }
     }
   }, [profile]);
 
@@ -80,40 +69,6 @@ export default function PrivacySettings() {
       toast({
         title: 'Copy failed',
         description: 'Please copy the URL manually',
-        variant: 'destructive',
-      });
-    }
-  };
-
-  // Handle per-field visibility change
-  const handleVisibilityFieldChange = async (field: keyof PublicVisibilitySettings, checked: boolean) => {
-    const newVisibility = { ...publicVisibility, [field]: checked };
-    setPublicVisibility(newVisibility);
-
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          public_visibility: newVisibility,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', user?.id);
-
-      if (error) throw error;
-
-      queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
-      queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
-
-      toast({
-        title: 'Visibility updated',
-        description: `${field.replace(/_/g, ' ')} is now ${checked ? 'visible' : 'hidden'} on your public profile`,
-      });
-    } catch (error: unknown) {
-      // Revert on error
-      setPublicVisibility({ ...publicVisibility, [field]: !checked });
-      toast({
-        title: 'Error updating visibility',
-        description: getErrorMessage(error),
         variant: 'destructive',
       });
     }
@@ -390,207 +345,8 @@ export default function PrivacySettings() {
             </CardContent>
           </Card>
         )}
-
-        {/* Per-Field Visibility Controls */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Eye className="h-5 w-5" />
-              Public Profile Visibility
-            </CardTitle>
-            <CardDescription>
-              Choose what visitors can see on your public profile
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Always Required Fields */}
-            <div className="space-y-2">
-              <h4 className="font-medium text-sm text-muted-foreground">Always Visible (Required)</h4>
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <p>• Full name and username</p>
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Configurable Fields */}
-            <div className="space-y-4">
-              <h4 className="font-medium text-sm">Choose what to show</h4>
-
-              {/* Avatar */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="vis_avatar" className="font-normal">Profile photo</Label>
-                </div>
-                <Switch
-                  id="vis_avatar"
-                  checked={publicVisibility.avatar}
-                  onCheckedChange={(checked) => handleVisibilityFieldChange('avatar', checked)}
-                  disabled={saving}
-                />
-              </div>
-
-              {/* Headline & Bio */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="vis_headline" className="font-normal">Headline & bio</Label>
-                </div>
-                <Switch
-                  id="vis_headline"
-                  checked={publicVisibility.headline && publicVisibility.bio}
-                  onCheckedChange={(checked) => {
-                    handleVisibilityFieldChange('headline', checked);
-                    handleVisibilityFieldChange('bio', checked);
-                  }}
-                  disabled={saving}
-                />
-              </div>
-
-              {/* Location */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="vis_location" className="font-normal">Location</Label>
-                </div>
-                <Switch
-                  id="vis_location"
-                  checked={publicVisibility.location}
-                  onCheckedChange={(checked) => handleVisibilityFieldChange('location', checked)}
-                  disabled={saving}
-                />
-              </div>
-
-              {/* Heritage */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="vis_heritage" className="font-normal">Heritage / Origin countries</Label>
-                </div>
-                <Switch
-                  id="vis_heritage"
-                  checked={publicVisibility.heritage}
-                  onCheckedChange={(checked) => handleVisibilityFieldChange('heritage', checked)}
-                  disabled={saving}
-                />
-              </div>
-
-              {/* Industry & Company */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="vis_industry" className="font-normal">Industry & company</Label>
-                </div>
-                <Switch
-                  id="vis_industry"
-                  checked={publicVisibility.industry && publicVisibility.company}
-                  onCheckedChange={(checked) => {
-                    handleVisibilityFieldChange('industry', checked);
-                    handleVisibilityFieldChange('company', checked);
-                  }}
-                  disabled={saving}
-                />
-              </div>
-
-              {/* LinkedIn */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="vis_linkedin" className="font-normal">LinkedIn profile link</Label>
-                </div>
-                <Switch
-                  id="vis_linkedin"
-                  checked={publicVisibility.linkedin_url}
-                  onCheckedChange={(checked) => handleVisibilityFieldChange('linkedin_url', checked)}
-                  disabled={saving}
-                />
-              </div>
-
-              {/* Website */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="vis_website" className="font-normal">Personal website</Label>
-                </div>
-                <Switch
-                  id="vis_website"
-                  checked={publicVisibility.website_url}
-                  onCheckedChange={(checked) => handleVisibilityFieldChange('website_url', checked)}
-                  disabled={saving}
-                />
-              </div>
-
-              {/* Connection Count */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="vis_connections" className="font-normal">Connection count</Label>
-                </div>
-                <Switch
-                  id="vis_connections"
-                  checked={publicVisibility.connection_count}
-                  onCheckedChange={(checked) => handleVisibilityFieldChange('connection_count', checked)}
-                  disabled={saving}
-                />
-              </div>
-
-              {/* Event Count */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="vis_events" className="font-normal">Events attended count</Label>
-                </div>
-                <Switch
-                  id="vis_events"
-                  checked={publicVisibility.event_count}
-                  onCheckedChange={(checked) => handleVisibilityFieldChange('event_count', checked)}
-                  disabled={saving}
-                />
-              </div>
-
-              {/* Member Since */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="vis_member_since" className="font-normal">Member since date</Label>
-                </div>
-                <Switch
-                  id="vis_member_since"
-                  checked={publicVisibility.member_since}
-                  onCheckedChange={(checked) => handleVisibilityFieldChange('member_since', checked)}
-                  disabled={saving}
-                />
-              </div>
-
-              <Separator />
-
-              {/* Opt-in Fields (hidden by default) */}
-              <h4 className="font-medium text-sm text-amber-700 dark:text-amber-400">
-                Contact Information (Hidden by Default)
-              </h4>
-
-              {/* Email */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="vis_email" className="font-normal">Email address</Label>
-                  <p className="text-xs text-muted-foreground">Only visible if you opt-in</p>
-                </div>
-                <Switch
-                  id="vis_email"
-                  checked={publicVisibility.email}
-                  onCheckedChange={(checked) => handleVisibilityFieldChange('email', checked)}
-                  disabled={saving}
-                />
-              </div>
-
-              {/* Phone */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="vis_phone" className="font-normal">Phone number</Label>
-                  <p className="text-xs text-muted-foreground">Only visible if you opt-in</p>
-                </div>
-                <Switch
-                  id="vis_phone"
-                  checked={publicVisibility.phone}
-                  onCheckedChange={(checked) => handleVisibilityFieldChange('phone', checked)}
-                  disabled={saving}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
+
 
       <ThresholdConsentDialog
         open={thresholdDialogOpen}
