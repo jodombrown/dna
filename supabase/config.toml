@@ -30,6 +30,8 @@ project_id = "ybhssuehmfnxrzneobok"
     port = 54329
 
 [functions]
+  [functions.ai-search]
+    verify_jwt = false
   [functions.auth-email-hook]
     verify_jwt = false
   [functions.collect-email]
@@ -48,10 +50,18 @@ project_id = "ybhssuehmfnxrzneobok"
     verify_jwt = false
   [functions.dia-compose-read]
     verify_jwt = true
+  [functions.dia-daily-insights]
+    verify_jwt = false
   [functions.dia-daily-pulse]
     verify_jwt = true
+  [functions.dia-feedback]
+    verify_jwt = false
+  [functions.dia-hub-intelligence]
+    verify_jwt = false
   [functions.dia-inbox-brief]
     verify_jwt = true
+  [functions.dia-search]
+    verify_jwt = false
   [functions.dia-smart-compose]
     verify_jwt = true
   [functions.dia-smart-replies]
@@ -70,6 +80,8 @@ project_id = "ybhssuehmfnxrzneobok"
     verify_jwt = true
   [functions.get-event-recommendations]
     verify_jwt = true
+  [functions.global-search]
+    verify_jwt = false
   [functions.link-preview]
     verify_jwt = false
   [functions.messages-cleanup]
@@ -93,6 +105,8 @@ project_id = "ybhssuehmfnxrzneobok"
   [functions.send-universal-email]
     verify_jwt = false
   [functions.stripe-webhook]
+    verify_jwt = false
+  [functions.suggest-usernames]
     verify_jwt = false
   [functions.unsubscribe-email]
     verify_jwt = false
