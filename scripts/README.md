@@ -1,3 +1,19 @@
+# DNA Platform Scripts
+
+## Sync `dna-lovable-staging` before a Lovable session
+
+Run this before every Lovable session so staging starts from the latest `main`:
+
+```bash
+npm run sync:staging
+# or:  ./scripts/sync-lovable-staging.sh
+# preview without pushing:  ./scripts/sync-lovable-staging.sh --dry-run
+```
+
+It fetches `main` and `dna-lovable-staging`, fast-forwards staging up to `main`, and
+pushes. It is fast-forward-only and refuses to run on a dirty tree; if staging has
+diverged from `main` it stops and asks you to reconcile by hand rather than guessing.
+
 # DNA Platform Seeding Scripts
 
 This directory contains scripts to seed the DNA platform database with sample data for development and testing.
