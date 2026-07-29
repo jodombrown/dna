@@ -6,7 +6,9 @@
 //
 // Anchors, honestly:
 //   • device   — navigator geolocation (getEventsNear; never persisted, gate #4)
-//   • declared — profiles.current_lat/current_lng, read-only projection below
+//   • declared — the profile's own coordinate, read via get_own_location()
+//                (SECURITY DEFINER RPC; authenticated-only), never a direct
+//                profiles read from the client
 //   • chapter  — NOT wired: the DNA × Place "chapter" is a city NAME in this
 //                schema (profiles.current_city), and geo_places exposes only a
 //                PostGIS centroid, not a client-readable lat/lng. Until a
@@ -45,13 +47,11 @@ export function useNearMeEvents<T extends { id: string }>(
     queryKey: ['near-me-declared', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
-      const { data } = await supabase
-        .from('profiles')
-        .select('current_lat, current_lng')
-        .eq('id', user.id)
-        .maybeSingle();
-      if (!data || data.current_lat == null || data.current_lng == null) return null;
-      return { lat: data.current_lat, lng: data.current_lng };
+      const { data, error } = await supabase.rpc('get_own_location');
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : null;
+      if (!row || row.current_lat == null || row.current_lng == null) return null;
+      return { lat: row.current_lat, lng: row.current_lng };
     },
     enabled: enabled && !!user?.id,
     staleTime: 300_000,
