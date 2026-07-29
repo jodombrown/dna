@@ -42,7 +42,6 @@ export default function PrivacySettings() {
   const [isPublic, setIsPublic] = useState(false);
   const [allowProfileSharing, setAllowProfileSharing] = useState(true);
   const [saving, setSaving] = useState(false);
-  
   const [thresholdDialogOpen, setThresholdDialogOpen] = useState(false);
   const [thresholdReadOnly, setThresholdReadOnly] = useState(false);
   const [savedThresholdFields, setSavedThresholdFields] = useState<string[]>([]);
@@ -55,7 +54,6 @@ export default function PrivacySettings() {
       setSavedThresholdFields(fields);
       // threshold_fields is recorded by ThresholdConsentDialog, not here.
     }
-
   }, [profile]);
 
   // Copy profile URL to clipboard
@@ -75,9 +73,6 @@ export default function PrivacySettings() {
       });
     }
   };
-
-
-
 
   // account_visibility is written straight away either way. Going private then
   // asks the threshold question, which writes threshold_fields on its own.
