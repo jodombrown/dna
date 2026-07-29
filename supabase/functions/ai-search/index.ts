@@ -190,7 +190,7 @@ async function performEnhancedSearch(intent: SearchIntent, userId?: string) {
     const profileQuery = supabase
       .from('profiles')
       .select('id, full_name, display_name, bio, avatar_url, location, professional_role, skills, created_at')
-      .eq('account_visibility', 'public')
+      .is('deleted_at', null)
       .limit(15);
 
     // Add text search across multiple fields
