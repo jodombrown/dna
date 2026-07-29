@@ -17,24 +17,22 @@ import { getErrorMessage } from '@/lib/errorLogger';
 import { ThresholdConsentDialog } from '@/components/profile/ThresholdConsentDialog';
 
 /** Summary of the consent set. Values live inside the CHECK constraint set:
- *  'name', 'avatar', 'headline', 'role', 'place'. */
-function presetFromFields(fields: string[] | null | undefined): 'handle' | 'name_face' | 'name_face_role_place' {
-  const set = new Set(fields ?? []);
-  if (set.has('role') || set.has('place')) return 'name_face_role_place';
-  if (set.has('name') || set.has('avatar')) return 'name_face';
-  return 'handle';
-}
-
+ *  'name', 'avatar', 'headline', 'role', 'place'. Enumerate the actual fields
+ *  rather than bucketing them, so the sentence is never false. */
+const THRESHOLD_LABELS: Array<[string, string]> = [
+  ['name', 'name'],
+  ['avatar', 'photo'],
+  ['headline', 'headline'],
+  ['role', 'role'],
+  ['place', 'place'],
+];
 
 function thresholdSummary(fields: string[] | null | undefined): string {
-  switch (presetFromFields(fields)) {
-    case 'name_face_role_place':
-      return 'name, face, role and place';
-    case 'name_face':
-      return 'name and face';
-    default:
-      return 'just your handle';
-  }
+  const set = new Set(fields ?? []);
+  const labels = THRESHOLD_LABELS.filter(([key]) => set.has(key)).map(([, label]) => label);
+  if (labels.length === 0) return 'just your handle';
+  if (labels.length === 1) return `your handle plus ${labels[0]}`;
+  return `your handle plus ${labels.slice(0, -1).join(', ')} and ${labels[labels.length - 1]}`;
 }
 
 export default function PrivacySettings() {
@@ -50,7 +48,6 @@ export default function PrivacySettings() {
   const [thresholdDialogOpen, setThresholdDialogOpen] = useState(false);
   const [thresholdReadOnly, setThresholdReadOnly] = useState(false);
   const [savedThresholdFields, setSavedThresholdFields] = useState<string[]>([]);
-
 
   useEffect(() => {
     if (profile) {
@@ -165,7 +162,6 @@ export default function PrivacySettings() {
     }
   };
 
-
   const handleSharingChange = async (checked: boolean) => {
     setSaving(true);
     setAllowProfileSharing(checked);
@@ -273,7 +269,6 @@ export default function PrivacySettings() {
                 </Button>
               </div>
             )}
-
 
             {/* Status indicator */}
             <div className={`p-4 rounded-lg ${isPublic ? 'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900' : 'bg-muted border'}`}>
@@ -622,7 +617,6 @@ export default function PrivacySettings() {
           queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
         }}
       />
-
     </SettingsLayout>
   );
 }
