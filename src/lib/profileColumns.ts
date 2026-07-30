@@ -184,6 +184,7 @@ export const PROFILE_SELECT_COLUMNS = ([
   'pronouns',
   // 'whatsapp_number' — revoked SELECT for anon/authenticated (2026-07-09 lockdown). Fetch via get_own_profile RPC.
   'preferred_contact_method',
+  'threshold_fields',
   'timezone',
   'consent_marketing_emails',
   'consent_partner_intros',

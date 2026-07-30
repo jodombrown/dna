@@ -12,6 +12,16 @@ import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { PenLine, Eye } from 'lucide-react';
 import { MateMasie } from '@/components/icons/adinkra';
+import { getCountryNameByAlpha3 } from '@/lib/dna-place';
+
+// The two ends of a corridor must speak one vocabulary. A saved headline may
+// hold an alpha-3 code on one side and a display name on the other, which
+// hides a degenerate corridor from the equality guard in buildHeadline.
+const resolveCountryLabel = (value: string): string => {
+  const raw = value.trim();
+  if (!raw) return '';
+  return getCountryNameByAlpha3(raw.toUpperCase()) ?? raw;
+};
 
 interface HeadlineWizardProps {
   headline: string;
@@ -71,8 +81,10 @@ const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
       if (parts.length >= 3) {
         const locParts = parts[2].split('\u2194').map(p => p.trim());
         if (locParts.length === 2) {
-          setLocationFrom(locParts[0]);
-          setLocationTo(locParts[1]);
+          const from = resolveCountryLabel(locParts[0]);
+          const to = resolveCountryLabel(locParts[1]);
+          setLocationFrom(from);
+          setLocationTo(from === to ? '' : to);
         }
       }
     } else {
@@ -84,7 +96,9 @@ const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
   // Auto-fill location from profile
   useEffect(() => {
     if (!locationFrom && currentCountry) setLocationFrom(currentCountry);
-    if (!locationTo && countryOfOrigin) setLocationTo(countryOfOrigin);
+    if (!locationTo && countryOfOrigin && countryOfOrigin !== (locationFrom || currentCountry)) {
+      setLocationTo(countryOfOrigin);
+    }
   }, [currentCountry, countryOfOrigin]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Build headline from parts
@@ -108,6 +122,10 @@ const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
       onHeadlineChange(buildHeadline());
     }
   }, [role, focus, locationFrom, locationTo, useWizard]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // The far end is degenerate when it matches where the Member already is, or
+  // when there is no inherited far end at all.
+  const sameOrEmptyCorridor = !locationTo;
 
   const focusSuggestions = professionalSectors.length > 0
     ? professionalSectors
@@ -213,29 +231,30 @@ const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
         )}
       </div>
 
-      {/* Step 3: Location Connection — only show when countries differ */}
-      {locationFrom !== locationTo && (
-        <div className="space-y-2">
-          <Label className="text-xs text-muted-foreground">Step 3: Your connection (optional)</Label>
-          <div className="flex items-center gap-2">
-            <Input
-              placeholder="Current location"
-              value={locationFrom}
-              onChange={(e) => setLocationFrom(e.target.value)}
-              maxLength={30}
-              className="flex-1"
-            />
-            <span className="text-muted-foreground text-sm shrink-0">↔</span>
-            <Input
-              placeholder="Heritage"
-              value={locationTo}
-              onChange={(e) => setLocationTo(e.target.value)}
-              maxLength={30}
-              className="flex-1"
-            />
-          </div>
+      {/* Step 3: Your corridor. Always rendered: for many members the line back
+          was severed, so the far end must be choosable rather than absent. */}
+      <div className="space-y-2">
+        <Label className="text-meta text-muted-foreground">
+          {sameOrEmptyCorridor ? 'Step 3: Your corridor (optional)' : 'Step 3: Your connection (optional)'}
+        </Label>
+        <div className="flex items-center gap-2">
+          <Input
+            placeholder="Current location"
+            value={locationFrom}
+            onChange={(e) => setLocationFrom(e.target.value)}
+            maxLength={30}
+            className="flex-1"
+          />
+          <span className="text-muted-foreground text-body shrink-0">↔</span>
+          <Input
+            placeholder={sameOrEmptyCorridor ? 'Where you are building toward' : 'Heritage'}
+            value={locationTo}
+            onChange={(e) => setLocationTo(e.target.value)}
+            maxLength={30}
+            className="flex-1"
+          />
         </div>
-      )}
+      </div>
 
       {/* Preview */}
       {role && (

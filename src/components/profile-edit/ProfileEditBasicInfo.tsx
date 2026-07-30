@@ -104,8 +104,8 @@ const ProfileEditBasicInfo: React.FC<ProfileEditBasicInfoProps> = ({
         <div>
           <HeadlineWizard
             headline={headline}
-            currentCountry={currentCountry}
-            countryOfOrigin={countryOfOrigin}
+            currentCountry={resolveCountryLabel(currentCountry)}
+            countryOfOrigin={resolveCountryLabel(countryOfOrigin)}
             skills={skills}
             professionalSectors={professionalSectors}
             onHeadlineChange={onHeadlineChange}
