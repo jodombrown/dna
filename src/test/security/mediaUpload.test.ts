@@ -171,14 +171,14 @@ async function uploadAndVerify(contentType: string, ext: string, body: Uint8Arra
   expect(data?.path).toBe(path);
   createdPaths.push(path);
 
-  // Read the persisted row back. storage.objects.owner_id is the uploader's
-  // auth.uid() as text; the first path segment is RLS's folder key.
-  const { data: rows, error: readErr } = await service
-    .schema('storage')
-    .from('objects')
-    .select('bucket_id, owner_id, name')
-    .eq('bucket_id', PUBLIC_BUCKET)
-    .eq('name', path);
+  // Read the persisted row back. PostgREST here exposes only public +
+  // graphql_public, so storage.objects is read through the service_role-only
+  // security_probe_media_object() function. storage.objects.owner_id is the
+  // uploader's auth.uid() as text; the first path segment is RLS's folder key.
+  const { data: rows, error: readErr } = await service.rpc('security_probe_media_object', {
+    p_bucket: PUBLIC_BUCKET,
+    p_name: path,
+  });
 
   expect(readErr).toBeNull();
   expect(Array.isArray(rows)).toBe(true);
@@ -271,21 +271,14 @@ describe('security · storage buckets have not drifted from the code matrix', ()
     const expected = new Set<string>([...IMAGE_TYPES, ...VIDEO_TYPES, ...DOC_TYPES]);
 
     for (const bucketId of [PUBLIC_BUCKET, PRIVATE_BUCKET]) {
-      const { data, error } = await service
-        .schema('storage')
-        .from('buckets')
-        .select('id, public, file_size_limit, allowed_mime_types')
-        .eq('id', bucketId)
-        .single();
+      // Read the bucket through the Storage Admin API (the storage schema is
+      // not exposed to PostgREST here). getBucket returns the same
+      // storage.buckets row: allowed_mime_types, file_size_limit, public.
+      const { data: bucket, error } = await service.storage.getBucket(bucketId);
 
       expect(error).toBeNull();
-      const bucket = data as {
-        id: string;
-        public: boolean;
-        file_size_limit: number;
-        allowed_mime_types: string[] | null;
-      };
-      const actual = new Set<string>(bucket.allowed_mime_types ?? []);
+      expect(bucket).not.toBeNull();
+      const actual = new Set<string>(bucket?.allowed_mime_types ?? []);
 
       // Set comparison in BOTH directions: neither subset nor superset. A type
       // added to the bucket by hand, or dropped from the code, fails here.
@@ -295,8 +288,8 @@ describe('security · storage buckets have not drifted from the code matrix', ()
       expect(extraInBucket).toEqual([]);
       expect(actual.size).toBe(expected.size);
 
-      expect(bucket.file_size_limit).toBe(BUCKET_SIZE_LIMIT);
-      expect(bucket.public).toBe(bucketId === PUBLIC_BUCKET);
+      expect(bucket?.file_size_limit).toBe(BUCKET_SIZE_LIMIT);
+      expect(bucket?.public).toBe(bucketId === PUBLIC_BUCKET);
     }
   }, 30000);
 });
