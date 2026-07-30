@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { uploadMedia } from '@/lib/uploadMedia';
+import { uploadMedia, ACCEPT } from '@/lib/uploadMedia';
 
 interface MediaUploadButtonProps {
   label?: string;
@@ -109,7 +109,7 @@ export function MediaUploadButton({
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/jpeg,image/jpg,image/png,image/webp,image/gif,video/mp4,video/webm"
+          accept={ACCEPT.post}
           onChange={handleFileSelect}
           className="hidden"
         />

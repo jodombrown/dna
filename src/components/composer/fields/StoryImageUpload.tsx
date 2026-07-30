@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { uploadMedia } from '@/lib/uploadMedia';
+import { uploadMedia, ACCEPT } from '@/lib/uploadMedia';
 import { compressAndTinify } from '@/lib/compressImage';
 
 interface StoryImageUploadProps {
@@ -92,7 +92,7 @@ export function StoryImageUpload({ currentImageUrl, onUpload, onRemove }: StoryI
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/jpeg,image/jpg,image/png,image/webp"
+          accept={ACCEPT.story}
           onChange={handleFileSelect}
           className="hidden"
         />

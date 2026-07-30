@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { uploadMedia } from '@/lib/uploadMedia';
+import { uploadMedia, ACCEPT } from '@/lib/uploadMedia';
 
 interface StoryGalleryUploadProps {
   galleryUrls: string[];
@@ -100,7 +100,7 @@ export function StoryGalleryUpload({ galleryUrls, onChange }: StoryGalleryUpload
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/jpeg,image/jpg,image/png,image/webp"
+        accept={ACCEPT.story}
         multiple
         className="hidden"
         onChange={handleFileSelect}
