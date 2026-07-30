@@ -127,7 +127,7 @@ export function StoryImageUpload({ currentImageUrl, onUpload, onRemove }: StoryI
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/jpeg,image/jpg,image/png,image/webp"
+        accept={ACCEPT.story}
         onChange={handleFileSelect}
         className="hidden"
       />
