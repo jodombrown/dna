@@ -76,9 +76,27 @@ export const uploadMedia = async (file: File, surface: Surface) => {
   // a caller argument. RLS keys the path on auth.uid(); trusting a passed-in id
   // lets a stale/mismatched value write under someone else's prefix (or fail RLS
   // in a way indistinguishable from auth loss).
+  //
+  // PROACTIVE: getSession() still returns a session whose access token has
+  // expired — building the path from it sends a dead token, storage treats the
+  // request as anon, and RLS denies with a raw 42501 the member should never
+  // see. A token within 60s of expiry is treated as already dead: the upload
+  // can outlive it. This is not sufficient on its own — the check depends on the
+  // device clock, which drifts, and cannot see a token invalidated for any
+  // reason other than expiry — so the upload below is also guarded reactively.
   const { data: s } = await supabase.auth.getSession();
-  const uid = s.session?.user?.id;
-  if (!uid) throw new Error('Your session has expired. Sign in again and retry the upload.');
+  let session = s.session;
+
+  const expiresAt = session?.expires_at ? session.expires_at * 1000 : 0;
+  if (session && expiresAt - Date.now() < 60_000) {
+    const { data: r, error: refreshErr } = await supabase.auth.refreshSession();
+    session = refreshErr ? null : r.session;
+  }
+
+  const uid = session?.user?.id;
+  if (!uid) {
+    throw new Error('Your session has expired. Sign back in and this will upload.');
+  }
 
   // d. Compress only real, canvas-safe images. HEIC/HEIF and GIFs are left
   // alone — the browser canvas path mangles HEIC and flattens GIF animation.
@@ -128,16 +146,47 @@ export const uploadMedia = async (file: File, surface: Surface) => {
   // g. One public bucket for all four surfaces in this pass.
   const bucket = 'dna-media-public';
 
-  const { data, error } = await supabase.storage.from(bucket).upload(filePath, uploadFile, {
+  // REACTIVE: the proactive check can still be beaten — a clock skewed slow, or
+  // a token revoked server-side before expiry. If the storage request comes back
+  // as an auth failure, refresh once and retry the SAME upload to the SAME path
+  // exactly once. Never loop.
+  const isAuthFailure = (e: unknown) => {
+    const msg = (e as { message?: string })?.message?.toLowerCase() ?? '';
+    const status = (e as { statusCode?: string | number })?.statusCode;
+    return String(status) === '401'
+      || msg.includes('jwt')
+      || msg.includes('unauthorized')
+      || msg.includes('row-level security');
+  };
+
+  const attemptUpload = () => supabase.storage.from(bucket).upload(filePath, uploadFile, {
     cacheControl: '3600',
     upsert: true,
     contentType: uploadFile.type || file.type || undefined,
   });
 
+  let { error } = await attemptUpload();
+
+  if (error && isAuthFailure(error)) {
+    const originalError = error;
+    const { data: r, error: refreshErr } = await supabase.auth.refreshSession();
+    if (refreshErr || !r.session) {
+      throw new Error('Your session has expired. Sign back in and this will upload.');
+    }
+    // The path is keyed to the original uid; a different member now would write
+    // to the wrong prefix. Refuse rather than silently mis-file.
+    if (r.session.user.id !== uid) {
+      throw new Error('Your session changed. Sign back in and this will upload.');
+    }
+    ({ error } = await attemptUpload());
+    // Retry once only. If it still fails, surface the original error.
+    if (error) error = originalError;
+  }
+
   // h. Keep the existing failure log unchanged.
   if (error) {
     console.error('[uploadMedia] upload FAILED bucket=%s path=%s uid=%s tokenLen=%s error=%o',
-      bucket, filePath, uid, s.session?.access_token?.length ?? 0, error);
+      bucket, filePath, uid, session?.access_token?.length ?? 0, error);
     throw error;
   }
 

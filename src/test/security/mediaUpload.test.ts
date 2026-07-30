@@ -16,7 +16,7 @@
  * .github/workflows/security-tests.yml ("Run security integration tests").
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import {
   uploadMedia,
@@ -247,14 +247,18 @@ describe('security · uploads that must be refused', () => {
   }, 30000);
 
   it('8. uploadMedia() throws the size-cap message, with the real numbers', async () => {
-    // image cap is 25 MB; hand it 30 MB of image/heic. heic skips the canvas
-    // compression path, so the size the gate sees is the size we built.
+    // image cap is 25 MB; hand it 30 MB of image/png. This test is named for the
+    // SIZE gate, so its fixture must be a plain image whose membership never
+    // moves — not image/heic, which coupled this assertion to an unrelated
+    // matrix change. The synthetic bytes are not a decodable image, so the
+    // canvas compression path throws and falls back to the original file: the
+    // size the gate sees is the size we built.
     const oversize = 30 * 1024 * 1024;
-    const bigHeic = new File([new Uint8Array(oversize)], 'too-big.heic', { type: 'image/heic' });
+    const bigImage = new File([new Uint8Array(oversize)], 'too-big.png', { type: 'image/png' });
 
     let capErr: unknown;
     try {
-      await uploadMedia(bigHeic, 'post');
+      await uploadMedia(bigImage, 'post');
     } catch (e) {
       capErr = e;
     }
@@ -290,6 +294,82 @@ describe('security · storage buckets have not drifted from the code matrix', ()
 
       expect(bucket?.file_size_limit).toBe(BUCKET_SIZE_LIMIT);
       expect(bucket?.public).toBe(bucketId === PUBLIC_BUCKET);
+    }
+  }, 30000);
+});
+
+describe('security · an expired session is refused before it reaches storage', () => {
+  it('10. uploadMedia() rejects an expired session with the session message, not RLS', async () => {
+    // Every other test signs in seconds earlier, so its token is always fresh —
+    // which is exactly why the suite went green while the product was broken: the
+    // real failure is an EXPIRED token that getSession() still returns. Hand
+    // uploadMedia() one whose access token is past expiry and syntactically valid
+    // but unverifiable, and whose refresh the server rejects, and prove the member
+    // gets the session message rather than a raw RLS 42501 — and that nothing lands.
+    const nowSec = Math.floor(Date.now() / 1000);
+    const b64url = (o: object) =>
+      btoa(JSON.stringify(o)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    // header.payload.signature — well-formed three-part JWT, exp an hour in the
+    // past, signature is junk so it can never be verified.
+    const deadJwt =
+      `${b64url({ alg: 'HS256', typ: 'JWT' })}.` +
+      `${b64url({ sub: testUid, role: 'authenticated', exp: nowSec - 3600 })}.` +
+      'c2lnbmF0dXJl';
+
+    const expiredSession = {
+      access_token: deadJwt,
+      refresh_token: 'invalid-refresh-token',
+      token_type: 'bearer',
+      expires_in: 0,
+      expires_at: nowSec - 3600,
+      user: { id: testUid },
+    };
+
+    // getSession() hands the code the expired session; the unverifiable token
+    // cannot be refreshed, so the server rejects it — model that as a failed
+    // refreshSession(). Both are on the singleton uploadMedia() itself calls.
+    const getSpy = vi
+      .spyOn(appClient.auth, 'getSession')
+      .mockResolvedValue({ data: { session: expiredSession }, error: null } as never);
+    const refreshSpy = vi
+      .spyOn(appClient.auth, 'refreshSession')
+      .mockResolvedValue({
+        data: { session: null, user: null },
+        error: { name: 'AuthApiError', message: 'Invalid Refresh Token' },
+      } as never);
+
+    // Freeze the clock: the expiry check reads it, and the path uploadMedia WOULD
+    // build embeds it — so the exact object we probe for is deterministic.
+    const FIXED = (nowSec + 5) * 1000;
+    const dateSpy = vi.spyOn(Date, 'now').mockReturnValue(FIXED);
+    const wouldBePath = `${testUid}/post/${FIXED}-expired-session-probe.png`;
+
+    try {
+      let err: unknown;
+      try {
+        const file = new File([PNG_BYTES], 'expired-session-probe.png', { type: 'image/png' });
+        await uploadMedia(file, 'post');
+      } catch (e) {
+        err = e;
+      }
+
+      expect(err).toBeInstanceOf(Error);
+      expect(String((err as Error).message)).toBe(
+        'Your session has expired. Sign back in and this will upload.',
+      );
+
+      // Not a raw RLS rejection leaking through, and no object at the path it
+      // would have used — the request was refused before it ever hit storage.
+      const { data: rows, error: readErr } = await service.rpc('security_probe_media_object', {
+        p_bucket: PUBLIC_BUCKET,
+        p_name: wouldBePath,
+      });
+      expect(readErr).toBeNull();
+      expect(rows).toEqual([]);
+    } finally {
+      dateSpy.mockRestore();
+      getSpy.mockRestore();
+      refreshSpy.mockRestore();
     }
   }, 30000);
 });
