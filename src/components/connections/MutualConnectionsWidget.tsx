@@ -18,6 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -262,33 +263,34 @@ function MutualConnectionsDialog({
       </DialogHeader>
       <div className="space-y-2 max-h-[400px] overflow-y-auto">
         {connections.map((connection) => (
-          <div
-            key={connection.user_id}
-            onClick={() => navigate(`/dna/${connection.username}`)}
-            className="flex items-center gap-3 hover:bg-muted rounded-lg p-3 cursor-pointer transition-colors"
-          >
-            <Avatar className="h-10 w-10">
-              <AvatarImage
-                src={connection.avatar_url || undefined}
-                alt={connection.full_name}
-              />
-              <AvatarFallback className="bg-primary text-primary-foreground">
-                {connection.full_name
-                  ?.split(' ')
-                  .map((n) => n[0])
-                  .join('')
-                  .toUpperCase() || '?'}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <p className="font-medium truncate">{connection.full_name}</p>
-              {connection.headline && (
-                <p className="text-sm text-muted-foreground truncate">
-                  {connection.headline}
-                </p>
-              )}
+          <DialogClose asChild key={connection.user_id}>
+            <div
+              onClick={() => navigate(`/dna/${connection.username}`)}
+              className="flex items-center gap-3 hover:bg-muted rounded-lg p-3 cursor-pointer transition-colors"
+            >
+              <Avatar className="h-10 w-10">
+                <AvatarImage
+                  src={connection.avatar_url || undefined}
+                  alt={connection.full_name}
+                />
+                <AvatarFallback className="bg-primary text-primary-foreground">
+                  {connection.full_name
+                    ?.split(' ')
+                    .map((n) => n[0])
+                    .join('')
+                    .toUpperCase() || '?'}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium truncate">{connection.full_name}</p>
+                {connection.headline && (
+                  <p className="text-meta text-muted-foreground truncate">
+                    {connection.headline}
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
+          </DialogClose>
         ))}
       </div>
     </DialogContent>
