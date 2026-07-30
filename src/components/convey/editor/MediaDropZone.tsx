@@ -1,13 +1,42 @@
 import { useState, useCallback } from 'react';
 import { Upload, Image, Video, FileText, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { supabaseClient } from '@/lib/supabaseHelpers';
+import { uploadMedia } from '@/lib/uploadMedia';
 import { toast } from 'sonner';
 
 interface MediaDropZoneProps {
   onMediaInsert: (markdown: string) => void;
   isDragging: boolean;
   setIsDragging: (dragging: boolean) => void;
+}
+
+/**
+ * Supabase storage errors are often plain objects, not Error instances.
+ * Surface the real message; fall back only when there is genuinely nothing.
+ * Mirrors describeUploadError in EventCoverUpload.tsx — swallowing this error
+ * silently is what hid the missing-bucket defect for months.
+ */
+function describeUploadError(error: unknown): string {
+  if (error !== null && typeof error === 'object') {
+    const e = error as { message?: unknown; error?: unknown; statusCode?: unknown };
+    if (typeof e.message === 'string' && e.message.trim()) return e.message;
+    const errPart = typeof e.error === 'string' && e.error.trim() ? e.error : undefined;
+    const statusPart =
+      typeof e.statusCode === 'string' || typeof e.statusCode === 'number'
+        ? String(e.statusCode)
+        : undefined;
+    if (errPart && statusPart) return `${errPart} (status ${statusPart})`;
+    if (errPart) return errPart;
+    if (statusPart) return `Upload failed with status ${statusPart}`;
+    try {
+      const json = JSON.stringify(error);
+      if (json && json !== '{}') return json;
+    } catch {
+      // fall through to generic fallback
+    }
+  }
+  if (typeof error === 'string' && error.trim()) return error;
+  return 'Please try again';
 }
 
 export function MediaDropZone({ onMediaInsert, isDragging, setIsDragging }: MediaDropZoneProps) {
@@ -35,29 +64,12 @@ export function MediaDropZone({ onMediaInsert, isDragging, setIsDragging }: Medi
         return null;
       }
 
-      // Generate unique filename
-      const ext = file.name.split('.').pop();
-      const fileName = `story-media/${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
-
-      // Upload to Supabase Storage
-      const { data, error } = await supabaseClient.storage
-        .from('media')
-        .upload(fileName, file, {
-          cacheControl: '3600',
-          upsert: false,
-        });
-
-      if (error) throw error;
-
-      // Get public URL
-      const { data: { publicUrl } } = supabaseClient.storage
-        .from('media')
-        .getPublicUrl(fileName);
+      const publicUrl = await uploadMedia(file, 'story-hero-images');
 
       setUploadProgress(100);
       return publicUrl;
-    } catch {
-      toast.error('Failed to upload file');
+    } catch (error) {
+      toast.error(`Failed to upload file: ${describeUploadError(error)}`);
       return null;
     } finally {
       setIsUploading(false);

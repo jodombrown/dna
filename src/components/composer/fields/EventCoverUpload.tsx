@@ -69,7 +69,7 @@ export function EventCoverUpload({ currentImageUrl, onUpload, onRemove }: EventC
 
     setIsUploading(true);
     try {
-      const url = await uploadMedia(file, user.id, 'event-images');
+      const url = await uploadMedia(file, 'event-images');
       onUpload(url);
       toast({ description: 'Cover image uploaded!' });
     } catch (error) {

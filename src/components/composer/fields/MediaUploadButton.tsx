@@ -55,7 +55,7 @@ export function MediaUploadButton({
 
     setIsUploading(true);
     try {
-      const url = await uploadMedia(file, user.id, 'post-media');
+      const url = await uploadMedia(file, 'post-media');
       onUpload(url);
       toast({ description: `${isVideo ? 'Video' : 'Image'} uploaded successfully.` });
     } catch (error) {

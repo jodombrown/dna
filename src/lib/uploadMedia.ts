@@ -3,8 +3,7 @@ import { compressAndTinify } from "@/lib/compressImage";
 
 
 export const uploadMedia = async (
-  file: File, 
-  userId: string, 
+  file: File,
   bucket: 'user-posts' | 'profile-pictures' | 'profile-images' | 'event-images' | 'story-hero-images' | 'post-media'
 ) => {
   // Sanitize filename to avoid storage InvalidKey errors (remove diacritics/spaces)
@@ -20,7 +19,7 @@ export const uploadMedia = async (
   const parts = origName.split('.');
   const ext = parts.length > 1 ? parts.pop()!.toLowerCase() : '';
   const base = normalize(parts.join('.')) || 'file';
-  const safeExt = ['jpg','jpeg','png','webp','gif','mp4','webm'].includes(ext) ? ext : 'bin';
+  const safeExt = ['jpg','jpeg','png','webp','gif','mp4','webm','mov','m4v'].includes(ext) ? ext : 'bin';
   const safeName = `${base}.${safeExt}`;
 
   // Auto-compress large images before upload so modern phone photos (6–12MB)
@@ -36,15 +35,15 @@ export const uploadMedia = async (
 
 
 
-  const filePath = `${userId}/${Date.now()}-${safeName}`;
-
-  // Diagnostics: is there a session at the moment of upload, and is the
-  // storage request carrying it? (RLS rejections are indistinguishable
-  // from auth loss without this.)
+  // Derive the storage folder from the live session, never from a caller
+  // argument. RLS keys the path on auth.uid(); trusting a passed-in id lets a
+  // stale/mismatched value write under someone else's prefix (or fail RLS in a
+  // way indistinguishable from auth loss).
   const { data: s } = await supabase.auth.getSession();
-  console.log('[uploadMedia] bucket=%s path=%s hasSession=%s tokenLen=%s sub=%s',
-    bucket, filePath, !!s.session, s.session?.access_token?.length ?? 0,
-    s.session?.user?.id ?? 'NONE');
+  const uid = s.session?.user?.id;
+  if (!uid) throw new Error('Your session has expired. Sign in again and retry the upload.');
+
+  const filePath = `${uid}/${Date.now()}-${safeName}`;
 
   const { data, error } = await supabase.storage.from(bucket).upload(filePath, uploadFile, {
     cacheControl: '3600',
@@ -54,9 +53,8 @@ export const uploadMedia = async (
 
 
   if (error) {
-    console.error('[uploadMedia] upload FAILED bucket=%s path=%s hasSession=%s tokenLen=%s sub=%s error=%o',
-      bucket, filePath, !!s.session, s.session?.access_token?.length ?? 0,
-      s.session?.user?.id ?? 'NONE', error);
+    console.error('[uploadMedia] upload FAILED bucket=%s path=%s uid=%s tokenLen=%s error=%o',
+      bucket, filePath, uid, s.session?.access_token?.length ?? 0, error);
     throw error;
   }
 
