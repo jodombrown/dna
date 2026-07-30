@@ -110,11 +110,29 @@ export function AvatarUploadModal({
 
     setUploading(true);
     try {
+      // Ensure we have an authenticated session before uploading (storage RLS uses auth.uid()).
+      // Derive the folder from the live session, never from the userId prop.
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user?.id) {
+        throw new Error('You must be signed in to upload a photo.');
+      }
+      if (session.user.id !== userId) {
+        throw new Error('Session user does not match profile owner.');
+      }
+
       const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels);
-      
+
       // Compress the image for faster loading on mobile
       const compressedBlob = await compressImage(croppedBlob);
-      const fileName = `${userId}/avatar-${Date.now()}.jpeg`;
+      const fileName = `${session.user.id}/avatar-${Date.now()}.jpeg`;
+
+      // Force session propagation to the storage client so auth.uid() is set for RLS.
+      // Some supabase-js edge cases leave the Storage client with the anon token
+      // if it initialised before the SIGNED_IN event fired.
+      await supabase.auth.setSession({
+        access_token: session.access_token,
+        refresh_token: session.refresh_token,
+      });
 
       // Use profile-images bucket (standardized)
       const { error: uploadError } = await supabase.storage

@@ -51,7 +51,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatarUrl, onAvatarC
       setPreviewUrl(preview);
 
       // Upload to Supabase Storage
-      const url = await uploadMedia(file, user.id, 'profile-images');
+      const url = await uploadMedia(file, 'profile-images');
       
       onAvatarChange(url);
       
