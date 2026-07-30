@@ -6,8 +6,11 @@ export type Surface = 'post' | 'event' | 'story' | 'profile';
 
 // The media matrix. A file is classified by its own MIME type against these
 // three lists — the class is derived, never passed in, so a caller cannot
-// mislabel a video as an image to sneak past a cap.
-const IMAGE_TYPES = [
+// mislabel a video as an image to sneak past a cap. Exported so the security
+// suite can assert the live storage buckets' allowed_mime_types have not
+// drifted from this one source of truth (a bucket edited by hand in the
+// dashboard must fail CI).
+export const IMAGE_TYPES = [
   'image/jpeg',
   'image/jpg',
   'image/png',
@@ -17,7 +20,7 @@ const IMAGE_TYPES = [
   'image/heif',
 ];
 
-const VIDEO_TYPES = [
+export const VIDEO_TYPES = [
   'video/mp4',
   'video/quicktime',
   'video/webm',
@@ -26,7 +29,7 @@ const VIDEO_TYPES = [
   'video/x-matroska',
 ];
 
-const DOC_TYPES = [
+export const DOC_TYPES = [
   'application/pdf',
   'application/vnd.ms-powerpoint',
   'application/vnd.openxmlformats-officedocument.presentationml.presentation',
