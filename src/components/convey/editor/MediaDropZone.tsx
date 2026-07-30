@@ -48,23 +48,7 @@ export function MediaDropZone({ onMediaInsert, isDragging, setIsDragging }: Medi
       setIsUploading(true);
       setUploadProgress(0);
 
-      // Validate file type
-      const isImage = file.type.startsWith('image/');
-      const isVideo = file.type.startsWith('video/');
-      
-      if (!isImage && !isVideo) {
-        toast.error('Only images and videos are supported');
-        return null;
-      }
-
-      // Validate file size (10MB for images, 50MB for videos)
-      const maxSize = isVideo ? 50 * 1024 * 1024 : 10 * 1024 * 1024;
-      if (file.size > maxSize) {
-        toast.error(`File too large. Max size: ${isVideo ? '50MB' : '10MB'}`);
-        return null;
-      }
-
-      const publicUrl = await uploadMedia(file, 'story-hero-images');
+      const publicUrl = await uploadMedia(file, 'story');
 
       setUploadProgress(100);
       return publicUrl;
