@@ -284,7 +284,7 @@ function MutualConnectionsDialog({
               <div className="flex-1 min-w-0">
                 <p className="font-medium truncate">{connection.full_name}</p>
                 {connection.headline && (
-                  <p className="text-sm text-muted-foreground truncate">
+                  <p className="text-meta text-muted-foreground truncate">
                     {connection.headline}
                   </p>
                 )}
