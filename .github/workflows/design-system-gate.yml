@@ -196,6 +196,66 @@ jobs:
           fi
           echo "Design system gate passed."
 
+      - name: media-matrix
+        shell: bash
+        run: |
+          #
+          # media-matrix tripwire.
+          #
+          # A spine-owned picker surface must CONSUME the media matrix
+          # (accept={ACCEPT.<surface>}) and never restate the type list inline.
+          # A literal accept="..." here means a picker has re-hardcoded the MIME
+          # list and will silently drift from what uploadMedia() actually accepts.
+          # The only legal accept form in these directories is accept={ACCEPT.<surface>}.
+          #
+          # Scope, spine-owned surfaces only:
+          #   - src/components/composer/fields/**
+          #   - src/components/convey/editor/**
+          # Only .tsx files are checked. This is a whole-file check, not added-lines:
+          # a restated matrix is a defect no matter which commit last touched the line.
+          #
+          # errexit discipline (BD121): GitHub injects `set -e` into shell: bash.
+          # rg exits 1 when it finds nothing, which is THIS gate's PASS, and under
+          # errexit that legitimate rc=1 would kill the step. A *global* `set +e`
+          # would fix that but turn every later unhandled error into a silent pass:
+          # fail-closed becomes fail-open. So `set +e` is scoped to the single rg
+          # check ONLY — captured rc, then `set -e` restored immediately. Every
+          # other line keeps errexit, so a genuine error still aborts fail-closed.
+          # The informational listings use `|| true` because "no files" there is not
+          # a gate signal, just an empty scope report.
+
+          COVERED='src/components/composer/fields/**/*.tsx, src/components/convey/editor/**/*.tsx'
+
+          # State the scope on every run — green included — so a pass says what it
+          # actually inspected and what it skipped.
+          SCANNED="$(rg --files --glob '*.tsx' src/components/composer/fields src/components/convey/editor 2>/dev/null | sort || true)"
+          EXCLUDED="$(rg --files --glob '!*.tsx' src/components/composer/fields src/components/convey/editor 2>/dev/null | sort || true)"
+
+          echo "media-matrix scope covered: ${COVERED}"
+          echo "Files scanned (.tsx in scope):"
+          printf '%s\n' "${SCANNED:-(none)}" | sed 's/^/  /'
+          echo "Files excluded (non-.tsx in scope):"
+          printf '%s\n' "${EXCLUDED:-(none)}" | sed 's/^/  /'
+
+          # The single check. rc 0 = literal accept string found (FAIL),
+          # rc 1 = none found (PASS), rc >1 = rg errored (FAIL closed).
+          # set +e scoped to this rg invocation ONLY.
+          set +e
+          HITS="$(rg -F 'accept="' --glob '*.tsx' src/components/composer/fields src/components/convey/editor)"
+          RC=$?
+          set -e
+
+          if [ "$RC" -eq 0 ]; then
+            echo "::error::media-matrix: literal accept string in a spine-owned surface. Consume the matrix — accept={ACCEPT.<surface>}, never accept=\"...\"."
+            printf '%s\n' "$HITS"
+            exit 1
+          elif [ "$RC" -gt 1 ]; then
+            echo "::error::media-matrix: rg errored (exit $RC). Failing closed."
+            exit 1
+          fi
+
+          echo "media-matrix passed: no literal accept strings in scope."
+
   sw-version:
     runs-on: ubuntu-latest
     steps:

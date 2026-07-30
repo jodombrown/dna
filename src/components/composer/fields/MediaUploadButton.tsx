@@ -122,7 +122,7 @@ export function MediaUploadButton({
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/jpeg,image/jpg,image/png,image/webp,image/gif,video/mp4,video/webm"
+        accept={ACCEPT.post}
         onChange={handleFileSelect}
         className="hidden"
       />
