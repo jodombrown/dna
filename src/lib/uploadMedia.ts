@@ -44,6 +44,17 @@ const CAPS: Record<MediaClass, number> = {
   document: 100 * 1024 * 1024,
 };
 
+// The accept matrix. Pickers consume this instead of restating the type lists —
+// one source of truth so a picker can never drift from what uploadMedia accepts.
+// profile is image-only on purpose: an avatar field that accepts a PDF is a bug,
+// not generosity (BD303).
+export const ACCEPT: Record<Surface, string> = {
+  post:    [...IMAGE_TYPES, ...VIDEO_TYPES, ...DOC_TYPES].join(','),
+  event:   [...IMAGE_TYPES, ...VIDEO_TYPES, ...DOC_TYPES].join(','),
+  story:   [...IMAGE_TYPES, ...VIDEO_TYPES, ...DOC_TYPES].join(','),
+  profile: IMAGE_TYPES.join(','),
+};
+
 const classify = (type: string): MediaClass | null => {
   if (IMAGE_TYPES.includes(type)) return 'image';
   if (VIDEO_TYPES.includes(type)) return 'video';
@@ -102,7 +113,7 @@ export const uploadMedia = async (file: File, surface: Surface) => {
   const base = normalize(parts.join('.')) || 'file';
   // e. safeExt spans every class in the matrix: images, video and documents.
   const safeExt = [
-    'jpg','jpeg','png','webp','gif',
+    'jpg','jpeg','png','webp','gif','heic','heif',
     'mp4','webm','mov','m4v','avi','mkv',
     'pdf','ppt','pptx','doc','docx','xls','xlsx','csv','txt',
   ].includes(ext) ? ext : 'bin';

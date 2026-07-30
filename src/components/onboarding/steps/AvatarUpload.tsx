@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { uploadMedia } from '@/lib/uploadMedia';
+import { uploadMedia, ACCEPT } from '@/lib/uploadMedia';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2, Upload, X } from 'lucide-react';
 
@@ -110,7 +110,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatarUrl, onAvatarC
         <div className="flex flex-col gap-2">
           <input
             type="file"
-            accept="image/jpeg,image/png,image/webp,image/gif"
+            accept={ACCEPT.profile}
             onChange={handleFileUpload}
             className="hidden"
             id="avatar-upload"

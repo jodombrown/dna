@@ -3,7 +3,7 @@ import { ImagePlus, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { uploadMedia } from '@/lib/uploadMedia';
+import { uploadMedia, ACCEPT } from '@/lib/uploadMedia';
 
 /**
  * Supabase storage errors are often plain objects, not Error instances.
@@ -50,12 +50,6 @@ export function EventCoverUpload({ currentImageUrl, onUpload, onRemove }: EventC
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
-
-    if (file.size > 25 * 1024 * 1024) {
-      toast({ title: 'File too large', description: 'Image must be under 25MB', variant: 'destructive' });
-      return;
-    }
-
 
     setIsUploading(true);
     try {
@@ -111,7 +105,7 @@ export function EventCoverUpload({ currentImageUrl, onUpload, onRemove }: EventC
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/jpeg,image/jpg,image/png,image/webp"
+        accept={ACCEPT.event}
         className="hidden"
         onChange={handleFileSelect}
       />

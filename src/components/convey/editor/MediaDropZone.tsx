@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Upload, Image, Video, FileText, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { uploadMedia } from '@/lib/uploadMedia';
+import { uploadMedia, ACCEPT } from '@/lib/uploadMedia';
 import { toast } from 'sonner';
 
 interface MediaDropZoneProps {
@@ -133,7 +133,7 @@ export function MediaDropZone({ onMediaInsert, isDragging, setIsDragging }: Medi
         type="file"
         id="media-upload"
         className="hidden"
-        accept="image/*,video/*"
+        accept={ACCEPT.story}
         multiple
         onChange={handleFileSelect}
       />
