@@ -152,7 +152,7 @@ export const ThresholdConsentDialog: React.FC<ThresholdConsentDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-w-lg max-h-sheet overflow-y-auto">
         <DialogHeader>
           <DialogTitle>What should someone see if they land on your link?</DialogTitle>
           <DialogDescription>
@@ -209,7 +209,7 @@ export const ThresholdConsentDialog: React.FC<ThresholdConsentDialogProps> = ({
         )}
 
         <div className="rounded-lg border p-4 space-y-2">
-          <p className="text-sm font-medium">What a visitor sees</p>
+          <p className="text-body font-medium">What a visitor sees</p>
           <div className="flex items-center gap-3">
             {has('avatar') && profile?.avatar_url && (
               <Avatar className="h-10 w-10">
@@ -222,17 +222,17 @@ export const ThresholdConsentDialog: React.FC<ThresholdConsentDialogProps> = ({
             <div>
               {has('name') && displayName && <p className="font-medium">{displayName}</p>}
               {profile?.username && (
-                <p className="text-sm text-muted-foreground">@{profile.username}</p>
+                <p className="text-body text-muted-foreground">@{profile.username}</p>
               )}
             </div>
           </div>
-          {has('headline') && profile?.headline && <p className="text-sm">{profile.headline}</p>}
-          {roleLabel && <p className="text-sm text-muted-foreground">{roleLabel}</p>}
+          {has('headline') && profile?.headline && <p className="text-body">{profile.headline}</p>}
+          {roleLabel && <p className="text-body text-muted-foreground">{roleLabel}</p>}
           {has('place') && profile?.current_country && (
-            <p className="text-sm text-muted-foreground">{profile.current_country}</p>
+            <p className="text-body text-muted-foreground">{profile.current_country}</p>
           )}
-          <p className="text-sm">Member of DNA</p>
-          <p className="text-sm text-muted-foreground">This Member is visible to Members.</p>
+          <p className="text-body">Member of DNA</p>
+          <p className="text-body text-muted-foreground">This Member is visible to Members.</p>
         </div>
 
         <DialogFooter>

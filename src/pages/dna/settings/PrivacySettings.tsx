@@ -199,7 +199,7 @@ export default function PrivacySettings() {
             </div>
 
             {!isPublic && (
-              <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-2 text-body text-muted-foreground">
                 <span>Visitors see: {thresholdSummary(savedThresholdFields)}</span>
                 <Button
                   variant="link"

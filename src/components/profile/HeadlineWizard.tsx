@@ -234,7 +234,7 @@ const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
       {/* Step 3: Your corridor. Always rendered: for many members the line back
           was severed, so the far end must be choosable rather than absent. */}
       <div className="space-y-2">
-        <Label className="text-xs text-muted-foreground">
+        <Label className="text-meta text-muted-foreground">
           {sameOrEmptyCorridor ? 'Step 3: Your corridor (optional)' : 'Step 3: Your connection (optional)'}
         </Label>
         <div className="flex items-center gap-2">
@@ -245,7 +245,7 @@ const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
             maxLength={30}
             className="flex-1"
           />
-          <span className="text-muted-foreground text-sm shrink-0">↔</span>
+          <span className="text-muted-foreground text-body shrink-0">↔</span>
           <Input
             placeholder={sameOrEmptyCorridor ? 'Where you are building toward' : 'Heritage'}
             value={locationTo}
