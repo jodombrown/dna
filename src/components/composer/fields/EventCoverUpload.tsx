@@ -51,16 +51,6 @@ export function EventCoverUpload({ currentImageUrl, onUpload, onRemove }: EventC
     const file = e.target.files?.[0];
     if (!file || !user) return;
 
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    if (!validTypes.includes(file.type)) {
-      toast({
-        title: 'Invalid file type',
-        description: 'Please upload a JPG, PNG, or WebP image',
-        variant: 'destructive',
-      });
-      return;
-    }
-
     if (file.size > 25 * 1024 * 1024) {
       toast({ title: 'File too large', description: 'Image must be under 25MB', variant: 'destructive' });
       return;
@@ -69,7 +59,7 @@ export function EventCoverUpload({ currentImageUrl, onUpload, onRemove }: EventC
 
     setIsUploading(true);
     try {
-      const url = await uploadMedia(file, 'event-images');
+      const url = await uploadMedia(file, 'event');
       onUpload(url);
       toast({ description: 'Cover image uploaded!' });
     } catch (error) {

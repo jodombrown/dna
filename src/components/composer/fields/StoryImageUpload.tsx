@@ -50,7 +50,7 @@ export function StoryImageUpload({ currentImageUrl, onUpload, onRemove }: StoryI
         maxDimension: 1920,
         maxSizeBytes: 5 * 1024 * 1024,
       });
-      const url = await uploadMedia(file, 'story-hero-images');
+      const url = await uploadMedia(file, 'story');
       onUpload(url);
       const savedPct =
         file.size < original.size
