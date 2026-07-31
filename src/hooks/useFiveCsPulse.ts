@@ -1,29 +1,83 @@
 /**
  * useFiveCsPulse — drives the Five C's Pulse Compass.
- * Calls the get_five_cs_pulse RPC and refreshes on activity_events realtime broadcasts.
+ *
+ * Two facts, two RPCs, one merged result:
+ *   - get_five_cs_pulse(window)  — the rolling-window count. The window arg is
+ *     a required part of its signature ('24h' | '7d' | '30d'); it has no
+ *     all-time mode. The 24h default stays.
+ *   - get_five_cs_pulse_totals   — the all-time count per pillar, read straight
+ *     from activity_events. This is what makes a true zero legible at ~20
+ *     members: event_count can be 0 today while all_time_count is > 0.
+ *
+ * Each slice carries both counts. `hasTotals` reports whether the all-time
+ * query has actually resolved, so the UI never mistakes an unresolved total
+ * for a real "zero ever". Refreshes on activity_events realtime broadcasts.
  */
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import type { PulseSlice, PulseTimeRange, PulseScope, CModule, PulseBreakdownItem } from '@/types/right-rail';
 
-export function useFiveCsPulse(timeRange: PulseTimeRange = '24h', scope: PulseScope = 'platform') {
+interface PulseWindowRow {
+  c_module: CModule;
+  event_count: number;
+  unique_users: number;
+  delta_vs_prior_period: number;
+}
+
+export interface FiveCsPulseResult {
+  /** Slices merged from the window and all-time queries. */
+  data: PulseSlice[];
+  /** True while either query is on its first load (no data yet). */
+  isLoading: boolean;
+  isError: boolean;
+  /**
+   * True once the all-time totals query has resolved. Until then a
+   * zero all_time_count is "unknown", not "zero ever" — the compass must not
+   * render the empty-pillar invitation while this is false.
+   */
+  hasTotals: boolean;
+}
+
+export function useFiveCsPulse(
+  timeRange: PulseTimeRange = '24h',
+  scope: PulseScope = 'platform',
+): FiveCsPulseResult {
   const { user } = useAuth();
   const qc = useQueryClient();
 
-  const query = useQuery({
+  const windowQuery = useQuery({
     queryKey: ['five-cs-pulse', timeRange, scope, user?.id ?? null],
-    queryFn: async (): Promise<PulseSlice[]> => {
+    queryFn: async (): Promise<PulseWindowRow[]> => {
       const { data, error } = await supabase.rpc('get_five_cs_pulse', {
         p_time_range: timeRange,
         p_scope: scope,
         p_user_id: scope === 'user' ? user?.id ?? undefined : undefined,
       });
       if (error) throw error;
-      return ((data ?? []) as PulseSlice[]);
+      return ((data ?? []) as PulseWindowRow[]);
     },
     staleTime: 60_000,
+    refetchInterval: 5 * 60_000,
+  });
+
+  // All-time totals are window-independent, so they are keyed by scope only.
+  const totalsQuery = useQuery({
+    queryKey: ['five-cs-pulse-totals', scope, user?.id ?? null],
+    queryFn: async (): Promise<Map<CModule, number>> => {
+      const { data, error } = await supabase.rpc('get_five_cs_pulse_totals', {
+        p_scope: scope,
+        p_user_id: scope === 'user' ? user?.id ?? undefined : undefined,
+      });
+      if (error) throw error;
+      const map = new Map<CModule, number>();
+      ((data ?? []) as { c_module: CModule; total_count: number }[]).forEach((row) => {
+        map.set(row.c_module, row.total_count);
+      });
+      return map;
+    },
+    staleTime: 5 * 60_000,
     refetchInterval: 5 * 60_000,
   });
 
@@ -32,6 +86,7 @@ export function useFiveCsPulse(timeRange: PulseTimeRange = '24h', scope: PulseSc
       .channel(`pulse-activity-${scope}-${timeRange}`)
       .on('broadcast', { event: 'activity_event' }, () => {
         qc.invalidateQueries({ queryKey: ['five-cs-pulse', timeRange, scope] });
+        qc.invalidateQueries({ queryKey: ['five-cs-pulse-totals', scope] });
       })
       .subscribe();
     return () => {
@@ -39,7 +94,25 @@ export function useFiveCsPulse(timeRange: PulseTimeRange = '24h', scope: PulseSc
     };
   }, [qc, scope, timeRange]);
 
-  return query;
+  const hasTotals = totalsQuery.isSuccess;
+  const totals = totalsQuery.data;
+
+  const data = useMemo<PulseSlice[]>(() => {
+    return (windowQuery.data ?? []).map((row) => ({
+      c_module: row.c_module,
+      event_count: row.event_count,
+      unique_users: row.unique_users,
+      delta_vs_prior_period: row.delta_vs_prior_period,
+      all_time_count: totals?.get(row.c_module) ?? 0,
+    }));
+  }, [windowQuery.data, totals]);
+
+  return {
+    data,
+    isLoading: windowQuery.isLoading || totalsQuery.isLoading,
+    isError: windowQuery.isError || totalsQuery.isError,
+    hasTotals,
+  };
 }
 
 export interface UserPulseTotals {

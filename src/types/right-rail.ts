@@ -23,9 +23,16 @@ export type PulseScope = 'platform' | 'user';
 
 export interface PulseSlice {
   c_module: CModule;
+  /** Count within the selected rolling window ('24h' | '7d' | '30d'). */
   event_count: number;
   unique_users: number;
   delta_vs_prior_period: number;
+  /**
+   * All-time count for this pillar, read from activity_events with no window
+   * filter (get_five_cs_pulse_totals). Distinguishes "zero this window" from
+   * "zero ever": event_count can be 0 while all_time_count is > 0.
+   */
+  all_time_count: number;
 }
 
 export interface PulseBreakdownItem {
