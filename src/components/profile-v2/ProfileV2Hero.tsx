@@ -281,36 +281,54 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                   <span>
                     {connectionsCount > 0 && (
                       <>
-                        <button
-                          type="button"
-                          onClick={() => goToNetwork('connections')}
-                          className="hover:underline focus-visible:underline focus-visible:outline-none"
-                          aria-label={`${connectionsCount} connections. Open network.`}
-                        >
-                          <strong>{connectionsCount}</strong> connections
-                        </button>
+                        {permissions.is_owner ? (
+                          <button
+                            type="button"
+                            onClick={() => goToNetwork('connections')}
+                            className="hover:underline focus-visible:underline focus-visible:outline-none"
+                            aria-label={`${connectionsCount} connections. Open network.`}
+                          >
+                            <strong>{connectionsCount}</strong> connections
+                          </button>
+                        ) : (
+                          <span aria-label={`${connectionsCount} connections`}>
+                            <strong>{connectionsCount}</strong> connections
+                          </span>
+                        )}
                         {(followerCount > 0 || followingCount > 0) && <span className="mx-1">·</span>}
                       </>
                     )}
                     {(followerCount > 0 || followingCount > 0) && (
                       <>
-                        <button
-                          type="button"
-                          onClick={() => goToNetwork('followers')}
-                          className="hover:underline focus-visible:underline focus-visible:outline-none"
-                          aria-label={`${followerCount} followers. Open network.`}
-                        >
-                          <strong>{followerCount}</strong> followers
-                        </button>
+                        {permissions.is_owner ? (
+                          <button
+                            type="button"
+                            onClick={() => goToNetwork('followers')}
+                            className="hover:underline focus-visible:underline focus-visible:outline-none"
+                            aria-label={`${followerCount} followers. Open network.`}
+                          >
+                            <strong>{followerCount}</strong> followers
+                          </button>
+                        ) : (
+                          <span aria-label={`${followerCount} followers`}>
+                            <strong>{followerCount}</strong> followers
+                          </span>
+                        )}
                         <span className="mx-1">·</span>
-                        <button
-                          type="button"
-                          onClick={() => goToNetwork('following')}
-                          className="hover:underline focus-visible:underline focus-visible:outline-none"
-                          aria-label={`${followingCount} following. Open network.`}
-                        >
-                          <strong>{followingCount}</strong> following
-                        </button>
+                        {permissions.is_owner ? (
+                          <button
+                            type="button"
+                            onClick={() => goToNetwork('following')}
+                            className="hover:underline focus-visible:underline focus-visible:outline-none"
+                            aria-label={`${followingCount} following. Open network.`}
+                          >
+                            <strong>{followingCount}</strong> following
+                          </button>
+                        ) : (
+                          <span aria-label={`${followingCount} following`}>
+                            <strong>{followingCount}</strong> following
+                          </span>
+                        )}
                       </>
                     )}
                   </span>
