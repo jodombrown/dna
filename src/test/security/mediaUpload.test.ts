@@ -25,7 +25,7 @@ import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 // so the spine's upload takes the same raw-body path the Uint8Array negative
 // tests already prove works. It is still a real File the spine classifies and
 // uploads unchanged — only its Blob lineage differs.
-import { File as NodeFile } from 'node:buffer';
+import { File as NodeFile, Blob as NodeBlob } from 'node:buffer';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import {
   uploadMedia,
@@ -232,11 +232,23 @@ describe('security · a signed-in member can upload every media class', () => {
     await uploadAndVerify('image/png', 'png', PNG_BYTES);
   }, 30000);
 
-  it('2. image/heic lands and is owned by the member', async () => {
-    // The type rejected at four layers, the reason this cycle exists. It must
-    // be a member of the image class in code AND accepted by the live bucket.
+  it('2. image/heic is accepted at pick time — never rejected for the phone default', async () => {
+    // The type rejected at four layers, the reason this cycle exists. The member
+    // must never see a rejection for shooting in their iPhone's default format
+    // (BD312 §1), so image/heic stays a member of the image class in code AND
+    // stays in the live bucket's allow-list. What changed with BD312 is the
+    // LANDING, not the acceptance: a HEIC driven through the spine is now
+    // re-encoded to JPEG before it is written (proven end-to-end in test 12),
+    // so this test no longer asserts a raw HEIC lands as heic — that WAS the
+    // broken state. Here we assert only that HEIC is still accepted, not refused.
     expect(IMAGE_TYPES).toContain('image/heic');
-    await uploadAndVerify('image/heic', 'heic', TINY);
+    expect(IMAGE_TYPES).toContain('image/heif');
+
+    const { data: bucket, error } = await service.storage.getBucket(PUBLIC_BUCKET);
+    expect(error).toBeNull();
+    const allowed = new Set<string>(bucket?.allowed_mime_types ?? []);
+    expect(allowed.has('image/heic')).toBe(true);
+    expect(allowed.has('image/heif')).toBe(true);
   }, 30000);
 
   it('3. video (video/mp4) lands and is owned by the member', async () => {
@@ -430,3 +442,111 @@ describe('security · an expired session is refused before it reaches storage', 
 // will be added — through the spine, never reconstructed — when that surface
 // lands. Do not discharge this by adding a placeholder that skips.
 // ---------------------------------------------------------------------------
+
+describe('security · a HEIC upload is converted to JPEG before it lands (BD312)', () => {
+  it('12. a HEIC file driven through uploadMedia() lands as a .jpg artefact', async () => {
+    // The bug this test exists for: image/heic renders in Safari (and every iOS
+    // browser, all WebKit) but NOT in Chrome or Firefox. A member uploads from
+    // their iPhone, sees it correctly, and ships a broken image to most of the
+    // body. Every earlier gate stops at the row landing in storage.objects, so
+    // none of them can see it — test 2 even asserted the HEIC lands AS heic,
+    // which is precisely the broken state. uploadMedia() now re-encodes HEIC/HEIF
+    // to JPEG before the object is written. This proves the spine does that: a
+    // file typed image/heic goes in, and the object that lands is named .jpg —
+    // never .heic/.heif — and is owned by the member.
+    //
+    // What this test does NOT prove — and cannot, in CI — is that a REAL iPhone
+    // photo's pixels decode faithfully. That is the browser's HEIC decoder
+    // (createImageBitmap on WebKit), which no headless Node/jsdom runner has.
+    // Certification of the real decode is a real photo, from a real iPhone,
+    // rendered in a non-Safari browser — founder QA, stated as such in the PR.
+    // This test certifies the WIRING: HEIC in, .jpg out, keyed to the member.
+    //
+    // The spine's conversion calls browser imaging APIs jsdom does not implement
+    // (createImageBitmap, canvas 2d, canvas.toBlob) and constructs the JPEG with
+    // the global File — which in this env would be jsdom's, whose Blob lineage
+    // node's fetch cannot serialize (see the node-File import note at the top).
+    // We supply those APIs the same way setup.ts supplies matchMedia and the
+    // observers, and point the global File at node's so the converted artefact
+    // takes the same raw-body upload path the other spine tests already prove.
+    // uploadMedia() itself is called unchanged — the spine, not a reconstruction.
+    const realCreateImageBitmap = (globalThis as { createImageBitmap?: unknown }).createImageBitmap;
+    const realFile = (globalThis as { File: unknown }).File;
+    const canvasProto = HTMLCanvasElement.prototype as unknown as {
+      getContext: unknown;
+      toBlob: unknown;
+    };
+    const realGetContext = canvasProto.getContext;
+    const realToBlob = canvasProto.toBlob;
+
+    // Minimal but well-formed JPEG (SOI … EOI). Storage validates the DECLARED
+    // content-type against the bucket allow-list, not the bytes (see the fixture
+    // note near PNG_BYTES), so these few bytes are a faithful stand-in for the
+    // canvas-encoded JPEG the browser would produce.
+    const JPEG_BYTES = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, 0xff, 0xd9]);
+
+    (globalThis as { createImageBitmap: unknown }).createImageBitmap = async () => ({
+      width: 1200,
+      height: 900,
+      close() {},
+    });
+    (globalThis as { File: unknown }).File = NodeFile;
+    canvasProto.getContext = () => ({ drawImage() {} });
+    canvasProto.toBlob = (cb: (b: unknown) => void) =>
+      cb(new NodeBlob([JPEG_BYTES], { type: 'image/jpeg' }));
+
+    let publicUrl: string;
+    try {
+      // A real File the picker would hand the spine: the member's original name
+      // and the iPhone default type. uploadMedia derives the class, converts, and
+      // builds the uid/surface path itself — the test never names the path.
+      const heic = new NodeFile([TINY], 'IMG_4021.heic', { type: 'image/heic' }) as unknown as File;
+      expect(IMAGE_TYPES).toContain('image/heic');
+      publicUrl = await uploadMedia(heic, 'post');
+    } finally {
+      if (realCreateImageBitmap === undefined) {
+        delete (globalThis as { createImageBitmap?: unknown }).createImageBitmap;
+      } else {
+        (globalThis as { createImageBitmap: unknown }).createImageBitmap = realCreateImageBitmap;
+      }
+      (globalThis as { File: unknown }).File = realFile;
+      canvasProto.getContext = realGetContext;
+      canvasProto.toBlob = realToBlob;
+    }
+
+    // The spine's return value already reflects the converted artefact: keyed to
+    // this member, under the surface it was filed in, and ending .jpg — not .heic.
+    expect(typeof publicUrl).toBe('string');
+    expect(publicUrl).toContain(testUid);
+    expect(publicUrl).toContain('/post/');
+    expect(publicUrl.endsWith('.jpg')).toBe(true);
+
+    // Recover the storage key the spine chose and probe the exact object that
+    // landed — the assertion is the row, not the upload response (BD312 §4).
+    const marker = `/${PUBLIC_BUCKET}/`;
+    const at = publicUrl.indexOf(marker);
+    expect(at).toBeGreaterThan(-1);
+    const path = decodeURIComponent(publicUrl.slice(at + marker.length));
+    createdPaths.push(path);
+
+    const { data: rows, error: readErr } = await service.rpc('security_probe_media_object', {
+      p_bucket: PUBLIC_BUCKET,
+      p_name: path,
+    });
+
+    expect(readErr).toBeNull();
+    expect(Array.isArray(rows)).toBe(true);
+    expect(rows).toHaveLength(1);
+    const row = (rows as Array<{ bucket_id: string; owner_id: string | null; name: string }>)[0];
+    expect(row.bucket_id).toBe(PUBLIC_BUCKET);
+    expect(row.owner_id).toBe(testUid);
+    expect(row.name.split('/')[0]).toBe(testUid);
+    // The artefact that landed is the converted JPEG: .jpg, and the raw HEIC
+    // extension is gone. A member's original base name survives; the format does not.
+    const landedName = row.name.split('/').pop() ?? '';
+    expect(landedName.endsWith('.jpg')).toBe(true);
+    expect(landedName).not.toContain('.heic');
+    expect(landedName).not.toContain('.heif');
+    expect(landedName).toContain('IMG_4021');
+  }, 30000);
+});

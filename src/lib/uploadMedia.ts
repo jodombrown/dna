@@ -65,6 +65,60 @@ const classify = (type: string): MediaClass | null => {
   return null;
 };
 
+// The formats only Safari can render. They stay in IMAGE_TYPES and ACCEPT so the
+// picker never rejects a member for shooting in their iPhone's default format
+// (BD312 §1) — but the bytes that land must be universally decodable, so we
+// convert them here before anything else touches the file.
+const HEIC_TYPES = ['image/heic', 'image/heif'];
+
+// BD312: HEIC/HEIF decode in Safari (and every iOS browser, all WebKit) but not
+// in Chrome or Firefox. A member uploads from their iPhone, sees the image on
+// their own screen, and ships a broken image to everyone on a non-Safari
+// browser. The old code SKIPPED this file (canvas mangles HEIC) and stored it
+// as-is; that silent unconverted upload is the bug.
+//
+// The decode is the browser's, not ours: createImageBitmap() decodes HEIC on
+// WebKit — which is exactly the device the member uploads from — and throws on
+// engines that cannot. On a successful decode we re-encode through a canvas to
+// image/jpeg, which renders everywhere. On a throw we do NOT fall through to
+// storing the raw HEIC (that is the current, broken behaviour and is worse than
+// a clear message): we refuse with an actionable error. The member keeps their
+// original file; only the stored artefact changes.
+const convertHeicToJpeg = async (file: File): Promise<File> => {
+  const refusal = new Error(
+    "This photo is in Apple's HEIC format, which this browser can't convert. " +
+      'Open it on your iPhone, or re-save it as JPEG, and it will upload.',
+  );
+
+  if (typeof createImageBitmap !== 'function') throw refusal;
+
+  let bitmap: ImageBitmap;
+  try {
+    bitmap = await createImageBitmap(file);
+  } catch {
+    throw refusal;
+  }
+
+  try {
+    const canvas = document.createElement('canvas');
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw refusal;
+    ctx.drawImage(bitmap, 0, 0);
+
+    const blob: Blob | null = await new Promise((res) =>
+      canvas.toBlob(res, 'image/jpeg', 0.92),
+    );
+    if (!blob || blob.size === 0) throw refusal;
+
+    const base = (file.name || 'photo').replace(/\.[^.]+$/, '') || 'photo';
+    return new File([blob], `${base}.jpg`, { type: 'image/jpeg', lastModified: Date.now() });
+  } finally {
+    bitmap.close();
+  }
+};
+
 export const uploadMedia = async (file: File, surface: Surface) => {
   // a. Classify by the file's own MIME type. No match means we don't accept it.
   const mediaClass = classify(file.type);
@@ -98,14 +152,24 @@ export const uploadMedia = async (file: File, surface: Surface) => {
     throw new Error('Your session has expired. Sign back in and this will upload.');
   }
 
-  // d. Compress only real, canvas-safe images. HEIC/HEIF and GIFs are left
-  // alone — the browser canvas path mangles HEIC and flattens GIF animation.
+  // d. HEIC/HEIF FIRST: re-encode to JPEG before anything else, so every step
+  // below (compression, the size gate, the stored object) works on a format that
+  // renders in every browser. convertHeicToJpeg throws a clear, actionable error
+  // rather than let an unrenderable HEIC through — see its comment (BD312 §2).
   let uploadFile = file;
-  if (mediaClass === 'image' && file.type !== 'image/gif' && file.type !== 'image/heic') {
+  if (mediaClass === 'image' && HEIC_TYPES.includes(file.type)) {
+    uploadFile = await convertHeicToJpeg(file);
+  }
+
+  // Compress only real, canvas-safe images. GIF is left alone (canvas flattens
+  // animation); HEIC no longer reaches here as HEIC — it is JPEG by now. If
+  // compression throws we KEEP the current uploadFile: reverting to `file` would
+  // put the raw HEIC back, undoing the conversion above.
+  if (mediaClass === 'image' && uploadFile.type !== 'image/gif') {
     try {
-      uploadFile = await compressAndTinify(file, { maxDimension: 1920, maxSizeBytes: 5 * 1024 * 1024 });
+      uploadFile = await compressAndTinify(uploadFile, { maxDimension: 1920, maxSizeBytes: 5 * 1024 * 1024 });
     } catch {
-      uploadFile = file;
+      /* keep the converted (or original) uploadFile — never revert to raw HEIC */
     }
   }
 
@@ -130,8 +194,14 @@ export const uploadMedia = async (file: File, surface: Surface) => {
 
   const origName = file.name || 'upload';
   const parts = origName.split('.');
-  const ext = parts.length > 1 ? parts.pop()!.toLowerCase() : '';
+  const origExt = parts.length > 1 ? parts.pop()!.toLowerCase() : '';
   const base = normalize(parts.join('.')) || 'file';
+  // The stored extension follows the ARTEFACT, not the original name. A HEIC/HEIF
+  // converted to JPEG must land as .jpg so the stored object is unambiguously the
+  // thing that renders (BD312 §3); every other class keeps its own extension. The
+  // member's original base name is preserved either way.
+  const converted = HEIC_TYPES.includes(file.type) && uploadFile.type === 'image/jpeg';
+  const ext = converted ? 'jpg' : origExt;
   // e. safeExt spans every class in the matrix: images, video and documents.
   const safeExt = [
     'jpg','jpeg','png','webp','gif','heic','heif',
