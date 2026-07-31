@@ -119,8 +119,8 @@ export const DiasporaFootprint: React.FC<DiasporaFootprintProps> = ({
           const pillInner = (
             <>
               <Icon className="w-4 h-4 text-dna-emerald mb-0.5" />
-              <span className="font-semibold text-sm text-foreground">{counts[key]}</span>
-              <span className="text-xs text-muted-foreground">{label}</span>
+              <span className="font-semibold text-body text-foreground">{counts[key]}</span>
+              <span className="text-meta text-muted-foreground">{label}</span>
             </>
           );
 
@@ -132,7 +132,7 @@ export const DiasporaFootprint: React.FC<DiasporaFootprintProps> = ({
                 key={key}
                 aria-label={`${counts[key]} ${label}`}
                 className={cn(
-                  'flex flex-col items-center bg-muted rounded-lg px-3 py-2 min-w-[64px] min-h-[44px]'
+                  'flex flex-col items-center bg-muted rounded-lg px-3 py-2 min-w-16 min-h-11'
                 )}
               >
                 {pillInner}
@@ -147,7 +147,7 @@ export const DiasporaFootprint: React.FC<DiasporaFootprintProps> = ({
               onClick={() => navigate(route)}
               aria-label={`${counts[key]} ${label}. Open details.`}
               className={cn(
-                'flex flex-col items-center bg-muted rounded-lg px-3 py-2 min-w-[64px] min-h-[44px]',
+                'flex flex-col items-center bg-muted rounded-lg px-3 py-2 min-w-16 min-h-11',
                 'hover:bg-secondary transition-colors cursor-pointer',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
               )}

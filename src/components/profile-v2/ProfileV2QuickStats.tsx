@@ -40,13 +40,13 @@ const QuickStat: React.FC<QuickStatProps> = ({
       <div className="flex items-center gap-1.5">
         <Icon className={cn("w-4 h-4", color, interactive && "group-hover:scale-110 transition-transform")} />
         <span className={cn(
-          "text-lg sm:text-xl font-bold text-foreground",
+          "text-h2 font-bold text-foreground",
           interactive && "group-hover:text-primary transition-colors"
         )}>
           {count}
         </span>
       </div>
-      <span className="text-[10px] sm:text-xs text-muted-foreground truncate w-full text-center">
+      <span className="text-micro sm:text-meta text-muted-foreground truncate w-full text-center">
         {label}
       </span>
     </>
@@ -61,7 +61,7 @@ const QuickStat: React.FC<QuickStatProps> = ({
         className={cn(
           "flex flex-col items-center gap-1 p-2 sm:p-3 rounded-lg",
           "bg-secondary/50",
-          "flex-1 min-w-0 min-h-[44px]"
+          "flex-1 min-w-0 min-h-11"
         )}
       >
         {inner}
