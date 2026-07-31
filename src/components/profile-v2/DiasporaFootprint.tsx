@@ -41,10 +41,12 @@ const FIVE_CS: { key: FiveCKey; label: string; icon: React.ElementType }[] = [
   { key: 'posts', label: 'Convey', icon: Mpatapo },
 ];
 
-const routeFor = (key: FiveCKey, isOwner: boolean, username?: string): string => {
+const routeFor = (key: FiveCKey, isOwner: boolean, username?: string): string | null => {
   switch (key) {
     case 'connections':
-      return isOwner ? '/dna/connect/network?tab=connections' : '/dna/connect/discover';
+      // A visitor cannot view this member's network; the owner-only network
+      // route is the sole honest destination. Non-owners get no tap target.
+      return isOwner ? '/dna/connect/network?tab=connections' : null;
     case 'events':
       return isOwner ? '/dna/convene/my-events' : '/dna/convene';
     case 'spaces':
@@ -112,23 +114,48 @@ export const DiasporaFootprint: React.FC<DiasporaFootprintProps> = ({
     <div className="space-y-2">
       <h3 className="text-sm font-semibold text-foreground">Diaspora Footprint</h3>
       <div className="flex flex-wrap gap-2">
-        {activePills.map(({ key, label, icon: Icon }) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => navigate(routeFor(key, isOwner, username))}
-            aria-label={`${counts[key]} ${label}. Open details.`}
-            className={cn(
-              'flex flex-col items-center bg-muted rounded-lg px-3 py-2 min-w-[64px] min-h-[44px]',
-              'hover:bg-secondary transition-colors cursor-pointer',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
-            )}
-          >
-            <Icon className="w-4 h-4 text-dna-emerald mb-0.5" />
-            <span className="font-semibold text-sm text-foreground">{counts[key]}</span>
-            <span className="text-xs text-muted-foreground">{label}</span>
-          </button>
-        ))}
+        {activePills.map(({ key, label, icon: Icon }) => {
+          const route = routeFor(key, isOwner, username);
+          const pillInner = (
+            <>
+              <Icon className="w-4 h-4 text-dna-emerald mb-0.5" />
+              <span className="font-semibold text-sm text-foreground">{counts[key]}</span>
+              <span className="text-xs text-muted-foreground">{label}</span>
+            </>
+          );
+
+          // No honest destination for this viewer: render a plain pill with no
+          // tap target, no hover/cursor affordance, no focus ring.
+          if (!route) {
+            return (
+              <div
+                key={key}
+                aria-label={`${counts[key]} ${label}`}
+                className={cn(
+                  'flex flex-col items-center bg-muted rounded-lg px-3 py-2 min-w-[64px] min-h-[44px]'
+                )}
+              >
+                {pillInner}
+              </div>
+            );
+          }
+
+          return (
+            <button
+              key={key}
+              type="button"
+              onClick={() => navigate(route)}
+              aria-label={`${counts[key]} ${label}. Open details.`}
+              className={cn(
+                'flex flex-col items-center bg-muted rounded-lg px-3 py-2 min-w-[64px] min-h-[44px]',
+                'hover:bg-secondary transition-colors cursor-pointer',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+              )}
+            >
+              {pillInner}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

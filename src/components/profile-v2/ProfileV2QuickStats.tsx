@@ -23,6 +23,7 @@ interface QuickStatProps {
   onClick: () => void;
   color?: string;
   tooltip?: string;
+  interactive?: boolean;
 }
 
 const QuickStat: React.FC<QuickStatProps> = ({
@@ -32,7 +33,42 @@ const QuickStat: React.FC<QuickStatProps> = ({
   onClick,
   color = 'text-primary',
   tooltip,
+  interactive = true,
 }) => {
+  const inner = (
+    <>
+      <div className="flex items-center gap-1.5">
+        <Icon className={cn("w-4 h-4", color, interactive && "group-hover:scale-110 transition-transform")} />
+        <span className={cn(
+          "text-lg sm:text-xl font-bold text-foreground",
+          interactive && "group-hover:text-primary transition-colors"
+        )}>
+          {count}
+        </span>
+      </div>
+      <span className="text-[10px] sm:text-xs text-muted-foreground truncate w-full text-center">
+        {label}
+      </span>
+    </>
+  );
+
+  // Non-interactive tile: no tap target, no hover/cursor affordance, no
+  // tooltip promising a destination this viewer cannot reach.
+  if (!interactive) {
+    return (
+      <div
+        aria-label={`${label}: ${count}`}
+        className={cn(
+          "flex flex-col items-center gap-1 p-2 sm:p-3 rounded-lg",
+          "bg-secondary/50",
+          "flex-1 min-w-0 min-h-[44px]"
+        )}
+      >
+        {inner}
+      </div>
+    );
+  }
+
   const content = (
     <button
       onClick={onClick}
@@ -44,18 +80,7 @@ const QuickStat: React.FC<QuickStatProps> = ({
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       )}
     >
-      <div className="flex items-center gap-1.5">
-        <Icon className={cn("w-4 h-4", color, "group-hover:scale-110 transition-transform")} />
-        <span className={cn(
-          "text-lg sm:text-xl font-bold text-foreground",
-          "group-hover:text-primary transition-colors"
-        )}>
-          {count}
-        </span>
-      </div>
-      <span className="text-[10px] sm:text-xs text-muted-foreground truncate w-full text-center">
-        {label}
-      </span>
+      {inner}
     </button>
   );
 
@@ -95,14 +120,18 @@ const ProfileV2QuickStats: React.FC<ProfileV2QuickStatsProps> = ({
       icon: Users,
       label: 'Connections',
       count: activity.connections_count || 0,
-      onClick: () => navigate(isOwner ? '/dna/connect/network?tab=connections' : '/dna/connect/discover'),
+      // A visitor cannot view this member's network; only the owner deep-links
+      // into their own. Non-owners get a plain count, no tap target.
+      interactive: isOwner,
+      onClick: () => navigate('/dna/connect/network?tab=connections'),
       color: 'text-blue-500',
-      tooltip: "View this member's network",
+      tooltip: isOwner ? "View this member's network" : undefined,
     },
     {
       icon: BookOpen,
       label: 'Posts',
       count: activity.stories_count || 0,
+      interactive: true,
       onClick: () =>
         navigate(isOwner ? '/dna/convey' : `/dna/feed${username ? `?author=${username}` : ''}`),
       color: 'text-emerald-500',
@@ -112,6 +141,7 @@ const ProfileV2QuickStats: React.FC<ProfileV2QuickStatsProps> = ({
       icon: Layers,
       label: 'Spaces',
       count: activity.spaces?.length || 0,
+      interactive: true,
       onClick: () => navigate(isOwner ? '/dna/collaborate/my-spaces' : '/dna/collaborate'),
       color: 'text-copper-500',
       tooltip: 'View collaboration spaces',
@@ -120,6 +150,7 @@ const ProfileV2QuickStats: React.FC<ProfileV2QuickStatsProps> = ({
       icon: Calendar,
       label: 'Events',
       count: activity.events_count ?? activity.events?.length ?? 0,
+      interactive: true,
       onClick: () => navigate(isOwner ? '/dna/convene/my-events' : '/dna/convene'),
       color: 'text-amber-500',
       tooltip: 'View events',
@@ -140,6 +171,7 @@ const ProfileV2QuickStats: React.FC<ProfileV2QuickStatsProps> = ({
                 onClick={stat.onClick}
                 color={stat.color}
                 tooltip={stat.tooltip}
+                interactive={stat.interactive}
               />
             ))}
           </div>
