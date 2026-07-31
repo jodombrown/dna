@@ -7,7 +7,7 @@
  */
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Activity, ArrowDownRight, ArrowUpRight, Loader2, Minus } from 'lucide-react';
+import { Activity, Loader2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useFiveCsPulse, usePulseBreakdown, useUserPulseTotals } from '@/hooks/useFiveCsPulse';
@@ -25,6 +25,27 @@ const SCOPE_OPTIONS: { value: PulseScope; label: string }[] = [
   { value: 'platform', label: 'Network' },
   { value: 'user', label: 'You' },
 ];
+
+// Reading for the rolling window count. The founder's canonical form is
+// "1 today · 14 all time" on the 24h default; the other windows keep the same
+// register. Rolling, not calendar — honest for a "last N" window.
+const WINDOW_NOUN: Record<PulseTimeRange, string> = {
+  '24h': 'today',
+  '7d': 'this week',
+  '30d': 'this month',
+};
+
+// Zero-ever invitation, per pillar. Marketing Voice, sentence case, no
+// exclamation, no emoji — the register of the founder's example,
+// "No one has opened a need yet." A pillar that has never had activity renders
+// this instead of a number: zero-in-window and zero-ever are different facts.
+const PILLAR_INVITATIONS: Record<CModule, string> = {
+  connect: 'No one has made a connection yet.',
+  convene: 'No one has hosted an event yet.',
+  collaborate: 'No one has opened a space yet.',
+  contribute: 'No one has opened a need yet.',
+  convey: 'No one has shared a post yet.',
+};
 
 // Compass geometry — 200x200 SVG, 5 spokes evenly distributed.
 // CONNECT top, CONVENE top-right, COLLABORATE bottom-right, CONTRIBUTE bottom-left, CONVEY top-left.
@@ -58,7 +79,7 @@ export const PulseCompass: React.FC = () => {
   const [scope, setScope] = useState<PulseScope>('platform');
   const [openModule, setOpenModule] = useState<CModule | null>(null);
 
-  const { data: slices, isLoading } = useFiveCsPulse(timeRange, scope);
+  const { data: slices, isLoading, hasTotals } = useFiveCsPulse(timeRange, scope);
 
   const byModule = useMemo(() => {
     const map = new Map<CModule, PulseSlice>();
@@ -67,16 +88,26 @@ export const PulseCompass: React.FC = () => {
   }, [slices]);
 
   const max = useMemo(() => Math.max(1, ...(slices ?? []).map((s) => s.event_count)), [slices]);
-  const totalCount = useMemo(
+  // The radar reflects the selected window (do not widen it). windowEmpty
+  // collapses the polygon to a tiny centred shape when nothing happened in
+  // the window — honest for the window, regardless of all-time history.
+  const windowTotal = useMemo(
     () => (slices ?? []).reduce((sum, s) => sum + s.event_count, 0),
     [slices]
   );
-  const isEmpty = totalCount === 0;
+  const windowEmpty = windowTotal === 0;
+  // neverAny is a stronger claim: nothing has EVER happened, across all pillars.
+  // Only assert it once the all-time totals have actually resolved.
+  const allTimeTotal = useMemo(
+    () => (slices ?? []).reduce((sum, s) => sum + s.all_time_count, 0),
+    [slices]
+  );
+  const neverAny = hasTotals && allTimeTotal === 0;
 
   // Build polygon points (always render — empty state collapses to tiny shape at center).
   const polygonPoints = MODULE_ORDER.map((m) => {
     const count = byModule.get(m)?.event_count ?? 0;
-    const normalized = isEmpty ? 0.06 : count / max;
+    const normalized = windowEmpty ? 0.06 : count / max;
     const p = spokePoint(m, Math.max(0.04, normalized));
     return `${p.x.toFixed(1)},${p.y.toFixed(1)}`;
   }).join(' ');
@@ -190,7 +221,7 @@ export const PulseCompass: React.FC = () => {
             {MODULE_ORDER.map((m) => {
               const slice = byModule.get(m);
               const count = slice?.event_count ?? 0;
-              const normalized = isEmpty ? 0.06 : Math.max(0.04, count / max);
+              const normalized = windowEmpty ? 0.06 : Math.max(0.04, count / max);
               const p = spokePoint(m, normalized);
               const visual = MODULE_VISUALS[m];
               const labelP = spokePoint(m, 1.18);
@@ -247,8 +278,10 @@ export const PulseCompass: React.FC = () => {
             <circle cx={CENTER} cy={CENTER} r={3} fill="hsl(var(--dna-emerald))" />
           </svg>
 
-          {/* Empty-state overlay */}
-          {isEmpty && (
+          {/* Empty-state overlay — only when nothing has EVER happened, not
+              merely nothing in the window. A body with all-time history but a
+              quiet window is not starting from zero. */}
+          {neverAny && (
             <div className="absolute inset-0 flex items-end justify-center pointer-events-none pb-2">
               <p className="text-[11px] text-muted-foreground text-center max-w-[160px] leading-tight">
                 Take your first action to start your pulse
@@ -258,29 +291,43 @@ export const PulseCompass: React.FC = () => {
         </div>
       )}
 
-      {/* Compact stat strip */}
+      {/* Pillar legend — one honest line per C. No bare number ever renders:
+          a pillar with all-time activity shows the window count AND the total
+          together; a pillar that has never had activity shows the invitation,
+          not a "0". Every pillar is always listed — an empty Contribute is
+          information about the body's shape, never something to hide. */}
       {!isLoading && (
-        <div className="grid grid-cols-5 gap-1 pt-1 border-t border-border/40">
+        <ul className="pt-1 border-t border-border/40 space-y-1.5" data-testid="pulse-legend">
           {MODULE_ORDER.map((m) => {
             const slice = byModule.get(m);
-            const count = slice?.event_count ?? 0;
             const visual = MODULE_VISUALS[m];
+            const windowCount = slice?.event_count ?? 0;
+            const allTime = slice?.all_time_count ?? 0;
+            const noun = WINDOW_NOUN[timeRange];
+
             return (
-              <button
-                key={m}
-                onClick={() => setOpenModule(m)}
-                className="flex flex-col items-center gap-0.5 py-1 rounded-md hover:bg-muted/40 transition-colors"
-                aria-label={`${visual.label} stats`}
-              >
-                <visual.Icon className="h-3 w-3" style={{ color: `hsl(${visual.hsl})` }} />
-                <span className="text-[10px] font-semibold text-foreground leading-none tabular-nums">
-                  {compactNumber(count)}
-                </span>
-                <DeltaPill delta={slice?.delta_vs_prior_period ?? 0} />
-              </button>
+              <li key={m}>
+                <button
+                  onClick={() => setOpenModule(m)}
+                  className="w-full flex items-start justify-between gap-3 py-1 px-1 rounded-md hover:bg-muted/40 transition-colors text-left"
+                  aria-label={`${visual.label} stats`}
+                >
+                  <span className="flex items-center gap-1.5 shrink-0">
+                    <visual.Icon className="h-3 w-3 shrink-0" style={{ color: `hsl(${visual.hsl})` }} />
+                    <span className="text-meta font-medium text-foreground">{visual.label}</span>
+                  </span>
+                  <PillarStatus
+                    cModule={m}
+                    windowCount={windowCount}
+                    allTime={allTime}
+                    noun={noun}
+                    hasTotals={hasTotals}
+                  />
+                </button>
+              </li>
             );
           })}
-        </div>
+        </ul>
       )}
       </div>
     </section>
@@ -296,24 +343,48 @@ function compactNumber(n: number): string {
   return `${(n / 1_000_000).toFixed(1)}m`;
 }
 
-const DeltaPill: React.FC<{ delta: number }> = ({ delta }) => {
-  if (delta === 0) {
+/**
+ * One pillar's status line. Three distinct facts, three distinct renders:
+ *
+ *   - all-time > 0        → the window count AND the total, together:
+ *                           "1 today · 14 all time". The total is what is
+ *                           legible at this size; the window count can be 0
+ *                           ("0 today · 14 all time") and still reads honestly
+ *                           because the total frames it.
+ *   - all-time === 0      → the invitation, in the pillar's own words. Never a
+ *                           bare "0" — zero-ever is a different fact from
+ *                           zero-this-window and must not render as a number.
+ *   - totals unresolved   → the window count as words ("None today" / "3
+ *                           today"), never a bare "0", and never the
+ *                           invitation, which would falsely claim "no one ever".
+ */
+const PillarStatus: React.FC<{
+  cModule: CModule;
+  windowCount: number;
+  allTime: number;
+  noun: string;
+  hasTotals: boolean;
+}> = ({ cModule, windowCount, allTime, noun, hasTotals }) => {
+  if (!hasTotals) {
     return (
-      <span className="inline-flex items-center text-[9px] text-muted-foreground">
-        <Minus className="h-2 w-2" />
+      <span className="text-meta text-muted-foreground text-right tabular-nums">
+        {windowCount > 0 ? `${windowCount} ${noun}` : `None ${noun}`}
       </span>
     );
   }
-  const positive = delta > 0;
+
+  if (allTime === 0) {
+    return (
+      <span className="text-meta text-muted-foreground text-right leading-snug">
+        {PILLAR_INVITATIONS[cModule]}
+      </span>
+    );
+  }
+
   return (
-    <span
-      className={cn(
-        'inline-flex items-center gap-0.5 text-[9px] font-medium',
-        positive ? 'text-dna-emerald' : 'text-destructive'
-      )}
-    >
-      {positive ? <ArrowUpRight className="h-2.5 w-2.5" /> : <ArrowDownRight className="h-2.5 w-2.5" />}
-      {Math.abs(Math.round(delta))}%
+    <span className="text-meta text-muted-foreground text-right tabular-nums">
+      {windowCount} {noun} <span aria-hidden="true">·</span>{' '}
+      <span className="font-semibold text-foreground">{compactNumber(allTime)}</span> all time
     </span>
   );
 };

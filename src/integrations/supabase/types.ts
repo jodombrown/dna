@@ -13184,6 +13184,13 @@ export type Database = {
           unique_users: number
         }[]
       }
+      get_five_cs_pulse_totals: {
+        Args: { p_scope?: string; p_user_id?: string }
+        Returns: {
+          c_module: string
+          total_count: number
+        }[]
+      }
       get_group_conversations_for_user:
         | {
             Args: never
