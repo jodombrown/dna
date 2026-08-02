@@ -1,5 +1,5 @@
 /**
- * LensBar — route-driven segmented control for switching the "lens" on a surface.
+ * LensBar: route-driven segmented control for switching the "lens" on a surface.
  *
  * The active lens lives in the URL (?lens=<id>), never in component state. This
  * is what makes the back button move between lenses instead of leaving the
@@ -9,11 +9,12 @@
  * C, resolved through the `c5` Tailwind key (no raw colour anywhere here).
  */
 
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { haptic } from '@/utils/haptics';
+import { useScrollDirection } from '@/hooks/useScrollDirection';
 
 /** The five surfaces of the D092 palette. */
 export type LensC = 'connect' | 'convene' | 'collaborate' | 'contribute' | 'convey';
@@ -34,7 +35,7 @@ interface LensBarProps {
 }
 
 /**
- * Full literal class strings — Tailwind's JIT scanner cannot see a class built
+ * Full literal class strings: Tailwind's JIT scanner cannot see a class built
  * by string interpolation, so the map is spelled out. Every value resolves
  * through the `c5` key; there is no raw colour literal in this file, which is
  * the point of shipping the primitive against the gate on main.
@@ -53,7 +54,7 @@ export function LensBar({ lenses, ariaLabel, c }: LensBarProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Active lens is read from the URL. When ?lens= is absent or unrecognised the
-  // first lens is active — and we do NOT rewrite the URL to say so on mount.
+  // first lens is active, and we do NOT rewrite the URL to say so on mount.
   const requested = searchParams.get(LENS_KEY);
   const activeLens = lenses.find((l) => l.id === requested) ?? lenses[0];
   const activeId = activeLens?.id;
@@ -63,9 +64,34 @@ export function LensBar({ lenses, ariaLabel, c }: LensBarProps) {
   const [indicator, setIndicator] = useState<{ x: number; w: number } | null>(null);
   const [ready, setReady] = useState(false);
 
+  // Descriptor visibility (BD332f). Visible on arrival; collapses on scroll-down
+  // and stays collapsed; tapping the active lens toggles it back. Nothing here
+  // is persisted; a fresh visit starts visible again.
+  const [descriptorHidden, setDescriptorHidden] = useState(false);
+
+  // Switching lens is a fresh arrival on a different thing: its descriptor shows.
+  useEffect(() => {
+    setDescriptorHidden(false);
+  }, [activeId]);
+
+  // Same scroll signal the shell already hides chrome with (Connect.tsx:
+  // `isScrollingDown && !isAtTop`). We only ever latch to hidden here: scroll-up
+  // deliberately does NOT bring the line back, so it cannot flicker on every
+  // upward scroll. Tapping the active lens is the only way back.
+  const { isScrollingDown, isAtTop } = useScrollDirection(30);
+  useEffect(() => {
+    if (isScrollingDown && !isAtTop) setDescriptorHidden(true);
+  }, [isScrollingDown, isAtTop]);
+
   const selectLens = useCallback(
     (lens: Lens) => {
-      if (lens.disabled || lens.id === activeId) return;
+      if (lens.disabled) return;
+      // Tapping the active lens toggles its descriptor rather than re-navigating.
+      if (lens.id === activeId) {
+        haptic('light');
+        setDescriptorHidden((hidden) => !hidden);
+        return;
+      }
       haptic('light');
       setSearchParams(
         (prev) => {
@@ -111,7 +137,7 @@ export function LensBar({ lenses, ariaLabel, c }: LensBarProps) {
         className="relative flex items-center gap-1 p-1 bg-muted/50 rounded-lg overflow-x-auto scrollbar-hide"
       >
         {/* Active chip: absolutely positioned so tapping a lens never reflows its
-            siblings. Sizes to its own content — never flex-1. */}
+            siblings. Sizes to its own content, never flex-1. */}
         {indicator && (
           <span
             aria-hidden="true"
@@ -127,7 +153,7 @@ export function LensBar({ lenses, ariaLabel, c }: LensBarProps) {
           const Icon = lens.icon;
           const isActive = lens.id === activeId;
           // Accessible name folds the description in where a surface supplies one.
-          const name = lens.description ? `${lens.label} — ${lens.description}` : lens.label;
+          const name = lens.description ? `${lens.label}: ${lens.description}` : lens.label;
 
           return (
             <button
@@ -147,7 +173,7 @@ export function LensBar({ lenses, ariaLabel, c }: LensBarProps) {
                 // p-2 for label breathing room) so tapping never re-flows the bar.
                 // Inactive lenses are flex-1 with a 32px floor: they share whatever
                 // the active chip leaves, evenly, and the scroll track only kicks in
-                // when the set genuinely cannot fit — nothing clips.
+                // when the set genuinely cannot fit, nothing clips.
                 'relative z-10 flex min-h-9 items-center justify-center gap-1.5 rounded-md',
                 isActive ? 'flex-none p-2' : 'min-w-8 flex-1',
                 'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
@@ -177,11 +203,26 @@ export function LensBar({ lenses, ariaLabel, c }: LensBarProps) {
           single pattern every surface shares (BD332e). Renders only when the
           active lens carries a description; nothing reserves space when it does
           not, so the bar sits flush. The same copy feeds the accessible name
-          above, so there is one source per lens. */}
+          above, so there is one source per lens.
+
+          Collapse is a height animation (max-height, not opacity) so content
+          below rises smoothly into the reclaimed space. duration-150 matches the
+          chip; index.css forces every transition to 0.01ms under reduced motion,
+          so that path collapses instantly with no per-component branch here. The
+          descriptor stays in the accessible name above whether shown or not, so
+          the lens button keeps role="tab"/aria-selected and gains no disclosure
+          semantics. */}
       {activeLens?.description && (
-        <p className="text-meta text-muted-foreground italic pt-2 pb-3">
-          {activeLens.description}
-        </p>
+        <div
+          className={cn(
+            'overflow-hidden transition-all duration-150 ease-out',
+            descriptorHidden ? 'max-h-0' : 'max-h-20',
+          )}
+        >
+          <p className="text-meta text-muted-foreground italic pt-2 pb-3">
+            {activeLens.description}
+          </p>
+        </div>
       )}
     </>
   );
