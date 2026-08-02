@@ -15324,6 +15324,14 @@ export type Database = {
           type: string
         }[]
       }
+      security_probe_media_object: {
+        Args: { p_bucket: string; p_name: string }
+        Returns: {
+          bucket_id: string
+          name: string
+          owner_id: string
+        }[]
+      }
       send_group_message: {
         Args: {
           p_client_id?: string
