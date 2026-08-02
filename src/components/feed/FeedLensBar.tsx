@@ -1,9 +1,14 @@
 /**
- * Mobile Feed Tabs — first consumer of the LensBar primitive (BD332).
+ * Feed's lens bar — the LensBar primitive (BD332) configured for Feed, used at
+ * BOTH widths. This is not a mobile-only component; the same instance renders on
+ * mobile and desktop.
  *
  * Route-driven: the active lens is read from ?lens=<id> by LensBar itself, so
  * this surface no longer receives or holds tab state. Ids are unchanged:
  * all, for_you, network, my_posts, bookmarks.
+ *
+ * BD337: Feed is not a C, so it passes no `c` — the active lens resolves to
+ * --foreground rather than a palette colour.
  */
 
 import { Newspaper, UserCheck, PenSquare, Bookmark, Compass } from 'lucide-react';
@@ -25,6 +30,6 @@ export const FEED_LENSES: Lens[] = [
   { id: 'bookmarks', label: 'Saved', icon: Bookmark, description: 'Posts you have saved' },
 ];
 
-export function MobileFeedTabs() {
-  return <LensBar lenses={FEED_LENSES} ariaLabel="Feed lenses" c="connect" />;
+export function FeedLensBar() {
+  return <LensBar lenses={FEED_LENSES} ariaLabel="Feed lenses" />;
 }

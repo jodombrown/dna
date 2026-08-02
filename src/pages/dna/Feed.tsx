@@ -10,8 +10,7 @@ import { ProfileCompletionNudge } from '@/components/profile/ProfileCompletionNu
 import { UniversalFeedInfinite } from '@/components/feed/UniversalFeedInfinite';
 import { PersonalizedFeed } from '@/components/feed/PersonalizedFeed';
 import { SearchDialog } from '@/components/feed/SearchDialog';
-import { MobileFeedTabs, FEED_LENSES } from '@/components/feed/MobileFeedTabs';
-import { LensBar } from '@/components/shell/LensBar';
+import { FeedLensBar, FEED_LENSES } from '@/components/feed/FeedLensBar';
 import { MobileProfileCompletionBanner } from '@/components/feed/MobileProfileCompletionBanner';
 import { FirstTimeWalkthrough } from '@/components/onboarding/FirstTimeWalkthrough';
 import { FeedHeroGreeting } from '@/components/feed/FeedHeroGreeting';
@@ -43,7 +42,7 @@ const DnaFeed = () => {
   // by the mobile LensBar off the same param. Fall back to the legacy ?tab= key
   // so existing deep links (sidebar "Saved Items", account drawer) still land.
   const lensParam = searchParams.get('lens') ?? searchParams.get('tab');
-  const validTabs: FeedTab[] = ['all', 'for_you', 'network', 'my_posts', 'bookmarks'];
+  const validTabs = FEED_LENSES.map((l) => l.id) as FeedTab[];
   const activeTab: FeedTab = validTabs.includes(lensParam as FeedTab)
     ? (lensParam as FeedTab)
     : 'all';
@@ -175,7 +174,7 @@ const DnaFeed = () => {
             {/* Tabs row - always visible */}
             <div className="bg-background border-b border-border">
               <div className="px-3 py-1.5">
-                <MobileFeedTabs />
+                <FeedLensBar />
               </div>
             </div>
           </div>
@@ -331,7 +330,7 @@ const DnaFeed = () => {
                 its descriptor on scroll via useScrollDirection (which resolves
                 the FeedColumn scroll region), so this branch no longer manages
                 either. */}
-            <LensBar lenses={FEED_LENSES} ariaLabel="Feed lenses" c="connect" />
+            <FeedLensBar />
           </div>
 
           {/* Feed Content */}

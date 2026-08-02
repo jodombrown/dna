@@ -42,7 +42,7 @@ interface NavSurface {
  */
 const NAV_SURFACES: NavSurface[] = [
   // Feed
-  { id: 'feed-tabs-mobile',      file: 'src/components/feed/MobileFeedTabs.tsx' },
+  { id: 'feed-lens-bar',         file: 'src/components/feed/FeedLensBar.tsx' },
   { id: 'feed-tab-explainer',    file: 'src/components/feed/FeedTabExplainer.tsx' },
   { id: 'feed-desktop-tabs',     file: 'src/pages/dna/Feed.tsx',
     scopeRegex: /<TabsList[\s\S]*?<\/TabsList>/, jsx: true },
@@ -183,7 +183,7 @@ function main() {
   const perSurface = checkPerSurface();
 
   // Reserved cross-surface usage is informational only. Mirroring is
-  // intentional in some cases (e.g. FeedTabExplainer mirrors MobileFeedTabs)
+  // intentional in some cases (e.g. FeedTabExplainer mirrors FeedLensBar)
   // so we report but do not fail the build on it.
   const reserved = checkReservedClashes();
 
