@@ -605,18 +605,20 @@ html {
     --c5-connect-bevel: 153 34% 54%;        /* #62B28E, rung 500 */
     --c5-connect-text: 153 34% 54%;
     --c5-convene-bevel: 29 57% 46%;         /* holds locked */
-    --c5-convene-text: 29 53% 53%;          /* #C78648, 4.51 on --card */
+    --c5-convene-text: 29 53% 54%;          /* #C8884C, 4.61 on --card */
     --c5-collaborate-bevel: 187 53% 40%;    /* holds locked */
-    --c5-collaborate-text: 187 51% 45%;     /* #39A2AF, 4.53 on --card */
+    --c5-collaborate-text: 187 51% 46%;     /* #39A3B1, 4.59 on --card */
     --c5-contribute-bevel: 46 65% 52%;      /* holds locked */
     --c5-contribute-text: 46 65% 52%;
     --c5-convey-bevel: 340 32% 63%;         /* #BF8397 */
-    --c5-convey-text: 340 32% 63%;          /* 4.50 on --card */
+    --c5-convey-text: 340 32% 64%;          /* #C18699, 4.65 on --card */
 
-    /* LOAD-BEARING AGAINST --card. Three dark text values sit ON the 4.5 floor:
-       Convene 4.51, Collaborate 4.53, Convey 4.50, all measured against
-       --card 20 14% 18%. Darkening dark --card breaks all three at once and
-       the failure is silent. Do not change dark --card without re-measuring. */
+    /* LOAD-BEARING AGAINST --card. Three dark C-name text values sit within 0.15
+       of the 4.5 floor against --card 20 14% 18%. LIGHTENING dark --card breaks
+       all three at once, and the failure is silent because the text still renders.
+       One point of lightness is the entire margin.
+       scripts/check-c5-contrast.mjs enforces this on every PR. Do not disable it
+       to make a card change pass. */
   }
 }
 
