@@ -1,34 +1,40 @@
 import React from 'react';
-import { Users, Network, Globe, MessageCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Users, Network, Map, MessageCircle } from 'lucide-react';
 import { DnaMobileHeader } from '@/components/mobile/DnaMobileHeader';
 import { MESSAGING_ENABLED } from '@/config/featureFlags';
+import { LensBar, type Lens } from '@/components/shell/LensBar';
 
 export type ConnectTab = 'discover' | 'network' | 'map' | 'messages';
 
 interface ConnectMobileHeaderProps {
-  activeTab: ConnectTab;
-  onTabChange: (tab: ConnectTab) => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   onFiltersClick: () => void;
   activeFilterCount?: number;
 }
 
-// BD063 hide-and-freeze: the Messages tab is dropped while DM/group messaging
-// is OUT at v0.0 (see MESSAGING_ENABLED).
-const TAB_CONFIG = [
-  { value: 'discover' as const, icon: Users, label: 'Members' },
-  { value: 'network' as const, icon: Network, label: 'Network' },
-  { value: 'map' as const, icon: Globe, label: 'Map' },
-  ...(MESSAGING_ENABLED
-    ? [{ value: 'messages' as const, icon: MessageCircle, label: 'Messages' }]
-    : []),
+/**
+ * Connect lenses (BD332b). Route-driven via ?lens=<id>: LensBar reads and
+ * writes the param, so this surface no longer holds tab state.
+ *
+ * Two deliberate icon/behaviour choices:
+ *  - Map uses Map, not Globe. Globe meant "a place" on Connect and "no place"
+ *    on Convene — the same glyph across two adjacent surfaces read as available.
+ *    Globe is retired from the shell.
+ *  - Messages always holds its seat, disabled while messaging is OUT
+ *    (MESSAGING_ENABLED === false). Messaging returns in Arc 3 (BD331); the set
+ *    must not renumber when the flag flips, so the lens is present-but-disabled
+ *    (aria-disabled, non-focusable, dashed border) rather than conditionally
+ *    absent. The flag itself stays false.
+ */
+const CONNECT_LENSES: Lens[] = [
+  { id: 'discover', label: 'Members', icon: Users },
+  { id: 'network', label: 'Network', icon: Network },
+  { id: 'map', label: 'Map', icon: Map },
+  { id: 'messages', label: 'Messages', icon: MessageCircle, disabled: !MESSAGING_ENABLED },
 ];
 
 export function ConnectMobileHeader({
-  activeTab,
-  onTabChange,
   searchQuery,
   onSearchChange,
   onFiltersClick,
@@ -46,52 +52,15 @@ export function ConnectMobileHeader({
           activeFilterCount,
         }}
       />
-      <ConnectMobileTabs activeTab={activeTab} onTabChange={onTabChange} />
+      <ConnectMobileTabs />
     </div>
   );
 }
 
-interface ConnectMobileTabsProps {
-  activeTab: ConnectTab;
-  onTabChange: (tab: ConnectTab) => void;
-}
-
-export function ConnectMobileTabs({ activeTab, onTabChange }: ConnectMobileTabsProps) {
+export function ConnectMobileTabs() {
   return (
     <div className="px-3 py-1.5 bg-background border-b border-border">
-      <div
-        className="flex items-center justify-between gap-1 p-1 bg-muted/50 rounded-lg"
-        role="tablist"
-        aria-label="Connect tabs"
-      >
-        {TAB_CONFIG.map(({ value, icon: Icon, label }) => {
-          const isActive = activeTab === value;
-          const ariaLabel = `${label} tab`;
-
-          return (
-            <button
-              key={value}
-              onClick={() => onTabChange(value)}
-              role="tab"
-              aria-selected={isActive}
-              aria-label={ariaLabel}
-              title={label}
-              className={cn(
-                "flex items-center justify-center gap-1.5 py-2 rounded-md transition-all duration-200",
-                "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                isActive
-                  ? "bg-background shadow-sm flex-1 px-3"
-                  : "px-3 text-muted-foreground hover:text-foreground hover:bg-background/50"
-              )}
-            >
-              <Icon className={cn("h-4 w-4 shrink-0", isActive && "text-primary")} aria-hidden="true" />
-              {isActive && (
-                <span className="text-xs font-medium truncate">{label}</span>
-              )}
-            </button>
-          );
-        })}
-      </div>
+      <LensBar lenses={CONNECT_LENSES} ariaLabel="Connect lenses" c="connect" />
     </div>
   );
 }
@@ -101,7 +70,7 @@ export function ConnectMobileTopBar({
   onSearchChange,
   onFiltersClick,
   activeFilterCount = 0,
-}: Omit<ConnectMobileHeaderProps, 'activeTab' | 'onTabChange'>) {
+}: ConnectMobileHeaderProps) {
   return (
     <div className="md:hidden">
       <DnaMobileHeader
@@ -117,4 +86,3 @@ export function ConnectMobileTopBar({
     </div>
   );
 }
-

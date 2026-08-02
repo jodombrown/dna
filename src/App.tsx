@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
-import { BrowserRouter, Routes, Route, Navigate, useNavigate, useParams } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useNavigate, useParams, useLocation } from "react-router-dom";
 import { MESSAGING_ENABLED } from "@/config/featureFlags";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ViewStateProvider } from "@/contexts/ViewStateContext";
@@ -221,6 +221,14 @@ const PartnerStart = lazy(() => import("./pages/PartnerStart"));
 const RegionHubPage = lazy(() => import("./pages/africa/RegionHubPage"));
 const CountryHubPage = lazy(() => import("./pages/africa/CountryHubPage"));
 
+
+// Connect index redirect that carries the query string across the hop to the
+// default child route. A bare <Navigate> drops search params, which would lose
+// a deep link like /dna/connect?lens=map before the LensBar can read it (BD332b).
+const ConnectIndexRedirect = () => {
+  const { search } = useLocation();
+  return <Navigate to={{ pathname: "/dna/connect/discover", search }} replace />;
+};
 
 // QueryClient configured in @/lib/queryClient.ts with centralized defaults
 
@@ -522,7 +530,7 @@ function App() {
                   <Connect />
                 </OnboardingGuard>
               }>
-                <Route index element={<Navigate to="/dna/connect/discover" replace />} />
+                <Route index element={<ConnectIndexRedirect />} />
                 <Route path="discover" element={<ConnectDiscover />} />
                 <Route path="network" element={<ConnectNetwork />} />
                 {/* Legacy route - now using /dna/messages as canonical */}

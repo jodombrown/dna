@@ -105,7 +105,9 @@ export function ConveneDiscovery() {
   const isMobile = useIsMobile();
 
   const selectedCity = searchParams.get('city');
-  const activePill = searchParams.get('pill') || 'all';
+  // Route-driven lens (BD332b): the hub filters off ?lens=, the same param the
+  // mobile LensBar and the desktop PillFilterBar write.
+  const activePill = searchParams.get('lens') || 'all';
   const viewMode = (searchParams.get('view') as 'list' | 'map') || 'list';
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -128,7 +130,7 @@ export function ConveneDiscovery() {
   };
 
   const handlePillChange = (pill: string) => {
-    updateFilters({ pill: pill === 'all' ? null : pill });
+    updateFilters({ lens: pill === 'all' ? null : pill });
   };
 
   // ── Discovery Lane Queries ──────────────────────
@@ -400,7 +402,7 @@ export function ConveneDiscovery() {
                 selectedCity={selectedCity}
                 eventCount={totalCount}
                 onOpenComposer={() => composer.open('event')}
-                onSetCategory={(cat) => updateFilters({ pill: cat })}
+                onSetCategory={(cat) => updateFilters({ lens: cat })}
               />
 
               {/* Lane: Happening Near You */}

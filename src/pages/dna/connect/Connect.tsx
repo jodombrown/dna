@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { messageService } from '@/services/messageService';
 import { MESSAGING_ENABLED } from '@/config/featureFlags';
-import { useNavigate, Outlet, useLocation } from 'react-router-dom';
+import { useNavigate, Outlet, useLocation, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useMobile } from '@/hooks/useMobile';
@@ -24,7 +24,7 @@ import {
 
 // Mobile components
 
-import { ConnectMobileHeader, ConnectMobileTabs, ConnectMobileTopBar } from '@/components/connect/ConnectMobileHeader';
+import { ConnectMobileTabs, ConnectMobileTopBar, type ConnectTab } from '@/components/connect/ConnectMobileHeader';
 
 // Diaspora density map — rendered in-shell as the Map tab (mobile) / right
 // column (desktop). The same component also backs the standalone
@@ -46,6 +46,7 @@ import { CulturalPattern } from '@/components/shared/CulturalPattern';
 const Connect = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
   const { data: profile, isLoading } = useProfile();
   const { isMobile } = useMobile();
@@ -78,24 +79,55 @@ const Connect = () => {
   const [mobileSearchQuery, setMobileSearchQuery] = useState('');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [mobileActiveFilterCount, setMobileActiveFilterCount] = useState(0);
-  // The Map tab renders in-shell without changing the URL (the standalone
-  // /dna/connect/map route stays reserved for deep links). Any real navigation
-  // resets it via the location effect below.
-  const [mapTabActive, setMapTabActive] = useState(false);
 
-  // Determine mobile view from URL path
+  // Determine mobile view from URL path (back-compat: existing deep links like
+  // /dna/connect/network still light the right lens before ?lens= is written).
   const getMobileViewFromPath = (): 'network' | 'discover' | 'messages' => {
     if (location.pathname.includes('/network')) return 'network';
     if (location.pathname.includes('/messages')) return 'messages';
     return 'discover';
   };
   const mobileView = getMobileViewFromPath();
-  // The Map tab is a peer of the routed tabs but has no route of its own; leave
-  // it as soon as the path changes (sibling tab, back/forward, deep link).
+
+  // Route-driven lens (BD332b): the active lens lives in the URL (?lens=<id>),
+  // read here and by the mobile LensBar off the same param — no tab state. Map
+  // renders in-shell (it has no route of its own); discover/network are child
+  // routes kept in step with the lens by the effect below. When ?lens= is
+  // absent we fall back to the path so legacy deep links still resolve.
+  const CONNECT_LENS_IDS = ['discover', 'network', 'map', 'messages'];
+  const lensParam = searchParams.get('lens');
+  const activeLens: ConnectTab =
+    lensParam && CONNECT_LENS_IDS.includes(lensParam)
+      ? (lensParam as ConnectTab)
+      : mobileView;
+
+  // Keep the URL lens and the child route in agreement on mobile.
   useEffect(() => {
-    setMapTabActive(false);
-  }, [location.pathname]);
-  const activeMobileTab = mapTabActive ? 'map' : mobileView;
+    if (!isMobile) return;
+    const lens = searchParams.get('lens');
+    if (!lens) {
+      // Migrate a path-only deep link to carry ?lens= so the bar agrees with the
+      // content without a redirect. Map has no route to migrate from.
+      if (mobileView === 'network' || mobileView === 'discover') {
+        setSearchParams(
+          (prev) => {
+            const next = new URLSearchParams(prev);
+            next.set('lens', mobileView);
+            return next;
+          },
+          { replace: true },
+        );
+      }
+      return;
+    }
+    // A routed lens drives a real navigation; Map stays in-shell and Messages is
+    // disabled, so neither moves the path.
+    if (lens === 'network' && mobileView !== 'network') {
+      navigate('/dna/connect/network?lens=network', { replace: true });
+    } else if (lens === 'discover' && mobileView !== 'discover') {
+      navigate('/dna/connect/discover?lens=discover', { replace: true });
+    }
+  }, [isMobile, searchParams, mobileView, navigate, setSearchParams]);
 
   // Handle filter changes from NetworkPanel
   const handleFilterChange = useCallback((newFilters: FilterState) => {
@@ -148,25 +180,6 @@ const Connect = () => {
     setSelectedConversationId(null);
   }, []);
 
-  // Mobile tab change
-  const handleMobileTabChange = (tab: 'discover' | 'network' | 'map' | 'messages') => {
-    if (tab === 'map') {
-      // Render the density map inside the Connect shell without leaving it; the
-      // standalone /dna/connect/map route is reserved for deep links and shares.
-      setMapTabActive(true);
-      return;
-    }
-    setMapTabActive(false);
-    if (tab === 'messages') {
-      // BD063 hide-and-freeze: messaging is OUT at v0.0 — route to discover, not /dna/messages.
-      navigate(MESSAGING_ENABLED ? '/dna/messages' : '/dna/connect/discover');
-    } else if (tab === 'network') {
-      navigate('/dna/connect/network');
-    } else {
-      navigate('/dna/connect/discover');
-    }
-  };
-
   // Loading state
   if (isLoading) {
     return (
@@ -204,7 +217,7 @@ const Connect = () => {
             />
           </div>
           {/* Tabs row - always visible (matches Feed behavior) */}
-          <ConnectMobileTabs activeTab={activeMobileTab} onTabChange={handleMobileTabChange} />
+          <ConnectMobileTabs />
         </div>
 
         {/* Mobile Content - dynamic padding from measured header */}
@@ -212,8 +225,8 @@ const Connect = () => {
           className="px-3 sm:px-4 overflow-x-hidden transition-[padding] duration-300"
           style={{ paddingTop: connectHeaderPadding || undefined }}
         >
-          <ConnectTabExplainer activeTab={activeMobileTab} />
-          {mapTabActive ? (
+          <ConnectTabExplainer activeTab={activeLens} />
+          {activeLens === 'map' ? (
             <DiasporaDensityMap inShell />
           ) : (
             <Outlet context={{
