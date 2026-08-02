@@ -150,8 +150,15 @@ const readIntrinsicSize = async (
   // so a stalled decode can never hang the upload, and revoke the object URL in a
   // finally regardless of how the promise settles.
   if (mediaClass === 'video') {
-    const objectUrl = URL.createObjectURL(file);
+    // createObjectURL / <video> are browser APIs a headless runner may not have.
+    // Reading a size is best-effort: ANY throw here must degrade to null, never
+    // propagate and abort the upload. So the whole branch — including
+    // createObjectURL — sits inside the try, and revoke only fires if we actually
+    // minted a URL.
+    let objectUrl: string | null = null;
     try {
+      objectUrl = URL.createObjectURL(file);
+      const src = objectUrl;
       return await new Promise<{ width: number; height: number } | null>((resolve) => {
         let settled = false;
         const finish = (result: { width: number; height: number } | null) => {
@@ -166,10 +173,12 @@ const readIntrinsicSize = async (
         video.onloadedmetadata = () =>
           finish({ width: video.videoWidth, height: video.videoHeight });
         video.onerror = () => finish(null);
-        video.src = objectUrl;
+        video.src = src;
       });
+    } catch {
+      return null;
     } finally {
-      URL.revokeObjectURL(objectUrl);
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
     }
   }
 
