@@ -29,7 +29,7 @@ import { UniversalFeedItem } from '@/types/feed';
 import { FeedCardBase } from './FeedCardBase';
 import { CardMedia } from './CardMedia';
 import { CardActionRow } from './CardActionRow';
-import { linkifyContent } from '@/utils/linkifyContent';
+import { ExpandableProse } from './ExpandableProse';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -98,7 +98,6 @@ export const StoryCard: React.FC<StoryCardProps> = ({
   onReshare,
 }) => {
   const navigate = useNavigate();
-  const [isExpanded, setIsExpanded] = useState(false);
   const [localShowComments, setLocalShowComments] = useState(showComments);
 
   const { likeCount, userHasLiked, toggleLike } = usePostLikes(item.post_id, currentUserId);
@@ -108,8 +107,6 @@ export const StoryCard: React.FC<StoryCardProps> = ({
   const authorName = item.author_display_name || item.author_username || 'this member';
   const firstName = authorName.split(' ')[0];
 
-  const bodyPreview = item.content.slice(0, 240);
-  const needsExpansion = item.content.length > 240;
   const storyHref = `/dna/story/${item.slug || item.post_id}`;
 
   // Reach scales, it doesn't start big.
@@ -148,7 +145,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
             {' · '}
             {abbrevAge(item.created_at)}
             {' · '}
-            {readTime(item.content)} min read
+            {readTime(item.content ?? '')} min read
             {/* BD160 requires the edit disclosure stay visible to non-authors and
                 anon viewers; the author's marker relocates to the PostMenu overflow. */}
             {!isOwner && item.edited_at && (
@@ -259,47 +256,14 @@ export const StoryCard: React.FC<StoryCardProps> = ({
         </div>
       )}
 
-      {/* Body preview — the expander is INLINE, never its own row. The title
-          navigates; this toggles in place. Two distinct behaviors (BD177). */}
-      <div className="mt-3">
-        {isExpanded ? (
-          <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">
-            {(() => {
-              const paragraphs = item.content.split('\n\n');
-              return paragraphs.map((p, idx) => (
-                <p key={idx} className="whitespace-pre-line">
-                  {linkifyContent(p)}
-                  {idx === paragraphs.length - 1 && (
-                    <>
-                      {' '}
-                      <button
-                        type="button"
-                        onClick={() => setIsExpanded((v) => !v)}
-                        className="font-semibold text-bevel-story"
-                      >
-                        Show less
-                      </button>
-                    </>
-                  )}
-                </p>
-              ));
-            })()}
-          </div>
-        ) : (
-          <p className="line-clamp-4 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
-            {linkifyContent(bodyPreview)}
-            {needsExpansion && (
-              <button
-                type="button"
-                onClick={() => setIsExpanded((v) => !v)}
-                className="font-semibold text-bevel-story"
-              >
-                …more
-              </button>
-            )}
-          </p>
-        )}
-      </div>
+      {/* Body. The control sits OUTSIDE the clamp on its own line, so it
+          cannot be clipped at any content length or viewport width (BD332).
+          The title navigates; this toggles in place. Two distinct behaviours. */}
+      <ExpandableProse
+        content={item.content}
+        accentClassName="text-bevel-story"
+        className="mt-3 text-body leading-relaxed text-muted-foreground"
+      />
 
       {/* Reach — earns itself. A story with no traction renders no row at all
           (BD177): an empty-state row costs layout for near-zero information. */}
