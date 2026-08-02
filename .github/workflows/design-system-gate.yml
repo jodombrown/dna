@@ -114,6 +114,18 @@ jobs:
           check "Hex color literal. Use a semantic token." \
                 '#[0-9a-fA-F]{3,8}\b'
 
+          # Functional colour notation (BD328). The hex check above cannot see
+          # these: 'hsl(153 40% 30%)' contains no #. This is precisely the form
+          # that let src/components/feed/cards/FeedCardBase.tsx accumulate ten
+          # hardcoded C values as an object literal, which is what actually
+          # paints every card bevel in the product.
+          #
+          # The hsl(var(--token)) escape is allowed and must stay allowed: that
+          # is the correct way to consume a token. Only LITERAL channel values
+          # fire, which is what the digit-anchored first argument enforces.
+          check "Functional colour literal. Use hsl(var(--c5-<c>-bevel)) or hsl(var(--c5-<c>-text)), never literal channels." \
+                '\b(hsl|hsla|rgb|rgba|oklch|lab)\(\s*[0-9.]'
+
           check "Banned Tailwind default font size. Use the DNA scale: micro meta body h3 h2 h1 display hero." \
                 '\btext-(xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl|7xl|8xl|9xl)\b'
 
@@ -130,7 +142,7 @@ jobs:
           # shape) and what keeps file paths out (shared/ contains "red", but
           # carries no numeric suffix). Prose is unaffected: "status GREEN, a red
           # flag" does not fire.
-          check "Raw Tailwind palette colour (BD291). Use a token: module-connect|convene|collaborate|contribute|convey for Five C's surfaces, dna-* for brand, or the semantic set (primary, muted, destructive, accent, border, foreground)." \
+          check "Raw Tailwind palette colour (BD291). Use a token: c5-connect|convene|collaborate|contribute|convey for Five C's surfaces, dna-* for brand, or the semantic set (primary, muted, destructive, accent, border, foreground)." \
                 '\b(!)?(text|bg|border|border-[trblxy]|from|via|to|ring|ring-offset|fill|stroke|shadow|divide|outline|decoration|accent|caret|placeholder)-(slate|gray|grey|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950)\b'
 
           # Arbitrary values, with the hsl(var(--x)) escape allowed.
@@ -255,6 +267,10 @@ jobs:
           fi
 
           echo "media-matrix passed: no literal accept strings in scope."
+
+      - name: D092 contrast invariants
+        shell: bash
+        run: node scripts/check-c5-contrast.mjs
 
   sw-version:
     runs-on: ubuntu-latest
