@@ -11,7 +11,8 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { getErrorMessage } from '@/lib/errorLogger';
 import { cn } from '@/lib/utils';
-import { WAITLIST_MODE } from '@/config/featureFlags';
+import { WAITLIST_MODE, areSignupsOpen, resolveSignupBypass } from '@/config/featureFlags';
+import BetaAccessForm from '@/components/auth/BetaAccessForm';
 
 /**
  * Only same-origin relative paths may be a post-auth destination. A login
