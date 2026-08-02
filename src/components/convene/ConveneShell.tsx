@@ -26,7 +26,7 @@ import { DnaMobileHubShell } from '@/components/mobile/DnaMobileHubShell';
 import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { LensBar, type Lens } from '@/components/shell/LensBar';
 
-const CONVENE_LENSES: Lens[] = [
+export const CONVENE_LENSES: Lens[] = [
   { id: 'all', label: 'All', icon: CalendarDays },
   { id: 'near_me', label: 'Near Me', icon: MapPin },
   { id: 'this_week', label: 'This Week', icon: Clock },

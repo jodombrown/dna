@@ -10,43 +10,49 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Newspaper, UserPlus, PenSquare, Bookmark, Compass } from 'lucide-react';
 import { FeedTab } from '@/types/feed';
 import { useAuth } from '@/contexts/AuthContext';
+import { FEED_LENSES } from '@/components/feed/MobileFeedTabs';
 
 interface FeedTabExplainerProps {
   activeTab: FeedTab;
 }
 
-const TAB_EXPLAINERS: Record<FeedTab, { title: string; description: string; icon: React.ElementType; bgClass: string }> = {
+/**
+ * The lens definition (FEED_LENSES) is the single source of truth for each
+ * tab's id, label and icon. The explainer reads title (= lens label) and glyph
+ * (= lens icon) from it, so My Network's UserCheck glyph can never diverge from
+ * the explainer. See BD332c.
+ */
+const LENS = Object.fromEntries(FEED_LENSES.map((l) => [l.id, l])) as Record<
+  FeedTab,
+  (typeof FEED_LENSES)[number]
+>;
+
+/**
+ * What is genuinely the explainer's own: the longer body copy (distinct from
+ * the lens's short accessible-name description) and the visual treatment. Keyed
+ * by the lens id — the dismissal storage key derives from the same id below.
+ */
+const EXPLAINER: Record<FeedTab, { description: string; bgClass: string }> = {
   all: {
-    title: 'All Posts',
     description: 'Discover the latest updates, stories, and conversations from across the diaspora community',
-    icon: Newspaper,
     bgClass: 'bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20',
   },
   for_you: {
-    title: 'Personalized For You',
     description: 'These posts are selected based on your connections, interests, and engagement patterns',
-    icon: Compass,
     bgClass: 'bg-gradient-to-r from-dna-copper/10 to-dna-gold/10 border-dna-copper/20',
   },
   network: {
-    title: 'My Network',
     description: 'Posts from your connections and people in your extended diaspora network',
-    icon: UserPlus,
     bgClass: 'bg-gradient-to-r from-dna-emerald/10 to-dna-emerald/5 border-dna-emerald/20',
   },
   my_posts: {
-    title: 'Your Posts',
     description: 'All the posts and stories you\'ve shared with the diaspora community',
-    icon: PenSquare,
     bgClass: 'bg-gradient-to-r from-dna-terracotta/10 to-dna-terracotta/5 border-dna-terracotta/20',
   },
   bookmarks: {
-    title: 'Saved Posts',
     description: 'Posts you\'ve bookmarked to read later or reference again',
-    icon: Bookmark,
     bgClass: 'bg-gradient-to-r from-dna-ochre/10 to-dna-ochre/5 border-dna-ochre/20',
   },
 };
@@ -120,11 +126,12 @@ export const FeedTabExplainer: React.FC<FeedTabExplainerProps> = ({ activeTab })
     }
   }, [activeTab, user, sessionTimestamp]);
 
-  const explainer = visibleTab ? TAB_EXPLAINERS[visibleTab] : null;
-  
-  if (!explainer || !visibleTab) return null;
+  const lens = visibleTab ? LENS[visibleTab] : null;
+  const copy = visibleTab ? EXPLAINER[visibleTab] : null;
 
-  const Icon = explainer.icon;
+  if (!lens || !copy || !visibleTab) return null;
+
+  const Icon = lens.icon;
 
   return (
     <AnimatePresence mode="wait">
@@ -143,13 +150,13 @@ export const FeedTabExplainer: React.FC<FeedTabExplainerProps> = ({ activeTab })
           }
           className="overflow-hidden"
         >
-          <div className={`p-3 rounded-lg border ${explainer.bgClass}`}>
+          <div className={`p-3 rounded-lg border ${copy.bgClass}`}>
             <div className="flex items-start gap-2">
               <Icon className="h-4 w-4 text-foreground/70 mt-0.5 shrink-0" />
               <div className="flex-1 min-w-0">
-                <h4 className="font-semibold text-xs">{explainer.title}</h4>
+                <h4 className="font-semibold text-meta">{lens.label}</h4>
                 <p className="text-[11px] text-muted-foreground mt-0.5 leading-snug">
-                  {explainer.description}
+                  {copy.description}
                 </p>
               </div>
             </div>
