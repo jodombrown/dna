@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { PenSquare, Users, Newspaper, TrendingUp, Search, Clock, Camera, Calendar, BookOpen, Compass, Bookmark } from 'lucide-react';
@@ -30,29 +30,56 @@ import { useScrollDirection } from '@/hooks/useScrollDirection';
 // Dynamic header spacing replaces hardcoded constants from mobileHeaderSpacing
 import { useMobileHeaderHeight } from '@/hooks/useMobileHeaderHeight';
 import { incrementSessionCount } from '@/services/dia-feed-cadence';
-import { useLocation } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 // Scroll position storage key
 const FEED_SCROLL_KEY = 'dna_feed_scroll_position';
 
 const DnaFeed = () => {
   const { user } = useAuth();
-  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { data: profile, isLoading: profileLoading } = useProfile();
 
-  // Read initial tab from URL params (e.g., ?tab=bookmarks)
-  const urlParams = new URLSearchParams(location.search);
-  const initialTab = (urlParams.get('tab') as FeedTab) || 'all';
-  const [activeTab, setActiveTab] = useState<FeedTab>(initialTab);
+  // Route-driven: the active lens lives in the URL (?lens=<id>), read here and
+  // by the mobile LensBar off the same param. Fall back to the legacy ?tab= key
+  // so existing deep links (sidebar "Saved Items", account drawer) still land.
+  const lensParam = searchParams.get('lens') ?? searchParams.get('tab');
+  const validTabs: FeedTab[] = ['all', 'for_you', 'network', 'my_posts', 'bookmarks'];
+  const activeTab: FeedTab = validTabs.includes(lensParam as FeedTab)
+    ? (lensParam as FeedTab)
+    : 'all';
 
-  // Sync activeTab when URL search params change (e.g., sidebar "Saved Items" click)
+  const setActiveTab = useCallback(
+    (tab: FeedTab) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          next.set('lens', tab);
+          next.delete('tab');
+          return next;
+        },
+        { replace: false },
+      );
+    },
+    [setSearchParams],
+  );
+
+  // Migrate a legacy ?tab= deep link to the canonical ?lens= on arrival so the
+  // lens bar and the feed content agree. replace:true keeps it out of history.
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const tabParam = params.get('tab') as FeedTab | null;
-    if (tabParam && tabParam !== activeTab) {
-      setActiveTab(tabParam);
+    const tab = searchParams.get('tab');
+    if (tab && !searchParams.get('lens')) {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          next.set('lens', tab);
+          next.delete('tab');
+          return next;
+        },
+        { replace: true },
+      );
     }
-  }, [location.search]);
+  }, [searchParams, setSearchParams]);
   const [rankingMode, setRankingMode] = useState<RankingMode>('latest');
   const [showSearchDialog, setShowSearchDialog] = useState(false);
   const [tabsVisible, setTabsVisible] = useState(true);
@@ -170,7 +197,7 @@ const DnaFeed = () => {
             {/* Tabs row - always visible */}
             <div className="bg-background border-b border-border">
               <div className="px-3 py-1.5">
-                <MobileFeedTabs activeTab={activeTab} onTabChange={setActiveTab} />
+                <MobileFeedTabs />
               </div>
             </div>
           </div>
