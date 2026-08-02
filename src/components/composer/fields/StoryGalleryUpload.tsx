@@ -38,7 +38,7 @@ export function StoryGalleryUpload({ galleryUrls, onChange }: StoryGalleryUpload
           continue;
         }
 
-        const url = await uploadMedia(file, 'story');
+        const { url } = await uploadMedia(file, 'story');
         newUrls.push(url);
       }
 

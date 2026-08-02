@@ -119,7 +119,74 @@ const convertHeicToJpeg = async (file: File): Promise<File> => {
   }
 };
 
-export const uploadMedia = async (file: File, surface: Surface) => {
+// Intrinsic pixel dimensions of the STORED artefact, read client-side. Returns
+// null whenever the class has no meaningful raster size (documents) or the read
+// fails for any reason — a null size never blocks the upload, it only means the
+// media_assets row carries null width/height/aspect. There is no invented
+// fallback size: a wrong number is worse than an honest null, because a card
+// would reserve a box that does not match the image that arrives.
+const readIntrinsicSize = async (
+  file: File,
+  mediaClass: MediaClass,
+): Promise<{ width: number; height: number } | null> => {
+  // image: createImageBitmap is already proven available here (convertHeicToJpeg
+  // uses it), so we lean on the browser's own decoder. close() the bitmap in a
+  // finally so the decoded frame is released whether we read it or throw.
+  if (mediaClass === 'image') {
+    if (typeof createImageBitmap !== 'function') return null;
+    let bitmap: ImageBitmap | null = null;
+    try {
+      bitmap = await createImageBitmap(file);
+      return { width: bitmap.width, height: bitmap.height };
+    } catch {
+      return null;
+    } finally {
+      bitmap?.close();
+    }
+  }
+
+  // video: a detached <video> reads intrinsic dimensions from metadata alone —
+  // preload='metadata' means we never fetch the whole file. Cap the wait at 10s
+  // so a stalled decode can never hang the upload, and revoke the object URL in a
+  // finally regardless of how the promise settles.
+  if (mediaClass === 'video') {
+    const objectUrl = URL.createObjectURL(file);
+    try {
+      return await new Promise<{ width: number; height: number } | null>((resolve) => {
+        let settled = false;
+        const finish = (result: { width: number; height: number } | null) => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          resolve(result);
+        };
+        const timer = setTimeout(() => finish(null), 10_000);
+        const video = document.createElement('video');
+        video.preload = 'metadata';
+        video.onloadedmetadata = () =>
+          finish({ width: video.videoWidth, height: video.videoHeight });
+        video.onerror = () => finish(null);
+        video.src = objectUrl;
+      });
+    } finally {
+      URL.revokeObjectURL(objectUrl);
+    }
+  }
+
+  // document: nothing to read.
+  return null;
+};
+
+export type UploadedMedia = {
+  url: string;
+  assetId: string;
+  mediaClass: MediaClass;
+  width: number | null;
+  height: number | null;
+  aspect: number | null;
+};
+
+export const uploadMedia = async (file: File, surface: Surface): Promise<UploadedMedia> => {
   // a. Classify by the file's own MIME type. No match means we don't accept it.
   const mediaClass = classify(file.type);
   if (!mediaClass) {
@@ -210,6 +277,16 @@ export const uploadMedia = async (file: File, surface: Surface) => {
   ].includes(ext) ? ext : 'bin';
   const safeName = `${base}.${safeExt}`;
 
+  // Read intrinsic dimensions from the STORED artefact (uploadFile), never the
+  // original `file`. compressAndTinify resizes images to maxDimension 1920, so a
+  // size read from `file` would describe bytes that were never stored and the
+  // Phase 3 card would reserve a box that does not match the image that arrives.
+  // The stored artefact is the subject.
+  const size = await readIntrinsicSize(uploadFile, mediaClass);
+  const width = size?.width ?? null;
+  const height = size?.height ?? null;
+  const aspect = size ? Number((size.width / size.height).toFixed(4)) : null;
+
   // f. Path is scoped by uid and surface.
   const filePath = `${uid}/${surface}/${Date.now()}-${safeName}`;
 
@@ -261,5 +338,49 @@ export const uploadMedia = async (file: File, surface: Surface) => {
   }
 
   const { data: publicUrl } = supabase.storage.from(bucket).getPublicUrl(filePath);
-  return publicUrl.publicUrl;
+
+  // Dual-write: record a media_assets row alongside the stored object. Legacy URL
+  // columns are untouched — nothing migrates, nothing drops.
+  //
+  // Plain insert, never upsert: filePath already carries Date.now() so there is no
+  // conflict to resolve, and BD307 established that upsert applies the SELECT
+  // policy. focal_x / focal_y are deliberately omitted: they carry DB defaults
+  // (0.500 / 0.420) and a client that restates a default is a second place for it
+  // to drift.
+  const { data: asset, error: insertError } = await supabase
+    .from('media_assets')
+    .insert({
+      owner_id: uid,
+      bucket,
+      path: filePath,
+      class: mediaClass,
+      mime_type: uploadFile.type || file.type,
+      byte_size: uploadFile.size,
+      width,
+      height,
+      aspect,
+    })
+    .select('id')
+    .single();
+
+  // A failed insert AFTER a successful upload orphans one storage object, which
+  // media_assets itself makes findable later — a deliberate, recoverable cost. A
+  // SWALLOWED insert failure instead produces a stored object with no framing that
+  // looks correct until a card renders wrong, which is how this repo arrived at 25
+  // bare URL columns. So we log in the same shape as the upload-failure log above,
+  // then throw — never return the URL anyway.
+  if (insertError || !asset) {
+    console.error('[uploadMedia] media_assets insert FAILED bucket=%s path=%s uid=%s error=%o',
+      bucket, filePath, uid, insertError);
+    throw insertError ?? new Error('media_assets insert returned no row');
+  }
+
+  return {
+    url: publicUrl.publicUrl,
+    assetId: asset.id,
+    mediaClass,
+    width,
+    height,
+    aspect,
+  };
 };

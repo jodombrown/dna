@@ -191,7 +191,7 @@ async function uploadAndVerify(
   // test never names the path, so it cannot drift from what the product writes.
   // (node File, not jsdom's — see the import note; the spine treats it identically.)
   const file = new NodeFile([body], `security-test.${ext}`, { type: contentType }) as unknown as File;
-  const publicUrl = await uploadMedia(file, surface);
+  const { url: publicUrl } = await uploadMedia(file, surface);
 
   // The spine's return value: a public URL keyed to THIS member and the surface it
   // was told to file under.
@@ -502,7 +502,7 @@ describe('security · a HEIC upload is converted to JPEG before it lands (BD312)
       // builds the uid/surface path itself — the test never names the path.
       const heic = new NodeFile([TINY], 'IMG_4021.heic', { type: 'image/heic' }) as unknown as File;
       expect(IMAGE_TYPES).toContain('image/heic');
-      publicUrl = await uploadMedia(heic, 'post');
+      publicUrl = (await uploadMedia(heic, 'post')).url;
     } finally {
       if (realCreateImageBitmap === undefined) {
         delete (globalThis as { createImageBitmap?: unknown }).createImageBitmap;

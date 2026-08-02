@@ -5582,6 +5582,63 @@ export type Database = {
         }
         Relationships: []
       }
+      media_assets: {
+        Row: {
+          alt_text: string | null
+          aspect: number | null
+          bucket: string
+          byte_size: number | null
+          class: string
+          created_at: string
+          focal_x: number
+          focal_y: number
+          height: number | null
+          id: string
+          mime_type: string
+          owner_id: string
+          path: string
+          poster_path: string | null
+          updated_at: string
+          width: number | null
+        }
+        Insert: {
+          alt_text?: string | null
+          aspect?: number | null
+          bucket: string
+          byte_size?: number | null
+          class: string
+          created_at?: string
+          focal_x?: number
+          focal_y?: number
+          height?: number | null
+          id?: string
+          mime_type: string
+          owner_id: string
+          path: string
+          poster_path?: string | null
+          updated_at?: string
+          width?: number | null
+        }
+        Update: {
+          alt_text?: string | null
+          aspect?: number | null
+          bucket?: string
+          byte_size?: number | null
+          class?: string
+          created_at?: string
+          focal_x?: number
+          focal_y?: number
+          height?: number | null
+          id?: string
+          mime_type?: string
+          owner_id?: string
+          path?: string
+          poster_path?: string | null
+          updated_at?: string
+          width?: number | null
+        }
+        Relationships: []
+      }
       member_heritage: {
         Row: {
           created_at: string
