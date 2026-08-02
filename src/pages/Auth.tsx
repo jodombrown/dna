@@ -261,7 +261,9 @@ const Auth = () => {
   // Auth content switches between sign-in and sign-up
   const authContent = (
     <div className="w-full space-y-4">
-      {isSignUp ? (
+      {isSignUp && signupsClosed ? (
+        <BetaAccessForm />
+      ) : isSignUp ? (
         <form onSubmit={handleSignUp} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="signup-fullname">Full Name</Label>
