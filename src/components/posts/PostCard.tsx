@@ -33,6 +33,7 @@ import { feedAnalytics } from '@/lib/feedAnalytics';
 import { MediaLightbox } from '@/components/feed/MediaLightbox';
 import { linkifyContent } from '@/utils/linkifyContent';
 import { RenderProse } from '@/utils/renderProse';
+import { ExpandableProse } from '@/components/feed/cards/ExpandableProse';
 
 import { logHighError } from '@/lib/errorLogger';
 import { EditedMarker } from './EditedMarker';
@@ -67,15 +68,7 @@ export function PostCard({
   const [showReshareDialog, setShowReshareDialog] = useState(false);
   const [showMediaLightbox, setShowMediaLightbox] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
-  const [isContentExpanded, setIsContentExpanded] = useState(false);
-  
-  // Truncate content at ~200 characters
-  const CONTENT_PREVIEW_LENGTH = 200;
-  const needsContentExpansion = post.content.length > CONTENT_PREVIEW_LENGTH;
-  const contentPreview = needsContentExpansion 
-    ? post.content.slice(0, CONTENT_PREVIEW_LENGTH) 
-    : post.content;
-  
+
   // Post reactions (emoji reactions) with notification context
   const {
     reactions,
@@ -349,22 +342,13 @@ export function PostCard({
         <SharedPostCard post={post} />
       ) : (
         <>
-          {/* Content with Read More */}
-          <div className="mb-4">
-            <RenderProse content={isContentExpanded ? post.content : contentPreview} />
-            {needsContentExpansion && !isContentExpanded && (
-              <span className="text-muted-foreground">...</span>
-            )}
-            {needsContentExpansion && (
-
-              <button
-                onClick={() => setIsContentExpanded(!isContentExpanded)}
-                className="text-primary text-sm font-medium mt-1 hover:underline"
-              >
-                {isContentExpanded ? 'Show less' : 'Read more'}
-              </button>
-            )}
-          </div>
+          {/* Content. Same primitive as StoryCard (BD332). Deletes the 200-char
+              hard cut, the stray literal "..." span, and the second threshold. */}
+          <ExpandableProse
+            content={post.content}
+            accentClassName="text-primary"
+            className="mb-4"
+          />
 
           {/* Media Display - supports single image/video or multi-image gallery */}
           {(() => {
