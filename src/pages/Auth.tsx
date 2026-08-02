@@ -47,6 +47,12 @@ const Auth = () => {
     return <Navigate to="/waitlist" replace />;
   }
 
+  // Dated signup gate: new accounts are paused until SIGNUPS_OPEN_AT, unless
+  // this browser holds the founder bypass key.
+  const signupsClosed = !areSignupsOpen() && !resolveSignupBypass(location.search);
+
+
+
   // Where to redirect after login: explicit ?redirect= (public pages like
   // PublicEventPage), then state.from (OnboardingGuard / protected routes),
   // then the feed. Both sources are validated to same-origin paths.
