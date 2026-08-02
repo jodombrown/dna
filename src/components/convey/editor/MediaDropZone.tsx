@@ -48,10 +48,10 @@ export function MediaDropZone({ onMediaInsert, isDragging, setIsDragging }: Medi
       setIsUploading(true);
       setUploadProgress(0);
 
-      const publicUrl = await uploadMedia(file, 'story');
+      const { url } = await uploadMedia(file, 'story');
 
       setUploadProgress(100);
-      return publicUrl;
+      return url;
     } catch (error) {
       toast.error(`Failed to upload file: ${describeUploadError(error)}`);
       return null;
