@@ -11,7 +11,8 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { getErrorMessage } from '@/lib/errorLogger';
 import { cn } from '@/lib/utils';
-import { WAITLIST_MODE } from '@/config/featureFlags';
+import { WAITLIST_MODE, areSignupsOpen, resolveSignupBypass } from '@/config/featureFlags';
+import BetaAccessForm from '@/components/auth/BetaAccessForm';
 
 /**
  * Only same-origin relative paths may be a post-auth destination. A login
@@ -45,6 +46,12 @@ const Auth = () => {
   if (WAITLIST_MODE && isSignUp) {
     return <Navigate to="/waitlist" replace />;
   }
+
+  // Dated signup gate: new accounts are paused until SIGNUPS_OPEN_AT, unless
+  // this browser holds the founder bypass key.
+  const signupsClosed = !areSignupsOpen() && !resolveSignupBypass(location.search);
+
+
 
   // Where to redirect after login: explicit ?redirect= (public pages like
   // PublicEventPage), then state.from (OnboardingGuard / protected routes),
@@ -234,7 +241,7 @@ const Auth = () => {
             : "text-muted-foreground hover:text-foreground"
         )}
       >
-        Join Now
+        {signupsClosed ? 'Request access' : 'Join Now'}
       </button>
       <button
         type="button"
@@ -254,7 +261,9 @@ const Auth = () => {
   // Auth content switches between sign-in and sign-up
   const authContent = (
     <div className="w-full space-y-4">
-      {isSignUp ? (
+      {isSignUp && signupsClosed ? (
+        <BetaAccessForm />
+      ) : isSignUp ? (
         <form onSubmit={handleSignUp} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="signup-fullname">Full Name</Label>
@@ -437,7 +446,11 @@ const Auth = () => {
               </div>
               <AuthModeToggle />
               <p className="text-sm text-muted-foreground mt-3">
-                {isSignUp ? 'Join the global African diaspora network' : 'Sign in to your account'}
+                {isSignUp
+                  ? signupsClosed
+                    ? 'Beta access requests are open'
+                    : 'Join the global African diaspora network'
+                  : 'Sign in to your account'}
               </p>
             </CardHeader>
             <CardContent>
@@ -509,7 +522,11 @@ const Auth = () => {
             <div className="text-center space-y-3">
               <AuthModeToggle />
               <p className="text-muted-foreground">
-                {isSignUp ? 'Join the global African diaspora network' : 'Sign in to your account'}
+                {isSignUp
+                  ? signupsClosed
+                    ? 'Beta access requests are open'
+                    : 'Join the global African diaspora network'
+                  : 'Sign in to your account'}
               </p>
             </div>
 

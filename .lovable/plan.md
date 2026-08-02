@@ -1,97 +1,46 @@
-# Signed-out Post Page: CTA Consolidation + Five C's Discovery
-
-Mirror the pattern we shipped on signed-out profiles (`/dna/:username`) on the public post page (`/post/:slug`). Today that page has **five** CTAs stacked on one screen (top-nav "Join the Waitlist", floating banner "Join the Waitlist", inline "Join the Waitlist to Engage", bottom card "Join the Waitlist", bottom card "Learn About DNA"). We're cutting that to a single primary CTA on the post itself, keeping the platform header as the persistent join affordance, and adding the same Five C's discovery row + right-sheet used on signed-out profiles.
-
-## Scope
-
-File: `src/pages/PublicPostPage.tsx` only. No schema, no RPC, no auth changes. Signed-in view is untouched.
-
 ## What changes
 
-### 1. Remove redundant CTAs (signed-out only)
+Public signup closes now and reopens by itself at the announced moment. In the meantime the signup route shows the announcement plus a Beta Access request form whose entries land in the existing Admin > Waitlist tracker. Login, password reset, and every authenticated surface stay untouched.
 
-Remove these three elements entirely:
+## 1. The dated gate
 
-- **Floating animated banner** ("Shared from DNA. Connect with the diaspora" + Join the Waitlist button) — lines ~245-274 and the `showBanner` state/effect. This is the direct analog of the "← DNA / Join DNA" banner we killed on profiles.
-- **Bottom "Join the Conversation on DNA" gradient card** with dual CTAs (Join Waitlist + Learn About DNA) — lines ~424-460. Replaced by the Five C's row.
-- **Inline "Join the Waitlist to Engage" button** on the post card — replace with a single quieter engagement affordance (see below).
+New in `src/config/featureFlags.ts`:
 
-Kept CTAs:
-- `UnifiedHeader` "Join the Waitlist" (top-right) — this is the universal, non-intrusive join affordance, matching profile pages.
-- Share / copy-link icon button on the post card — utility, not a join CTA.
+- `SIGNUPS_OPEN_AT` = August 15, 2026, 12:00 noon **UTC** (say the word if you want a different zone, for example New York or London, and I will set that instant instead).
+- `areSignupsOpen()` returns `Date.now() >= SIGNUPS_OPEN_AT`. No deploy needed on the day: the notice disappears and signup opens on the next page load after the moment passes.
+- `WAITLIST_MODE` stays `false` and is left alone. This gate is separate and does not resurrect the waitlist funnel.
 
-### 2. Replace inline engagement CTA
+`src/pages/Auth.tsx`: when the signup tab is requested and signups are closed and the bypass is not held, render the Beta Access screen instead of the signup form. The sign-in tab renders exactly as it does today, and the "Sign up" toggle becomes "Request beta access".
 
-The current button reads "Join the Waitlist to Engage" (full-width, primary green). Replace for signed-out users with a subtler, purpose-specific bar directly under the engagement stats:
+## 2. Your bypass
 
-```
-[ Heart icon ]  Like, comment, and reply on DNA   →  [ Join the Waitlist ]
-```
+`/auth?mode=signup&key=<token>` sets a flag in `localStorage` so you keep signup access across reloads on that browser. A constant in the frontend is obscurity, not security: anyone reading the bundle can find it. It is fine for holding back a launch date, it is not an access control, and I will say so in a comment. If you would rather it be real, the alternative is an admin-only invite row, which is a bigger build.
 
-- Single row, `bg-muted/40`, small text on the left, one outline-primary button on the right.
-- No gradient, no full-width green block.
-- Signed-in users keep the existing "Like & Comment" primary button unchanged.
+## 3. The Beta Access screen
 
-### 3. Add Five C's discovery row + sheet (signed-out only)
+New `src/pages/BetaAccess.tsx`, route `/beta-access`, plus the same component rendered inline on the closed signup tab so nobody has to navigate twice.
 
-Reuse the existing `FiveCsDiscoverySection` component (`src/components/five-cs/FiveCsDiscoverySection.tsx`) that already powers the signed-out profile. Mount it below the author card when `!isLoggedIn`, passing post/author context for analytics:
+- Heading: "Signups open August 15, 2026 at 12pm noon" (sentence case, no em dashes).
+- Body: one line on what beta access means and what happens next.
+- A live countdown is optional; say if you want it and I will add a quiet one.
+- Fields: first name, last name, email, location (optional), and one short "why you want in" box. Client-side validation mirrors the database constraint already on the table (valid email, name under 160 chars, message under 2000).
+- Submit inserts into `beta_waitlist` with `status = 'pending'`. I verified the live policy: anon may insert exactly this shape, so no migration and no schema change is needed.
+- Duplicate email returns a friendly "you are already on the list" instead of an error.
+- Confirmation email fires through the existing `send-universal-email` function, same pattern the waitlist page uses, and a failure there never blocks the signup.
+- Success state replaces the form. No error surface for a visitor.
 
-```tsx
-{!isLoggedIn && (
-  <div className="mt-8">
-    <FiveCsDiscoverySection
-      username={authorUsername}
-      memberFirstName={post.author?.full_name?.split(' ')[0] ?? null}
-    />
-  </div>
-)}
-```
+## 4. Tracking
 
-Same 5 cards, same right-sheet detail, same waitlist CTA inside the sheet — one consistent "learn what DNA is" surface across public profile + public post.
+Nothing new to build. `Admin > Waitlist` (`src/pages/admin/WaitlistManagement.tsx`) already reads `beta_waitlist` with search, status filter, notes, and CSV export, so requests appear there the moment they arrive.
 
-### 4. Analytics
+## 5. Copy sweep
 
-Extend the existing `five_cs_card_open` PostHog event with a `source: 'public_post'` tag (the component already accepts `username`; we'll pass the author's username and add `source` inside `FiveCsDiscoverySection` via a new optional `source` prop, defaulting to `'public_profile'` so profile behavior is unchanged).
+Public "Sign up" CTAs that point at `/auth?mode=signup` continue to work: they land on the announcement, which is the correct destination. I will not mass-rename them, so the labels revert to correct on their own on August 15. Flag it if you would rather they read "Request beta access" until then.
 
-## Final signed-out page structure
+## Technical notes
 
-```text
-[ UnifiedHeader: logo | About Us | Join the Waitlist | Sign In ]
-
-[ Post Card ]
-  author row + share icon
-  post content / image / link preview
-  engagement stats (likes, comments)
-  subtle "Like, comment, and reply on DNA → Join the Waitlist" bar
-  copy-link icon
-
-[ Compact Author Card: avatar + name + View Profile ]
-
-[ Five C's Discovery Row: 5 Adinkra cards ]
-  → click opens right-sheet with detail + Join the Waitlist CTA
-
-[ Footer ]
-```
-
-CTA count drops from 5 to 2 above the fold (header + inline join bar), plus the Five C's cards which are discovery, not join-nags.
-
-## Signed-in behavior
-
-Unchanged: no banner today (already conditional), no bottom gradient card (already conditional), keeps "Like & Comment" primary button, no Five C's row.
-
-## Out of scope
-
-- No changes to the post card's data model, share behavior, SEO/JSON-LD, or the Author card.
-- No changes to `FiveCsDiscoveryRow` copy/icons (still empty heading/subtitle per your last edit).
-- No mobile-specific redesign — the existing responsive rules already cover it.
-- No changes to `/post/:id` route or slug resolution.
-
-## Files touched
-
-- `src/pages/PublicPostPage.tsx` — remove 2 CTA blocks, replace inline engage button, mount `FiveCsDiscoverySection`.
-- `src/components/five-cs/FiveCsDiscoverySection.tsx` — add optional `source` prop for analytics tagging (default `'public_profile'`).
-
-## Verification
-
-- Playwright signed-out visit to `/post/gipc-and-dacf-investment-partnership`: assert no floating banner, no "Join the Conversation" gradient card, no "Join the Waitlist to Engage" button, Five C's row present, right-sheet opens on card click.
-- Signed-in visit: assert page still shows "Like & Comment" and no Five C's row.
+- Files touched: `src/config/featureFlags.ts`, `src/pages/Auth.tsx`, `src/App.tsx` (one route), new `src/pages/BetaAccess.tsx`, new `src/components/auth/BetaAccessForm.tsx`.
+- No database migration, no RLS change, no edge function deploy.
+- Existing `src/components/auth/BetaWaitlist.tsx` carries stale December 2025 beta dates. It is a separate modal; I will leave it alone unless you want it retired in the same pass, in which case tell me and I will name what I remove.
+- Design system: `Section` / `Container` / `Stack`, DNA type tokens only, no arbitrary values, no raw hex.
+- Verification: typecheck, lint, token and scale gates, and I will confirm a real row lands in `beta_waitlist` and read it back rather than trusting a success toast.
