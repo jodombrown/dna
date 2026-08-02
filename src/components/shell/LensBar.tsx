@@ -141,9 +141,13 @@ export function LensBar({ lenses, ariaLabel, c }: LensBarProps) {
             tabIndex={lens.disabled ? -1 : 0}
             onClick={() => selectLens(lens)}
             className={cn(
-              // 36px touch target; icon-only inactive lenses are 32px wide and
-              // never shrink — the scroll track absorbs overflow, nothing clips.
-              'relative z-10 flex min-h-9 shrink-0 items-center justify-center gap-1.5 rounded-md p-2',
+              // 36px touch target. The active chip stays content-sized (flex-none,
+              // p-2 for label breathing room) so tapping never re-flows the bar.
+              // Inactive lenses are flex-1 with a 32px floor: they share whatever
+              // the active chip leaves, evenly, and the scroll track only kicks in
+              // when the set genuinely cannot fit — nothing clips.
+              'relative z-10 flex min-h-9 items-center justify-center gap-1.5 rounded-md',
+              isActive ? 'flex-none p-2' : 'min-w-8 flex-1',
               'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
               lens.disabled
                 ? 'cursor-default border border-dashed border-border'
