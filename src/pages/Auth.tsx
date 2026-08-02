@@ -241,7 +241,7 @@ const Auth = () => {
             : "text-muted-foreground hover:text-foreground"
         )}
       >
-        Join Now
+        {signupsClosed ? 'Request access' : 'Join Now'}
       </button>
       <button
         type="button"
