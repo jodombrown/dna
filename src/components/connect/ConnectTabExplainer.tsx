@@ -151,7 +151,7 @@ export const ConnectTabExplainer: React.FC<ConnectTabExplainerProps> = ({ active
             <div className="flex items-start gap-3">
               <Icon className="h-5 w-5 text-foreground/70 mt-0.5 shrink-0" />
               <div className="flex-1 min-w-0">
-                <h4 className="font-semibold text-sm">{lens.label}</h4>
+                <h4 className="font-semibold text-body">{lens.label}</h4>
                 <p className="text-xs text-muted-foreground mt-1">
                   {copy.description}
                 </p>

@@ -156,7 +156,7 @@ export const ConveneTabExplainer: React.FC<ConveneTabExplainerProps> = ({ active
             <div className="flex items-start gap-2">
               <Icon className="h-4 w-4 text-foreground/70 mt-0.5 shrink-0" />
               <div className="flex-1 min-w-0">
-                <h4 className="font-semibold text-xs">{lens.label}</h4>
+                <h4 className="font-semibold text-meta">{lens.label}</h4>
                 <p className="text-[11px] text-muted-foreground mt-0.5 leading-snug">
                   {copy.description}
                 </p>
