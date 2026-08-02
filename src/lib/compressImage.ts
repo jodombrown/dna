@@ -74,18 +74,29 @@ export async function compressImage(
 export async function tinifyImage(file: File): Promise<File> {
   if (!/^image\/(jpeg|jpg|png|webp)$/i.test(file.type)) return file;
   try {
-    const { data, error } = await supabase.functions.invoke('compress-image', {
-      body: await file.arrayBuffer(),
-      headers: { 'Content-Type': file.type },
+    // Sent with fetch, not functions.invoke: invoke does not forward a raw
+    // binary body alongside a custom image/* Content-Type, so the function
+    // received an empty body and answered 400.
+    const { data: sessionData } = await supabase.auth.getSession();
+    const token = sessionData.session?.access_token ?? config.SUPABASE_ANON_KEY;
+    const res = await fetch(`${config.SUPABASE_URL}/functions/v1/compress-image`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': file.type,
+        apikey: config.SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${token}`,
+      },
+      body: file,
     });
-    if (error || !data) return file;
-    const blob = data instanceof Blob ? data : new Blob([data as ArrayBuffer], { type: file.type });
+    if (!res.ok) return file;
+    const blob = await res.blob();
     if (blob.size === 0 || blob.size >= file.size) return file;
     return new File([blob], file.name, { type: file.type, lastModified: Date.now() });
   } catch {
     return file;
   }
 }
+
 
 /** Convenience: canvas resize, then TinyPNG polish. */
 export async function compressAndTinify(
