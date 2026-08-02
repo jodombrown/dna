@@ -28,10 +28,10 @@ interface ConnectMobileHeaderProps {
  *    absent. The flag itself stays false.
  */
 export const CONNECT_LENSES: Lens[] = [
-  { id: 'discover', label: 'Members', icon: Users },
-  { id: 'network', label: 'Network', icon: Network },
-  { id: 'map', label: 'Map', icon: Map },
-  { id: 'messages', label: 'Messages', icon: MessageCircle, disabled: !MESSAGING_ENABLED },
+  { id: 'discover', label: 'Members', icon: Users, description: 'Find diaspora members by skill, interest, and location' },
+  { id: 'network', label: 'Network', icon: Network, description: 'Manage your connections and pending requests' },
+  { id: 'map', label: 'Map', icon: Map, description: 'Where the diaspora is gathering. Places, never people.' },
+  { id: 'messages', label: 'Messages', icon: MessageCircle, disabled: !MESSAGING_ENABLED, description: 'Start conversations with your connections' },
 ];
 
 export function ConnectMobileHeader({

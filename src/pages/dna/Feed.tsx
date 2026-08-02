@@ -12,7 +12,6 @@ import { UniversalFeedInfinite } from '@/components/feed/UniversalFeedInfinite';
 import { PersonalizedFeed } from '@/components/feed/PersonalizedFeed';
 import { SearchDialog } from '@/components/feed/SearchDialog';
 import { MobileFeedTabs } from '@/components/feed/MobileFeedTabs';
-import { FeedTabExplainer } from '@/components/feed/FeedTabExplainer';
 import { MobileProfileCompletionBanner } from '@/components/feed/MobileProfileCompletionBanner';
 import { FirstTimeWalkthrough } from '@/components/onboarding/FirstTimeWalkthrough';
 import { FeedHeroGreeting } from '@/components/feed/FeedHeroGreeting';
@@ -209,9 +208,6 @@ const DnaFeed = () => {
           >
             {/* Profile completion banner */}
             <MobileProfileCompletionBanner threshold={100} />
-            {/* Tab Explainer - shows once per day/login per tab */}
-            <FeedTabExplainer activeTab={activeTab} />
-
             {activeTab === 'for_you' ? (
               <PersonalizedFeed />
             ) : (
@@ -412,11 +408,6 @@ const DnaFeed = () => {
                  </TabsList>
               </Tabs>
             </div>
-          </div>
-
-          {/* Tab Explainer */}
-          <div className="mt-2">
-            <FeedTabExplainer activeTab={activeTab} />
           </div>
 
           {/* Feed Content */}

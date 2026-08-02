@@ -87,8 +87,8 @@ function toFeatureCollection(rows: DensityRow[]) {
 interface DiasporaDensityMapProps {
   /**
    * When rendered inside the Connect shell (as the Map tab / desktop column),
-   * suppress this component's own page-level heading and explainer — the shell
-   * already provides that chrome (tab header + ConnectTabExplainer). The
+   * suppress this component's own page-level heading and explainer, the shell
+   * already provides that chrome (the lens bar and its descriptor line). The
    * standalone /dna/connect/map route leaves this false so it keeps its full
    * page heading per BD110.
    */
