@@ -446,7 +446,11 @@ const Auth = () => {
               </div>
               <AuthModeToggle />
               <p className="text-sm text-muted-foreground mt-3">
-                {isSignUp ? 'Join the global African diaspora network' : 'Sign in to your account'}
+                {isSignUp
+                  ? signupsClosed
+                    ? 'Beta access requests are open'
+                    : 'Join the global African diaspora network'
+                  : 'Sign in to your account'}
               </p>
             </CardHeader>
             <CardContent>
@@ -518,7 +522,11 @@ const Auth = () => {
             <div className="text-center space-y-3">
               <AuthModeToggle />
               <p className="text-muted-foreground">
-                {isSignUp ? 'Join the global African diaspora network' : 'Sign in to your account'}
+                {isSignUp
+                  ? signupsClosed
+                    ? 'Beta access requests are open'
+                    : 'Join the global African diaspora network'
+                  : 'Sign in to your account'}
               </p>
             </div>
 
