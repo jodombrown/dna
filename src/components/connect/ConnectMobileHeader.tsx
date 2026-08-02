@@ -27,7 +27,7 @@ interface ConnectMobileHeaderProps {
  *    (aria-disabled, non-focusable, dashed border) rather than conditionally
  *    absent. The flag itself stays false.
  */
-const CONNECT_LENSES: Lens[] = [
+export const CONNECT_LENSES: Lens[] = [
   { id: 'discover', label: 'Members', icon: Users },
   { id: 'network', label: 'Network', icon: Network },
   { id: 'map', label: 'Map', icon: Map },

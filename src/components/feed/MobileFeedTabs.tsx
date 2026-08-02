@@ -17,7 +17,7 @@ import { LensBar, type Lens } from '@/components/shell/LensBar';
  * already connected to", not "add a person". The same meaning shares a glyph
  * across surfaces (Convene Network, Convey My Circle).
  */
-const FEED_LENSES: Lens[] = [
+export const FEED_LENSES: Lens[] = [
   { id: 'all', label: 'All', icon: Newspaper, description: 'All posts from the diaspora community' },
   { id: 'for_you', label: 'For You', icon: Compass, description: 'Personalized for you' },
   { id: 'network', label: 'My Network', icon: UserCheck, description: 'Posts from your connections' },

@@ -10,8 +10,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CalendarDays, MapPin, Clock, Globe, Ticket, Users } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { CONVENE_LENSES } from '@/components/convene/ConveneShell';
 
 export type ConveneTab = 'all' | 'near_me' | 'this_week' | 'online' | 'free' | 'network';
 
@@ -19,41 +19,45 @@ interface ConveneTabExplainerProps {
   activeTab: string;
 }
 
-const TAB_EXPLAINERS: Record<ConveneTab, { title: string; description: string; icon: React.ElementType; bgClass: string }> = {
+/**
+ * The lens definition (CONVENE_LENSES) is the single source of truth for each
+ * tab's id, label and icon. The explainer reads title (= lens label) and glyph
+ * (= lens icon) from it, so the Virtual lens's Video glyph can never diverge
+ * from the explainer. See BD332c.
+ */
+const LENS = Object.fromEntries(CONVENE_LENSES.map((l) => [l.id, l])) as Record<
+  ConveneTab,
+  (typeof CONVENE_LENSES)[number]
+>;
+
+/**
+ * What is genuinely the explainer's own: the longer body copy and the visual
+ * treatment. Keyed by the lens id — the dismissal storage key derives from the
+ * same id below.
+ */
+const EXPLAINER: Record<ConveneTab, { description: string; bgClass: string }> = {
   all: {
-    title: 'All Events',
     description: 'Browse every upcoming event across the diaspora community',
-    icon: CalendarDays,
     bgClass: 'bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20',
   },
   near_me: {
-    title: 'Near Me',
     description: 'Events happening close to your current location',
-    icon: MapPin,
     bgClass: 'bg-gradient-to-r from-dna-emerald/10 to-dna-emerald/5 border-dna-emerald/20',
   },
   this_week: {
-    title: 'This Week',
     description: 'Events taking place within the next seven days',
-    icon: Clock,
     bgClass: 'bg-gradient-to-r from-dna-copper/10 to-dna-gold/10 border-dna-copper/20',
   },
   online: {
-    title: 'Virtual',
     description: 'Virtual events you can join from anywhere in the world',
-    icon: Globe,
     bgClass: 'bg-gradient-to-r from-dna-terracotta/10 to-dna-terracotta/5 border-dna-terracotta/20',
   },
   free: {
-    title: 'Free Events',
     description: 'No-cost events open to all community members',
-    icon: Ticket,
     bgClass: 'bg-gradient-to-r from-dna-ochre/10 to-dna-ochre/5 border-dna-ochre/20',
   },
   network: {
-    title: 'My Network',
     description: 'Events hosted by or attended by people in your network',
-    icon: Users,
     bgClass: 'bg-gradient-to-r from-dna-emerald/10 to-dna-emerald/5 border-dna-emerald/20',
   },
 };
@@ -124,11 +128,12 @@ export const ConveneTabExplainer: React.FC<ConveneTabExplainerProps> = ({ active
     }
   }, [typedTab, user, sessionTimestamp]);
 
-  const explainer = visibleTab ? TAB_EXPLAINERS[visibleTab] : null;
-  
-  if (!explainer || !visibleTab) return null;
+  const lens = visibleTab ? LENS[visibleTab] : null;
+  const copy = visibleTab ? EXPLAINER[visibleTab] : null;
 
-  const Icon = explainer.icon;
+  if (!lens || !copy || !visibleTab) return null;
+
+  const Icon = lens.icon;
 
   return (
     <AnimatePresence mode="wait">
@@ -147,13 +152,13 @@ export const ConveneTabExplainer: React.FC<ConveneTabExplainerProps> = ({ active
           }
           className="overflow-hidden"
         >
-          <div className={`p-3 rounded-lg border ${explainer.bgClass}`}>
+          <div className={`p-3 rounded-lg border ${copy.bgClass}`}>
             <div className="flex items-start gap-2">
               <Icon className="h-4 w-4 text-foreground/70 mt-0.5 shrink-0" />
               <div className="flex-1 min-w-0">
-                <h4 className="font-semibold text-xs">{explainer.title}</h4>
+                <h4 className="font-semibold text-xs">{lens.label}</h4>
                 <p className="text-[11px] text-muted-foreground mt-0.5 leading-snug">
-                  {explainer.description}
+                  {copy.description}
                 </p>
               </div>
             </div>

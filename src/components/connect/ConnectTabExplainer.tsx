@@ -10,8 +10,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, Network, Globe, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { CONNECT_LENSES } from '@/components/connect/ConnectMobileHeader';
 
 export type ConnectTab = 'discover' | 'network' | 'map' | 'messages';
 
@@ -19,29 +19,37 @@ interface ConnectTabExplainerProps {
   activeTab: ConnectTab;
 }
 
-const TAB_EXPLAINERS: Record<ConnectTab, { title: string; description: string; icon: React.ElementType; bgClass: string }> = {
+/**
+ * The lens definition (CONNECT_LENSES) is the single source of truth for each
+ * tab's id, label and icon. The explainer reads title (= lens label) and glyph
+ * (= lens icon) from it, so an icon swap on the lens bar can never leave the
+ * explainer showing the old glyph. See BD332c.
+ */
+const LENS = Object.fromEntries(CONNECT_LENSES.map((l) => [l.id, l])) as Record<
+  ConnectTab,
+  (typeof CONNECT_LENSES)[number]
+>;
+
+/**
+ * What is genuinely the explainer's own: the longer body copy and the visual
+ * treatment. Keyed by the lens id — the dismissal storage key derives from the
+ * same id below.
+ */
+const EXPLAINER: Record<ConnectTab, { description: string; bgClass: string }> = {
   discover: {
-    title: 'Discover Members',
     description: 'Find and connect with diaspora professionals based on skills, interests, and location',
-    icon: Users,
     bgClass: 'bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20',
   },
   network: {
-    title: 'My Network',
     description: 'View and manage your connections, pending requests, and grow your diaspora network',
-    icon: Network,
     bgClass: 'bg-gradient-to-r from-dna-emerald/10 to-dna-emerald/5 border-dna-emerald/20',
   },
   map: {
-    title: 'Diaspora Map',
     description: 'See where the diaspora is gathering. Counts are aggregated and consent-gated — this map shows places, never people.',
-    icon: Globe,
     bgClass: 'bg-gradient-to-r from-dna-gold/10 to-dna-gold/5 border-dna-gold/20',
   },
   messages: {
-    title: 'Messages',
     description: 'Start conversations with your connections and engage in meaningful dialogue',
-    icon: MessageSquare,
     bgClass: 'bg-gradient-to-r from-dna-copper/10 to-dna-gold/10 border-dna-copper/20',
   },
 };
@@ -115,11 +123,12 @@ export const ConnectTabExplainer: React.FC<ConnectTabExplainerProps> = ({ active
     }
   }, [activeTab, user, sessionTimestamp]);
 
-  const explainer = visibleTab ? TAB_EXPLAINERS[visibleTab] : null;
-  
-  if (!explainer || !visibleTab) return null;
+  const lens = visibleTab ? LENS[visibleTab] : null;
+  const copy = visibleTab ? EXPLAINER[visibleTab] : null;
 
-  const Icon = explainer.icon;
+  if (!lens || !copy || !visibleTab) return null;
+
+  const Icon = lens.icon;
 
   return (
     <AnimatePresence mode="wait">
@@ -138,13 +147,13 @@ export const ConnectTabExplainer: React.FC<ConnectTabExplainerProps> = ({ active
           }
           className="overflow-hidden"
         >
-          <div className={`p-4 rounded-lg border ${explainer.bgClass}`}>
+          <div className={`p-4 rounded-lg border ${copy.bgClass}`}>
             <div className="flex items-start gap-3">
               <Icon className="h-5 w-5 text-foreground/70 mt-0.5 shrink-0" />
               <div className="flex-1 min-w-0">
-                <h4 className="font-semibold text-sm">{explainer.title}</h4>
+                <h4 className="font-semibold text-sm">{lens.label}</h4>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {explainer.description}
+                  {copy.description}
                 </p>
               </div>
             </div>
