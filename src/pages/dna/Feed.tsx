@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { PenSquare, Users, Newspaper, TrendingUp, Search, Clock, Camera, Calendar, BookOpen, Compass, Bookmark } from 'lucide-react';
+import { PenSquare, TrendingUp, Search, Clock, Camera, Calendar, BookOpen } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -11,7 +10,8 @@ import { ProfileCompletionNudge } from '@/components/profile/ProfileCompletionNu
 import { UniversalFeedInfinite } from '@/components/feed/UniversalFeedInfinite';
 import { PersonalizedFeed } from '@/components/feed/PersonalizedFeed';
 import { SearchDialog } from '@/components/feed/SearchDialog';
-import { MobileFeedTabs } from '@/components/feed/MobileFeedTabs';
+import { MobileFeedTabs, FEED_LENSES } from '@/components/feed/MobileFeedTabs';
+import { LensBar } from '@/components/shell/LensBar';
 import { MobileProfileCompletionBanner } from '@/components/feed/MobileProfileCompletionBanner';
 import { FirstTimeWalkthrough } from '@/components/onboarding/FirstTimeWalkthrough';
 import { FeedHeroGreeting } from '@/components/feed/FeedHeroGreeting';
@@ -81,11 +81,9 @@ const DnaFeed = () => {
   }, [searchParams, setSearchParams]);
   const [rankingMode, setRankingMode] = useState<RankingMode>('latest');
   const [showSearchDialog, setShowSearchDialog] = useState(false);
-  const [tabsVisible, setTabsVisible] = useState(true);
   const feedContainerRef = useRef<HTMLDivElement>(null);
   const mobileHeaderRef = useRef<HTMLDivElement>(null);
   const mainScrollRef = useRef<HTMLElement>(null);
-  const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mobileHeaderPadding = useMobileHeaderHeight(mobileHeaderRef);
   const composer = useUniversalComposer();
   const { isMobile } = useMobile();
@@ -132,25 +130,6 @@ const DnaFeed = () => {
       sessionStorage.setItem(FEED_SCROLL_KEY, String(window.scrollY));
     };
   }, []);
-
-  // Auto-hide tabs while scrolling, reappear 3s after scroll stops
-  useEffect(() => {
-    if (isMobile) return;
-    const el = mainScrollRef.current;
-    if (!el) return;
-
-    const onScroll = () => {
-      setTabsVisible(false);
-      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
-      scrollTimerRef.current = setTimeout(() => setTabsVisible(true), 3000);
-    };
-
-    el.addEventListener('scroll', onScroll, { passive: true });
-    return () => {
-      el.removeEventListener('scroll', onScroll);
-      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
-    };
-  }, [isMobile]);
 
   if (profileLoading) {
     return (
@@ -347,67 +326,12 @@ const DnaFeed = () => {
               </Tabs>
             </div>
 
-            {/* Filter Tabs - auto-hide on scroll */}
-            <div
-              className="transition-all duration-500 ease-in-out overflow-hidden"
-              style={{
-                maxHeight: tabsVisible ? '48px' : '0px',
-                opacity: tabsVisible ? 1 : 0,
-              }}
-            >
-              <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
-                 <TabsList
-                   className="w-full grid grid-cols-5 h-10 bg-muted/20 rounded-full p-1"
-                   aria-label="Feed filter tabs"
-                 >
-                   <Tooltip>
-                     <TooltipTrigger asChild>
-                       <TabsTrigger value="all" aria-label="All posts from across DNA" className="text-xs rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
-                         <Newspaper className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
-                         All
-                       </TabsTrigger>
-                     </TooltipTrigger>
-                     <TooltipContent>All posts from across DNA</TooltipContent>
-                   </Tooltip>
-                   <Tooltip>
-                     <TooltipTrigger asChild>
-                       <TabsTrigger value="for_you" aria-label="Personalized for you" className="text-xs rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
-                         <Compass className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
-                         For You
-                       </TabsTrigger>
-                     </TooltipTrigger>
-                     <TooltipContent>Personalized based on your interests</TooltipContent>
-                   </Tooltip>
-                   <Tooltip>
-                     <TooltipTrigger asChild>
-                       <TabsTrigger value="network" aria-label="Posts from your network" className="text-xs rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
-                         <Users className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
-                         Network
-                       </TabsTrigger>
-                     </TooltipTrigger>
-                     <TooltipContent>Posts from your connections</TooltipContent>
-                   </Tooltip>
-                   <Tooltip>
-                     <TooltipTrigger asChild>
-                       <TabsTrigger value="my_posts" aria-label="Your own posts" className="text-xs rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
-                         <PenSquare className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
-                         Mine
-                       </TabsTrigger>
-                     </TooltipTrigger>
-                     <TooltipContent>Your posts and stories</TooltipContent>
-                   </Tooltip>
-                   <Tooltip>
-                     <TooltipTrigger asChild>
-                       <TabsTrigger value="bookmarks" aria-label="Saved posts" className="text-xs rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
-                         <Bookmark className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
-                         Saved
-                       </TabsTrigger>
-                     </TooltipTrigger>
-                     <TooltipContent>Bookmarked posts and stories</TooltipContent>
-                   </Tooltip>
-                 </TabsList>
-              </Tabs>
-            </div>
+            {/* Filter lenses — same primitive, lens definition, and route-driven
+                behaviour as mobile. LensBar writes ?lens= itself and collapses
+                its descriptor on scroll via useScrollDirection (which resolves
+                the FeedColumn scroll container), so this branch no longer manages
+                either. */}
+            <LensBar lenses={FEED_LENSES} ariaLabel="Feed lenses" c="connect" />
           </div>
 
           {/* Feed Content */}
