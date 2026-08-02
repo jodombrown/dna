@@ -1,4 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
+import { config } from '@/lib/config';
+
 
 /**
  * Client-side image compression using canvas.
