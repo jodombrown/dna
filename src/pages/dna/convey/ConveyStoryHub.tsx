@@ -1,12 +1,13 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import LayoutController from '@/components/LayoutController';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Heart, Lightbulb, PenSquare, Camera, Megaphone, Target, Flame, Star, Filter, Compass, Users, Mic, Bookmark } from 'lucide-react';
+import { BookOpen, Heart, Lightbulb, PenSquare, Camera, Megaphone, Target, Flame, Star, Filter, Compass, UserCheck, Mic, Bookmark } from 'lucide-react';
 import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { Mpatapo } from '@/components/icons/adinkra';
+import { LensBar, type Lens } from '@/components/shell/LensBar';
 
 import { useMobile } from '@/hooks/useMobile';
 import { STORY_TYPE_CONFIG, type StoryType } from '@/types/storyTypes';
@@ -19,22 +20,28 @@ import { ConveyEditorialCard } from '@/components/convey/ConveyEditorialCards';
 import { ConveyCategorySection, ConveyMiniCard } from '@/components/convey/ConveyCategorySection';
 import { DiaContextual } from '@/components/dia';
 
-// ─── CONVEY Editorial Tabs ───────────────────────────────────────────
+// ─── CONVEY Lenses ───────────────────────────────────────────────────
 type ConveyTab = 'pulse' | 'curated' | 'my_circle' | 'my_voice' | 'saved';
 
-interface TabConfig {
-  id: ConveyTab;
-  label: string;
-  descriptor: string;
-  icon: React.ComponentType<{ className?: string }>;
-}
-
-const CONVEY_TABS: TabConfig[] = [
-  { id: 'pulse', label: 'Pulse', descriptor: 'Everything happening across the diaspora right now', icon: Flame },
-  { id: 'curated', label: 'Curated', descriptor: "DIA's picks based on your interests and connections", icon: Compass },
-  { id: 'my_circle', label: 'My Circle', descriptor: 'Dispatches from the people in your world', icon: Users },
-  { id: 'my_voice', label: 'My Voice', descriptor: "Your contribution to the diaspora's story", icon: Mic },
-  { id: 'saved', label: 'Saved', descriptor: "Posts you've bookmarked to read later or reference again", icon: Bookmark },
+/**
+ * Convey lenses (BD332). Route-driven via ?lens=<id>: LensBar reads and writes
+ * the param, so this surface no longer holds tab state. Ids are unchanged:
+ * pulse, curated, my_circle, my_voice, saved.
+ *
+ * Convey is the only surface whose lenses carry a `description`. The primitive
+ * folds it into each lens's accessible name, and the hub renders it as the
+ * descriptor line below the bar — a persistent explainer no other surface has.
+ *
+ * My Circle uses UserCheck, not Users: the lens means "from people I am
+ * connected to", the same meaning as Convene Network and Feed My Network, and
+ * the same meaning shares a glyph across surfaces (docs/ICON_USAGE_GUIDE.md).
+ */
+export const CONVEY_LENSES: Lens[] = [
+  { id: 'pulse', label: 'Pulse', icon: Flame, description: 'Everything happening across the diaspora right now' },
+  { id: 'curated', label: 'Curated', icon: Compass, description: "DIA's picks based on your interests and connections" },
+  { id: 'my_circle', label: 'My Circle', icon: UserCheck, description: 'Dispatches from the people in your world' },
+  { id: 'my_voice', label: 'My Voice', icon: Mic, description: "Your contribution to the diaspora's story" },
+  { id: 'saved', label: 'Saved', icon: Bookmark, description: "Posts you've bookmarked to read later or reference again" },
 ];
 
 // Map editorial tabs to feed query params
@@ -57,133 +64,29 @@ const categoryPills = [
   { id: 'photo_essay' as StoryType, label: 'Photos', icon: Camera },
 ];
 
-// ─── Editorial Tab Bar Component ─────────────────────────────────────
-// Mobile: segmented pill row (icon + active-label) matching the shared
-// DNA hub menu-nav pattern (Feed/Connect/Convene/Collaborate/Contribute).
-// Desktop: underline tab bar.
-// Descriptor line under both acts as the tab explainer.
-function ConveyEditorialTabs({
-  activeTab,
-  onTabChange,
-  isMobile,
-}: {
-  activeTab: ConveyTab;
-  onTabChange: (tab: ConveyTab) => void;
-  isMobile: boolean;
-}) {
-  const tabBarRef = useRef<HTMLDivElement>(null);
-  const activeTabRef = useRef<HTMLButtonElement>(null);
-  const [descriptorKey, setDescriptorKey] = useState(0);
-
-  // Scroll active tab into view on mobile (desktop overflow rare)
-  useEffect(() => {
-    if (!isMobile && activeTabRef.current && tabBarRef.current) {
-      const container = tabBarRef.current;
-      const tab = activeTabRef.current;
-      const scrollLeft = tab.offsetLeft - container.offsetWidth / 2 + tab.offsetWidth / 2;
-      container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
-    }
-  }, [activeTab, isMobile]);
-
-  const handleTabChange = (tab: ConveyTab) => {
-    onTabChange(tab);
-    setDescriptorKey((k) => k + 1);
-  };
-
-  const activeConfig = CONVEY_TABS.find((t) => t.id === activeTab)!;
-
-  if (isMobile) {
-    return (
-      <div className="border-b border-border -mx-4">
-        <div className="px-3 py-1.5 bg-background">
-          <div
-            className="flex items-center justify-between gap-1 p-1 bg-muted/50 rounded-lg"
-            role="tablist"
-            aria-label="Convey tabs"
-          >
-            {CONVEY_TABS.map(({ id, label, icon: Icon }) => {
-              const isActive = activeTab === id;
-              return (
-                <button
-                  key={id}
-                  onClick={() => handleTabChange(id)}
-                  role="tab"
-                  aria-selected={isActive}
-                  aria-label={`${label} tab`}
-                  title={label}
-                  className={cn(
-                    'flex items-center justify-center gap-1.5 py-2 rounded-md transition-all duration-200',
-                    'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                    isActive
-                      ? 'bg-background shadow-sm flex-1 px-2'
-                      : 'px-2 text-muted-foreground hover:text-foreground hover:bg-background/50',
-                  )}
-                >
-                  <Icon className={cn('h-4 w-4 shrink-0', isActive && 'text-primary')} aria-hidden="true" />
-                  {isActive && (
-                    <span className="text-xs font-medium truncate">{label}</span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-        <p
-          key={descriptorKey}
-          className="text-xs text-muted-foreground italic px-4 pb-2 animate-in fade-in duration-300"
-        >
-          {activeConfig.descriptor}
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="border-b border-border">
-      {/* Desktop underline tab bar */}
-      <div ref={tabBarRef} className="flex gap-6 overflow-x-auto scrollbar-hide px-0">
-        {CONVEY_TABS.map((tab) => {
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              ref={isActive ? activeTabRef : undefined}
-              onClick={() => handleTabChange(tab.id)}
-              className={cn(
-                'relative whitespace-nowrap pb-3 pt-1 text-sm font-medium transition-colors shrink-0',
-                'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                isActive ? 'text-dna-forest font-semibold' : 'text-muted-foreground hover:text-foreground',
-              )}
-            >
-              {tab.label}
-              {isActive && (
-                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-dna-forest rounded-full" />
-              )}
-            </button>
-          );
-        })}
-      </div>
-      <p
-        key={descriptorKey}
-        className="text-xs text-muted-foreground italic px-0 pt-2 pb-3 animate-in fade-in duration-300"
-      >
-        {activeConfig.descriptor}
-      </p>
-    </div>
-  );
-}
-
 // ─── Main Hub ────────────────────────────────────────────────────────
 export default function ConveyStoryHub() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<ConveyTab>('pulse');
+  const [searchParams] = useSearchParams();
+  // Route-driven lens (BD332): the active lens lives in ?lens=<id>, read here
+  // and written by LensBar off the same param — this surface holds no tab state.
+  // Unknown or absent ?lens= falls back to the first lens, matching LensBar.
+  const activeTab: ConveyTab =
+    (CONVEY_LENSES.find((l) => l.id === searchParams.get('lens'))?.id as ConveyTab) ?? 'pulse';
+  const activeLens = CONVEY_LENSES.find((l) => l.id === activeTab);
   const [selectedCategory, setSelectedCategory] = useState<StoryType | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const composer = useUniversalComposer();
   const { isMobile } = useMobile();
   const mobileHeaderRef = useRef<HTMLDivElement>(null);
   const mobileHeaderPadding = useMobileHeaderHeight(mobileHeaderRef);
+
+  // Category filtering is per-lens; reset it to All whenever the lens changes
+  // (the old tab bar did this in its onTabChange, now driven by the URL).
+  useEffect(() => {
+    setSelectedCategory('all');
+  }, [activeTab]);
 
   // Derive feed params from editorial tab
   const feedParams = tabToFeedParams(activeTab, user?.id);
@@ -366,15 +269,15 @@ export default function ConveyStoryHub() {
           </Button>
         </div>
 
-        {/* Editorial Tab Bar */}
-        <ConveyEditorialTabs
-          activeTab={activeTab}
-          onTabChange={(tab) => {
-            setActiveTab(tab);
-            setSelectedCategory('all');
-          }}
-          isMobile={!!isMobile}
-        />
+        {/* Editorial Lens Bar (BD332): route-driven via ?lens=<id>. The
+            descriptor line below is unique to Convey — it renders the active
+            lens's own copy, the persistent explainer no other surface carries. */}
+        <div className="border-b border-border">
+          <LensBar lenses={CONVEY_LENSES} ariaLabel="Convey lenses" c="convey" />
+          <p className="text-meta text-muted-foreground italic pt-2 pb-3">
+            {activeLens?.description}
+          </p>
+        </div>
 
         {/* Category Pills (only on Pulse tab) */}
         {activeTab === 'pulse' && (
