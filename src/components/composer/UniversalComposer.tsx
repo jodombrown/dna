@@ -418,8 +418,18 @@ export const UniversalComposer = ({
    */
   return (
     <>
-
-        <div className="min-h-0 w-full flex-1 overflow-y-auto overflow-x-hidden overscroll-contain px-4 py-4 sm:px-6">
+        {/* CONTENT ONLY. The shell owns the scroller (AppDrawer line 202).
+            This div previously declared overflow-y-auto + overscroll-contain,
+            which made it a scroll container that could never scroll: its parent
+            is the shell's block-level scroll div, so flex-1 was inert and its
+            height was auto, leaving scrollHeight equal to clientHeight.
+            overscroll-contain still applied, so a gesture here was trapped in a
+            box with nowhere to go and never chained to the real scroller.
+            Do NOT re-add overflow-x-hidden on its own: when one axis is
+            non-visible the other is treated as auto, which rebuilds the same
+            dead scroller from one class. Clip runaway width on the child with
+            break-words instead. */}
+        <div className="w-full px-4 py-4 sm:px-6">
           <div className="flex w-full items-start gap-5">
             {/* ---- Writing column ---- */}
             <div className="min-w-0 flex-1 space-y-3">
@@ -498,7 +508,7 @@ export const UniversalComposer = ({
         {/* ---- Tools · Draft · POST ---- */}
         {/* Event mode: EventForm carries its own publish controls above. */}
         <div
-          className="flex-shrink-0 border-t bg-background px-4 pt-3 sm:px-6"
+          className="sticky bottom-0 z-10 border-t bg-background px-4 pt-3 sm:px-6"
           style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 12px), 12px)' }}
         >
           <div className="flex items-center gap-2">
