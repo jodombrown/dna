@@ -142,6 +142,13 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
+				c5: {
+					connect:     { DEFAULT: 'hsl(var(--c5-connect-bevel))', text: 'hsl(var(--c5-connect-text))' },
+					convene:     { DEFAULT: 'hsl(var(--c5-convene-bevel))', text: 'hsl(var(--c5-convene-text))' },
+					collaborate: { DEFAULT: 'hsl(var(--c5-collaborate-bevel))', text: 'hsl(var(--c5-collaborate-text))' },
+					contribute:  { DEFAULT: 'hsl(var(--c5-contribute-bevel))', text: 'hsl(var(--c5-contribute-text))' },
+					convey:      { DEFAULT: 'hsl(var(--c5-convey-bevel))', text: 'hsl(var(--c5-convey-text))' },
+				},
 				// DNA Brand Identity Colors (Design System PRD)
 				dna: {
 					// Core Brand — Emerald

@@ -372,6 +372,96 @@ html {
     --sidebar-accent-foreground: 20 8% 15%;
     --sidebar-border: 28 10% 89%;
     --sidebar-ring: 153 31% 42%;
+
+    /* ── THE FIVE C'S IDENTITY PALETTE (D092) ──
+       Logo-derived, locked 2026-08-01. Additive: --module-*, --c-*, --bevel-*
+       and C_MODULE_COLORS remain live and retire in their own cycle.
+       Named --c5-* and not --c-*, because --c-* is consumed by tailwind.config.ts. */
+
+    /* Connect — locked at 800 */
+    --c5-connect-50: 160 20% 97%;
+    --c5-connect-100: 154 23% 94%;
+    --c5-connect-200: 155 25% 87%;
+    --c5-connect-300: 154 29% 78%;
+    --c5-connect-400: 153 31% 66%;
+    --c5-connect-500: 153 34% 54%;
+    --c5-connect-600: 154 37% 45%;
+    --c5-connect-700: 154 39% 36%;
+    --c5-connect-800: 153 40% 30%;   /* LOCKED #2D6A4F */
+    --c5-connect-900: 154 43% 20%;
+    --c5-connect-950: 154 45% 13%;
+
+    /* Convene — locked at 600 */
+    --c5-convene-50: 24 33% 97%;
+    --c5-convene-100: 33 35% 94%;
+    --c5-convene-200: 29 37% 87%;
+    --c5-convene-300: 29 41% 78%;
+    --c5-convene-400: 29 47% 66%;
+    --c5-convene-500: 29 53% 54%;
+    --c5-convene-600: 29 57% 46%;    /* LOCKED #B87333 */
+    --c5-convene-700: 29 58% 36%;
+    --c5-convene-800: 29 59% 28%;
+    --c5-convene-900: 29 61% 20%;
+    --c5-convene-950: 28 61% 13%;
+
+    /* Collaborate — locked at 700 */
+    --c5-collaborate-50: 192 33% 97%;
+    --c5-collaborate-100: 192 33% 94%;
+    --c5-collaborate-200: 185 34% 87%;
+    --c5-collaborate-300: 186 38% 78%;
+    --c5-collaborate-400: 186 43% 66%;
+    --c5-collaborate-500: 186 47% 54%;
+    --c5-collaborate-600: 187 51% 45%;
+    --c5-collaborate-700: 187 53% 40%;  /* LOCKED #30909C */
+    --c5-collaborate-800: 187 55% 28%;
+    --c5-collaborate-900: 186 57% 20%;
+    --c5-collaborate-950: 186 58% 13%;
+
+    /* Contribute — locked at 500 */
+    --c5-contribute-50: 50 37% 97%;
+    --c5-contribute-100: 45 40% 94%;
+    --c5-contribute-200: 46 43% 87%;
+    --c5-contribute-300: 46 49% 78%;
+    --c5-contribute-400: 46 56% 66%;
+    --c5-contribute-500: 46 65% 52%;    /* LOCKED #D4AF37 */
+    --c5-contribute-600: 46 66% 45%;
+    --c5-contribute-700: 45 67% 36%;
+    --c5-contribute-800: 46 69% 28%;
+    --c5-contribute-900: 46 71% 20%;
+    --c5-contribute-950: 46 70% 13%;
+
+    /* Convey — locked at 700 */
+    --c5-convey-50: 340 20% 97%;
+    --c5-convey-100: 343 23% 94%;
+    --c5-convey-200: 339 25% 87%;
+    --c5-convey-300: 339 29% 78%;
+    --c5-convey-400: 340 31% 66%;
+    --c5-convey-500: 340 34% 54%;
+    --c5-convey-600: 340 37% 45%;
+    --c5-convey-700: 340 40% 34%;       /* LOCKED #79344B */
+    --c5-convey-800: 340 41% 28%;
+    --c5-convey-900: 340 43% 20%;
+    --c5-convey-950: 341 43% 13%;
+
+    /* Semantic slots, light. Bevel is the locked rung; text steps where the
+       locked rung fails 4.5 on the page ground. */
+    --c5-connect-bevel: var(--c5-connect-800);
+    --c5-connect-text: var(--c5-connect-800);
+    --c5-convene-bevel: var(--c5-convene-600);
+    --c5-convene-text: var(--c5-convene-700);
+    --c5-collaborate-bevel: var(--c5-collaborate-700);
+    --c5-collaborate-text: var(--c5-collaborate-800);
+    --c5-contribute-bevel: var(--c5-contribute-500);
+    --c5-contribute-text: var(--c5-contribute-800);
+    --c5-convey-bevel: var(--c5-convey-700);
+    --c5-convey-text: var(--c5-convey-700);
+
+    /* RULED EXCEPTION, do not "fix". Contribute's light bevel measures 1.98
+       against --card, under the 3:1 non-text floor. Every darker rung clears
+       contrast and breaks the >=20 separation gate against Convene: rung 700
+       drops that pair to 14.2, rung 800 to 18.7. Gold's bevel is
+       over-constrained; no value on its ramp satisfies both floors. It ships
+       at 1.98 and the C-name carries. See D092. */
   }
 
   /* Card padding steps down on narrow viewports (BD176). Base 16px lives in
@@ -510,6 +600,23 @@ html {
     --c-contribute: 0 30% 48%;
     --c-convey: 30 12% 76%;
     --c-dia: 155 35% 48%;
+
+    /* D092 dark set. Three C's hold their locked hex; Connect and Convey cannot. */
+    --c5-connect-bevel: 153 34% 54%;        /* #62B28E, rung 500 */
+    --c5-connect-text: 153 34% 54%;
+    --c5-convene-bevel: 29 57% 46%;         /* holds locked */
+    --c5-convene-text: 29 53% 53%;          /* #C78648, 4.51 on --card */
+    --c5-collaborate-bevel: 187 53% 40%;    /* holds locked */
+    --c5-collaborate-text: 187 51% 45%;     /* #39A2AF, 4.53 on --card */
+    --c5-contribute-bevel: 46 65% 52%;      /* holds locked */
+    --c5-contribute-text: 46 65% 52%;
+    --c5-convey-bevel: 340 32% 63%;         /* #BF8397 */
+    --c5-convey-text: 340 32% 63%;          /* 4.50 on --card */
+
+    /* LOAD-BEARING AGAINST --card. Three dark text values sit ON the 4.5 floor:
+       Convene 4.51, Collaborate 4.53, Convey 4.50, all measured against
+       --card 20 14% 18%. Darkening dark --card breaks all three at once and
+       the failure is silent. Do not change dark --card without re-measuring. */
   }
 }
 
