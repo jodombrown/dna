@@ -329,7 +329,7 @@ const DnaFeed = () => {
             {/* Filter lenses — same primitive, lens definition, and route-driven
                 behaviour as mobile. LensBar writes ?lens= itself and collapses
                 its descriptor on scroll via useScrollDirection (which resolves
-                the FeedColumn scroll container), so this branch no longer manages
+                the FeedColumn scroll region), so this branch no longer manages
                 either. */}
             <LensBar lenses={FEED_LENSES} ariaLabel="Feed lenses" c="connect" />
           </div>
