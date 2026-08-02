@@ -107,7 +107,10 @@ export const ACCOUNT_SURFACE: DrawerSurface = {
       behaviour: {
         kind: 'navigate',
         route: '/dna/feed?tab=bookmarks',
-        paramContract: { param: 'tab', value: 'bookmarks', destinationFile: 'src/pages/dna/Feed.tsx' },
+        // Feed derives its valid lens set from FEED_LENSES (BD340); the
+        // 'bookmarks' id lives there, not inline in Feed.tsx, so the contract
+        // points at that single source rather than a duplicated literal.
+        paramContract: { param: 'tab', value: 'bookmarks', destinationFile: 'src/components/feed/FeedLensBar.tsx' },
       },
     },
     {

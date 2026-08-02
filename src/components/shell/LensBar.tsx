@@ -5,8 +5,9 @@
  * is what makes the back button move between lenses instead of leaving the
  * surface, and what lets a link land directly on a lens. See BD332.
  *
- * First consumer of the D092 palette: the active lens icon carries the surface's
- * C, resolved through the `c5` Tailwind key (no raw colour anywhere here).
+ * The active lens icon carries the surface's C where the surface HAS one,
+ * resolved through the `c5` Tailwind key (no raw colour anywhere here); where
+ * the surface is not a C (Feed, BD337) it carries --foreground instead.
  */
 
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -30,8 +31,9 @@ export type Lens = {
 interface LensBarProps {
   lenses: Lens[];
   ariaLabel: string;
-  /** The surface's C. Colours the active lens icon through the c5 key. */
-  c: LensC;
+  /** The surface's C. Omit on a surface that is not a C (Feed, BD337):
+      the active lens then resolves to --foreground. */
+  c?: LensC;
 }
 
 /**
@@ -184,7 +186,7 @@ export function LensBar({ lenses, ariaLabel, c }: LensBarProps) {
               )}
             >
               <Icon
-                className={cn('h-4 w-4 shrink-0', isActive && C_ICON[c])}
+                className={cn('h-4 w-4 shrink-0', isActive && (c ? C_ICON[c] : 'text-foreground'))}
                 aria-hidden="true"
               />
               {/* Label renders on the active lens only; the icon-only inactive
