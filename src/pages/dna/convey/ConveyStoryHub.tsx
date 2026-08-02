@@ -28,9 +28,9 @@ type ConveyTab = 'pulse' | 'curated' | 'my_circle' | 'my_voice' | 'saved';
  * the param, so this surface no longer holds tab state. Ids are unchanged:
  * pulse, curated, my_circle, my_voice, saved.
  *
- * Convey is the only surface whose lenses carry a `description`. The primitive
- * folds it into each lens's accessible name, and the hub renders it as the
- * descriptor line below the bar — a persistent explainer no other surface has.
+ * Every lens carries a `description` (BD332e): the primitive folds it into the
+ * accessible name and renders it as the italic descriptor line below the bar.
+ * Convey's five are the reference every other surface now matches.
  *
  * My Circle uses UserCheck, not Users: the lens means "from people I am
  * connected to", the same meaning as Convene Network and Feed My Network, and
@@ -74,7 +74,6 @@ export default function ConveyStoryHub() {
   // Unknown or absent ?lens= falls back to the first lens, matching LensBar.
   const activeTab: ConveyTab =
     (CONVEY_LENSES.find((l) => l.id === searchParams.get('lens'))?.id as ConveyTab) ?? 'pulse';
-  const activeLens = CONVEY_LENSES.find((l) => l.id === activeTab);
   const [selectedCategory, setSelectedCategory] = useState<StoryType | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const composer = useUniversalComposer();
@@ -270,13 +269,10 @@ export default function ConveyStoryHub() {
         </div>
 
         {/* Editorial Lens Bar (BD332): route-driven via ?lens=<id>. The
-            descriptor line below is unique to Convey — it renders the active
-            lens's own copy, the persistent explainer no other surface carries. */}
+            descriptor line beneath the bar is now rendered by the LensBar
+            primitive itself (BD332e), the one pattern every surface shares. */}
         <div className="border-b border-border">
           <LensBar lenses={CONVEY_LENSES} ariaLabel="Convey lenses" c="convey" />
-          <p className="text-meta text-muted-foreground italic pt-2 pb-3">
-            {activeLens?.description}
-          </p>
         </div>
 
         {/* Category Pills (only on Pulse tab) */}

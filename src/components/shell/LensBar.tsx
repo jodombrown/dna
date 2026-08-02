@@ -22,7 +22,7 @@ export type Lens = {
   id: string; // becomes ?lens=<id>
   label: string;
   icon: LucideIcon;
-  description?: string; // Convey is the only surface using this today
+  description?: string; // rendered as the descriptor line and folded into the accessible name
   disabled?: boolean; // renders present-but-unreachable
 };
 
@@ -55,7 +55,8 @@ export function LensBar({ lenses, ariaLabel, c }: LensBarProps) {
   // Active lens is read from the URL. When ?lens= is absent or unrecognised the
   // first lens is active — and we do NOT rewrite the URL to say so on mount.
   const requested = searchParams.get(LENS_KEY);
-  const activeId = lenses.find((l) => l.id === requested)?.id ?? lenses[0]?.id;
+  const activeLens = lenses.find((l) => l.id === requested) ?? lenses[0];
+  const activeId = activeLens?.id;
 
   const trackRef = useRef<HTMLDivElement>(null);
   const btnRefs = useRef<Record<string, HTMLButtonElement | null>>({});
@@ -102,73 +103,86 @@ export function LensBar({ lenses, ariaLabel, c }: LensBarProps) {
   }, [indicator, ready]);
 
   return (
-    <div
-      ref={trackRef}
-      role="tablist"
-      aria-label={ariaLabel}
-      className="relative flex items-center gap-1 p-1 bg-muted/50 rounded-lg overflow-x-auto scrollbar-hide"
-    >
-      {/* Active chip: absolutely positioned so tapping a lens never reflows its
-          siblings. Sizes to its own content — never flex-1. */}
-      {indicator && (
-        <span
-          aria-hidden="true"
-          className={cn(
-            'pointer-events-none absolute top-1 bottom-1 left-0 rounded-md bg-background shadow-sm',
-            ready && 'transition-[transform,width] duration-150 ease-out',
-          )}
-          style={{ transform: `translate3d(${indicator.x}px, 0, 0)`, width: indicator.w }}
-        />
-      )}
-
-      {lenses.map((lens) => {
-        const Icon = lens.icon;
-        const isActive = lens.id === activeId;
-        // Accessible name folds the description in where a surface supplies one.
-        const name = lens.description ? `${lens.label} — ${lens.description}` : lens.label;
-
-        return (
-          <button
-            key={lens.id}
-            ref={(el) => {
-              btnRefs.current[lens.id] = el;
-            }}
-            type="button"
-            role="tab"
-            aria-selected={isActive}
-            aria-label={name}
-            aria-disabled={lens.disabled || undefined}
-            tabIndex={lens.disabled ? -1 : 0}
-            onClick={() => selectLens(lens)}
+    <>
+      <div
+        ref={trackRef}
+        role="tablist"
+        aria-label={ariaLabel}
+        className="relative flex items-center gap-1 p-1 bg-muted/50 rounded-lg overflow-x-auto scrollbar-hide"
+      >
+        {/* Active chip: absolutely positioned so tapping a lens never reflows its
+            siblings. Sizes to its own content — never flex-1. */}
+        {indicator && (
+          <span
+            aria-hidden="true"
             className={cn(
-              // 36px touch target. The active chip stays content-sized (flex-none,
-              // p-2 for label breathing room) so tapping never re-flows the bar.
-              // Inactive lenses are flex-1 with a 32px floor: they share whatever
-              // the active chip leaves, evenly, and the scroll track only kicks in
-              // when the set genuinely cannot fit — nothing clips.
-              'relative z-10 flex min-h-9 items-center justify-center gap-1.5 rounded-md',
-              isActive ? 'flex-none p-2' : 'min-w-8 flex-1',
-              'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-              lens.disabled
-                ? 'cursor-default border border-dashed border-border'
-                : 'cursor-pointer',
-              !isActive && !lens.disabled && 'text-muted-foreground hover:text-foreground',
+              'pointer-events-none absolute top-1 bottom-1 left-0 rounded-md bg-background shadow-sm',
+              ready && 'transition-[transform,width] duration-150 ease-out',
             )}
-          >
-            <Icon
-              className={cn('h-4 w-4 shrink-0', isActive && C_ICON[c])}
-              aria-hidden="true"
-            />
-            {/* Label renders on the active lens only; the icon-only inactive
-                shape is what fits six lenses on a 375px screen. */}
-            {isActive && (
-              <span className="whitespace-nowrap text-meta font-medium animate-in fade-in duration-100">
-                {lens.label}
-              </span>
-            )}
-          </button>
-        );
-      })}
-    </div>
+            style={{ transform: `translate3d(${indicator.x}px, 0, 0)`, width: indicator.w }}
+          />
+        )}
+
+        {lenses.map((lens) => {
+          const Icon = lens.icon;
+          const isActive = lens.id === activeId;
+          // Accessible name folds the description in where a surface supplies one.
+          const name = lens.description ? `${lens.label} — ${lens.description}` : lens.label;
+
+          return (
+            <button
+              key={lens.id}
+              ref={(el) => {
+                btnRefs.current[lens.id] = el;
+              }}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              aria-label={name}
+              aria-disabled={lens.disabled || undefined}
+              tabIndex={lens.disabled ? -1 : 0}
+              onClick={() => selectLens(lens)}
+              className={cn(
+                // 36px touch target. The active chip stays content-sized (flex-none,
+                // p-2 for label breathing room) so tapping never re-flows the bar.
+                // Inactive lenses are flex-1 with a 32px floor: they share whatever
+                // the active chip leaves, evenly, and the scroll track only kicks in
+                // when the set genuinely cannot fit — nothing clips.
+                'relative z-10 flex min-h-9 items-center justify-center gap-1.5 rounded-md',
+                isActive ? 'flex-none p-2' : 'min-w-8 flex-1',
+                'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                lens.disabled
+                  ? 'cursor-default border border-dashed border-border'
+                  : 'cursor-pointer',
+                !isActive && !lens.disabled && 'text-muted-foreground hover:text-foreground',
+              )}
+            >
+              <Icon
+                className={cn('h-4 w-4 shrink-0', isActive && C_ICON[c])}
+                aria-hidden="true"
+              />
+              {/* Label renders on the active lens only; the icon-only inactive
+                  shape is what fits six lenses on a 375px screen. */}
+              {isActive && (
+                <span className="whitespace-nowrap text-meta font-medium animate-in fade-in duration-100">
+                  {lens.label}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Active lens descriptor: one italic, muted line beneath the track, the
+          single pattern every surface shares (BD332e). Renders only when the
+          active lens carries a description; nothing reserves space when it does
+          not, so the bar sits flush. The same copy feeds the accessible name
+          above, so there is one source per lens. */}
+      {activeLens?.description && (
+        <p className="text-meta text-muted-foreground italic pt-2 pb-3">
+          {activeLens.description}
+        </p>
+      )}
+    </>
   );
 }

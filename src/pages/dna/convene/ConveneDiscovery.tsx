@@ -25,7 +25,6 @@ import { ConveneDIADiscoveryCard } from '@/components/convene/ConveneDIADiscover
 import { DIAHubSection } from '@/components/dia/DIAHubSection';
 import { UpcomingEventsSection } from '@/components/convene/UpcomingEventsSection';
 import { ConveneShell } from '@/components/convene/ConveneShell';
-// ConveneTabExplainer removed on mobile - segmented tab labels are self-explanatory
 import { useConveneCities, useUserCity } from '@/hooks/convene/useConveneCities';
 import {
   useHeroEvent,

@@ -27,12 +27,12 @@ import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { LensBar, type Lens } from '@/components/shell/LensBar';
 
 export const CONVENE_LENSES: Lens[] = [
-  { id: 'all', label: 'All', icon: CalendarDays },
-  { id: 'near_me', label: 'Near Me', icon: MapPin },
-  { id: 'this_week', label: 'This Week', icon: Clock },
-  { id: 'online', label: 'Virtual', icon: Video },
-  { id: 'free', label: 'Free', icon: Ticket },
-  { id: 'network', label: 'Network', icon: UserCheck },
+  { id: 'all', label: 'All', icon: CalendarDays, description: 'Browse every upcoming event across the diaspora community' },
+  { id: 'near_me', label: 'Near Me', icon: MapPin, description: 'Events happening close to your current location' },
+  { id: 'this_week', label: 'This Week', icon: Clock, description: 'Events taking place within the next seven days' },
+  { id: 'online', label: 'Virtual', icon: Video, description: 'Virtual events you can join from anywhere in the world' },
+  { id: 'free', label: 'Free', icon: Ticket, description: 'No-cost events open to all community members' },
+  { id: 'network', label: 'Network', icon: UserCheck, description: 'Events hosted by or attended by people in your network' },
 ];
 
 function ConveneTabStrip() {
