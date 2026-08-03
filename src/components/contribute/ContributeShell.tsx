@@ -29,7 +29,7 @@ export function ContributeShell({
       bubble={{ kind: 'static', placeholder: bubblePlaceholder }}
       tabs={tabs ?? undefined}
     >
-      <div className="min-h-[60vh] bg-background">
+      <div className="bg-background">
         <div className={`mx-auto ${maxWidthClassName} px-4 py-6 sm:py-8`}>{children}</div>
       </div>
     </DnaMobileHubShell>
