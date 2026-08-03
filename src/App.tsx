@@ -200,14 +200,6 @@ const ConnectNetwork = lazy(() => import("./pages/dna/connect/Network"));
 const DiasporaDensityMap = lazy(() => import("./pages/dna/connect/DiasporaDensityMap"));
 // Legacy connect messages pages removed - using canonical /dna/messages route
 
-// Phase pages
-const MarketResearchPhase = lazy(() => import("./pages/MarketResearchPhase"));
-const PrototypingPhase = lazy(() => import("./pages/PrototypingPhase"));
-const CustomerDiscoveryPhase = lazy(() => import("./pages/CustomerDiscoveryPhase"));
-const MvpPhase = lazy(() => import("./pages/MvpPhase"));
-const BetaValidationPhase = lazy(() => import("./pages/BetaValidationPhase"));
-const GoToMarketPhase = lazy(() => import("./pages/GoToMarketPhase"));
-
 // Partner With DNA pages
 const PartnerWithDna = lazy(() => import("./pages/PartnerWithDna"));
 const PartnerSector = lazy(() => import("./pages/PartnerSector"));
@@ -920,15 +912,7 @@ function App() {
               </Route>
 
               {/* Static pages */}
-              
-              {/* Phase pages */}
-              <Route path="/phase-1/market-research" element={<MarketResearchPhase />} />
-              <Route path="/phase-2/prototyping" element={<PrototypingPhase />} />
-              <Route path="/phase-3/customer-discovery" element={<CustomerDiscoveryPhase />} />
-              <Route path="/phase-4/mvp" element={<MvpPhase />} />
-              <Route path="/phase-5/beta-validation" element={<BetaValidationPhase />} />
-              <Route path="/phase-6/go-to-market" element={<GoToMarketPhase />} />
-              
+
               {/* Partner With DNA pages */}
               <Route path="/partner-with-dna" element={<PartnerWithDna />} />
               <Route path="/partner-with-dna/sectors/:slug" element={<PartnerSector />} />
