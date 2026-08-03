@@ -53,12 +53,13 @@ export const WAITLIST_MODE = false;
  * Public signup gate. Signups are paused until this instant, then open by
  * themselves on the next page load. No deploy needed on the day.
  *
- * Stored as an ISO instant in UTC: August 15, 2026 at 12:00 noon UTC.
+ * Stored as an ISO instant in UTC: August 15, 2026 at 9:00 am PDT
+ * (PDT is UTC-7, so 9:00 am PDT = 16:00 UTC).
  */
-export const SIGNUPS_OPEN_AT = new Date('2026-08-15T12:00:00Z');
+export const SIGNUPS_OPEN_AT = new Date('2026-08-15T16:00:00Z');
 
 /** Human copy for the announcement. Kept beside the instant so they cannot drift. */
-export const SIGNUPS_OPEN_LABEL = 'August 15, 2026 at 12pm noon UTC';
+export const SIGNUPS_OPEN_LABEL = 'August 15, 2026 at 9:00 am PDT';
 
 export const areSignupsOpen = (now: Date = new Date()): boolean =>
   now.getTime() >= SIGNUPS_OPEN_AT.getTime();
