@@ -301,7 +301,7 @@ const AdminLogin = () => {
               <div className="text-sm text-amber-800">
                 <p className="font-medium mb-1">Security Notice</p>
                 <p className="text-amber-700">
-                  Magic links are sent only to authorized @diasporanetwork.africa emails. All login attempts are logged.
+                  Admin access is limited to authorized @diasporanetwork.africa accounts. All login attempts are logged.
                 </p>
               </div>
             </div>
