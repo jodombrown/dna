@@ -12,7 +12,6 @@ export const publicNavItems: PublicNavItem[] = [];
 
 export const aboutUsDropdown = [
   { name: 'About Us', path: '/about' },
-  { name: 'Fact Sheet', path: '/fact-sheet' },
   { name: 'Contact', path: '/contact' },
 ];
 
@@ -72,15 +71,6 @@ export const pillarNavigation = {
     ],
   },
 };
-
-export const phases = [
-  { name: 'Market Research', path: '/phase-1/market-research' },
-  { name: 'Prototyping', path: '/phase-2/prototyping' },
-  { name: 'Customer Discovery', path: '/phase-3/customer-discovery' },
-  { name: 'MVP Build', path: '/phase-4/mvp' },
-  { name: 'Beta Validation', path: '/phase-5/beta-validation' },
-  { name: 'Go-to-Market', path: '/phase-6/go-to-market' },
-] as const;
 
 // Example pages for landing page showcase (Five C's marketing pages temporarily hidden).
 export const examplePages: { name: string; path: string }[] = [];

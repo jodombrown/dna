@@ -16,12 +16,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-  <url>
-    <loc>https://diasporanetwork.africa/fact-sheet</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
+
   <!-- Five C's Marketing Pages -->
   <url>
     <loc>https://diasporanetwork.africa/connect</loc>

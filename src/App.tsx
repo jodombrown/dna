@@ -100,8 +100,6 @@ const UserAgreement = lazy(() => import("./pages/UserAgreement"));
 const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
 
 const Convene = lazy(() => import("./pages/Convene"));
-const FactSheetPage = lazy(() => import("./pages/FactSheetPage"));
-const Manifesto = lazy(() => import("./pages/Manifesto"));
 const Demo = lazy(() => import("./pages/Demo"));
 
 const DesignSystem = lazy(() => import("./pages/DesignSystem"));
@@ -202,23 +200,11 @@ const ConnectNetwork = lazy(() => import("./pages/dna/connect/Network"));
 const DiasporaDensityMap = lazy(() => import("./pages/dna/connect/DiasporaDensityMap"));
 // Legacy connect messages pages removed - using canonical /dna/messages route
 
-// Phase pages
-const MarketResearchPhase = lazy(() => import("./pages/MarketResearchPhase"));
-const PrototypingPhase = lazy(() => import("./pages/PrototypingPhase"));
-const CustomerDiscoveryPhase = lazy(() => import("./pages/CustomerDiscoveryPhase"));
-const MvpPhase = lazy(() => import("./pages/MvpPhase"));
-const BetaValidationPhase = lazy(() => import("./pages/BetaValidationPhase"));
-const GoToMarketPhase = lazy(() => import("./pages/GoToMarketPhase"));
-
 // Partner With DNA pages
 const PartnerWithDna = lazy(() => import("./pages/PartnerWithDna"));
 const PartnerSector = lazy(() => import("./pages/PartnerSector"));
 const PartnerModels = lazy(() => import("./pages/PartnerModels"));
 const PartnerStart = lazy(() => import("./pages/PartnerStart"));
-
-// Regional Hubs
-const RegionHubPage = lazy(() => import("./pages/africa/RegionHubPage"));
-const CountryHubPage = lazy(() => import("./pages/africa/CountryHubPage"));
 
 
 // Connect index redirect that carries the query string across the hop to the
@@ -488,7 +474,6 @@ function App() {
               <Route path="/dna/settings/profile" element={<Navigate to="/dna/profile/edit" replace />} />
               
               {/* DNA Dashboard Routes - Protected with OnboardingGuard */}
-              <Route path="/fact-sheet" element={<FactSheetPage />} />
 
               {/* Documentation Routes */}
               <Route path="/documentation/features" element={<FeaturesHub />} />
@@ -923,27 +908,14 @@ function App() {
               </Route>
 
               {/* Static pages */}
-              
-              {/* Phase pages */}
-              <Route path="/phase-1/market-research" element={<MarketResearchPhase />} />
-              <Route path="/phase-2/prototyping" element={<PrototypingPhase />} />
-              <Route path="/phase-3/customer-discovery" element={<CustomerDiscoveryPhase />} />
-              <Route path="/phase-4/mvp" element={<MvpPhase />} />
-              <Route path="/phase-5/beta-validation" element={<BetaValidationPhase />} />
-              <Route path="/phase-6/go-to-market" element={<GoToMarketPhase />} />
-              
+
               {/* Partner With DNA pages */}
               <Route path="/partner-with-dna" element={<PartnerWithDna />} />
               <Route path="/partner-with-dna/sectors/:slug" element={<PartnerSector />} />
               <Route path="/partner-with-dna/models" element={<PartnerModels />} />
               <Route path="/partner-with-dna/start" element={<PartnerStart />} />
 
-              {/* Regional Hubs */}
-              <Route path="/africa/:regionSlug" element={<RegionHubPage />} />
-              <Route path="/africa/:regionSlug/:countrySlug" element={<CountryHubPage />} />
-
               {/* Static pages */}
-              <Route path="/manifesto" element={<Manifesto />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/about" element={<About />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />

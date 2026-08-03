@@ -41,7 +41,6 @@ Deno.serve(async (req) => {
       { loc: '/terms-of-service', changefreq: 'yearly', priority: 0.5 },
       { loc: '/privacy-policy', changefreq: 'yearly', priority: 0.5 },
       { loc: '/releases', changefreq: 'weekly', priority: 0.6 },
-      { loc: '/fact-sheet', changefreq: 'monthly', priority: 0.7 },
     ];
     urls.push(...staticPages);
 
