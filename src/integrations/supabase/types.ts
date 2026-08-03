@@ -7064,42 +7064,6 @@ export type Database = {
           },
         ]
       }
-      platform_fees: {
-        Row: {
-          applies_to: string | null
-          created_at: string | null
-          fee_type: string
-          id: string
-          is_active: boolean | null
-          max_amount: number | null
-          min_amount: number | null
-          name: string
-          value: number
-        }
-        Insert: {
-          applies_to?: string | null
-          created_at?: string | null
-          fee_type: string
-          id?: string
-          is_active?: boolean | null
-          max_amount?: number | null
-          min_amount?: number | null
-          name: string
-          value: number
-        }
-        Update: {
-          applies_to?: string | null
-          created_at?: string | null
-          fee_type?: string
-          id?: string
-          is_active?: boolean | null
-          max_amount?: number | null
-          min_amount?: number | null
-          name?: string
-          value?: number
-        }
-        Relationships: []
-      }
       political_digest: {
         Row: {
           author: string | null
@@ -10896,6 +10860,7 @@ export type Database = {
           cover_image_url: string | null
           created_at: string
           created_by: string
+          definition_of_done: string | null
           description: string | null
           focus_areas: string[] | null
           health_score: number | null
@@ -10913,6 +10878,7 @@ export type Database = {
           stall_threshold_days: number | null
           status: string
           tagline: string | null
+          target_date: string | null
           template_id: string | null
           updated_at: string
           visibility: string
@@ -10923,6 +10889,7 @@ export type Database = {
           cover_image_url?: string | null
           created_at?: string
           created_by: string
+          definition_of_done?: string | null
           description?: string | null
           focus_areas?: string[] | null
           health_score?: number | null
@@ -10940,6 +10907,7 @@ export type Database = {
           stall_threshold_days?: number | null
           status?: string
           tagline?: string | null
+          target_date?: string | null
           template_id?: string | null
           updated_at?: string
           visibility?: string
@@ -10950,6 +10918,7 @@ export type Database = {
           cover_image_url?: string | null
           created_at?: string
           created_by?: string
+          definition_of_done?: string | null
           description?: string | null
           focus_areas?: string[] | null
           health_score?: number | null
@@ -10967,6 +10936,7 @@ export type Database = {
           stall_threshold_days?: number | null
           status?: string
           tagline?: string | null
+          target_date?: string | null
           template_id?: string | null
           updated_at?: string
           visibility?: string
