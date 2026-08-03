@@ -316,7 +316,7 @@ const FactSheetPage = () => {
               </div>
               <div>
                 <div className="text-5xl font-bold text-dna-emerald mb-2">$100B+</div>
-                <div className="text-sm font-semibold text-muted-foreground">Annual Remittances to Africa</div>
+                <div className="text-body font-semibold text-muted-foreground">Annual Remittances to Africa</div>
                 <div className="text-xs text-muted-foreground/70 mt-1">2x more than all international aid combined</div>
               </div>
               <div>
