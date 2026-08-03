@@ -63,14 +63,14 @@ const DiaSheet: React.FC = () => {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent
         side="right"
-        className="w-full sm:max-w-[460px] p-0 flex flex-col gap-0 border-l border-border/60"
+        className="w-full sm:max-w-[460px] p-0 flex flex-col gap-0 border-l border-border/60 overflow-hidden"
         style={{
           backgroundImage: KENTE_PATTERN,
           backgroundColor: 'hsl(var(--background))',
         }}
       >
         {/* Readability overlay over the pattern */}
-        <div className="absolute inset-0 bg-background/[0.94] pointer-events-none" />
+        <div className="absolute inset-0 z-0 bg-background/[0.94] pointer-events-none" />
 
         <div className="relative z-10 flex flex-col h-full min-h-0">
           <SheetHeader className="px-4 py-3 border-b border-border/60 space-y-0 bg-background" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 0.75rem)' }}>
@@ -114,7 +114,7 @@ const DiaSheet: React.FC = () => {
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="search" className="flex-1 overflow-y-auto px-4 py-4 mt-0">
+              <TabsContent value="search" className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 mt-0">
                 {tab === 'search' && (
                   <DiaSearch
                     key={`ask-${seedNonce}`}
@@ -128,19 +128,19 @@ const DiaSheet: React.FC = () => {
                 )}
               </TabsContent>
 
-              <TabsContent value="insights" className="flex-1 overflow-y-auto px-4 py-4 mt-0">
+              <TabsContent value="insights" className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 mt-0">
                 {tab === 'insights' && <DiaInsights limit={6} onInsightClick={handleFromOtherTab} />}
               </TabsContent>
 
-              <TabsContent value="briefs" className="flex-1 overflow-y-auto px-4 py-4 mt-0">
+              <TabsContent value="briefs" className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 mt-0">
                 {tab === 'briefs' && <DiaBriefs onPromptClick={handleFromOtherTab} />}
               </TabsContent>
 
-              <TabsContent value="saved" className="flex-1 overflow-y-auto px-4 py-4 mt-0">
+              <TabsContent value="saved" className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 mt-0">
                 {tab === 'saved' && <DiaSaved onQueryClick={handleFromOtherTab} />}
               </TabsContent>
 
-              <TabsContent value="history" className="flex-1 overflow-y-auto px-4 py-4 mt-0">
+              <TabsContent value="history" className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 mt-0">
                 {tab === 'history' && <DiaHistory onQueryClick={handleFromOtherTab} />}
               </TabsContent>
             </Tabs>
