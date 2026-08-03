@@ -65,103 +65,54 @@ const AdminLogin = () => {
     checkExistingAuth();
   }, [navigate]);
 
-  // Validate email on blur
-  const handleEmailBlur = async () => {
-    if (!email || !email.includes('@')) {
-      setEmailValidation(null);
-      setEmailError(null);
-      return;
-    }
-
-    setIsValidatingEmail(true);
-    setEmailError(null);
-
-    try {
-      const { data, error } = await (supabase as any).rpc('is_valid_admin_email', {
-        check_email: email.toLowerCase().trim()
-      });
-
-      if (error) {
-        setEmailError('Unable to validate email. Please try again.');
-        setEmailValidation(null);
-        return;
-      }
-
-      if (data && Array.isArray(data) && data.length > 0) {
-        const result = data[0];
-        setEmailValidation({
-          isValid: result.is_valid,
-          roleLevel: result.role_level,
-          isSuperAdmin: result.is_super_admin
-        });
-
-        if (!result.is_valid) {
-          setEmailError('This email is not authorized for admin access. Only @diasporanetwork.africa emails or pre-approved accounts can access the admin panel.');
-        }
-      } else {
-        setEmailValidation({ isValid: false, roleLevel: null, isSuperAdmin: false });
-        setEmailError('This email is not authorized for admin access.');
-      }
-    } catch (error) {
-      setEmailError('Unable to validate email. Please try again.');
-      setEmailValidation(null);
-    } finally {
-      setIsValidatingEmail(false);
-    }
-  };
-
-  const handleSendMagicLink = async (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // First validate the email if not already validated
-    if (!emailValidation) {
-      await handleEmailBlur();
-    }
-
-    // Re-check validation state
-    const currentValidation = emailValidation;
-    if (!currentValidation?.isValid) {
-      toast({
-        title: 'Access Denied',
-        description: 'This email is not authorized for admin access.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
+    setEmailError(null);
     setIsLoading(true);
 
     try {
-      // Call the send-magic-link edge function
-      const { data, error } = await supabase.functions.invoke('send-magic-link', {
-        body: {
-          email: email.toLowerCase().trim(),
-          redirectTo: `${window.location.origin}/admin/dashboard`
-        }
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: email.toLowerCase().trim(),
+        password,
       });
 
-      if (error) {
-        throw error;
+      if (signInError) {
+        setEmailError('Incorrect email or password.');
+        return;
       }
 
-      setMagicLinkSent(true);
-      toast({
-        title: 'Magic Link Sent',
-        description: 'Check your email for a secure login link.',
+      const { data, error } = await (supabase as any).rpc('get_current_admin_status');
+
+      if (error) {
+        setEmailError('Unable to verify admin access. Please try again.');
+        return;
+      }
+
+      const status = Array.isArray(data) && data.length > 0 ? data[0] : null;
+
+      if (!status?.is_admin) {
+        await supabase.auth.signOut();
+        setEmailError('This account is not authorized for admin access.');
+        toast({
+          title: 'Access denied',
+          description: 'This account is not authorized for admin access.',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      setEmailValidation({
+        isValid: true,
+        roleLevel: status.role_level ?? null,
+        isSuperAdmin: Boolean(status.is_super_admin),
       });
+
+      navigate('/admin/dashboard', { replace: true });
     } catch (error: unknown) {
-      toast({
-        title: 'Error',
-        description: getErrorMessage(error) || 'Failed to send magic link. Please try again.',
-        variant: 'destructive',
-      });
+      setEmailError(getErrorMessage(error) || 'Sign in failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleResendLink = () => {
-    setMagicLinkSent(false);
   };
 
   if (isCheckingAuth) {
