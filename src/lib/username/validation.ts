@@ -8,7 +8,10 @@ export const USERNAME_RULES = {
     'admin', 'support', 'dna', 'api', 'www', 'app', 'help', 'about', 
     'contact', 'settings', 'profile', 'user', 'users', 'account', 'dashboard',
     'login', 'logout', 'signup', 'register', 'connect', 'collaborate', 'contribute',
-    'convene', 'events', 'messages', 'network', 'discover', 'impact', 'system'
+    'convene', 'events', 'messages', 'network', 'discover', 'impact', 'system',
+    'adin', 'affirm', 'analytics', 'applications', 'convene-example', 'convey',
+    'debug', 'dia', 'feed', 'feedback', 'hashtag', 'icons', 'me', 'notifications',
+    'nudges', 'preferences', 'saved', 'space', 'spaces', 'story', 'u', 'welcome'
   ],
   maxLifetimeChanges: 3,
 };
