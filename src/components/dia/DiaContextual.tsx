@@ -63,15 +63,18 @@ export function DiaContextual({
             <MateMasie className="h-6 w-6" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl">
-          <SheetHeader className="pb-4">
+        <SheetContent
+          side="bottom"
+          className="h-[85vh] rounded-t-2xl flex flex-col overflow-hidden"
+        >
+          <SheetHeader className="pb-4 flex-none">
             <SheetTitle className="flex items-center gap-2">
               <MateMasie className="h-5 w-5 text-emerald-600" />
               <span>DIA: {config.title}</span>
             </SheetTitle>
             <p className="text-sm text-muted-foreground">{config.description}</p>
           </SheetHeader>
-          <div className="overflow-y-auto flex-1 -mx-2 px-2">
+          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain -mx-2 px-2">
             <DiaSearch
               source={config.pillar}
               placeholder={config.placeholder}
