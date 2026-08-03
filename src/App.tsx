@@ -100,7 +100,6 @@ const UserAgreement = lazy(() => import("./pages/UserAgreement"));
 const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
 
 const Convene = lazy(() => import("./pages/Convene"));
-const Manifesto = lazy(() => import("./pages/Manifesto"));
 const Demo = lazy(() => import("./pages/Demo"));
 
 const DesignSystem = lazy(() => import("./pages/DesignSystem"));
@@ -941,7 +940,6 @@ function App() {
               <Route path="/africa/:regionSlug/:countrySlug" element={<CountryHubPage />} />
 
               {/* Static pages */}
-              <Route path="/manifesto" element={<Manifesto />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/about" element={<About />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
