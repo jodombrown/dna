@@ -13,8 +13,7 @@ import {
   XCircle,
   Loader2,
   AlertTriangle,
-  Mail,
-  Send
+  Mail
 } from 'lucide-react';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { useToast } from '@/hooks/use-toast';
