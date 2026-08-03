@@ -163,7 +163,7 @@ const AdminLogin = () => {
           <div className="space-y-3 pt-4">
             <div className="flex items-center gap-3 text-white/60">
               <Mail className="w-5 h-5 text-emerald-500" />
-              <span>Passwordless magic link authentication</span>
+              <span>Credentialed admin authentication</span>
             </div>
             <div className="flex items-center gap-3 text-white/60">
               <Lock className="w-5 h-5 text-emerald-500" />
