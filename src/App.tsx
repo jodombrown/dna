@@ -101,7 +101,6 @@ const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
 
 const Convene = lazy(() => import("./pages/Convene"));
 const FactSheetPage = lazy(() => import("./pages/FactSheetPage"));
-const PitchDeck = lazy(() => import("./pages/PitchDeck"));
 const Manifesto = lazy(() => import("./pages/Manifesto"));
 const Demo = lazy(() => import("./pages/Demo"));
 
@@ -490,8 +489,7 @@ function App() {
               
               {/* DNA Dashboard Routes - Protected with OnboardingGuard */}
               <Route path="/fact-sheet" element={<FactSheetPage />} />
-              <Route path="/pitch-deck" element={<PitchDeck />} />
-              
+
               {/* Documentation Routes */}
               <Route path="/documentation/features" element={<FeaturesHub />} />
               <Route path="/documentation/features/:slug" element={<FeatureDetail />} />
