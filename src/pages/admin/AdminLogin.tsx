@@ -33,12 +33,11 @@ const AdminLogin = () => {
   const { toast } = useToast();
 
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-  const [isValidatingEmail, setIsValidatingEmail] = useState(false);
   const [emailValidation, setEmailValidation] = useState<AdminValidation | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
-  const [magicLinkSent, setMagicLinkSent] = useState(false);
 
   // Check if already authenticated as admin
   useEffect(() => {
