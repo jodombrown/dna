@@ -31,7 +31,16 @@
 
 import * as React from 'react';
 
-/** A phone on its side. Not a desktop, not an iPad. */
+/**
+ * A phone on its side. Not a desktop, not an iPad.
+ *
+ * Kept as the size bound and as the last-resort fallback where no orientation
+ * API exists. It is NOT trusted alone: both halves measure the LAYOUT viewport,
+ * which the software keyboard shrinks. A 402x725 phone with the keyboard open
+ * reports roughly 402x300, which is wider than tall and under the height bound,
+ * so CSS calls a vertical phone "landscape". That false positive is what made
+ * this notice flash at a member mid-signup.
+ */
 const PHONE_LANDSCAPE = '(orientation: landscape) and (max-height: 500px)';
 
 /**
@@ -41,11 +50,46 @@ const PHONE_LANDSCAPE = '(orientation: landscape) and (max-height: 500px)';
  * `components/drawer/constants.ts`, because `tailwind.config.ts` declares no
  * `zIndex` scale: a `z-*` utility beyond Tailwind's defaults renders NOTHING.
  * The bands, per that file: sheet 999/1000, drawer 1060, alert-dialog 1100.
- *
- * This one sits on top of all of them on purpose. If landscape is unbuilt, an
- * open drawer over a broken landscape layout is not a state worth preserving.
  */
 const LANDSCAPE_GATE_Z_INDEX = 1200;
+
+/** Under this many CSS px of lost visual viewport, the keyboard is up. */
+const KEYBOARD_THRESHOLD = 150;
+
+/** Is the DEVICE on its side? The keyboard cannot change this. */
+function isDeviceLandscape(): boolean {
+  if (typeof window === 'undefined') return false;
+
+  const type = window.screen?.orientation?.type;
+  if (typeof type === 'string') return type.startsWith('landscape');
+
+  const angle = (window as Window & { orientation?: number }).orientation;
+  if (typeof angle === 'number') return Math.abs(angle) === 90;
+
+  // No orientation API: fall back to the media query, keyboard risk and all.
+  return window.matchMedia?.(PHONE_LANDSCAPE).matches ?? false;
+}
+
+/** Second, independent guard: never interrupt someone who is typing. */
+function isKeyboardOpen(): boolean {
+  if (typeof window === 'undefined') return false;
+
+  const vv = window.visualViewport;
+  const shrunk = vv ? window.innerHeight - vv.height > KEYBOARD_THRESHOLD : false;
+  if (!shrunk) return false;
+
+  const el = document.activeElement as HTMLElement | null;
+  if (!el) return false;
+  const tag = el.tagName;
+  return tag === 'INPUT' || tag === 'TEXTAREA' || el.isContentEditable;
+}
+
+/** A phone, on its side, with nobody typing. */
+function shouldGate(): boolean {
+  if (typeof window === 'undefined' || !window.matchMedia) return false;
+  const shortEnough = window.matchMedia(PHONE_LANDSCAPE).matches;
+  return shortEnough && isDeviceLandscape() && !isKeyboardOpen();
+}
 
 export function LandscapeGate() {
   const [isPhoneLandscape, setIsPhoneLandscape] = React.useState(false);
@@ -55,17 +99,31 @@ export function LandscapeGate() {
     if (typeof window === 'undefined' || !window.matchMedia) return;
     const mq = window.matchMedia(PHONE_LANDSCAPE);
 
-    const apply = (matches: boolean) => {
-      setIsPhoneLandscape(matches);
-      // Rotating back to portrait rearms the notice. See the note above.
-      if (!matches) setDismissed(false);
+    const evaluate = () => setIsPhoneLandscape(shouldGate());
+
+    // Only a real device rotation rearms the notice. Rearming on every media
+    // query flip is what turned one keyboard open into a repeating loop.
+    const onRotate = () => {
+      setDismissed(false);
+      evaluate();
     };
 
-    apply(mq.matches);
-    const onChange = (e: MediaQueryListEvent) => apply(e.matches);
-    mq.addEventListener('change', onChange);
-    return () => mq.removeEventListener('change', onChange);
+    evaluate();
+    mq.addEventListener('change', evaluate);
+    window.screen?.orientation?.addEventListener?.('change', onRotate);
+    window.visualViewport?.addEventListener('resize', evaluate);
+    document.addEventListener('focusin', evaluate);
+    document.addEventListener('focusout', evaluate);
+
+    return () => {
+      mq.removeEventListener('change', evaluate);
+      window.screen?.orientation?.removeEventListener?.('change', onRotate);
+      window.visualViewport?.removeEventListener('resize', evaluate);
+      document.removeEventListener('focusin', evaluate);
+      document.removeEventListener('focusout', evaluate);
+    };
   }, []);
+
 
   if (!isPhoneLandscape || dismissed) return null;
 
