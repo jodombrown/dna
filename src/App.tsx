@@ -160,7 +160,6 @@ const NeedComposerPage = lazy(() => import("./pages/dna/contribute/NeedComposerP
 
 // Convey M1-M4 pages
 const Convey = lazy(() => import("./pages/dna/Convey"));
-const ConveyHub = lazy(() => import("./pages/dna/convey/ConveyHub"));
 const StoryDetail = lazy(() => import("./pages/dna/convey/StoryDetail"));
 const FeedStoryDetail = lazy(() => import("./pages/dna/FeedStoryDetail"));
 const CreateStory = lazy(() => import("./pages/dna/convey/CreateStory"));

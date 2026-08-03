@@ -163,7 +163,7 @@ CONNECT v2 represents a **significant transformation** from directory to mobiliz
 5. **Safety**:
    - Blocked users excluded from results (bidirectional: blocker can't see blocked, blocked can't see blocker)
    - Users with <40% profile completion excluded via WHERE clause in RPC
-   - Profile gate enforced: <40% users get `profile_incomplete` status from edge function with clear toast
+   - ~~Profile gate enforced: <40% users get `profile_incomplete` status from edge function with clear toast~~ — **Corrected (BD346): this gate was removed; the deployed `send-connection-request` function no longer returns `profile_incomplete`.**
 
 **Gaps vs Intended Behavior**:
 - ❌ No "why you're seeing this" explanation (e.g., "Matches 3 of your focus areas")
@@ -539,8 +539,8 @@ CONNECT v2 represents a **significant transformation** from directory to mobiliz
 
 2. **Profile gate enforcement**:
    - ✅ Tested: <40% users don't appear in Discover results
-   - ✅ Tested: <40% users get clear error when trying to send connection request
-   - ✅ Tested: Edge function returns `profile_incomplete` status
+   - ~~✅ Tested: <40% users get clear error when trying to send connection request~~ — **Corrected (BD346): this gate was removed.**
+   - ~~✅ Tested: Edge function returns `profile_incomplete` status~~ — **Corrected (BD346): the deployed `send-connection-request` function no longer returns `profile_incomplete`.**
 
 3. **Connection state machine**:
    - ✅ Tested: No duplicate requests possible (RLS + edge function prevent)

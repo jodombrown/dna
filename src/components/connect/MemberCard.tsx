@@ -98,13 +98,6 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
         });
         await trackEvent('connect_request_sent', { target_user_id: member.id });
         onConnectionSent?.();
-      } else if (result.status === 'profile_incomplete') {
-        toast({
-          title: 'Profile Incomplete',
-          description: result.message || 'Complete your profile to at least 40% to send connection requests.',
-          variant: 'destructive',
-        });
-        navigate('/dna/profile/edit');
       } else if (result.status === 'already_connected') {
         toast({
           title: 'Already connected',
