@@ -1,19 +1,30 @@
-// COLLABORATE hub landing. Composes the existing Spaces surfaces into one
-// entry point: the user's active spaces, a discover shelf of community/public
-// spaces to join, and a Create Space CTA. Query keys are shared with MySpaces
-// and SpacesIndex so the cache is reused rather than duplicated.
+// COLLABORATE hub landing (Arc 3, Frame 1). One destination, three lenses on the
+// shared LensBar primitive:
+//
+//   discover   Spaces the caller is NOT on: open, joinable work in the community.
+//   mine       Spaces where the caller holds a roster seat (an active membership).
+//   completed  Finished work, the proof surface: every Space that has completed.
+//
+// The active lens lives in the URL (?lens=<id>) and is owned by the LensBar, so
+// this page reads it but never writes tab state. Query keys are shared with
+// MySpaces and SpacesIndex so the cache is reused rather than duplicated.
 
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowRight, Plus } from 'lucide-react';
+import { Plus, Telescope, UsersRound, BadgeCheck } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SpacesShell } from '@/components/collaborate/SpacesShell';
 import { SpaceListCard, type SpaceListItem } from '@/components/collaborate/SpaceListCard';
+import {
+  CollaborateLensBar,
+  COLLABORATE_LENSES,
+  type CollaborateLensId,
+} from '@/components/collaborate/CollaborateLensBar';
+import { LensEmpty } from '@/components/collaborate/SpacesLensEmpty';
 import { useJoinSpace } from '@/hooks/collaborate/useJoinSpace';
 import type { SpaceVisibility } from '@/types/collaborate';
 
@@ -31,6 +42,11 @@ interface SpaceRow {
 const SPACE_COLUMNS =
   'id, slug, name, tagline, space_type, status, visibility, space_members(count)';
 
+// Spaces open enough to appear in Discover. Completed / paused / abandoned work
+// is not joinable and does not belong in the marketplace lens; completed work
+// has its own lens.
+const OPEN_STATUSES = new Set(['idea', 'forming', 'active']);
+
 function mapSpace(s: SpaceRow): SpaceListItem {
   return {
     id: s.id,
@@ -44,12 +60,18 @@ function mapSpace(s: SpaceRow): SpaceListItem {
   };
 }
 
-const PREVIEW_LIMIT = 3;
+const VALID_LENS_IDS = COLLABORATE_LENSES.map((l) => l.id);
 
 export default function CollaborateHub() {
   const { user } = useAuth();
   const joinSpace = useJoinSpace();
+  const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
+
+  const lensParam = searchParams.get('lens');
+  const activeLens: CollaborateLensId = (
+    lensParam && VALID_LENS_IDS.includes(lensParam) ? lensParam : 'discover'
+  ) as CollaborateLensId;
 
   // Spaces the caller is an active member of (shares MySpaces' cache).
   const { data: mySpaces = [], isLoading: myLoading } = useQuery({
@@ -88,6 +110,21 @@ export default function CollaborateHub() {
     },
   });
 
+  // Completed work: the proof surface. Every finished Space, community-wide,
+  // newest first. Not scoped to the caller: completion is shared proof.
+  const { data: completedSpaces = [], isLoading: completedLoading } = useQuery({
+    queryKey: ['spaces', 'completed'],
+    queryFn: async (): Promise<SpaceListItem[]> => {
+      const { data, error } = await supabase
+        .from('spaces')
+        .select(SPACE_COLUMNS)
+        .eq('status', 'completed')
+        .order('last_activity_at', { ascending: false, nullsFirst: false });
+      if (error) throw error;
+      return (data as SpaceRow[]).map(mapSpace);
+    },
+  });
+
   // Which spaces the caller already belongs to (and whether still pending).
   const { data: memberships } = useQuery({
     queryKey: ['my-spaces', 'membership-map', user?.id],
@@ -107,7 +144,7 @@ export default function CollaborateHub() {
 
   const membershipMap = useMemo(() => memberships ?? {}, [memberships]);
 
-  // Client-side search filter shared by both My Spaces and Discover shelves.
+  // Client-side search filter shared by every lens.
   const matchesQuery = (s: SpaceListItem) => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return true;
@@ -117,127 +154,167 @@ export default function CollaborateHub() {
     );
   };
 
-  const filteredMySpaces = useMemo(
+  // Discover: community/public spaces the caller has not joined, still open.
+  const discover = useMemo(
+    () =>
+      allSpaces.filter(
+        (s) =>
+          !membershipMap[s.id] &&
+          (s.visibility === 'public' || s.visibility === 'community') &&
+          OPEN_STATUSES.has(s.status) &&
+          matchesQuery(s),
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [allSpaces, membershipMap, searchQuery],
+  );
+
+  const mine = useMemo(
     () => mySpaces.filter(matchesQuery),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [mySpaces, searchQuery],
   );
 
-  // Community/public spaces the caller hasn't joined yet.
-  const discover = useMemo(
-    () =>
-      allSpaces
-        .filter(
-          (s) =>
-            !membershipMap[s.id] &&
-            (s.visibility === 'public' || s.visibility === 'community') &&
-            matchesQuery(s),
-        )
-        .slice(0, PREVIEW_LIMIT),
+  const completed = useMemo(
+    () => completedSpaces.filter(matchesQuery),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [allSpaces, membershipMap, searchQuery],
+    [completedSpaces, searchQuery],
   );
+
+  const loadingByLens: Record<CollaborateLensId, boolean> = {
+    discover: discoverLoading,
+    mine: myLoading,
+    completed: completedLoading,
+  };
+
+  function renderLensBody() {
+    const isLoading = loadingByLens[activeLens];
+    if (isLoading) {
+      return (
+        <div className="space-y-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-28 w-full rounded-xl" />
+          ))}
+        </div>
+      );
+    }
+
+    if (activeLens === 'discover') {
+      if (discover.length === 0) {
+        return (
+          <LensEmpty
+            icon={Telescope}
+            title="No open Spaces to join right now"
+            body="When a member opens a Space to the community, it lands here for you to join. Until then, the first move is yours."
+            action={
+              <Button asChild>
+                <Link to="/dna/collaborate/spaces/new">
+                  <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
+                  Start a Space
+                </Link>
+              </Button>
+            }
+          />
+        );
+      }
+      return (
+        <div className="space-y-3">
+          {discover.map((space) => (
+            <SpaceListCard
+              key={space.id}
+              space={space}
+              isMember={!!membershipMap[space.id]}
+              isPending={membershipMap[space.id] === 'invited'}
+              isJoining={joinSpace.isPending && joinSpace.variables?.spaceId === space.id}
+              onJoin={(s) =>
+                joinSpace.mutate({
+                  spaceId: s.id,
+                  visibility: s.visibility as SpaceVisibility,
+                })
+              }
+            />
+          ))}
+        </div>
+      );
+    }
+
+    if (activeLens === 'mine') {
+      if (mine.length === 0) {
+        return (
+          <LensEmpty
+            icon={UsersRound}
+            title="You do not hold a seat in any Space yet"
+            body="A Space is a place the diaspora builds together. Find one to join in Discover, or start your own."
+            action={
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                <Button asChild variant="outline">
+                  <Link to="/dna/collaborate?lens=discover">Browse Discover</Link>
+                </Button>
+                <Button asChild>
+                  <Link to="/dna/collaborate/spaces/new">
+                    <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
+                    Start a Space
+                  </Link>
+                </Button>
+              </div>
+            }
+          />
+        );
+      }
+      return (
+        <div className="space-y-3">
+          {mine.map((space) => (
+            <SpaceListCard key={space.id} space={space} isMember />
+          ))}
+        </div>
+      );
+    }
+
+    // completed
+    if (completed.length === 0) {
+      return (
+        <LensEmpty
+          icon={BadgeCheck}
+          title="No Space has completed yet"
+          body="When a Space finishes what it set out to do, the full roster and the proof of the work land here. This surface fills itself, in time."
+        />
+      );
+    }
+    return (
+      <div className="space-y-3">
+        {completed.map((space) => (
+          <SpaceListCard key={space.id} space={space} isMember={!!membershipMap[space.id]} />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <SpacesShell
-      bubblePlaceholder="Search Spaces…"
+      bubblePlaceholder="Search Spaces"
       searchQuery={searchQuery}
       onSearchChange={setSearchQuery}
+      tabs={null}
     >
-      <div className="mb-6 flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Collaborate</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Spaces are where the diaspora builds together. Join one, or start your own.
-          </p>
+      <div className="flex flex-col gap-6">
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-1">
+            <h1 className="text-h1 text-foreground">Collaborate</h1>
+            <p className="text-body text-muted-foreground">
+              Spaces are where the diaspora builds together. Join one, or start your own.
+            </p>
+          </div>
+          <Button asChild className="shrink-0">
+            <Link to="/dna/collaborate/spaces/new">
+              <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
+              Start a Space
+            </Link>
+          </Button>
         </div>
-        <Button asChild className="shrink-0">
-          <Link to="/dna/collaborate/spaces/new">
-            <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
-            Create Space
-          </Link>
-        </Button>
+
+        <CollaborateLensBar />
+
+        {renderLensBody()}
       </div>
-
-      {/* My spaces */}
-      <section>
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-sm font-semibold text-foreground">My Spaces</h2>
-          <Link
-            to="/dna/collaborate/my-spaces"
-            className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground"
-          >
-            View all
-            <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
-          </Link>
-        </div>
-        {myLoading ? (
-          <div className="mt-3 space-y-3">
-            {Array.from({ length: 2 }).map((_, i) => (
-              <Skeleton key={i} className="h-28 w-full rounded-lg" />
-            ))}
-          </div>
-        ) : filteredMySpaces.length === 0 ? (
-          <Card className="mt-3 p-6 text-center">
-            <p className="text-sm text-muted-foreground">
-              {mySpaces.length === 0
-                ? "You haven't joined any spaces yet. Discover one below, or start your own."
-                : 'No spaces match your search.'}
-            </p>
-          </Card>
-        ) : (
-          <div className="mt-3 space-y-3">
-            {filteredMySpaces.slice(0, PREVIEW_LIMIT).map((space) => (
-              <SpaceListCard key={space.id} space={space} isMember />
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* Discover */}
-      <section className="mt-8">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-sm font-semibold text-foreground">Discover Spaces</h2>
-          <Link
-            to="/dna/collaborate/spaces"
-            className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground"
-          >
-            Browse all
-            <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
-          </Link>
-        </div>
-        {discoverLoading ? (
-          <div className="mt-3 space-y-3">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <Skeleton key={i} className="h-28 w-full rounded-lg" />
-            ))}
-          </div>
-        ) : discover.length === 0 ? (
-          <Card className="mt-3 p-6 text-center">
-            <p className="text-sm text-muted-foreground">
-              No open spaces to join right now. Be the first to start one.
-            </p>
-          </Card>
-        ) : (
-          <div className="mt-3 space-y-3">
-            {discover.map((space) => (
-              <SpaceListCard
-                key={space.id}
-                space={space}
-                isMember={!!membershipMap[space.id]}
-                isPending={membershipMap[space.id] === 'invited'}
-                isJoining={joinSpace.isPending && joinSpace.variables?.spaceId === space.id}
-                onJoin={(s) =>
-                  joinSpace.mutate({
-                    spaceId: s.id,
-                    visibility: s.visibility as SpaceVisibility,
-                  })
-                }
-              />
-            ))}
-          </div>
-        )}
-      </section>
     </SpacesShell>
   );
 }

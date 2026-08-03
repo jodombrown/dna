@@ -80,6 +80,26 @@ export const contributeNeedService = {
       .sort((a, b) => STATUS_RANK[a.status] - STATUS_RANK[b.status]);
   },
 
+  /**
+   * Open, public need declarations across the community, newest published
+   * first. RLS ("Open public need declarations are visible to authenticated")
+   * scopes this to open + public rows, so no other status or visibility can
+   * leak. The caller's own needs are excluded here rather than in SQL so the
+   * shared query cache stays keyed by nothing user specific.
+   */
+  async loadOpenNeeds(excludeUserId?: string): Promise<NeedDeclaration[]> {
+    const { data, error } = await supabase
+      .from('need_declarations')
+      .select('*')
+      .eq('status', 'open')
+      .eq('visibility', 'public')
+      .order('published_at', { ascending: false, nullsFirst: false });
+    if (error) throw error;
+    const rows = (data as NeedRow[] | null) ?? [];
+    const mapped = rows.map(mapNeed);
+    return excludeUserId ? mapped.filter((n) => n.userId !== excludeUserId) : mapped;
+  },
+
   async getNeedsForUser(targetUserId: string): Promise<NeedDeclaration[]> {
     const { data, error } = await supabase.rpc('get_need_declarations_for_user', {
       target_user_id: targetUserId,
