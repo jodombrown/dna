@@ -206,10 +206,6 @@ const PartnerSector = lazy(() => import("./pages/PartnerSector"));
 const PartnerModels = lazy(() => import("./pages/PartnerModels"));
 const PartnerStart = lazy(() => import("./pages/PartnerStart"));
 
-// Regional Hubs
-const RegionHubPage = lazy(() => import("./pages/africa/RegionHubPage"));
-const CountryHubPage = lazy(() => import("./pages/africa/CountryHubPage"));
-
 
 // Connect index redirect that carries the query string across the hop to the
 // default child route. A bare <Navigate> drops search params, which would lose
@@ -918,10 +914,6 @@ function App() {
               <Route path="/partner-with-dna/sectors/:slug" element={<PartnerSector />} />
               <Route path="/partner-with-dna/models" element={<PartnerModels />} />
               <Route path="/partner-with-dna/start" element={<PartnerStart />} />
-
-              {/* Regional Hubs */}
-              <Route path="/africa/:regionSlug" element={<RegionHubPage />} />
-              <Route path="/africa/:regionSlug/:countrySlug" element={<CountryHubPage />} />
 
               {/* Static pages */}
               <Route path="/contact" element={<Contact />} />
