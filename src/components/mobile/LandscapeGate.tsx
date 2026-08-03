@@ -43,6 +43,16 @@ import * as React from 'react';
  */
 const PHONE_LANDSCAPE = '(orientation: landscape) and (max-height: 500px)';
 
+/**
+ * Above every band in the app, including alert-dialog.
+ *
+ * Written as a constant and applied inline, matching `DRAWER_Z_INDEX` in
+ * `components/drawer/constants.ts`, because `tailwind.config.ts` declares no
+ * `zIndex` scale: a `z-*` utility beyond Tailwind's defaults renders NOTHING.
+ * The bands, per that file: sheet 999/1000, drawer 1060, alert-dialog 1100.
+ */
+const LANDSCAPE_GATE_Z_INDEX = 1200;
+
 /** Under this many CSS px of lost visual viewport, the keyboard is up. */
 const KEYBOARD_THRESHOLD = 150;
 
