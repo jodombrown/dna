@@ -60,7 +60,7 @@
 | **Feed Empty State** | ✅ | Proper condition (`!isLoading && activities.length === 0`); 3 functional CTAs |
 | **Feed Safety** | ✅ | Real-time subscriptions for new activities; no visible RLS issues |
 | **Discover Filters** | ✅ | All 7 filters wire correctly to `discover_members` RPC; pagination with "Load More" |
-| **Profile Gate (40%)** | ✅ | Enforced in `discover_members` (users < 40% excluded) and `send-connection-request` (returns `profile_incomplete`) |
+| **Profile Gate (40%)** | ⚠️ | Enforced in `discover_members` (users < 40% excluded) ~~and `send-connection-request` (returns `profile_incomplete`)~~ — **Corrected (BD346): the `send-connection-request` profile gate was removed; the deployed function no longer returns `profile_incomplete`.** |
 | **Blocked Users** | ✅ | Excluded from Discover, Network, Feed; CTAs hidden on profiles |
 | **MemberCard States** | ✅ | State machine works (Connect → Request Sent → Message); shared attributes display correctly |
 | **Network Flows** | ✅ | Accept/Decline update DB and UI; "Message" routes to `/dna/connect/messages?conversation=X` |
@@ -237,8 +237,8 @@
 - `profile_completion_percentage` column exists ✓
 - Profile gate enforcement:
   - `discover_members` RPC: excludes users < 40% ✓
-  - `send-connection-request` edge function: returns `profile_incomplete` when < 40% ✓ (lines 125-130)
-- Frontend shows error toast when attempting to connect with incomplete profile ✓ (MemberCard lines 65-70)
+  - ~~`send-connection-request` edge function: returns `profile_incomplete` when < 40% ✓ (lines 125-130)~~ — **Corrected (BD346): this gate was removed; the deployed function no longer returns `profile_incomplete`.**
+- ~~Frontend shows error toast when attempting to connect with incomplete profile ✓ (MemberCard lines 65-70)~~ — **Corrected (BD346): no such toast; the profile-incomplete branch was removed from the member cards.**
 
 ---
 

@@ -108,8 +108,8 @@ Profiles now act as **nodes in the whole engine**, not just a bio page:
 
 * **Profile gate**:
   * `discover_members` excludes users below 40% completion.
-  * `send-connection-request` returns `profile_incomplete` for <40%:
-    * UI shows a clear toast: "Complete your profile to at least 40% to send connection requests."
+  * ~~`send-connection-request` returns `profile_incomplete` for <40%:~~ — **Corrected (BD346): this gate was removed; the deployed function no longer returns `profile_incomplete`.**
+    * ~~UI shows a clear toast: "Complete your profile to at least 40% to send connection requests."~~ — **Corrected (BD346): the profile-incomplete branch was removed from the member cards, so no such toast fires.**
 * **Blocking**:
   * `blocked_users` enforced in:
     * Discover

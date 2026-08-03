@@ -391,9 +391,6 @@ const ProfileV2: React.FC = () => {
               toast({ title: 'Already connected', description: result.message });
             } else if (result.status === 'already_pending' || result.status === 'request_received') {
               toast({ title: 'Request pending', description: result.message });
-            } else if (result.status === 'profile_incomplete') {
-              toast({ title: 'Profile Incomplete', description: result.message || 'Complete your profile to send requests.', variant: 'destructive' });
-              navigate('/dna/profile/edit');
             } else {
               toast({ title: 'Unable to connect', description: result.error || 'Please try again.', variant: 'destructive' });
             }

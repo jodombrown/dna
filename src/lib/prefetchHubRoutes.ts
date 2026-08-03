@@ -18,7 +18,7 @@ const ROUTE_PREFETCH: Record<string, () => Promise<unknown>> = {
   '/dna/convene': () => import('@/pages/dna/convene/ConveneHub'),
   '/dna/collaborate': () => import('@/pages/dna/collaborate/CollaborateHub'),
   '/dna/contribute': () => import('@/pages/dna/contribute/ContributeHub'),
-  '/dna/convey': () => import('@/pages/dna/convey/ConveyHub'),
+  '/dna/convey': () => import('@/pages/dna/Convey'),
 };
 
 const prefetched = new Set<string>();

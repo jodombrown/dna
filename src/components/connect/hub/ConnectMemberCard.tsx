@@ -104,9 +104,6 @@ export function ConnectMemberCard({ member, onConnectionSent, onMessage }: Conne
         toast({ title: 'Connection request sent', description: `Request sent to ${member.full_name}.` });
         await trackEvent('connect_request_sent', { target_user_id: member.id });
         onConnectionSent?.();
-      } else if (result.status === 'profile_incomplete') {
-        toast({ title: 'Profile Incomplete', description: result.message || 'Complete your profile first.', variant: 'destructive' });
-        navigate('/dna/profile/edit');
       } else {
         toast({ title: 'Request status', description: result.message || 'Please try again later.' });
       }

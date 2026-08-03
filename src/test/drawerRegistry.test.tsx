@@ -117,7 +117,7 @@ describe('drawer registry — BD137 enforcement', () => {
    * DIRTY INPUT — the other half of BD121.
    *
    * This is the real `My stories` row exactly as it shipped in AccountDrawer.tsx
-   * and exactly as DR0 found it live. `ConveyHub.tsx` has no tab concept, so the
+   * and exactly as DR0 found it live. `Convey.tsx` has no tab concept, so the
    * member was silently landed on the wrong screen. If this test ever goes
    * green, the gate has been inverted and is certifying nothing.
    */
@@ -132,7 +132,7 @@ describe('drawer registry — BD137 enforcement', () => {
         paramContract: {
           param: 'tab',
           value: 'my_stories',
-          destinationFile: 'src/pages/dna/convey/ConveyHub.tsx',
+          destinationFile: 'src/pages/dna/Convey.tsx',
         },
       },
     };
@@ -190,7 +190,7 @@ describe('BD139 — the My Stories promise resolves everywhere', () => {
   it('no live caller still points at the dead param or the /dna/me redirect', () => {
     const callers = [
       'src/components/navigation/AccountDrawer.tsx',
-      'src/pages/dna/convey/ConveyDiscovery.tsx',
+      'src/pages/dna/convey/ConveyStoryHub.tsx',
       'src/pages/dna/admin/UserAdminHub.tsx',
     ];
     for (const rel of callers) {
