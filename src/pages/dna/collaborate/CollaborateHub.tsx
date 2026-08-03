@@ -295,26 +295,26 @@ export default function CollaborateHub() {
       onSearchChange={setSearchQuery}
       tabs={null}
     >
-      <div className="mb-5 flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-h1 text-foreground">Collaborate</h1>
-          <p className="mt-1 text-body text-muted-foreground">
-            Spaces are where the diaspora builds together. Join one, or start your own.
-          </p>
+      <div className="flex flex-col gap-6">
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-1">
+            <h1 className="text-h1 text-foreground">Collaborate</h1>
+            <p className="text-body text-muted-foreground">
+              Spaces are where the diaspora builds together. Join one, or start your own.
+            </p>
+          </div>
+          <Button asChild className="shrink-0">
+            <Link to="/dna/collaborate/spaces/new">
+              <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
+              Start a Space
+            </Link>
+          </Button>
         </div>
-        <Button asChild className="shrink-0">
-          <Link to="/dna/collaborate/spaces/new">
-            <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
-            Start a Space
-          </Link>
-        </Button>
-      </div>
 
-      <div className="mb-6">
         <CollaborateLensBar />
-      </div>
 
-      {renderLensBody()}
+        {renderLensBody()}
+      </div>
     </SpacesShell>
   );
 }
