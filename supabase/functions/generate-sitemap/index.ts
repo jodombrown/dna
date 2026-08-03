@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     
-    const { data: events } = await supabase
+    const { data: events, error: eventsError } = await supabase
       .from('events')
       .select('slug, updated_at')
       .eq('status', 'published')
@@ -56,6 +56,10 @@ Deno.serve(async (req) => {
       .gte('end_time', thirtyDaysAgo.toISOString())
       .order('start_time', { ascending: false })
       .limit(500);
+
+    if (eventsError) {
+      console.error('[generate-sitemap] events query failed:', eventsError);
+    }
 
     if (events) {
       for (const event of events) {
@@ -71,7 +75,7 @@ Deno.serve(async (req) => {
     }
 
     // Fetch public profiles (users with public visibility and completed profiles)
-    const { data: profiles } = await supabase
+    const { data: profiles, error: profilesError } = await supabase
       .from('profiles')
       .select('username, updated_at')
       .eq('visibility', 'public')
@@ -79,6 +83,10 @@ Deno.serve(async (req) => {
       .not('full_name', 'is', null)
       .order('updated_at', { ascending: false })
       .limit(1000);
+
+    if (profilesError) {
+      console.error('[generate-sitemap] profiles query failed:', profilesError);
+    }
 
     if (profiles) {
       for (const profile of profiles) {
@@ -93,13 +101,21 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Fetch public posts
-    const { data: posts } = await supabase
+    // Fetch public posts. `posts.visibility` does not exist; the real column is
+    // `privacy_level`, and the /post/:id route (get_public_post) only resolves
+    // rows where privacy_level='public' AND is_deleted is not true — mirror that
+    // so the sitemap never lists a URL that 404s.
+    const { data: posts, error: postsError } = await supabase
       .from('posts')
       .select('id, updated_at')
-      .eq('visibility', 'public')
+      .eq('privacy_level', 'public')
+      .not('is_deleted', 'is', true)
       .order('created_at', { ascending: false })
       .limit(500);
+
+    if (postsError) {
+      console.error('[generate-sitemap] posts query failed:', postsError);
+    }
 
     if (posts) {
       for (const post of posts) {
@@ -112,24 +128,33 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Fetch public stories
-    const { data: stories } = await supabase
-      .from('stories')
-      .select('id, slug, updated_at')
-      .eq('visibility', 'public')
-      .eq('status', 'published')
-      .order('published_at', { ascending: false })
+    // Fetch public stories. Convey stories are posts (post_type='story'); there
+    // is no `stories` table in the catalog. The public detail route is
+    // /dna/story/:slug, resolved by slug, so only stories with a slug are listed.
+    const { data: stories, error: storiesError } = await supabase
+      .from('posts')
+      .select('slug, updated_at')
+      .eq('post_type', 'story')
+      .eq('privacy_level', 'public')
+      .not('is_deleted', 'is', true)
+      .not('slug', 'is', null)
+      .order('created_at', { ascending: false })
       .limit(200);
+
+    if (storiesError) {
+      console.error('[generate-sitemap] stories query failed:', storiesError);
+    }
 
     if (stories) {
       for (const story of stories) {
-        const storyPath = story.slug || story.id;
-        urls.push({
-          loc: `/story/${storyPath}`,
-          lastmod: story.updated_at,
-          changefreq: 'monthly',
-          priority: 0.7,
-        });
+        if (story.slug) {
+          urls.push({
+            loc: `/dna/story/${story.slug}`,
+            lastmod: story.updated_at,
+            changefreq: 'monthly',
+            priority: 0.7,
+          });
+        }
       }
     }
 
