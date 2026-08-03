@@ -45,6 +45,8 @@ const NAV_SURFACES: NavSurface[] = [
   { id: 'feed-lens-bar',         file: 'src/components/feed/FeedLensBar.tsx' },
   // Collaborate
   { id: 'collaborate-lens-bar',  file: 'src/components/collaborate/CollaborateLensBar.tsx' },
+  // Contribute
+  { id: 'contribute-lens-bar',   file: 'src/components/contribute/ContributeLensBar.tsx' },
   { id: 'feed-tab-explainer',    file: 'src/components/feed/FeedTabExplainer.tsx' },
   { id: 'feed-desktop-tabs',     file: 'src/pages/dna/Feed.tsx',
     scopeRegex: /<TabsList[\s\S]*?<\/TabsList>/, jsx: true },

@@ -23,6 +23,24 @@ export function useOwnNeeds() {
   return { ...query, userId };
 }
 
+/**
+ * Open, public needs across the community for the Needs lens, with the caller's
+ * own asks excluded (those live in the Mine lens). Enabled only when signed in,
+ * because the RLS policy that exposes open public needs requires an
+ * authenticated role.
+ */
+export function useOpenNeeds() {
+  const { user } = useAuth();
+  const userId = user?.id ?? null;
+
+  return useQuery<NeedDeclaration[]>({
+    queryKey: ['contribute', 'needs', 'open', userId],
+    queryFn: () => contributeNeedService.loadOpenNeeds(userId ?? undefined),
+    enabled: !!userId,
+    staleTime: 60_000,
+  });
+}
+
 export function useUserNeeds(targetUserId: string | null | undefined) {
   return useQuery<NeedDeclaration[]>({
     queryKey: ['contribute', 'needs', 'user', targetUserId ?? null],
