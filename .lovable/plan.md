@@ -1,46 +1,33 @@
-## What changes
+## What happened to Raymond
 
-Public signup closes now and reopens by itself at the announced moment. In the meantime the signup route shows the announcement plus a Beta Access request form whose entries land in the existing Admin > Waitlist tracker. Login, password reset, and every authenticated surface stay untouched.
+He was upright the whole time. The notice fired because of the software keyboard, not rotation.
 
-## 1. The dated gate
+`src/components/mobile/LandscapeGate.tsx` decides with one media query:
 
-New in `src/config/featureFlags.ts`:
+```
+(orientation: landscape) and (max-height: 500px)
+```
 
-- `SIGNUPS_OPEN_AT` = August 15, 2026, 12:00 noon **UTC** (say the word if you want a different zone, for example New York or London, and I will set that instant instead).
-- `areSignupsOpen()` returns `Date.now() >= SIGNUPS_OPEN_AT`. No deploy needed on the day: the notice disappears and signup opens on the next page load after the moment passes.
-- `WAITLIST_MODE` stays `false` and is left alone. This gate is separate and does not resurrect the waitlist funnel.
+Both halves are measured against the **layout viewport**, which shrinks when the keyboard opens. On a 402x725 phone, an open keyboard leaves roughly 402x300: wider than tall, and under 500px. So the CSS reports "landscape" while the phone is vertical.
 
-`src/pages/Auth.tsx`: when the signup tab is requested and signups are closed and the bypass is not held, render the Beta Access screen instead of the signup form. The sign-in tab renders exactly as it does today, and the "Sign up" toggle becomes "Request beta access".
+Worse, the component re-arms on every change to that query (`if (!matches) setDismissed(false)`). Tapping a field opened the notice, tapping "Continue anyway" dismissed it, the keyboard closing rearmed it, the next field opened it again. That is the back-and-forth he lived through, and on signup it lands on the worst possible screen.
 
-## 2. Your bypass
+## The fix (one file)
 
-`/auth?mode=signup&key=<token>` sets a flag in `localStorage` so you keep signup access across reloads on that browser. A constant in the frontend is obscurity, not security: anyone reading the bundle can find it. It is fine for holding back a launch date, it is not an access control, and I will say so in a comment. If you would rather it be real, the alternative is an admin-only invite row, which is a bigger build.
+`src/components/mobile/LandscapeGate.tsx`:
 
-## 3. The Beta Access screen
+1. **Decide orientation from the device, not the viewport.** Read `screen.orientation.type` (fall back to `window.orientation`, then to the media query where neither exists). A keyboard never changes `screen.orientation`, so this alone ends the false positive. Keep the existing `(orientation: landscape) and (max-height: 500px)` query as the size check and last-resort fallback, so the desktop scoping guarantee and the BD158 tests in `src/test/appChromeSafeArea.test.tsx` stay intact.
+2. **Suppress while typing.** If the software keyboard is up, never show the gate. Detect it the way the app already does: `window.visualViewport.height` well below `window.innerHeight`, plus an active `input` / `textarea` / `contenteditable` element. This is a second, independent guard so a browser with unreliable `screen.orientation` still cannot flash the notice mid-form.
+3. **Stop the flicker.** Re-arm the dismissal only on a real device-orientation change, not on every media-query flip.
 
-New `src/pages/BetaAccess.tsx`, route `/beta-access`, plus the same component rendered inline on the closed signup tab so nobody has to navigate twice.
+Net: the gate shows only when the device is genuinely on its side and no keyboard is open, and it does not reappear repeatedly within a session on the same rotation.
 
-- Heading: "Signups open August 15, 2026 at 12pm noon" (sentence case, no em dashes).
-- Body: one line on what beta access means and what happens next.
-- A live countdown is optional; say if you want it and I will add a quiet one.
-- Fields: first name, last name, email, location (optional), and one short "why you want in" box. Client-side validation mirrors the database constraint already on the table (valid email, name under 160 chars, message under 2000).
-- Submit inserts into `beta_waitlist` with `status = 'pending'`. I verified the live policy: anon may insert exactly this shape, so no migration and no schema change is needed.
-- Duplicate email returns a friendly "you are already on the list" instead of an error.
-- Confirmation email fires through the existing `send-universal-email` function, same pattern the waitlist page uses, and a failure there never blocks the signup.
-- Success state replaces the form. No error surface for a visitor.
+## Verification
 
-## 4. Tracking
+- Playwright at 402x725: focus the signup email field, shrink the visual viewport to simulate the keyboard, assert no `role="alertdialog"` with "Turn your phone upright".
+- Assert it still appears at 725x402 with `screen.orientation` landscape.
+- Run the BD158 tests in `src/test/appChromeSafeArea.test.tsx` and a typecheck.
 
-Nothing new to build. `Admin > Waitlist` (`src/pages/admin/WaitlistManagement.tsx`) already reads `beta_waitlist` with search, status filter, notes, and CSV export, so requests appear there the moment they arrive.
+## Notes
 
-## 5. Copy sweep
-
-Public "Sign up" CTAs that point at `/auth?mode=signup` continue to work: they land on the announcement, which is the correct destination. I will not mass-rename them, so the labels revert to correct on their own on August 15. Flag it if you would rather they read "Request beta access" until then.
-
-## Technical notes
-
-- Files touched: `src/config/featureFlags.ts`, `src/pages/Auth.tsx`, `src/App.tsx` (one route), new `src/pages/BetaAccess.tsx`, new `src/components/auth/BetaAccessForm.tsx`.
-- No database migration, no RLS change, no edge function deploy.
-- Existing `src/components/auth/BetaWaitlist.tsx` carries stale December 2025 beta dates. It is a separate modal; I will leave it alone unless you want it retired in the same pass, in which case tell me and I will name what I remove.
-- Design system: `Section` / `Container` / `Stack`, DNA type tokens only, no arbitrary values, no raw hex.
-- Verification: typecheck, lint, token and scale gates, and I will confirm a real row lands in `beta_waitlist` and read it back rather than trusting a success toast.
+No database, auth or signup logic changes. Raymond's account is unaffected; this was presentation only. Nothing else in `src/` is touched.
