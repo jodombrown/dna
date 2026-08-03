@@ -15555,7 +15555,13 @@ export type Database = {
         | "not_interested"
         | "saved"
         | "why_this_opened"
-      contribution_currency: "expertise" | "network" | "resources" | "capital"
+      contribution_currency:
+        | "expertise"
+        | "network"
+        | "resources"
+        | "capital"
+        | "time"
+        | "advocacy"
       contribution_need_priority: "normal" | "high"
       contribution_need_status: "open" | "in_progress" | "fulfilled" | "closed"
       contribution_need_type:
@@ -15797,7 +15803,14 @@ export const Constants = {
         "saved",
         "why_this_opened",
       ],
-      contribution_currency: ["expertise", "network", "resources", "capital"],
+      contribution_currency: [
+        "expertise",
+        "network",
+        "resources",
+        "capital",
+        "time",
+        "advocacy",
+      ],
       contribution_need_priority: ["normal", "high"],
       contribution_need_status: ["open", "in_progress", "fulfilled", "closed"],
       contribution_need_type: [
