@@ -217,7 +217,7 @@ const AdminLogin = () => {
               <form onSubmit={handleSignIn} className="space-y-5">
                 {/* Email Input */}
                 <div className="space-y-2">
-                  <Label htmlFor="admin-email" className="text-neutral-700">
+                  <Label htmlFor="admin-email" className="text-foreground">
                     Email Address
                   </Label>
                   <Input
@@ -237,7 +237,7 @@ const AdminLogin = () => {
 
                 {/* Password Input */}
                 <div className="space-y-2">
-                  <Label htmlFor="admin-password" className="text-neutral-700">
+                  <Label htmlFor="admin-password" className="text-foreground">
                     Password
                   </Label>
                   <Input
@@ -255,7 +255,7 @@ const AdminLogin = () => {
                 </div>
 
                 {emailValidation?.isValid && (
-                  <p className="text-meta text-emerald-600 flex items-center gap-1">
+                  <p className="text-meta text-dna-emerald flex items-center gap-1">
                     <CheckCircle2 className="w-3 h-3" />
                     Authorized: {emailValidation.roleLevel?.replace('_', ' ')}
                     {emailValidation.isSuperAdmin && ' (Super Admin)'}
@@ -264,7 +264,7 @@ const AdminLogin = () => {
 
                 {/* Error Alert */}
                 {emailError && (
-                  <Alert variant="destructive" className="bg-red-50 border-red-200">
+                  <Alert variant="destructive" className="bg-destructive/10">
                     <XCircle className="h-4 w-4" />
                     <AlertDescription className="text-body">
                       {emailError}
@@ -275,7 +275,7 @@ const AdminLogin = () => {
                 {/* Submit Button */}
                 <Button
                   type="submit"
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                  className="w-full"
                   disabled={isLoading || !email || !password}
                 >
                   {isLoading ? (
