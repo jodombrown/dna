@@ -63,7 +63,7 @@ const DiaSheet: React.FC = () => {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent
         side="right"
-        className="w-full sm:max-w-[460px] p-0 flex flex-col gap-0 border-l border-border/60 overflow-hidden"
+        className="w-full sm:max-w-drawer p-0 flex flex-col gap-0 border-l border-border/60 overflow-hidden"
         style={{
           backgroundImage: KENTE_PATTERN,
           backgroundColor: 'hsl(var(--background))',

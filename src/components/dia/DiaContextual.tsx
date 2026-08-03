@@ -65,7 +65,7 @@ export function DiaContextual({
         </SheetTrigger>
         <SheetContent
           side="bottom"
-          className="h-[85vh] rounded-t-2xl flex flex-col overflow-hidden"
+          className="h-sheet rounded-t-2xl flex flex-col overflow-hidden"
         >
           <SheetHeader className="pb-4 flex-none">
             <SheetTitle className="flex items-center gap-2">
