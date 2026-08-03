@@ -1,4 +1,11 @@
-import { BookOpen, Users, Package, Coins, type LucideIcon } from 'lucide-react';
+import {
+  Banknote,
+  Clock,
+  GraduationCap,
+  Handshake,
+  Megaphone,
+  type LucideIcon,
+} from 'lucide-react';
 import type {
   ContributionCurrency,
   StanceAvailability,
@@ -8,9 +15,9 @@ import type {
 export interface CurrencyVisual {
   key: ContributionCurrency;
   label: string;
-  /** Token color used for the 4px left bar, icons, and other non-text graphical elements. */
+  /** Token color for the currency icon and other non-text graphical marks. */
   barHex: string;
-  /** Token color used wherever the currency name renders as text. AA-compliant on white. */
+  /** Token color used wherever the currency name renders as text. AA-compliant on the page ground. */
   labelHex: string;
   icon: LucideIcon;
   placeholderTitle: string;
@@ -19,21 +26,43 @@ export interface CurrencyVisual {
 }
 
 /**
- * Single source of truth for currency presentation. Colors resolve from the
- * DNA design tokens at runtime (rendered as inline style on a 4px bar / icon)
- * so each currency reads with equal visual weight and stays themeable.
+ * Single source of truth for currency presentation. Each currency takes one
+ * locked hue from the Five C's identity palette (--c5-*, canonical per D092),
+ * so every currency reads as a distinct, themeable mark of equal weight. The
+ * former --dna-* hues and the 4px left bar are retired: D092 refuses
+ * left-edge accent stripes, so the hue now carries the icon and label only.
  *
- * `barHex` vs `labelHex`: the bar is graphical (no contrast minimum), while
- * label text must clear WCAG AA (4.5:1) on the cream ground. Emerald is
- * 3.8:1 there, so Expertise labels use Forest instead.
+ * `barHex` vs `labelHex`: the mark is graphical (no contrast minimum) and uses
+ * the palette's bevel rung; label text must clear WCAG AA (4.5:1) on the page
+ * ground and uses the contrast-tuned text rung.
  */
 export const CURRENCY_VISUALS: Record<ContributionCurrency, CurrencyVisual> = {
+  capital: {
+    key: 'capital',
+    label: 'Capital',
+    barHex: 'hsl(var(--c5-contribute-bevel))',
+    labelHex: 'hsl(var(--c5-contribute-text))',
+    icon: Banknote,
+    placeholderTitle: '',
+    shortBlurb: 'Coming after the trust ladder is built.',
+    authorable: false,
+  },
+  time: {
+    key: 'time',
+    label: 'Time',
+    barHex: 'hsl(var(--c5-convene-bevel))',
+    labelHex: 'hsl(var(--c5-convene-text))',
+    icon: Clock,
+    placeholderTitle: 'e.g., Two hours a month mentoring first-time founders',
+    shortBlurb: 'Hours you can put in yourself.',
+    authorable: true,
+  },
   expertise: {
     key: 'expertise',
     label: 'Expertise',
-    barHex: 'hsl(var(--dna-emerald))',
-    labelHex: 'hsl(var(--dna-forest))', // Darker for AA contrast
-    icon: BookOpen,
+    barHex: 'hsl(var(--c5-collaborate-bevel))',
+    labelHex: 'hsl(var(--c5-collaborate-text))',
+    icon: GraduationCap,
     placeholderTitle: 'e.g., FDA regulatory strategy for biotech',
     shortBlurb: 'Knowledge depth you offer to others.',
     authorable: true,
@@ -41,32 +70,22 @@ export const CURRENCY_VISUALS: Record<ContributionCurrency, CurrencyVisual> = {
   network: {
     key: 'network',
     label: 'Network',
-    barHex: 'hsl(var(--dna-forest))',
-    labelHex: 'hsl(var(--dna-forest))',
-    icon: Users,
+    barHex: 'hsl(var(--c5-connect-bevel))',
+    labelHex: 'hsl(var(--c5-connect-text))',
+    icon: Handshake,
     placeholderTitle: 'e.g., Warm intros to East African agritech investors',
     shortBlurb: 'Doors you can open.',
     authorable: true,
   },
-  resources: {
-    key: 'resources',
-    label: 'Resources',
-    barHex: 'hsl(var(--dna-copper))',
-    labelHex: 'hsl(var(--dna-copper))',
-    icon: Package,
-    placeholderTitle: 'e.g., Office space in Accra for visiting founders',
-    shortBlurb: 'Tangible things you can share.',
+  advocacy: {
+    key: 'advocacy',
+    label: 'Advocacy',
+    barHex: 'hsl(var(--c5-convey-bevel))',
+    labelHex: 'hsl(var(--c5-convey-text))',
+    icon: Megaphone,
+    placeholderTitle: 'e.g., Vouching for a founder to your investors',
+    shortBlurb: 'Your voice and standing, lent to someone.',
     authorable: true,
-  },
-  capital: {
-    key: 'capital',
-    label: 'Capital',
-    barHex: 'hsl(var(--dna-gold-dark))',
-    labelHex: 'hsl(var(--dna-gold-dark))',
-    icon: Coins,
-    placeholderTitle: '',
-    shortBlurb: 'Coming after the trust ladder is built.',
-    authorable: false,
   },
 };
 

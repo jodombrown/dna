@@ -189,7 +189,7 @@ export function ManifestEditor() {
 
           {activeStances.length === 0 && (
             <p className="text-sm text-muted-foreground py-4">
-              Add a stance for each way you show up - expertise you offer, networks you can open, or resources you can share.
+              Add a stance for each way you show up: time you can give, expertise you offer, networks you can open, or advocacy you can lend.
             </p>
           )}
 
