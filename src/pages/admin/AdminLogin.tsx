@@ -13,8 +13,7 @@ import {
   XCircle,
   Loader2,
   AlertTriangle,
-  Mail,
-  Send
+  Mail
 } from 'lucide-react';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { useToast } from '@/hooks/use-toast';
@@ -33,12 +32,11 @@ const AdminLogin = () => {
   const { toast } = useToast();
 
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-  const [isValidatingEmail, setIsValidatingEmail] = useState(false);
   const [emailValidation, setEmailValidation] = useState<AdminValidation | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
-  const [magicLinkSent, setMagicLinkSent] = useState(false);
 
   // Check if already authenticated as admin
   useEffect(() => {
@@ -65,103 +63,54 @@ const AdminLogin = () => {
     checkExistingAuth();
   }, [navigate]);
 
-  // Validate email on blur
-  const handleEmailBlur = async () => {
-    if (!email || !email.includes('@')) {
-      setEmailValidation(null);
-      setEmailError(null);
-      return;
-    }
-
-    setIsValidatingEmail(true);
-    setEmailError(null);
-
-    try {
-      const { data, error } = await (supabase as any).rpc('is_valid_admin_email', {
-        check_email: email.toLowerCase().trim()
-      });
-
-      if (error) {
-        setEmailError('Unable to validate email. Please try again.');
-        setEmailValidation(null);
-        return;
-      }
-
-      if (data && Array.isArray(data) && data.length > 0) {
-        const result = data[0];
-        setEmailValidation({
-          isValid: result.is_valid,
-          roleLevel: result.role_level,
-          isSuperAdmin: result.is_super_admin
-        });
-
-        if (!result.is_valid) {
-          setEmailError('This email is not authorized for admin access. Only @diasporanetwork.africa emails or pre-approved accounts can access the admin panel.');
-        }
-      } else {
-        setEmailValidation({ isValid: false, roleLevel: null, isSuperAdmin: false });
-        setEmailError('This email is not authorized for admin access.');
-      }
-    } catch (error) {
-      setEmailError('Unable to validate email. Please try again.');
-      setEmailValidation(null);
-    } finally {
-      setIsValidatingEmail(false);
-    }
-  };
-
-  const handleSendMagicLink = async (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // First validate the email if not already validated
-    if (!emailValidation) {
-      await handleEmailBlur();
-    }
-
-    // Re-check validation state
-    const currentValidation = emailValidation;
-    if (!currentValidation?.isValid) {
-      toast({
-        title: 'Access Denied',
-        description: 'This email is not authorized for admin access.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
+    setEmailError(null);
     setIsLoading(true);
 
     try {
-      // Call the send-magic-link edge function
-      const { data, error } = await supabase.functions.invoke('send-magic-link', {
-        body: {
-          email: email.toLowerCase().trim(),
-          redirectTo: `${window.location.origin}/admin/dashboard`
-        }
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: email.toLowerCase().trim(),
+        password,
       });
 
-      if (error) {
-        throw error;
+      if (signInError) {
+        setEmailError('Incorrect email or password.');
+        return;
       }
 
-      setMagicLinkSent(true);
-      toast({
-        title: 'Magic Link Sent',
-        description: 'Check your email for a secure login link.',
+      const { data, error } = await (supabase as any).rpc('get_current_admin_status');
+
+      if (error) {
+        setEmailError('Unable to verify admin access. Please try again.');
+        return;
+      }
+
+      const status = Array.isArray(data) && data.length > 0 ? data[0] : null;
+
+      if (!status?.is_admin) {
+        await supabase.auth.signOut();
+        setEmailError('This account is not authorized for admin access.');
+        toast({
+          title: 'Access denied',
+          description: 'This account is not authorized for admin access.',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      setEmailValidation({
+        isValid: true,
+        roleLevel: status.role_level ?? null,
+        isSuperAdmin: Boolean(status.is_super_admin),
       });
+
+      navigate('/admin/dashboard', { replace: true });
     } catch (error: unknown) {
-      toast({
-        title: 'Error',
-        description: getErrorMessage(error) || 'Failed to send magic link. Please try again.',
-        variant: 'destructive',
-      });
+      setEmailError(getErrorMessage(error) || 'Sign in failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleResendLink = () => {
-    setMagicLinkSent(false);
   };
 
   if (isCheckingAuth) {
@@ -214,7 +163,7 @@ const AdminLogin = () => {
           <div className="space-y-3 pt-4">
             <div className="flex items-center gap-3 text-white/60">
               <Mail className="w-5 h-5 text-emerald-500" />
-              <span>Passwordless magic link authentication</span>
+              <span>Credentialed admin authentication</span>
             </div>
             <div className="flex items-center gap-3 text-white/60">
               <Lock className="w-5 h-5 text-emerald-500" />
@@ -258,119 +207,90 @@ const AdminLogin = () => {
             </div>
             <h2 className="text-2xl font-bold text-neutral-900">Admin Sign In</h2>
             <p className="text-neutral-500">
-              {magicLinkSent 
-                ? 'Check your email for the magic link' 
-                : 'Enter your email to receive a secure login link'}
+              Sign in with your admin credentials
             </p>
           </div>
 
           {/* Login Card */}
           <Card className="border-neutral-200 shadow-lg">
             <CardContent className="pt-6">
-              {magicLinkSent ? (
-                // Magic Link Sent State
-                <div className="space-y-6 text-center py-4">
-                  <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto">
-                    <Mail className="w-8 h-8 text-emerald-600" />
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="text-lg font-semibold text-neutral-900">Check Your Email</h3>
-                    <p className="text-neutral-600 text-sm">
-                      We've sent a secure login link to<br />
-                      <span className="font-medium text-neutral-900">{email}</span>
-                    </p>
-                  </div>
-                  <div className="bg-neutral-50 rounded-lg p-4 text-sm text-neutral-600">
-                    <p>Click the link in your email to access the admin portal. The link expires in 24 hours.</p>
-                  </div>
-                  <Button
-                    variant="outline"
-                    onClick={handleResendLink}
-                    className="w-full"
-                  >
-                    <Send className="mr-2 h-4 w-4" />
-                    Send Another Link
-                  </Button>
+              <form onSubmit={handleSignIn} className="space-y-5">
+                {/* Email Input */}
+                <div className="space-y-2">
+                  <Label htmlFor="admin-email" className="text-neutral-700">
+                    Email Address
+                  </Label>
+                  <Input
+                    id="admin-email"
+                    type="email"
+                    autoComplete="username"
+                    placeholder="admin@diasporanetwork.africa"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setEmailError(null);
+                    }}
+                    required
+                    disabled={isLoading}
+                  />
                 </div>
-              ) : (
-                // Email Input Form
-                <form onSubmit={handleSendMagicLink} className="space-y-5">
-                  {/* Email Input */}
-                  <div className="space-y-2">
-                    <Label htmlFor="admin-email" className="text-neutral-700">
-                      Email Address
-                    </Label>
-                    <div className="relative">
-                      <Input
-                        id="admin-email"
-                        type="email"
-                        placeholder="admin@diasporanetwork.africa"
-                        value={email}
-                        onChange={(e) => {
-                          setEmail(e.target.value);
-                          setEmailValidation(null);
-                          setEmailError(null);
-                        }}
-                        onBlur={handleEmailBlur}
-                        required
-                        disabled={isLoading}
-                        className={`pr-10 ${
-                          emailValidation?.isValid
-                            ? 'border-emerald-500 focus-visible:ring-emerald-500'
-                            : emailError
-                              ? 'border-red-500 focus-visible:ring-red-500'
-                              : ''
-                        }`}
-                      />
-                      {isValidatingEmail && (
-                        <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-neutral-400" />
-                      )}
-                      {!isValidatingEmail && emailValidation?.isValid && (
-                        <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500" />
-                      )}
-                      {!isValidatingEmail && emailError && (
-                        <XCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-red-500" />
-                      )}
-                    </div>
-                    {emailValidation?.isValid && (
-                      <p className="text-xs text-emerald-600 flex items-center gap-1">
-                        <CheckCircle2 className="w-3 h-3" />
-                        Authorized: {emailValidation.roleLevel?.replace('_', ' ')}
-                        {emailValidation.isSuperAdmin && ' (Super Admin)'}
-                      </p>
-                    )}
-                  </div>
 
-                  {/* Email Error Alert */}
-                  {emailError && (
-                    <Alert variant="destructive" className="bg-red-50 border-red-200">
-                      <XCircle className="h-4 w-4" />
-                      <AlertDescription className="text-sm">
-                        {emailError}
-                      </AlertDescription>
-                    </Alert>
+                {/* Password Input */}
+                <div className="space-y-2">
+                  <Label htmlFor="admin-password" className="text-neutral-700">
+                    Password
+                  </Label>
+                  <Input
+                    id="admin-password"
+                    type="password"
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setEmailError(null);
+                    }}
+                    required
+                    disabled={isLoading}
+                  />
+                </div>
+
+                {emailValidation?.isValid && (
+                  <p className="text-meta text-emerald-600 flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3" />
+                    Authorized: {emailValidation.roleLevel?.replace('_', ' ')}
+                    {emailValidation.isSuperAdmin && ' (Super Admin)'}
+                  </p>
+                )}
+
+                {/* Error Alert */}
+                {emailError && (
+                  <Alert variant="destructive" className="bg-red-50 border-red-200">
+                    <XCircle className="h-4 w-4" />
+                    <AlertDescription className="text-body">
+                      {emailError}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {/* Submit Button */}
+                <Button
+                  type="submit"
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                  disabled={isLoading || !email || !password}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Signing in...
+                    </>
+                  ) : (
+                    <>
+                      <Lock className="mr-2 h-4 w-4" />
+                      Sign in
+                    </>
                   )}
-
-                  {/* Submit Button */}
-                  <Button
-                    type="submit"
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
-                    disabled={isLoading || !email || !!emailError}
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Sending Link...
-                      </>
-                    ) : (
-                      <>
-                        <Mail className="mr-2 h-4 w-4" />
-                        Send Magic Link
-                      </>
-                    )}
-                  </Button>
-                </form>
-              )}
+                </Button>
+              </form>
             </CardContent>
           </Card>
 
@@ -381,7 +301,7 @@ const AdminLogin = () => {
               <div className="text-sm text-amber-800">
                 <p className="font-medium mb-1">Security Notice</p>
                 <p className="text-amber-700">
-                  Magic links are sent only to authorized @diasporanetwork.africa emails. All login attempts are logged.
+                  Admin access is limited to authorized @diasporanetwork.africa accounts. All login attempts are logged.
                 </p>
               </div>
             </div>
