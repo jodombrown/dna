@@ -6,10 +6,11 @@
  */
 
 export type ContributionCurrency =
+  | 'capital'
+  | 'time'
   | 'expertise'
   | 'network'
-  | 'resources'
-  | 'capital';
+  | 'advocacy';
 
 export type StanceAvailability =
   | 'open_ongoing'
@@ -79,9 +80,10 @@ export const MANIFEST_STANCE_SOFT_WARN = 3;
  * `capital_deferred_v1` constraint backs this up.
  */
 export const AUTHORABLE_CURRENCIES: readonly ContributionCurrency[] = [
+  'time',
   'expertise',
   'network',
-  'resources',
+  'advocacy',
 ] as const;
 
 export function isAuthorableCurrency(

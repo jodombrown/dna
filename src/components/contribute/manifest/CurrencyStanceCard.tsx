@@ -41,10 +41,7 @@ export function CurrencyStanceCard({
   };
 
   return (
-    <article
-      className="relative bg-card border rounded-lg overflow-hidden"
-      style={{ borderLeft: `4px solid ${visual.barHex}` }}
-    >
+    <article className="relative bg-card border rounded-lg overflow-hidden">
       <button
         type="button"
         onClick={() => setExpanded((v) => !v)}

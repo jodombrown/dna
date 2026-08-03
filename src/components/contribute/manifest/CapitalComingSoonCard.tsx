@@ -16,7 +16,7 @@ interface CapitalComingSoonCardProps {
 }
 
 const CAPITAL = CURRENCY_VISUALS.capital;
-const BODY = `Coming after we've built the trust ladder. For now, we're focused on Expertise, Network, and Resources - the contributions that build the social fabric that makes capital trustworthy.`;
+const BODY = `Time, expertise, network and advocacy are what make capital worth trusting when it arrives. Start with what you already carry.`;
 
 export function CapitalComingSoonCard({ surface }: CapitalComingSoonCardProps) {
   const [open, setOpen] = useState(false);
@@ -46,7 +46,6 @@ export function CapitalComingSoonCard({ surface }: CapitalComingSoonCardProps) {
         aria-disabled="true"
         aria-describedby="capital-card-help"
         className="w-full text-left bg-card border rounded-lg overflow-hidden opacity-60 hover:opacity-75 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        style={{ borderLeft: `4px solid ${CAPITAL.barHex}` }}
       >
         <div className="px-4 py-4 min-h-[44px]">
           <div className="flex items-center justify-between gap-3 mb-2">
@@ -64,7 +63,7 @@ export function CapitalComingSoonCard({ surface }: CapitalComingSoonCardProps) {
             </Badge>
           </div>
           <h3 className="text-base md:text-lg font-medium leading-snug">
-            Capital contributions
+            Capital comes later, and on purpose.
           </h3>
           <p id="capital-card-help" className="mt-2 text-xs text-muted-foreground">
             Tap to read why we're sequencing this.
