@@ -42,9 +42,11 @@ describe('reserved usernames cover every routed /dna/ segment', () => {
   it('reserves every first path segment routed under /dna/', () => {
     const segments = routedDnaFirstSegments(appSource);
 
-    // Sanity: the derivation must actually find routes. A regex that silently
-    // matched nothing would make this test vacuously pass.
-    expect(segments.length).toBeGreaterThan(0);
+    // Floor, not a policy value: this asserts the DERIVATION still reaches
+    // the route table, not that any particular count is correct. If routes
+    // are genuinely removed this trips, and that is a signal worth reading
+    // rather than a number to relax. 34 segments routed at 89d07af.
+    expect(segments.length).toBeGreaterThanOrEqual(30);
 
     const reserved = new Set(USERNAME_RULES.reservedWords);
     const missing = segments.filter((s) => !reserved.has(s)).sort();
