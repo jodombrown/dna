@@ -100,7 +100,6 @@ const UserAgreement = lazy(() => import("./pages/UserAgreement"));
 const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
 
 const Convene = lazy(() => import("./pages/Convene"));
-const FactSheetPage = lazy(() => import("./pages/FactSheetPage"));
 const Manifesto = lazy(() => import("./pages/Manifesto"));
 const Demo = lazy(() => import("./pages/Demo"));
 
@@ -488,7 +487,6 @@ function App() {
               <Route path="/dna/settings/profile" element={<Navigate to="/dna/profile/edit" replace />} />
               
               {/* DNA Dashboard Routes - Protected with OnboardingGuard */}
-              <Route path="/fact-sheet" element={<FactSheetPage />} />
 
               {/* Documentation Routes */}
               <Route path="/documentation/features" element={<FeaturesHub />} />

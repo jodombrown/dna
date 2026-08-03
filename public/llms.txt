@@ -9,7 +9,6 @@ DNA is an integrated value circulation platform. Professional networking surface
 - [Home](/): Overview of DNA and the Five C's methodology.
 - [About](/about): Mission, vision, and the team behind DNA.
 - [Contact](/contact): Get in touch with the DNA team.
-- [Fact Sheet](/fact-sheet): Key facts, metrics, and platform summary.
 - [Connect](/connect): Professional networking for the Global African Diaspora.
 - [Convene](/convene): Discover and host diaspora events worldwide.
 - [Collaborate](/collaborate): Project spaces, tasks, and accountability for diaspora-led initiatives.

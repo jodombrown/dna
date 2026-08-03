@@ -63,7 +63,7 @@ const Manifesto = () => {
       {/* Section V */}
       <ManifestoSection number="V">
         <ManifestoLine>
-          We send <ManifestoLink to="/fact-sheet" variant="subtle">$100 billion</ManifestoLink> back each year, more than all foreign aid combined.
+          We send $100 billion a year back to Africa, more than all foreign aid combined.
         </ManifestoLine>
         <ManifestoLine delay={0.1}>We build schools we'll never sit in. Fund hospitals we'll never visit.</ManifestoLine>
         <ManifestoLine delay={0.2}>Support families we haven't hugged in years.</ManifestoLine>

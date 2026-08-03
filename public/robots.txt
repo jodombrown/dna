@@ -7,7 +7,6 @@ Allow: /
 # Core marketing pages
 Allow: /about
 Allow: /contact
-Allow: /fact-sheet
 Allow: /connect
 Allow: /convene
 Allow: /collaborate
