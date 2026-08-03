@@ -5,10 +5,15 @@ export const USERNAME_RULES = {
   maxLength: 20,
   pattern: /^[a-z0-9_-]+$/,
   reservedWords: [
-    'admin', 'support', 'dna', 'api', 'www', 'app', 'help', 'about', 
+    'admin', 'support', 'dna', 'api', 'www', 'app', 'help', 'about',
     'contact', 'settings', 'profile', 'user', 'users', 'account', 'dashboard',
     'login', 'logout', 'signup', 'register', 'connect', 'collaborate', 'contribute',
     'convene', 'events', 'messages', 'network', 'discover', 'impact', 'system',
+    // BD344 step 1: every first segment routed under /dna/ is reserved, with no
+    // length carve-out. me and u are below minLength (3) and cannot be
+    // claimed today, but they stay reserved so lowering minLength later cannot
+    // silently open a live route to registration. Do not derive this list from
+    // the current minLength — the invariant is the route table, not the rule.
     'adin', 'affirm', 'analytics', 'applications', 'convene-example', 'convey',
     'debug', 'dia', 'feed', 'feedback', 'hashtag', 'icons', 'me', 'notifications',
     'nudges', 'preferences', 'saved', 'space', 'spaces', 'story', 'u', 'welcome'
