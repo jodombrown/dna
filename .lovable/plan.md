@@ -1,97 +1,33 @@
-# Signed-out Post Page: CTA Consolidation + Five C's Discovery
+## What happened to Raymond
 
-Mirror the pattern we shipped on signed-out profiles (`/dna/:username`) on the public post page (`/post/:slug`). Today that page has **five** CTAs stacked on one screen (top-nav "Join the Waitlist", floating banner "Join the Waitlist", inline "Join the Waitlist to Engage", bottom card "Join the Waitlist", bottom card "Learn About DNA"). We're cutting that to a single primary CTA on the post itself, keeping the platform header as the persistent join affordance, and adding the same Five C's discovery row + right-sheet used on signed-out profiles.
+He was upright the whole time. The notice fired because of the software keyboard, not rotation.
 
-## Scope
-
-File: `src/pages/PublicPostPage.tsx` only. No schema, no RPC, no auth changes. Signed-in view is untouched.
-
-## What changes
-
-### 1. Remove redundant CTAs (signed-out only)
-
-Remove these three elements entirely:
-
-- **Floating animated banner** ("Shared from DNA. Connect with the diaspora" + Join the Waitlist button) — lines ~245-274 and the `showBanner` state/effect. This is the direct analog of the "← DNA / Join DNA" banner we killed on profiles.
-- **Bottom "Join the Conversation on DNA" gradient card** with dual CTAs (Join Waitlist + Learn About DNA) — lines ~424-460. Replaced by the Five C's row.
-- **Inline "Join the Waitlist to Engage" button** on the post card — replace with a single quieter engagement affordance (see below).
-
-Kept CTAs:
-- `UnifiedHeader` "Join the Waitlist" (top-right) — this is the universal, non-intrusive join affordance, matching profile pages.
-- Share / copy-link icon button on the post card — utility, not a join CTA.
-
-### 2. Replace inline engagement CTA
-
-The current button reads "Join the Waitlist to Engage" (full-width, primary green). Replace for signed-out users with a subtler, purpose-specific bar directly under the engagement stats:
+`src/components/mobile/LandscapeGate.tsx` decides with one media query:
 
 ```
-[ Heart icon ]  Like, comment, and reply on DNA   →  [ Join the Waitlist ]
+(orientation: landscape) and (max-height: 500px)
 ```
 
-- Single row, `bg-muted/40`, small text on the left, one outline-primary button on the right.
-- No gradient, no full-width green block.
-- Signed-in users keep the existing "Like & Comment" primary button unchanged.
+Both halves are measured against the **layout viewport**, which shrinks when the keyboard opens. On a 402x725 phone, an open keyboard leaves roughly 402x300: wider than tall, and under 500px. So the CSS reports "landscape" while the phone is vertical.
 
-### 3. Add Five C's discovery row + sheet (signed-out only)
+Worse, the component re-arms on every change to that query (`if (!matches) setDismissed(false)`). Tapping a field opened the notice, tapping "Continue anyway" dismissed it, the keyboard closing rearmed it, the next field opened it again. That is the back-and-forth he lived through, and on signup it lands on the worst possible screen.
 
-Reuse the existing `FiveCsDiscoverySection` component (`src/components/five-cs/FiveCsDiscoverySection.tsx`) that already powers the signed-out profile. Mount it below the author card when `!isLoggedIn`, passing post/author context for analytics:
+## The fix (one file)
 
-```tsx
-{!isLoggedIn && (
-  <div className="mt-8">
-    <FiveCsDiscoverySection
-      username={authorUsername}
-      memberFirstName={post.author?.full_name?.split(' ')[0] ?? null}
-    />
-  </div>
-)}
-```
+`src/components/mobile/LandscapeGate.tsx`:
 
-Same 5 cards, same right-sheet detail, same waitlist CTA inside the sheet — one consistent "learn what DNA is" surface across public profile + public post.
+1. **Decide orientation from the device, not the viewport.** Read `screen.orientation.type` (fall back to `window.orientation`, then to the media query where neither exists). A keyboard never changes `screen.orientation`, so this alone ends the false positive. Keep the existing `(orientation: landscape) and (max-height: 500px)` query as the size check and last-resort fallback, so the desktop scoping guarantee and the BD158 tests in `src/test/appChromeSafeArea.test.tsx` stay intact.
+2. **Suppress while typing.** If the software keyboard is up, never show the gate. Detect it the way the app already does: `window.visualViewport.height` well below `window.innerHeight`, plus an active `input` / `textarea` / `contenteditable` element. This is a second, independent guard so a browser with unreliable `screen.orientation` still cannot flash the notice mid-form.
+3. **Stop the flicker.** Re-arm the dismissal only on a real device-orientation change, not on every media-query flip.
 
-### 4. Analytics
-
-Extend the existing `five_cs_card_open` PostHog event with a `source: 'public_post'` tag (the component already accepts `username`; we'll pass the author's username and add `source` inside `FiveCsDiscoverySection` via a new optional `source` prop, defaulting to `'public_profile'` so profile behavior is unchanged).
-
-## Final signed-out page structure
-
-```text
-[ UnifiedHeader: logo | About Us | Join the Waitlist | Sign In ]
-
-[ Post Card ]
-  author row + share icon
-  post content / image / link preview
-  engagement stats (likes, comments)
-  subtle "Like, comment, and reply on DNA → Join the Waitlist" bar
-  copy-link icon
-
-[ Compact Author Card: avatar + name + View Profile ]
-
-[ Five C's Discovery Row: 5 Adinkra cards ]
-  → click opens right-sheet with detail + Join the Waitlist CTA
-
-[ Footer ]
-```
-
-CTA count drops from 5 to 2 above the fold (header + inline join bar), plus the Five C's cards which are discovery, not join-nags.
-
-## Signed-in behavior
-
-Unchanged: no banner today (already conditional), no bottom gradient card (already conditional), keeps "Like & Comment" primary button, no Five C's row.
-
-## Out of scope
-
-- No changes to the post card's data model, share behavior, SEO/JSON-LD, or the Author card.
-- No changes to `FiveCsDiscoveryRow` copy/icons (still empty heading/subtitle per your last edit).
-- No mobile-specific redesign — the existing responsive rules already cover it.
-- No changes to `/post/:id` route or slug resolution.
-
-## Files touched
-
-- `src/pages/PublicPostPage.tsx` — remove 2 CTA blocks, replace inline engage button, mount `FiveCsDiscoverySection`.
-- `src/components/five-cs/FiveCsDiscoverySection.tsx` — add optional `source` prop for analytics tagging (default `'public_profile'`).
+Net: the gate shows only when the device is genuinely on its side and no keyboard is open, and it does not reappear repeatedly within a session on the same rotation.
 
 ## Verification
 
-- Playwright signed-out visit to `/post/gipc-and-dacf-investment-partnership`: assert no floating banner, no "Join the Conversation" gradient card, no "Join the Waitlist to Engage" button, Five C's row present, right-sheet opens on card click.
-- Signed-in visit: assert page still shows "Like & Comment" and no Five C's row.
+- Playwright at 402x725: focus the signup email field, shrink the visual viewport to simulate the keyboard, assert no `role="alertdialog"` with "Turn your phone upright".
+- Assert it still appears at 725x402 with `screen.orientation` landscape.
+- Run the BD158 tests in `src/test/appChromeSafeArea.test.tsx` and a typecheck.
+
+## Notes
+
+No database, auth or signup logic changes. Raymond's account is unaffected; this was presentation only. Nothing else in `src/` is touched.

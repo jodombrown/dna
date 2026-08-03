@@ -92,6 +92,7 @@ const CuratedSourceReviews = lazy(() => import("./pages/admin/CuratedSourceRevie
 const About = lazy(() => import("./pages/About"));
 const Install = lazy(() => import("./pages/Install"));
 const Waitlist = lazy(() => import("./pages/Waitlist"));
+const BetaAccess = lazy(() => import("./pages/BetaAccess"));
 const Contact = lazy(() => import("./pages/Contact"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
@@ -405,6 +406,7 @@ function App() {
               {/* Core authentication */}
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
               <Route path="/waitlist" element={<Waitlist />} />
+              <Route path="/beta-access" element={<BetaAccess />} />
               <Route path="/demo" element={<Demo />} />
               <Route path="/design-system" element={<DesignSystem />} />
               <Route path="/install" element={<Install />} />
