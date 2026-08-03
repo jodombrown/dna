@@ -55,10 +55,7 @@ export function NeedCard({
   return (
     <article
       className="relative bg-card border rounded-lg overflow-hidden"
-      style={{
-        borderLeft: `4px solid ${visual.barHex}`,
-        opacity: isClosed ? 0.7 : 1,
-      }}
+      style={{ opacity: isClosed ? 0.7 : 1 }}
     >
       <button
         type="button"

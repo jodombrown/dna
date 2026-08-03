@@ -42,7 +42,7 @@ export const FALLBACK_STAT_CITATIONS: StatCitation[] = [
     id: 'fallback-2',
     key: 'annual_remittances',
     display_value: '100B+',
-    label: 'Annual Remittances (2024)',
+    label: 'Annual Remittances to Africa (2024)',
     description: 'Fueling economic growth across African nations',
     source_name: 'World Bank / KNOMAD',
     source_url: 'https://www.knomad.org/publication/migration-and-development-brief-41',

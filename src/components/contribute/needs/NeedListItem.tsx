@@ -3,11 +3,11 @@
 // and no contributor count, because the brief forbids amounts and the canonical
 // need_declarations model records no contributors yet.
 //
-// It also renders NO currency vocabulary. The live currency words (the UI
-// constant's Expertise / Network / Resources / Capital) are off-canon against
-// D043's locked five and, in the case of "resources", simply wrong. Until the
-// contribution_need_type enum migrates to D043 and Frame 11 is drawn against it,
-// this row surfaces none of that vocabulary rather than ship the wrong words.
+// It also renders NO currency vocabulary. The manifest currency now tracks
+// D043's five, but need_declarations still reads its own contribution_need_type
+// enum, which has not yet migrated to D043. Until that enum migrates and Frame 11
+// is drawn against it, this row surfaces no currency word rather than imply an
+// alignment the data does not yet have.
 // No left-edge stripe, no coloured band: the card is flat, carried by border.
 
 import { Link } from 'react-router-dom';
