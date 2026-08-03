@@ -123,7 +123,7 @@ const FactSheetPage = () => {
               350M+ Diasporans
             </span>
             <span className="px-4 py-2 bg-dna-copper/10 text-dna-copper rounded-full text-sm font-medium">
-              $100B+ Annual Remittances
+              $100B+ Annual Remittances to Africa
             </span>
             <span className="px-4 py-2 bg-dna-gold/10 text-dna-gold rounded-full text-sm font-medium">
               1 Platform
@@ -316,7 +316,7 @@ const FactSheetPage = () => {
               </div>
               <div>
                 <div className="text-5xl font-bold text-dna-emerald mb-2">$100B+</div>
-                <div className="text-sm font-semibold text-muted-foreground">Annual Diaspora Remittances</div>
+                <div className="text-sm font-semibold text-muted-foreground">Annual Remittances to Africa</div>
                 <div className="text-xs text-muted-foreground/70 mt-1">2x more than all international aid combined</div>
               </div>
               <div>
@@ -332,7 +332,7 @@ const FactSheetPage = () => {
               The African diaspora represents one of the world's most underutilized resources for development. With nearly <strong>350 million people</strong> globally, if the diaspora were a country, it would be the <strong>third-largest in the world</strong> - larger than the United States, Indonesia, or Brazil.
             </p>
             <p>
-              In 2024, over <strong>$96 billion</strong> flowed into Africa through remittances alone - approximately twice the level of overseas development assistance. This figure is projected to exceed <strong>$100 billion annually</strong>, with potential to reach <strong>$500 billion by 2035</strong> if transfer costs are reduced.
+              In 2024, over <strong>$104 billion</strong> flowed into Africa through remittances, larger than foreign direct investment and roughly double overseas development assistance. Sub-Saharan Africa accounted for about <strong>$56 billion</strong> of that; the balance is North Africa, principally Egypt and Morocco.
             </p>
             <p>
               However, this immense potential remains <strong>fragmented and uncoordinated</strong>. DNA solves this by creating the first comprehensive platform that turns individual efforts into collective impact, transforming scattered contributions into systemic change.
@@ -606,8 +606,8 @@ const FactSheetPage = () => {
                     </a>
                   </li>
                   <li>
-                    <a href="https://gfrid.org/remittances-from-african-diaspora-grew-in-2023-set-to-exceed-100bn-in-2024/" target="_blank" rel="noopener noreferrer" className="hover:text-dna-copper flex items-center gap-1">
-                      GFRID Remittances Report 2024 <ArrowUpRight className="h-3 w-3" />
+                    <a href="https://remitscope.org/africa/" target="_blank" rel="noopener noreferrer" className="hover:text-dna-copper flex items-center gap-1">
+                      World Bank Remittances Data 2024 <ArrowUpRight className="h-3 w-3" />
                     </a>
                   </li>
                   <li>
