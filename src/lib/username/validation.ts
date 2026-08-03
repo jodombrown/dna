@@ -10,7 +10,7 @@ export const USERNAME_RULES = {
     'login', 'logout', 'signup', 'register', 'connect', 'collaborate', 'contribute',
     'convene', 'events', 'messages', 'network', 'discover', 'impact', 'system',
     // BD344 step 1: every first segment routed under /dna/ is reserved, with no
-    // length carve-out. 'me' and 'u' are below minLength (3) and cannot be
+    // length carve-out. me and u are below minLength (3) and cannot be
     // claimed today, but they stay reserved so lowering minLength later cannot
     // silently open a live route to registration. Do not derive this list from
     // the current minLength — the invariant is the route table, not the rule.
