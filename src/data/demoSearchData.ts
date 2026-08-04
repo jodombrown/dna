@@ -378,7 +378,7 @@ export const demoProfessionals: Professional[] = [
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z'
   },
-  // Additional professionals from ConnectTabsContent (consolidated)
+  // Additional professionals from the legacy connect tabs content (consolidated)
   {
     id: 'prof11',
     full_name: 'Dr. Aminata Touré',

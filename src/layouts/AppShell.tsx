@@ -63,10 +63,16 @@ export function AppShell({ context, children, related }: AppShellProps) {
   }
 
   // ── Mobile (<768px) ──────────────────────────────────────────────────────
-  // header + composer bubble + content + PulseDock, unchanged. The composer
-  // bubble is part of the mobile header; PulseBar self-nulls on mobile so the
-  // desktop C-nav track never appears here. The shell owns height, so no
-  // min-h-screen — the spacer clears the fixed header and content flows.
+  // header + composer bubble + content + PulseDock. The composer bubble is part
+  // of the mobile header; PulseBar self-nulls on mobile so the desktop C-nav
+  // track never appears here. The shell owns height, so no min-h-screen — the
+  // spacer clears the fixed header and content flows.
+  //
+  // The rails cannot be side columns at this width, so they stack: `context`
+  // above the content well and `related` below it. This is what keeps a
+  // surface's rail intact at 390 (its first consumer, Connect, needs the filter
+  // rail at both widths) — the tracks only DROP when the surface omits them,
+  // never because the viewport is narrow.
   if (isMobile) {
     return (
       <>
@@ -75,7 +81,15 @@ export function AppShell({ context, children, related }: AppShellProps) {
           aria-hidden
           style={{ height: 'var(--total-header-height, 7.5rem)' }}
         />
-        <div className="w-full max-w-full overflow-x-hidden pb-20">{children}</div>
+        <div className="w-full max-w-full overflow-x-hidden pb-20">
+          {context != null && (
+            <div className="border-b border-border/40">{context}</div>
+          )}
+          {children}
+          {related != null && (
+            <div className="border-t border-border/40">{related}</div>
+          )}
+        </div>
         <PulseDock />
       </>
     );

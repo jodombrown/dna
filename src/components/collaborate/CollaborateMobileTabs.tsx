@@ -1,5 +1,5 @@
-// Collaborate mobile menu-nav row. Mirrors ConnectMobileTabs so every /dna/*
-// hub renders the same second row directly under DnaMobileHeader.
+// Collaborate mobile menu-nav row. Mirrors the Connect mobile lens row so every
+// /dna/* hub renders the same second row directly under DnaMobileHeader.
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Users, Bookmark, Compass } from 'lucide-react';
