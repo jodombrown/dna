@@ -5,17 +5,21 @@ Three tabs on `/auth`: **Sign up**, **Request access**, **Sign in**. Sign up onl
 ## What you get
 
 **Sign up tab (new, /auth only)**
+
 - Email first. On blur, the form asks the database whether that email is approved.
 - Approved: the rest of the form unlocks (name, password, confirm) and signup proceeds into orientation exactly as today.
 - Not approved: the form stays locked with one line, "This email is not approved yet," and a link to the Request access tab. No hint about whether the email exists.
 
 **Request access tab**
+
 - The existing beta request form, unchanged. Still writes to the waitlist tracker.
 
 **Sign in tab**
+
 - Unchanged, including Continue with LinkedIn.
 
 **Admin > Waitlist**
+
 - An "Approve for signup" action that sets a request to approved. Approved rows are what the signup gate reads. Rejecting or archiving removes the approval.
 
 For your own throwaway test account: approve the address in Admin > Waitlist first, then sign up with it.
@@ -32,12 +36,14 @@ Say the word and I include step 1's code plus the exact Supabase setting to flip
 ## Technical notes
 
 Files edited:
+
 - `src/pages/Auth.tsx`: three-way tab state replacing the two-way `isSignUp` boolean, driven by `?mode=signup|request|signin`. Existing `?mode=signup` deep links keep working. Approval check gates the password fields.
 - `src/components/auth/SignUpApprovalGate.tsx` (new): email field, approval lookup, locked/unlocked states.
 - `src/pages/admin/WaitlistManagement.tsx`: approve action and an approved filter option.
 - `src/config/featureFlags.ts`: the dated gate stops driving the signup tab. `SIGNUPS_OPEN_AT` and the bypass key stay in the file for the public announcement copy, unused by the tab logic.
 
 Migration (one, additive):
+
 - `public.is_signup_approved(p_email text) returns boolean`, SECURITY DEFINER, `set search_path = public`, `REVOKE EXECUTE FROM PUBLIC` then `GRANT EXECUTE TO anon, authenticated`. Returns true only for a `beta_waitlist` row with `status = 'approved'` and `archived_at is null`, matched on lowercased email. Returns a boolean only, never a row, so it cannot be used to enumerate the waitlist.
 - No RLS change. `beta_waitlist` stays admin-read, anon-insert as it is now.
 
