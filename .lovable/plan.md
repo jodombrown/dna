@@ -1,28 +1,32 @@
-# Stop Near Me from asking for your location
+# Let a throwaway address complete signup
 
-## What is happening
+You already have everything needed to reach the signup form. The only blocker for an address that cannot receive mail is the email confirmation step.
 
-Pressing the Near Me pill runs the proximity sort, and the first step of that sort calls the browser's location API directly. That is what triggers the "Allow ... to access your location?" box every time. Nothing remembers a previous answer, so it reappears on every press, and in the preview it shows the raw preview URL, which looks alarming.
+## What you can do right now, no changes needed
 
-Confirmed in the code: `src/lib/maps/eventsNear.ts` calls `getDevicePosition()` (the browser prompt) as the first anchor in its chain, and `useNearMeEvents` runs that as soon as the Near Me lens is active.
+Open this and the signup tab unlocks for your browser only (the key is remembered in localStorage). Everyone else still sees the August 15 notice.
 
-## The fix
+`/auth?mode=signup&key=dna-early-1815`
 
-Near Me never prompts on its own again. It uses the location you already declared on your profile, and the device location is only ever used if you deliberately ask for it.
+## The one change to make
 
-1. **Never prompt automatically.** The device-location step becomes opt-in. Pressing Near Me sorts by your declared profile location instead, which needs no permission and no prompt.
-2. **Silent reuse when already allowed.** If the browser already has location permission granted for this site from a previous deliberate choice, Near Me uses it with no prompt. If permission is denied or not yet decided, it is never asked for.
-3. **One explicit control.** A small "Use my exact location" action sits in the Near Me lane header. Only pressing that can ever raise the browser box. Once used, the choice is remembered locally so it does not re-ask on every visit, and it can be turned back off.
-4. **Honest headers stay honest.** The existing header states already cover each case ("Near your saved location", "Nothing near you yet", the error state). No new copy invented beyond the one control label.
+Turn on auto-confirm for email signups, temporarily, so a fake address does not need to click a link. With it on, `signUp()` returns a live session and you land straight in orientation, exactly as a real user would after confirming.
 
-If you have no declared location on your profile and have not opted in, Near Me shows the plain upcoming list with the existing "Nothing near you yet" header. Empty, never an error, never a prompt.
+Steps:
+
+1. Read the project's current auth settings and report whether email confirmation is on today.
+2. Enable auto-confirm email.
+3. You run the full journey: signup form, orientation, first post.
+4. Tell me when you are done and I turn auto-confirm back off in the same session.
+
+## What this affects while it is on
+
+- Any signup during the window skips email verification. The signup gate is still closed to the public until August 15, and the bypass key is required to see the form, so exposure is small but not zero.
+- Password reset by email is unaffected.
+- No code changes. This is an auth setting, reverted the moment you say the test is finished.
 
 ## Technical notes
 
-- `src/lib/maps/eventsNear.ts`: `getEventsNear` takes an explicit `allowDevice` flag. When false, the device branch is skipped entirely and the chain starts at the declared anchor. When true, it checks `navigator.permissions.query({ name: 'geolocation' })` first and only calls `getCurrentPosition` when the state is `granted`, or when the call originates from the explicit opt-in action. The BD213 rule holds: the try/catch still guards only the prompt, and an RPC error still propagates.
-- `src/hooks/convene/useNearMeEvents.ts`: accepts and threads the `allowDevice` value, keeps it out of the query key in coordinate form (only the boolean plus the declared coordinate participate), and continues to never persist a device coordinate.
-- `src/components/convene/NearMeEventsLane.tsx`: reads the stored opt-in preference, renders the single opt-in control in the lane header, and passes `allowDevice` down. Design-system tokens only, no arbitrary values, existing `DiscoveryLane` reused with no new card or bespoke layout.
-- Opt-in state is stored under one local key, read-only from this feature, and never written to the profile.
-- `src/lib/maps/eventsNear.test.ts` gains cases for: `allowDevice: false` never touches geolocation, and `allowDevice: true` with permission not granted also never touches it.
-
-Files touched: `src/lib/maps/eventsNear.ts`, `src/hooks/convene/useNearMeEvents.ts`, `src/components/convene/NearMeEventsLane.tsx`, `src/lib/maps/eventsNear.test.ts`.
+- Setting: GoTrue `auto_confirm_email`, applied with the auth config tool against project `ybhssuehmfnxrzneobok`. Nothing in `src/` changes.
+- `src/config/featureFlags.ts` stays as is: `SIGNUPS_OPEN_AT` remains August 15, 2026 at 9:00 am PDT, and `SIGNUP_BYPASS_KEY` remains `dna-early-1815`.
+- I will read the setting back after each flip rather than trusting the success response, and I will name the value I read.
