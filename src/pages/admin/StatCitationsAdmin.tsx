@@ -51,6 +51,10 @@ const StatCitationsAdmin: React.FC = () => {
         definition: draft.definition || null,
         sort_order: draft.sort_order ?? 99,
         is_active: draft.is_active ?? true,
+        scope_geography: draft.scope_geography ?? '',
+        scope_population: draft.scope_population || null,
+        scope_period: draft.scope_period || null,
+
       };
       const { error } = await supabase
         .from('stat_citations')
