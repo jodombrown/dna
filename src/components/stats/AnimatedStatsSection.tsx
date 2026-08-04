@@ -48,7 +48,7 @@ const AnimatedStat: React.FC<AnimatedStatProps> = ({ citation, bgGradient, onOpe
     <div className={`${bgGradient} rounded-xl p-6 text-center shadow-lg flex flex-col`}>
       <div
         ref={countRef}
-        className="text-4xl font-bold text-white mb-2 tabular-nums"
+        className="text-display font-bold text-white mb-2 tabular-nums"
       >
         {count}
         {suffix}
@@ -56,7 +56,7 @@ const AnimatedStat: React.FC<AnimatedStatProps> = ({ citation, bgGradient, onOpe
       {citation.scope_geography ? (
         <div className="text-meta text-white/80 mb-1">{scope}</div>
       ) : null}
-      <div className="text-lg font-medium text-white/90 mb-1">{citation.label}</div>
+      <div className="text-h3 font-medium text-white/90 mb-1">{citation.label}</div>
       <div className="text-body text-white/80">{citation.description}</div>
 
       <div className="mt-auto pt-3 border-t border-white/20 flex items-center justify-center gap-2 flex-wrap">
