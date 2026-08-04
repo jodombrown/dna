@@ -228,130 +228,54 @@ const Auth = () => {
     }
   ];
 
-  const AuthModeToggle = () => (
-    <div className="flex items-center p-1 bg-muted rounded-lg w-full max-w-xs mx-auto">
-      <button
-        type="button"
-        onClick={() => setIsSignUp(true)}
-        className={cn(
-          "flex-1 py-2 text-sm font-medium rounded-md transition-all",
-          isSignUp
-            ? "bg-background text-foreground shadow-sm"
-            : "text-muted-foreground hover:text-foreground"
-        )}
-      >
-        {signupsClosed ? 'Request access' : 'Join Now'}
-      </button>
-      <button
-        type="button"
-        onClick={() => setIsSignUp(false)}
-        className={cn(
-          "flex-1 py-2 text-sm font-medium rounded-md transition-all",
-          !isSignUp
-            ? "bg-background text-foreground shadow-sm"
-            : "text-muted-foreground hover:text-foreground"
-        )}
-      >
-        Sign In
-      </button>
-    </div>
-  );
+  const modeSubtitle =
+    authMode === 'signup'
+      ? 'Create your account with an approved email'
+      : authMode === 'request'
+        ? 'Request access and we will review it'
+        : 'Sign in to your account';
 
-  // Auth content switches between sign-in and sign-up
+  const AuthModeToggle = () => {
+    const tabs: Array<{ value: AuthMode; label: string }> = [
+      { value: 'signup', label: 'Sign up' },
+      { value: 'request', label: 'Request access' },
+      { value: 'signin', label: 'Sign in' },
+    ];
+    return (
+      <div
+        role="tablist"
+        aria-label="Account access"
+        className="flex items-center p-1 bg-muted rounded-lg w-full mx-auto"
+      >
+        {tabs.map((tab) => (
+          <button
+            key={tab.value}
+            type="button"
+            role="tab"
+            aria-selected={authMode === tab.value}
+            onClick={() => setAuthMode(tab.value)}
+            className={cn(
+              'flex-1 py-2 text-meta font-medium rounded-md transition-all',
+              authMode === tab.value
+                ? 'bg-background text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+    );
+  };
+
+  // Auth content switches between sign up, request access, and sign in
   const authContent = (
     <div className="w-full space-y-4">
-      {isSignUp && signupsClosed ? (
+      {authMode === 'request' ? (
         <BetaAccessForm />
-      ) : isSignUp ? (
-        <form onSubmit={handleSignUp} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="signup-fullname">Full Name</Label>
-            <Input
-              id="signup-fullname"
-              type="text"
-              placeholder="Your full name"
-              value={signUpFullName}
-              onChange={(e) => setSignUpFullName(e.target.value)}
-              required
-              disabled={isSignUpLoading}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="signup-email">Email</Label>
-            <Input
-              id="signup-email"
-              type="email"
-              placeholder="your@email.com"
-              value={signUpEmail}
-              onChange={(e) => setSignUpEmail(e.target.value)}
-              required
-              disabled={isSignUpLoading}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="signup-password">Password</Label>
-            <div className="relative">
-              <Input
-                id="signup-password"
-                type={showSignUpPassword ? "text" : "password"}
-                placeholder="••••••••"
-                value={signUpPassword}
-                onChange={(e) => setSignUpPassword(e.target.value)}
-                required
-                disabled={isSignUpLoading}
-                autoComplete="new-password"
-                className="pr-10"
-              />
-              <button
-                type="button"
-                onClick={() => setShowSignUpPassword(!showSignUpPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                aria-label={showSignUpPassword ? "Hide password" : "Show password"}
-              >
-                {showSignUpPassword ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </button>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="signup-confirm">Confirm Password</Label>
-            <div className="relative">
-              <Input
-                id="signup-confirm"
-                type={showSignUpConfirm ? "text" : "password"}
-                placeholder="••••••••"
-                value={signUpConfirmPassword}
-                onChange={(e) => setSignUpConfirmPassword(e.target.value)}
-                required
-                disabled={isSignUpLoading}
-                autoComplete="new-password"
-                className="pr-10"
-              />
-              <button
-                type="button"
-                onClick={() => setShowSignUpConfirm(!showSignUpConfirm)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                aria-label={showSignUpConfirm ? "Hide password" : "Show password"}
-              >
-                {showSignUpConfirm ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </button>
-            </div>
-          </div>
-          <Button
-            type="submit"
-            className="w-full bg-dna-forest hover:bg-dna-forest/90"
-            disabled={isSignUpLoading}
-          >
-            {isSignUpLoading ? 'Joining...' : 'Join Now'}
-          </Button>
-        </form>
+      ) : authMode === 'signup' ? (
+        <SignUpApprovalGate onRequestAccess={() => setAuthMode('request')} />
+
       ) : (
         <form onSubmit={handleSignIn} className="space-y-4">
           <div className="space-y-2">
