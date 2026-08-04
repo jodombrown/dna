@@ -105,7 +105,9 @@ export function AppShell({ context, children, related }: AppShellProps) {
           maxWidth: CONTENT_MAX_WIDTH,
           gridTemplateColumns,
           // Clear the fixed header + C nav, then own the remaining viewport.
-          paddingTop: 'var(--total-header-height, 7.5rem)',
+          // Margin sits OUTSIDE the box, so the grid height is not reduced a
+          // second time by the chrome under border-box (paddingTop would be).
+          marginTop: 'var(--total-header-height, 7.5rem)',
           height: 'calc(100dvh - var(--total-header-height, 7.5rem))',
         }}
       >

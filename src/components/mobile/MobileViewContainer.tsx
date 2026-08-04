@@ -48,13 +48,21 @@ export const MobileViewContainer: React.FC<MobileViewContainerProps> = ({
         actions={headerActions}
       />
       
-      <main 
+      <main
         className={cn(
           "pb-bottom-nav", // Space for bottom nav
-          fullHeight && "min-h-[calc(100dvh-3.5rem-4rem)]", // Full height minus header and nav
           !noPadding && "px-3 sm:px-4 py-3 sm:py-4",
           className
         )}
+        // Full height minus chrome and the bottom nav, both read from tokens.
+        style={
+          fullHeight
+            ? {
+                minHeight:
+                  'calc(100dvh - var(--total-header-height, 7.5rem) - var(--bottom-nav-height, 4rem))',
+              }
+            : undefined
+        }
       >
         {children}
       </main>
