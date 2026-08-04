@@ -195,7 +195,7 @@ export default function Network() {
 
   return (
     <div className="space-y-6">
-      <Tabs value={activeTab} onValueChange={(v) => { setActiveTab(v); setSearchParams((prev) => { const next = new URLSearchParams(prev); next.set('tab', v); return next; }, { replace: true }); }}>
+      <Tabs value={activeTab} onValueChange={(v) => { setActiveTab(v); setSearchParams({ tab: v }); }}>
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="requests">
             <UserPlus className="h-4 w-4 mr-2" />
