@@ -1,7 +1,13 @@
 /**
- * AppShell — Frame 01, the desktop chrome contract.
+ * AppShell — Frame 01, the chrome contract at both widths.
  *
- * Four regions, one shell:
+ * The shell is the ONE chrome owner (BD110) for the routes that mount it: it
+ * renders the header and the C nav itself, and claims ownership so BaseLayout's
+ * global chrome stands down (see ChromeOwnerContext). A route on AppShell never
+ * double-renders chrome and — the defect this frame repairs — never renders
+ * none.
+ *
+ * Desktop (>=768px), four regions in one grid:
  *   header   — <UnifiedHeader />, full width, height var(--unified-header-height)
  *   C nav    — <PulseBar />, full width, fixed directly under the header at
  *              top: var(--unified-header-height) (PulseBar owns that positioning;
@@ -15,9 +21,14 @@
  *   right    — the `related` rail (340). Renders nothing when `related` is
  *              absent and the grid DROPS the track — there is never an empty 340.
  *
- * The shell owns height. There is no `min-h-screen` in this file: the desktop
- * grid is sized to the viewport below the chrome and each column scrolls
- * independently, exactly like ThreeColumnLayout.
+ * Mobile (<768px): the shell renders DnaMobileHubShell's header treatment (the
+ * canonical logo / bubble / bell / avatar top bar with its BD157 safe-area
+ * inset) plus PulseDock — reused, not re-implemented. The rails fold beneath the
+ * well: content first (LensBar is its first node), then `context`, then
+ * `related`.
+ *
+ * The shell owns height. There is no `min-h-screen` in this file's DESKTOP grid;
+ * the mobile branch delegates height to DnaMobileHubShell, which owns it there.
  *
  * Panel-awareness (BD135 rule 5, the same contract PageFrame encodes): inside a
  * 448px drawer panel the shell already owns the header, back, close, the scroll
@@ -31,7 +42,10 @@
 import * as React from 'react';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { PulseBar, PulseDock } from '@/components/pulse';
+import { DnaMobileHubShell } from '@/components/mobile/DnaMobileHubShell';
+import type { DnaMobileHeaderBubble } from '@/components/mobile/DnaMobileHeader';
 import { useIdentitySheetSafe } from '@/components/ui/settings-kit';
+import { useChromeOwner } from '@/layouts/ChromeOwnerContext';
 import { useMobile } from '@/hooks/useMobile';
 
 /** The content column is capped with the rails at a 1400px total (px, so the
@@ -41,6 +55,11 @@ const LEFT_RAIL = '280px';
 const RIGHT_RAIL = '340px';
 
 interface AppShellProps {
+  /** The mobile header's action bubble (search/composer/static). The shell owns
+   *  the mobile chrome (BD110), so the surface hands it the ONE thing that
+   *  differs per surface. Required — a mobile header with no bubble is a
+   *  half-rendered header, which is the defect this frame repairs. */
+  bubble: DnaMobileHeaderBubble;
   /** Left rail (280). Surface CONTEXT only — filters, an index, the member's
    *  own object. Never navigation. The track drops when this is absent. */
   context?: React.ReactNode;
@@ -51,9 +70,23 @@ interface AppShellProps {
   related?: React.ReactNode;
 }
 
-export function AppShell({ context, children, related }: AppShellProps) {
+export function AppShell({ bubble, context, children, related }: AppShellProps) {
   const inPanel = useIdentitySheetSafe() !== null;
   const { isMobile } = useMobile();
+  const { claim, release } = useChromeOwner();
+
+  // ── Chrome ownership (BD110) ──────────────────────────────────────────────
+  // Claim before the browser paints, release on unmount. useLayoutEffect (not
+  // useEffect) is the whole reason there is no flash: BaseLayout renders its
+  // chrome on the first commit, this fires synchronously before paint, and the
+  // re-render with our chrome lands in the same frame. A panel is an overlay
+  // ON TOP of a route — the route beneath keeps its chrome — so a panelled
+  // AppShell claims nothing.
+  React.useLayoutEffect(() => {
+    if (inPanel) return;
+    claim();
+    return release;
+  }, [inPanel, claim, release]);
 
   // ── Panel context ────────────────────────────────────────────────────────
   // The shell owns everything route-only; a panel is content only. Rendering
@@ -63,33 +96,29 @@ export function AppShell({ context, children, related }: AppShellProps) {
   }
 
   // ── Mobile (<768px) ──────────────────────────────────────────────────────
-  // header + composer bubble + content + PulseDock. The composer bubble is part
-  // of the mobile header; PulseBar self-nulls on mobile so the desktop C-nav
-  // track never appears here. The shell owns height, so no min-h-screen — the
-  // spacer clears the fixed header and content flows.
+  // The shell renders the CANONICAL mobile chrome (BD110): DnaMobileHubShell's
+  // header treatment — logo / bubble / bell / avatar in the fixed, safe-area-
+  // inset, scroll-collapsing top bar (BD157) — reused, never re-implemented,
+  // plus PulseDock. This branch renders NO UnifiedHeader; UnifiedHeader used to
+  // self-hide on these paths and left mobile Connect with no header at all.
   //
-  // The rails cannot be side columns at this width, so they stack: `context`
-  // above the content well and `related` below it. This is what keeps a
-  // surface's rail intact at 390 (its first consumer, Connect, needs the filter
-  // rail at both widths) — the tracks only DROP when the surface omits them,
-  // never because the viewport is narrow.
+  // The rails cannot be side columns at this width, so they FOLD BENEATH the
+  // well (Frame 01): the content (`children`, whose first node is the surface's
+  // LensBar) comes first, then `context`, then `related`. The lens bar is the
+  // first thing under the header at 390. The tracks only DROP when the surface
+  // omits them, never because the viewport is narrow.
   if (isMobile) {
     return (
       <>
-        <UnifiedHeader />
-        <div
-          aria-hidden
-          style={{ height: 'var(--total-header-height, 7.5rem)' }}
-        />
-        <div className="w-full max-w-full overflow-x-hidden pb-20">
-          {context != null && (
-            <div className="border-b border-border/40">{context}</div>
-          )}
+        <DnaMobileHubShell bubble={bubble}>
           {children}
+          {context != null && (
+            <div className="border-t border-border/40">{context}</div>
+          )}
           {related != null && (
             <div className="border-t border-border/40">{related}</div>
           )}
-        </div>
+        </DnaMobileHubShell>
         <PulseDock />
       </>
     );
