@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { getErrorMessage } from '@/lib/errorLogger';
 import { cn } from '@/lib/utils';
-import { WAITLIST_MODE, areSignupsOpen, resolveSignupBypass } from '@/config/featureFlags';
+import { WAITLIST_MODE } from '@/config/featureFlags';
 import BetaAccessForm from '@/components/auth/BetaAccessForm';
 import { SignUpApprovalGate } from '@/components/auth/SignUpApprovalGate';
 
@@ -35,7 +35,7 @@ const Auth = () => {
   useScrollToTop();
   const navigate = useNavigate();
   const location = useLocation();
-  const { signIn, signUp } = useAuth();
+  const { signIn } = useAuth();
 
   const queryParams = new URLSearchParams(location.search);
   const queryMode = queryParams.get('mode');
