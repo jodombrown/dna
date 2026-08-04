@@ -10,9 +10,13 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { getErrorMessage } from '@/lib/errorLogger';
-import { cn } from '@/lib/utils';
-import { WAITLIST_MODE, areSignupsOpen, resolveSignupBypass } from '@/config/featureFlags';
+import { WAITLIST_MODE } from '@/config/featureFlags';
 import BetaAccessForm from '@/components/auth/BetaAccessForm';
+import { SignUpApprovalGate } from '@/components/auth/SignUpApprovalGate';
+import { AuthModeToggle } from '@/components/auth/AuthModeToggle';
+
+type AuthMode = 'signup' | 'request' | 'signin';
+
 
 /**
  * Only same-origin relative paths may be a post-auth destination. A login
@@ -31,25 +35,24 @@ const Auth = () => {
   useScrollToTop();
   const navigate = useNavigate();
   const location = useLocation();
-  const { signIn, signUp } = useAuth();
+  const { signIn } = useAuth();
 
   const queryParams = new URLSearchParams(location.search);
   const queryMode = queryParams.get('mode');
-  // Toggle between sign-in and sign-up
-  const [isSignUp, setIsSignUp] = useState(queryMode === 'signup');
+  // Three surfaces: approved-only sign up, access request, sign in.
+  const resolveMode = (value: string | null): AuthMode =>
+    value === 'signup' ? 'signup' : value === 'request' ? 'request' : 'signin';
+  const [authMode, setAuthMode] = useState<AuthMode>(resolveMode(queryMode));
 
   useEffect(() => {
-    setIsSignUp(queryMode === 'signup');
+    setAuthMode(resolveMode(queryMode));
   }, [queryMode]);
 
   // Waitlist mode: signup tab is closed; funnel to /waitlist.
-  if (WAITLIST_MODE && isSignUp) {
+  if (WAITLIST_MODE && authMode === 'signup') {
     return <Navigate to="/waitlist" replace />;
   }
 
-  // Dated signup gate: new accounts are paused until SIGNUPS_OPEN_AT, unless
-  // this browser holds the founder bypass key.
-  const signupsClosed = !areSignupsOpen() && !resolveSignupBypass(location.search);
 
 
 
@@ -67,17 +70,9 @@ const Auth = () => {
   const [signInPassword, setSignInPassword] = useState('');
   const [isSignInLoading, setIsSignInLoading] = useState(false);
 
-  // Sign Up State
-  const [signUpFullName, setSignUpFullName] = useState('');
-  const [signUpEmail, setSignUpEmail] = useState('');
-  const [signUpPassword, setSignUpPassword] = useState('');
-  const [signUpConfirmPassword, setSignUpConfirmPassword] = useState('');
-  const [isSignUpLoading, setIsSignUpLoading] = useState(false);
-
-  // Password visibility toggles
+  // Password visibility toggle
   const [showSignInPassword, setShowSignInPassword] = useState(false);
-  const [showSignUpPassword, setShowSignUpPassword] = useState(false);
-  const [showSignUpConfirm, setShowSignUpConfirm] = useState(false);
+
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -149,66 +144,8 @@ const Auth = () => {
     }
   };
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Sign up lives in SignUpApprovalGate: it is gated on an admin-approved email.
 
-    if (!signUpFullName.trim()) {
-      toast({
-        title: 'Full name required',
-        description: 'Please enter your full name.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    if (signUpPassword !== signUpConfirmPassword) {
-      toast({
-        title: 'Passwords do not match',
-        description: 'Please make sure your passwords match.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    if (signUpPassword.length < 8) {
-      toast({
-        title: 'Password too short',
-        description: 'Password must be at least 8 characters long.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    setIsSignUpLoading(true);
-
-    try {
-      const { error } = await signUp(signUpEmail, signUpPassword, signUpFullName);
-
-      if (error) {
-        toast({
-          title: 'Sign up failed',
-          description: getErrorMessage(error),
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      toast({
-        title: 'Welcome to DNA!',
-        description: 'Your account has been created. Let\'s complete your profile.',
-      });
-      navigate('/onboarding');
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? getErrorMessage(err) : 'An unexpected error occurred';
-      toast({
-        title: 'Error',
-        description: errorMessage,
-        variant: 'destructive',
-      });
-    } finally {
-      setIsSignUpLoading(false);
-    }
-  };
 
   // Features for desktop hero
   const features = [
@@ -229,130 +166,21 @@ const Auth = () => {
     }
   ];
 
-  const AuthModeToggle = () => (
-    <div className="flex items-center p-1 bg-muted rounded-lg w-full max-w-xs mx-auto">
-      <button
-        type="button"
-        onClick={() => setIsSignUp(true)}
-        className={cn(
-          "flex-1 py-2 text-sm font-medium rounded-md transition-all",
-          isSignUp
-            ? "bg-background text-foreground shadow-sm"
-            : "text-muted-foreground hover:text-foreground"
-        )}
-      >
-        {signupsClosed ? 'Request access' : 'Join Now'}
-      </button>
-      <button
-        type="button"
-        onClick={() => setIsSignUp(false)}
-        className={cn(
-          "flex-1 py-2 text-sm font-medium rounded-md transition-all",
-          !isSignUp
-            ? "bg-background text-foreground shadow-sm"
-            : "text-muted-foreground hover:text-foreground"
-        )}
-      >
-        Sign In
-      </button>
-    </div>
-  );
+  const modeSubtitle =
+    authMode === 'signup'
+      ? 'Create your account with an approved email'
+      : authMode === 'request'
+        ? 'Request access and we will review it'
+        : 'Sign in to your account';
 
-  // Auth content switches between sign-in and sign-up
+  // Auth content switches between sign up, request access, and sign in
   const authContent = (
     <div className="w-full space-y-4">
-      {isSignUp && signupsClosed ? (
+      {authMode === 'request' ? (
         <BetaAccessForm />
-      ) : isSignUp ? (
-        <form onSubmit={handleSignUp} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="signup-fullname">Full Name</Label>
-            <Input
-              id="signup-fullname"
-              type="text"
-              placeholder="Your full name"
-              value={signUpFullName}
-              onChange={(e) => setSignUpFullName(e.target.value)}
-              required
-              disabled={isSignUpLoading}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="signup-email">Email</Label>
-            <Input
-              id="signup-email"
-              type="email"
-              placeholder="your@email.com"
-              value={signUpEmail}
-              onChange={(e) => setSignUpEmail(e.target.value)}
-              required
-              disabled={isSignUpLoading}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="signup-password">Password</Label>
-            <div className="relative">
-              <Input
-                id="signup-password"
-                type={showSignUpPassword ? "text" : "password"}
-                placeholder="••••••••"
-                value={signUpPassword}
-                onChange={(e) => setSignUpPassword(e.target.value)}
-                required
-                disabled={isSignUpLoading}
-                autoComplete="new-password"
-                className="pr-10"
-              />
-              <button
-                type="button"
-                onClick={() => setShowSignUpPassword(!showSignUpPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                aria-label={showSignUpPassword ? "Hide password" : "Show password"}
-              >
-                {showSignUpPassword ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </button>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="signup-confirm">Confirm Password</Label>
-            <div className="relative">
-              <Input
-                id="signup-confirm"
-                type={showSignUpConfirm ? "text" : "password"}
-                placeholder="••••••••"
-                value={signUpConfirmPassword}
-                onChange={(e) => setSignUpConfirmPassword(e.target.value)}
-                required
-                disabled={isSignUpLoading}
-                autoComplete="new-password"
-                className="pr-10"
-              />
-              <button
-                type="button"
-                onClick={() => setShowSignUpConfirm(!showSignUpConfirm)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                aria-label={showSignUpConfirm ? "Hide password" : "Show password"}
-              >
-                {showSignUpConfirm ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </button>
-            </div>
-          </div>
-          <Button
-            type="submit"
-            className="w-full bg-dna-forest hover:bg-dna-forest/90"
-            disabled={isSignUpLoading}
-          >
-            {isSignUpLoading ? 'Joining...' : 'Join Now'}
-          </Button>
-        </form>
+      ) : authMode === 'signup' ? (
+        <SignUpApprovalGate onRequestAccess={() => setAuthMode('request')} />
+
       ) : (
         <form onSubmit={handleSignIn} className="space-y-4">
           <div className="space-y-2">
@@ -405,7 +233,7 @@ const Auth = () => {
         </form>
       )}
 
-      {!isSignUp && (
+      {authMode === 'signin' && (
         <>
           <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
@@ -444,13 +272,10 @@ const Auth = () => {
               <div className="mx-auto mb-3 w-14 h-14 rounded-full bg-gradient-to-br from-dna-emerald to-dna-copper flex items-center justify-center">
                 <Globe className="w-7 h-7 text-white" />
               </div>
-              <AuthModeToggle />
-              <p className="text-sm text-muted-foreground mt-3">
-                {isSignUp
-                  ? signupsClosed
-                    ? 'Beta access requests are open'
-                    : 'Join the global African diaspora network'
-                  : 'Sign in to your account'}
+              <AuthModeToggle value={authMode} onChange={setAuthMode} />
+              <p className="text-body text-muted-foreground">
+                {modeSubtitle}
+
               </p>
             </CardHeader>
             <CardContent>
@@ -520,13 +345,10 @@ const Auth = () => {
           <div className="w-full max-w-md space-y-8">
             {/* Header */}
             <div className="text-center space-y-3">
-              <AuthModeToggle />
+              <AuthModeToggle value={authMode} onChange={setAuthMode} />
               <p className="text-muted-foreground">
-                {isSignUp
-                  ? signupsClosed
-                    ? 'Beta access requests are open'
-                    : 'Join the global African diaspora network'
-                  : 'Sign in to your account'}
+                {modeSubtitle}
+
               </p>
             </div>
 
