@@ -13,6 +13,10 @@ import { getErrorMessage } from '@/lib/errorLogger';
 import { cn } from '@/lib/utils';
 import { WAITLIST_MODE, areSignupsOpen, resolveSignupBypass } from '@/config/featureFlags';
 import BetaAccessForm from '@/components/auth/BetaAccessForm';
+import { SignUpApprovalGate } from '@/components/auth/SignUpApprovalGate';
+
+type AuthMode = 'signup' | 'request' | 'signin';
+
 
 /**
  * Only same-origin relative paths may be a post-auth destination. A login
