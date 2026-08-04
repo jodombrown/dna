@@ -12,6 +12,7 @@ import { ProfileCompletionGuide } from '@/components/onboarding/ProfileCompletio
 import { FeedbackFAB } from '@/components/feedback/FeedbackFAB';
 import { useAccountActions } from '@/contexts/AccountActionsContext';
 import { useAutoRegisterPush } from '@/hooks/messaging/useAutoRegisterPush';
+import { CulturalPattern } from '@/components/shared/CulturalPattern';
 
 // Phase 16 - lazy global: morning brief banner only on /dna/feed for authed users.
 const MorningBriefBanner = React.lazy(() =>
@@ -65,55 +66,17 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
     isConveyHubRoute ||
     isCollaborateHubRoute;
 
-  // Unique gradient for each of the 5 Cs + Feed when logged in
-  // All using DNA brand colors: mint, terra, ochre, sunset, purple, copper
-  const getAuthGradient = () => {
-    if (!user) return "bg-background";
-
-    const path = location.pathname;
-
-    // Feed - DNA mint green
-    if (path.includes('/feed')) {
-      return "bg-gradient-to-br from-dna-mint/20 via-background to-dna-mint/10";
-    }
-
-    // Connect - Cultural warmth (terra/ochre)
-    if (path.includes('/connect') || path.includes('/network') || path.includes('/discover')) {
-      return "bg-gradient-to-br from-dna-terra/15 via-background to-dna-ochre/10";
-    }
-
-    // Convene - Sunset celebration (orange/purple)
-    if (path.includes('/convene') || path.includes('/events')) {
-      return "bg-gradient-to-br from-dna-sunset/15 via-background to-dna-purple/10";
-    }
-
-    // Collaborate - Earth to mint (terra/mint growth)
-    if (path.includes('/collaborate') || path.includes('/spaces')) {
-      return "bg-gradient-to-br from-dna-terra/15 via-background to-dna-mint/10";
-    }
-
-    // Contribute - Copper warmth (copper/ochre)
-    if (path.includes('/contribute') || path.includes('/impact') || path.includes('/opportunities')) {
-      return "bg-gradient-to-br from-dna-copper/15 via-background to-dna-ochre/10";
-    }
-
-    // Convey - Royal storytelling (purple/sunset)
-    if (path.includes('/convey')) {
-      return "bg-gradient-to-br from-dna-purple/15 via-background to-dna-sunset/10";
-    }
-
-    // Default - DNA mint green
-    return "bg-gradient-to-br from-dna-mint/20 via-background to-dna-copper/10";
-  };
-
   return (
     <>
       <UnifiedHeader />
       <PulseBar />
       <div
         className={cn(
-          "min-h-dvh w-full max-w-full",
-          getAuthGradient(),
+          "min-h-dvh w-full max-w-full relative",
+          // R1: one ground at every route. The per-C auth gradients are retired;
+          // every route now sits on --background with a single heritage texture
+          // (the CulturalPattern overlay below), never a route-specific gradient.
+          "bg-background",
           // Add bottom padding on mobile to account for PulseDock
           "pb-20 lg:pb-0",
           "transition-colors duration-300 ease-in-out",
@@ -129,6 +92,10 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
         data-view-state={viewState}
         data-layout-type={layoutConfig.type}
       >
+        {/* R1: the only page-level texture. One heritage pattern at 4% opacity
+            over --background, replacing the six route-specific auth gradients.
+            pointer-events-none and aria-hidden inside CulturalPattern. */}
+        <CulturalPattern pattern="adinkra" opacity={0.04} />
         {/* Spacer div that reads CSS vars for top padding */}
         <div
           aria-hidden
@@ -136,7 +103,10 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
             // Always reserve space for header + pulse bar to prevent columns
             // rendering behind the PulseBar before the measurement hook runs.
             // Mobile pages with custom headers hide this spacer via the className.
-            height: 'calc(var(--unified-header-height, 56px) + var(--pulse-bar-height, 56px))',
+            // BD361: read --total-header-height instead of re-summing its two
+            // terms by hand. That token IS the sum of the header and the pulse
+            // bar (index.css), so one edit there moves every reservation at once.
+            height: 'var(--total-header-height, 7.5rem)',
           }}
           className={cn(
             hasCustomMobileHeader ? 'hidden sm:block' : 'block',
