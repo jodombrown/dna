@@ -13,6 +13,7 @@ import { FeedbackFAB } from '@/components/feedback/FeedbackFAB';
 import { useAccountActions } from '@/contexts/AccountActionsContext';
 import { useAutoRegisterPush } from '@/hooks/messaging/useAutoRegisterPush';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
+import { ChromeOwnerProvider, useChromeOwner } from '@/layouts/ChromeOwnerContext';
 
 // Phase 16 - lazy global: morning brief banner only on /dna/feed for authed users.
 const MorningBriefBanner = React.lazy(() =>
@@ -34,11 +35,16 @@ interface BaseLayoutProps {
  * - Responsive behavior for mobile/tablet/desktop
  * - Preserves context across view state changes
  */
-const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
+const BaseLayoutChrome: React.FC<BaseLayoutProps> = ({ children }) => {
   const accountActions = useAccountActions();
   const { viewState, layoutConfig } = useViewState();
   const { user, profile } = useAuth();
   const location = useLocation();
+
+  // BD110: a route on AppShell claims chrome ownership, and while it holds the
+  // claim BaseLayout renders NONE of its own chrome (and reserves no space for
+  // it). Ownership is by claim, never by route — there is no path list here.
+  const { claimed } = useChromeOwner();
 
   // Phase 20A: silently re-register push subscription if permission already granted
   useAutoRegisterPush();
@@ -51,8 +57,10 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
     }
   }, [user?.id]);
 
-  // Check if we're on routes that manage their own mobile headers
-  const isConnectRoute = location.pathname.includes('/dna/connect');
+  // Routes that render their own mobile header (a DnaMobileHubShell inside the
+  // page) hide BaseLayout's mobile spacer. Connect is NOT in this list: it runs
+  // on AppShell now, so it CLAIMS chrome ownership and BaseLayout's whole chrome
+  // block — spacer included — stands down for it by claim, never by route match.
   const isFeedRoute = location.pathname.includes('/dna/feed');
   const isConveneHubRoute = location.pathname === '/dna/convene';
   const isContributeHubRoute = location.pathname === '/dna/contribute';
@@ -60,7 +68,6 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   const isCollaborateHubRoute = location.pathname === '/dna/collaborate';
   const hasCustomMobileHeader =
     isFeedRoute ||
-    isConnectRoute ||
     isConveneHubRoute ||
     isContributeHubRoute ||
     isConveyHubRoute ||
@@ -68,8 +75,8 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
 
   return (
     <>
-      <UnifiedHeader />
-      <PulseBar />
+      {!claimed && <UnifiedHeader />}
+      {!claimed && <PulseBar />}
       <div
         className={cn(
           "min-h-dvh w-full max-w-full relative",
@@ -96,27 +103,32 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
             over --background, replacing the six route-specific auth gradients.
             pointer-events-none and aria-hidden inside CulturalPattern. */}
         <CulturalPattern pattern="adinkra" opacity={0.04} />
-        {/* Spacer div that reads CSS vars for top padding */}
-        <div
-          aria-hidden
-          style={{
-            // Always reserve space for header + pulse bar to prevent columns
-            // rendering behind the PulseBar before the measurement hook runs.
-            // Mobile pages with custom headers hide this spacer via the className.
-            // BD361: read --total-header-height instead of re-summing its two
-            // terms by hand. That token IS the sum of the header and the pulse
-            // bar (index.css), so one edit there moves every reservation at once.
-            height: 'var(--total-header-height, 7.5rem)',
-          }}
-          className={cn(
-            hasCustomMobileHeader ? 'hidden sm:block' : 'block',
-          )}
-        />
+        {/* Spacer div that reads CSS vars for top padding. It reserves space
+            for BaseLayout's OWN chrome, so it stands down with that chrome when
+            an AppShell route has claimed ownership — the claiming shell brings
+            its own header and its own top spacing. */}
+        {!claimed && (
+          <div
+            aria-hidden
+            style={{
+              // Always reserve space for header + pulse bar to prevent columns
+              // rendering behind the PulseBar before the measurement hook runs.
+              // Mobile pages with custom headers hide this spacer via the className.
+              // BD361: read --total-header-height instead of re-summing its two
+              // terms by hand. That token IS the sum of the header and the pulse
+              // bar (index.css), so one edit there moves every reservation at once.
+              height: 'var(--total-header-height, 7.5rem)',
+            }}
+            className={cn(
+              hasCustomMobileHeader ? 'hidden sm:block' : 'block',
+            )}
+          />
+        )}
         {children}
       </div>
       {/* Feedback FAB - side chevron on all /dna routes */}
       <FeedbackFAB onOpen={accountActions.onFeedback} />
-      <PulseDock />
+      {!claimed && <PulseDock />}
 
       {/* Phase 16 - DIA Morning brief (gated to /dna/feed inside the component) */}
       {user && location.pathname.startsWith('/dna/feed') && (
@@ -138,5 +150,16 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
     </>
   );
 };
+
+/**
+ * BaseLayout provides the ChromeOwnerContext so a route rendered in `children`
+ * (via AppShell) can claim chrome ownership, and BaseLayoutChrome — inside the
+ * provider — reads the claim to decide whether to render its own chrome.
+ */
+const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => (
+  <ChromeOwnerProvider>
+    <BaseLayoutChrome>{children}</BaseLayoutChrome>
+  </ChromeOwnerProvider>
+);
 
 export default BaseLayout;

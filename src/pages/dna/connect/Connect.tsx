@@ -1,10 +1,11 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { MESSAGING_ENABLED } from '@/config/featureFlags';
 
 import AppShell from '@/layouts/AppShell';
+import type { DnaMobileHeaderBubble } from '@/components/mobile/DnaMobileHeader';
 import { type ConnectTab } from '@/components/connect/ConnectMobileHeader';
 import { type FilterState } from '@/components/connect/hub';
 import { ConnectContextRail } from '@/components/connect/ConnectContextRail';
@@ -40,6 +41,12 @@ const Connect = () => {
   // Reuse the shared FilterState shape rather than authoring new state.
   const [filters, setFilters] = useState<FilterState>(EMPTY_FILTERS);
 
+  // The filter rail folds beneath the well on mobile (AppShell stacks it under
+  // the content). The header bubble's filter button scrolls to it — the same
+  // affordance the retired ConnectMobileTopBar exposed, now pointing at the
+  // rail's real home instead of a separate sheet.
+  const filtersRef = useRef<HTMLDivElement>(null);
+
   const lensParam = searchParams.get('lens');
   const activeLens: ConnectTab =
     lensParam && CONNECT_LENS_IDS.includes(lensParam as ConnectTab)
@@ -72,9 +79,31 @@ const Connect = () => {
     return null;
   }
 
+  // Count the filters that differ from the empty default, so the mobile header
+  // bubble can badge the active count exactly as ConnectMobileTopBar did.
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (filters.cEngagement !== 'all') count += 1;
+    count += filters.regions.length;
+    count += filters.diasporaLocations.length;
+    return count;
+  }, [filters]);
+
+  // The search bubble ConnectMobileTopBar used to pass, now handed to the shell,
+  // which owns the one mobile header (BD110).
+  const bubble: DnaMobileHeaderBubble = {
+    kind: 'search',
+    placeholder: 'Search members...',
+    onFiltersClick: () =>
+      filtersRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+    activeFilterCount,
+  };
+
   // The left rail is context, never navigation, and does not change with the lens.
   const context = (
-    <ConnectContextRail filters={filters} onFilterChange={handleFilterChange} />
+    <div ref={filtersRef}>
+      <ConnectContextRail filters={filters} onFilterChange={handleFilterChange} />
+    </div>
   );
 
   // The map lens is full-bleed: pass NO `related` so AppShell drops the right
@@ -87,7 +116,7 @@ const Connect = () => {
   // The well (LensBar + the single active lens body) owns its own padding in a
   // component under src/components, so this page carries no layout values.
   return (
-    <AppShell context={context} related={related}>
+    <AppShell bubble={bubble} context={context} related={related}>
       <ConnectWell
         activeLens={activeLens}
         filters={filters}
