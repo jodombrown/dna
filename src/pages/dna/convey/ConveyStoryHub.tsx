@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import LayoutController from '@/components/LayoutController';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Heart, Lightbulb, PenSquare, Camera, Megaphone, Target, Flame, Star, Filter, Compass, UserCheck, Mic, Bookmark } from 'lucide-react';
+import { BookOpen, Heart, Lightbulb, PenSquare, Camera, Megaphone, Target, Flame, Star, Filter, Compass, UserCheck, Mic, Bookmark, Sunrise } from 'lucide-react';
 import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { Mpatapo } from '@/components/icons/adinkra';
 import { LensBar, type Lens } from '@/components/shell/LensBar';
@@ -19,9 +19,10 @@ import { ConveyTrendingSection } from '@/components/convey/ConveyTrendingSection
 import { ConveyEditorialCard } from '@/components/convey/ConveyEditorialCards';
 import { ConveyCategorySection, ConveyMiniCard } from '@/components/convey/ConveyCategorySection';
 import { DiaContextual } from '@/components/dia';
+import { DailyPulseContent } from '@/components/pulse/DailyPulseContent';
 
 // ─── CONVEY Lenses ───────────────────────────────────────────────────
-type ConveyTab = 'pulse' | 'curated' | 'my_circle' | 'my_voice' | 'saved';
+type ConveyTab = 'pulse' | 'curated' | 'my_circle' | 'my_voice' | 'saved' | 'daily';
 
 /**
  * Convey lenses (BD332). Route-driven via ?lens=<id>: LensBar reads and writes
@@ -42,6 +43,7 @@ export const CONVEY_LENSES: Lens[] = [
   { id: 'my_circle', label: 'My Circle', icon: UserCheck, description: 'Dispatches from the people in your world' },
   { id: 'my_voice', label: 'My Voice', icon: Mic, description: "Your contribution to the diaspora's story" },
   { id: 'saved', label: 'Saved', icon: Bookmark, description: "Posts you've bookmarked to read later or reference again" },
+  { id: 'daily', label: 'Daily', icon: Sunrise, description: 'Your day across Connect, Convene, Collaborate and Contribute' },
 ];
 
 // Map editorial tabs to feed query params
@@ -52,6 +54,9 @@ function tabToFeedParams(tab: ConveyTab, userId?: string) {
     case 'my_circle': return { tab: 'network' as const };
     case 'my_voice': return { tab: 'my_posts' as const, authorId: userId };
     case 'saved': return { tab: 'bookmarks' as const };
+    // Daily is a cross-module day view, not a story feed; it renders
+    // DailyPulseContent and ignores these params. 'all' keeps the switch total.
+    case 'daily': return { tab: 'all' as const };
   }
 }
 
@@ -302,6 +307,9 @@ export default function ConveyStoryHub() {
         )}
       </div>
 
+      {/* Daily lens — cross-module day view rehomed from DailyPulseSheet (D086) */}
+      {activeTab === 'daily' && <DailyPulseContent active />}
+
       {/* Trending Section (Pulse tab, All category only) */}
       {activeTab === 'pulse' && selectedCategory === 'all' && <ConveyTrendingSection />}
 
@@ -341,8 +349,9 @@ export default function ConveyStoryHub() {
         </>
       )}
 
-      {/* Filtered Feed (non-Pulse tabs or filtered category) */}
-      {(selectedCategory !== 'all' || activeTab !== 'pulse') && (
+      {/* Filtered Feed (non-Pulse tabs or filtered category). Daily is not a
+          story feed and is excluded — it renders DailyPulseContent above. */}
+      {activeTab !== 'daily' && (selectedCategory !== 'all' || activeTab !== 'pulse') && (
         <div className="space-y-4">
           {/* Curated tab header */}
           {activeTab === 'curated' && (

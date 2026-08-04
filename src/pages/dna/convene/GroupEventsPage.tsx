@@ -6,7 +6,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import LayoutController from '@/components/LayoutController';
-import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { eventStartMs } from '@/lib/events/eventTime';
 import { Event } from '@/types/events';
@@ -82,7 +81,6 @@ export default function GroupEventsPage() {
 
   return (
     <LayoutController
-      leftColumn={<LeftNav />}
       centerColumn={
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}

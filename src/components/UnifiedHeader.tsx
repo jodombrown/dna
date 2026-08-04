@@ -38,6 +38,7 @@ import { MESSAGING_ENABLED } from '@/config/featureFlags';
 import { useMobile } from '@/hooks/useMobile';
 import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
+import { useDiaSheet } from '@/contexts/DiaSheetContext';
 
 const UnifiedHeader = () => {
   const { user, profile: authProfile, signOut, loading } = useAuth();
@@ -50,12 +51,21 @@ const UnifiedHeader = () => {
   
   const navigate = useNavigate();
   const location = useLocation();
-  
+
+  // The logo is Home. Authenticated users land on the feed; signed-out visitors
+  // land on the marketing root. UnifiedHeader also serves the public marketing
+  // routes, so this must stay conditional — never make it unconditional.
+  const logoDestination = user ? '/dna/feed' : '/';
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
   
   // Universal Composer hook for global create button
   const composer = useUniversalComposer();
+
+  // DIA's home is a header affordance on both widths (its former tray row was
+  // dissolved with the tray). Opens the shared DIA sheet via DiaSheetContext.
+  const { openWith: openDia } = useDiaSheet();
 
   // Query admin status
   const { data: isAdmin } = useQuery({
@@ -141,8 +151,8 @@ const UnifiedHeader = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
-              <NavLink 
-                to="/" 
+              <NavLink
+                to={logoDestination}
                 className="flex items-center hover:opacity-80 transition-opacity"
               >
                 <img 
@@ -287,8 +297,8 @@ const UnifiedHeader = () => {
           <div className="flex justify-between items-center h-16">
             {/* Left section - Logo and Search */}
             <div className="flex items-center space-x-4 -ml-8">
-              <NavLink 
-                to="/" 
+              <NavLink
+                to={logoDestination}
                 className="flex items-center hover:opacity-80 transition-opacity"
               >
                 <img 
@@ -402,6 +412,27 @@ const UnifiedHeader = () => {
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Feedback Hub</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+
+              {/* DIA — header affordance (parity with mobile). Opens the shared
+                  DIA sheet; the tray that used to hold this row is gone. */}
+              {isAuthenticated && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => openDia()}
+                      className="hidden md:flex text-muted-foreground hover:text-primary"
+                      aria-label="Ask DIA"
+                    >
+                      <MateMasie className="w-5 h-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Ask DIA</p>
                   </TooltipContent>
                 </Tooltip>
               )}

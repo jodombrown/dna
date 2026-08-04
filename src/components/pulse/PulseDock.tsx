@@ -1,52 +1,59 @@
 /**
  * PulseDock - Mobile Navigation Dock
  *
- * DNA's mobile navigation system featuring:
- * - Fixed bottom navigation with 5 primary items
- * - Center-elevated Feed button
- * - Status indicators for Five C's
- * - Expandable tray via MORE button with Smart Dock pattern
+ * DNA's mobile navigation system: a fixed bottom bar of exactly the Five C's,
+ * derived from the one FIVE_CS const so its slot set can never drift from the
+ * desktop PulseBar's. Status indicators carry no C hue (Frame B); the active
+ * slot alone spends its C.
  *
- * Replaces MobileBottomNav with a Pulse-aware navigation system.
+ * There is no Feed centre seat and no More trigger: Home lives on the mark in
+ * DnaMobileHeader (which navigates to /dna/feed), and every former tray tenant
+ * has its own ruled home elsewhere in the chrome.
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, Grid3X3, type LucideIcon } from 'lucide-react';
-import { Sankofa, Nkonsonkonson, FuntunfunefuDenkyemfunefu } from '@/components/icons/adinkra';
+import type { LucideIcon } from 'lucide-react';
+import { Sankofa, Nkonsonkonson, FuntunfunefuDenkyemfunefu, Adinkrahene, Mpatapo } from '@/components/icons/adinkra';
 import { cn } from '@/lib/utils';
-import { usePulseNavigation, type MoreButtonState } from '@/hooks/usePulseNavigation';
-import type { PulseSection } from '@/types/pulse';
+import { usePulseNavigation } from '@/hooks/usePulseNavigation';
+import { FIVE_CS, type PulseKey, type PulseSection } from '@/types/pulse';
 import { useMobile } from '@/hooks/useMobile';
 import { useAuth } from '@/contexts/AuthContext';
 import { useKeyboardDetection } from '@/hooks/useKeyboardDetection';
-import { scheduleHubPrefetch, prefetchHubRoute } from '@/lib/prefetchHubRoutes';
+import { scheduleHubPrefetch } from '@/lib/prefetchHubRoutes';
 
 import { PulseDockItem } from './PulseDockItem';
-import { PulseDockTray } from './PulseDockTray';
 
 interface PrimaryItemBase {
-  key: string;
+  key: PulseKey;
   label: string;
   icon: LucideIcon;
-  href: string | null;
-  isCenter?: boolean;
-  isTrigger?: boolean;
+  href: string;
   isAdinkra?: boolean;
 }
 
-const PRIMARY_ITEMS: PrimaryItemBase[] = [
-  { key: 'connect', label: 'Connect', icon: Sankofa, href: '/dna/connect', isAdinkra: true },
-  { key: 'convene', label: 'Convene', icon: Nkonsonkonson, href: '/dna/convene', isAdinkra: true },
-  { key: 'feed', label: 'Feed', icon: Home, href: '/dna/feed', isCenter: true },
-  { key: 'collaborate', label: 'Collaborate', icon: FuntunfunefuDenkyemfunefu, href: '/dna/collaborate', isAdinkra: true },
-  { key: 'more', label: 'More', icon: Grid3X3, href: null, isTrigger: true },
-];
+const ADINKRA_ICONS: Record<string, LucideIcon> = {
+  Sankofa,
+  Nkonsonkonson,
+  FuntunfunefuDenkyemfunefu,
+  Adinkrahene,
+  Mpatapo,
+};
+
+// Derived from the one FIVE_CS const (src/types/pulse) — same source the
+// desktop PulseBar reads, so the two slot sets cannot drift.
+const PRIMARY_ITEMS: PrimaryItemBase[] = FIVE_CS.map((c) => ({
+  key: c.id,
+  label: c.label,
+  icon: ADINKRA_ICONS[c.icon],
+  href: c.href,
+  isAdinkra: true,
+}));
 
 export function PulseDock() {
   const { isMobile } = useMobile();
   const { user } = useAuth();
-  const [trayOpen, setTrayOpen] = useState(false);
   const pulseNav = usePulseNavigation();
   const location = useLocation();
   const navigate = useNavigate();
@@ -70,27 +77,16 @@ export function PulseDock() {
   if (isFullScreenChat) return null;
 
   const handleItemClick = (item: PrimaryItemBase) => {
-    if (item.isTrigger) {
-      setTrayOpen(true);
-    } else if (item.href) {
-      navigate(item.href);
-    }
+    navigate(item.href);
   };
 
-  const isActive = (href: string | null) => {
-    if (!href) return false;
+  const isActive = (href: string) => {
     const path = location.pathname;
     // Direct prefix match
     if (path.startsWith(href)) return true;
     // Map related routes to their parent module
-    if (href === '/dna/feed') {
-      return path.startsWith('/dna/story') || path.startsWith('/dna/hashtag') || path.startsWith('/dna/debug/feed');
-    }
     if (href === '/dna/connect') {
       return path.startsWith('/dna/profile') || path.startsWith('/dna/discover') || path.startsWith('/dna/network');
-    }
-    if (href === '/dna/convene') {
-      return path.startsWith('/dna/convene');
     }
     if (href === '/dna/collaborate') {
       return path.startsWith('/dna/collaborate') || path.startsWith('/dna/spaces');
@@ -98,22 +94,12 @@ export function PulseDock() {
     return false;
   };
 
-  const getPulseData = (item: PrimaryItemBase): PulseSection | MoreButtonState | null => {
-    if (item.key === 'more') {
-      return pulseNav.more;
-    }
-    if (item.key === 'feed') {
-      return null;
-    }
-    const key = item.key as 'connect' | 'convene' | 'collaborate' | 'contribute' | 'convey';
-    return pulseNav[key] || null;
+  const getPulseData = (item: PrimaryItemBase): PulseSection | null => {
+    return pulseNav[item.key] || null;
   };
 
   return (
     <>
-      {/* Tray Overlay */}
-      <PulseDockTray open={trayOpen} onClose={() => setTrayOpen(false)} pulseNav={pulseNav} />
-
       {/* Primary Dock */}
         <nav
           className={cn(
@@ -134,7 +120,7 @@ export function PulseDock() {
               key={item.key}
               item={item}
               pulseData={getPulseData(item)}
-              isActive={item.isTrigger ? trayOpen : isActive(item.href)}
+              isActive={isActive(item.href)}
               onClick={() => handleItemClick(item)}
             />
           ))}
