@@ -521,11 +521,8 @@ const Auth = () => {
             <div className="text-center space-y-3">
               <AuthModeToggle />
               <p className="text-muted-foreground">
-                {isSignUp
-                  ? signupsClosed
-                    ? 'Beta access requests are open'
-                    : 'Join the global African diaspora network'
-                  : 'Sign in to your account'}
+                {modeSubtitle}
+
               </p>
             </div>
 
