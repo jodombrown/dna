@@ -5,13 +5,11 @@ import { useProfile } from '@/hooks/useProfile';
 import { MESSAGING_ENABLED } from '@/config/featureFlags';
 
 import AppShell from '@/layouts/AppShell';
-import { LensBar } from '@/components/shell/LensBar';
-import { CONNECT_LENSES, type ConnectTab } from '@/components/connect/ConnectMobileHeader';
-import { DiscoveryFeed, type FilterState } from '@/components/connect/hub';
+import { type ConnectTab } from '@/components/connect/ConnectMobileHeader';
+import { type FilterState } from '@/components/connect/hub';
 import { ConnectContextRail } from '@/components/connect/ConnectContextRail';
 import { ConnectRelatedRail } from '@/components/connect/ConnectRelatedRail';
-import Network from '@/pages/dna/connect/Network';
-import { DiasporaDensityMap } from '@/components/maps/DiasporaDensityMap';
+import { ConnectWell } from '@/components/connect/ConnectWell';
 
 /**
  * Connect — one shell, both widths (BD363).
@@ -86,33 +84,16 @@ const Connect = () => {
       <ConnectRelatedRail onMessageUser={handleMessageMember} />
     );
 
+  // The well (LensBar + the single active lens body) owns its own padding in a
+  // component under src/components, so this page carries no layout values.
   return (
     <AppShell context={context} related={related}>
-      <div className="flex flex-col gap-3">
-        <div className="px-4 pt-4">
-          <LensBar lenses={CONNECT_LENSES} ariaLabel="Connect lenses" c="connect" />
-        </div>
-
-        {/* Exactly one lens body renders at a time. Messages never renders a
-            body — its lens stays present-and-dashed in the bar while messaging
-            is OUT. */}
-        {activeLens === 'discover' && (
-          <DiscoveryFeed
-            filters={filters}
-            onMessageMember={handleMessageMember}
-            onClearFilters={handleClearFilters}
-            viewMode="discover"
-          />
-        )}
-
-        {activeLens === 'network' && (
-          <div className="px-4 pb-6">
-            <Network />
-          </div>
-        )}
-
-        {activeLens === 'map' && <DiasporaDensityMap inShell />}
-      </div>
+      <ConnectWell
+        activeLens={activeLens}
+        filters={filters}
+        onMessageMember={handleMessageMember}
+        onClearFilters={handleClearFilters}
+      />
     </AppShell>
   );
 };
