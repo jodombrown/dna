@@ -195,9 +195,6 @@ const GroupSettingsPage = lazy(() => import("./pages/GroupSettingsPage"));
 
 // CONNECT M2 - New Connect Hub pages
 const Connect = lazy(() => import("./pages/dna/connect/Connect"));
-const ConnectDiscover = lazy(() => import("./pages/dna/connect/Discover"));
-const ConnectNetwork = lazy(() => import("./pages/dna/connect/Network"));
-const DiasporaDensityMap = lazy(() => import("./pages/dna/connect/DiasporaDensityMap"));
 // Legacy connect messages pages removed - using canonical /dna/messages route
 
 // Partner With DNA pages
@@ -207,12 +204,15 @@ const PartnerModels = lazy(() => import("./pages/PartnerModels"));
 const PartnerStart = lazy(() => import("./pages/PartnerStart"));
 
 
-// Connect index redirect that carries the query string across the hop to the
-// default child route. A bare <Navigate> drops search params, which would lose
-// a deep link like /dna/connect?lens=map before the LensBar can read it (BD332b).
-const ConnectIndexRedirect = () => {
+// Redirect a legacy Connect sub-path to the canonical single Connect route in
+// its ?lens= form (BD363 §1). Existing search params are preserved so a deep
+// link's other params survive the hop, and pointing straight at ?lens= means
+// there is no redirect chain.
+const LensRedirect = ({ lens }: { lens: string }) => {
   const { search } = useLocation();
-  return <Navigate to={{ pathname: "/dna/connect/discover", search }} replace />;
+  const params = new URLSearchParams(search);
+  params.set("lens", lens);
+  return <Navigate to={`/dna/connect?${params.toString()}`} replace />;
 };
 
 // QueryClient configured in @/lib/queryClient.ts with centralized defaults
@@ -509,32 +509,23 @@ function App() {
               } />
 
               {/* ========== CONNECT HUB M2 ========== */}
+              {/* One route renders Connect. The lens lives in the URL (?lens=),
+                  so discover/network/map are no longer child routes — they are
+                  permanent redirects onto this single route's ?lens= form. */}
               <Route path="/dna/connect" element={
                 <OnboardingGuard>
                   <Connect />
                 </OnboardingGuard>
-              }>
-                <Route index element={<ConnectIndexRedirect />} />
-                <Route path="discover" element={<ConnectDiscover />} />
-                <Route path="network" element={<ConnectNetwork />} />
-                {/* Legacy route - now using /dna/messages as canonical */}
-                <Route path="messages" element={<Navigate to="/dna/messages" replace />} />
-                <Route path="messages/:conversationId" element={<Navigate to="/dna/messages" replace />} />
-              </Route>
-
-              {/* Diaspora Density Map — standalone under BaseLayout (BD110), not the
-                  three-column Connect hub. Public, consent-safe density view. */}
-              <Route path="/dna/connect/map" element={
-                <OnboardingGuard>
-                  <DiasporaDensityMap />
-                </OnboardingGuard>
               } />
+              <Route path="/dna/connect/discover" element={<LensRedirect lens="discover" />} />
+              <Route path="/dna/connect/network" element={<LensRedirect lens="network" />} />
+              <Route path="/dna/connect/map" element={<LensRedirect lens="map" />} />
 
               {/* ========== LEGACY CONNECT & DISCOVER ROUTES - Redirects ========== */}
-              <Route path="/dna/discover/members" element={<Navigate to="/dna/connect/discover" replace />} />
-              <Route path="/dna/discover" element={<Navigate to="/dna/connect/discover" replace />} />
+              <Route path="/dna/discover/members" element={<LensRedirect lens="discover" />} />
+              <Route path="/dna/discover" element={<LensRedirect lens="discover" />} />
               <Route path="/dna/discover/feed" element={<Navigate to="/dna/feed" replace />} />
-              <Route path="/dna/network" element={<Navigate to="/dna/connect/network" replace />} />
+              <Route path="/dna/network" element={<LensRedirect lens="network" />} />
               <Route path="/dna/network/feed" element={<Navigate to="/dna/feed" replace />} />
               <Route path="/dna/connect/feed" element={<Navigate to="/dna/feed" replace />} />
                {/* Feed is the multi-C activity stream home */}
@@ -585,8 +576,8 @@ function App() {
               {/* Legacy message routes - redirect to canonical */}
               <Route path="/dna/connect/messages" element={<Navigate to="/dna/messages" replace />} />
               <Route path="/dna/connect/messages/:conversationId" element={<Navigate to="/dna/messages" replace />} />
-              <Route path="/discover/members" element={<Navigate to="/dna/connect/discover" replace />} />
-              <Route path="/discover" element={<Navigate to="/dna/connect/discover" replace />} />
+              <Route path="/discover/members" element={<LensRedirect lens="discover" />} />
+              <Route path="/discover" element={<LensRedirect lens="discover" />} />
               
               {/* ========== CONVENE PILLAR M1 ========== */}
               <Route path="/dna/convene" element={

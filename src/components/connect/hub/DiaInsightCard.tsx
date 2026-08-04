@@ -117,7 +117,7 @@ export function DiaInsightCard({
       case 'people_you_should_know':
         return 'from-dna-terra/5 to-dna-ochre/10';
       case 'network_insight':
-        return 'from-dna-purple/5 to-dna-sunset/10';
+        return 'from-c5-convey/5 to-dna-sunset/10';
       case 'event_overlap':
         return 'from-dna-sunset/5 to-dna-crimson/10';
       case 'contribution_match':
@@ -134,7 +134,7 @@ export function DiaInsightCard({
       case 'people_you_should_know':
         return 'border-dna-terra/20';
       case 'network_insight':
-        return 'border-dna-purple/20';
+        return 'border-c5-convey/20';
       case 'event_overlap':
         return 'border-dna-sunset/20';
       case 'contribution_match':
@@ -334,12 +334,12 @@ function NetworkInsightContent({
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-3">
-        <div className="p-2.5 rounded-lg bg-dna-purple/10">
-          <TrendingUp className="h-5 w-5 text-dna-purple" />
+        <div className="p-2.5 rounded-lg bg-c5-convey/10">
+          <TrendingUp className="h-5 w-5 text-c5-convey" />
         </div>
         <div>
           {insight.percentage !== undefined && (
-            <p className="text-2xl font-bold text-dna-purple">
+            <p className="text-h1 font-bold text-c5-convey">
               +{insight.percentage}%
             </p>
           )}
@@ -352,7 +352,7 @@ function NetworkInsightContent({
       <Button
         size="sm"
         variant="outline"
-        className="border-dna-purple/30 text-dna-purple hover:bg-dna-purple/10"
+        className="border-c5-convey/30 text-c5-convey hover:bg-c5-convey/10"
         onClick={insight.primaryAction.action}
       >
         {insight.primaryAction.label}

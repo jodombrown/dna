@@ -182,7 +182,7 @@ export function FiveCsEngagement({
       label: 'CONVEY',
       active: engagement.convey.active,
       count: engagement.convey.count,
-      color: 'bg-dna-purple/10 text-dna-purple border-dna-purple/30',
+      color: 'bg-c5-convey/10 text-c5-convey border-c5-convey/30',
       tooltip: engagement.convey.active
         ? `${engagement.convey.count} stor${engagement.convey.count !== 1 ? 'ies' : 'y'} this month`
         : 'No recent stories',

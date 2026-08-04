@@ -26,6 +26,8 @@ interface DiscoveryFeedProps {
   onMessageMember?: (memberId: string) => void;
   viewMode?: 'discover' | 'network' | 'activity';
   onViewModeChange?: (mode: 'discover' | 'network' | 'activity') => void;
+  /** Clears the surface's context-rail filters (BD363 §6 empty state). */
+  onClearFilters?: () => void;
   className?: string;
 }
 
@@ -66,6 +68,7 @@ export function DiscoveryFeed({
   onMessageMember,
   viewMode = 'discover',
   onViewModeChange,
+  onClearFilters,
   className,
 }: DiscoveryFeedProps) {
   const { user, profile } = useAuth();
@@ -463,7 +466,7 @@ export function DiscoveryFeed({
             <LaneSkeleton />
           </div>
         ) : allLanesEmpty ? (
-          <AllEmptyState />
+          <AllEmptyState onClearFilters={onClearFilters} />
         ) : (
           <>
             {/* Lane 1: Active Now */}
@@ -562,25 +565,26 @@ function EmptySearch({ onClear }: { onClear: () => void }) {
   );
 }
 
-function AllEmptyState() {
-  const navigate = useNavigate();
+function AllEmptyState({ onClearFilters }: { onClearFilters?: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
-      <div className="h-16 w-16 rounded-full bg-dna-emerald/10 flex items-center justify-center mb-4">
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-dna-emerald/10">
         <Users className="h-8 w-8 text-dna-emerald" />
       </div>
-      <p className="text-lg font-semibold text-foreground">
-        Be the first to connect with the diaspora
+      <p className="text-h3 text-foreground">No members match these filters yet</p>
+      <p className="mt-2 max-w-xs text-meta text-muted-foreground">
+        Widen the region, or clear the C filter. The diaspora is bigger than one
+        search.
       </p>
-      <p className="text-sm text-muted-foreground mt-2 max-w-xs">
-        Complete your profile to get personalized member recommendations
-      </p>
-      <Button
-        className="mt-6 bg-dna-emerald hover:bg-dna-forest text-white rounded-full px-6"
-        onClick={() => navigate('/dna/settings/profile')}
-      >
-        Complete Profile
-      </Button>
+      {onClearFilters && (
+        <Button
+          variant="outline"
+          className="mt-6 rounded-full px-6"
+          onClick={onClearFilters}
+        >
+          Clear filters
+        </Button>
+      )}
     </div>
   );
 }

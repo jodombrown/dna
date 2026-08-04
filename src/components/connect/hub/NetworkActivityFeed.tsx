@@ -44,7 +44,7 @@ const ACTIVITY_ICONS = {
 };
 
 const ACTIVITY_COLORS = {
-  story: 'bg-dna-purple/10 text-dna-purple',
+  story: 'bg-c5-convey/10 text-c5-convey',
   event: 'bg-dna-sunset/10 text-dna-sunset',
   project: 'bg-dna-mint/10 text-dna-forest',
   opportunity: 'bg-dna-ochre/10 text-dna-ochre',
