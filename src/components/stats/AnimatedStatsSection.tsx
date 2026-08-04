@@ -40,6 +40,10 @@ const AnimatedStat: React.FC<AnimatedStatProps> = ({ citation, bgGradient, onOpe
   const yearLabel = citation.year ? `${citation.source_name}, ${citation.year}` : citation.source_name;
   const hasDetail = Boolean(citation.methodology || citation.definition);
 
+  const scope =
+    [citation.scope_population, citation.scope_geography].filter(Boolean).join(' ') +
+    (citation.scope_period ? ` · ${citation.scope_period}` : '');
+
   return (
     <div className={`${bgGradient} rounded-xl p-6 text-center shadow-lg min-h-[140px] flex flex-col`}>
       <div
@@ -49,6 +53,9 @@ const AnimatedStat: React.FC<AnimatedStatProps> = ({ citation, bgGradient, onOpe
         {count}
         {suffix}
       </div>
+      {citation.scope_geography ? (
+        <div className="text-meta text-white/80 mb-1">{scope}</div>
+      ) : null}
       <div className="text-lg font-medium text-white/90 mb-1 h-[28px]">{citation.label}</div>
       <div className="text-sm text-white/80 min-h-[40px]">{citation.description}</div>
 
