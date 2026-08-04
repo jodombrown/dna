@@ -152,66 +152,8 @@ const Auth = () => {
     }
   };
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Sign up lives in SignUpApprovalGate: it is gated on an admin-approved email.
 
-    if (!signUpFullName.trim()) {
-      toast({
-        title: 'Full name required',
-        description: 'Please enter your full name.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    if (signUpPassword !== signUpConfirmPassword) {
-      toast({
-        title: 'Passwords do not match',
-        description: 'Please make sure your passwords match.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    if (signUpPassword.length < 8) {
-      toast({
-        title: 'Password too short',
-        description: 'Password must be at least 8 characters long.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    setIsSignUpLoading(true);
-
-    try {
-      const { error } = await signUp(signUpEmail, signUpPassword, signUpFullName);
-
-      if (error) {
-        toast({
-          title: 'Sign up failed',
-          description: getErrorMessage(error),
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      toast({
-        title: 'Welcome to DNA!',
-        description: 'Your account has been created. Let\'s complete your profile.',
-      });
-      navigate('/onboarding');
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? getErrorMessage(err) : 'An unexpected error occurred';
-      toast({
-        title: 'Error',
-        description: errorMessage,
-        variant: 'destructive',
-      });
-    } finally {
-      setIsSignUpLoading(false);
-    }
-  };
 
   // Features for desktop hero
   const features = [
