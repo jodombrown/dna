@@ -14669,6 +14669,7 @@ export type Database = {
         Returns: boolean
       }
       is_prelaunch_locked: { Args: never; Returns: boolean }
+      is_signup_approved: { Args: { p_email: string }; Returns: boolean }
       is_space_lead: {
         Args: { _space_id: string; _user_id: string }
         Returns: boolean
