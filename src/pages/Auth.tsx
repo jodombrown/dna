@@ -35,21 +35,20 @@ const Auth = () => {
 
   const queryParams = new URLSearchParams(location.search);
   const queryMode = queryParams.get('mode');
-  // Toggle between sign-in and sign-up
-  const [isSignUp, setIsSignUp] = useState(queryMode === 'signup');
+  // Three surfaces: approved-only sign up, access request, sign in.
+  const resolveMode = (value: string | null): AuthMode =>
+    value === 'signup' ? 'signup' : value === 'request' ? 'request' : 'signin';
+  const [authMode, setAuthMode] = useState<AuthMode>(resolveMode(queryMode));
 
   useEffect(() => {
-    setIsSignUp(queryMode === 'signup');
+    setAuthMode(resolveMode(queryMode));
   }, [queryMode]);
 
   // Waitlist mode: signup tab is closed; funnel to /waitlist.
-  if (WAITLIST_MODE && isSignUp) {
+  if (WAITLIST_MODE && authMode === 'signup') {
     return <Navigate to="/waitlist" replace />;
   }
 
-  // Dated signup gate: new accounts are paused until SIGNUPS_OPEN_AT, unless
-  // this browser holds the founder bypass key.
-  const signupsClosed = !areSignupsOpen() && !resolveSignupBypass(location.search);
 
 
 
