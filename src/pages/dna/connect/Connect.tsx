@@ -197,7 +197,7 @@ const Connect = () => {
   if (isMobile) {
     return (
       <div className="min-h-screen bg-background pb-bottom-nav overflow-x-hidden">
-        {/* Single measured container for fixed header */}
+        {/* Single measured wrapper for fixed header */}
         <div
           ref={connectHeaderRef}
           className="fixed top-0 left-0 right-0"
@@ -221,8 +221,16 @@ const Connect = () => {
 
         {/* Mobile Content - dynamic padding from measured header */}
         <div
-          className="px-3 sm:px-4 overflow-x-hidden transition-[padding] duration-300"
-          style={{ paddingTop: connectHeaderPadding || undefined }}
+          className="overflow-x-hidden transition-[padding] duration-300"
+          // Horizontal gutter lives here as an inline value rather than a
+          // page-level padding utility (the layout primitives own page width
+          // and none exists in this bespoke mobile shell). Co-located with the
+          // dynamic top pad.
+          style={{
+            paddingTop: connectHeaderPadding || undefined,
+            paddingLeft: '0.75rem',
+            paddingRight: '0.75rem',
+          }}
         >
           {activeLens === 'map' ? (
             <DiasporaDensityMap inShell />

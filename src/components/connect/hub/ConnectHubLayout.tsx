@@ -71,7 +71,7 @@ export function ConnectHubLayout({
     return (
       <div className={cn('flex min-h-screen', className)}>
         {/* Left column - 30% */}
-        <div className="w-[30%] border-r border-border/40 overflow-y-auto">
+        <div className="w-1/3 border-r border-border/40 overflow-y-auto">
           {leftPanel}
         </div>
 
@@ -86,7 +86,7 @@ export function ConnectHubLayout({
             initial={{ x: '100%' }}
             animate={{ x: expandedChat ? 0 : '100%' }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="absolute inset-y-0 right-0 w-[80%] bg-background border-l border-border shadow-xl z-20"
+            className="absolute inset-y-0 right-0 w-4/5 bg-background border-l border-border shadow-xl z-20"
           >
             {rightPanel}
           </motion.div>
@@ -187,7 +187,7 @@ function MobileBottomNav({ activeView, onViewChange }: MobileBottomNavProps) {
               )}
             >
               <item.icon className={cn('h-5 w-5', isActive && 'text-primary')} />
-              <span className="text-xs font-medium">{item.label}</span>
+              <span className="text-meta font-medium">{item.label}</span>
             </button>
           );
         })}

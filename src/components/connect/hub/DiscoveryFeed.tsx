@@ -569,10 +569,10 @@ function AllEmptyState() {
       <div className="h-16 w-16 rounded-full bg-dna-emerald/10 flex items-center justify-center mb-4">
         <Users className="h-8 w-8 text-dna-emerald" />
       </div>
-      <p className="text-lg font-semibold text-foreground">
+      <p className="text-h3 font-semibold text-foreground">
         Be the first to connect with the diaspora
       </p>
-      <p className="text-sm text-muted-foreground mt-2 max-w-xs">
+      <p className="text-body text-muted-foreground mt-2 max-w-xs">
         Complete your profile to get personalized member recommendations
       </p>
       <Button
