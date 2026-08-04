@@ -94,7 +94,7 @@ const FullCanvasLayout: React.FC<FullCanvasLayoutProps> = ({
 
   // Desktop: Side-by-side layout with independent scrolling
   return (
-    <div className={cn("flex w-full gap-4 p-4", className)} style={{ height: 'calc(100dvh - 64px)' }}>
+    <div className={cn("flex w-full gap-4 p-4", className)} style={{ height: 'calc(100dvh - var(--total-header-height, 7.5rem))' }}>
       {/* Sidebar */}
       {sidebar && !isCollapsed && (
         <aside 

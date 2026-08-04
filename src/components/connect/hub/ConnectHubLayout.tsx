@@ -108,7 +108,7 @@ export function ConnectHubLayout({
 
   // Desktop: Full three-column layout with dynamic sizing
   // Each column scrolls independently within viewport height minus header+PulseBar
-  const columnHeight = 'calc(100dvh - 7.5rem)';
+  const columnHeight = 'calc(100dvh - var(--total-header-height, 7.5rem))';
 
   return (
     <div className={cn('flex', className)} style={{ height: columnHeight }}>
