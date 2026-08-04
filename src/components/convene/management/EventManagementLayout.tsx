@@ -139,7 +139,10 @@ const EventManagementLayout: React.FC = () => {
 
   if (eventLoading) {
     return (
-      <div className="flex items-center justify-center h-[calc(100dvh-64px)]">
+      <div
+        className="flex items-center justify-center"
+        style={{ height: 'calc(100dvh - var(--total-header-height, 7.5rem))' }}
+      >
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
@@ -147,7 +150,10 @@ const EventManagementLayout: React.FC = () => {
 
   if (!event) {
     return (
-      <div className="flex flex-col items-center justify-center h-[calc(100dvh-64px)] gap-4">
+      <div
+        className="flex flex-col items-center justify-center gap-4"
+        style={{ height: 'calc(100dvh - var(--total-header-height, 7.5rem))' }}
+      >
         <p className="text-muted-foreground">Event not found</p>
         <Button variant="outline" onClick={() => navigate('/dna/convene/events')}>
           Back to Events
@@ -159,7 +165,10 @@ const EventManagementLayout: React.FC = () => {
   // Check access
   if (userRole === 'none') {
     return (
-      <div className="flex flex-col items-center justify-center h-[calc(100dvh-64px)] gap-4">
+      <div
+        className="flex flex-col items-center justify-center gap-4"
+        style={{ height: 'calc(100dvh - var(--total-header-height, 7.5rem))' }}
+      >
         <p className="text-muted-foreground">You don't have permission to manage this event</p>
         <Button variant="outline" onClick={() => navigate(`/dna/convene/events/${eventId}`)}>
           Back to Event
@@ -188,7 +197,10 @@ const EventManagementLayout: React.FC = () => {
 
   return (
     <EventManagementContext.Provider value={contextValue}>
-      <div className="flex h-[calc(100dvh-64px)] bg-background">
+      <div
+        className="flex bg-background"
+        style={{ height: 'calc(100dvh - var(--total-header-height, 7.5rem))' }}
+      >
         {/* Sidebar - Desktop */}
         {!isMobile && (
           <aside className="w-64 border-r border-border bg-muted/20 flex flex-col">

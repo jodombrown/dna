@@ -306,7 +306,7 @@ const PresenceHeartbeat = () => {
   return null;
 };
 
-const AppShell = ({ children }: { children: React.ReactNode }) => (
+const RequireAuth = ({ children }: { children: React.ReactNode }) => (
   <AuthGuard>
     {children}
   </AuthGuard>
