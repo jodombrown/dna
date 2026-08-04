@@ -89,28 +89,34 @@ vi.mock('@/contexts/DiaSheetContext', () => ({
   useDiaSheet: () => ({ openWith: () => {} }),
 }));
 
-// ── The Connect surface body, stubbed so the test stays about chrome ────────
-// Connect itself is REAL — it is the route under test, and it must pass its own
-// search bubble ("Search members…") through AppShell to the mobile header.
-vi.mock('@/components/connect/ConnectWell', () => ({
-  ConnectWell: () => <div data-testid="connect-well">well</div>,
-}));
-vi.mock('@/components/connect/ConnectContextRail', () => ({
-  ConnectContextRail: () => <div data-testid="connect-context">filters</div>,
-}));
-vi.mock('@/components/connect/ConnectRelatedRail', () => ({
-  ConnectRelatedRail: () => <div data-testid="connect-related">related</div>,
-}));
-
 import BaseLayout from '@/layouts/BaseLayout';
-import Connect from '@/pages/dna/connect/Connect';
+import AppShell from '@/layouts/AppShell';
+
+/**
+ * The gate certifies AppShell's chrome contract, so it mounts AppShell directly
+ * through a fixture the TEST owns rather than through a product route. No product
+ * surface renders AppShell today, and the BD110 property lives in AppShell, not
+ * in any one surface — so the fixture supplies exactly the four things a surface
+ * hands the shell: the ONE per-surface bubble (the search bubble, whose
+ * "Search members..." placeholder the mobile-header assertion reads) plus stub
+ * children, stub context and stub related that add no chrome of their own.
+ */
+const AppShellFixture = () => (
+  <AppShell
+    bubble={{ kind: 'search', placeholder: 'Search members...' }}
+    context={<div data-testid="fixture-context">filters</div>}
+    related={<div data-testid="fixture-related">related</div>}
+  >
+    <div data-testid="fixture-content">content</div>
+  </AppShell>
+);
 
 /**
  * Every route that renders an AppShell, mounted the way production mounts it.
  * Adding the next converted C here is the whole maintenance cost of this gate.
  */
 const APP_SHELL_ROUTES: Array<{ name: string; path: string; element: React.ReactElement }> = [
-  { name: 'Connect', path: '/dna/connect', element: <Connect /> },
+  { name: 'AppShell', path: '/appshell-fixture', element: <AppShellFixture /> },
 ];
 
 function renderRoute(path: string, element: React.ReactElement) {

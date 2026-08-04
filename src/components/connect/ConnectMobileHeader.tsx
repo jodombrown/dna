@@ -1,14 +1,21 @@
+import React from 'react';
 import { Users, Network, Map, MessageCircle } from 'lucide-react';
+import { DnaMobileHeader } from '@/components/mobile/DnaMobileHeader';
 import { MESSAGING_ENABLED } from '@/config/featureFlags';
-import { type Lens } from '@/components/shell/LensBar';
+import { LensBar, type Lens } from '@/components/shell/LensBar';
 
 export type ConnectTab = 'discover' | 'network' | 'map' | 'messages';
 
+interface ConnectMobileHeaderProps {
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
+  onFiltersClick: () => void;
+  activeFilterCount?: number;
+}
+
 /**
- * Connect lenses (BD332b / BD363). Route-driven via ?lens=<id>: the LensBar
- * reads and writes the param, so this surface holds no tab state. The bar now
- * lives in the content well at both widths — there is no separate mobile tab
- * row.
+ * Connect lenses (BD332b). Route-driven via ?lens=<id>: LensBar reads and
+ * writes the param, so this surface no longer holds tab state.
  *
  * Two deliberate icon/behaviour choices:
  *  - Map uses Map, not Globe. Globe meant "a place" on Connect and "no place"
@@ -21,8 +28,61 @@ export type ConnectTab = 'discover' | 'network' | 'map' | 'messages';
  *    absent. The flag itself stays false.
  */
 export const CONNECT_LENSES: Lens[] = [
-  { id: 'discover', label: 'Discover', icon: Users, description: 'Find diaspora members by skill, interest, and location' },
+  { id: 'discover', label: 'Members', icon: Users, description: 'Find diaspora members by skill, interest, and location' },
   { id: 'network', label: 'Network', icon: Network, description: 'Manage your connections and pending requests' },
   { id: 'map', label: 'Map', icon: Map, description: 'Where the diaspora is gathering. Places, never people.' },
   { id: 'messages', label: 'Messages', icon: MessageCircle, disabled: !MESSAGING_ENABLED, description: 'Start conversations with your connections' },
 ];
+
+export function ConnectMobileHeader({
+  searchQuery,
+  onSearchChange,
+  onFiltersClick,
+  activeFilterCount = 0,
+}: ConnectMobileHeaderProps) {
+  return (
+    <div className="md:hidden">
+      <DnaMobileHeader
+        bubble={{
+          kind: 'search',
+          placeholder: 'Search members...',
+          value: searchQuery,
+          onChange: onSearchChange,
+          onFiltersClick,
+          activeFilterCount,
+        }}
+      />
+      <ConnectMobileTabs />
+    </div>
+  );
+}
+
+export function ConnectMobileTabs() {
+  return (
+    <div className="px-3 py-1.5 bg-background border-b border-border">
+      <LensBar lenses={CONNECT_LENSES} ariaLabel="Connect lenses" c="connect" />
+    </div>
+  );
+}
+
+export function ConnectMobileTopBar({
+  searchQuery,
+  onSearchChange,
+  onFiltersClick,
+  activeFilterCount = 0,
+}: ConnectMobileHeaderProps) {
+  return (
+    <div className="md:hidden">
+      <DnaMobileHeader
+        bubble={{
+          kind: 'search',
+          placeholder: 'Search members...',
+          value: searchQuery,
+          onChange: onSearchChange,
+          onFiltersClick,
+          activeFilterCount,
+        }}
+      />
+    </div>
+  );
+}

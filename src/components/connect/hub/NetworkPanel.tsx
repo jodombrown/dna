@@ -30,7 +30,7 @@ interface NetworkPanelProps {
 }
 
 export interface FilterState {
-  cEngagement: 'all' | 'connect' | 'convene' | 'collaborate' | 'contribute' | 'convey';
+  cEngagement: 'all' | 'convene' | 'collaborate' | 'contribute' | 'convey';
   regions: string[];
   diasporaLocations: string[];
 }
