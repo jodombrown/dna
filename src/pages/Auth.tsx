@@ -10,10 +10,10 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { getErrorMessage } from '@/lib/errorLogger';
-import { cn } from '@/lib/utils';
 import { WAITLIST_MODE } from '@/config/featureFlags';
 import BetaAccessForm from '@/components/auth/BetaAccessForm';
 import { SignUpApprovalGate } from '@/components/auth/SignUpApprovalGate';
+import { AuthModeToggle } from '@/components/auth/AuthModeToggle';
 
 type AuthMode = 'signup' | 'request' | 'signin';
 
@@ -173,39 +173,6 @@ const Auth = () => {
         ? 'Request access and we will review it'
         : 'Sign in to your account';
 
-  const AuthModeToggle = () => {
-    const tabs: Array<{ value: AuthMode; label: string }> = [
-      { value: 'signup', label: 'Sign up' },
-      { value: 'request', label: 'Request access' },
-      { value: 'signin', label: 'Sign in' },
-    ];
-    return (
-      <div
-        role="tablist"
-        aria-label="Account access"
-        className="flex items-center p-1 bg-muted rounded-lg w-full mx-auto"
-      >
-        {tabs.map((tab) => (
-          <button
-            key={tab.value}
-            type="button"
-            role="tab"
-            aria-selected={authMode === tab.value}
-            onClick={() => setAuthMode(tab.value)}
-            className={cn(
-              'flex-1 py-2 text-meta font-medium rounded-md transition-all',
-              authMode === tab.value
-                ? 'bg-background text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
-            )}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-    );
-  };
-
   // Auth content switches between sign up, request access, and sign in
   const authContent = (
     <div className="w-full space-y-4">
@@ -305,8 +272,8 @@ const Auth = () => {
               <div className="mx-auto mb-3 w-14 h-14 rounded-full bg-gradient-to-br from-dna-emerald to-dna-copper flex items-center justify-center">
                 <Globe className="w-7 h-7 text-white" />
               </div>
-              <AuthModeToggle />
-              <p className="text-body text-muted-foreground mt-3">
+              <AuthModeToggle value={authMode} onChange={setAuthMode} />
+              <p className="text-body text-muted-foreground">
                 {modeSubtitle}
 
               </p>
@@ -378,7 +345,7 @@ const Auth = () => {
           <div className="w-full max-w-md space-y-8">
             {/* Header */}
             <div className="text-center space-y-3">
-              <AuthModeToggle />
+              <AuthModeToggle value={authMode} onChange={setAuthMode} />
               <p className="text-muted-foreground">
                 {modeSubtitle}
 
