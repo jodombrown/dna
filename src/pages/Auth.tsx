@@ -444,12 +444,9 @@ const Auth = () => {
                 <Globe className="w-7 h-7 text-white" />
               </div>
               <AuthModeToggle />
-              <p className="text-sm text-muted-foreground mt-3">
-                {isSignUp
-                  ? signupsClosed
-                    ? 'Beta access requests are open'
-                    : 'Join the global African diaspora network'
-                  : 'Sign in to your account'}
+              <p className="text-body text-muted-foreground mt-3">
+                {modeSubtitle}
+
               </p>
             </CardHeader>
             <CardContent>
