@@ -15,12 +15,18 @@ export interface StatCitation {
   sort_order: number;
   is_active: boolean;
   updated_at: string;
+  scope_population: string | null;
+  scope_geography: string;
+  scope_period: string | null;
 }
 
 /**
- * Fallback data used if the request fails or the table is empty.
- * Mirrors the seeded rows so the homepage never renders blank while
- * network / cache warms up.
+ * Fallback data passed as `placeholderData`, so it renders on the FIRST PAINT
+ * of every visit, before the query resolves, not only if the request fails or
+ * the table is empty. Because it bypasses the database entirely, it also
+ * bypasses the NOT NULL constraint on scope_geography; the values below must be
+ * kept in sync with the live rows. Mirrors the seeded rows so the homepage
+ * never renders blank while network / cache warms up.
  */
 export const FALLBACK_STAT_CITATIONS: StatCitation[] = [
   {
@@ -37,21 +43,27 @@ export const FALLBACK_STAT_CITATIONS: StatCitation[] = [
     sort_order: 1,
     is_active: true,
     updated_at: '',
+    scope_population: 'Diaspora',
+    scope_geography: 'worldwide',
+    scope_period: null,
   },
   {
     id: 'fallback-2',
     key: 'annual_remittances',
     display_value: '100B+',
     label: 'Annual Remittances to Africa (2024)',
-    description: 'Fueling economic growth across African nations',
-    source_name: 'World Bank / KNOMAD',
-    source_url: 'https://www.knomad.org/publication/migration-and-development-brief-41',
+    description: 'Larger than foreign direct investment and roughly double official development assistance',
+    source_name: 'World Bank, via IFAD RemitSCOPE Africa',
+    source_url: 'https://remitscope.org/africa/',
     year: 2024,
     methodology: null,
     definition: null,
     sort_order: 2,
     is_active: true,
     updated_at: '',
+    scope_population: null,
+    scope_geography: 'Africa, all countries',
+    scope_period: '2024',
   },
   {
     id: 'fallback-3',
@@ -68,6 +80,9 @@ export const FALLBACK_STAT_CITATIONS: StatCitation[] = [
     sort_order: 3,
     is_active: true,
     updated_at: '',
+    scope_population: 'Black immigrants ages 25 and older',
+    scope_geography: 'in the United States',
+    scope_period: '2022',
   },
 ];
 
