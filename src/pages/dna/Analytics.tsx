@@ -1,7 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import LayoutController from '@/components/LayoutController';
-import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { Card } from '@/components/ui/card';
 import { BarChart3 } from 'lucide-react';
@@ -48,7 +47,6 @@ const DnaAnalytics = () => {
 
   return (
     <LayoutController
-      leftColumn={<LeftNav />}
       centerColumn={centerColumn}
       rightColumn={<RightWidgets variant="default" />}
     />

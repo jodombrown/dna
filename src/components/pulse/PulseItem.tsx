@@ -6,11 +6,11 @@
  */
 
 import React, { useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { PulseSection, PulseConfig, PulseStatus } from '@/types/pulse';
+import type { PulseSection, PulseConfig, PulseStatus, PulseKey } from '@/types/pulse';
 import { PulsePreviewCard } from './PulsePreviewCard';
 import {
   Sankofa,
@@ -34,34 +34,43 @@ const prefetchRoute = prefetchHubRoute;
 interface PulseItemProps {
   config: PulseConfig;
   data?: PulseSection;
-  pulseKey: string;
+  pulseKey: PulseKey;
 }
 
-const STATUS_COLORS: Record<PulseStatus, { bg: string; glow: string; text: string; indicator: string }> = {
-  active: {
-    bg: 'bg-primary/8 hover:bg-primary/14',
-    glow: 'shadow-[0_0_12px_-2px_hsl(var(--primary)/0.3)]',
-    text: 'text-primary',
-    indicator: 'bg-primary',
-  },
-  attention: {
-    bg: 'bg-amber-500/8 hover:bg-amber-500/14',
-    glow: 'shadow-[0_0_12px_-2px_hsl(36,90%,50%,0.3)]',
-    text: 'text-amber-600',
-    indicator: 'bg-amber-500',
-  },
-  dormant: {
-    bg: 'bg-muted/40 hover:bg-muted/60',
-    glow: '',
-    text: 'text-muted-foreground',
-    indicator: 'bg-muted-foreground/30',
-  },
-  urgent: {
-    bg: 'bg-destructive/8 hover:bg-destructive/14',
-    glow: 'shadow-[0_0_16px_-2px_hsl(var(--destructive)/0.4)]',
-    text: 'text-destructive',
-    indicator: 'bg-destructive',
-  },
+/**
+ * Frame B — colour is the one C you are in.
+ *
+ * The active-route slot spends its C in exactly two places: the glyph+label as
+ * one mark (via the parent's text colour, which both inherit) and a 2px rule
+ * beneath as the second. No fill, no tint, no border. Inactive slots carry no
+ * C. Full literal class strings so the JIT scanner can see them.
+ */
+const C_MARK: Record<PulseKey, string> = {
+  connect: 'text-c5-connect',
+  convene: 'text-c5-convene',
+  collaborate: 'text-c5-collaborate',
+  contribute: 'text-c5-contribute',
+  convey: 'text-c5-convey',
+};
+
+const C_RULE: Record<PulseKey, string> = {
+  connect: 'bg-c5-connect',
+  convene: 'bg-c5-convene',
+  collaborate: 'bg-c5-collaborate',
+  contribute: 'bg-c5-contribute',
+  convey: 'bg-c5-convey',
+};
+
+/**
+ * Status is shape, not hue: filled dot = active, hollow ring = attention,
+ * numeral = count, crimson dot = urgent (the one colour exception). No C hue
+ * ever rides on the status mark.
+ */
+const STATUS_DOT: Record<PulseStatus, string> = {
+  active: 'bg-foreground',
+  attention: 'border border-foreground',
+  dormant: '',
+  urgent: 'bg-dna-crimson',
 };
 
 export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
@@ -74,7 +83,22 @@ export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
   const count = data?.count || 0;
   const microText = data?.micro_text || '';
   const hasItems = data?.top_items && data.top_items.length > 0;
-  const colors = STATUS_COLORS[status];
+
+  // Colour is keyed on the active ROUTE, never on pulse activity: only the C
+  // you are in is coloured, and it changes only when the route changes.
+  const location = useLocation();
+  const path = location.pathname;
+  const href = config.href;
+  const isActiveRoute =
+    path.startsWith(href) ||
+    (href === '/dna/connect' &&
+      (path.startsWith('/dna/profile') ||
+        path.startsWith('/dna/discover') ||
+        path.startsWith('/dna/network'))) ||
+    (href === '/dna/collaborate' && path.startsWith('/dna/spaces'));
+
+  // Status ping/dot colour: neutral by default, crimson only for urgent.
+  const dotColor = status === 'urgent' ? 'bg-dna-crimson' : 'bg-foreground';
 
   // Calculate activity dots (1-5 based on count)
   const activityLevel = Math.min(Math.max(count, 0), 5);
@@ -117,11 +141,7 @@ export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
           to={config.href}
           className={cn(
             'flex flex-col items-center p-2.5 rounded-xl transition-all duration-200',
-            'border border-transparent',
-            colors.bg,
-            colors.text,
-            status !== 'dormant' && colors.glow,
-            status !== 'dormant' && 'border-current/10',
+            isActiveRoute ? C_MARK[pulseKey] : 'text-muted-foreground',
           )}
           onMouseDown={() => setIsPressed(true)}
           onMouseUp={() => setIsPressed(false)}
@@ -129,13 +149,15 @@ export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
         >
           {/* Icon + Label Row */}
           <div className="flex items-center gap-1.5">
-            {/* Animated Status Indicator */}
+            {/* Status indicator — shape carries status, colour stays neutral
+                (crimson is the one exception, for urgent). The ping timings are
+                unchanged; only the hue moved off the C. */}
             <span className="relative flex h-2 w-2">
               {(status === 'active' || status === 'urgent') && (
                 <motion.span
                   className={cn(
                     'absolute inset-0 rounded-full opacity-40',
-                    colors.indicator,
+                    dotColor,
                   )}
                   animate={{
                     scale: [1, 1.8, 1],
@@ -152,7 +174,7 @@ export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
                 <motion.span
                   className={cn(
                     'absolute inset-0 rounded-full opacity-30',
-                    colors.indicator,
+                    dotColor,
                   )}
                   animate={{
                     scale: [1, 1.5, 1],
@@ -165,12 +187,14 @@ export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
                   }}
                 />
               )}
-              <span
-                className={cn(
-                  'relative inline-flex rounded-full h-2 w-2',
-                  colors.indicator,
-                )}
-              />
+              {status !== 'dormant' && (
+                <span
+                  className={cn(
+                    'relative inline-flex rounded-full h-2 w-2',
+                    STATUS_DOT[status],
+                  )}
+                />
+              )}
             </span>
 
             <Icon className="w-[18px] h-[18px]" />
@@ -194,6 +218,11 @@ export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
           <span className="text-[11px] text-center truncate max-w-full px-1 opacity-70 mt-0.5">
             {microText}
           </span>
+
+          {/* Second place the active C is spent: a 2px rule beneath the mark. */}
+          {isActiveRoute && (
+            <span className={cn('h-0.5 w-6 rounded-full mt-1', C_RULE[pulseKey])} />
+          )}
         </Link>
       </motion.div>
 

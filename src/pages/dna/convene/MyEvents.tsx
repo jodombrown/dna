@@ -10,7 +10,6 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import LayoutController from '@/components/LayoutController';
-import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { EventCalendarView } from '@/components/convene/EventCalendarView';
 import { ConveneEventRow } from '@/components/convene/ConveneEventRow';
@@ -209,7 +208,6 @@ const MyEvents = () => {
     // already mounts MobileBottomNav, so the shell must not add a second one.
     <ConveneShell showBottomNav={false}>
     <LayoutController
-      leftColumn={<LeftNav />}
       centerColumn={
         <div className="container max-w-3xl mx-auto px-4 py-6 sm:py-8">
           {/* ── Page Header ────────────────────────── */}

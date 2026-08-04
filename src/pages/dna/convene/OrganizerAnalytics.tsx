@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import LayoutController from '@/components/LayoutController';
-import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -21,7 +20,6 @@ const OrganizerAnalytics = () => {
   if (isLoading) {
     return (
       <LayoutController
-        leftColumn={<LeftNav />}
         centerColumn={
           <div className="flex items-center justify-center min-h-[400px]">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -35,7 +33,6 @@ const OrganizerAnalytics = () => {
   if (error) {
     return (
       <LayoutController
-        leftColumn={<LeftNav />}
         centerColumn={
           <div className="space-y-4">
             <Button variant="ghost" onClick={() => navigate('/dna/convene/my-events')}>
@@ -59,7 +56,6 @@ const OrganizerAnalytics = () => {
   if (!analytics) {
     return (
       <LayoutController
-        leftColumn={<LeftNav />}
         centerColumn={
           <div className="space-y-4">
             <Button variant="ghost" onClick={() => navigate('/dna/convene/my-events')}>
@@ -86,7 +82,6 @@ const OrganizerAnalytics = () => {
 
   return (
     <LayoutController
-      leftColumn={<LeftNav />}
       centerColumn={
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

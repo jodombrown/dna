@@ -11,9 +11,11 @@ import { SlidersHorizontal } from 'lucide-react';
 import dnaLogo from '@/assets/dna-logo.png';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { UnifiedNotificationBell } from '@/components/notifications/UnifiedNotificationBell';
+import { MateMasie } from '@/components/icons/adinkra';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useAccountDrawer } from '@/contexts/AccountDrawerContext';
+import { useDiaSheet } from '@/contexts/DiaSheetContext';
 import { cn } from '@/lib/utils';
 
 export type DnaMobileHeaderBubble =
@@ -44,6 +46,9 @@ export const DnaMobileHeader: React.FC<DnaMobileHeaderProps> = ({
   const { user } = useAuth();
   const { data: profile } = useProfile();
   const { open: openAccountDrawer } = useAccountDrawer();
+  // DIA's home is a header affordance on both widths (its former tray row was
+  // dissolved with the tray). Opens the shared DIA sheet via DiaSheetContext.
+  const { openWith: openDia } = useDiaSheet();
 
   return (
     <div
@@ -110,6 +115,16 @@ export const DnaMobileHeader: React.FC<DnaMobileHeaderProps> = ({
 
         {/* Right cluster - locked */}
         <div className="flex items-center gap-1.5 flex-shrink-0">
+          {user && (
+            <button
+              type="button"
+              onClick={() => openDia()}
+              aria-label="Ask DIA"
+              className="h-9 w-9 inline-flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <MateMasie className="w-5 h-5" />
+            </button>
+          )}
           <UnifiedNotificationBell />
           {user && profile && (
             <Avatar className="h-9 w-9 cursor-pointer" onClick={openAccountDrawer}>

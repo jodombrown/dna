@@ -54,14 +54,9 @@ const NAV_SURFACES: NavSurface[] = [
   { id: 'feed-left-panel',       file: 'src/components/feed/FeedLeftPanel.tsx' },
   // Connect
   { id: 'connect-mobile-header', file: 'src/components/connect/ConnectMobileHeader.tsx' },
-  // Pulse Dock + Tray
+  // Pulse Dock — the sole mobile nav surface (the tray and LeftNav were
+  // dissolved; there is one Five C's navigation now).
   { id: 'pulse-dock',            file: 'src/components/pulse/PulseDock.tsx' },
-  { id: 'pulse-dock-tray-pulse', file: 'src/components/pulse/PulseDockTray.tsx',
-    scopeRegex: /PULSE_ITEMS\s*=\s*\[[\s\S]*?\]/ },
-  { id: 'pulse-dock-tray-utility', file: 'src/components/pulse/PulseDockTray.tsx',
-    scopeRegex: /UTILITY_ITEMS\s*=\s*\[[\s\S]*?\]/ },
-  // Layout
-  { id: 'left-nav',              file: 'src/components/layout/columns/LeftNav.tsx' },
   // Admin
   { id: 'admin-layout',          file: 'src/pages/admin/AdminLayout.tsx' },
   // Settings (notification categories use distinct icons per row)

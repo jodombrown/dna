@@ -13,10 +13,11 @@ import { usePulseBar } from '@/hooks/usePulseBar';
 import { useMobile } from '@/hooks/useMobile';
 import { useSetCSSHeaderHeight } from '@/hooks/useSetCSSHeaderHeight';
 import { PulseItem } from './PulseItem';
-import { PULSE_CONFIG, type PulseKey } from '@/types/pulse';
+import { FIVE_CS, PULSE_CONFIG, type PulseKey } from '@/types/pulse';
 import { scheduleHubPrefetch } from '@/lib/prefetchHubRoutes';
 
-const PULSE_KEYS: PulseKey[] = ['connect', 'convene', 'collaborate', 'contribute', 'convey'];
+// Both navs derive their slot set from the one FIVE_CS const (src/types/pulse).
+const PULSE_KEYS: PulseKey[] = FIVE_CS.map((c) => c.id);
 
 function PulseBarSkeleton() {
   return (

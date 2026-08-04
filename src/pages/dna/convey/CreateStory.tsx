@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { ConveyItemType } from '@/types/conveyTypes';
 import LayoutController from '@/components/LayoutController';
-import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
@@ -138,7 +137,6 @@ export default function CreateStory() {
   if (isLoadingSpace || isLoadingEvent || (requestedType === 'impact' && isLoadingImpact)) {
     return (
       <LayoutController
-        leftColumn={<LeftNav />}
         centerColumn={
           <div className="max-w-3xl mx-auto px-4 py-8">
             <div className="flex items-center justify-center py-12">
@@ -165,7 +163,6 @@ export default function CreateStory() {
 
   return (
     <LayoutController
-      leftColumn={<LeftNav />}
       centerColumn={
         <div className="container max-w-3xl mx-auto px-4 py-8">
           <Button

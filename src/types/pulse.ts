@@ -75,45 +75,46 @@ export interface UserPulseData {
 
 export type PulseKey = 'connect' | 'convene' | 'collaborate' | 'contribute' | 'convey';
 
+/**
+ * FIVE_CS — the single ordered source of the Five C's navigation slot set, in
+ * Five C's order: connect, convene, collaborate, contribute, convey.
+ *
+ * PulseDock (PRIMARY_ITEMS) and PulseBar BOTH derive their slots from this one
+ * const. Two hand-maintained arrays are exactly how the mobile and desktop
+ * widths drift apart; there is one declaration here so they cannot.
+ *
+ * `icon` is the icon's registry name; each surface resolves it to its own
+ * component (adinkra symbol) so this stays a plain data array.
+ */
+export interface FiveCSlot {
+  id: PulseKey;
+  label: string;
+  icon: string;
+  href: string;
+}
+
+export const FIVE_CS: readonly FiveCSlot[] = [
+  { id: 'connect', label: 'Connect', icon: 'Sankofa', href: '/dna/connect' },
+  { id: 'convene', label: 'Convene', icon: 'Nkonsonkonson', href: '/dna/convene' },
+  { id: 'collaborate', label: 'Collaborate', icon: 'FuntunfunefuDenkyemfunefu', href: '/dna/collaborate' },
+  { id: 'contribute', label: 'Contribute', icon: 'Adinkrahene', href: '/dna/contribute' },
+  { id: 'convey', label: 'Convey', icon: 'Mpatapo', href: '/dna/convey' },
+] as const;
+
 export interface PulseConfig {
   label: string;
   icon: string;
   href: string;
-  color: string;
 }
 
-export const PULSE_CONFIG: Record<PulseKey, PulseConfig> = {
-  connect: {
-    label: 'CONNECT',
-    icon: 'Sankofa',
-    href: '/dna/connect',
-    color: 'emerald',
-  },
-  convene: {
-    label: 'CONVENE',
-    icon: 'Nkonsonkonson',
-    href: '/dna/convene',
-    color: 'emerald',
-  },
-  collaborate: {
-    label: 'COLLABORATE',
-    icon: 'FuntunfunefuDenkyemfunefu',
-    href: '/dna/collaborate',
-    color: 'emerald',
-  },
-  contribute: {
-    label: 'CONTRIBUTE',
-    icon: 'Adinkrahene',
-    href: '/dna/contribute',
-    color: 'emerald',
-  },
-  convey: {
-    label: 'CONVEY',
-    icon: 'Mpatapo',
-    href: '/dna/convey',
-    color: 'emerald',
-  },
-} as const;
+/**
+ * PULSE_CONFIG — per-key label/icon/href lookup for the desktop PulseBar,
+ * derived from FIVE_CS so the slot set has exactly one source. Labels are
+ * uppercased for the bar's eyebrow treatment.
+ */
+export const PULSE_CONFIG: Record<PulseKey, PulseConfig> = Object.fromEntries(
+  FIVE_CS.map((c) => [c.id, { label: c.label.toUpperCase(), icon: c.icon, href: c.href }]),
+) as Record<PulseKey, PulseConfig>;
 
 /**
  * Mobile Navigation Types for Pulse Dock

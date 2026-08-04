@@ -18,7 +18,6 @@ export type LayoutConfig = {
   leftWidth?: string;
   centerWidth?: string;
   rightWidth?: string;
-  showLeftNav?: boolean;
   showRightColumn?: boolean;
 };
 
@@ -128,7 +127,6 @@ const viewStateToLayout = (viewState: ViewState): LayoutConfig => {
         leftWidth: '280px',
         centerWidth: '1fr',
         rightWidth: '340px',
-        showLeftNav: true,
         showRightColumn: true,
       };
     
@@ -138,7 +136,6 @@ const viewStateToLayout = (viewState: ViewState): LayoutConfig => {
         leftWidth: '280px',
         centerWidth: '1fr',
         rightWidth: '340px',
-        showLeftNav: true,
         showRightColumn: true, // Adapted with network stats
       };
     
@@ -147,7 +144,6 @@ const viewStateToLayout = (viewState: ViewState): LayoutConfig => {
         type: 'two-column',
         leftWidth: '60%',
         rightWidth: '40%',
-        showLeftNav: false, // Collapsed
         showRightColumn: true,
       };
     
@@ -156,7 +152,6 @@ const viewStateToLayout = (viewState: ViewState): LayoutConfig => {
         type: 'two-column',
         leftWidth: '35%',
         rightWidth: '65%',
-        showLeftNav: false,
         showRightColumn: true,
       };
     
@@ -165,7 +160,6 @@ const viewStateToLayout = (viewState: ViewState): LayoutConfig => {
         type: 'full-canvas',
         leftWidth: '20%',
         centerWidth: '80%',
-        showLeftNav: true,
         showRightColumn: false,
       };
     
@@ -174,7 +168,6 @@ const viewStateToLayout = (viewState: ViewState): LayoutConfig => {
         type: 'two-column',
         leftWidth: '55%',
         rightWidth: '45%',
-        showLeftNav: true,
         showRightColumn: true,
       };
     
@@ -184,7 +177,6 @@ const viewStateToLayout = (viewState: ViewState): LayoutConfig => {
         leftWidth: '280px',
         centerWidth: '1fr',
         rightWidth: '340px',
-        showLeftNav: true,
         showRightColumn: true,
       };
     
@@ -193,7 +185,6 @@ const viewStateToLayout = (viewState: ViewState): LayoutConfig => {
       // Used for: profiles, events, spaces, stories, needs, offers
       return {
         type: 'modal-overlay', // Type name kept for backward compatibility
-        showLeftNav: false, // DetailViewLayout handles its own navigation
         showRightColumn: false,
       };
     
@@ -203,7 +194,6 @@ const viewStateToLayout = (viewState: ViewState): LayoutConfig => {
         leftWidth: '280px',
         centerWidth: '1fr',
         rightWidth: '340px',
-        showLeftNav: true,
         showRightColumn: true,
       };
   }
