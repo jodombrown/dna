@@ -45,10 +45,10 @@ const AnimatedStat: React.FC<AnimatedStatProps> = ({ citation, bgGradient, onOpe
     (citation.scope_period ? ` · ${citation.scope_period}` : '');
 
   return (
-    <div className={`${bgGradient} rounded-xl p-6 text-center shadow-lg min-h-[140px] flex flex-col`}>
+    <div className={`${bgGradient} rounded-xl p-6 text-center shadow-lg flex flex-col`}>
       <div
         ref={countRef}
-        className="text-4xl font-bold text-white mb-2 tabular-nums min-w-[120px] inline-block h-[44px]"
+        className="text-display font-bold text-white mb-2 tabular-nums"
       >
         {count}
         {suffix}
@@ -56,29 +56,29 @@ const AnimatedStat: React.FC<AnimatedStatProps> = ({ citation, bgGradient, onOpe
       {citation.scope_geography ? (
         <div className="text-meta text-white/80 mb-1">{scope}</div>
       ) : null}
-      <div className="text-lg font-medium text-white/90 mb-1 h-[28px]">{citation.label}</div>
-      <div className="text-sm text-white/80 min-h-[40px]">{citation.description}</div>
+      <div className="text-h3 font-medium text-white/90 mb-1">{citation.label}</div>
+      <div className="text-body text-white/80">{citation.description}</div>
 
-      <div className="mt-3 pt-2 border-t border-white/20 flex items-center justify-center gap-2 flex-wrap">
+      <div className="mt-auto pt-3 border-t border-white/20 flex items-center justify-center gap-2 flex-wrap">
         {citation.source_url ? (
           <a
             href={citation.source_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-white/70 hover:text-white underline underline-offset-2 transition-colors inline-flex items-center gap-1"
+            className="text-meta text-white/70 hover:text-white underline underline-offset-2 transition-colors inline-flex items-center gap-1"
           >
             Source: {yearLabel}
             <ExternalLink className="h-3 w-3" aria-hidden />
           </a>
         ) : (
-          <span className="text-xs text-white/70">Source: {yearLabel}</span>
+          <span className="text-meta text-white/70">Source: {yearLabel}</span>
         )}
 
         {hasDetail && (
           <button
             type="button"
             onClick={() => onOpenDetails(citation)}
-            className="text-xs text-white/70 hover:text-white inline-flex items-center gap-1 underline underline-offset-2 min-h-[24px] px-1"
+            className="text-meta text-white/70 hover:text-white inline-flex items-center gap-1 underline underline-offset-2 px-1"
             aria-label={`Show source details for ${citation.label}`}
           >
             <Info className="h-3 w-3" aria-hidden />
@@ -86,6 +86,7 @@ const AnimatedStat: React.FC<AnimatedStatProps> = ({ citation, bgGradient, onOpe
           </button>
         )}
       </div>
+
     </div>
   );
 };
