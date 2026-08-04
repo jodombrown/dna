@@ -11145,6 +11145,9 @@ export type Database = {
           key: string
           label: string
           methodology: string | null
+          scope_geography: string
+          scope_period: string | null
+          scope_population: string | null
           sort_order: number
           source_name: string
           source_url: string | null
@@ -11162,6 +11165,9 @@ export type Database = {
           key: string
           label: string
           methodology?: string | null
+          scope_geography: string
+          scope_period?: string | null
+          scope_population?: string | null
           sort_order?: number
           source_name: string
           source_url?: string | null
@@ -11179,6 +11185,9 @@ export type Database = {
           key?: string
           label?: string
           methodology?: string | null
+          scope_geography?: string
+          scope_period?: string | null
+          scope_population?: string | null
           sort_order?: number
           source_name?: string
           source_url?: string | null
