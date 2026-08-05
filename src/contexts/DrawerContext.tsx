@@ -153,19 +153,85 @@ export function DrawerProvider({
   }, [navigate]);
 
   /**
+   * Exit animation on close (BD389 follow-up).
+   *
+   * What is open is a pure function of the URL, so stripping `?drawer=` unmounts
+   * the whole shell in ONE synchronous render — there is no window for vaul or
+   * anyone else to animate an exit, which is why the shell used to just vanish.
+   * Rather than reintroduce a controlled-open frame stash in AppDrawer (which
+   * would fight the single-owner model this file exists to hold, and drag the
+   * BD135/BD136 surface into it), the close mutation is wrapped in a View
+   * Transition. The browser snapshots the old frame, we drop the param, and it
+   * cross-fades the drawer out. One place, only the disappearance.
+   *
+   * The subtlety, and why this is more than a bare wrap: the common close path is
+   * `navigate(-depth)`, a browser POP that commits ASYNCHRONOUSLY. A plain
+   * startViewTransition would capture the "after" before React re-rendered and
+   * animate nothing. So the transition is held open by a promise that resolves
+   * the instant the URL actually changes — see the layout effect on `raw` — with
+   * a timeout as a hang guard.
+   *
+   * Feature-detected and reduced-motion-aware: where View Transitions are absent
+   * (older browsers, jsdom) or the member asked for less motion, the mutation
+   * runs bare and the drawer closes instantly, exactly as before. The header's
+   * "reduced motion" ownership is preserved because this is the only path that
+   * could have introduced motion on close.
+   */
+  const closeTransition = React.useRef<{ resolve: () => void; timer: number } | null>(null);
+
+  React.useLayoutEffect(() => {
+    const pending = closeTransition.current;
+    if (!pending) return;
+    closeTransition.current = null;
+    window.clearTimeout(pending.timer);
+    pending.resolve();
+  }, [raw]);
+
+  /**
    * Close unwinds every drawer entry this session pushed, so the member lands
    * back on the page they were reading rather than stepping out one panel at a
    * time. Falls back to a param strip when the drawer was deep-linked into
    * directly and there is no history to unwind.
    */
   const close = React.useCallback(() => {
-    if (depth > 0 && window.history.state?.idx >= depth) {
-      navigate(-depth);
+    const mutate = () => {
+      if (depth > 0 && window.history.state?.idx >= depth) {
+        navigate(-depth);
+        return;
+      }
+      const params = new URLSearchParams(searchParams);
+      params.delete(DRAWER_PARAM);
+      setSearchParams(params, { replace: true });
+    };
+
+    const startViewTransition = (
+      document as Document & {
+        startViewTransition?: (callback: () => void | Promise<void>) => unknown;
+      }
+    ).startViewTransition;
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      !!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+
+    if (!startViewTransition || prefersReducedMotion) {
+      mutate();
       return;
     }
-    const params = new URLSearchParams(searchParams);
-    params.delete(DRAWER_PARAM);
-    setSearchParams(params, { replace: true });
+
+    startViewTransition.call(
+      document,
+      () =>
+        new Promise<void>((resolve) => {
+          const timer = window.setTimeout(() => {
+            if (closeTransition.current?.resolve === resolve) {
+              closeTransition.current = null;
+              resolve();
+            }
+          }, 300);
+          closeTransition.current = { resolve, timer };
+          mutate();
+        }),
+    );
   }, [depth, navigate, searchParams, setSearchParams]);
 
   const getScroll = React.useCallback((key: string) => scrollMemory.current.get(key) ?? 0, []);
