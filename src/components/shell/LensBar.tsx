@@ -136,7 +136,7 @@ export function LensBar({ lenses, ariaLabel, c }: LensBarProps) {
         ref={trackRef}
         role="tablist"
         aria-label={ariaLabel}
-        className="relative flex items-center gap-1 p-1 bg-muted/50 rounded-lg overflow-x-auto scrollbar-hide"
+        className="relative flex items-center gap-1 p-1 bg-muted shadow-[inset_0_1px_0_0_hsl(var(--border))] rounded-lg overflow-x-auto scrollbar-hide"
       >
         {/* Active chip: absolutely positioned so tapping a lens never reflows its
             siblings. Sizes to its own content, never flex-1. */}
@@ -144,7 +144,7 @@ export function LensBar({ lenses, ariaLabel, c }: LensBarProps) {
           <span
             aria-hidden="true"
             className={cn(
-              'pointer-events-none absolute top-1 bottom-1 left-0 rounded-md bg-background shadow-sm',
+              'pointer-events-none absolute top-1 bottom-1 left-0 rounded-md bg-surface-raised shadow-sm',
               ready && 'transition-[transform,width] duration-150 ease-out',
             )}
             style={{ transform: `translate3d(${indicator.x}px, 0, 0)`, width: indicator.w }}
@@ -182,7 +182,7 @@ export function LensBar({ lenses, ariaLabel, c }: LensBarProps) {
                 lens.disabled
                   ? 'cursor-default border border-dashed border-border'
                   : 'cursor-pointer',
-                !isActive && !lens.disabled && 'text-muted-foreground hover:text-foreground',
+                !isActive && !lens.disabled && 'text-foreground/70 hover:text-foreground',
               )}
             >
               <Icon
