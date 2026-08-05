@@ -11,6 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import LayoutController from '@/components/LayoutController';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
+import { ContentColumn } from '@/components/layout/ContentColumn';
 import { EventCalendarView } from '@/components/convene/EventCalendarView';
 import { ConveneEventRow } from '@/components/convene/ConveneEventRow';
 import { MyEventCard } from '@/components/convene/MyEventCard';
@@ -209,7 +210,7 @@ const MyEvents = () => {
     <ConveneShell showBottomNav={false} tabs={null}>
     <LayoutController
       centerColumn={
-        <div className="container max-w-3xl mx-auto px-4">
+        <ContentColumn>
           {/* ── Page Header ────────────────────────── */}
           <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative overflow-hidden rounded-xl p-5">
             <CulturalPattern pattern="kente" opacity={0.05} />
@@ -552,7 +553,7 @@ const MyEvents = () => {
               </TabsContent>
             </Tabs>
           )}
-        </div>
+        </ContentColumn>
       }
       rightColumn={<RightWidgets variant="convene" />}
     >
