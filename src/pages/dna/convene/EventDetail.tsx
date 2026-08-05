@@ -6,7 +6,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Calendar, MapPin, Users, ExternalLink, Share2, Clock, MoreHorizontal, XCircle, Trash2, Flag, QrCode, Loader2, Settings, MessageSquare, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { invalidateAllEventCaches } from '@/lib/eventCacheInvalidation';
-import UnifiedHeader from '@/components/UnifiedHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -589,13 +588,12 @@ const EventDetail = () => {
     // Sub-page of the Convene hub: mobile chrome comes from the shared
     // ConveneShell. The MobileBottomNav is omitted because the StickyRSVPBar
     // is this page's fixed bottom bar — never two fixed bars. On md+ the
-    // shell is a no-op and UnifiedHeader provides the desktop chrome.
+    // shell is a no-op, and desktop chrome comes from BaseLayout externally
+    // (BaseLayout renders UnifiedHeader unconditionally for every unclaimed
+    // route). This page previously rendered a second UnifiedHeader here,
+    // stacking with BaseLayout's copy on desktop. Removed.
     <ConveneShell showBottomNav={false} tabs={null}>
     <div className="min-h-screen bg-background pb-28 lg:pb-0">
-      <div className="hidden md:block">
-        <UnifiedHeader />
-      </div>
-
       {/* ── Sticky Scroll Header (md+ — the mobile top row is the locked
              DnaMobileHeader rendered by the shell) ─────── */}
       <motion.div
