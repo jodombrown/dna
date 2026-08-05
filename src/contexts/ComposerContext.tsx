@@ -55,6 +55,11 @@ export function ComposerProvider({ children }: { children: React.ReactNode }) {
     if (drawerSurfaceId === COMPOSER_SURFACE_ID) drawer?.close();
   }, [composer, drawer, drawerSurfaceId]);
 
+  const dismissSuccess = React.useCallback(() => {
+    composer.dismissSuccess();
+    if (drawerSurfaceId === COMPOSER_SURFACE_ID) drawer?.close();
+  }, [composer, drawer, drawerSurfaceId]);
+
   /**
    * Openness is DERIVED from the shell, not mirrored into it.
    *
@@ -75,8 +80,8 @@ export function ComposerProvider({ children }: { children: React.ReactNode }) {
   const isOpen = drawer ? drawerSurfaceId === COMPOSER_SURFACE_ID : composer.isOpen;
 
   const value = React.useMemo<ComposerApi>(
-    () => ({ ...composer, isOpen, open, close }),
-    [composer, isOpen, open, close],
+    () => ({ ...composer, isOpen, open, close, dismissSuccess }),
+    [composer, isOpen, open, close, dismissSuccess],
   );
 
   return <ComposerCtx.Provider value={value}>{children}</ComposerCtx.Provider>;
