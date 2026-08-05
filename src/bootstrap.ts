@@ -42,6 +42,8 @@ const clearDevelopmentPreviewCache = async () => {
   return clearedState;
 };
 
+const RETRY_FLAG = 'dna-bootstrap-retry';
+
 const boot = async () => {
   const clearedState = await clearDevelopmentPreviewCache();
 
@@ -50,7 +52,19 @@ const boot = async () => {
     return;
   }
 
-  await import('./main.tsx');
+  try {
+    await import('./main.tsx');
+    sessionStorage.removeItem(RETRY_FLAG);
+  } catch (error) {
+    // A dev-server restart or dropped chunk fetch can kill this import.
+    // Reload once so the app self-heals instead of leaving a blank screen.
+    if (!sessionStorage.getItem(RETRY_FLAG)) {
+      sessionStorage.setItem(RETRY_FLAG, '1');
+      window.location.reload();
+      return;
+    }
+    throw error;
+  }
 };
 
 void boot();
