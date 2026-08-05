@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -56,8 +55,6 @@ const About = () => {
         canonicalPath="/about"
         structuredData={[getOrganizationSchema(), founderSchema]}
       />
-      <UnifiedHeader />
-      
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10 py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
