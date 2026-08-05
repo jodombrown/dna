@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import UnifiedHeader from '@/components/UnifiedHeader';
 import { useIdentitySheetSafe } from '@/components/ui/settings-kit';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -108,8 +107,6 @@ export function SettingsLayout({ children, title, description }: SettingsLayoutP
 
   return (
     <div className="min-h-screen bg-background">
-      <UnifiedHeader />
-
       <div className="container max-w-6xl mx-auto px-4 py-8">
         {/* Mobile back button */}
         <div className="mb-6 lg:hidden">

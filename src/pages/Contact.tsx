@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -138,8 +137,6 @@ const Contact = () => {
         canonicalPath="/contact"
         structuredData={contactSchema}
       />
-      <UnifiedHeader />
-      
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 pt-16 pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

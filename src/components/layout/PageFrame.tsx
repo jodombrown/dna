@@ -23,7 +23,6 @@
  */
 
 import * as React from 'react';
-import UnifiedHeader from '@/components/UnifiedHeader';
 import { useIdentitySheetSafe } from '@/components/ui/settings-kit';
 import { cn } from '@/lib/utils';
 
@@ -107,7 +106,6 @@ export function PageFrame({
 
   return (
     <div className={cn('min-h-screen bg-background', className)}>
-      <UnifiedHeader />
       <div className={cn(contained && 'container mx-auto max-w-4xl px-4 py-8')}>
         {controls}
         {children}

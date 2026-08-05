@@ -20,7 +20,6 @@ import { linkifyContent } from '@/utils/linkifyContent';
 import { RenderProse } from '@/utils/renderProse';
 
 import { EditedMarker } from '@/components/posts/EditedMarker';
-import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import { FiveCsDiscoverySection } from '@/components/five-cs/FiveCsDiscoverySection';
 
@@ -74,8 +73,6 @@ export const PublicPostNotFound = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 
   return (
     <div className="min-h-screen bg-background">
-      <UnifiedHeader />
-      <div aria-hidden style={{ height: "var(--unified-header-height, 64px)" }} />
       <div className="container max-w-2xl mx-auto px-4 py-16 text-center">
         <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
         <h1 className="text-h1 mb-4">Post Not Found</h1>
@@ -199,8 +196,6 @@ export const PublicPostView = ({ post, postId, isLoggedIn }: PublicPostViewProps
       </Helmet>
 
       <div className="min-h-screen bg-background">
-        <UnifiedHeader />
-        <div aria-hidden style={{ height: "var(--unified-header-height, 64px)" }} />
 
         <div className="container max-w-2xl mx-auto px-4 pt-3 pb-6">
 
