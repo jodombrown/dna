@@ -83,6 +83,11 @@ html {
     --card: 0 0% 100%; /* White cards on cream bg */
     --card-foreground: 20 8% 15%;
 
+    /* Genuinely lighter than the page ground for a raised active state.
+       BD388 / S17. Light: pure white, per Design's own "chip on white."
+       Dark: one step up from --card on the existing neutral ramp. */
+    --surface-raised: 0 0% 100%;
+
     --popover: 0 0% 100%;
     --popover-foreground: 20 8% 15%;
 
@@ -590,6 +595,7 @@ html {
     --ring: 160 28% 56%;
     --card: 20 14% 18%;             /* neutral-800 surface */
     --card-foreground: 36 20% 97%;
+    --surface-raised: 22 12% 26%; /* --neutral-700, one step above dark --card (18%) */
     --destructive: 0 65% 45%;
     --destructive-foreground: 36 20% 97%;
 
