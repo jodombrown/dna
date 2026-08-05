@@ -14,6 +14,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
 import { FieldError } from '@/components/composer/fields/FieldError';
+import { cn } from '@/lib/utils';
 import {
   AUTHORABLE_CURRENCIES,
   STANCE_DESCRIPTION_MAX,
@@ -156,14 +157,13 @@ export function CurrencyStanceForm({
                 disabled={locked && !selected}
                 onClick={() => !locked && update('currency', c)}
                 aria-pressed={selected}
-                className="flex items-center gap-2 px-3 py-3 min-h-[44px] rounded-lg border text-left transition-colors disabled:opacity-50"
-                style={{
-                  borderColor: selected ? visual.barHex : undefined,
-                  background: selected ? 'hsl(var(--muted))' : undefined,
-                }}
+                className={cn(
+                  'flex items-center gap-2 px-3 py-3 min-h-11 rounded-lg border text-left transition-colors disabled:opacity-50',
+                  selected && 'border-c5-contribute bg-muted',
+                )}
               >
-                <Icon className="h-4 w-4" style={{ color: visual.barHex }} aria-hidden="true" />
-                <span className="text-sm font-medium" style={{ color: selected ? visual.labelHex : undefined }}>{visual.label}</span>
+                <Icon className="h-4 w-4 text-c5-contribute" aria-hidden="true" />
+                <span className={cn('text-body font-medium', selected && 'text-c5-contribute-text')}>{visual.label}</span>
               </button>
             );
           })}
@@ -174,8 +174,7 @@ export function CurrencyStanceForm({
                 const Icon = CURRENCY_VISUALS.capital.icon;
                 return (
                   <Icon
-                    className="h-4 w-4"
-                    style={{ color: CURRENCY_VISUALS.capital.barHex }}
+                    className="h-4 w-4 text-c5-contribute"
                     aria-hidden="true"
                   />
                 );

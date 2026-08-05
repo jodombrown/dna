@@ -50,10 +50,9 @@ export function CapitalComingSoonCard({ surface }: CapitalComingSoonCardProps) {
         <div className="px-4 py-4 min-h-[44px]">
           <div className="flex items-center justify-between gap-3 mb-2">
             <div className="flex items-center gap-2">
-              <Icon className="h-4 w-4" style={{ color: CAPITAL.barHex }} aria-hidden="true" />
+              <Icon className="h-4 w-4 text-c5-contribute" aria-hidden="true" />
               <span
-                className="text-xs uppercase tracking-wide font-medium"
-                style={{ color: CAPITAL.labelHex }}
+                className="text-micro uppercase tracking-wide font-medium text-c5-contribute-text"
               >
                 Capital
               </span>
