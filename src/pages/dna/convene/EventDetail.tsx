@@ -499,7 +499,7 @@ const EventDetail = () => {
 
   if (isLoading) {
     return (
-      <ConveneShell>
+      <ConveneShell tabs={null}>
         <div className="min-h-screen bg-background">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <button onClick={() => navigate(-1)} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6">
@@ -516,7 +516,7 @@ const EventDetail = () => {
 
   if (!event) {
     return (
-      <ConveneShell>
+      <ConveneShell tabs={null}>
         <div className="min-h-screen bg-background">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <button onClick={() => navigate(-1)} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6">
@@ -537,7 +537,7 @@ const EventDetail = () => {
   // ── Curated event → render lightweight preview ──
   if (event.is_curated) {
     return (
-      <ConveneShell>
+      <ConveneShell tabs={null}>
         <div className="min-h-screen bg-background">
           <CuratedEventPreview event={event} />
         </div>
@@ -590,7 +590,7 @@ const EventDetail = () => {
     // ConveneShell. The MobileBottomNav is omitted because the StickyRSVPBar
     // is this page's fixed bottom bar — never two fixed bars. On md+ the
     // shell is a no-op and UnifiedHeader provides the desktop chrome.
-    <ConveneShell showBottomNav={false}>
+    <ConveneShell showBottomNav={false} tabs={null}>
     <div className="min-h-screen bg-background pb-28 lg:pb-0">
       <div className="hidden md:block">
         <UnifiedHeader />

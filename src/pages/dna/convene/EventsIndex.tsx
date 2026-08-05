@@ -140,7 +140,7 @@ const EventsIndex = () => {
   return (
     // Mobile chrome comes from the shared ConveneShell; this page renders
     // body only (desktop keeps its own header row below).
-    <ConveneShell>
+    <ConveneShell tabs={null}>
     <div className="w-full h-full overflow-auto p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
