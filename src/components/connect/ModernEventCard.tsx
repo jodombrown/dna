@@ -103,7 +103,7 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
               variant="outline"
               className="gap-1 border-border/70 text-[10px] font-medium text-muted-foreground"
             >
-              Seen by DNA
+              Curated by DNA
             </Badge>
           </div>
         ) : event.creator_profile ? (
