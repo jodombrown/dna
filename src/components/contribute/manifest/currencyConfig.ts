@@ -15,10 +15,6 @@ import type {
 export interface CurrencyVisual {
   key: ContributionCurrency;
   label: string;
-  /** Token color for the currency icon and other non-text graphical marks. */
-  barHex: string;
-  /** Token color used wherever the currency name renders as text. AA-compliant on the page ground. */
-  labelHex: string;
   icon: LucideIcon;
   placeholderTitle: string;
   shortBlurb: string;
@@ -26,22 +22,22 @@ export interface CurrencyVisual {
 }
 
 /**
- * Single source of truth for currency presentation. Each currency takes one
- * locked hue from the Five C's identity palette (--c5-*, canonical per D092),
- * so every currency reads as a distinct, themeable mark of equal weight. The
- * former --dna-* hues and the 4px left bar are retired: D092 refuses
- * left-edge accent stripes, so the hue now carries the icon and label only.
- *
- * `barHex` vs `labelHex`: the mark is graphical (no contrast minimum) and uses
- * the palette's bevel rung; label text must clear WCAG AA (4.5:1) on the page
- * ground and uses the contrast-tuned text rung.
+ * Single source of truth for currency presentation. Per BD372, currencies no
+ * longer carry a per-currency colour: every currency previously borrowed a
+ * DIFFERENT C's hue (time -> Convene, expertise -> Collaborate, network ->
+ * Connect, advocacy -> Convey), and only capital, the one currency that
+ * cannot yet be authored, wore Contribute's own colour. All five now render
+ * with a single, static Contribute treatment (`text-c5-contribute` for icons
+ * and marks, `text-c5-contribute-text` for label text, `bg-c5-contribute` for
+ * filled surfaces), applied directly as a Tailwind class in each consumer,
+ * never looked up per-currency here. Design's own recommendation: a colour
+ * repeated five times invites re-diversification, one shared treatment does
+ * not.
  */
 export const CURRENCY_VISUALS: Record<ContributionCurrency, CurrencyVisual> = {
   capital: {
     key: 'capital',
     label: 'Capital',
-    barHex: 'hsl(var(--c5-contribute-bevel))',
-    labelHex: 'hsl(var(--c5-contribute-text))',
     icon: Banknote,
     placeholderTitle: '',
     shortBlurb: 'Coming after the trust ladder is built.',
@@ -50,8 +46,6 @@ export const CURRENCY_VISUALS: Record<ContributionCurrency, CurrencyVisual> = {
   time: {
     key: 'time',
     label: 'Time',
-    barHex: 'hsl(var(--c5-convene-bevel))',
-    labelHex: 'hsl(var(--c5-convene-text))',
     icon: Clock,
     placeholderTitle: 'e.g., Two hours a month mentoring first-time founders',
     shortBlurb: 'Hours you can put in yourself.',
@@ -60,8 +54,6 @@ export const CURRENCY_VISUALS: Record<ContributionCurrency, CurrencyVisual> = {
   expertise: {
     key: 'expertise',
     label: 'Expertise',
-    barHex: 'hsl(var(--c5-collaborate-bevel))',
-    labelHex: 'hsl(var(--c5-collaborate-text))',
     icon: GraduationCap,
     placeholderTitle: 'e.g., FDA regulatory strategy for biotech',
     shortBlurb: 'Knowledge depth you offer to others.',
@@ -70,8 +62,6 @@ export const CURRENCY_VISUALS: Record<ContributionCurrency, CurrencyVisual> = {
   network: {
     key: 'network',
     label: 'Network',
-    barHex: 'hsl(var(--c5-connect-bevel))',
-    labelHex: 'hsl(var(--c5-connect-text))',
     icon: Handshake,
     placeholderTitle: 'e.g., Warm intros to East African agritech investors',
     shortBlurb: 'Doors you can open.',
@@ -80,8 +70,6 @@ export const CURRENCY_VISUALS: Record<ContributionCurrency, CurrencyVisual> = {
   advocacy: {
     key: 'advocacy',
     label: 'Advocacy',
-    barHex: 'hsl(var(--c5-convey-bevel))',
-    labelHex: 'hsl(var(--c5-convey-text))',
     icon: Megaphone,
     placeholderTitle: 'e.g., Vouching for a founder to your investors',
     shortBlurb: 'Your voice and standing, lent to someone.',

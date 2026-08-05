@@ -51,10 +51,9 @@ export function CurrencyStanceCard({
       >
         <div className="flex items-center justify-between gap-3 mb-2">
           <div className="flex items-center gap-2">
-            <Icon className="h-4 w-4" style={{ color: visual.barHex }} aria-hidden="true" />
+            <Icon className="h-4 w-4 text-c5-contribute" aria-hidden="true" />
             <span
-              className="text-xs uppercase tracking-wide font-medium"
-              style={{ color: visual.labelHex }}
+              className="text-xs uppercase tracking-wide font-medium text-c5-contribute-text"
             >
               {visual.label}
             </span>
