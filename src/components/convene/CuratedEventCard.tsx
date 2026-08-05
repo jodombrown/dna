@@ -6,7 +6,7 @@
  * byte-identical in shape to every other event surface, and fills the four
  * bands with the curated read:
  *
- *   Identity — a small "Seen by DNA" chip and the compact time, overlaid on
+ *   Identity — a small "Curated by DNA" chip and the compact time, overlaid on
  *              the top of the image band.
  *   Image    — the source's own cover when it has one, else an <EventPlate>:
  *              a generative, imageless cover. Never stock photography.
@@ -102,7 +102,7 @@ export function CuratedEventCard({ event, className, suppressDateTbc }: CuratedE
     >
       <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-border/60 bg-card/90 px-2 py-0.5 text-micro uppercase text-foreground backdrop-blur-sm">
         <Nkonsonkonson className="h-2.5 w-2.5" />
-        Seen by DNA
+        Curated by DNA
       </span>
       <EventTime
         event={event}

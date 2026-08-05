@@ -175,7 +175,7 @@ export function ConveneEventCard({
   const provenance = event.is_curated ? (
     <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-border/60 bg-card/90 px-2 py-0.5 text-micro uppercase text-foreground backdrop-blur-sm">
       <Nkonsonkonson className="h-2.5 w-2.5" />
-      Seen by DNA
+      Curated by DNA
     </span>
   ) : isOrganizer ? (
     <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-border/60 bg-card/90 px-2 py-0.5 text-micro uppercase text-foreground backdrop-blur-sm">

@@ -184,7 +184,7 @@ export function CuratedEventPreview({ event, showBack = true }: CuratedEventPrev
             className="shrink-0 gap-1 border-border/70 px-1.5 py-0 text-[10px] font-medium text-muted-foreground"
           >
             <Nkonsonkonson className="h-2.5 w-2.5" />
-            Seen by DNA
+            Curated by DNA
           </Badge>
         </div>
 
