@@ -158,12 +158,12 @@ export function CurrencyStanceForm({
                 onClick={() => !locked && update('currency', c)}
                 aria-pressed={selected}
                 className={cn(
-                  'flex items-center gap-2 px-3 py-3 min-h-[44px] rounded-lg border text-left transition-colors disabled:opacity-50',
+                  'flex items-center gap-2 px-3 py-3 min-h-11 rounded-lg border text-left transition-colors disabled:opacity-50',
                   selected && 'border-c5-contribute bg-muted',
                 )}
               >
                 <Icon className="h-4 w-4 text-c5-contribute" aria-hidden="true" />
-                <span className={cn('text-sm font-medium', selected && 'text-c5-contribute-text')}>{visual.label}</span>
+                <span className={cn('text-body font-medium', selected && 'text-c5-contribute-text')}>{visual.label}</span>
               </button>
             );
           })}

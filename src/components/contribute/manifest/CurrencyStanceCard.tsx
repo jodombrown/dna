@@ -53,7 +53,7 @@ export function CurrencyStanceCard({
           <div className="flex items-center gap-2">
             <Icon className="h-4 w-4 text-c5-contribute" aria-hidden="true" />
             <span
-              className="text-xs uppercase tracking-wide font-medium text-c5-contribute-text"
+              className="text-micro uppercase tracking-wide font-medium text-c5-contribute-text"
             >
               {visual.label}
             </span>
