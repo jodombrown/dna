@@ -16,6 +16,7 @@ import {
   Adinkrahene,
   Mpatapo,
 } from '@/components/icons/adinkra';
+import { ROUTES } from '@/config/routes';
 
 interface DiasporaFootprintProps {
   userId: string;
@@ -48,7 +49,7 @@ const routeFor = (key: FiveCKey, isOwner: boolean, username?: string): string | 
       // route is the sole honest destination. Non-owners get no tap target.
       return isOwner ? '/dna/connect/network?tab=connections' : null;
     case 'events':
-      return isOwner ? '/dna/convene/my-events' : '/dna/convene';
+      return isOwner ? ROUTES.convene.myEvents : '/dna/convene';
     case 'spaces':
       return isOwner ? '/dna/collaborate/my-spaces' : '/dna/collaborate';
     case 'contributions':

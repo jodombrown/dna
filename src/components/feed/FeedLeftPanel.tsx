@@ -16,6 +16,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { FeedUpcomingEvents } from '@/components/feed/FeedUpcomingEvents';
 import { FeedActiveSpaces } from '@/components/feed/FeedActiveSpaces';
 import { FeedSponsorCard } from '@/components/feed/FeedSponsorCard';
+import { ROUTES } from '@/config/routes';
 
 export const FeedLeftPanel: React.FC = () => {
   const { user } = useAuth();
@@ -66,7 +67,7 @@ export const FeedLeftPanel: React.FC = () => {
       count: stats?.events || 0,
       label: 'Events',
       color: 'text-dna-gold',
-      to: '/dna/convene/my-events',
+      to: ROUTES.convene.myEvents,
     },
     {
       icon: Layers,

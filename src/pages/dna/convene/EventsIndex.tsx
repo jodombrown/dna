@@ -13,6 +13,7 @@ import { isEventCompleted } from '@/lib/events/lifecycle';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
 import { ConveneShell } from '@/components/convene/ConveneShell';
 import { useUniversalComposer } from '@/contexts/ComposerContext';
+import { ROUTES } from '@/config/routes';
 
 const EventsIndex = () => {
   const navigate = useNavigate();
@@ -152,7 +153,7 @@ const EventsIndex = () => {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={() => navigate('/dna/convene/my-events')}>
+            <Button variant="outline" onClick={() => navigate(ROUTES.convene.myEvents)}>
               <CalendarCheck className="w-4 h-4 mr-2" />
               My Events
             </Button>

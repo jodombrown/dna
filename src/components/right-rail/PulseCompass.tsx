@@ -464,7 +464,7 @@ const BreakdownPanel: React.FC<{
       {(() => {
         const TILE_ROUTES: Record<string, { first: string; second: string }> = {
           connect: { first: '/dna/connect/network', second: scope === 'user' ? '/dna/connect/network?filter=pending' : '/dna/connect/discover' },
-          convene: { first: scope === 'user' ? '/dna/convene/my-events' : '/dna/convene', second: '/dna/convene/my-events' },
+          convene: { first: scope === 'user' ? '/dna/convene/mine' : '/dna/convene', second: '/dna/convene/mine' },
           collaborate: { first: scope === 'user' ? '/dna/collaborate/my-spaces' : '/dna/collaborate', second: '/dna/collaborate' },
           contribute: { first: '/dna/contribute', second: '/dna/contribute/my' },
           convey: { first: '/dna/convey', second: '/dna/convey' },

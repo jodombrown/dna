@@ -39,7 +39,7 @@ export const ROUTES = {
   convene: {
     base: '/dna/convene',
     events: '/dna/convene/events',
-    myEvents: '/dna/convene/my-events',
+    myEvents: '/dna/convene/mine',
     analytics: '/dna/convene/analytics',
     groups: '/dna/convene/groups',
     createEvent: '/dna/convene/events/new',

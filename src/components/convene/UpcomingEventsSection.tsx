@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { logger } from '@/lib/logger';
 import { EVENT_PLACE_SELECT, formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 import { EventTime } from '@/components/events/EventTime';
+import { ROUTES } from '@/config/routes';
 
 interface EventItem extends EventPlaceInput {
   id: string;
@@ -148,7 +149,7 @@ export const UpcomingEventsSection = ({ onCreateEvent }: { onCreateEvent?: () =>
         <h2 className="text-2xl font-bold">Your Upcoming Events</h2>
         <Button
           variant="ghost"
-          onClick={() => navigate('/dna/convene/my-events')}
+          onClick={() => navigate(ROUTES.convene.myEvents)}
         >
           View All
           <ArrowRight className="ml-2 h-4 w-4" />
