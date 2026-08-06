@@ -118,13 +118,19 @@ export function AppDrawer() {
       <DrawerPrimitive.Portal>
         <DrawerPrimitive.Overlay
           className="fixed inset-0 bg-foreground/50"
-          style={{ zIndex: DRAWER_Z_INDEX }}
+          style={{
+            zIndex: DRAWER_Z_INDEX,
+            viewTransitionName: anchor === 'bottom' ? 'drawer-scrim' : undefined,
+          }}
         />
         <DrawerPrimitive.Content
           ref={contentRef}
           tabIndex={-1}
           aria-label={currentFrame.title}
-          style={{ zIndex: DRAWER_Z_INDEX + 1 }}
+          style={{
+            zIndex: DRAWER_Z_INDEX + 1,
+            viewTransitionName: anchor === 'bottom' ? 'drawer-sheet' : undefined,
+          }}
           className={cn(
             'fixed flex flex-col bg-background outline-none',
             anchor === 'bottom' &&

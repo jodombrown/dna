@@ -1130,6 +1130,39 @@ html {
   animation: fade-in 200ms ease-out forwards;
 }
 
+/*
+ * Drawer close (BD389 follow-up, corrected). Named elements only: an
+ * unnamed startViewTransition() crossfades the WHOLE document, which is
+ * what produced the reported flash. Suppressing ::view-transition-old(root)
+ * and ::view-transition-new(root) makes root-level changes instant (no
+ * animation, no flash) and leaves only the two explicitly named elements
+ * below to animate. Bottom-anchor only for now; left/right anchors carry
+ * no view-transition-name yet, so they close instantly, unchanged from
+ * before this fix.
+ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(drawer-sheet) {
+  animation: slide-down 220ms ease-in forwards;
+}
+
+::view-transition-old(drawer-scrim) {
+  animation: fade-out 220ms ease-in forwards;
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
 /* Kente Pattern Flow Animation for Demo Page */
 @keyframes kente-flow {
   0% { background-position: 0% 50%; }
