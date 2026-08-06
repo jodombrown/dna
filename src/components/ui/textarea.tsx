@@ -7,9 +7,10 @@ export interface TextareaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, ...props }, ref) => {
+  ({ className, autoComplete = 'off', ...props }, ref) => {
     return (
       <textarea
+        autoComplete={autoComplete}
         className={cn(
           "flex min-h-[80px] w-full rounded-dna-md border-[1.5px] border-dna-stone bg-background px-4 py-3 text-base md:text-[15px] text-foreground ring-offset-background",
           "placeholder:text-dna-gray400",

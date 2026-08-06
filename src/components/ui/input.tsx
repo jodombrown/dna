@@ -9,10 +9,11 @@ export interface InputProps
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, variant = 'default', ...props }, ref) => {
+  ({ className, type, variant = 'default', autoComplete = 'off', ...props }, ref) => {
     return (
       <input
         type={type}
+        autoComplete={autoComplete}
         className={cn(
           // Base
           "flex w-full bg-background text-foreground ring-offset-background transition-[border-color,box-shadow] duration-150",
