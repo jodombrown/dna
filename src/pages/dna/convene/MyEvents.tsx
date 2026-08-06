@@ -5,13 +5,13 @@ import { Calendar, BarChart3, List, CalendarDays } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import LayoutController from '@/components/LayoutController';
-import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { ContentColumn } from '@/components/layout/ContentColumn';
+import { ViewSwitch } from '@/components/shell/ViewSwitch';
+import { LensRail } from '@/components/shell/LensRail';
+import { MyEventsChromeBar } from '@/components/convene/MyEventsChromeBar';
 import { EventCalendarView } from '@/components/convene/EventCalendarView';
 import { ConveneEventRow } from '@/components/convene/ConveneEventRow';
 import { MyEventCard } from '@/components/convene/MyEventCard';
@@ -53,12 +53,14 @@ function eventDateBox(event: Parameters<typeof eventStartMs>[0]) {
 
 const MyEvents = () => {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const composer = useUniversalComposer();
   const queryClient = useQueryClient();
-  const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
-  const activeTab = searchParams.get('tab') || 'hosting';
+  // View (list/calendar) and lens (attending/hosting) both live in the URL —
+  // ViewSwitch owns ?view=, LensBar/LensRail own ?lens=. The page only reads.
+  const viewMode = (searchParams.get('view') as 'list' | 'calendar') || 'list';
+  const activeTab = searchParams.get('lens') || 'attending';
   const [pastHostingOpen, setPastHostingOpen] = useState(false);
   const [cancelledHostingOpen, setCancelledHostingOpen] = useState(false);
   const [pastAttendingOpen, setPastAttendingOpen] = useState(false);
@@ -205,12 +207,27 @@ const MyEvents = () => {
   );
 
   return (
-    // Mobile chrome comes from the shared ConveneShell. LayoutController
-    // already mounts MobileBottomNav, so the shell must not add a second one.
-    <ConveneShell showBottomNav={false} tabs={null}>
-    <LayoutController
-      centerColumn={
-        <ContentColumn>
+    // Mobile chrome comes from the shared ConveneShell. PulseDock (mounted
+    // globally in BaseLayout) is the sole mobile bottom nav, so the shell must
+    // not add a second one.
+    <ConveneShell showBottomNav={false} tabs={<MyEventsChromeBar />}>
+    {/* Desktop gets a full-width wrapper (the hub's own pattern), not the 60%
+        column TwoColumnLayout would impose — the lens rail needs the room. */}
+    <div className="w-full min-h-dvh bg-background">
+      <ContentColumn width="wide">
+          <div className="md:flex md:gap-4">
+            {/* Desktop lens rail — mobile uses the ConveneShell chrome bar above */}
+            <div className="hidden md:block shrink-0">
+              <LensRail
+                ariaLabel="My events"
+                lenses={[
+                  { id: 'attending', label: 'Attending', icon: Calendar, count: attendingEvents.length },
+                  { id: 'hosting', label: 'Hosting', icon: BarChart3, count: hostingEvents.length },
+                ]}
+              />
+            </div>
+
+            <div className="md:flex-1 md:min-w-0">
           {/* ── Page Header ────────────────────────── */}
           <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative overflow-hidden rounded-xl p-5">
             <CulturalPattern pattern="kente" opacity={0.05} />
@@ -220,25 +237,16 @@ const MyEvents = () => {
                 Manage events you're hosting and attending
               </p>
             </div>
-            <div className="flex gap-2 relative z-10">
-              <div className="flex gap-1 border rounded-lg p-1">
-                <Button
-                  variant={viewMode === 'list' ? 'secondary' : 'ghost'}
-                  size="sm"
-                  onClick={() => setViewMode('list')}
-                >
-                  <List className="h-4 w-4 sm:mr-1.5" />
-                  <span className="hidden sm:inline">List</span>
-                </Button>
-                <Button
-                  variant={viewMode === 'calendar' ? 'secondary' : 'ghost'}
-                  size="sm"
-                  onClick={() => setViewMode('calendar')}
-                >
-                  <CalendarDays className="h-4 w-4 sm:mr-1.5" />
-                  <span className="hidden sm:inline">Calendar</span>
-                </Button>
-              </div>
+            {/* Desktop view switch — trailing end of the list column header.
+                Mobile uses the ConveneShell chrome bar instead. */}
+            <div className="hidden md:block relative z-10">
+              <ViewSwitch
+                ariaLabel="View"
+                options={[
+                  { id: 'list', label: 'List', icon: List },
+                  { id: 'calendar', label: 'Calendar', icon: CalendarDays },
+                ]}
+              />
             </div>
           </div>
 
@@ -252,14 +260,10 @@ const MyEvents = () => {
 
           {/* ── List View ──────────────────────────── */}
           {viewMode === 'list' && (
-            <Tabs value={activeTab} onValueChange={(v) => setSearchParams({ tab: v })} className="space-y-6">
-              <TabsList className="grid w-full max-w-md grid-cols-2">
-                <TabsTrigger value="hosting">Hosting ({hostingEvents.length})</TabsTrigger>
-                <TabsTrigger value="attending">Attending ({attendingEvents.length})</TabsTrigger>
-              </TabsList>
-
-              {/* ═══ HOSTING TAB ═══ */}
-              <TabsContent value="hosting" className="space-y-5">
+            <div className="space-y-6">
+              {/* ═══ HOSTING ═══ */}
+              {activeTab === 'hosting' && (
+                <div className="space-y-5">
                 {/* Stats Header */}
                 {(statsLoading || (stats && stats.eventsHosted > 0)) && (
                   <MyEventsStatsHeader stats={stats ?? { eventsHosted: 0, totalAttendees: 0, upcoming: 0 }} isLoading={statsLoading} />
@@ -399,10 +403,12 @@ const MyEvents = () => {
                     )}
                   </>
                 )}
-              </TabsContent>
+                </div>
+              )}
 
-              {/* ═══ ATTENDING TAB ═══ */}
-              <TabsContent value="attending" className="space-y-5">
+              {/* ═══ ATTENDING ═══ */}
+              {activeTab === 'attending' && (
+                <div className="space-y-5">
                 {attendingLoading ? (
                   <p className="text-center text-muted-foreground py-8">Loading events...</p>
                 ) : attendingEvents.length === 0 ? (
@@ -550,14 +556,14 @@ const MyEvents = () => {
                     )}
                   </>
                 )}
-              </TabsContent>
-            </Tabs>
+                </div>
+              )}
+            </div>
           )}
-        </ContentColumn>
-      }
-      rightColumn={<RightWidgets variant="convene" />}
-    >
-    </LayoutController>
+            </div>
+          </div>
+      </ContentColumn>
+    </div>
     </ConveneShell>
   );
 };
