@@ -167,7 +167,7 @@ const ProfileV2: React.FC = () => {
                 : 'That handle is not in the network. It may have changed, or the link may be incomplete.'}
             </p>
             <div className="flex flex-wrap gap-3">
-              <Button onClick={() => navigate('/dna')}>DNA home</Button>
+              <Button onClick={() => navigate(ROUTES.feed)}>DNA home</Button>
               {user ? (
                 <Button variant="outline" onClick={() => navigate(ROUTES.connect.discover)}>
                   Discover Members
