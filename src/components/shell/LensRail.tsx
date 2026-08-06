@@ -51,7 +51,7 @@ export function LensRail({ lenses, ariaLabel }: LensRailProps) {
   };
 
   return (
-    <div role="tablist" aria-orientation="vertical" aria-label={ariaLabel} className="w-48 flex flex-col gap-1">
+    <div role="tablist" aria-orientation="vertical" aria-label={ariaLabel} className="w-52 flex flex-col gap-1">
       {lenses.map((lens) => {
         const Icon = lens.icon;
         const isActive = lens.id === activeId;

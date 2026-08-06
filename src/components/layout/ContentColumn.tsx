@@ -24,11 +24,22 @@ interface ContentColumnProps {
   children: React.ReactNode;
   /** Layout positioning only (e.g. a page that needs a wider read). */
   className?: string;
+  /** Read width. 'default' (max-w-3xl) is a single reading column; 'wide'
+   *  (max-w-6xl) is for a page that composes a sidebar rail beside its content,
+   *  like My Events' desktop lens rail. Keeping both widths in this component,
+   *  and not at the call site, is what the page-level layout gate requires. */
+  width?: 'default' | 'wide';
 }
 
-export function ContentColumn({ children, className }: ContentColumnProps) {
+export function ContentColumn({ children, className, width = 'default' }: ContentColumnProps) {
   return (
-    <div className={cn('container max-w-3xl mx-auto px-4', className)}>
+    <div
+      className={cn(
+        'container mx-auto px-4',
+        width === 'wide' ? 'max-w-6xl' : 'max-w-3xl',
+        className,
+      )}
+    >
       {children}
     </div>
   );

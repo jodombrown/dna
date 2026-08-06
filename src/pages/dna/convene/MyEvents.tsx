@@ -8,11 +8,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import LayoutController from '@/components/LayoutController';
 import { ContentColumn } from '@/components/layout/ContentColumn';
-import { LensBar } from '@/components/shell/LensBar';
 import { ViewSwitch } from '@/components/shell/ViewSwitch';
 import { LensRail } from '@/components/shell/LensRail';
+import { MyEventsChromeBar } from '@/components/convene/MyEventsChromeBar';
 import { EventCalendarView } from '@/components/convene/EventCalendarView';
 import { ConveneEventRow } from '@/components/convene/ConveneEventRow';
 import { MyEventCard } from '@/components/convene/MyEventCard';
@@ -208,35 +207,14 @@ const MyEvents = () => {
   );
 
   return (
-    // Mobile chrome comes from the shared ConveneShell. LayoutController
-    // already mounts MobileBottomNav, so the shell must not add a second one.
-    <ConveneShell
-      showBottomNav={false}
-      tabs={
-        // Mobile chrome row (this slot renders on mobile only). Desktop gets
-        // the same two controls placed differently: LensRail + header ViewSwitch.
-        <div className="md:hidden flex items-center justify-between gap-3 px-3 py-1.5 bg-background border-b border-border">
-          <LensBar
-            ariaLabel="My events"
-            c="convene"
-            lenses={[
-              { id: 'attending', label: 'Attending', icon: Calendar },
-              { id: 'hosting', label: 'Hosting', icon: BarChart3 },
-            ]}
-          />
-          <ViewSwitch
-            ariaLabel="View"
-            options={[
-              { id: 'list', label: 'List', icon: List },
-              { id: 'calendar', label: 'Calendar', icon: CalendarDays },
-            ]}
-          />
-        </div>
-      }
-    >
-    <LayoutController
-      centerColumn={
-        <ContentColumn>
+    // Mobile chrome comes from the shared ConveneShell. PulseDock (mounted
+    // globally in BaseLayout) is the sole mobile bottom nav, so the shell must
+    // not add a second one.
+    <ConveneShell showBottomNav={false} tabs={<MyEventsChromeBar />}>
+    {/* Desktop gets a full-width wrapper (the hub's own pattern), not the 60%
+        column TwoColumnLayout would impose — the lens rail needs the room. */}
+    <div className="w-full min-h-dvh bg-background">
+      <ContentColumn width="wide">
           <div className="md:flex md:gap-4">
             {/* Desktop lens rail — mobile uses the ConveneShell chrome bar above */}
             <div className="hidden md:block shrink-0">
@@ -584,10 +562,8 @@ const MyEvents = () => {
           )}
             </div>
           </div>
-        </ContentColumn>
-      }
-    >
-    </LayoutController>
+      </ContentColumn>
+    </div>
     </ConveneShell>
   );
 };
