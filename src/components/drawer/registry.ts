@@ -132,7 +132,7 @@ export const ACCOUNT_SURFACE: DrawerSurface = {
       // Same defect class as BD139's `My stories`, which pointed at the
       // unfiltered Convey hub. The durable fix is a member-filter contract on
       // the `my-work` group; proposed separately, not smuggled in here.
-      behaviour: { kind: 'navigate', route: '/dna/convene/my-events' },
+      behaviour: { kind: 'navigate', route: ROUTES.convene.myEvents },
     },
     {
       id: 'my-stories',

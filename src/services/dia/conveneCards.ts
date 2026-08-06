@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { formatEventPlace } from '@/lib/events/formatPlace';
 import type { DIACard } from '@/services/diaCardService';
 import { MateMasie } from '@/components/icons/adinkra';
+import { ROUTES } from '@/config/routes';
 const ACCENT = '#C4942A';
 
 // ── Card Type 1: Event Overlap ─────────────────────
@@ -267,7 +268,7 @@ async function generateHostingNudge(userId: string): Promise<DIACard | null> {
       icon: 'Mic',
       priority: 35,
       actions: [
-        { label: 'Create Event', type: 'navigate' as const, payload: { url: '/dna/convene/my-events' }, isPrimary: true },
+        { label: 'Create Event', type: 'navigate' as const, payload: { url: ROUTES.convene.myEvents }, isPrimary: true },
         { label: 'Not for me', type: 'dismiss' as const, payload: {}, isPrimary: false },
       ],
       metadata: { attendedCount },

@@ -31,7 +31,7 @@ const C_ORDER: CModule[] = ['connect', 'convene', 'collaborate', 'contribute', '
 
 const C_ROUTES: Record<CModule, string> = {
   connect: '/dna/connect/network',
-  convene: '/dna/convene/my-events',
+  convene: '/dna/convene/mine',
   collaborate: '/dna/collaborate/my-spaces',
   contribute: '/dna/contribute/my',
   convey: '/dna/convey',

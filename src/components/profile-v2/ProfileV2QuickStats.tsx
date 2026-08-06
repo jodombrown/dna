@@ -15,6 +15,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { ROUTES } from '@/config/routes';
 
 interface QuickStatProps {
   icon: React.ElementType;
@@ -151,7 +152,7 @@ const ProfileV2QuickStats: React.FC<ProfileV2QuickStatsProps> = ({
       label: 'Events',
       count: activity.events_count ?? activity.events?.length ?? 0,
       interactive: true,
-      onClick: () => navigate(isOwner ? '/dna/convene/my-events' : '/dna/convene'),
+      onClick: () => navigate(isOwner ? ROUTES.convene.myEvents : '/dna/convene'),
       color: 'text-amber-500',
       tooltip: 'View events',
     },

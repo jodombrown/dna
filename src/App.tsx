@@ -635,11 +635,12 @@ function App() {
                 <Route path="settings" element={<EventSettingsRedirect />} />
               </Route>
 
-              <Route path="/dna/convene/my-events" element={
+              <Route path="/dna/convene/mine" element={
                 <OnboardingGuard>
                   <MyEvents />
                 </OnboardingGuard>
               } />
+              <Route path="/dna/convene/my-events" element={<Navigate to="/dna/convene/mine" replace />} />
               <Route path="/dna/convene/analytics" element={
                 <OnboardingGuard>
                   <OrganizerAnalytics />

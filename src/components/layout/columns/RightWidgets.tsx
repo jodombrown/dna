@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, Calendar } from 'lucide-react';
 import { MateMasie } from '@/components/icons/adinkra';
+import { ROUTES } from '@/config/routes';
 
 interface RightWidgetsProps {
   variant?: 'default' | 'connect' | 'convene' | 'convey';
@@ -55,7 +56,7 @@ export function RightWidgets({ variant = 'default' }: RightWidgetsProps) {
             variant="outline"
             size="sm"
             className="w-full justify-start"
-            onClick={() => navigate('/dna/convene/my-events')}
+            onClick={() => navigate(ROUTES.convene.myEvents)}
           >
             <Calendar className="w-4 h-4 mr-2" />
             Host an Event

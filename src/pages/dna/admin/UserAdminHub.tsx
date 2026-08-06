@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { MateMasie } from '@/components/icons/adinkra';
+import { ROUTES } from '@/config/routes';
 
 /**
  * UserAdminHub - Personal management hub for all Five C's activities
@@ -38,11 +39,11 @@ const UserAdminHub: React.FC = () => {
       title: 'My Events',
       description: 'Manage events you\'re hosting or organizing',
       icon: Calendar,
-      path: '/dna/convene/my-events',
+      path: ROUTES.convene.myEvents,
       pillar: 'convene',
       color: 'text-blue-600 bg-blue-100',
       items: [
-        { label: 'My Events', path: '/dna/convene/my-events' },
+        { label: 'My Events', path: ROUTES.convene.myEvents },
         { label: 'Event Analytics', path: '/dna/convene/analytics' },
         { label: 'Host an Event', path: '/dna/convene/events/new' },
       ]
