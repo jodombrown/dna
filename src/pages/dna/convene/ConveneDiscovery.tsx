@@ -40,6 +40,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { EVENT_PLACE_SELECT, pickEventPlace } from '@/lib/events/formatPlace';
 import { EVENT_TIME_SELECT } from '@/lib/events/eventTime';
 import type { MapEventData } from '@/components/convene/mapEventData';
+import { ROUTES } from '@/config/routes';
 
 const LazyMapView = lazy(() => import('@/components/convene/ConveneMapView'));
 
@@ -288,7 +289,7 @@ export function ConveneDiscovery() {
               variant="outline"
               size="sm"
               className="w-full rounded-full"
-              onClick={() => navigate('/dna/convene/my-events')}
+              onClick={() => navigate(ROUTES.convene.myEvents)}
             >
               <CalendarCheck className="w-4 h-4 mr-1.5" />
               My Events
@@ -341,7 +342,7 @@ export function ConveneDiscovery() {
                   variant="outline"
                   size="sm"
                   className="rounded-full h-9 px-4"
-                  onClick={() => navigate('/dna/convene/my-events')}
+                  onClick={() => navigate(ROUTES.convene.myEvents)}
                 >
                   <CalendarCheck className="w-4 h-4 mr-1" />
                   My Events

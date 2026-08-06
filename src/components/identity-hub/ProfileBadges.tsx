@@ -46,7 +46,7 @@ const MODULE_COLORS: Record<CModule | 'cross_c', string> = {
 
 const MODULE_ROUTES: Record<CModule | 'cross_c', string> = {
   connect: '/dna/connect/network',
-  convene: '/dna/convene/my-events',
+  convene: '/dna/convene/mine',
   collaborate: '/dna/collaborate/my-spaces',
   contribute: '/dna/contribute/my',
   convey: '/dna/convey',

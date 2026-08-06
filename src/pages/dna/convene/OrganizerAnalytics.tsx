@@ -9,6 +9,7 @@ import { OrganizerAnalyticsDashboard } from '@/components/convene/analytics/Orga
 import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { ROUTES } from '@/config/routes';
 
 const OrganizerAnalytics = () => {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ const OrganizerAnalytics = () => {
       <LayoutController
         centerColumn={
           <div className="space-y-4">
-            <Button variant="ghost" onClick={() => navigate('/dna/convene/my-events')}>
+            <Button variant="ghost" onClick={() => navigate(ROUTES.convene.myEvents)}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to My Events
             </Button>
@@ -58,7 +59,7 @@ const OrganizerAnalytics = () => {
       <LayoutController
         centerColumn={
           <div className="space-y-4">
-            <Button variant="ghost" onClick={() => navigate('/dna/convene/my-events')}>
+            <Button variant="ghost" onClick={() => navigate(ROUTES.convene.myEvents)}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to My Events
             </Button>
@@ -86,7 +87,7 @@ const OrganizerAnalytics = () => {
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <Button variant="ghost" onClick={() => navigate('/dna/convene/my-events')}>
+              <Button variant="ghost" onClick={() => navigate(ROUTES.convene.myEvents)}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 My Events
               </Button>
