@@ -35,7 +35,7 @@ export function SectionNav({ items, userRole }: SectionNavProps) {
           end={item.path === ''}
           className={({ isActive }) =>
             cn(
-              'flex items-center gap-1.5 px-3 py-2.5 text-sm whitespace-nowrap border-b-2 -mb-px transition-colors',
+              'flex items-center gap-1.5 px-3 py-2.5 text-body whitespace-nowrap border-b-2 -mb-px transition-colors',
               isActive
                 ? 'border-foreground text-foreground font-medium'
                 : 'border-transparent text-muted-foreground hover:text-foreground',

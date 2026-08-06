@@ -425,7 +425,7 @@ const EventOverview = () => {
             <Button variant="ghost" size="icon" className="shrink-0 h-8 w-8" onClick={() => navigate(-1)}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <h2 className="text-sm font-semibold truncate">{event.title as string}</h2>
+            <h2 className="text-body font-semibold truncate">{event.title as string}</h2>
           </div>
           <Button variant="ghost" size="icon" className="shrink-0 h-8 w-8" onClick={handleShareEvent}>
             <Share2 className="h-4 w-4" />
@@ -445,11 +445,11 @@ const EventOverview = () => {
             <div className="px-4 py-2.5 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-white min-w-0">
                 <Nkonsonkonson className="w-4 h-4 shrink-0" />
-                <span className="text-sm font-medium truncate">
+                <span className="text-body font-medium truncate">
                   You're invited! Join DNA to attend this event
                 </span>
               </div>
-              <Button size="sm" className="bg-white text-foreground hover:bg-white/90 shrink-0 h-7 text-xs px-3" asChild>
+              <Button size="sm" className="bg-white text-foreground hover:bg-white/90 shrink-0 h-7 text-meta px-3" asChild>
                 <Link to="/auth?mode=signup">Sign up</Link>
               </Button>
             </div>
@@ -461,7 +461,7 @@ const EventOverview = () => {
         {/* Back Navigation */}
         <button
           onClick={() => navigate(-1)}
-          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-3 sm:mb-6 transition-colors"
+          className="inline-flex items-center text-body text-muted-foreground hover:text-foreground mb-3 sm:mb-6 transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-1" />
           Back to Events
@@ -498,7 +498,7 @@ const EventOverview = () => {
                   <Badge variant="outline" className="capitalize">{eventVisibility}</Badge>
                 )}
               </div>
-              <h1 className="text-2xl sm:text-4xl font-bold mb-2">{event.title as string}</h1>
+              <h1 className="text-h1 sm:text-display font-bold mb-2">{event.title as string}</h1>
               <EventCountdown
                 startTime={
                   (event.date_confirmed as boolean | null) === false
@@ -549,7 +549,7 @@ const EventOverview = () => {
                       ) : (
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <div className="relative flex cursor-not-allowed select-none items-center rounded-sm px-2 py-1.5 text-sm opacity-50">
+                            <div className="relative flex cursor-not-allowed select-none items-center rounded-sm px-2 py-1.5 text-body opacity-50">
                               <Trash2 className="mr-2 h-4 w-4" /> Delete Event
                             </div>
                           </TooltipTrigger>
@@ -605,7 +605,7 @@ const EventOverview = () => {
                     <EventTime
                       event={eventTimeInput}
                       variant="clock"
-                      className="block text-sm text-muted-foreground"
+                      className="block text-body text-muted-foreground"
                     />
                   </div>
                 </div>
@@ -618,7 +618,7 @@ const EventOverview = () => {
                         <p className="font-medium">Online Event</p>
                         {event.meeting_url && (
                           <a href={event.meeting_url as string} target="_blank" rel="noopener noreferrer"
-                            className="text-sm text-primary hover:underline flex items-center gap-1">
+                            className="text-body text-primary hover:underline flex items-center gap-1">
                             Join meeting <ExternalLink className="h-3 w-3" />
                           </a>
                         )}
@@ -638,7 +638,7 @@ const EventOverview = () => {
                 {event.max_attendees && (
                   <div className="flex items-start gap-3">
                     <Users className="h-5 w-5 mt-0.5 text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-body text-muted-foreground">
                       {/* Organizers see the true count/capacity; everyone else
                           gets the tiered copy so a young event doesn't read
                           as an empty room. */}
@@ -689,7 +689,7 @@ const EventOverview = () => {
                             <AvatarImage src={profile.avatar_url || ''} />
                             <AvatarFallback>{profile.full_name?.[0]}</AvatarFallback>
                           </Avatar>
-                          <span className="text-sm">{profile.full_name}</span>
+                          <span className="text-body">{profile.full_name}</span>
                         </div>
                       );
                     })}

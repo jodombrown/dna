@@ -116,7 +116,7 @@ const ArchivedFeatureDetail = lazy(() => import("./pages/features/archived/Archi
 const ConveneHub = lazy(() => import("./pages/dna/convene/ConveneHub"));
 const EventsIndex = lazy(() => import("./pages/dna/convene/EventsIndex"));
 const EventDetail = lazy(() => import("./pages/dna/convene/EventDetail"));
-const EventOverview = lazy(() => import("./pages/dna/convene/EventOverview"));
+const EventOverview = lazy(() => import("./components/convene/EventOverview"));
 const Welcome = lazy(() => import("./pages/dna/Welcome"));
 const MyEvents = lazy(() => import("./pages/dna/convene/MyEvents"));
 const EventAnalytics = lazy(() => import("./pages/dna/convene/EventAnalytics"));
