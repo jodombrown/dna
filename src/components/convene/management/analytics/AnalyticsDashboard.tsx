@@ -14,7 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
-import { useEventManagement } from '../EventManagementLayout';
+import { useEventManagement } from '../EventManagementContext';
 import { format, differenceInDays, eachDayOfInterval, parseISO } from 'date-fns';
 import { eventEndMs, eventStartMs, DATES_TBA } from '@/lib/events/eventTime';
 import { isEventCompleted } from '@/lib/events/lifecycle';

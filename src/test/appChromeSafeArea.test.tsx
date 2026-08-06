@@ -114,7 +114,7 @@ const DECLARED_CHROME: Array<{ file: string; edges: Array<'top' | 'bottom'> }> =
   // Connect no longer pins its own chrome: it renders through <AppShell>, whose
   // <UnifiedHeader> (listed above) owns the top edge and its inset (BD363 §2).
   { file: 'src/pages/dna/convey/ConveyStoryHub.tsx', edges: ['top'] },
-  { file: 'src/pages/dna/convene/EventDetail.tsx', edges: ['top'] },
+  { file: 'src/pages/dna/convene/EventOverview.tsx', edges: ['top'] },
   { file: 'src/components/admin/AdminDashboardLayout.tsx', edges: ['top'] },
   { file: 'src/components/ui/toast.tsx', edges: ['top', 'bottom'] },
   { file: 'src/components/mobile/MobileBottomNav.tsx', edges: ['bottom'] },
