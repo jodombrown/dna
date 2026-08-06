@@ -144,7 +144,7 @@ export function LensBar({ lenses, ariaLabel, c }: LensBarProps) {
           <span
             aria-hidden="true"
             className={cn(
-              'pointer-events-none absolute top-1 bottom-1 left-0 rounded-md bg-surface-raised shadow-sm',
+              'pointer-events-none absolute top-1 bottom-1 left-0 rounded-md bg-surface-raised shadow-dna-2',
               ready && 'transition-[transform,width] duration-150 ease-out',
             )}
             style={{ transform: `translate3d(${indicator.x}px, 0, 0)`, width: indicator.w }}
