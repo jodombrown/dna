@@ -114,6 +114,7 @@ export function AppDrawer() {
       direction={anchor}
       modal
       dismissible
+      repositionInputs={false}
     >
       <DrawerPrimitive.Portal>
         <DrawerPrimitive.Overlay
