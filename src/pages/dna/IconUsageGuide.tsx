@@ -119,7 +119,7 @@ export default function IconUsageGuide() {
             the allowed pool for new tabs, lives in
             {' '}
             <a
-              href="https://github.com/diasporanetwork/dna/blob/main/docs/ICON_USAGE_GUIDE.md"
+              href="https://github.com/jodombrown/dna-May-2026/blob/main/docs/ICON_USAGE_GUIDE.md"
               target="_blank"
               rel="noreferrer"
               className="underline underline-offset-2 inline-flex items-center gap-1"

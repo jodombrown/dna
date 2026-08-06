@@ -44,6 +44,18 @@ const ALLOWLIST_HOSTS = new Set<string>([
   'www.instagram.com',
   'facebook.com',
   'www.facebook.com',
+  'wa.me',
+  // ".example" is the RFC 2606 reserved TLD for docs/test fixtures — never resolves
+  'img.example',
+  // Form placeholder text, not a real link
+  'yourwebsite.com',
+  // Google Fonts preconnect hints — bare host has no fetchable resource at "/"
+  'fonts.googleapis.com',
+  'fonts.gstatic.com',
+  // BD214 curated source: one of the five "live curated sources" covered by
+  // curated.test.ts. Blocks/404s bot probes from CI; not actually dead.
+  'nyadiff.org',
+  'www.nyadiff.org',
   // Supabase project URLs are validated by other checks
   'ybhssuehmfnxrzneobok.supabase.co',
 ]);
@@ -81,7 +93,9 @@ function walk(path: string, out: string[] = []): string[] {
   }
   if (!stat.isDirectory()) return out;
   for (const entry of readdirSync(path)) {
-    if (entry === 'node_modules' || entry.startsWith('.')) continue;
+    // _archived dirs hold orphaned code with zero live importers; their
+    // stale demo/placeholder links aren't reachable from the shipped app.
+    if (entry === 'node_modules' || entry === '_archived' || entry.startsWith('.')) continue;
     walk(join(path, entry), out);
   }
   return out;
@@ -96,6 +110,10 @@ function extractUrls(files: string[]): Map<string, { file: string; line: number 
       const matches = line.match(URL_RE);
       if (!matches) return;
       for (const raw of matches) {
+        // Skip JS template-literal interpolation (`${...}`): the regex can't
+        // know where the dynamic segment ends, so the "URL" it captured is
+        // just a truncated prefix that was never meant to be fetched as-is.
+        if (raw.includes('${')) continue;
         // Strip trailing punctuation the regex left in
         const url = raw.replace(/[.,;:!?]+$/, '');
         let parsed: URL;
@@ -104,6 +122,9 @@ function extractUrls(files: string[]): Map<string, { file: string; line: number 
         } catch {
           continue;
         }
+        // Wildcard host patterns (e.g. CSP directive examples in comments,
+        // `https://*.tiles.mapbox.com`) are never a real fetchable target.
+        if (parsed.hostname.includes('*')) continue;
         if (ALLOWLIST_HOSTS.has(parsed.hostname)) continue;
         if (IGNORED_PATH_PREFIXES.some((p) => parsed.pathname.startsWith(p))) continue;
         // Skip pure asset URLs baked in by build tools

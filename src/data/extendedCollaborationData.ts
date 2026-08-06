@@ -28,7 +28,7 @@ export const extendedCollaborationProjects: CollaborationProject[] = [
     timeline: "18 months",
     next_milestone: "Deploy in 200 farms",
     recent_update: "Pilot successful with 50 farmers, 30% water reduction achieved",
-    image_url: "https://images.unsplash.com/photo-1544717684-7a2eba6c2036?w=500&h=300&fit=crop",
+    image_url: "https://picsum.photos/seed/7a2eba6c20/500/300",
     created_at: "2024-01-26T00:00:00Z"
   },
   {
@@ -195,7 +195,7 @@ export const extendedCollaborationProjects: CollaborationProject[] = [
     time_commitment: "full-time",
     creator: {
       name: "Amina Hassan",
-      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b829?w=80",
+      avatar: "https://picsum.photos/seed/2616b612b8/80/80",
       title: "Industrial Engineer"
     },
     tags: ["Solar Manufacturing", "Job Creation", "Industrial Development", "Regional Supply"],
@@ -260,7 +260,7 @@ export const extendedCollaborationProjects: CollaborationProject[] = [
     timeline: "15 months",
     next_milestone: "Enroll 5000 informal workers",
     recent_update: "1,500 workers enrolled, 80% claim satisfaction rate",
-    image_url: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=500&h=300&fit=crop",
+    image_url: "https://picsum.photos/seed/112ba8d25d/500/300",
     created_at: "2024-02-14T00:00:00Z"
   },
   {

@@ -442,7 +442,7 @@ export const useConveyLogic = () => {
       category: 'Environment',
       impact: 'Model for continental climate action',
       content: 'With diaspora climate scientists, Rwanda achieves carbon-negative status through reforestation and renewables.',
-      imageUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=800&h=600&fit=crop',
+      imageUrl: 'https://picsum.photos/seed/4e9042af21/800/600',
       date: '2024-12-05',
       featured: false
     },

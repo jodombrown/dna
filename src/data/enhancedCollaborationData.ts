@@ -55,7 +55,7 @@ export const enhancedCollaborationProjects: CollaborationProject[] = [
     time_commitment: "part-time",
     creator: {
       name: "Amara Okonkwo",
-      avatar: "https://images.unsplash.com/photo-1494790108755-2616b332e234?w=80",
+      avatar: "https://picsum.photos/seed/2616b332e2/80/80",
       title: "Clean Energy Engineer"
     },
     collaborator_avatars: [
