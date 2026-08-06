@@ -21,7 +21,17 @@ One file: `src/components/platform/HeroTriangleSection.tsx`.
 5. Collapse the five hand-copied button blocks into one map over a local ordered array of the five C's so the set cannot drift again. Copy stays exactly as it reads today.
 6. Move the banned Tailwind default sizes in this block (`text-xl`, `text-sm`) onto the project scale and drop the reflex `font-bold`.
 
+## Also: the card-corner icons
+
+Checked all five section files. Three already carry the right glyph in the stacked-card header corner: Convene renders Nkonsonkonson, Collaborate renders Funtunfunefu Denkyemfunefu, Convey renders Mpatapo. Two do not:
+
+- `src/components/platform/ConnectSection.tsx` line 96 renders the Lucide `Network` glyph in the corner. It becomes Sankofa. `Network` also appears further down at line 187 as a small inline marker in the section body; that is not the C identity corner, so I leave it unless you want it gone too.
+- `src/components/platform/ContributeSection.tsx` line 92 renders a per-item Lucide icon (`DollarSign`, `Clock`, `Users`, `Lightbulb`, `Award`) that changes card to card. The corner is a C identity slot, not a per-item slot, so all five cards get Adinkrahene. If nothing else reads the per-item `icon` field after that, I remove it.
+
+That fixes the corner on all five. Nothing else in those section files changes in this pass.
+
 ## Notes
 
 - The Adinkra usage guard runs against a baseline (`scripts/.adinkra-baseline.json`). Adding a legitimate Five C identity surface means that baseline needs regenerating in the same change, otherwise CI reads the new imports as decoration. I will run the script's `--update` path and include the result.
-- Scope boundary: the five long sections below this row (`ConnectSection`, `ConveneSection`, `CollaborateSection`, `ContributeSection`, `ConveySection`) each still import Lucide and still use `dna-*` colours. They are a separate pass and I will not touch them here unless you say so.
+- Scope boundary: beyond the corner glyph above, the five long sections still use `dna-*` colours and gradient card headers. Repainting them onto the locked C palette is a separate pass and I will not do it here unless you say so.
+
