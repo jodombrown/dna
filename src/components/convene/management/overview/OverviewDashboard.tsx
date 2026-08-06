@@ -17,7 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
-import { useEventManagement } from '../EventManagementLayout';
+import { useEventManagement } from '../EventManagementContext';
 import { formatDistanceToNow, differenceInDays, format } from 'date-fns';
 import { eventStartMs } from '@/lib/events/eventTime';
 import { isEventCompleted } from '@/lib/events/lifecycle';

@@ -116,6 +116,7 @@ const ArchivedFeatureDetail = lazy(() => import("./pages/features/archived/Archi
 const ConveneHub = lazy(() => import("./pages/dna/convene/ConveneHub"));
 const EventsIndex = lazy(() => import("./pages/dna/convene/EventsIndex"));
 const EventDetail = lazy(() => import("./pages/dna/convene/EventDetail"));
+const EventOverview = lazy(() => import("./components/convene/EventOverview"));
 const Welcome = lazy(() => import("./pages/dna/Welcome"));
 const MyEvents = lazy(() => import("./pages/dna/convene/MyEvents"));
 const EventAnalytics = lazy(() => import("./pages/dna/convene/EventAnalytics"));
@@ -125,8 +126,6 @@ const GroupEventsPage = lazy(() => import("./pages/dna/convene/GroupEventsPage")
 const EventCheckIn = lazy(() => import("./pages/dna/convene/EventCheckIn"));
 
 // Event Management Console
-const EventManagementLayout = lazy(() => import("./components/convene/management/EventManagementLayout"));
-const OverviewDashboard = lazy(() => import("./components/convene/management/overview/OverviewDashboard"));
 const AttendeeManagement = lazy(() => import("./components/convene/management/attendees/AttendeeManagement"));
 const ManagementCheckInDashboard = lazy(() => import("./components/convene/management/checkin/CheckInDashboard"));
 const CommunicationsHub = lazy(() => import("./components/convene/management/communications/CommunicationsHub"));
@@ -601,7 +600,22 @@ function App() {
               } />
               {/* Event detail is members-only: once the session resolves,
                   signed-out visitors are redirected to /event/:slugOrId */}
-              <Route path="/dna/convene/events/:id" element={<EventDetail />} />
+              <Route path="/dna/convene/events/:id" element={<EventDetail />}>
+                <Route index element={<EventOverview />} />
+                <Route path="attendees" element={<AttendeeManagement />} />
+                <Route path="check-in" element={<ManagementCheckInDashboard />} />
+                <Route path="communications" element={<CommunicationsHub />} />
+                <Route path="analytics" element={<ManagementAnalyticsDashboard />} />
+                <Route path="team" element={<TeamManager />} />
+                <Route path="settings" element={<EventSettingsRedirect />} />
+              </Route>
+              <Route path="/dna/convene/events/:id/manage" element={<Navigate to=".." replace />} />
+              <Route path="/dna/convene/events/:id/manage/attendees" element={<Navigate to="../attendees" replace />} />
+              <Route path="/dna/convene/events/:id/manage/check-in" element={<Navigate to="../check-in" replace />} />
+              <Route path="/dna/convene/events/:id/manage/communications" element={<Navigate to="../communications" replace />} />
+              <Route path="/dna/convene/events/:id/manage/analytics" element={<Navigate to="../analytics" replace />} />
+              <Route path="/dna/convene/events/:id/manage/team" element={<Navigate to="../team" replace />} />
+              <Route path="/dna/convene/events/:id/manage/settings" element={<Navigate to="../settings" replace />} />
               {/* Event creation wizard — full 5-step flow */}
               {/* Event creation now handled by Universal Composer */}
               <Route path="/dna/convene/events/:id/edit" element={
@@ -619,21 +633,6 @@ function App() {
                   <EventCheckIn />
                 </OnboardingGuard>
               } />
-
-              {/* Event Management Console Routes */}
-              <Route path="/dna/convene/events/:eventId/manage" element={
-                <OnboardingGuard>
-                  <EventManagementLayout />
-                </OnboardingGuard>
-              }>
-                <Route index element={<OverviewDashboard />} />
-                <Route path="attendees" element={<AttendeeManagement />} />
-                <Route path="check-in" element={<ManagementCheckInDashboard />} />
-                <Route path="communications" element={<CommunicationsHub />} />
-                <Route path="analytics" element={<ManagementAnalyticsDashboard />} />
-                <Route path="team" element={<TeamManager />} />
-                <Route path="settings" element={<EventSettingsRedirect />} />
-              </Route>
 
               <Route path="/dna/convene/mine" element={
                 <OnboardingGuard>

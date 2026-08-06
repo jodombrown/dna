@@ -8,7 +8,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import AfricaSpinner from '@/components/ui/AfricaSpinner';
 
 export default function EventSettingsRedirect() {
-  const { eventId } = useParams<{ eventId: string }>();
+  const { id: eventId } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   useEffect(() => {
