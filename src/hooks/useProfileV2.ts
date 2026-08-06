@@ -177,6 +177,17 @@ export const useProfileV2 = (username: string | undefined) => {
           return null;
         }
 
+        // BD394: a clean RPC call with no matching username returns
+        // data: null, error: null. Falling through here (as before) builds
+        // a permissions-defaulted object with no `.profile`, which passes
+        // ProfileV2.tsx's not-found guard as truthy and crashes downstream
+        // on the first non-optional profile.<field> access. Same failure
+        // mode `if (error)` already exists to prevent, just for the other
+        // trigger.
+        if (!data) {
+          return null;
+        }
+
         // Defensive fallback: if a stale RPC ever forgets to stamp `permissions`
         // or `should_show_public_landing`, derive them from the viewer id so
         // owners never fall through to the visitor UI.
