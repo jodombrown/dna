@@ -99,11 +99,23 @@ serve(async (req) => {
 
     console.log('Starting engagement tracking update...')
 
-    // Get all active users
+    // Get active users. Capped and chunked below: an unbounded fetch plus a
+    // fully sequential per-user loop (~10 queries each) will exceed the
+    // edge function execution timeout once the active-user count grows
+    // past a few hundred. This still processes everyone in a single run
+    // for realistic table sizes, just with bounded concurrency instead of
+    // one round trip at a time; true cursor-based continuation across
+    // invocations would be needed if the active-user count ever exceeds
+    // BATCH_LIMIT.
+    const BATCH_LIMIT = 2000
+    const CONCURRENCY = 20
+
     const { data: profiles, error: profileError } = await supabase
       .from('profiles')
       .select('id')
       .eq('is_active', true)
+      .order('id')
+      .limit(BATCH_LIMIT)
 
     if (profileError) {
       throw profileError
@@ -115,7 +127,7 @@ serve(async (req) => {
     const sevenDaysAgo = new Date()
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 
-    for (const profile of profiles || []) {
+    const processProfile = async (profile: { id: string }): Promise<boolean> => {
       try {
         // Fetch activity metrics for the last 7 days
         const [postsData, commentsData, connectionsData, messagesData, eventsData] = await Promise.all([
@@ -194,13 +206,20 @@ serve(async (req) => {
 
         if (upsertError) {
           console.error(`Error updating engagement for user ${profile.id}:`, upsertError)
-        } else {
-          updatedCount++
+          return false
         }
+        return true
 
       } catch (userError) {
         console.error(`Error processing user ${profile.id}:`, userError)
+        return false
       }
+    }
+
+    for (let i = 0; i < (profiles || []).length; i += CONCURRENCY) {
+      const chunk = (profiles || []).slice(i, i + CONCURRENCY)
+      const results = await Promise.all(chunk.map(processProfile))
+      updatedCount += results.filter(Boolean).length
     }
 
     console.log(`Engagement tracking complete. Updated ${updatedCount} users.`)

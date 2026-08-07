@@ -35,11 +35,21 @@ Deno.serve(async (req: Request) => {
 
   const admin = createClient(url, serviceKey);
 
-  // Pull eligible conversations with a duration set.
+  // Pull eligible conversations with a duration set. Capped and processed
+  // in concurrent batches below: an unbounded fetch plus a fully
+  // sequential per-conversation delete will exceed the edge function
+  // execution timeout once the number of disappearing-message
+  // conversations grows large. Each delete targets a distinct
+  // conversation's rows, so running them concurrently is safe.
+  const BATCH_LIMIT = 2000;
+  const CONCURRENCY = 20;
+
   const { data: convos, error: cErr } = await admin
     .from('conversations')
     .select('id, disappearing_seconds')
-    .not('disappearing_seconds', 'is', null);
+    .not('disappearing_seconds', 'is', null)
+    .order('id')
+    .limit(BATCH_LIMIT);
 
   if (cErr) {
     return new Response(JSON.stringify({ error: cErr.message }), {
@@ -49,16 +59,24 @@ Deno.serve(async (req: Request) => {
   }
 
   let totalDeleted = 0;
-  for (const c of convos ?? []) {
-    const seconds = (c as any).disappearing_seconds as number;
-    if (!seconds || seconds <= 0) continue;
+
+  const deleteExpiredFor = async (c: { id: string; disappearing_seconds: number | null }): Promise<number> => {
+    const seconds = c.disappearing_seconds as number;
+    if (!seconds || seconds <= 0) return 0;
     const cutoff = new Date(Date.now() - seconds * 1000).toISOString();
     const { error: dErr, count } = await admin
       .from('messages')
       .delete({ count: 'exact' })
-      .eq('conversation_id', (c as any).id)
+      .eq('conversation_id', c.id)
       .lt('created_at', cutoff);
-    if (!dErr && typeof count === 'number') totalDeleted += count;
+    return !dErr && typeof count === 'number' ? count : 0;
+  };
+
+  const eligible = (convos ?? []) as { id: string; disappearing_seconds: number | null }[];
+  for (let i = 0; i < eligible.length; i += CONCURRENCY) {
+    const chunk = eligible.slice(i, i + CONCURRENCY);
+    const counts = await Promise.all(chunk.map(deleteExpiredFor));
+    totalDeleted += counts.reduce((sum, n) => sum + n, 0);
   }
 
   return new Response(

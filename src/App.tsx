@@ -84,6 +84,7 @@ const ContentModeration = lazy(() => import("./pages/admin/ContentModeration"));
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
 const AdminDashboardLayout = lazy(() => import("./components/admin/AdminDashboardLayout"));
 const AdminDashboardOverview = lazy(() => import("./pages/admin/AdminDashboardOverview"));
+const AdminComingSoon = lazy(() => import("./pages/admin/AdminComingSoon"));
 const AdminRouteGuard = lazy(() => import("./components/admin/AdminRouteGuard").then(m => ({ default: m.AdminRouteGuard })));
 const StatCitationsAdmin = lazy(() => import("./pages/admin/StatCitationsAdmin"));
 const CuratedSourceReviews = lazy(() => import("./pages/admin/CuratedSourceReviews"));
@@ -875,6 +876,11 @@ function App() {
                 <Route path="citations" element={<StatCitationsAdmin />} />
                 {/* Curated source review queue (Convene C2.4) */}
                 <Route path="curated-source-reviews" element={<CuratedSourceReviews />} />
+                {/* Catch-all for sidebar links that don't have a page yet
+                    (AdminDashboardLayout's nav lists several roadmap items
+                    with no matching route) — keeps them in-shell instead of
+                    falling through to the global 404 below. */}
+                <Route path="*" element={<AdminComingSoon />} />
               </Route>
 
               {/* Legacy Admin routes */}

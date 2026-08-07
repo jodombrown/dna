@@ -14,7 +14,7 @@ import { mapFeedRow, type FeedRpcRow } from '@/lib/feed/mapFeedRow';
 export function useUniversalFeed(filters: FeedFilters) {
   const { viewerId, tab = 'all', authorId, spaceId, eventId, hashtag, rankingMode = 'latest', limit = 30 } = filters;
 
-  const queryKey = ['universal-feed', { viewerId, tab, authorId, spaceId, eventId, hashtag, rankingMode }];
+  const queryKey = ['universal-feed', { viewerId, tab, authorId, spaceId, eventId, hashtag, rankingMode, limit }];
 
   const query = useQuery({
     queryKey,
