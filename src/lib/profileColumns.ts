@@ -146,6 +146,7 @@ export const PROFILE_SELECT_COLUMNS = ([
   'event_interest_tags',
   'collaboration_tags',
   'engagement_intentions',
+  'engagement_geography',
   'my_dna_statement',
   'organization_category',
   'organization_name',
