@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -25,6 +25,11 @@ const UsernameManager: React.FC<UsernameManagerProps> = ({
   const [checking, setChecking] = useState(false);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
+  // The debounce timer only prevents overlapping *scheduling*; it does
+  // nothing once a check is in flight. If a slower, earlier check for a
+  // since-abandoned username resolves after a faster, later one for the
+  // current username, it would otherwise overwrite the correct result.
+  const latestRequestId = useRef(0);
 
   const canChangeUsername = !disabled;
 
@@ -50,9 +55,10 @@ const UsernameManager: React.FC<UsernameManagerProps> = ({
 
   const checkUsernameAvailability = async (name: string) => {
     if (name === currentUsername) return;
-    
+
+    const requestId = ++latestRequestId.current;
     setChecking(true);
-    
+
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -64,6 +70,10 @@ const UsernameManager: React.FC<UsernameManagerProps> = ({
         throw error;
       }
 
+      // Discard if a newer check has started since this one was issued —
+      // this response is for an abandoned candidate username.
+      if (requestId !== latestRequestId.current) return;
+
       const taken = !!data;
       setIsAvailable(!taken);
 
@@ -74,10 +84,11 @@ const UsernameManager: React.FC<UsernameManagerProps> = ({
         setSuggestions([]);
       }
     } catch (error) {
+      if (requestId !== latestRequestId.current) return;
       setIsAvailable(false);
     }
 
-    setChecking(false);
+    if (requestId === latestRequestId.current) setChecking(false);
   };
 
   const generateSuggestions = (base: string): string[] => {

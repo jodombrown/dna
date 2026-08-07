@@ -146,6 +146,13 @@ export function getOrganizationSchema() {
  * Generate WebSite structured data with SearchAction
  */
 export function getWebsiteSchema() {
+  // No `potentialAction`/SearchAction: it previously pointed at
+  // /connect?q={search_term_string}, but /connect is one of the Five C's
+  // marketing routes deliberately disabled pending redesign (App.tsx
+  // redirects it home, dropping the query string), and no live page in
+  // this app actually reads a `q` search param today. Advertising a
+  // SearchAction Google can't actually use is worse than omitting it —
+  // add it back once a real search-capable landing page exists.
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
@@ -153,11 +160,6 @@ export function getWebsiteSchema() {
     alternateName: 'DNA',
     url: config.APP_URL,
     description: 'Connect, collaborate, and contribute to Africa\'s development with the global diaspora community.',
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: `${config.APP_URL}/connect?q={search_term_string}`,
-      'query-input': 'required name=search_term_string',
-    },
   };
 }
 

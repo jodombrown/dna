@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Image, X, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -21,7 +21,24 @@ export function FeedbackMediaUpload({
   maxSizeMB = 10,
 }: FeedbackMediaUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Previews are derived from the selectedFiles prop rather than kept as
+  // independent local state populated by async FileReader callbacks.
+  // FileReader.onload for multiple simultaneously-selected files can
+  // resolve out of order, so previews[index] wasn't guaranteed to
+  // correspond to selectedFiles[index]; and if a parent ever mutated
+  // selectedFiles other than through onRemoveFile, previews had no way to
+  // notice and would silently go stale. Object URLs are synchronous and
+  // index-stable, so this can't desync.
   const [previews, setPreviews] = useState<string[]>([]);
+
+  useEffect(() => {
+    const urls = selectedFiles.map((file) => URL.createObjectURL(file));
+    setPreviews(urls);
+    return () => {
+      urls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [selectedFiles]);
 
   const handleClick = () => {
     fileInputRef.current?.click();
@@ -52,15 +69,6 @@ export function FeedbackMediaUpload({
       return;
     }
 
-    // Generate previews
-    validFiles.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setPreviews((prev) => [...prev, reader.result as string]);
-      };
-      reader.readAsDataURL(file);
-    });
-
     onFilesSelected(validFiles);
 
     // Reset input
@@ -70,7 +78,6 @@ export function FeedbackMediaUpload({
   };
 
   const handleRemove = (index: number) => {
-    setPreviews((prev) => prev.filter((_, i) => i !== index));
     onRemoveFile(index);
   };
 

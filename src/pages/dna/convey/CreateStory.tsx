@@ -108,6 +108,11 @@ export default function CreateStory() {
   const handleSubmit = async (formData: any) => {
     const data = {
       ...formData,
+      // ConveyItemForm produces coverImage (camelCase); useCreateConveyItem
+      // expects image_url. Without this mapping the field the user picked in
+      // CoverImageEditor was silently dropped — every story insert wrote
+      // image_url: null regardless of what was selected.
+      image_url: formData.coverImage || formData.image_url || undefined,
       primary_space_id: spaceId || undefined,
       primary_event_id: eventId || undefined,
       primary_need_id: needId || undefined,
@@ -182,15 +187,17 @@ export default function CreateStory() {
           </div>
 
           <ConveyItemForm
-            onSubmit={async (formData) => {
-              createMutation.mutate(formData, {
-                onSuccess: (data) => {
-                  // Navigate to the story detail page
-                  navigate(`/dna/story/${data.slug}`);
-                },
-              });
-            }}
-            onCancel={() => navigate('/dna/convey')}
+            initialData={prefillData}
+            spaceId={spaceId || undefined}
+            spaceName={space?.name}
+            spaceVisibility={space?.visibility}
+            eventId={eventId || undefined}
+            eventTitle={event?.title}
+            needId={needId || undefined}
+            isAdmin={isAdmin}
+            onSubmit={handleSubmit}
+            onCancel={handleCancel}
+            isLoading={createMutation.isPending}
           />
         </div>
       }

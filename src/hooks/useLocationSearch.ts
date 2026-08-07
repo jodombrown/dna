@@ -11,6 +11,11 @@ export function useLocationSearch(
   const [loading, setLoading] = useState(false);
   const debRef = useRef<number | null>(null);
   const lastQ = useRef<string>('');
+  // The debounce timer only guards against overlapping *scheduling* — once
+  // provider.search is actually in flight, nothing stops a second, faster
+  // query from resolving before it. Without sequencing, a slower response
+  // for an abandoned query could overwrite the correct, newer results.
+  const latestRequestId = useRef(0);
 
   useEffect(() => {
     if (debRef.current) window.clearTimeout(debRef.current);
@@ -19,10 +24,16 @@ export function useLocationSearch(
     debRef.current = window.setTimeout(async () => {
       if (q === lastQ.current) return;
       lastQ.current = q;
+      const requestId = ++latestRequestId.current;
       setLoading(true);
-      try { setResults(await provider.search(q, opts)); }
-      catch { setResults([]); }
-      finally { setLoading(false); }
+      try {
+        const res = await provider.search(q, opts);
+        if (requestId === latestRequestId.current) setResults(res);
+      } catch {
+        if (requestId === latestRequestId.current) setResults([]);
+      } finally {
+        if (requestId === latestRequestId.current) setLoading(false);
+      }
     }, delay);
 
     return () => { if (debRef.current) window.clearTimeout(debRef.current); };

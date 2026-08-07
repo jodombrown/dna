@@ -2,7 +2,11 @@ import React from 'react';
 import { useMobile } from '@/hooks/useMobile';
 import { cn } from '@/lib/utils';
 import { MobileHeader } from './MobileHeader';
-import MobileBottomNav from './MobileBottomNav';
+// Dead code today — MobileFeedView, its only consumer, has zero consumers
+// of its own. This used to render its own <MobileBottomNav /> unconditionally;
+// every real mobile layout it would be mounted inside already renders one,
+// so reactivating it without removing this would double up the bottom nav.
+// Removed; let the surrounding layout own the bottom nav.
 
 interface MobileViewContainerProps {
   children: React.ReactNode;
@@ -66,8 +70,6 @@ export const MobileViewContainer: React.FC<MobileViewContainerProps> = ({
       >
         {children}
       </main>
-
-      <MobileBottomNav />
     </div>
   );
 };

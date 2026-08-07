@@ -147,13 +147,37 @@ const PublicEventPage = () => {
 
   const handleRsvpClick = (status: 'going' | 'maybe') => {
     if (!isLoggedIn) {
-      // Store intent to return after auth
-      sessionStorage.setItem('dna_event_after_auth', event?.id || '');
+      // Store intent to return after auth. Consumed below, once we're back
+      // on this page logged in.
+      sessionStorage.setItem(
+        'dna_event_after_auth',
+        JSON.stringify({ eventId: event?.id || '', status })
+      );
       navigate(`/auth?redirect=/event/${event?.slug || slugOrId}`);
       return;
     }
     rsvpMutation.mutate(status);
   };
+
+  // Consume the stored RSVP intent after the auth round-trip: the ?redirect=
+  // lands the user back here logged in, but nothing was reading the stored
+  // intent, so the RSVP they asked for before being asked to sign up was
+  // silently lost.
+  useEffect(() => {
+    if (!isLoggedIn || !event?.id) return;
+    const raw = sessionStorage.getItem('dna_event_after_auth');
+    if (!raw) return;
+    sessionStorage.removeItem('dna_event_after_auth');
+    try {
+      const intent = JSON.parse(raw) as { eventId: string; status: 'going' | 'maybe' };
+      if (intent.eventId === event.id) {
+        rsvpMutation.mutate(intent.status);
+      }
+    } catch {
+      // Malformed/legacy value (previously just the bare event id) — ignore.
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoggedIn, event?.id]);
 
   const getInitials = (name: string) => {
     return name

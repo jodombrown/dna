@@ -45,24 +45,30 @@ export const useAnimatedCounter = ({ end, duration = 2000, decimals = 0, resetKe
     if (!isVisible) return;
 
     let startTime: number;
+    let rafId: number;
     const startValue = 0;
 
     const animate = (currentTime: number) => {
       if (!startTime) startTime = currentTime;
       const progress = Math.min((currentTime - startTime) / duration, 1);
-      
+
       // Easing function for smooth animation
       const easeOutCubic = 1 - Math.pow(1 - progress, 3);
       const currentCount = startValue + (end - startValue) * easeOutCubic;
-      
+
       setCount(Number(currentCount.toFixed(decimals)));
 
       if (progress < 1) {
-        requestAnimationFrame(animate);
+        rafId = requestAnimationFrame(animate);
       }
     };
 
-    requestAnimationFrame(animate);
+    rafId = requestAnimationFrame(animate);
+    // Without this, a re-run of this effect (end/duration/decimals
+    // changing while already visible) started a second animation loop
+    // without cancelling the first, and unmounting while a frame was
+    // pending left it queued to call setCount after unmount.
+    return () => cancelAnimationFrame(rafId);
   }, [isVisible, end, duration, decimals]);
 
   return { count, countRef };

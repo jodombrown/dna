@@ -308,24 +308,18 @@ export async function toggleBadgeFeatured(
   featured: boolean
 ): Promise<boolean> {
   try {
-    if (featured) {
-      // Check current featured count
-      const { count } = await supabase
-        .from('user_badges' as any)
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', userId)
-        .eq('is_featured', true);
+    // The count-check and the update used to be two separate round trips
+    // (read the current featured count, then write if it was under the
+    // limit) — two concurrent "feature" clicks could both read a stale
+    // count and both proceed, landing on more than 3 featured badges.
+    // set_badge_featured does both in one statement.
+    const { data, error } = await supabase.rpc('set_badge_featured' as any, {
+      p_user_id: userId,
+      p_user_badge_id: userBadgeId,
+      p_featured: featured,
+    });
 
-      if ((count ?? 0) >= 3) return false;
-    }
-
-    const { error } = await supabase
-      .from('user_badges' as any)
-      .update({ is_featured: featured })
-      .eq('id', userBadgeId)
-      .eq('user_id', userId);
-
-    return !error;
+    return !error && data === true;
   } catch {
     return false;
   }

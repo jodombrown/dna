@@ -55,6 +55,15 @@ const DnaMessages = () => {
     }
   }, [threadParam]);
 
+  // Resync when the route's :conversationId itself changes. This route is
+  // matched by the same <Route path="/dna/messages/:conversationId">
+  // element for any conversation, so navigating from .../A to .../B keeps
+  // this component mounted and only updates the param — selectedConversationId
+  // was previously only ever seeded from it once, on mount.
+  useEffect(() => {
+    if (conversationId) setSelectedConversationId(conversationId);
+  }, [conversationId]);
+
   // Get header visibility controls
   const { hideHeader, showHeader } = useHeaderVisibility();
 
