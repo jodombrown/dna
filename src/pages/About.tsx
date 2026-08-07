@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Linkedin, ArrowUpRight } from 'lucide-react';
@@ -7,7 +6,6 @@ import JoinDNADialog from '@/components/auth/JoinDNADialog';
 import SurveyDialog from '@/components/survey/SurveyDialog';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { PageSEO, getOrganizationSchema } from '@/components/seo/PageSEO';
-import { useStatCitations } from '@/hooks/useStatCitations';
 import dnaLogo from '@/assets/dna-logo-trimmed.png';
 
 const LINKEDIN_URL = 'https://www.linkedin.com/in/jaunelamarr/';
@@ -33,13 +31,9 @@ const CORE_VALUES = [
 
 const About = () => {
   useScrollToTop();
-  const navigate = useNavigate();
 
   const [isJoinDialogOpen, setIsJoinDialogOpen] = useState(false);
   const [isSurveyOpen, setIsSurveyOpen] = useState(false);
-
-  const { data: stats } = useStatCitations();
-  const featuredStats = (stats ?? []).slice(0, 3);
 
   const founderSchema = {
     '@context': 'https://schema.org',
@@ -235,7 +229,6 @@ const About = () => {
           </div>
         </div>
       </section>
-
 
       <JoinDNADialog
         isOpen={isJoinDialogOpen}
