@@ -21,6 +21,7 @@ import { Separator } from '@/components/ui/separator';
 import { MessageSquare, Settings, Bell, LogOut, LayoutDashboard } from 'lucide-react';
 import { MESSAGING_ENABLED } from '@/config/featureFlags';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
+import { useDiaSheet } from '@/contexts/DiaSheetContext';
 
 const MobileBottomNav: React.FC = () => {
   const navigate = useNavigate();
@@ -30,7 +31,8 @@ const MobileBottomNav: React.FC = () => {
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const { data: unreadCountFromRPC = 0 } = useUnreadNotificationCount();
   const { isAdmin } = useIsAdmin();
-  
+  const { openWith: openDia } = useDiaSheet();
+
   // Use the RPC count directly - it's the source of truth for unread notifications
   const unreadCount = unreadCountFromRPC;
 
@@ -235,7 +237,11 @@ const MobileBottomNav: React.FC = () => {
                 key={item.label}
                 onClick={() => {
                   setShowMoreMenu(false);
-                  navigate(item.path);
+                  if (item.label === 'DIA') {
+                    openDia();
+                  } else {
+                    navigate(item.path);
+                  }
                 }}
                 className={cn(
                   "w-full flex items-center gap-4 p-4 hover:bg-muted/50 rounded-lg transition-colors",
