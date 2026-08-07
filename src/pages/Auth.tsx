@@ -10,12 +10,10 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { getErrorMessage } from '@/lib/errorLogger';
-import { WAITLIST_MODE } from '@/config/featureFlags';
-import BetaAccessForm from '@/components/auth/BetaAccessForm';
 import { SignUpApprovalGate } from '@/components/auth/SignUpApprovalGate';
 import { AuthModeToggle } from '@/components/auth/AuthModeToggle';
 
-type AuthMode = 'signup' | 'request' | 'signin';
+type AuthMode = 'signup' | 'signin';
 
 
 /**
@@ -39,19 +37,15 @@ const Auth = () => {
 
   const queryParams = new URLSearchParams(location.search);
   const queryMode = queryParams.get('mode');
-  // Three surfaces: open sign up, access request, sign in.
+  // Two surfaces: open sign up, sign in. Legacy ?mode=request lands on sign up.
   const resolveMode = (value: string | null): AuthMode =>
-    value === 'signup' ? 'signup' : value === 'request' ? 'request' : 'signin';
+    value === 'signup' || value === 'request' ? 'signup' : 'signin';
   const [authMode, setAuthMode] = useState<AuthMode>(resolveMode(queryMode));
 
   useEffect(() => {
     setAuthMode(resolveMode(queryMode));
   }, [queryMode]);
 
-  // Waitlist mode: signup tab is closed; funnel to /waitlist.
-  if (WAITLIST_MODE && authMode === 'signup') {
-    return <Navigate to="/waitlist" replace />;
-  }
 
 
 
@@ -167,20 +161,15 @@ const Auth = () => {
   ];
 
   const modeSubtitle =
-    authMode === 'signup'
-      ? 'Create your account'
-      : authMode === 'request'
-        ? 'Request access and we will review it'
-        : 'Sign in to your account';
+    authMode === 'signup' ? 'Create your account' : 'Sign in to your account';
 
 
-  // Auth content switches between sign up, request access, and sign in
+  // Auth content switches between sign up and sign in
   const authContent = (
     <div className="w-full space-y-4">
-      {authMode === 'request' ? (
-        <BetaAccessForm />
-      ) : authMode === 'signup' ? (
+      {authMode === 'signup' ? (
         <SignUpApprovalGate />
+
 
       ) : (
         <form onSubmit={handleSignIn} className="space-y-4">
