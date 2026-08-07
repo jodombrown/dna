@@ -37,19 +37,15 @@ const Auth = () => {
 
   const queryParams = new URLSearchParams(location.search);
   const queryMode = queryParams.get('mode');
-  // Three surfaces: open sign up, access request, sign in.
+  // Two surfaces: open sign up, sign in. Legacy ?mode=request lands on sign up.
   const resolveMode = (value: string | null): AuthMode =>
-    value === 'signup' ? 'signup' : value === 'request' ? 'request' : 'signin';
+    value === 'signup' || value === 'request' ? 'signup' : 'signin';
   const [authMode, setAuthMode] = useState<AuthMode>(resolveMode(queryMode));
 
   useEffect(() => {
     setAuthMode(resolveMode(queryMode));
   }, [queryMode]);
 
-  // Waitlist mode: signup tab is closed; funnel to /waitlist.
-  if (WAITLIST_MODE && authMode === 'signup') {
-    return <Navigate to="/waitlist" replace />;
-  }
 
 
 
