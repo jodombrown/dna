@@ -181,7 +181,7 @@ export function ConveneDIADiscoveryCard({
         body: 'Set your city in your profile to see events in your area.',
         ctaLabel: 'Update Profile',
         icon: MapPin,
-        action: () => navigate('/dna/settings/profile'),
+        action: () => navigate('/dna/profile/edit'),
       };
     }
 

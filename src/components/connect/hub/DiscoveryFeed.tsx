@@ -577,7 +577,7 @@ function AllEmptyState() {
       </p>
       <Button
         className="mt-6 bg-dna-emerald hover:bg-dna-forest text-white rounded-full px-6"
-        onClick={() => navigate('/dna/settings/profile')}
+        onClick={() => navigate('/dna/profile/edit')}
       >
         Complete Profile
       </Button>

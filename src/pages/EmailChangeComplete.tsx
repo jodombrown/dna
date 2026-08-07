@@ -98,7 +98,7 @@ export default function EmailChangeComplete() {
         {status !== 'checking' && (
           <Button
             className="w-full h-12 bg-dna-copper hover:bg-dna-copper/90"
-            onClick={() => navigate(status === 'success' ? '/dna/me' : '/auth')}
+            onClick={() => navigate(status === 'success' ? '/dna/feed' : '/auth')}
           >
             {status === 'success' ? 'Continue to DNA' : 'Back to Sign In'}
           </Button>
