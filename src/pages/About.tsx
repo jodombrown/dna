@@ -1,31 +1,45 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '@/components/Footer';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Users, Globe, Lightbulb, Heart, Target, Quote, Linkedin } from 'lucide-react';
+import { Linkedin, ArrowUpRight } from 'lucide-react';
 import JoinDNADialog from '@/components/auth/JoinDNADialog';
 import SurveyDialog from '@/components/survey/SurveyDialog';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { PageSEO, getOrganizationSchema } from '@/components/seo/PageSEO';
-import { config } from '@/lib/config';
-import { MateMasie } from '@/components/icons/adinkra';
+import { useStatCitations } from '@/hooks/useStatCitations';
+import dnaLogo from '@/assets/dna-logo-trimmed.png';
+
+const LINKEDIN_URL = 'https://www.linkedin.com/in/jaunelamarr/';
+const DNA_PROFILE_URL = 'https://diasporanetwork.africa/dna/jaunelamarro';
+
+const CORE_VALUES = [
+  {
+    numeral: '01',
+    name: 'Unity',
+    copy: 'Many origins, one mobilization. We build where diaspora effort compounds instead of scattering.',
+  },
+  {
+    numeral: '02',
+    name: 'Innovation',
+    copy: 'We solve the coordination problem with real infrastructure, not goodwill and group chats.',
+  },
+  {
+    numeral: '03',
+    name: 'Impact',
+    copy: 'Success is measured on the continent: work completed, capital moved, people reached.',
+  },
+];
 
 const About = () => {
   useScrollToTop();
   const navigate = useNavigate();
-  
+
   const [isJoinDialogOpen, setIsJoinDialogOpen] = useState(false);
   const [isSurveyOpen, setIsSurveyOpen] = useState(false);
 
-  const handleJoinPlatform = () => {
-    setIsJoinDialogOpen(true);
-  };
-
-  const handleTakeSurvey = () => {
-    setIsSurveyOpen(true);
-  };
+  const { data: stats } = useStatCitations();
+  const featuredStats = (stats ?? []).slice(0, 3);
 
   const founderSchema = {
     '@context': 'https://schema.org',
@@ -36,14 +50,14 @@ const About = () => {
       '@type': 'Organization',
       name: 'Diaspora Network of Africa',
     },
-    url: 'https://www.linkedin.com/in/jaunelamarr/',
+    url: LINKEDIN_URL,
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <PageSEO
         title="About DNA: Our Mission to Unite the African Diaspora"
-        description="DNA empowers 200M+ African diaspora members to connect, collaborate, and contribute to Africa's sustainable development. Meet our founder and learn our mission."
+        description="DNA is the mobilization infrastructure for the Global African Diaspora's return. Meet the founder and learn why DNA exists."
         keywords={[
           'about diaspora network africa',
           'african diaspora mission',
@@ -55,334 +69,225 @@ const About = () => {
         canonicalPath="/about"
         structuredData={[getOrganizationSchema(), founderSchema]}
       />
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10 py-12">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <Badge className="bg-dna-copper text-white mb-6 text-sm px-6 py-2">Our Story</Badge>
-            <h1 className="text-5xl md:text-7xl font-bold text-neutral-900 mb-8">
-              About <span className="text-dna-copper">DNA</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-neutral-600 max-w-4xl mx-auto leading-relaxed">
-              Empowering the African diaspora to create meaningful connections, drive innovation, 
-              and contribute to Africa's sustainable development through technology and collaboration.
-            </p>
-          </div>
-        </div>
-      </section>
 
-      {/* Mission & Vision */}
-      <section className="py-12">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12">
-            <Card className="border-l-4 border-l-dna-emerald shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader className="pb-6">
-                <CardTitle className="flex items-center gap-3 text-3xl">
-                  <Target className="w-8 h-8 text-dna-emerald" />
-                  Our Mission
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-neutral-700 text-lg leading-relaxed">
-                  To create a unified platform that connects African diaspora professionals, 
-                  entrepreneurs, and innovators worldwide, enabling them to collaborate on 
-                  impactful projects that drive sustainable development across Africa.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-l-4 border-l-dna-copper shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader className="pb-6">
-                <CardTitle className="flex items-center gap-3 text-3xl">
-                  <Lightbulb className="w-8 h-8 text-dna-copper" />
-                  Our Vision
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-neutral-700 text-lg leading-relaxed">
-                  A thriving ecosystem where the African diaspora's collective knowledge, 
-                  resources, and passion transform into tangible solutions that address 
-                  Africa's most pressing challenges and unlock its vast potential.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Core Values */}
-      <section className="py-12 bg-neutral-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-neutral-900 mb-6">Our Core Values</h2>
-            <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-              These principles guide everything we do and shape our platform's culture
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-10">
-            <Card className="text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-              <CardContent className="pt-8 pb-8">
-                <div className="w-20 h-20 bg-dna-emerald/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Users className="w-10 h-10 text-dna-emerald" />
-                </div>
-                <h3 className="text-2xl font-semibold text-neutral-900 mb-4">Unity</h3>
-                <p className="text-neutral-600 text-lg leading-relaxed">
-                  Bringing together diverse voices and perspectives to create stronger, 
-                  more innovative solutions for Africa's future.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-              <CardContent className="pt-8 pb-8">
-                <div className="w-20 h-20 bg-dna-copper/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <MateMasie className="w-10 h-10 text-dna-copper" />
-                </div>
-                <h3 className="text-2xl font-semibold text-neutral-900 mb-4">Innovation</h3>
-                <p className="text-neutral-600 text-lg leading-relaxed">
-                  Fostering creativity and technological advancement to solve complex 
-                  challenges with cutting-edge solutions.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-              <CardContent className="pt-8 pb-8">
-                <div className="w-20 h-20 bg-dna-forest/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Heart className="w-10 h-10 text-dna-forest" />
-                </div>
-                <h3 className="text-2xl font-semibold text-neutral-900 mb-4">Impact</h3>
-                <p className="text-neutral-600 text-lg leading-relaxed">
-                  Measuring success by the positive change we create in communities 
-                  across Africa and the diaspora.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Meet the Founder Section */}
-      <section className="py-12">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-neutral-900 mb-6">Meet the Founder</h2>
-            <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-              The visionary behind the Diaspora Network of Africa
-            </p>
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Founder Photo */}
-            <div className="text-center lg:text-left">
-              <div className="w-80 h-80 mx-auto lg:mx-0 rounded-lg shadow-2xl overflow-hidden">
-                <img 
-                  src="/lovable-uploads/02154efb-0abe-4ed4-b41f-265e4a856e8d.png"
-                  alt="Jaûne L. Odombrown - Founder & CEO"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-
-            {/* Bio Content */}
-            <div className="space-y-8">
-              <div>
-                <h3 className="text-3xl font-bold text-neutral-900 mb-4">
-                  <a 
-                    href="https://www.linkedin.com/in/jaunelamarr/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="hover:text-dna-copper inline-flex items-center gap-2 transition-colors"
-                  >
-                    Jaûne L. Odombrown
-                    <Linkedin className="w-6 h-6" />
-                  </a>
-                </h3>
-                <p className="text-xl text-dna-copper font-semibold mb-6">Founder & Chief Executive Officer</p>
-                
-                <div className="space-y-6 text-neutral-700 text-lg leading-relaxed">
-                  <p>
-                    Jaûne is a visionary leader passionate about connecting Africa's diaspora to drive 
-                    meaningful change across the continent. With extensive experience in technology, 
-                    entrepreneurship, and community building, he recognized the untapped potential 
-                    of uniting diaspora professionals for collective impact.
-                  </p>
-                  
-                  <p>
-                    His journey began with witnessing firsthand the challenges faced by both diaspora 
-                    communities seeking meaningful ways to contribute to Africa's development and 
-                    African communities needing access to global expertise and resources. This inspired 
-                    the creation of DNA, a platform designed to bridge these gaps and unlock the 
-                    transformative power of diaspora collaboration.
-                  </p>
-                </div>
-              </div>
-
-              {/* Quote Section */}
-              <Card className="bg-gradient-to-r from-dna-emerald/5 to-dna-copper/5 border-l-4 border-l-dna-copper">
-                <CardContent className="pt-6">
-                  <Quote className="w-8 h-8 text-dna-copper mb-4" />
-                  <blockquote className="text-xl italic text-neutral-700 mb-4 leading-relaxed">
-                    "The African diaspora represents one of the world's most powerful yet underutilized 
-                    resources for positive change. By connecting our collective knowledge, passion, and 
-                    resources, we can transform challenges into opportunities and unlock Africa's limitless potential."
-                  </blockquote>
-                  <cite className="text-dna-copper font-semibold">- Jaûne L. Odombrown</cite>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Platform Overview */}
-      <section className="py-12 bg-neutral-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-neutral-900 mb-6">How DNA Works</h2>
-            <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-              Our three-pillar approach creates a comprehensive ecosystem for diaspora engagement
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-10">
-            <Card className="relative overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-              <div className="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-dna-emerald to-dna-copper"></div>
-              <CardHeader className="pb-6">
-                <CardTitle className="text-2xl text-dna-emerald">Connect</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-neutral-700 text-lg mb-6 leading-relaxed">
-                  Build meaningful relationships with fellow diaspora professionals, 
-                  entrepreneurs, and thought leaders across industries.
-                </p>
-                <ul className="text-neutral-600 space-y-3">
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-dna-emerald rounded-full mr-3"></span>
-                    Professional networking
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-dna-emerald rounded-full mr-3"></span>
-                    Mentorship opportunities
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-dna-emerald rounded-full mr-3"></span>
-                    Community events
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-dna-emerald rounded-full mr-3"></span>
-                    Knowledge sharing
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card className="relative overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-              <div className="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-dna-copper to-dna-gold"></div>
-              <CardHeader className="pb-6">
-                <CardTitle className="text-2xl text-dna-copper">Collaborate</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-neutral-700 text-lg mb-6 leading-relaxed">
-                  Work together on innovative projects that address real challenges 
-                  across Africa with collective expertise and resources.
-                </p>
-                <ul className="text-neutral-600 space-y-3">
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-dna-copper rounded-full mr-3"></span>
-                    Project partnerships
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-dna-copper rounded-full mr-3"></span>
-                    Resource pooling
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-dna-copper rounded-full mr-3"></span>
-                    Cross-border initiatives
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-dna-copper rounded-full mr-3"></span>
-                    Innovation labs
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card className="relative overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-              <div className="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-dna-gold to-dna-forest"></div>
-              <CardHeader className="pb-6">
-                <CardTitle className="text-2xl text-dna-forest">Contribute</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-neutral-700 text-lg mb-6 leading-relaxed">
-                  Make tangible contributions to Africa's development through 
-                  skills, knowledge, funding, and strategic partnerships.
-                </p>
-                <ul className="text-neutral-600 space-y-3">
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-dna-forest rounded-full mr-3"></span>
-                    Skills volunteering
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-dna-forest rounded-full mr-3"></span>
-                    Investment opportunities
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-dna-forest rounded-full mr-3"></span>
-                    Knowledge transfer
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-dna-forest rounded-full mr-3"></span>
-                    Social impact projects
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Call to Action */}
-      <section className="py-12 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold text-neutral-900 mb-8">
-            Ready to Be Part of the Movement?
-          </h2>
-          <p className="text-xl text-neutral-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Join thousands of diaspora professionals who are already making a difference. 
-            Together, we can unlock Africa's potential and create lasting change.
+      {/* Hero */}
+      <section className="py-12 border-b border-border">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-micro uppercase text-dna-copper mb-6">Our story</p>
+          <img
+            src={dnaLogo}
+            alt="Diaspora Network of Africa"
+            width={661}
+            height={307}
+            className="h-16 sm:h-20 w-auto mb-6"
+          />
+          <h1 className="text-display sm:text-hero font-serif text-foreground max-w-3xl mb-6">
+            DNA is the mobilization infrastructure for the Global African Diaspora's return.
+          </h1>
+          <p className="text-h3 text-muted-foreground max-w-2xl leading-relaxed">
+            Members connect, convene, collaborate, contribute and convey in one place, so
+            diaspora talent, capital and expertise reach the continent as coordinated effort
+            rather than scattered goodwill.
           </p>
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <Button 
-              onClick={handleJoinPlatform}
-              className="bg-dna-copper hover:bg-dna-gold text-white px-10 py-4 text-lg rounded-lg font-semibold transition-colors shadow-lg hover:shadow-xl"
-            >
-              Join the Platform
-            </Button>
-            <Button 
-              onClick={() => navigate('/contact')}
-              variant="outline"
-              className="border-2 border-dna-forest text-dna-forest hover:bg-dna-forest hover:text-white px-10 py-4 text-lg rounded-lg font-semibold transition-colors shadow-lg hover:shadow-xl"
-            >
-              Get in Touch
-            </Button>
+        </div>
+      </section>
+
+      {/* Why DNA exists */}
+      <section className="py-12">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
+            <h2 className="text-h1 font-serif text-foreground">Why DNA exists</h2>
+            <div className="lg:col-span-2 space-y-4 text-body text-muted-foreground leading-relaxed max-w-prose">
+              <p>
+                The diaspora is not short on will, skill or money. It is short on a place where
+                those three meet a specific need at a specific time. A surgeon in Houston, a
+                logistics operator in Lisbon and a fund manager in Nairobi can all want the same
+                clinic built and never once be in the same room.
+              </p>
+              <p>
+                Every attempt to fix that with a group chat, a spreadsheet or an annual conference
+                runs out of energy before the work finishes. DNA exists so the effort survives the
+                enthusiasm: needs are stated, work becomes a completable unit, and contribution is
+                tracked to a result on the continent.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Join DNA Dialog */}
-      <JoinDNADialog 
-        isOpen={isJoinDialogOpen} 
+      {/* Mission and Vision */}
+      <section className="py-12 bg-muted/40 border-y border-border">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="rounded-xl border border-border bg-card p-6">
+              <h3 className="text-h2 font-serif text-foreground mb-3">Our mission</h3>
+              <p className="text-body text-muted-foreground leading-relaxed">
+                To create a unified platform that connects African diaspora professionals,
+                entrepreneurs and innovators worldwide, so they can collaborate on work that
+                drives sustainable development across Africa.
+              </p>
+            </div>
+            <div className="rounded-xl border border-border bg-card p-6">
+              <h3 className="text-h2 font-serif text-foreground mb-3">Our vision</h3>
+              <p className="text-body text-muted-foreground leading-relaxed">
+                A thriving ecosystem where the diaspora's collective knowledge, resources and
+                passion become tangible solutions to Africa's most pressing challenges.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Meet the founder */}
+      <section className="py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-micro uppercase text-dna-copper mb-4">Meet the founder</p>
+          <div className="grid lg:grid-cols-3 gap-8 lg:gap-12 items-start">
+            <div className="rounded-xl border border-border overflow-hidden bg-card">
+              <img
+                src="/lovable-uploads/02154efb-0abe-4ed4-b41f-265e4a856e8d.png"
+                alt="Jaûne L. Odombrown, Founder and CEO of Diaspora Network of Africa"
+                className="w-full aspect-square object-cover"
+                loading="lazy"
+              />
+            </div>
+
+            <div className="lg:col-span-2">
+              <h2 className="text-display font-serif text-foreground mb-1">Jaûne L. Odombrown</h2>
+              <p className="text-h3 text-dna-copper mb-6">Founder and Chief Executive Officer</p>
+
+              <div className="space-y-4 text-body text-muted-foreground leading-relaxed max-w-prose">
+                <p>
+                  Jaûne is an ecosystem builder who has spent his career putting people who would
+                  never have met in the same room, then keeping them there long enough to finish
+                  something. He started DNA after watching that work stall for the same reason
+                  every time: no shared place to hold it.
+                </p>
+                <p>
+                  He leads DNA from the same conviction it was founded on. Diaspora members are
+                  ready to build, and communities on the continent are ready to receive that
+                  effort. What has been missing is the infrastructure between them.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 mt-6">
+                <Button asChild variant="outline" className="touch-target justify-start">
+                  <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer">
+                    <Linkedin className="w-4 h-4 mr-2" />
+                    Connect with Jaûne on LinkedIn
+                  </a>
+                </Button>
+                <Button asChild variant="ghost" className="touch-target justify-start">
+                  <a href={DNA_PROFILE_URL} target="_blank" rel="noopener noreferrer">
+                    View his DNA profile
+                    <ArrowUpRight className="w-4 h-4 ml-2" />
+                  </a>
+                </Button>
+              </div>
+
+              <figure className="mt-8 border-l border-dna-copper pl-5">
+                <blockquote className="text-h3 font-serif italic text-foreground leading-relaxed max-w-prose">
+                  "The African diaspora represents one of the world's most powerful yet
+                  underutilized resources for positive change. By connecting our collective
+                  knowledge, passion and resources, we can transform challenges into opportunities
+                  and unlock Africa's limitless potential."
+                </blockquote>
+                <figcaption className="text-meta text-muted-foreground mt-3">
+                  Jaûne L. Odombrown
+                </figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Core values */}
+      <section className="py-12 bg-muted/40 border-y border-border">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-h1 font-serif text-foreground mb-8">Our core values</h2>
+          <ol className="grid md:grid-cols-3 gap-6">
+            {CORE_VALUES.map(({ numeral, name, copy }) => (
+              <li
+                key={name}
+                className="rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-dna-copper"
+              >
+                <span className="text-micro text-dna-copper">{numeral}</span>
+                <h3 className="text-h2 font-serif text-foreground mt-2 mb-2">{name}</h3>
+                <p className="text-body text-muted-foreground leading-relaxed">{copy}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* Sourced numbers */}
+      {featuredStats.length > 0 && (
+        <section className="py-12">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-h1 font-serif text-foreground mb-8">The scale we are building for</h2>
+            <dl className="grid sm:grid-cols-3 gap-6">
+              {featuredStats.map((stat) => (
+                <div key={stat.id} className="border-t border-border pt-4">
+                  <dd className="text-display font-serif text-dna-emerald">{stat.display_value}</dd>
+                  <dt className="text-h3 text-foreground mt-1">{stat.label}</dt>
+                  <p className="text-meta text-muted-foreground mt-2 leading-relaxed">
+                    {stat.description}
+                  </p>
+                  <p className="text-meta text-muted-foreground mt-2">
+                    {stat.source_url ? (
+                      <a
+                        href={stat.source_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline hover:text-dna-copper"
+                      >
+                        Source: {stat.source_name}
+                        {stat.year ? `, ${stat.year}` : ''}
+                      </a>
+                    ) : (
+                      <>
+                        Source: {stat.source_name}
+                        {stat.year ? `, ${stat.year}` : ''}
+                      </>
+                    )}
+                  </p>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+      )}
+
+      {/* Call to action */}
+      <section className="py-12 border-t border-border">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-h1 font-serif text-foreground mb-4">Join the mobilization</h2>
+          <p className="text-body text-muted-foreground leading-relaxed mb-6 max-w-prose">
+            Membership is where the work happens. Request access and we will let you know the
+            moment your place is open.
+          </p>
+          <div className="flex flex-wrap items-center gap-6">
+            <Button onClick={() => setIsJoinDialogOpen(true)} className="touch-target">
+              Request access
+            </Button>
+            <button
+              type="button"
+              onClick={() => navigate('/contact')}
+              className="text-body text-dna-forest underline hover:text-dna-copper transition-colors"
+            >
+              Or get in touch
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <JoinDNADialog
+        isOpen={isJoinDialogOpen}
         onClose={() => setIsJoinDialogOpen(false)}
-        onTakeSurvey={handleTakeSurvey}
+        onTakeSurvey={() => setIsSurveyOpen(true)}
       />
 
-      {/* Survey Dialog */}
-      <SurveyDialog 
-        isOpen={isSurveyOpen} 
-        onClose={() => setIsSurveyOpen(false)} 
-      />
+      <SurveyDialog isOpen={isSurveyOpen} onClose={() => setIsSurveyOpen(false)} />
 
       <Footer />
     </div>
