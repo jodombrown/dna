@@ -387,8 +387,9 @@ function App() {
               
               {/* Core authentication */}
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
-              <Route path="/waitlist" element={<Waitlist />} />
-              <Route path="/beta-access" element={<BetaAccess />} />
+              {/* Waitlist retired: signup is open, so both legacy paths land on sign up. */}
+              <Route path="/waitlist" element={<Navigate to="/auth?mode=signup" replace />} />
+              <Route path="/beta-access" element={<Navigate to="/auth?mode=signup" replace />} />
               <Route path="/demo" element={<Demo />} />
               <Route path="/design-system" element={<DesignSystem />} />
               <Route path="/install" element={<Install />} />
