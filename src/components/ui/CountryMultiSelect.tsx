@@ -74,7 +74,7 @@ export function CountryMultiSelect({
             aria-label={ariaLabel || placeholder}
             disabled={disabled}
             className={cn(
-              'w-full justify-between text-left font-normal min-h-[44px] bg-background',
+              'w-full justify-between text-left font-normal min-h-11 bg-background',
               error && 'border-destructive focus:ring-destructive',
               disabled && 'opacity-50 cursor-not-allowed',
               className
@@ -87,7 +87,8 @@ export function CountryMultiSelect({
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-[var(--radix-popover-trigger-width)] p-0 bg-background border shadow-lg z-50"
+          className="p-0 bg-background border shadow-lg z-50"
+          style={{ width: 'var(--radix-popover-trigger-width)' }}
           align="start"
         >
           <Command>

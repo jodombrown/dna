@@ -224,7 +224,7 @@ const ProfileEditDiaspora: React.FC<ProfileEditDiasporaProps> = ({
             placeholder="Select countries..."
             aria-label="Where do you want to help?"
           />
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-meta text-muted-foreground mt-1">
             Countries where you'd like your time, skills, or support to make a difference. This can be different from where you're from.
           </p>
         </div>
