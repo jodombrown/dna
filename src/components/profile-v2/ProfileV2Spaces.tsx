@@ -1,6 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, Link } from 'react-router-dom';
+import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -35,6 +36,7 @@ const ProfileV2SpacesImpl: React.FC<ProfileV2SpacesProps> = ({
   isOwner,
 }) => {
   const navigate = useNavigate();
+  const composer = useUniversalComposer();
   const profileUserId = profile.id;
 
   // Query spaces the profile user is leading (created)
@@ -229,7 +231,7 @@ const ProfileV2SpacesImpl: React.FC<ProfileV2SpacesProps> = ({
     spaces: SpaceDisplayItem[],
     emptyTitle: string,
     emptyDescription: string,
-    emptyAction: { label: string; path: string }
+    emptyAction: { label: string; path?: string; onClick?: () => void }
   ) => {
     if (spaces.length === 0) {
       return (
@@ -242,7 +244,7 @@ const ProfileV2SpacesImpl: React.FC<ProfileV2SpacesProps> = ({
             {emptyDescription}
           </p>
           {isOwner && (
-            <Button onClick={() => navigate(emptyAction.path)}>
+            <Button onClick={emptyAction.onClick ?? (() => navigate(emptyAction.path!))}>
               {emptyAction.label}
             </Button>
           )}
@@ -274,7 +276,7 @@ const ProfileV2SpacesImpl: React.FC<ProfileV2SpacesProps> = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => navigate('/dna/collaborate/spaces/new')}
+              onClick={() => composer.open('space')}
             >
               <Plus className="w-4 h-4 mr-2" />
               Create Space
@@ -328,7 +330,7 @@ const ProfileV2SpacesImpl: React.FC<ProfileV2SpacesProps> = ({
               isOwner
                 ? 'Create your first space to lead a project or initiative!'
                 : `${profile.full_name || 'This user'} hasn't created any spaces yet.`,
-              { label: 'Create Space', path: '/dna/collaborate/spaces/new' }
+              { label: 'Create Space', onClick: () => composer.open('space') }
             )}
           </TabsContent>
 

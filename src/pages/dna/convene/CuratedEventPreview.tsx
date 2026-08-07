@@ -29,13 +29,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { useToast } from '@/hooks/use-toast';
 import { EventTime } from '@/components/events/EventTime';
 import { isEventCompleted } from '@/lib/events/lifecycle';
 import { formatEventPlace, pickEventPlace } from '@/lib/events/formatPlace';
 import { curatedHostName, curatedSourceDomain, realCuratedCover } from '@/lib/events/curated';
 import { useCuratedEventPulse } from '@/hooks/convene/useCuratedEventPulse';
-import { ROUTES } from '@/config/routes';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
 import { LocationMap } from '@/components/maps/LocationMap';
 import { LocationLine } from '@/components/maps/LocationLine';
@@ -49,6 +49,7 @@ interface CuratedEventPreviewProps {
 export function CuratedEventPreview({ event, showBack = true }: CuratedEventPreviewProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const composer = useUniversalComposer();
   const { toast } = useToast();
 
   const eventId = event.id as string;
@@ -114,8 +115,8 @@ export function CuratedEventPreview({ event, showBack = true }: CuratedEventPrev
 
   const handleOpenSpace = () => {
     if (!requireUser()) return;
-    navigate(ROUTES.collaborate.createSpace, {
-      state: {
+    composer.open('space', {
+      spacePrefill: {
         name: `Going to ${title}`,
         tagline: cityLine ? `Members heading to ${title} · ${cityLine}` : `Members heading to ${title}`,
         description: curatedSourceUrl

@@ -6,11 +6,10 @@
 
 import { type ReactNode } from 'react';
 import { DnaMobileHubShell } from '@/components/mobile/DnaMobileHubShell';
+import { useUniversalComposer } from '@/contexts/ComposerContext';
 
 interface ContributeShellProps {
   children: ReactNode;
-  /** Placeholder shown in the mobile header bubble. */
-  bubblePlaceholder?: string;
   /** Max width of the centered content column. */
   maxWidthClassName?: string;
   /** Optional menu-nav row under the header. Omitted by default: the hub uses
@@ -20,13 +19,13 @@ interface ContributeShellProps {
 
 export function ContributeShell({
   children,
-  bubblePlaceholder = 'Search Needs',
   maxWidthClassName = 'max-w-2xl',
   tabs = null,
 }: ContributeShellProps) {
+  const composer = useUniversalComposer();
   return (
     <DnaMobileHubShell
-      bubble={{ kind: 'static', placeholder: bubblePlaceholder }}
+      bubble={{ kind: 'composer', placeholder: 'Post a Need...', onClick: () => composer.open('need') }}
       tabs={tabs ?? undefined}
     >
       <div className="bg-background">

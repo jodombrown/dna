@@ -58,6 +58,15 @@ export interface ComposerContext {
   relatedEventTitle?: string;
   relatedOpportunityId?: string;
   resharedContentId?: string;
+  // Initial-values prefill for the 'space' mode (BD087 inline compose) — the
+  // one caller (CuratedEventPreview) that used to hand this to the standalone
+  // /spaces/new form via router state now hands it here instead.
+  spacePrefill?: {
+    name?: string;
+    tagline?: string;
+    description?: string;
+    spaceType?: string;
+  };
 }
 
 export interface AgendaItem {

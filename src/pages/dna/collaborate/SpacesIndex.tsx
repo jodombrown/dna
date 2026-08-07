@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -26,6 +26,7 @@ interface SpaceRow {
 export default function SpacesIndex() {
   const { user } = useAuth();
   const joinSpace = useJoinSpace();
+  const composer = useUniversalComposer();
 
   const { data: spaces = [], isLoading } = useQuery({
     queryKey: ['spaces', 'index'],
@@ -69,7 +70,7 @@ export default function SpacesIndex() {
   const membershipMap = useMemo(() => memberships ?? {}, [memberships]);
 
   return (
-    <SpacesShell bubblePlaceholder="Search Spaces…">
+    <SpacesShell>
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">Spaces</h1>
@@ -77,11 +78,9 @@ export default function SpacesIndex() {
             Find a collaboration to join, or start your own.
           </p>
         </div>
-        <Button asChild className="shrink-0">
-          <Link to="/dna/collaborate/spaces/new">
-            <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
-            Create Space
-          </Link>
+        <Button onClick={() => composer.open('space')} className="shrink-0">
+          <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
+          Create Space
         </Button>
       </div>
 
@@ -96,11 +95,9 @@ export default function SpacesIndex() {
           <p className="text-sm text-muted-foreground">
             No spaces yet. Be the first to start one.
           </p>
-          <Button asChild className="mt-4">
-            <Link to="/dna/collaborate/spaces/new">
-              <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
-              Create Space
-            </Link>
+          <Button onClick={() => composer.open('space')} className="mt-4">
+            <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
+            Create Space
           </Button>
         </Card>
       ) : (

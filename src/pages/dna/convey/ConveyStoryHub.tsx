@@ -80,7 +80,6 @@ export default function ConveyStoryHub() {
   const activeTab: ConveyTab =
     (CONVEY_LENSES.find((l) => l.id === searchParams.get('lens'))?.id as ConveyTab) ?? 'pulse';
   const [selectedCategory, setSelectedCategory] = useState<StoryType | 'all'>('all');
-  const [searchQuery, setSearchQuery] = useState('');
   const composer = useUniversalComposer();
   const { isMobile } = useMobile();
   const mobileHeaderRef = useRef<HTMLDivElement>(null);
@@ -134,17 +133,8 @@ export default function ConveyStoryHub() {
     if (selectedCategory !== 'all') {
       result = result.filter((s) => s.story_type === selectedCategory);
     }
-    const q = searchQuery.trim().toLowerCase();
-    if (q.length > 0) {
-      result = result.filter((s) => {
-        const title = (s.title ?? '').toLowerCase();
-        const subtitle = (s.subtitle ?? '').toLowerCase();
-        const content = (s.content ?? '').toLowerCase();
-        return title.includes(q) || subtitle.includes(q) || content.includes(q);
-      });
-    }
     return result;
-  }, [stories, selectedCategory, searchQuery]);
+  }, [stories, selectedCategory]);
 
   // Get trending stories (top engaged) — restricted to validated story items.
   const trendingStories = useMemo(() => {
@@ -242,37 +232,6 @@ export default function ConveyStoryHub() {
           isMobile ? 'sticky top-0 pt-1 pb-0 -mx-4 px-4' : 'pb-0'
         )}
       >
-        {/* Title Row */}
-        <div className="flex items-center justify-between gap-3 mb-3">
-          <div className="flex items-center gap-3">
-            <div
-              className={cn(
-                'rounded-xl bg-dna-convey shadow-lg shrink-0',
-                isMobile ? 'p-2' : 'p-2.5'
-              )}
-            >
-              <BookOpen className={cn('text-white', isMobile ? 'h-5 w-5' : 'h-6 w-6')} />
-            </div>
-            <div>
-              <h1 className={cn('font-bold tracking-tight', isMobile ? 'text-xl' : 'text-2xl')}>
-                Convey
-              </h1>
-              <p className="text-xs text-muted-foreground hidden md:block">
-                The diaspora's living publication
-              </p>
-            </div>
-          </div>
-
-          <Button
-            onClick={() => composer.open('story')}
-            size="sm"
-            className="bg-dna-gold hover:bg-dna-gold/90 text-white shadow-md h-8 px-3"
-          >
-            <PenSquare className="h-4 w-4" />
-            {!isMobile && <span className="ml-2">Write</span>}
-          </Button>
-        </div>
-
         {/* Editorial Lens Bar (BD332): route-driven via ?lens=<id>. The
             descriptor line beneath the bar is now rendered by the LensBar
             primitive itself (BD332e), the one pattern every surface shares. */}
@@ -505,10 +464,9 @@ export default function ConveyStoryHub() {
         >
           <DnaMobileHeader
             bubble={{
-              kind: 'search',
-              placeholder: 'Search stories...',
-              value: searchQuery,
-              onChange: setSearchQuery,
+              kind: 'composer',
+              placeholder: 'Write a story, update...',
+              onClick: () => composer.open('story'),
             }}
           />
         </div>
