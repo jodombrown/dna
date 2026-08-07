@@ -56,10 +56,6 @@ const WhoIsDNAForSection = () => {
   return (
     <section className="py-12 lg:py-16 bg-gradient-to-br from-neutral-50 to-white">
       <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-8">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500 mb-2 text-center sm:text-left">
-            FAQ
-          </p>
           <h2 className={`${TYPOGRAPHY.h2} text-dna-copper mb-3 lg:mb-4 text-center sm:text-left`}>
             Who is DNA for?
           </h2>
