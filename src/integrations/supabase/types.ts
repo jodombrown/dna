@@ -7953,6 +7953,7 @@ export type Database = {
           email_notifications: boolean | null
           email_visible: boolean | null
           engagement_intentions: string[] | null
+          engagement_geography: string[] | null
           ethnic_heritage: string[] | null
           event_interest_tags: Json | null
           facebook_url: string | null
@@ -8185,6 +8186,7 @@ export type Database = {
           impact_regions?: string[] | null
           impact_scores?: Json | null
           impact_scores_updated_at?: string | null
+          engagement_geography?: string[] | null
           industries?: string[] | null
           industry?: string | null
           industry_sectors?: string[] | null
@@ -8395,6 +8397,7 @@ export type Database = {
           impact_regions?: string[] | null
           impact_scores?: Json | null
           impact_scores_updated_at?: string | null
+          engagement_geography?: string[] | null
           industries?: string[] | null
           industry?: string | null
           industry_sectors?: string[] | null
@@ -12123,6 +12126,7 @@ export type Database = {
           id: string | null
           impact_areas: string[] | null
           impact_regions: string[] | null
+          engagement_geography: string[] | null
           industry: string | null
           interest_tags: string[] | null
           interests: string[] | null
@@ -12162,6 +12166,7 @@ export type Database = {
           id?: string | null
           impact_areas?: string[] | null
           impact_regions?: string[] | null
+          engagement_geography?: string[] | null
           industry?: string | null
           interest_tags?: string[] | null
           interests?: string[] | null
@@ -12201,6 +12206,7 @@ export type Database = {
           id?: string | null
           impact_areas?: string[] | null
           impact_regions?: string[] | null
+          engagement_geography?: string[] | null
           industry?: string | null
           interest_tags?: string[] | null
           interests?: string[] | null
@@ -14213,6 +14219,7 @@ export type Database = {
           id: string
           impact_areas: string[]
           impact_regions: string[]
+          engagement_geography: string[]
           industry: string
           interest_tags: string[]
           interests: string[]
