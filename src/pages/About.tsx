@@ -95,7 +95,7 @@ const About = () => {
       {/* Why DNA exists */}
       <section className="py-12">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-[1fr,1.4fr] gap-8 lg:gap-12">
+          <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
             <h2 className="text-h1 font-serif text-foreground">Why DNA exists</h2>
             <div className="space-y-4 text-body text-muted-foreground leading-relaxed max-w-prose">
               <p>
@@ -142,7 +142,7 @@ const About = () => {
       <section className="py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-micro uppercase text-dna-copper mb-4">Meet the founder</p>
-          <div className="grid lg:grid-cols-[minmax(0,22rem),1fr] gap-8 lg:gap-12 items-start">
+          <div className="grid lg:grid-cols-3 gap-8 lg:gap-12 items-start">
             <div className="rounded-xl border border-border overflow-hidden bg-card">
               <img
                 src="/lovable-uploads/02154efb-0abe-4ed4-b41f-265e4a856e8d.png"
@@ -171,13 +171,13 @@ const About = () => {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3 mt-6">
-                <Button asChild variant="outline" className="min-h-touch justify-start">
+                <Button asChild variant="outline" className="touch-target justify-start">
                   <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer">
                     <Linkedin className="w-4 h-4 mr-2" />
                     Connect with Jaûne on LinkedIn
                   </a>
                 </Button>
-                <Button asChild variant="ghost" className="min-h-touch justify-start">
+                <Button asChild variant="ghost" className="touch-target justify-start">
                   <a href={DNA_PROFILE_URL} target="_blank" rel="noopener noreferrer">
                     View his DNA profile
                     <ArrowUpRight className="w-4 h-4 ml-2" />
@@ -267,7 +267,7 @@ const About = () => {
             moment your place is open.
           </p>
           <div className="flex flex-wrap items-center gap-6">
-            <Button onClick={() => setIsJoinDialogOpen(true)} className="min-h-touch">
+            <Button onClick={() => setIsJoinDialogOpen(true)} className="touch-target">
               Request access
             </Button>
             <button
