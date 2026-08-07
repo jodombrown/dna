@@ -83,7 +83,7 @@ const DiaSheet: React.FC = () => {
                   <div className="flex items-center gap-1.5">
                     <span className="font-heritage text-base font-semibold">DIA</span>
                     <Badge className="bg-dna-copper/10 text-dna-copper hover:bg-dna-copper/10 text-[9px] px-1.5 py-0 h-4 rounded-sm">
-                      Alpha
+                      Beta
                     </Badge>
                   </div>
                   <span className="text-[11px] text-muted-foreground truncate">
