@@ -206,6 +206,25 @@ const CheckInDashboard: React.FC = () => {
     getDevices();
   }, []);
 
+  // Release the camera on unmount (organizer closes the check-in dashboard
+  // without pressing "Stop") — previously only the explicit "Stop" button
+  // released it, so the camera stayed active indefinitely otherwise.
+  useEffect(() => {
+    return () => {
+      try { reader.reset(); } catch {}
+    };
+  }, [reader]);
+
+  // Also release it when navigating away from the scanner tab to another
+  // management tab, for the same reason.
+  useEffect(() => {
+    if (activeTab !== 'scanner' && scannerActive) {
+      try { reader.reset(); } catch {}
+      setScannerActive(false);
+      setScanResult({ state: 'ready' });
+    }
+  }, [activeTab, scannerActive, reader]);
+
   // Check-in mutation
   const checkInMutation = useMutation({
     mutationFn: async (attendeeId: string) => {

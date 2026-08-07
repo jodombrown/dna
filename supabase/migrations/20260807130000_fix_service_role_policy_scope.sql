@@ -1,0 +1,63 @@
+-- Fix H1 from the 2026-08-07 codebase bug audit: RLS policies named
+-- "Service role manages..." / "System can manage/insert/update/delete..."
+-- were created with no `TO` clause (defaulting to `PUBLIC`) or scoped to
+-- "any authenticated user" (`auth.uid() IS NOT NULL`) instead of the
+-- service role their name implies. Since Postgres OR-combines permissive
+-- policies together, each of these silently granted access to any
+-- authenticated (or, for badge_counts, even anon) caller, defeating the
+-- co-located "own row only" policies on the same tables.
+--
+-- Note on scope: `entity_vectors`' equivalent write policies
+-- ("System can insert/update/delete entity vectors") were already dropped
+-- with no replacement by 20260218053744_e5fb06ef-...sql ("FIX 5"),
+-- correctly locking those writes down to service_role only (which bypasses
+-- RLS entirely via the BYPASSRLS role attribute) — no action needed there.
+-- `user_vectors`' SELECT policy was likewise already corrected by that
+-- same migration (superseded again by 20260713001028_...sql) to
+-- `user_id = auth.uid() OR admin`. What was NOT fixed anywhere in the
+-- migration history is `user_vectors`' three write policies
+-- ("System can insert/update/delete user vectors", from
+-- 20251116072614_...sql), which remain scoped to "any authenticated user"
+-- to this day — any signed-in user can overwrite or delete any other
+-- user's personalization vector. The one client call site
+-- (`saveUserVector` in src/services/embeddingService.ts) is dead code, not
+-- imported anywhere in the app, so tightening this to service_role is
+-- fully non-breaking.
+--
+-- Fix: scope user_vectors' write policies to `service_role`, matching the
+-- correctly-scoped `adin_queries_all_service_role` policy elsewhere in the
+-- migration history and the `entity_vectors` precedent above.
+--
+-- See docs/audits/codebase-bug-audit-2026-08-07.md, finding H1.
+--
+-- Correction (post-staging-verification, see docs/audits/pr263-fix-notes):
+-- this migration originally also had `ALTER POLICY "Service role manages
+-- badge counts" ON public.badge_counts TO service_role;`. Confirmed against
+-- production (read-only) that `public.badge_counts` does not exist:
+-- `to_regclass('public.badge_counts')` returns NULL, and version
+-- '20260212400000' is absent from `supabase_migrations.schema_migrations`.
+-- The migration that defines it (20260212400000_notification_system.sql,
+-- badge_counts plus 4 sibling tables: notification_records,
+-- notification_batches, notification_preferences, push_tokens) never ran
+-- against production at all -- it was tracked in the repo but never
+-- deployed. Production's live notification system is the older, separate
+-- `notifications` table instead (see get_user_notifications in
+-- 20260807120000_fix_idor_user_scoped_rpcs.sql, which already queries it).
+-- There is no `badge_counts` table in production to scope a policy on, so
+-- that statement is dropped here rather than rewritten -- applying it would
+-- fail outright (`relation "badge_counts" does not exist`).
+--
+-- This is unrelated to the separate, already-live "impact badges" (badge
+-- achievement) system -- `impact_badges` / `badge_definitions` /
+-- `user_badges` -- which shares no tables with `badge_counts` despite the
+-- similar name. Confirmed against production: those tables exist and their
+-- write policies are already correctly scoped to `service_role`
+-- ("Service role inserts badges" on `user_badges`), so no live equivalent
+-- of this vulnerability exists there either. No action needed for either
+-- badge system; if the notification_system.sql migration is ever deployed
+-- to production in the future, its badge_counts policy will need this same
+-- service_role fix applied at that time.
+
+ALTER POLICY "Users insert own vectors" ON public.user_vectors TO service_role;
+ALTER POLICY "Users update own vectors" ON public.user_vectors TO service_role;
+ALTER POLICY "Users delete own vectors" ON public.user_vectors TO service_role;

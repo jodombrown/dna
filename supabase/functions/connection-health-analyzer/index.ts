@@ -23,15 +23,30 @@ async function analyzeConnectionHealth(supabase: any, userId: string, connection
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
   const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000)
 
+  // Resolve the 1:1 conversation(s) between exactly this pair, so the
+  // messages query below can scope to it. The old `.or(sender_id.eq.A,
+  // sender_id.eq.B)` filter only checked sender_id and never scoped to a
+  // shared conversation — it counted each user's messages to *anyone* on
+  // the platform, inflating health scores for users who are simply active
+  // in messaging elsewhere and defeating the "fading connection" nudge.
+  const { data: sharedConversations } = await supabase
+    .from('conversations')
+    .select('id')
+    .or(`and(user_a.eq.${userId},user_b.eq.${connectionId}),and(user_a.eq.${connectionId},user_b.eq.${userId})`)
+
+  const conversationIds = (sharedConversations || []).map((c: { id: string }) => c.id)
+
   // Check for various interactions between users
   const [messagesData, commentsData, reactionsData] = await Promise.all([
-    // Messages between users
-    supabase.from('messages')
-      .select('created_at')
-      .or(`sender_id.eq.${userId},sender_id.eq.${connectionId}`)
-      .gte('created_at', ninetyDaysAgo.toISOString())
-      .order('created_at', { ascending: false }),
-    
+    // Messages between users — scoped to their actual shared conversation(s)
+    conversationIds.length > 0
+      ? supabase.from('messages')
+          .select('created_at')
+          .in('conversation_id', conversationIds)
+          .gte('created_at', ninetyDaysAgo.toISOString())
+          .order('created_at', { ascending: false })
+      : Promise.resolve({ data: [] as { created_at: string }[] }),
+
     // Comments on each other's posts
     supabase.from('post_comments')
       .select('created_at, author_id')
@@ -125,11 +140,20 @@ serve(async (req) => {
 
     console.log('Starting connection health analysis...')
 
-    // Get all active connections
+    // Get accepted connections. Capped and chunked below: an unbounded
+    // fetch plus a fully sequential per-connection loop (each connection
+    // running 2x3 queries plus up to 4 more) will exceed the edge function
+    // execution timeout once the connection count grows past a few
+    // hundred. See engagement-tracker for the same pattern.
+    const BATCH_LIMIT = 2000
+    const CONCURRENCY = 15
+
     const { data: connections, error: fetchError } = await supabase
       .from('connections')
       .select('id, requester_id, recipient_id, created_at')
       .eq('status', 'accepted')
+      .order('id')
+      .limit(BATCH_LIMIT)
 
     if (fetchError) {
       throw fetchError
@@ -141,7 +165,10 @@ serve(async (req) => {
     let fadingConnections = 0
     let nudgesCreated = 0
 
-    for (const connection of connections || []) {
+    const processConnection = async (connection: { id: string; requester_id: string; recipient_id: string; created_at: string }) => {
+      let localWeak = 0
+      let localFading = 0
+      let localNudges = 0
       try {
         // Analyze health for both directions
         const healthA = await analyzeConnectionHealth(
@@ -159,8 +186,8 @@ serve(async (req) => {
         )
 
         // Track weak/fading connections
-        if (healthA.health_status === 'weak') weakConnections++
-        if (healthA.health_status === 'fading') fadingConnections++
+        if (healthA.health_status === 'weak') localWeak++
+        if (healthA.health_status === 'fading') localFading++
 
         // Create nudges for fading connections (60+ days no interaction)
         if (healthA.days_since_interaction >= 60) {
@@ -198,11 +225,22 @@ serve(async (req) => {
             expires_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
           })
 
-          nudgesCreated += 2
+          localNudges += 2
         }
 
       } catch (connError) {
         console.error(`Error analyzing connection ${connection.id}:`, connError)
+      }
+      return { weak: localWeak, fading: localFading, nudges: localNudges }
+    }
+
+    for (let i = 0; i < (connections || []).length; i += CONCURRENCY) {
+      const chunk = (connections || []).slice(i, i + CONCURRENCY)
+      const results = await Promise.all(chunk.map(processConnection))
+      for (const r of results) {
+        weakConnections += r.weak
+        fadingConnections += r.fading
+        nudgesCreated += r.nudges
       }
     }
 

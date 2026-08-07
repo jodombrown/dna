@@ -162,12 +162,21 @@ export function ZeroConnectionsState({
         </div>
 
         <div className="flex justify-center gap-2 flex-wrap max-w-md mx-auto">
-          {['Tech', 'Finance', 'Healthcare', 'Arts', 'Education', 'Entrepreneurship'].map((field) => (
+          {/*
+            These must match Discover's canonical industries taxonomy
+            (DiscoverFilterSheet's INDUSTRIES list) verbatim: Discover.tsx
+            filters via `.overlaps('industries', [...])` against that exact
+            casing. Lowercasing an arbitrary label here ("tech" for
+            "Technology") produced a value nothing in the profiles table
+            ever matched, so the filter silently returned zero results —
+            on top of Discover previously not even reading this param.
+          */}
+          {['Technology', 'Finance', 'Healthcare', 'Creative Industries', 'Education', 'Agriculture'].map((field) => (
             <Button
               key={field}
               variant="outline"
               size="sm"
-              onClick={() => navigate(`/dna/connect/discover?field=${field.toLowerCase()}`)}
+              onClick={() => navigate(`/dna/connect/discover?field=${encodeURIComponent(field)}`)}
               className="text-xs"
             >
               {field}

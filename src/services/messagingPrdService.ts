@@ -344,6 +344,15 @@ export const messagingPrdService = {
     const sentMessage = mapMessageRow(data as Record<string, unknown>);
 
     // Update conversation metadata
+    // NOTE: this targets conversations_new, but that table (per its
+    // migration history) never gained message_count, last_message_sender_id,
+    // or last_message_sender_name columns — only messaging_conversations
+    // has those. This update has likely never actually succeeded against a
+    // real database; left as-is rather than guessing which table this
+    // dead-code path (see the migration note above; sendMessage has no
+    // live caller) was meant to target — that's a design question for
+    // whoever reactivates this service, not something to silently
+    // reinterpret here.
     await db
       .from('conversations_new')
       .update({
@@ -371,21 +380,15 @@ export const messagingPrdService = {
       logger.warn(LOG_TAG, 'Failed to broadcast message', err);
     }
 
-    // Increment unread for other participants
-    const { data: otherParticipants } = await db
-      .from('messaging_participants')
-      .select('user_id, unread_count, mute_until')
-      .eq('conversation_id', conversationId)
-      .neq('user_id', senderId);
-
-    if (otherParticipants) {
-      for (const p of otherParticipants) {
-        await db
-          .from('messaging_participants')
-          .update({ unread_count: (p.unread_count || 0) + 1 })
-          .eq('conversation_id', conversationId)
-          .eq('user_id', p.user_id);
-      }
+    // Increment unread for other participants — a single atomic UPDATE via
+    // RPC instead of a client-computed read-then-write per participant,
+    // which could lose an increment under concurrent sends.
+    const { error: bumpError } = await db.rpc('messaging_bump_unread_counts', {
+      p_conversation_id: conversationId,
+      p_exclude_user_id: senderId,
+    });
+    if (bumpError) {
+      logger.warn(LOG_TAG, 'Failed to bump unread counts', bumpError);
     }
 
     // Update DIA metadata (never message content)
@@ -609,12 +612,12 @@ export const messagingPrdService = {
       .eq('id', messageId)
       .eq('conversation_id', conversationId);
 
-    // Update pinned count
-    const conversation = await this.getConversation(conversationId);
-    await db
-      .from('conversations_new')
-      .update({ pinned_message_count: conversation.pinnedMessageCount + 1 })
-      .eq('id', conversationId);
+    // Update pinned count atomically — reading pinned_message_count then
+    // writing stale_value + 1 loses increments under concurrent pins.
+    await db.rpc('messaging_bump_pinned_count', {
+      p_conversation_id: conversationId,
+      p_delta: 1,
+    });
 
     // Send system message
     const { data: profile } = await db
@@ -655,13 +658,10 @@ export const messagingPrdService = {
       .eq('id', messageId)
       .eq('conversation_id', conversationId);
 
-    const conversation = await this.getConversation(conversationId);
-    await db
-      .from('conversations_new')
-      .update({
-        pinned_message_count: Math.max(0, conversation.pinnedMessageCount - 1),
-      })
-      .eq('id', conversationId);
+    await db.rpc('messaging_bump_pinned_count', {
+      p_conversation_id: conversationId,
+      p_delta: -1,
+    });
   },
 
   // ============================================
@@ -689,12 +689,11 @@ export const messagingPrdService = {
       throw error;
     }
 
-    // Update participant count
-    const conversation = await this.getConversation(conversationId);
-    await db
-      .from('conversations_new')
-      .update({ participant_count: conversation.participantCount + 1 })
-      .eq('id', conversationId);
+    // Update participant count atomically — see messaging_bump_pinned_count.
+    await db.rpc('messaging_bump_participant_count', {
+      p_conversation_id: conversationId,
+      p_delta: 1,
+    });
   },
 
   /**
@@ -715,11 +714,10 @@ export const messagingPrdService = {
       throw error;
     }
 
-    const conversation = await this.getConversation(conversationId);
-    await db
-      .from('conversations_new')
-      .update({ participant_count: Math.max(0, conversation.participantCount - 1) })
-      .eq('id', conversationId);
+    await db.rpc('messaging_bump_participant_count', {
+      p_conversation_id: conversationId,
+      p_delta: -1,
+    });
   },
 
   /**

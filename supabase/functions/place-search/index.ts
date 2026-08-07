@@ -20,6 +20,7 @@
 
 import { corsHeaders } from '../_shared/cors.ts';
 import { toAlpha3 } from '../_shared/iso-alpha3.ts';
+import { requireUser } from '../_shared/auth.ts';
 
 interface AddressComponent {
   longText?: string;
@@ -103,6 +104,14 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+
+  // This is a thin proxy onto Google's paid Places API, billed per request
+  // against DNA's own key. With no auth check, anyone who found the function
+  // URL — no account required — could run up the bill or exhaust quota for
+  // real organizers. The only caller (PlaceSearchField, in the event
+  // composer) already runs behind a logged-in session.
+  const __auth = await requireUser(req);
+  if (!__auth.ok) return __auth.response;
 
   try {
     // The key is a server-side secret. If it is missing, SAY SO — a silent empty

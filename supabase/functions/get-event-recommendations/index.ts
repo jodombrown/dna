@@ -1,6 +1,8 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.9';
-import { requireUser, makeUserClient, callModel, writeEvent, modelFor } from '../_shared/dia-core/index.ts';
+import { requireUser, makeUserClient, callModel, writeEvent, modelFor, checkLimit, recordUsage } from '../_shared/dia-core/index.ts';
+
+const CAPABILITY = 'event_recommendations' as const;
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -78,8 +80,24 @@ serve(async (req) => {
       return acc;
     }, {} as Record<string, string[]>) || {};
 
+    // Limits (dia-core → dia_check_limit). Check before spending a model
+    // call — placed after the "no upcoming events" early return above,
+    // since that path never calls the model.
+    const limit = await checkLimit(admin, userId, CAPABILITY);
+    if (!limit.allowed) {
+      return new Response(
+        JSON.stringify({
+          error: 'Monthly query limit reached',
+          message: "You've used all your DIA queries this month",
+          limit: limit.limit,
+          used: limit.used,
+        }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
+
     // Use the DIA model spine to score and rank events
-    const systemPrompt = `You are an intelligent event recommendation system for the Diaspora Network of Africa (DNA). 
+    const systemPrompt = `You are an intelligent event recommendation system for the Diaspora Network of Africa (DNA).
 Your task is to analyze events and user profiles to recommend the most relevant events.
 
 Consider:
@@ -114,7 +132,7 @@ Recommend the top 10 events with scores and brief reasoning.`;
     let result;
     try {
       result = await callModel({
-        capability: 'event_recommendations',
+        capability: CAPABILITY,
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
@@ -149,8 +167,8 @@ Recommend the top 10 events with scores and brief reasoning.`;
     } catch (modelError) {
       console.error('Model error:', modelError);
       await writeEvent(admin, {
-        userId, capability: 'event_recommendations', surface: 'get-event-recommendations',
-        provider: 'gemini', model: modelFor('event_recommendations'), success: false,
+        userId, capability: CAPABILITY, surface: 'get-event-recommendations',
+        provider: 'gemini', model: modelFor(CAPABILITY), success: false,
         latencyMs: Date.now() - startTime, errorCode: 'model_unavailable',
         errorMessage: (modelError instanceof Error ? modelError.message : String(modelError)).slice(0, 300),
       });
@@ -191,11 +209,14 @@ Recommend the top 10 events with scores and brief reasoning.`;
       .filter(Boolean);
 
     await writeEvent(admin, {
-      userId, capability: 'event_recommendations', surface: 'get-event-recommendations',
+      userId, capability: CAPABILITY, surface: 'get-event-recommendations',
       provider: result.provider, model: result.model, success: true,
       latencyMs: Date.now() - startTime, tokens: result.tokens,
       meta: { events_scored: events.length },
     });
+
+    // Limits: record AFTER success so failed calls don't count.
+    await recordUsage(admin, userId, CAPABILITY, result.tokens ?? 0);
 
     console.log(`Generated ${recommendations.length} recommendations for user ${userId}`);
 

@@ -132,9 +132,15 @@ const handler = async (req: Request): Promise<Response> => {
       const batch = followers.slice(i, i + batchSize);
       
       try {
+        // Recipients go in `bcc`, not `to` — putting the whole batch in `to`
+        // exposed every subscriber's email address to every other recipient
+        // in that batch (visible via "reply all" or raw headers). `to` is
+        // set to the sending address itself, which every mail provider
+        // requires to be non-empty.
         const emailResponse = await resend.emails.send({
           from: `${author.full_name} <newsletter@resend.dev>`,
-          to: batch.map(f => f.email),
+          to: "newsletter@resend.dev",
+          bcc: batch.map(f => f.email),
           subject: emailSubject,
           html: emailHtml,
         });

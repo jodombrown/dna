@@ -31,7 +31,7 @@ const STEP_TITLES = [
 ];
 
 const Onboarding = () => {
-  const { user, profile, refreshProfile } = useAuth();
+  const { user, profile, loading: authLoading, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
@@ -86,12 +86,20 @@ const Onboarding = () => {
     engagement_intentions: profile?.engagement_intentions || [],
   });
 
-  // Redirect if user is not authenticated
+  // Redirect if user is not authenticated. Must wait for the initial auth
+  // session check to resolve first — every other guarded page in this app
+  // does the same (AuthGuard, OnboardingGuard, Welcome, Index, EventDetail).
+  // Without this, `user` reads as null on first mount (before the session
+  // check completes), so this effect fired immediately even for a
+  // just-authenticated user OnboardingGuard had sent here with a
+  // `?step=` param — bouncing them to /auth and, once auth resolved and
+  // sent them back, dropping that param and any resume progress.
   useEffect(() => {
+    if (authLoading) return;
     if (!user) {
       navigate('/auth', { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, authLoading, navigate]);
 
   // Redirect away only if onboarding is fully done AND we're not in partial mode
   // (i.e., user was sent back in to declare role/place per BD008).

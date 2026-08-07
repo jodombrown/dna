@@ -13,7 +13,6 @@ const corsHeaders = {
 };
 
 interface PasswordResetRequest {
-  email: string;
   resetUrl: string;
 }
 
@@ -27,7 +26,22 @@ const handler = async (req: Request): Promise<Response> => {
   if (!__auth.ok) return __auth.response;
 
   try {
-    const { email, resetUrl }: PasswordResetRequest = await req.json();
+    const { resetUrl }: PasswordResetRequest = await req.json();
+
+    // The recipient is always the authenticated caller's own account email,
+    // never a client-supplied address. Accepting an arbitrary `email` from
+    // the request body let any signed-up account make the platform send a
+    // legitimate-looking "DNA Platform" branded email — with an
+    // attacker-chosen resetUrl — to any address (phishing-enablement /
+    // email-relay abuse), since nothing checked that the target email
+    // belonged to the caller.
+    const email = __auth.email;
+    if (!email) {
+      return new Response(
+        JSON.stringify({ error: 'No email address on this account' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Validate resetUrl against allowed domains to prevent phishing
     const ALLOWED_HOSTS = ['diasporanetwork.africa', 'www.diasporanetwork.africa', 'diaspora-network-of-africa.lovable.app'];

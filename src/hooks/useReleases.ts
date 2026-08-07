@@ -200,12 +200,12 @@ export const useRelease = (slug: string) => {
 
       if (error) throw error;
 
-      // Increment view count
+      // Increment view count atomically — reading view_count and writing
+      // stale_value + 1 loses increments when two viewers load the same
+      // release concurrently. increment_release_view_count does the
+      // read-and-write as a single UPDATE.
       if (data?.id) {
-        await (supabase as any)
-          .from('releases')
-          .update({ view_count: (data.view_count || 0) + 1 })
-          .eq('id', data.id);
+        await (supabase as any).rpc('increment_release_view_count', { p_release_id: data.id });
       }
 
       return {

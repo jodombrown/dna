@@ -3,7 +3,7 @@
  * Filter controls for releases page
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
@@ -37,6 +37,12 @@ export const ReleaseFilters: React.FC<ReleaseFiltersProps> = ({
   className,
 }) => {
   const [searchValue, setSearchValue] = useState(filters.search || '');
+  // Called directly from onChange, not from a useEffect, so the returned
+  // cleanup below was never invoked by anything — each keystroke scheduled
+  // its own independent timer that nothing cancelled, firing
+  // onFiltersChange once per keystroke ~300ms later instead of once,
+  // 300ms after typing actually stops.
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   const handleFilterChange = (filter: ReleaseFilterType) => {
     onFiltersChange({ ...filters, filter });
@@ -48,11 +54,10 @@ export const ReleaseFilters: React.FC<ReleaseFiltersProps> = ({
 
   const handleSearchChange = (value: string) => {
     setSearchValue(value);
-    // Debounced search - only update after typing stops
-    const timer = setTimeout(() => {
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+    searchTimerRef.current = setTimeout(() => {
       onFiltersChange({ ...filters, search: value || undefined });
     }, 300);
-    return () => clearTimeout(timer);
   };
 
   const handleClearSearch = () => {

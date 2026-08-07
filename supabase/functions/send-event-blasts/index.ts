@@ -89,7 +89,8 @@ serve(async (req) => {
         .select('id, event_id, subject, body_markdown, segment, scheduled_for, sent_at')
         .eq('event_id', eventId)
         .is('sent_at', null)
-        .or(`scheduled_for.is.null,scheduled_for.lte.${nowIso}`);
+        .or(`scheduled_for.is.null,scheduled_for.lte.${nowIso}`)
+        .limit(50);
       if (error) throw error;
       blasts = data as Blast[];
     } else {
@@ -108,7 +109,8 @@ serve(async (req) => {
         .from('event_blasts')
         .select('id, event_id, subject, body_markdown, segment, scheduled_for, sent_at')
         .is('sent_at', null)
-        .lte('scheduled_for', nowIso);
+        .lte('scheduled_for', nowIso)
+        .limit(50);
       if (error) throw error;
       blasts = data as Blast[];
     }
@@ -159,15 +161,24 @@ serve(async (req) => {
         <div>${bodyHtml}</div>
       </div>`;
 
+      // One email API call per recipient, sequentially awaited with no
+      // cap, risked the function's execution timeout for any blast with a
+      // large segment and hit Resend's rate limits with no backoff.
+      // Batch with bounded concurrency, same pattern as messages-cleanup.
+      const SEND_CONCURRENCY = 10;
       const sendResults: any[] = [];
-      for (const to of emails) {
-        try {
-          const res = await resend.emails.send({ from: fromEmail, to: [to], subject: blast.subject, html });
-          sendResults.push({ to, id: (res as any).id || null });
-        } catch (e) {
-          console.error('send error', e);
-          sendResults.push({ to, error: String(e) });
-        }
+      for (let i = 0; i < emails.length; i += SEND_CONCURRENCY) {
+        const chunk = emails.slice(i, i + SEND_CONCURRENCY);
+        const chunkResults = await Promise.all(chunk.map(async (to) => {
+          try {
+            const res = await resend.emails.send({ from: fromEmail, to: [to], subject: blast.subject, html });
+            return { to, id: (res as any).id || null };
+          } catch (e) {
+            console.error('send error', e);
+            return { to, error: String(e) };
+          }
+        }));
+        sendResults.push(...chunkResults);
       }
 
       // Mark blast sent

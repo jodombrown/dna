@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -40,15 +40,23 @@ export const SignUpApprovalGate: React.FC<SignUpApprovalGateProps> = ({ onReques
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // checkApproval runs from both onBlur and handleSubmit with no request
+  // sequencing. If the user blurs with email A, then edits and blurs again
+  // with email B before A's RPC resolves, whichever response resolves last
+  // wins the final setApproval call — regardless of which email is
+  // currently in the input.
+  const latestCandidate = useRef('');
 
   const checkApproval = async () => {
     const candidate = email.trim().toLowerCase();
+    latestCandidate.current = candidate;
     if (!EMAIL_RE.test(candidate)) {
       setApproval('idle');
       return;
     }
     setApproval('checking');
     const { data, error } = await supabase.rpc('is_signup_approved', { p_email: candidate });
+    if (candidate !== latestCandidate.current) return; // a newer check superseded this one
     if (error) {
       console.error('Signup approval check failed', { email: candidate, error });
       setApproval('error');

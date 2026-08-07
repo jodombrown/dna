@@ -217,7 +217,7 @@ export const platformNotifications = {
       type: 'introduction',
       title: `${introducerName} introduced you to ${otherPersonName}`,
       message: messagePreview.slice(0, 120),
-      linkUrl: `/dna/messages?conversation=${conversationId}`,
+      linkUrl: `/dna/messages/${conversationId}`,
       entityType: 'introduction',
       actorId: introducerId,
     });

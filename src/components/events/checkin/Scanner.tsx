@@ -28,6 +28,15 @@ const Scanner: React.FC<ScannerProps> = ({ eventId, onCheckIn }) => {
     })();
   }, [deviceId]);
 
+  // Release the camera on unmount — without this, navigating away while
+  // the scanner is running left the camera stream open indefinitely (only
+  // the explicit "Stop" button released it).
+  useEffect(() => {
+    return () => {
+      try { (reader as any).reset?.(); (reader as any).stopContinuousDecode?.(); } catch {}
+    };
+  }, [reader]);
+
   const start = async () => {
     if (!videoRef.current || !deviceId) return;
     setActive(true);

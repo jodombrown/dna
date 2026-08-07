@@ -32,40 +32,33 @@ export function GroupJoinRequests({ groupId }: GroupJoinRequestsProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  // Fetch join requests
+  // Fetch join requests. This calls get_group_join_requests (a
+  // SECURITY DEFINER RPC) rather than selecting group_join_requests with
+  // a profiles:user_id join directly: profiles' general SELECT policy only
+  // allows a viewer to see a profile that's public, their own, or an
+  // accepted connection — but a join request is exactly the case of a
+  // stranger with neither. The direct join returned profiles: null for
+  // that row, and reading req.profiles.username off it threw, failing the
+  // whole query (not just that row) and silently hiding every pending
+  // request in the group. The RPC deliberately carves out this admin
+  // action from the general privacy policy, the same as admin_verify_user.
   const { data: requests, refetch } = useQuery({
     queryKey: ['group-join-requests', groupId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('group_join_requests')
-        .select(`
-          id,
-          group_id,
-          user_id,
-          message,
-          status,
-          created_at,
-          profiles:user_id (
-            username,
-            full_name,
-            avatar_url,
-            headline
-          )
-        `)
-        .eq('group_id', groupId)
-        .eq('status', 'pending')
-        .order('created_at', { ascending: false });
+      const { data, error } = await supabase.rpc('get_group_join_requests' as any, {
+        p_group_id: groupId,
+      });
 
       if (error) throw error;
 
-      return (data || []).map((req: any) => ({
+      return ((data || []) as any[]).map((req) => ({
         id: req.id,
         group_id: req.group_id,
         user_id: req.user_id,
-        username: req.profiles.username,
-        full_name: req.profiles.full_name,
-        avatar_url: req.profiles.avatar_url,
-        headline: req.profiles.headline,
+        username: req.username ?? 'unknown',
+        full_name: req.full_name ?? 'Unknown member',
+        avatar_url: req.avatar_url,
+        headline: req.headline,
         message: req.message,
         status: req.status,
         created_at: req.created_at,

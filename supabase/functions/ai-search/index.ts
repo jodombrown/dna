@@ -4,9 +4,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.9';
 
 const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -43,6 +41,18 @@ serve(async (req) => {
         status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+
+    // RLS-respecting client, scoped to the caller's own JWT — a user-facing
+    // search must only ever see what that user is allowed to see. This
+    // used to be a module-level service-role client (bypasses RLS
+    // entirely), letting any authenticated caller search the full
+    // profiles/events tables regardless of each row's real visibility.
+    const supabase = createClient(
+      supabaseUrl,
+      supabaseAnonKey,
+      { global: { headers: { Authorization: `Bearer ${token}` } } }
+    );
+
     const { data: userRes, error: userErr } = await supabase.auth.getUser(token);
     if (userErr || !userRes?.user) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
@@ -59,7 +69,7 @@ serve(async (req) => {
     console.log('Search intent analyzed:', intent);
 
     // Perform enhanced search based on AI understanding
-    const results = await performEnhancedSearch(intent, userId);
+    const results = await performEnhancedSearch(supabase, intent, userId);
     
     return new Response(JSON.stringify({
       intent,
@@ -173,7 +183,16 @@ async function analyzeSearchIntent(query: string): Promise<SearchIntent> {
   }
 }
 
-async function performEnhancedSearch(intent: SearchIntent, userId?: string) {
+// Strip PostgREST filter-syntax metacharacters before interpolating a term
+// (which may originate from the user's raw query, or from the LLM's
+// "expanded terms" — themselves influenced by that same user input) into a
+// `.or()` filter string. Without this, a term containing `,` or `)` breaks
+// out of the intended filter and can append/alter conditions.
+function sanitizeForOrFilter(text: string): string {
+  return String(text ?? '').replace(/[*(),]/g, '').trim();
+}
+
+async function performEnhancedSearch(supabase: any, intent: SearchIntent, userId?: string) {
   const results: any = {
     profiles: [],
     communities: [],
@@ -182,7 +201,9 @@ async function performEnhancedSearch(intent: SearchIntent, userId?: string) {
   };
 
   // Create search terms including expanded terms
-  const allSearchTerms = [intent.query, ...intent.expandedTerms];
+  const allSearchTerms = [intent.query, ...intent.expandedTerms]
+    .map(sanitizeForOrFilter)
+    .filter(Boolean);
   const searchPattern = allSearchTerms.map(term => `%${term.toLowerCase()}%`).join('|');
 
   // Search profiles if requested
@@ -194,10 +215,10 @@ async function performEnhancedSearch(intent: SearchIntent, userId?: string) {
       .limit(15);
 
     // Add text search across multiple fields
-    let profileFilter = allSearchTerms.map(term => 
+    let profileFilter = allSearchTerms.map(term =>
       `full_name.ilike.%${term}%,display_name.ilike.%${term}%,bio.ilike.%${term}%,professional_role.ilike.%${term}%`
     ).join(',');
-    
+
     profileQuery.or(profileFilter);
 
     if (intent.filters.location) {

@@ -85,22 +85,17 @@ export function useFollow(targetUserId: string | undefined): UseFollowResult {
           .eq('followed_id', targetUserId);
         if (error) throw error;
 
-        // Update counts
-        await Promise.all([
-          db.from('profiles').update({ follower_count: Math.max((counts?.followerCount || 1) - 1, 0) }).eq('id', targetUserId),
-          db.from('profiles').update({ following_count: Math.max((counts?.followingCount || 1) - 1, 0) }).eq('id', user.id),
-        ]).catch(() => {});
+        // follower_count/following_count on profiles are maintained
+        // atomically by the sync_follow_counts DB trigger on user_follows
+        // (see migration 20260807150000) — writing them from the client
+        // here was a racy read-modify-write that could lose increments
+        // under concurrent follow/unfollow actions, with errors silently
+        // swallowed. onSettled below refetches the authoritative counts.
       } else {
         const { error } = await db
           .from('user_follows')
           .insert({ follower_id: user.id, followed_id: targetUserId });
         if (error) throw error;
-
-        // Update counts
-        await Promise.all([
-          db.from('profiles').update({ follower_count: (counts?.followerCount || 0) + 1 }).eq('id', targetUserId),
-          db.from('profiles').update({ following_count: (counts?.followingCount || 0) + 1 }).eq('id', user.id),
-        ]).catch(() => {});
       }
     },
     // Optimistic update

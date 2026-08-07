@@ -197,13 +197,17 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const supabaseServiceRole = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    if (!supabaseUrl) {
+      throw new Error('SUPABASE_URL not configured');
+    }
     if (!supabaseServiceRole) {
       throw new Error('Service role key not configured');
     }
 
     const supabase = createClient(
-      'https://ybhssuehmfnxrzneobok.supabase.co',
+      supabaseUrl,
       supabaseServiceRole
     );
 

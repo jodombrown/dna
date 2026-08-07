@@ -29,6 +29,7 @@ export const VoiceMessageRecorder: React.FC<VoiceMessageRecorderProps> = ({
   const animationFrameRef = useRef<number | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -36,14 +37,27 @@ export const VoiceMessageRecorder: React.FC<VoiceMessageRecorderProps> = ({
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Cleanup on unmount
+  // Cleanup on unmount. Also stop the live recording (timer + mic stream) if
+  // the user navigates away mid-recording without pressing stop/cancel —
+  // previously the mic and the interval driving recordingTime both kept
+  // running indefinitely in that case.
   useEffect(() => {
     return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+        mediaRecorderRef.current.stop();
+      }
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
       if (audioContextRef.current) {
         audioContextRef.current.close();
+        audioContextRef.current = null;
       }
       if (audioRef.current) {
         audioRef.current.pause();
@@ -84,7 +98,8 @@ export const VoiceMessageRecorder: React.FC<VoiceMessageRecorderProps> = ({
   const startRecording = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      
+      streamRef.current = stream;
+
       // Set up audio context and analyser for waveform
       audioContextRef.current = new AudioContext();
       const source = audioContextRef.current.createMediaStreamSource(stream);
@@ -108,10 +123,11 @@ export const VoiceMessageRecorder: React.FC<VoiceMessageRecorderProps> = ({
         const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
         setAudioBlob(blob);
         stream.getTracks().forEach(track => track.stop());
-        
+        streamRef.current = null;
+
         // Generate static waveform for preview
         setWaveformData(Array(20).fill(0).map(() => 0.3 + Math.random() * 0.7));
-        
+
         if (audioContextRef.current) {
           audioContextRef.current.close();
           audioContextRef.current = null;

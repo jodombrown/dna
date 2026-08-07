@@ -2,11 +2,15 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "https://ybhssuehmfnxrzneobok.supabase.co";
+// No hardcoded production URL fallback: if SUPABASE_URL is ever unset in a
+// non-prod deploy, this must fail loudly (supabaseAdmin stays null, and the
+// existing `if (!supabaseAdmin)` checks below return a clear error) rather
+// than silently targeting production.
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
-const supabaseAdmin = SERVICE_ROLE_KEY ? createClient(SUPABASE_URL, SERVICE_ROLE_KEY) : null;
+const supabaseAdmin = SUPABASE_URL && SERVICE_ROLE_KEY ? createClient(SUPABASE_URL, SERVICE_ROLE_KEY) : null;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { FeedLayout } from '@/components/layout/FeedLayout';
+import { PageFrame } from '@/components/layout/PageFrame';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -204,6 +205,20 @@ export default function GroupSettingsPage() {
           </div>
         </div>
       </FeedLayout>
+    );
+  }
+
+  // The permission check above lived only inside the useEffect, which runs
+  // after render/commit. As soon as `group` resolved — regardless of
+  // role — this fell through to the full settings page render (tabs,
+  // "Danger Zone", the form) on that same render, with the redirect only
+  // firing afterward: a real flash of the settings UI for a non-admin.
+  // Guard synchronously here too.
+  if (!['owner', 'admin'].includes(group.user_role || '')) {
+    return (
+      <PageFrame centered>
+        <p className="text-body text-muted-foreground">Loading settings...</p>
+      </PageFrame>
     );
   }
 

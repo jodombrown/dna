@@ -246,7 +246,7 @@ async getConversationDetails(conversationId: string): Promise<ConversationListIt
 
 async getConversations(
     limit: number = 50,
-    _offset: number = 0,
+    offset: number = 0,
     includeArchived: boolean = false
   ): Promise<ConversationListItem[]> {
     const { data: { user } } = await supabase.auth.getUser();
@@ -258,7 +258,7 @@ async getConversations(
       .select('id, user_a, user_b, last_message_at, is_archived_by_a, is_archived_by_b, is_muted_by_a, is_muted_by_b, is_pinned_by_a, is_pinned_by_b, deleted_by_a, deleted_by_b, bucket_for_a, bucket_for_b')
       .or(`user_a.eq.${user.id},user_b.eq.${user.id}`)
       .order('last_message_at', { ascending: false, nullsFirst: false })
-      .limit(limit);
+      .range(offset, offset + limit - 1);
 
     if (error) {
       throw error;
@@ -273,14 +273,14 @@ async getConversations(
       const isUserA = conv.user_a === user.id;
       const isDeleted = isUserA ? conv.deleted_by_a : conv.deleted_by_b;
       const isArchived = isUserA ? conv.is_archived_by_a : conv.is_archived_by_b;
-      
+
       if (isDeleted) return false;
       if (!includeArchived && isArchived) return false;
       return true;
     });
 
     // Get other user IDs
-    const otherUserIds = filteredConversations.map(c => 
+    const otherUserIds = filteredConversations.map(c =>
       c.user_a === user.id ? c.user_b : c.user_a
     );
 
@@ -292,63 +292,69 @@ async getConversations(
 
     const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
 
-    // Build conversation list
-    const result: ConversationListItem[] = [];
-    for (const conv of filteredConversations) {
-      const isUserA = conv.user_a === user.id;
-      const otherUserId = isUserA ? conv.user_b : conv.user_a;
-      const profile = profileMap.get(otherUserId);
+    // Build conversation list. The last-message and unread-count/participant
+    // lookups run concurrently across all conversations instead of one
+    // sequential await-per-conversation `for` loop — for 50 conversations
+    // that was up to ~150 sequential round trips; this is one round trip's
+    // worth of latency for all of them.
+    const result: ConversationListItem[] = await Promise.all(
+      filteredConversations.map(async (conv) => {
+        const isUserA = conv.user_a === user.id;
+        const otherUserId = isUserA ? conv.user_b : conv.user_a;
+        const profile = profileMap.get(otherUserId);
 
-      // Get last message for this conversation
-      const { data: lastMessage } = await supabase
-        .from('messages')
-        .select('content')
-        .eq('conversation_id', conv.id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        const [{ data: lastMessage }, { data: participant }] = await Promise.all([
+          // Get last message for this conversation
+          supabase
+            .from('messages')
+            .select('content')
+            .eq('conversation_id', conv.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle(),
+          // Get unread count using conversation_participants.last_read_at
+          supabase
+            .from('conversation_participants')
+            .select('last_read_at')
+            .eq('conversation_id', conv.id)
+            .eq('user_id', user.id)
+            .maybeSingle(),
+        ]);
 
-      // Get unread count using conversation_participants.last_read_at
-      const { data: participant } = await supabase
-        .from('conversation_participants')
-        .select('last_read_at')
-        .eq('conversation_id', conv.id)
-        .eq('user_id', user.id)
-        .maybeSingle();
+        let unreadCount = 0;
+        if (participant) {
+          let query = supabase
+            .from('messages')
+            .select('id', { count: 'exact' })
+            .eq('conversation_id', conv.id)
+            .neq('sender_id', user.id);
 
-      let unreadCount = 0;
-      if (participant) {
-        let query = supabase
-          .from('messages')
-          .select('id', { count: 'exact' })
-          .eq('conversation_id', conv.id)
-          .neq('sender_id', user.id);
-        
-        if (participant.last_read_at) {
-          query = query.gt('created_at', participant.last_read_at);
+          if (participant.last_read_at) {
+            query = query.gt('created_at', participant.last_read_at);
+          }
+
+          const { count } = await query;
+          unreadCount = count || 0;
         }
-        
-        const { count } = await query;
-        unreadCount = count || 0;
-      }
 
-      const rawBucket = isUserA ? (conv as { bucket_for_a?: string }).bucket_for_a : (conv as { bucket_for_b?: string }).bucket_for_b;
-      const bucket = (rawBucket === 'requests' || rawBucket === 'spam' || rawBucket === 'primary') ? rawBucket : 'primary';
-      result.push({
-        conversation_id: conv.id,
-        other_user_id: otherUserId,
-        other_user_username: profile?.username || '',
-        other_user_full_name: profile?.full_name || 'Unknown User',
-        other_user_avatar_url: profile?.avatar_url || '',
-        last_message_content: lastMessage?.content || null,
-        last_message_at: conv.last_message_at,
-        unread_count: unreadCount || 0,
-        is_muted: isUserA ? (conv.is_muted_by_a ?? false) : (conv.is_muted_by_b ?? false),
-        is_pinned: isUserA ? (conv.is_pinned_by_a ?? false) : (conv.is_pinned_by_b ?? false),
-        is_archived: isUserA ? (conv.is_archived_by_a ?? false) : (conv.is_archived_by_b ?? false),
-        bucket,
-      });
-    }
+        const rawBucket = isUserA ? (conv as { bucket_for_a?: string }).bucket_for_a : (conv as { bucket_for_b?: string }).bucket_for_b;
+        const bucket = (rawBucket === 'requests' || rawBucket === 'spam' || rawBucket === 'primary') ? rawBucket : 'primary';
+        return {
+          conversation_id: conv.id,
+          other_user_id: otherUserId,
+          other_user_username: profile?.username || '',
+          other_user_full_name: profile?.full_name || 'Unknown User',
+          other_user_avatar_url: profile?.avatar_url || '',
+          last_message_content: lastMessage?.content || null,
+          last_message_at: conv.last_message_at,
+          unread_count: unreadCount || 0,
+          is_muted: isUserA ? (conv.is_muted_by_a ?? false) : (conv.is_muted_by_b ?? false),
+          is_pinned: isUserA ? (conv.is_pinned_by_a ?? false) : (conv.is_pinned_by_b ?? false),
+          is_archived: isUserA ? (conv.is_archived_by_a ?? false) : (conv.is_archived_by_b ?? false),
+          bucket,
+        };
+      })
+    );
 
     // Sort: pinned first, then by last_message_at
     result.sort((a, b) => {
@@ -366,27 +372,41 @@ async getConversations(
   async getMessages(
     conversationId: string,
     limit: number = 100,
-    _beforeTimestamp?: string
+    beforeTimestamp?: string
   ): Promise<MessageWithSender[]> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    // Get messages - query only columns that definitely exist
+    // Order newest-first so `.limit()` bounds the correct end of the
+    // conversation (the most recent messages, or — when paging further
+    // back — the `limit` messages immediately before `beforeTimestamp`),
+    // then reverse to chronological order for display. The previous
+    // ascending order + ignored `beforeTimestamp` meant any conversation
+    // over `limit` messages could only ever show its oldest messages, with
+    // no way to reach the recent ones or page backward.
     // Note: deleted_at may not exist if migration hasn't been applied yet
-    const { data: messages, error } = await supabase
+    let query = supabase
       .from('messages')
       .select('id, conversation_id, sender_id, content, read, created_at, payload, edited_at, deleted_at, forwarded_from_message_id')
       .eq('conversation_id', conversationId)
-      .order('created_at', { ascending: true })
+      .order('created_at', { ascending: false })
       .limit(limit);
+
+    if (beforeTimestamp) {
+      query = query.lt('created_at', beforeTimestamp);
+    }
+
+    const { data: rawMessages, error } = await query;
 
     if (error) {
       throw error;
     }
 
-    if (!messages || messages.length === 0) {
+    if (!rawMessages || rawMessages.length === 0) {
       return [];
     }
+
+    const messages = [...rawMessages].reverse();
 
     // Get unique sender IDs
     const senderIds = [...new Set(messages.map(m => m.sender_id))];

@@ -7,6 +7,40 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
+/**
+ * Recursively lists and removes every object under `prefix` in `bucket`.
+ * Supabase Storage's `list()` only returns one level at a time (folder
+ * entries come back with `id: null`), so nested paths — e.g.
+ * dna-media-public/${uid}/${surface}/... — have to be walked explicitly.
+ */
+async function removeUserStorage(
+  admin: ReturnType<typeof createClient>,
+  bucket: string,
+  prefix: string
+): Promise<void> {
+  const stack = [prefix];
+  const filesToRemove: string[] = [];
+  while (stack.length > 0) {
+    const dir = stack.pop()!;
+    const { data: entries, error } = await admin.storage.from(bucket).list(dir, { limit: 1000 });
+    if (error || !entries) continue;
+    for (const entry of entries) {
+      const fullPath = `${dir}/${entry.name}`;
+      if (entry.id === null) {
+        stack.push(fullPath);
+      } else {
+        filesToRemove.push(fullPath);
+      }
+    }
+  }
+  if (filesToRemove.length > 0) {
+    const { error: removeErr } = await admin.storage.from(bucket).remove(filesToRemove);
+    if (removeErr) {
+      console.warn(`Storage cleanup: remove failed for ${bucket}/${prefix}:`, removeErr.message);
+    }
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -53,13 +87,28 @@ Deno.serve(async (req) => {
 
     const userId = userData.user.id;
 
-    // Best-effort cleanup of user-related rows before deleting the auth user
+    // Best-effort cleanup of the user's storage objects before deleting DB
+    // rows/the auth user. These are the buckets that actually key files by
+    // uid-prefixed path in current upload code (avatars/${uid}/..,
+    // dna-media-public/${uid}/${surface}/.., post-media/${uid}/..); other
+    // bucket names referenced historically (banners, event-images, etc.)
+    // have no live uploader writing to them and are skipped.
+    for (const bucket of ["avatars", "dna-media-public", "post-media"]) {
+      try {
+        await removeUserStorage(admin, bucket, userId);
+      } catch (storageErr) {
+        console.warn(`Storage cleanup failed for ${bucket}:`, storageErr);
+      }
+    }
+
+    // Best-effort cleanup of user-related rows before deleting the auth user.
+    // `connection_preferences`/`connection_intentions`/`connection_events`
+    // were dropped entirely (migration 20251001163626) — deleting from them
+    // is dead code. `connections`' real columns are `requester_id`/
+    // `recipient_id`, not `a`/`b` (see src/integrations/supabase/types.ts).
     const deletions = [
-      { table: "connection_preferences", col: "user_id" },
-      { table: "connection_intentions", col: "by_user" },
-      { table: "connection_events", col: "actor" },
-      { table: "connections", col: "a" },
-      { table: "connections", col: "b" },
+      { table: "connections", col: "requester_id" },
+      { table: "connections", col: "recipient_id" },
       { table: "dia_nudges", col: "user_id" },
       { table: "dia_recommendations", col: "user_id" },
       { table: "dia_events", col: "user_id" },

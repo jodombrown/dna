@@ -15,12 +15,13 @@ serve(async (req) => {
   }
 
   try {
-    const { 
-      age_group, 
-      gender, 
-      current_country, 
-      country_of_origin, 
-      education, 
+    const body = await req.json();
+    const {
+      age_group,
+      gender,
+      current_country,
+      country_of_origin,
+      education,
       occupation,
       connection_methods,
       participation_frequency,
@@ -34,8 +35,23 @@ serve(async (req) => {
       last_name,
       email,
       additional_comments,
-      recipient_email 
-    } = await req.json()
+    } = body;
+
+    // No auth is expected here — this is a public, pre-signup market
+    // validation survey — but with zero protection an attacker can flood
+    // two real inboxes at will. Reject payloads with any field far larger
+    // than legitimate survey input needs, which also caps the cost of an
+    // "email an arbitrary huge blob to our admins" abuse pattern.
+    const MAX_FIELD_LENGTH = 3000;
+    const allStrings = Object.values(body).flatMap((v) =>
+      Array.isArray(v) ? v : [v]
+    ).filter((v): v is string => typeof v === 'string');
+    if (allStrings.some((s) => s.length > MAX_FIELD_LENGTH)) {
+      return new Response(JSON.stringify({ success: false, error: 'Response too long' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     const htmlContent = `
       <h2>DNA Market Validation Survey Response</h2>

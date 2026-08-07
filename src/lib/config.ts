@@ -93,12 +93,14 @@ export const getStorageUrl = (bucket: string, path: string): string => {
 
 /**
  * Generate a profile URL
- * @param usernameOrId - Username or user ID
+ * @param username - The member's exact username (not a display name or user
+ *   ID — `/dna/:username` resolves by exact match, with no database lookup
+ *   or slugification along the way, so passing anything else produces a
+ *   dead link)
  * @returns Full profile URL
  */
-export const getProfileUrl = (usernameOrId: string): string => {
-  const slug = usernameOrId.toLowerCase().replace(/\s+/g, '-');
-  return getAppUrl(`/u/${slug}`);
+export const getProfileUrl = (username: string): string => {
+  return getAppUrl(`/dna/${username}`);
 };
 
 /**
@@ -134,7 +136,11 @@ export const getPostUrl = (postId: string): string => {
  * @returns Full messages URL
  */
 export const getConversationUrl = (conversationId: string): string => {
-  return getAppUrl(`/dna/messages?conversation=${conversationId}`);
+  // Must match the registered route (`/dna/messages/:conversationId` in
+  // App.tsx, ROUTES.messages.conversation in config/routes.ts) — Messages.tsx
+  // reads the conversation from the path param (or a `?thread=` query param),
+  // never a `?conversation=` one, so that variant landed on the generic inbox.
+  return getAppUrl(`/dna/messages/${conversationId}`);
 };
 
 /**

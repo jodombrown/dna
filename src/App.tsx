@@ -79,11 +79,14 @@ const UserManagement = lazy(() => import("./pages/admin/UserManagement"));
 const PlatformHealth = lazy(() => import("./pages/admin/PlatformHealth"));
 const ErrorDashboard = lazy(() => import("./pages/admin/ErrorDashboard"));
 const ContentModeration = lazy(() => import("./pages/admin/ContentModeration"));
+const SponsorshipManagement = lazy(() => import("./pages/admin/SponsorshipManagement"));
+const SponsorLogoAuditLog = lazy(() => import("./pages/admin/SponsorLogoAuditLog"));
 
 // New Admin Dashboard Routes
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
 const AdminDashboardLayout = lazy(() => import("./components/admin/AdminDashboardLayout"));
 const AdminDashboardOverview = lazy(() => import("./pages/admin/AdminDashboardOverview"));
+const AdminComingSoon = lazy(() => import("./pages/admin/AdminComingSoon"));
 const AdminRouteGuard = lazy(() => import("./components/admin/AdminRouteGuard").then(m => ({ default: m.AdminRouteGuard })));
 const StatCitationsAdmin = lazy(() => import("./pages/admin/StatCitationsAdmin"));
 const CuratedSourceReviews = lazy(() => import("./pages/admin/CuratedSourceReviews"));
@@ -132,6 +135,7 @@ const TeamManager = lazy(() => import("./components/convene/management/team/Team
 // Event settings folded into the unified event form (EditEventPage) — old
 // /manage/settings links redirect there.
 const EventSettingsRedirect = lazy(() => import("./components/routing/EventSettingsRedirect"));
+const LegacyEventManageRedirect = lazy(() => import("./components/routing/LegacyEventManageRedirect"));
 
 // Collaborate M1-M5 pages
 const CollaborateHub = lazy(() => import("./pages/dna/collaborate/CollaborateHub"));
@@ -606,13 +610,13 @@ function App() {
                 <Route path="team" element={<TeamManager />} />
                 <Route path="settings" element={<EventSettingsRedirect />} />
               </Route>
-              <Route path="/dna/convene/events/:id/manage" element={<Navigate to=".." replace />} />
-              <Route path="/dna/convene/events/:id/manage/attendees" element={<Navigate to="../attendees" replace />} />
-              <Route path="/dna/convene/events/:id/manage/check-in" element={<Navigate to="../check-in" replace />} />
-              <Route path="/dna/convene/events/:id/manage/communications" element={<Navigate to="../communications" replace />} />
-              <Route path="/dna/convene/events/:id/manage/analytics" element={<Navigate to="../analytics" replace />} />
-              <Route path="/dna/convene/events/:id/manage/team" element={<Navigate to="../team" replace />} />
-              <Route path="/dna/convene/events/:id/manage/settings" element={<Navigate to="../settings" replace />} />
+              <Route path="/dna/convene/events/:id/manage" element={<LegacyEventManageRedirect />} />
+              <Route path="/dna/convene/events/:id/manage/attendees" element={<LegacyEventManageRedirect to="attendees" />} />
+              <Route path="/dna/convene/events/:id/manage/check-in" element={<LegacyEventManageRedirect to="check-in" />} />
+              <Route path="/dna/convene/events/:id/manage/communications" element={<LegacyEventManageRedirect to="communications" />} />
+              <Route path="/dna/convene/events/:id/manage/analytics" element={<LegacyEventManageRedirect to="analytics" />} />
+              <Route path="/dna/convene/events/:id/manage/team" element={<LegacyEventManageRedirect to="team" />} />
+              <Route path="/dna/convene/events/:id/manage/settings" element={<LegacyEventManageRedirect to="settings" />} />
               {/* Event creation wizard — full 5-step flow */}
               {/* Event creation now handled by Universal Composer */}
               <Route path="/dna/convene/events/:id/edit" element={
@@ -874,6 +878,11 @@ function App() {
                 <Route path="citations" element={<StatCitationsAdmin />} />
                 {/* Curated source review queue (Convene C2.4) */}
                 <Route path="curated-source-reviews" element={<CuratedSourceReviews />} />
+                {/* Catch-all for sidebar links that don't have a page yet
+                    (AdminDashboardLayout's nav lists several roadmap items
+                    with no matching route) — keeps them in-shell instead of
+                    falling through to the global 404 below. */}
+                <Route path="*" element={<AdminComingSoon />} />
               </Route>
 
               {/* Legacy Admin routes */}
@@ -886,6 +895,8 @@ function App() {
                 <Route path="signals" element={<AdminSignals />} />
                 <Route path="moderation" element={<ContentModeration />} />
                 <Route path="convey" element={<ConveyAnalytics />} />
+                <Route path="sponsorships" element={<SponsorshipManagement />} />
+                <Route path="sponsorships/logo-audit" element={<SponsorLogoAuditLog />} />
               </Route>
 
               {/* Static pages */}
