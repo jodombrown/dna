@@ -1,10 +1,9 @@
 /**
  * Spaces — creation service
  *
- * The ONE code path that creates a Space. Used by the canonical page
- * (/dna/collaborate/spaces/new) and by the Universal Composer's Collaborate
- * verb (BD087 reversal: Space composes inline; the member never leaves the
- * composer).
+ * The ONE code path that creates a Space. Used by the Universal Composer's
+ * Collaborate verb (BD087 reversal: Space composes inline; the member never
+ * leaves the composer).
  *
  * The spaces INSERT trigger (add_creator_as_member) seats the creator as an
  * active `lead` in space_members — callers must NOT insert that membership

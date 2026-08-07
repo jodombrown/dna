@@ -26,7 +26,7 @@ const HeroSection = () => {
                   <span className="text-dna-copper">Diaspora Network of Africa</span>
                 </h1>
                 
-                <p className="text-lg sm:text-xl lg:text-2xl xl:text-3xl text-muted-foreground mb-2 lg:mb-3 leading-relaxed">
+                <p className="text-h1 text-muted-foreground mb-2 lg:mb-3 leading-relaxed text-left sm:text-center lg:text-left">
                   Where the African diaspora goes from scattered potential to coordinated power.
                 </p>
 
@@ -52,7 +52,7 @@ const HeroSection = () => {
                 </div>
 
                 {/* Legal Disclaimer */}
-                <p className="text-xs sm:text-sm text-neutral-600 text-center lg:text-left leading-relaxed">
+                <p className="text-meta text-muted-foreground text-left sm:text-center lg:text-left leading-relaxed">
                   By clicking Continue to join or sign in, you agree to DNA's{' '}
                   <a href="/legal/user-agreement" className="text-dna-copper hover:underline font-medium">
                     User Agreement

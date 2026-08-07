@@ -96,7 +96,6 @@ const About = lazy(() => import("./pages/About"));
 const Install = lazy(() => import("./pages/Install"));
 const Waitlist = lazy(() => import("./pages/Waitlist"));
 const BetaAccess = lazy(() => import("./pages/BetaAccess"));
-const Contact = lazy(() => import("./pages/Contact"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const UserAgreement = lazy(() => import("./pages/UserAgreement"));
@@ -122,7 +121,6 @@ const EventDetail = lazy(() => import("./pages/dna/convene/EventDetail"));
 const EventOverview = lazy(() => import("./components/convene/EventOverview"));
 const Welcome = lazy(() => import("./pages/dna/Welcome"));
 const MyEvents = lazy(() => import("./pages/dna/convene/MyEvents"));
-const EventAnalytics = lazy(() => import("./pages/dna/convene/EventAnalytics"));
 const OrganizerAnalytics = lazy(() => import("./pages/dna/convene/OrganizerAnalytics"));
 const GroupsBrowse = lazy(() => import("./pages/dna/convene/GroupsBrowse"));
 const GroupEventsPage = lazy(() => import("./pages/dna/convene/GroupEventsPage"));
@@ -144,7 +142,6 @@ const CollaborateHub = lazy(() => import("./pages/dna/collaborate/CollaborateHub
 const SpacesIndex = lazy(() => import("./pages/dna/collaborate/SpacesIndex"));
 const CollaborateSpaceDetail = lazy(() => import("./pages/dna/collaborate/SpaceDetail"));
 const SpaceBoard = lazy(() => import("./pages/dna/collaborate/SpaceBoard"));
-const CreateSpace = lazy(() => import("./pages/dna/collaborate/CreateSpace"));
 const SpaceSettings = lazy(() => import("./pages/dna/collaborate/SpaceSettings"));
 const MySpaces = lazy(() => import("./pages/dna/collaborate/MySpaces"));
 
@@ -627,17 +624,6 @@ function App() {
                   <EditEventPage />
                 </OnboardingGuard>
               } />
-              <Route path="/dna/convene/events/:id/analytics" element={
-                <OnboardingGuard>
-                  <EventAnalytics />
-                </OnboardingGuard>
-              } />
-              <Route path="/dna/convene/events/:id/check-in" element={
-                <OnboardingGuard>
-                  <EventCheckIn />
-                </OnboardingGuard>
-              } />
-
               <Route path="/dna/convene/mine" element={
                 <OnboardingGuard>
                   <MyEvents />
@@ -675,11 +661,6 @@ function App() {
               <Route path="/dna/collaborate/spaces" element={
                 <OnboardingGuard>
                   <SpacesIndex />
-                </OnboardingGuard>
-              } />
-              <Route path="/dna/collaborate/spaces/new" element={
-                <OnboardingGuard>
-                  <CreateSpace />
                 </OnboardingGuard>
               } />
               <Route path="/dna/collaborate/spaces/:slug" element={
@@ -927,7 +908,6 @@ function App() {
               <Route path="/partner-with-dna/start" element={<PartnerStart />} />
 
               {/* Static pages */}
-              <Route path="/contact" element={<Contact />} />
               <Route path="/about" element={<About />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />

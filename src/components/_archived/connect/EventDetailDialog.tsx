@@ -20,13 +20,13 @@ type Props = {
 // Event logo images - contextually relevant
 const getEventLogo = (eventTitle: string, eventType: string) => {
   if (eventTitle.toLowerCase().includes('tech') || eventTitle.toLowerCase().includes('innovation')) {
-    return 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=150&h=150&fit=crop';
+    return 'https://picsum.photos/seed/4e9042af21/150/150';
   }
   if (eventTitle.toLowerCase().includes('investment') || eventTitle.toLowerCase().includes('finance')) {
     return 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=150&h=150&fit=crop';
   }
   if (eventTitle.toLowerCase().includes('health')) {
-    return 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=150&h=150&fit=crop';
+    return 'https://picsum.photos/seed/112ba8d25d/150/150';
   }
   if (eventTitle.toLowerCase().includes('agri')) {
     return 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=150&h=150&fit=crop';

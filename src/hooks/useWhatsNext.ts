@@ -65,35 +65,7 @@ export function useWhatsNext() {
         });
       }
 
-      // 3. Check for spaces user can join based on their role/interests
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('intents')
-        .eq('id', user.id)
-        .single();
-
-      if (profile?.intents && profile.intents.length > 0) {
-        const { data: relevantSpaces } = await supabase
-          .from('spaces')
-          .select('id, name')
-          .eq('visibility', 'public')
-          .eq('status', 'active')
-          .limit(1);
-
-        if (relevantSpaces && relevantSpaces.length > 0) {
-          recommendations.push({
-            id: 'join_space',
-            title: 'Spaces Matching Your Interests',
-            description: `Explore ${relevantSpaces[0].name} and similar projects`,
-            pillar: 'collaborate',
-            route: '/dna/collaborate',
-            priority: 6,
-            icon: 'folder-kanban',
-          });
-        }
-      }
-
-      // 4. Check for spaces user is member of with open needs
+      // 3. Check for spaces user is member of with open needs
       // Two-step fetch pattern to avoid PostgREST FK resolution issues
       const { data: memberSpaces } = await supabase
         .from('space_members')
@@ -124,7 +96,7 @@ export function useWhatsNext() {
         }
       }
 
-      // 5. Encourage sharing a story if user has been active
+      // 4. Encourage sharing a story if user has been active
       const { data: recentActivity } = await supabase
         .from('posts')
         .select('id')
@@ -145,7 +117,7 @@ export function useWhatsNext() {
         });
       }
 
-      // 6. Based on last view state, suggest returning
+      // 5. Based on last view state, suggest returning
       if (lastState && lastState.last_view_state !== 'DASHBOARD_HOME') {
         const viewStateMap: Record<string, { pillar: NextActionCard['pillar']; route: string; title: string }> = {
           CONNECT_MODE: { pillar: 'connect', route: '/dna/connect', title: 'Continue Building Your Network' },

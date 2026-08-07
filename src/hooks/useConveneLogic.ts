@@ -52,7 +52,7 @@ export const useConveneLogic = () => {
       },
       creatorName: 'Dr. Amina Hassan',
       creatorImage: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&h=80&fit=crop&crop=face',
-      eventLogo: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=120&h=120&fit=crop',
+      eventLogo: 'https://picsum.photos/seed/4e9042af21/120/120',
       bannerImage: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=500&h=200&fit=crop',
       featured: true,
       spotsLeft: 50,
@@ -123,7 +123,7 @@ export const useConveneLogic = () => {
         avatar: null
       },
       creatorName: 'Sarah Mwangi',
-      creatorImage: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=80&h=80&fit=crop&crop=face',
+      creatorImage: 'https://picsum.photos/seed/2616b612b8/80/80',
       eventLogo: 'https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?w=120&h=120&fit=crop',
       bannerImage: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=500&h=200&fit=crop',
       featured: false,
@@ -171,7 +171,7 @@ export const useConveneLogic = () => {
         avatar: null
       },
       creatorName: 'Dr. Chinedu Okonkwo',
-      creatorImage: 'https://images.unsplash.com/photo-1566492031773-4f4e44671d66?w=80&h=80&fit=crop&crop=face',
+      creatorImage: 'https://picsum.photos/seed/4f4e44671d/80/80',
       eventLogo: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=120&h=120&fit=crop',
       bannerImage: 'https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?w=500&h=200&fit=crop',
       featured: false,

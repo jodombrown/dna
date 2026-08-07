@@ -82,14 +82,13 @@ const ContributeSection = () => {
   };
 
   const renderCard = (contribution: typeof contributions[0]) => {
-    const Icon = contribution.icon;
     return (
       <div className={`bg-gradient-to-br ${contribution.gradient} rounded-xl p-1.5 shadow-2xl h-full w-full`}>
         <div className="bg-white rounded-xl overflow-hidden h-full flex flex-col">
           <div className={`bg-gradient-to-r ${contribution.gradient} text-white p-6`}>
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold text-lg font-serif">{contribution.categoryTitle}</h3>
-              <Icon className="w-5 h-5" />
+              <Adinkrahene className="w-5 h-5" />
             </div>
             <p className="text-sm text-white/80">{contribution.categorySubtitle}</p>
           </div>

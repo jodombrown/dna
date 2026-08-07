@@ -166,23 +166,8 @@ export default function ContributeHub() {
   }
 
   return (
-    <ContributeShell bubblePlaceholder="Search Needs">
+    <ContributeShell>
       <div className="flex flex-col gap-6">
-        <div className="flex items-start justify-between gap-4">
-          <div className="space-y-1">
-            <h1 className="text-h1 text-foreground">Contribute</h1>
-            <p className="text-body text-muted-foreground">
-              A Need is a specific ask met by named people, or honestly closed unmet.
-            </p>
-          </div>
-          <Button asChild className="shrink-0">
-            <Link to="/dna/contribute/my-needs">
-              <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
-              Post a Need
-            </Link>
-          </Button>
-        </div>
-
         <ContributeLensBar />
 
         {renderLensBody()}

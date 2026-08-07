@@ -234,6 +234,34 @@ export const UniversalComposer = ({
     if (!isOpen) hydratedRef.current = false;
   }, [isOpen]);
 
+  // ---- Space prefill: CuratedEventPreview hands name/tagline/description in
+  // via context.spacePrefill (the old /spaces/new form read the same fields
+  // from router state). Runs after draft restore so an explicit prefill wins.
+  const spacePrefillAppliedRef = useRef(false);
+  useEffect(() => {
+    if (!isOpen) {
+      spacePrefillAppliedRef.current = false;
+      return;
+    }
+    if (spacePrefillAppliedRef.current) return;
+    const prefill = context.spacePrefill;
+    if (!prefill) return;
+    spacePrefillAppliedRef.current = true;
+
+    const owned = new Set<string>();
+    if (prefill.name) {
+      setFields((f) => ({ ...f, title: prefill.name! }));
+      owned.add('title');
+    }
+    if (prefill.spaceType) {
+      setFields((f) => ({ ...f, type: prefill.spaceType! }));
+      owned.add('type');
+    }
+    const bodyText = [prefill.tagline, prefill.description].filter(Boolean).join('\n\n');
+    if (bodyText) setBody(bodyText);
+    if (owned.size) setOwnedByAuthor((s) => new Set([...s, ...owned]));
+  }, [isOpen, context]);
+
   useEffect(() => {
     if (!isOpen || !userId || successData) return;
     clearTimeout(draftTimerRef.current);

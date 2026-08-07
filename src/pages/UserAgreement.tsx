@@ -327,8 +327,8 @@ const UserAgreement = () => {
             </AccordionTrigger>
             <AccordionContent className="prose prose-slate max-w-none text-foreground">
               <p>
-                For general inquiries, you may contact us through our
-                <a href="/contact" className="text-dna-copper hover:underline mx-1">Contact page</a>.
+                For general inquiries, you may email us at
+                <a href="mailto:support@diasporanetworkofafrica.org" className="text-dna-copper hover:underline mx-1">support@diasporanetworkofafrica.org</a>.
               </p>
               <p className="mt-4">
                 <strong>Diaspora Network of Africa</strong><br />

@@ -25,7 +25,7 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
       isVirtual: false,
       attendeeCount: 450,
       isFeatured: true,
-      eventLogo: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=120&h=120&fit=crop',
+      eventLogo: 'https://picsum.photos/seed/4e9042af21/120/120',
       bannerImage: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=500&h=200&fit=crop',
       creatorName: 'Dr. Amina Hassan',
       creatorImage: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&h=80&fit=crop&crop=face'
@@ -70,7 +70,7 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
       id: 'tech-innovators',
       name: 'African Tech Innovators',
       description: 'Curating the best tech events across Africa',
-      logo: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=120&h=120&fit=crop',
+      logo: 'https://picsum.photos/seed/4e9042af21/120/120',
       eventCount: 24,
       followers: 1200
     },

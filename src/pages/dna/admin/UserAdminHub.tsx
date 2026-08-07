@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { Calendar, Handshake, Heart, BookOpen, BarChart3, Users, Settings, ChevronRight } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -27,12 +28,13 @@ interface AdminSection {
   path: string;
   pillar?: string;
   color: string;
-  items?: { label: string; path: string }[];
+  items?: { label: string; path?: string; onClick?: () => void }[];
 }
 
 const UserAdminHub: React.FC = () => {
   const navigate = useNavigate();
   const { profile } = useAuth();
+  const composer = useUniversalComposer();
 
   const adminSections: AdminSection[] = [
     {
@@ -57,7 +59,7 @@ const UserAdminHub: React.FC = () => {
       color: 'text-copper-600 bg-copper-100',
       items: [
         { label: 'My Spaces', path: '/dna/collaborate/my-spaces' },
-        { label: 'Create Space', path: '/dna/collaborate/spaces/new' },
+        { label: 'Create Space', onClick: () => composer.open('space') },
       ]
     },
     {
@@ -148,13 +150,14 @@ const UserAdminHub: React.FC = () => {
                   <div className="space-y-1">
                     {section.items.map((item) => (
                       <Button
-                        key={item.path}
+                        key={item.label}
                         variant="ghost"
                         size="sm"
                         className="w-full justify-between text-muted-foreground hover:text-foreground"
                         onClick={(e) => {
                           e.stopPropagation();
-                          navigate(item.path);
+                          if (item.onClick) item.onClick();
+                          else navigate(item.path!);
                         }}
                       >
                         {item.label}

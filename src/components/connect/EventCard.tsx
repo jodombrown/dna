@@ -24,7 +24,7 @@ interface EventCardProps {
 const getEventLogo = (eventTitle: string, eventType: string) => {
   // Tech/Innovation events
   if (eventTitle.toLowerCase().includes('tech') || eventTitle.toLowerCase().includes('innovation')) {
-    return 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=150&h=150&fit=crop'; // Tech/circuit board design
+    return 'https://picsum.photos/seed/4e9042af21/150/150'; // Tech/circuit board design
   }
   // Investment/Finance events
   if (eventTitle.toLowerCase().includes('investment') || eventTitle.toLowerCase().includes('finance')) {
@@ -32,7 +32,7 @@ const getEventLogo = (eventTitle: string, eventType: string) => {
   }
   // Healthcare events
   if (eventTitle.toLowerCase().includes('health')) {
-    return 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=150&h=150&fit=crop'; // Medical/health symbol
+    return 'https://picsum.photos/seed/112ba8d25d/150/150'; // Medical/health symbol
   }
   // Agriculture events
   if (eventTitle.toLowerCase().includes('agri')) {
