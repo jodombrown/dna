@@ -9,10 +9,12 @@ One file: `src/pages/About.tsx`. Full rebuild of the page onto brand tokens, wit
 **2. Hero shows the logo, not the word.** The `About DNA` headline drops the copper "DNA" text. The transparent DNA logo renders in its place at a controlled height, with the headline reading as a real sentence beneath it: "We are the mobilization infrastructure for the Global African Diaspora's return." No gradient wash behind it; flat cream ground.
 
 **3. Meet the founder, rebuilt.** Becomes the strongest block on the page:
+
 - Two-column on desktop, stacked on mobile, photo left at a squarer crop with a hairline frame rather than a heavy drop shadow.
 - Name, then role, then the bio in two short scannable paragraphs.
 - An explicit, labelled LinkedIn action instead of a bare icon: a bordered button reading "Connect with Jaûne on LinkedIn" with the LinkedIn glyph, sized to a 44px target, opening in a new tab. Nobody has to guess the icon is clickable.
 - The pull-quote sits under the bio as a plain indented quote with a hairline rule, no card, no gradient fill.
+- add a link to my DNA profile as well - [https://diasporanetwork.africa/dna/jaunelamarro](https://diasporanetwork.africa/dna/jaunelamarro)
 
 **4. "How DNA Works" section deleted.** The three Connect / Collaborate / Contribute pillar cards go away entirely, along with the bullet lists. The Five C's are already explained on the homepage.
 
