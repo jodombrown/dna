@@ -378,10 +378,10 @@ const UnifiedHeader = () => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => navigate('/app/admin')}
+                      onClick={() => navigate('/admin')}
                       className={cn(
                         "flex items-center gap-2",
-                        location.pathname.startsWith('/app/admin') ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-primary'
+                        location.pathname.startsWith('/admin') ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-primary'
                       )}
                     >
                       <Shield className="w-5 h-5" />
