@@ -40,7 +40,7 @@ export const demoProfessionals: Professional[] = [
     location: 'Berlin, Germany',
     bio: 'Transforming healthcare delivery through digital innovation and telemedicine solutions.',
     skills: ['Healthcare Technology', 'Digital Health', 'Product Management', 'Strategy'],
-    avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=400&h=400&fit=crop&crop=face',
+    avatar_url: 'https://picsum.photos/seed/2616b612b8/400/400',
     is_mentor: true,
     is_investor: false,
     looking_for_opportunities: false,
@@ -85,7 +85,7 @@ export const demoProfessionals: Professional[] = [
     location: 'San Francisco, USA',
     bio: 'Advancing artificial intelligence research with applications for African development.',
     skills: ['Artificial Intelligence', 'Machine Learning', 'Data Science', 'Research'],
-    avatar_url: 'https://images.unsplash.com/photo-1566492031773-4f4e44671d66?w=400&h=400&fit=crop&crop=face',
+    avatar_url: 'https://picsum.photos/seed/4f4e44671d/400/400',
     is_mentor: true,
     is_investor: false,
     looking_for_opportunities: false,
@@ -311,7 +311,7 @@ export const demoProfessionals: Professional[] = [
     location: 'Freetown, Sierra Leone',
     bio: 'Promoting ethical diamond mining and establishing transparent supply chains.',
     skills: ['Diamond Mining', 'Ethical Trade', 'Supply Chain Management', 'Regulatory Compliance'],
-    avatar_url: 'https://images.unsplash.com/photo-1616328638639-82e2e4a8beaf?w=400&h=400&fit=crop&crop=face',
+    avatar_url: 'https://picsum.photos/seed/82e2e4a8be/400/400',
     is_mentor: true,
     is_investor: false,
     looking_for_opportunities: false,
@@ -356,7 +356,7 @@ export const demoProfessionals: Professional[] = [
     location: 'Nouakchott, Mauritania',
     bio: 'Designing large-scale solar installations for the Sahel region and desert communities.',
     skills: ['Solar Energy', 'Desert Technology', 'Energy Storage', 'Grid Integration'],
-    avatar_url: 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=400&h=400&fit=crop&crop=face',
+    avatar_url: 'https://picsum.photos/seed/d0401ba2fe/400/400',
     is_mentor: false,
     is_investor: true,
     looking_for_opportunities: false,
@@ -387,7 +387,7 @@ export const demoProfessionals: Professional[] = [
     location: 'Geneva, Switzerland',
     bio: 'Designing low-cost medical devices and health solutions for underserved communities in Africa.',
     skills: ['Biomedical Engineering', 'Medical Devices', 'Global Health', 'Innovation'],
-    avatar_url: 'https://images.unsplash.com/photo-1594824226441-0a5b592e07c6?w=400',
+    avatar_url: 'https://picsum.photos/seed/0a5b592e07/400/400',
     is_mentor: true,
     is_investor: false,
     looking_for_opportunities: false,
@@ -433,7 +433,7 @@ export const demoProfessionals: Professional[] = [
     location: 'Geneva, Switzerland',
     bio: 'Mali-born, Detroit-raised physician working to eliminate health disparities across Africa and the diaspora.',
     skills: ['Public Health', 'Health Equity', 'International Development', 'Policy Implementation'],
-    avatar_url: 'https://images.unsplash.com/photo-1594824389862-a8ec2d0f8c3d?w=400',
+    avatar_url: 'https://picsum.photos/seed/a8ec2d0f8c/400/400',
     is_mentor: true,
     is_investor: false,
     looking_for_opportunities: false,
@@ -448,7 +448,7 @@ export const demoProfessionals: Professional[] = [
     location: 'Port of Spain, Trinidad',
     bio: 'Bridging Caribbean and African textile traditions while building sustainable fashion supply chains.',
     skills: ['Sustainable Fashion', 'Ethical Manufacturing', 'Cultural Design', 'Supply Chain Management'],
-    avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b35d4e1c?w=400',
+    avatar_url: 'https://picsum.photos/seed/2616b35d4e/400/400',
     is_mentor: true,
     is_investor: true,
     looking_for_opportunities: true,
@@ -809,7 +809,7 @@ export const demoEvents: Event[] = [
     creator_profile: {
       id: '1',
       full_name: 'Dr. Amara Okafor',
-      avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=80'
+      avatar_url: 'https://picsum.photos/seed/2616b612b8/80/80'
     }
   },
   {
@@ -879,13 +879,13 @@ export const demoEvents: Event[] = [
     is_virtual: true,
     attendee_count: 180,
     is_featured: true,
-    banner_url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=500&h=200&fit=crop',
+    banner_url: 'https://picsum.photos/seed/112ba8d25d/500/200',
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
       id: '5',
       full_name: 'Fatima Al-Rashid',
-      avatar_url: 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=80'
+      avatar_url: 'https://picsum.photos/seed/d0401ba2fe/80/80'
     }
   },
   {
@@ -961,7 +961,7 @@ export const demoEvents: Event[] = [
     creator_profile: {
       id: '1',
       full_name: 'Dr. Amara Okafor',
-      avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=80'
+      avatar_url: 'https://picsum.photos/seed/2616b612b8/80/80'
     }
   },
   {
@@ -1095,7 +1095,7 @@ export const demoEvents: Event[] = [
     creator_profile: {
       id: '17',
       full_name: 'Nuru Mwalimu',
-      avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=80'
+      avatar_url: 'https://picsum.photos/seed/2616b612b8/80/80'
     }
   },
   {

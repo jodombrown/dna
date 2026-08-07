@@ -60,7 +60,7 @@ const demoProfessionals: Professional[] = [
     location: 'London, UK',
     bio: 'Leading fintech innovation across Africa and Europe with over 10 years of experience.',
     skills: ['Financial Technology', 'Digital Payments', 'Blockchain', 'Leadership'],
-    avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=400',
+    avatar_url: 'https://picsum.photos/seed/2616b612b8/400/400',
     is_mentor: true,
     is_investor: true,
     looking_for_opportunities: false,
@@ -286,7 +286,7 @@ const demoEvents: Event[] = [
     creator_profile: {
       id: '1',
       full_name: 'Dr. Amara Okafor',
-      avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=80'
+      avatar_url: 'https://picsum.photos/seed/2616b612b8/80/80'
     }
   },
   {
@@ -356,7 +356,7 @@ const demoEvents: Event[] = [
     is_virtual: true,
     attendee_count: 180,
     is_featured: true,
-    banner_url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=500&h=200&fit=crop',
+    banner_url: 'https://picsum.photos/seed/112ba8d25d/500/200',
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
@@ -438,7 +438,7 @@ const demoEvents: Event[] = [
     creator_profile: {
       id: '1',
       full_name: 'Dr. Amara Okafor',
-      avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=80'
+      avatar_url: 'https://picsum.photos/seed/2616b612b8/80/80'
     }
   },
   {

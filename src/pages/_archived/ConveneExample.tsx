@@ -53,7 +53,7 @@ const ConveneExample = () => {
       id: 'tech-innovators',
       name: 'African Tech Innovators',
       description: 'Curating the best tech events across Africa',
-      logo: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=120&h=120&fit=crop',
+      logo: 'https://picsum.photos/seed/4e9042af21/120/120',
       eventCount: 24,
       followers: 1200
     },
