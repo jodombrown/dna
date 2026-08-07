@@ -50,42 +50,10 @@ export const MESSAGING_ENABLED = false;
 export const WAITLIST_MODE = false;
 
 /**
- * Public signup gate. Signups are paused until this instant, then open by
- * themselves on the next page load. No deploy needed on the day.
+ * Retired August 7, 2026: the dated signup gate and the approved-only signup
+ * gate are both gone. Signup on /auth is open to everyone.
  *
- * Stored as an ISO instant in UTC: August 15, 2026 at 9:00 am PDT
- * (PDT is UTC-7, so 9:00 am PDT = 16:00 UTC).
+ * The database function `is_signup_approved` is left in place, unused, so
+ * approval-only signup can be restored without a migration.
  */
-export const SIGNUPS_OPEN_AT = new Date('2026-08-15T16:00:00Z');
 
-/** Human copy for the announcement. Kept beside the instant so they cannot drift. */
-export const SIGNUPS_OPEN_LABEL = 'August 15, 2026 at 9:00 am PDT';
-
-export const areSignupsOpen = (now: Date = new Date()): boolean =>
-  now.getTime() >= SIGNUPS_OPEN_AT.getTime();
-
-/**
- * Founder bypass for creating test accounts before the gate lifts:
- * /auth?mode=signup&key=<SIGNUP_BYPASS_KEY>
- *
- * This is obscurity, not security. The value ships in the client bundle and
- * anyone reading it can use it. It holds back a launch date, it is not an
- * access control. Real gating would need a server-checked invite row.
- */
-export const SIGNUP_BYPASS_KEY = 'dna-early-1815';
-
-const BYPASS_STORAGE_KEY = 'dna_signup_bypass';
-
-/** Reads the key from the URL, remembers it for this browser, and reports it. */
-export const resolveSignupBypass = (search: string): boolean => {
-  try {
-    const fromUrl = new URLSearchParams(search).get('key');
-    if (fromUrl === SIGNUP_BYPASS_KEY) {
-      window.localStorage.setItem(BYPASS_STORAGE_KEY, '1');
-      return true;
-    }
-    return window.localStorage.getItem(BYPASS_STORAGE_KEY) === '1';
-  } catch {
-    return false;
-  }
-};

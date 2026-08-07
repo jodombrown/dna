@@ -168,10 +168,11 @@ const Auth = () => {
 
   const modeSubtitle =
     authMode === 'signup'
-      ? 'Create your account with an approved email'
+      ? 'Create your account'
       : authMode === 'request'
         ? 'Request access and we will review it'
         : 'Sign in to your account';
+
 
   // Auth content switches between sign up, request access, and sign in
   const authContent = (
@@ -179,7 +180,7 @@ const Auth = () => {
       {authMode === 'request' ? (
         <BetaAccessForm />
       ) : authMode === 'signup' ? (
-        <SignUpApprovalGate onRequestAccess={() => setAuthMode('request')} />
+        <SignUpApprovalGate />
 
       ) : (
         <form onSubmit={handleSignIn} className="space-y-4">
