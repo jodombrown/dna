@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 import dnaLogo from '@/assets/dna-logo.png';
 import { MateMasie } from '@/components/icons/adinkra';
 
-import { Home, MessageCircle, MessageSquarePlus, Bell, User, LogOut, Menu, ChevronDown, Target, Users2, Lightbulb, TestTube, Shield, Plus, Search } from 'lucide-react';
+import { Home, MessageCircle, MessageSquarePlus, Bell, User, LogOut, Menu, Target, Users2, Lightbulb, TestTube, Shield, Plus, Search } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,7 +31,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
-import { publicNavItems, aboutUsDropdown } from './header/navigationConfig';
+import { publicNavItems } from './header/navigationConfig';
 import { useUnreadMessageCount } from '@/hooks/useUnreadMessageCount';
 import { MESSAGING_ENABLED } from '@/config/featureFlags';
 // useUnreadNotificationCount removed — UnifiedNotificationBell handles its own count
@@ -477,26 +477,15 @@ const UnifiedHeader = () => {
               {!isAuthenticated && (
                 <>
                   <nav className="hidden md:flex items-center space-x-6">
-                    {/* About Us Dropdown */}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="text-neutral-700 hover:text-dna-forest transition-colors font-medium">
-                          About Us
-                          <ChevronDown className="w-4 h-4 ml-1" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="start" className="w-48">
-                        {aboutUsDropdown.map((item) => (
-                          <DropdownMenuItem
-                            key={item.name}
-                            onClick={() => navigate(item.path)}
-                            className="cursor-pointer"
-                          >
-                            {item.name}
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    {/* About */}
+                    <Button
+                      variant="ghost"
+                      onClick={() => navigate('/about')}
+                      className="text-neutral-700 hover:text-dna-forest transition-colors font-medium"
+                    >
+                      About
+                    </Button>
+
 
                     {publicNavItems.filter(item => item.path !== currentPath).map((item) => (
                       <NavLink
@@ -577,20 +566,17 @@ const UnifiedHeader = () => {
                       <nav className="flex flex-col space-y-1 p-4 sm:p-6 pb-20">
                         {!isAuthenticated ? (
                           <>
-                            {/* About Us Section with submenu */}
+                            {/* About */}
                             <div className="border-b pb-4 mb-4">
-                              <p className="text-sm text-neutral-600 mb-2 font-medium px-4">About</p>
-                              {aboutUsDropdown.map((item) => (
-                                <Button
-                                  key={item.name}
-                                  variant="ghost"
-                                  className="justify-start text-left w-full hover:bg-dna-mint/20 hover:text-dna-forest transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                                  onClick={() => handleNavClick(item)}
-                                >
-                                  {item.name}
-                                </Button>
-                              ))}
+                              <Button
+                                variant="ghost"
+                                className="justify-start text-left w-full hover:bg-dna-mint/20 hover:text-dna-forest transition-all duration-200 focus:ring-0 focus:ring-offset-0"
+                                onClick={() => navigate('/about')}
+                              >
+                                About
+                              </Button>
                             </div>
+
 
                             {/* Featured items (e.g. ROADMAP) */}
                             {filteredNavItems.some((i) => i.featured) && (

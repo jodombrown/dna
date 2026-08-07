@@ -13,18 +13,11 @@
 
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, ChevronDown } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import dnaLogo from '@/assets/dna-logo.png';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { aboutUsDropdown } from './header/navigationConfig';
 
 export const PublicSiteHeader = () => {
   const navigate = useNavigate();
@@ -58,25 +51,13 @@ export const PublicSiteHeader = () => {
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="text-neutral-700 hover:text-dna-forest font-medium">
-                  About Us
-                  <ChevronDown className="w-4 h-4 ml-1" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-48">
-                {aboutUsDropdown.map((item) => (
-                  <DropdownMenuItem
-                    key={item.name}
-                    onClick={() => navigate(item.path)}
-                    className="cursor-pointer"
-                  >
-                    {item.name}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/about')}
+              className="text-neutral-700 hover:text-dna-forest font-medium"
+            >
+              About
+            </Button>
 
             <Button
               variant="outline"
@@ -116,17 +97,13 @@ export const PublicSiteHeader = () => {
                 </div>
                 <ScrollArea className="flex-1 overflow-y-auto">
                   <nav className="flex flex-col gap-1 p-4 pb-20">
-                    <p className="text-sm text-neutral-600 mb-2 font-medium px-4">About</p>
-                    {aboutUsDropdown.map((item) => (
-                      <Button
-                        key={item.name}
-                        variant="ghost"
-                        className="justify-start w-full hover:bg-dna-mint/20 hover:text-dna-forest"
-                        onClick={() => go(item.path)}
-                      >
-                        {item.name}
-                      </Button>
-                    ))}
+                    <Button
+                      variant="ghost"
+                      className="justify-start w-full hover:bg-dna-mint/20 hover:text-dna-forest"
+                      onClick={() => go('/about')}
+                    >
+                      About
+                    </Button>
 
                     <div className="h-3" />
 
