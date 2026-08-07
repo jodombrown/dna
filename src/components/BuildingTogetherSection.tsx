@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MessageCircle, Eye, BookOpen } from 'lucide-react';
+import { MessageCircle, BookOpen } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import PatternBackground from './ui/PatternBackground';
@@ -24,7 +24,7 @@ const BuildingTogetherSection = () => {
         </div>
 
         {/* Action Cards */}
-        <div className="grid md:grid-cols-3 gap-4 lg:gap-6">
+        <div className="grid md:grid-cols-2 gap-4 lg:gap-6">
           {/* Share Feedback Card */}
           <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-0 bg-white/80 backdrop-blur-sm">
             <CardContent className="p-5 lg:p-6 text-center">
@@ -40,25 +40,6 @@ const BuildingTogetherSection = () => {
                 onClick={() => setIsFeedbackOpen(true)}
               >
                 Give Feedback
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Track Progress Card */}
-          <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-0 bg-white/80 backdrop-blur-sm">
-            <CardContent className="p-5 lg:p-6 text-center">
-              <div className="w-14 h-14 lg:w-16 lg:h-16 bg-dna-emerald/10 rounded-full flex items-center justify-center mx-auto mb-4 lg:mb-6 group-hover:bg-dna-emerald/20 transition-colors">
-                <Eye className="w-7 h-7 lg:w-8 lg:h-8 text-dna-emerald" />
-              </div>
-              <h3 className="text-xl lg:text-2xl font-bold text-dna-forest mb-3 lg:mb-4">Track Our Progress</h3>
-              <p className="text-sm sm:text-base text-neutral-600 mb-4 lg:mb-6 leading-relaxed">
-                Follow our development journey phase by phase
-              </p>
-              <Button 
-                variant="default"
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              >
-                View Phases
               </Button>
             </CardContent>
           </Card>
