@@ -93,7 +93,6 @@ const About = lazy(() => import("./pages/About"));
 const Install = lazy(() => import("./pages/Install"));
 const Waitlist = lazy(() => import("./pages/Waitlist"));
 const BetaAccess = lazy(() => import("./pages/BetaAccess"));
-const Contact = lazy(() => import("./pages/Contact"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const UserAgreement = lazy(() => import("./pages/UserAgreement"));
@@ -904,7 +903,6 @@ function App() {
               <Route path="/partner-with-dna/start" element={<PartnerStart />} />
 
               {/* Static pages */}
-              <Route path="/contact" element={<Contact />} />
               <Route path="/about" element={<About />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />

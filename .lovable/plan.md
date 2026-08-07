@@ -1,37 +1,65 @@
-# Fix the Five C's cards on the public framework section
+# Mobile hub spacing and DIA cleanup
 
-## What is actually wrong
+## What is causing the spacing
 
-The cards in your screenshot are rendered by `src/components/platform/HeroTriangleSection.tsx`. That file was never brought onto the identity system, so it still carries the pre-palette, pre-Adinkra markup:
+The screenshots contain two overlapping problems:
 
-- Icons are stock Lucide: `Users`, `Calendar`, `Handshake`, `Heart`, `Newspaper`. No Adinkra import exists in the file, so the Five C's identity glyphs (Sankofa, Nkonsonkonson, Funtunfunefu Denkyemfunefu, Adinkrahene, Mpatapo) are simply absent here.
-- Colors come from the retired `dna-*` names, not the locked C palette, and two are assigned to the wrong C: Collaborate is painted copper (that ink belongs to Convene) and Contribute is painted emerald/mint (that ink belongs to Connect). Convey is ochre/gold, which is Contribute's gold. So three of five C's are wearing another C's colour.
-- Each tile is a two-stop gradient with `text-white` and a `hover:scale-105` lift, all of which the design rules refuse.
+1. Connect and the shared mobile hub shell measure the full fixed header, then add an extra 12px buffer before rendering the body. Because this behavior is shared, the gap returns across multiple hub lenses whenever the shell is reused.
+2. Convene My Events also renders its desktop title panel on mobile directly below the mobile chrome. Its padding and bottom margin create the much larger blank region in that screenshot.
 
-Confirmed in this codebase: the locked `--c5-*` ramp exists in `src/index.css` and is exposed in `tailwind.config.ts` as `c5.<c>` and `c5.<c>.text`, so the correct values are already available as tokens. Nothing new needs to be added to the token layer.
+The fix will remove the extra buffer only from the affected hub shells. Feed will not be changed. My Events will keep its title panel on desktop and hide it on mobile.
 
-## What I will change
+## Changes
 
-One file: `src/components/platform/HeroTriangleSection.tsx`.
+### 1. Remove recurring mobile hub gaps
 
-1. Replace the five Lucide module icons with the Adinkra icons from `@/components/icons/adinkra`, in Five C's order: Sankofa for Connect, Nkonsonkonson for Convene, Funtunfunefu Denkyemfunefu for Collaborate, Adinkrahene for Contribute, Mpatapo for Convey. `ArrowDown` stays: it is utility, not identity.
-2. Replace the gradient tiles with a flat single-C surface using that C's own token, and drop `text-white` in favour of a token foreground.
-3. Repoint every colour reference to `c5.<c>` / `c5.<c>.text` so each C wears only its own ink. No `dna-sunset`, `dna-copper`, `dna-mint`, `dna-ochre`, `dna-gold` left in the file.
-4. Remove `hover:scale-105` and the icon `group-hover:scale-110`; hover becomes a border and colour shift only.
-5. Collapse the five hand-copied button blocks into one map over a local ordered array of the five C's so the set cannot drift again. Copy stays exactly as it reads today.
-6. Move the banned Tailwind default sizes in this block (`text-xl`, `text-sm`) onto the project scale and drop the reflex `font-bold`.
+- Make `DnaMobileHubShell` offset content by the measured header height only, with no added visual buffer.
+- Apply the same exact-height measurement to Connect's bespoke mobile shell.
+- Keep safe-area inset handling intact so content never sits under the device status bar.
+- Hide the redundant My Events title panel on mobile while preserving it on desktop.
 
-## Also: the card-corner icons
+### 2. Remove the requested mobile intro rows
 
-Checked all five section files. Three already carry the right glyph in the stacked-card header corner: Convene renders Nkonsonkonson, Collaborate renders Funtunfunefu Denkyemfunefu, Convey renders Mpatapo. Two do not:
+- Hide the Collaborate title, description, and `Start a Space` row on mobile only.
+- Hide the Contribute title, description, and `Post a Need` row on mobile only.
+- Keep both rows unchanged on desktop. Their lens bars become the first mobile content below the shared header.
 
-- `src/components/platform/ConnectSection.tsx` line 96 renders the Lucide `Network` glyph in the corner. It becomes Sankofa. `Network` also appears further down at line 187 as a small inline marker in the section body; that is not the C identity corner, so I leave it unless you want it gone too.
-- `src/components/platform/ContributeSection.tsx` line 92 renders a per-item Lucide icon (`DollarSign`, `Clock`, `Users`, `Lightbulb`, `Award`) that changes card to card. The corner is a C identity slot, not a per-item slot, so all five cards get Adinkrahene. If nothing else reads the per-item `icon` field after that, I remove it.
+### 3. Expand the DIA search text area
 
-That fixes the corner on all five. Nothing else in those section files changes in this pass.
+- Give the full DIA search surface two visible rows so `Discover stories, content, or trending topics...` can wrap and remain readable on mobile.
+- Keep the compact desktop DIA surface at one row.
+- Preserve the existing auto-grow and scrolling behavior for longer queries.
 
-## Notes
+### 4. Remove the floating Convey icon
 
-- The Adinkra usage guard runs against a baseline (`scripts/.adinkra-baseline.json`). Adding a legitimate Five C identity surface means that baseline needs regenerating in the same change, otherwise CI reads the new imports as decoration. I will run the script's `--update` path and include the result.
-- Scope boundary: beyond the corner glyph above, the five long sections still use `dna-*` colours and gradient card headers. Repainting them onto the locked C palette is a separate pass and I will not do it here unless you say so.
+- Remove the mobile floating `DiaContextual` launcher from Convey across its lenses.
+- Keep DIA accessible through the canonical MateMasie control already present in the shared mobile header.
+- Keep the desktop inline DIA panel unchanged.
 
+## Technical scope
+
+Expected source files:
+
+- `src/components/mobile/DnaMobileHubShell.tsx`
+- `src/pages/dna/connect/Connect.tsx`
+- `src/pages/dna/convene/MyEvents.tsx`
+- `src/pages/dna/collaborate/CollaborateHub.tsx`
+- `src/pages/dna/contribute/ContributeHub.tsx`
+- `src/components/dia/DiaSearch.tsx`
+- `src/pages/dna/convey/ConveyStoryHub.tsx`
+
+No schema, backend, Feed, desktop hub behavior, or public copy changes.
+
+## Verification
+
+- Run the focused mobile shell regression tests and the project design-system checks.
+- Verify the structural behavior at mobile width for Connect Members, Network, Map, Convene My Events, Collaborate, Contribute, and Convey.
+- Confirm the header and lens bars remain fixed without content overlap, the DIA placeholder wraps fully, and the floating icon is absent.
+- Authenticated browser verification may be limited because this project uses an external unmanaged Supabase session. If so, verify authenticated-only states through focused component tests and report that limitation explicitly.
+
+## Design system check
+
+- Reuse existing background, foreground, border, and module tokens.
+- Compose the existing mobile shell, lens bars, Button, and DIA components.
+- Add no token, component, dependency, arbitrary value, font, or color.
+- Preserve canonical mobile chrome and desktop menus.
