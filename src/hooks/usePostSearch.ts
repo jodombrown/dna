@@ -71,7 +71,7 @@ export const usePostSearch = (
         .eq('is_deleted', false)
         .or(`content.ilike.${searchTerm}`)
         .order('created_at', { ascending: false })
-        .limit(limit);
+        .range(offset, offset + limit - 1);
 
       // Apply filters
       if (filters?.postType) {
@@ -110,7 +110,7 @@ export const usePostSearch = (
         `)
         .eq('is_deleted', false)
         .order('created_at', { ascending: false })
-        .limit(limit);
+        .range(offset, offset + limit - 1);
 
       // Search profiles that match the query
       const { data: matchingProfiles } = await supabase

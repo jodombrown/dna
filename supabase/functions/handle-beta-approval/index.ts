@@ -51,8 +51,17 @@ const handler = async (req: Request): Promise<Response> => {
 
       if (appError) throw appError;
 
-      // Send approval email with magic link
-      const magicLink = `${Deno.env.get('SUPABASE_URL')}/auth/v1/verify?type=beta_signup&token=${magicLinkData[0].magic_link_token}&redirect_to=${encodeURIComponent('https://ybhssuehmfnxrzneobok.supabase.co/beta-signup-complete')}`;
+      // Send approval email with magic link. redirect_to must point at the
+      // app domain, not the Supabase project URL — the project URL serves
+      // the REST/Auth API, not app pages, so an approved user clicking this
+      // link previously landed on a dead backend endpoint instead of
+      // onboarding. `/beta-signup-complete` also isn't a registered route
+      // anywhere in the app (verified against src/App.tsx), so redirect to
+      // the root instead: Index.tsx already sends any authenticated user
+      // to /dna/feed, and OnboardingGuard takes it from there for a
+      // freshly-verified, not-yet-onboarded user.
+      const appUrl = Deno.env.get('APP_URL') ?? 'https://diasporanetwork.africa';
+      const magicLink = `${Deno.env.get('SUPABASE_URL')}/auth/v1/verify?type=beta_signup&token=${magicLinkData[0].magic_link_token}&redirect_to=${encodeURIComponent(appUrl)}`;
 
       const { error: emailError } = await supabase.functions.invoke('send-universal-email', {
         body: {

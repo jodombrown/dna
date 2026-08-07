@@ -3,7 +3,7 @@ import MessageOverlay from '@/components/messaging/MessageOverlay';
 import { messageService } from '@/services/messageService';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { usePresenceHeartbeat } from '@/hooks/usePresence';
+import { usePresenceHeartbeat } from '@/hooks/messaging/usePresenceHeartbeat';
 import { ConversationOriginType, OriginMetadata } from '@/types/messaging';
 import { logger } from '@/lib/logger';
 

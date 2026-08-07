@@ -269,8 +269,10 @@ Deno.serve(async (req) => {
       .single();
 
     if (insertError) {
+      // Log the real DB error server-side only — the raw message (schema
+      // details, constraint names) shouldn't reach the client.
       console.error('Insert error:', insertError);
-      throw new Error(`Failed to create event: ${insertError.message}`);
+      throw new Error('Failed to create event. Please check your event details and try again.');
     }
 
     console.log('Event created successfully:', event.id);

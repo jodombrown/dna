@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ const Join: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [eventUrl, setEventUrl] = useState<string | null>(null);
+  const redirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const handleJoinLink = async () => {
@@ -39,7 +40,7 @@ const Join: React.FC = () => {
           toast.success('Join link processed successfully!');
           
           // Auto-redirect after a short delay
-          setTimeout(() => {
+          redirectTimerRef.current = setTimeout(() => {
             window.location.replace(data as string);
           }, 2000);
         } else {
@@ -53,6 +54,16 @@ const Join: React.FC = () => {
     };
 
     handleJoinLink();
+
+    // Cancel the pending auto-redirect if the user navigates away (or
+    // clicks "Go to Homepage") within the 2s window — previously this
+    // stale timeout still fired and forced window.location.replace,
+    // yanking the user back to the event page they just left.
+    return () => {
+      if (redirectTimerRef.current) {
+        clearTimeout(redirectTimerRef.current);
+      }
+    };
   }, [token]);
 
   const handleManualRedirect = () => {

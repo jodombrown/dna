@@ -1,4 +1,11 @@
-export const USERNAME_REGEX = /^[a-z0-9._-]{3,30}$/;
+// Kept in sync with the canonical rules in src/lib/username/validation.ts
+// (USERNAME_RULES) — this module previously allowed dots and up to 30
+// characters, while the canonical rules allow neither, defining two
+// conflicting username policies. This file is currently only referenced
+// from an _archived component (dead code), but a stale, more permissive
+// regex left lying around is exactly the kind of thing that silently
+// reactivates a bug if that code is ever un-archived.
+export const USERNAME_REGEX = /^[a-z0-9_-]{3,20}$/;
 
 export const normalizeUsername = (name: string) => (name || '').trim().toLowerCase();
 

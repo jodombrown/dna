@@ -77,6 +77,28 @@ export function useConveyFeed(options: UseConveyFeedOptions = {}) {
         }
       }
 
+      // Apply region filter — resolved against the spaces table *before*
+      // pagination, since "region" lives on spaces, not posts. Filtering
+      // client-side after `.range()` (the previous approach) only ever
+      // saw the current page's already-limited rows: a page could read as
+      // empty even when matching rows existed elsewhere, and the reported
+      // `count` wouldn't match the actually-filterable set. Combined with
+      // the "only my spaces" filter above, this is a second `.in()` on
+      // `space_id`, which PostgREST ANDs together — the correct
+      // intersection of both filters.
+      if (region) {
+        const { data: regionSpaces } = await supabase
+          .from('spaces')
+          .select('id')
+          .eq('region', region);
+
+        const regionSpaceIds = (regionSpaces ?? []).map(s => s.id);
+        if (regionSpaceIds.length === 0) {
+          return { data: [], count: 0 };
+        }
+        query = query.in('space_id', regionSpaceIds);
+      }
+
       // Apply pagination
       const from = (page - 1) * pageSize;
       const to = from + pageSize - 1;
@@ -138,17 +160,8 @@ export function useConveyFeed(options: UseConveyFeedOptions = {}) {
         primary_space: spaceMap.get(post.space_id) || undefined,
       }));
 
-      // Apply region filter client-side if specified
-      let filteredData = transformedData;
-      if (region) {
-        filteredData = transformedData.filter(item =>
-          item.region === region ||
-          item.primary_space?.region === region
-        );
-      }
-
       return {
-        data: filteredData,
+        data: transformedData,
         count: count || 0,
       };
     },

@@ -198,11 +198,30 @@ serve(async (req) => {
       .single();
 
     if (insertError) {
+      // A concurrent request (double-click, or two rapid calls) can win
+      // the race between the "existing connection?" check above and this
+      // insert. The unique index on the unordered pair (see migration
+      // 20260807170000) turns that race into a clean 23505 here instead
+      // of a duplicate row — treat it the same as the non-racy
+      // "already pending" case rather than a 500.
+      if (insertError.code === '23505') {
+        console.log(`Duplicate connection request race for ${user.id} <-> ${target_user_id}`);
+        return new Response(
+          JSON.stringify({
+            status: 'already_pending',
+            message: 'A connection request between you and this user already exists',
+          }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 200,
+          }
+        );
+      }
       console.error('Failed to create connection:', insertError);
       return new Response(
-        JSON.stringify({ 
+        JSON.stringify({
           status: 'error',
-          error: 'Failed to create connection request' 
+          error: 'Failed to create connection request'
         }),
         {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
