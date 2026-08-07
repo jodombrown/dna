@@ -44,21 +44,21 @@ const BuildingTogetherSection = () => {
             </CardContent>
           </Card>
 
-          {/* Learn About DNA Card */}
+          {/* Mobilization CTA Card */}
           <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-0 bg-white/80 backdrop-blur-sm">
             <CardContent className="p-5 lg:p-6 text-center">
               <div className="w-14 h-14 lg:w-16 lg:h-16 bg-dna-forest/10 rounded-full flex items-center justify-center mx-auto mb-4 lg:mb-6 group-hover:bg-dna-forest/20 transition-colors">
-                <BookOpen className="w-7 h-7 lg:w-8 lg:h-8 text-dna-forest" />
+                <Users className="w-7 h-7 lg:w-8 lg:h-8 text-dna-forest" />
               </div>
-              <h3 className="text-xl lg:text-2xl font-bold text-dna-forest mb-3 lg:mb-4">Learn About DNA</h3>
+              <h3 className="text-xl lg:text-2xl font-bold text-dna-forest mb-3 lg:mb-4">African Diaspora Mobilization Starts Here</h3>
               <p className="text-sm sm:text-base text-neutral-600 mb-4 lg:mb-6 leading-relaxed">
-                Understand our mission, vision, and approach
+                Connect with visionary leaders, builders, and changemakers dedicated to accelerating Africa's development.
               </p>
               <Button 
                 variant="default"
-                onClick={() => navigate('/about')}
+                onClick={() => navigate('/auth?mode=signup')}
               >
-                Learn More
+                Sign up
               </Button>
             </CardContent>
           </Card>
