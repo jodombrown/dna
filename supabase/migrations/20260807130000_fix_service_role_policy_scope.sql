@@ -24,14 +24,39 @@
 -- imported anywhere in the app, so tightening this to service_role is
 -- fully non-breaking.
 --
--- Fix: scope badge_counts' and user_vectors' write policies to
--- `service_role`, matching the correctly-scoped `adin_queries_all_service_role`
--- policy elsewhere in the migration history and the `entity_vectors`
--- precedent above.
+-- Fix: scope user_vectors' write policies to `service_role`, matching the
+-- correctly-scoped `adin_queries_all_service_role` policy elsewhere in the
+-- migration history and the `entity_vectors` precedent above.
 --
 -- See docs/audits/codebase-bug-audit-2026-08-07.md, finding H1.
-
-ALTER POLICY "Service role manages badge counts" ON public.badge_counts TO service_role;
+--
+-- Correction (post-staging-verification, see docs/audits/pr263-fix-notes):
+-- this migration originally also had `ALTER POLICY "Service role manages
+-- badge counts" ON public.badge_counts TO service_role;`. Confirmed against
+-- production (read-only) that `public.badge_counts` does not exist:
+-- `to_regclass('public.badge_counts')` returns NULL, and version
+-- '20260212400000' is absent from `supabase_migrations.schema_migrations`.
+-- The migration that defines it (20260212400000_notification_system.sql,
+-- badge_counts plus 4 sibling tables: notification_records,
+-- notification_batches, notification_preferences, push_tokens) never ran
+-- against production at all -- it was tracked in the repo but never
+-- deployed. Production's live notification system is the older, separate
+-- `notifications` table instead (see get_user_notifications in
+-- 20260807120000_fix_idor_user_scoped_rpcs.sql, which already queries it).
+-- There is no `badge_counts` table in production to scope a policy on, so
+-- that statement is dropped here rather than rewritten -- applying it would
+-- fail outright (`relation "badge_counts" does not exist`).
+--
+-- This is unrelated to the separate, already-live "impact badges" (badge
+-- achievement) system -- `impact_badges` / `badge_definitions` /
+-- `user_badges` -- which shares no tables with `badge_counts` despite the
+-- similar name. Confirmed against production: those tables exist and their
+-- write policies are already correctly scoped to `service_role`
+-- ("Service role inserts badges" on `user_badges`), so no live equivalent
+-- of this vulnerability exists there either. No action needed for either
+-- badge system; if the notification_system.sql migration is ever deployed
+-- to production in the future, its badge_counts policy will need this same
+-- service_role fix applied at that time.
 
 ALTER POLICY "System can insert user vectors" ON public.user_vectors TO service_role;
 ALTER POLICY "System can update user vectors" ON public.user_vectors TO service_role;

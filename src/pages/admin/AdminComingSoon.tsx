@@ -1,5 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
+import { PageFrame } from '@/components/layout/PageFrame';
 import { Construction } from 'lucide-react';
 
 /**
@@ -14,16 +15,16 @@ export default function AdminComingSoon() {
   const location = useLocation();
 
   return (
-    <div className="p-6 md:p-8">
+    <PageFrame centered>
       <Card>
-        <CardContent className="flex flex-col items-center gap-3 py-16 text-center">
+        <CardContent className="flex flex-col items-center gap-3 pt-16 pb-16 text-center">
           <Construction className="h-8 w-8 text-muted-foreground" />
-          <h1 className="text-2xl font-semibold">Coming soon</h1>
-          <p className="max-w-md text-sm text-muted-foreground">
+          <h1 className="text-h1 font-semibold">Coming soon</h1>
+          <p className="text-body text-muted-foreground">
             This admin page ({location.pathname}) hasn't been built yet.
           </p>
         </CardContent>
       </Card>
-    </div>
+    </PageFrame>
   );
 }

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { FeedLayout } from '@/components/layout/FeedLayout';
+import { PageFrame } from '@/components/layout/PageFrame';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -215,13 +216,9 @@ export default function GroupSettingsPage() {
   // Guard synchronously here too.
   if (!['owner', 'admin'].includes(group.user_role || '')) {
     return (
-      <FeedLayout>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center py-12 text-muted-foreground">
-            Loading settings...
-          </div>
-        </div>
-      </FeedLayout>
+      <PageFrame centered>
+        <p className="text-body text-muted-foreground">Loading settings...</p>
+      </PageFrame>
     );
   }
 

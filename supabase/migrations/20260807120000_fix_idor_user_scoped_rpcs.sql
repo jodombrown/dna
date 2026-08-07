@@ -180,8 +180,8 @@ BEGIN
 
   -- Verify the user is actually a participant in this conversation
   IF NOT EXISTS (
-    SELECT 1 FROM conversation_participants
-    WHERE conversation_id = p_conversation_id AND user_id = p_user_id
+    SELECT 1 FROM conversation_participants cp
+    WHERE cp.conversation_id = p_conversation_id AND cp.user_id = p_user_id
   ) THEN
     RETURN; -- Return empty if not a participant
   END IF;
@@ -256,10 +256,10 @@ BEGIN
   INNER JOIN conversation_participants cp_other ON c.id = cp_other.conversation_id
   INNER JOIN profiles p ON cp_other.user_id = p.id
   LEFT JOIN LATERAL (
-    SELECT content
-    FROM messages_new
-    WHERE conversation_id = c.id
-    ORDER BY created_at ASC
+    SELECT mn.content
+    FROM messages_new mn
+    WHERE mn.conversation_id = c.id
+    ORDER BY mn.created_at ASC
     LIMIT 1
   ) m ON true
   WHERE cp.user_id = p_user_id
