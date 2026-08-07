@@ -1,8 +1,9 @@
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { PROFILE_SELECT_COLUMNS } from '@/lib/profileColumns';
+import { logger } from '@/lib/logger';
 
 /**
  * User profile data from the profiles table
@@ -84,24 +85,45 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Fetch user profile
-  const fetchProfile = async (userId: string) => {
+  // Refs, not state: both are read from inside long-lived closures
+  // (onAuthStateChange's callback, async chains in getInitialSession) that
+  // must always see the *current* value, not the value captured when the
+  // closure was created. `isInitialized` as state was ineffective for this
+  // reason — the onAuthStateChange closure is created once, at mount, so it
+  // always read isInitialized as false, and the `authVersion` counter below
+  // needs read/write from that same code without triggering re-renders.
+  const isInitializedRef = useRef(false);
+  // Bumped by every authoritative auth event (a real onAuthStateChange
+  // firing, or an explicit signOut()). Any async chain that resolves after
+  // its own captured version has been superseded is stale and must not
+  // write session/user/profile state — this closes a race where a slow
+  // getUser() validation round trip in getInitialSession() could resolve
+  // after a sign-out and silently resurrect the just-cleared session.
+  const authVersionRef = useRef(0);
+
+  // Fetch user profile. `expectedVersion` guards every state write against
+  // being superseded by a newer auth event while this call was in flight.
+  const fetchProfile = async (userId: string, expectedVersion: number) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
         .select(PROFILE_SELECT_COLUMNS)
         .eq('id', userId)
         .maybeSingle();
-      
+
+      if (authVersionRef.current !== expectedVersion) return;
+
       if (error) {
+        logger.error('AuthContext', 'Failed to fetch profile', error);
         return;
       }
 
       if (!data) {
         // Profile should have been created by trigger — brief retry delay
         await new Promise(resolve => setTimeout(resolve, 150));
+
+        if (authVersionRef.current !== expectedVersion) return;
 
         // Try one more time
         const { data: retryData, error: retryError } = await supabase
@@ -110,7 +132,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .eq('id', userId)
           .maybeSingle();
 
+        if (authVersionRef.current !== expectedVersion) return;
+
         if (retryError) {
+          logger.error('AuthContext', 'Failed to fetch profile on retry', retryError);
           return;
         }
 
@@ -120,19 +145,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
 
         // If still no profile, the trigger failed
+        logger.warn('AuthContext', 'No profile found for user after retry', { userId });
         return;
       }
 
       setProfile(data);
-    } catch {
-      // Silently ignore profile fetch errors
+    } catch (err) {
+      logger.error('AuthContext', 'Unexpected error fetching profile', err);
     }
   };
 
   // Public method to refresh profile
   const refreshProfile = async () => {
     if (user) {
-      await fetchProfile(user.id);
+      await fetchProfile(user.id, authVersionRef.current);
     }
   };
 
@@ -142,18 +168,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
+        // Every real auth event is authoritative: bump the version so any
+        // in-flight, now-superseded async response (e.g. getInitialSession's
+        // getUser() validation round trip below) can never overwrite this
+        // with stale data once it resolves.
+        const myVersion = ++authVersionRef.current;
+
         setSession(session);
         setUser(session?.user ?? null);
-        
+
       if (session?.user) {
           // Fetch profile immediately - the retry inside fetchProfile handles race conditions
-          fetchProfile(session.user.id);
+          fetchProfile(session.user.id, myVersion);
         } else {
           setProfile(null);
         }
-        
+
         // Only set loading to false after initial session check is complete
-        if (isInitialized) {
+        if (isInitializedRef.current) {
           setLoading(false);
         }
       }
@@ -161,11 +193,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Get initial session with error handling
     const getInitialSession = async () => {
+      const myVersion = ++authVersionRef.current;
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
 
         if (error) {
-          setIsInitialized(true);
+          isInitializedRef.current = true;
           setLoading(false);
           return;
         }
@@ -177,6 +210,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // rendering a blank screen behind 401s.
         if (session) {
           const { error: userError } = await supabase.auth.getUser();
+
+          if (authVersionRef.current !== myVersion) {
+            // A newer auth event (e.g. a sign-out that happened while this
+            // JWT validation round trip was in flight) already landed —
+            // acting on this stale session would resurrect a session the
+            // user just signed out of.
+            isInitializedRef.current = true;
+            setLoading(false);
+            return;
+          }
+
           if (userError) {
             // Only clear the session for a definitively bad token. A transient
             // failure (offline, Supabase 5xx/timeout) must NOT sign the user
@@ -188,27 +232,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               /bad_jwt|invalid claim|missing sub/i.test(userError.message ?? '');
             if (isBadToken) {
               await supabase.auth.signOut();
-              setSession(null);
-              setUser(null);
-              setProfile(null);
-              setIsInitialized(true);
+              if (authVersionRef.current === myVersion) {
+                setSession(null);
+                setUser(null);
+                setProfile(null);
+              }
+              isInitializedRef.current = true;
               setLoading(false);
               return;
             }
           }
         }
 
+        if (authVersionRef.current !== myVersion) {
+          isInitializedRef.current = true;
+          setLoading(false);
+          return;
+        }
+
         setSession(session);
         setUser(session?.user ?? null);
 
         if (session?.user) {
-          await fetchProfile(session.user.id);
+          await fetchProfile(session.user.id, myVersion);
         }
 
-        setIsInitialized(true);
+        isInitializedRef.current = true;
         setLoading(false);
       } catch {
-        setIsInitialized(true);
+        isInitializedRef.current = true;
         setLoading(false);
       }
     };
@@ -305,6 +357,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
+    // Bump the version immediately, without waiting for the
+    // onAuthStateChange event to arrive, so any async chain already in
+    // flight (e.g. a slow getInitialSession() JWT-validation round trip)
+    // can never resurrect this session after we've cleared it here.
+    ++authVersionRef.current;
     try {
       await supabase.auth.signOut();
     } finally {
