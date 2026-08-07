@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 import dnaLogo from '@/assets/dna-logo.png';
 import { MateMasie } from '@/components/icons/adinkra';
 
-import { Home, MessageCircle, MessageSquarePlus, Bell, User, LogOut, Menu, ChevronDown, Target, Users2, Lightbulb, TestTube, Shield, Plus, Search } from 'lucide-react';
+import { Home, MessageCircle, MessageSquarePlus, Bell, User, LogOut, Menu, Target, Users2, Lightbulb, TestTube, Shield, Plus, Search } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
