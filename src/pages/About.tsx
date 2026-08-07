@@ -220,44 +220,6 @@ const About = () => {
         </div>
       </section>
 
-      {/* Sourced numbers */}
-      {featuredStats.length > 0 && (
-        <section className="py-12">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-h1 font-serif text-foreground mb-8">The scale we are building for</h2>
-            <dl className="grid sm:grid-cols-3 gap-6">
-              {featuredStats.map((stat) => (
-                <div key={stat.id} className="border-t border-border pt-4">
-                  <dd className="text-display font-serif text-dna-emerald">{stat.display_value}</dd>
-                  <dt className="text-h3 text-foreground mt-1">{stat.label}</dt>
-                  <p className="text-meta text-muted-foreground mt-2 leading-relaxed">
-                    {stat.description}
-                  </p>
-                  <p className="text-meta text-muted-foreground mt-2">
-                    {stat.source_url ? (
-                      <a
-                        href={stat.source_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline hover:text-dna-copper"
-                      >
-                        Source: {stat.source_name}
-                        {stat.year ? `, ${stat.year}` : ''}
-                      </a>
-                    ) : (
-                      <>
-                        Source: {stat.source_name}
-                        {stat.year ? `, ${stat.year}` : ''}
-                      </>
-                    )}
-                  </p>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </section>
-      )}
-
       {/* Call to action */}
       <section className="py-12 border-t border-border">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -270,16 +232,10 @@ const About = () => {
             <Button onClick={() => setIsJoinDialogOpen(true)} className="touch-target">
               Request access
             </Button>
-            <button
-              type="button"
-              onClick={() => navigate('/contact')}
-              className="text-body text-dna-forest underline hover:text-dna-copper transition-colors"
-            >
-              Or get in touch
-            </button>
           </div>
         </div>
       </section>
+
 
       <JoinDNADialog
         isOpen={isJoinDialogOpen}
