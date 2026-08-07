@@ -94,7 +94,8 @@ export const BetaAccessForm: React.FC = () => {
         <CheckCircle2 className="w-10 h-10 mx-auto text-dna-emerald" />
         <h2 className="text-h3">You are on the list</h2>
         <p className="text-body text-muted-foreground">
-          Beta access opens {SIGNUPS_OPEN_LABEL}. We will email you when your place is ready.
+          We have your request. Signup is open now, so you can also create your account from the
+          Sign up tab.
         </p>
       </div>
     );
@@ -105,13 +106,14 @@ export const BetaAccessForm: React.FC = () => {
       <div className="space-y-2">
         <div className="flex items-start gap-2">
           <CalendarClock className="w-4 h-4 mt-1 shrink-0 text-dna-copper" />
-          <h2 className="text-h3">Signups open {SIGNUPS_OPEN_LABEL}</h2>
+          <h2 className="text-h3">Signup is open</h2>
         </div>
         <p className="text-body text-muted-foreground">
-          New accounts are paused until then. Request beta access and we will email you when your
-          place opens.
+          You can create your account right now from the Sign up tab. Prefer to hear from us first?
+          Leave your details and we will reach out.
         </p>
       </div>
+
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
