@@ -91,11 +91,11 @@ export default function SpacesIndex() {
           ))}
         </div>
       ) : spaces.length === 0 ? (
-        <Card className="p-8 text-center">
+        <Card className="p-8 text-center space-y-4">
           <p className="text-sm text-muted-foreground">
             No spaces yet. Be the first to start one.
           </p>
-          <Button onClick={() => composer.open('space')} className="mt-4">
+          <Button onClick={() => composer.open('space')}>
             <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
             Create Space
           </Button>
