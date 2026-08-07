@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 
-export type AuthMode = 'signup' | 'request' | 'signin';
+export type AuthMode = 'signup' | 'signin';
 
 interface AuthModeToggleProps {
   value: AuthMode;
@@ -9,14 +9,13 @@ interface AuthModeToggleProps {
 
 const TABS: Array<{ value: AuthMode; label: string }> = [
   { value: 'signup', label: 'Sign up' },
-  { value: 'request', label: 'Request access' },
   { value: 'signin', label: 'Sign in' },
 ];
 
 /**
- * Segmented control for the three auth surfaces (approved-only sign up,
- * access request, sign in). Lives outside src/pages so its internal
- * padding is component styling, not page-level layout.
+ * Segmented control for the two auth surfaces (open sign up, sign in).
+ * Lives outside src/pages so its internal padding is component styling,
+ * not page-level layout.
  */
 export const AuthModeToggle = ({ value, onChange }: AuthModeToggleProps) => (
   <div
