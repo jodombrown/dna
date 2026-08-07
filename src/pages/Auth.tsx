@@ -10,12 +10,10 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { getErrorMessage } from '@/lib/errorLogger';
-import { WAITLIST_MODE } from '@/config/featureFlags';
-import BetaAccessForm from '@/components/auth/BetaAccessForm';
 import { SignUpApprovalGate } from '@/components/auth/SignUpApprovalGate';
 import { AuthModeToggle } from '@/components/auth/AuthModeToggle';
 
-type AuthMode = 'signup' | 'request' | 'signin';
+type AuthMode = 'signup' | 'signin';
 
 
 /**
