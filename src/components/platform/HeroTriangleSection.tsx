@@ -1,7 +1,78 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { MessageSquare, Users, Handshake, Heart, Calendar, Newspaper, ArrowDown } from 'lucide-react';
+import { ArrowDown } from 'lucide-react';
+import {
+  Sankofa,
+  Nkonsonkonson,
+  FuntunfunefuDenkyemfunefu,
+  Adinkrahene,
+  Mpatapo,
+} from '@/components/icons/adinkra';
 import MainPageFeedbackPanel from '@/components/MainPageFeedbackPanel';
+
+type FiveC = {
+  id: string;
+  name: string;
+  sectionId: string;
+  blurb: string;
+  Icon: typeof Sankofa;
+  surface: string;
+  text: string;
+  hoverBorder: string;
+};
+
+const FIVE_CS: FiveC[] = [
+  {
+    id: 'connect',
+    name: 'Connect',
+    sectionId: 'connect-section',
+    blurb: 'Forge powerful bonds across the global African diaspora.',
+    Icon: Sankofa,
+    surface: 'bg-c5-connect',
+    text: 'text-c5-connect-text',
+    hoverBorder: 'hover:border-c5-connect',
+  },
+  {
+    id: 'convene',
+    name: 'Convene',
+    sectionId: 'convene-section',
+    blurb: 'Gather for meaningful events and cultural celebrations.',
+    Icon: Nkonsonkonson,
+    surface: 'bg-c5-convene',
+    text: 'text-c5-convene-text',
+    hoverBorder: 'hover:border-c5-convene',
+  },
+  {
+    id: 'collaborate',
+    name: 'Collaborate',
+    sectionId: 'collaborate-section',
+    blurb: 'Transform shared vision into action through partnerships.',
+    Icon: FuntunfunefuDenkyemfunefu,
+    surface: 'bg-c5-collaborate',
+    text: 'text-c5-collaborate-text',
+    hoverBorder: 'hover:border-c5-collaborate',
+  },
+  {
+    id: 'contribute',
+    name: 'Contribute',
+    sectionId: 'contribute-section',
+    blurb: "Step into your role in Africa's future with tangible impact.",
+    Icon: Adinkrahene,
+    surface: 'bg-c5-contribute',
+    text: 'text-c5-contribute-text',
+    hoverBorder: 'hover:border-c5-contribute',
+  },
+  {
+    id: 'convey',
+    name: 'Convey',
+    sectionId: 'convey-section',
+    blurb: 'Share stories and amplify diaspora voices across platforms.',
+    Icon: Mpatapo,
+    surface: 'bg-c5-convey',
+    text: 'text-c5-convey-text',
+    hoverBorder: 'hover:border-c5-convey',
+  },
+];
+
 
 const HeroTriangleSection = () => {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
