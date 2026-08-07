@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -22,6 +23,7 @@ interface SpaceRow {
 
 export default function MySpaces() {
   const { user } = useAuth();
+  const composer = useUniversalComposer();
 
   const { data: spaces = [], isLoading } = useQuery({
     queryKey: ['my-spaces', 'active', user?.id],
@@ -60,7 +62,7 @@ export default function MySpaces() {
   });
 
   return (
-    <SpacesShell bubblePlaceholder="Search your Spaces…">
+    <SpacesShell>
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">My Spaces</h1>
@@ -88,11 +90,9 @@ export default function MySpaces() {
             <Button asChild variant="outline">
               <Link to="/dna/collaborate/spaces">Browse spaces</Link>
             </Button>
-            <Button asChild>
-              <Link to="/dna/collaborate/spaces/new">
-                <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
-                Create Space
-              </Link>
+            <Button onClick={() => composer.open('space')}>
+              <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
+              Create Space
             </Button>
           </div>
         </Card>

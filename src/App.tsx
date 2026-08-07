@@ -138,7 +138,6 @@ const CollaborateHub = lazy(() => import("./pages/dna/collaborate/CollaborateHub
 const SpacesIndex = lazy(() => import("./pages/dna/collaborate/SpacesIndex"));
 const CollaborateSpaceDetail = lazy(() => import("./pages/dna/collaborate/SpaceDetail"));
 const SpaceBoard = lazy(() => import("./pages/dna/collaborate/SpaceBoard"));
-const CreateSpace = lazy(() => import("./pages/dna/collaborate/CreateSpace"));
 const SpaceSettings = lazy(() => import("./pages/dna/collaborate/SpaceSettings"));
 const MySpaces = lazy(() => import("./pages/dna/collaborate/MySpaces"));
 
@@ -658,11 +657,6 @@ function App() {
               <Route path="/dna/collaborate/spaces" element={
                 <OnboardingGuard>
                   <SpacesIndex />
-                </OnboardingGuard>
-              } />
-              <Route path="/dna/collaborate/spaces/new" element={
-                <OnboardingGuard>
-                  <CreateSpace />
                 </OnboardingGuard>
               } />
               <Route path="/dna/collaborate/spaces/:slug" element={

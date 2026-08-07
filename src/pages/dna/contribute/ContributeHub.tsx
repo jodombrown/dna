@@ -166,7 +166,7 @@ export default function ContributeHub() {
   }
 
   return (
-    <ContributeShell bubblePlaceholder="Search Needs">
+    <ContributeShell>
       <div className="flex flex-col gap-6">
         <ContributeLensBar />
 

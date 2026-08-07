@@ -66,7 +66,6 @@ export const ROUTES = {
     base: '/dna/collaborate',
     spaces: '/dna/collaborate/spaces',
     mySpaces: '/dna/collaborate/my-spaces',
-    createSpace: '/dna/collaborate/spaces/new',
     spaceDetail: (slug: string) => `/dna/collaborate/spaces/${slug}`,
     spaceBoard: (slug: string) => `/dna/collaborate/spaces/${slug}/board`,
     spaceSettings: (slug: string) => `/dna/collaborate/spaces/${slug}/settings`,

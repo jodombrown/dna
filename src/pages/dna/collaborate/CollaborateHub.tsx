@@ -12,10 +12,12 @@
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Plus, Telescope, UsersRound, BadgeCheck } from 'lucide-react';
+import { Plus, Search, Telescope, UsersRound, BadgeCheck } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SpacesShell } from '@/components/collaborate/SpacesShell';
 import { SpaceListCard, type SpaceListItem } from '@/components/collaborate/SpaceListCard';
@@ -65,6 +67,7 @@ const VALID_LENS_IDS = COLLABORATE_LENSES.map((l) => l.id);
 export default function CollaborateHub() {
   const { user } = useAuth();
   const joinSpace = useJoinSpace();
+  const composer = useUniversalComposer();
   const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -199,40 +202,56 @@ export default function CollaborateHub() {
     }
 
     if (activeLens === 'discover') {
+      const searchField = (
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+          <Input
+            placeholder="Search Spaces"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+      );
+
       if (discover.length === 0) {
         return (
-          <LensEmpty
-            icon={Telescope}
-            title="No open Spaces to join right now"
-            body="When a member opens a Space to the community, it lands here for you to join. Until then, the first move is yours."
-            action={
-              <Button asChild>
-                <Link to="/dna/collaborate/spaces/new">
+          <div className="space-y-4">
+            {searchField}
+            <LensEmpty
+              icon={Telescope}
+              title="No open Spaces to join right now"
+              body="When a member opens a Space to the community, it lands here for you to join. Until then, the first move is yours."
+              action={
+                <Button onClick={() => composer.open('space')}>
                   <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
                   Start a Space
-                </Link>
-              </Button>
-            }
-          />
+                </Button>
+              }
+            />
+          </div>
         );
       }
       return (
-        <div className="space-y-3">
-          {discover.map((space) => (
-            <SpaceListCard
-              key={space.id}
-              space={space}
-              isMember={!!membershipMap[space.id]}
-              isPending={membershipMap[space.id] === 'invited'}
-              isJoining={joinSpace.isPending && joinSpace.variables?.spaceId === space.id}
-              onJoin={(s) =>
-                joinSpace.mutate({
-                  spaceId: s.id,
-                  visibility: s.visibility as SpaceVisibility,
-                })
-              }
-            />
-          ))}
+        <div className="space-y-4">
+          {searchField}
+          <div className="space-y-3">
+            {discover.map((space) => (
+              <SpaceListCard
+                key={space.id}
+                space={space}
+                isMember={!!membershipMap[space.id]}
+                isPending={membershipMap[space.id] === 'invited'}
+                isJoining={joinSpace.isPending && joinSpace.variables?.spaceId === space.id}
+                onJoin={(s) =>
+                  joinSpace.mutate({
+                    spaceId: s.id,
+                    visibility: s.visibility as SpaceVisibility,
+                  })
+                }
+              />
+            ))}
+          </div>
         </div>
       );
     }
@@ -249,11 +268,9 @@ export default function CollaborateHub() {
                 <Button asChild variant="outline">
                   <Link to="/dna/collaborate?lens=discover">Browse Discover</Link>
                 </Button>
-                <Button asChild>
-                  <Link to="/dna/collaborate/spaces/new">
-                    <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
-                    Start a Space
-                  </Link>
+                <Button onClick={() => composer.open('space')}>
+                  <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
+                  Start a Space
                 </Button>
               </div>
             }
@@ -289,12 +306,7 @@ export default function CollaborateHub() {
   }
 
   return (
-    <SpacesShell
-      bubblePlaceholder="Search Spaces"
-      searchQuery={searchQuery}
-      onSearchChange={setSearchQuery}
-      tabs={null}
-    >
+    <SpacesShell tabs={null}>
       <div className="flex flex-col gap-6">
         <CollaborateLensBar />
 
