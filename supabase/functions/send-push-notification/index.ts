@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import webpush from "npm:web-push@3.6.7";
 import { requireInternal, requireUser } from "../_shared/auth.ts";
 
 
@@ -37,7 +38,6 @@ const handler = async (req: Request): Promise<Response> => {
     const data: PushNotificationRequest = await req.json();
 
     // Registration is user-initiated (called from the browser with a user JWT).
-    // Sending pushes is internal-only (service-role or cron secret).
     if (data.action === 'register') {
       const authed = await requireUser(req);
       if (!authed.ok) return authed.response;
@@ -49,8 +49,21 @@ const handler = async (req: Request): Promise<Response> => {
         );
       }
     } else {
-      const internal = requireInternal(req);
-      if (!internal.ok) return internal.response;
+      // Sending is triggered by an ordinary user's own session pushing a
+      // notification to a *different* user — e.g. messageService.ts fires
+      // this when a message is sent, targeting the recipient, not the
+      // sender — the same recipient-not-caller shape as
+      // send-notification-email. This branch previously required
+      // requireInternal() (service-role key or CRON_SECRET), which the
+      // browser never has, so every real "send" caller
+      // (messageService.ts, notificationSystemService.ts) was rejected
+      // outright. Accept either an authenticated user or a genuine
+      // internal/cron caller.
+      const authed = await requireUser(req);
+      if (!authed.ok) {
+        const internal = requireInternal(req);
+        if (!internal.ok) return authed.response;
+      }
     }
 
     
@@ -142,56 +155,56 @@ const handler = async (req: Request): Promise<Response> => {
     // Get VAPID keys for proper web push signing
     const vapidPublicKey = Deno.env.get("VAPID_PUBLIC_KEY");
     const vapidPrivateKey = Deno.env.get("VAPID_PRIVATE_KEY");
+    const vapidSubject = Deno.env.get("VAPID_SUBJECT") || "mailto:notifications@diasporanetwork.africa";
 
     if (!vapidPublicKey || !vapidPrivateKey) {
       console.warn("VAPID keys not configured - push notifications may not work");
+    } else {
+      // The previous implementation never actually signed anything: it sent
+      // the plaintext payload as the request body and attached a
+      // `Crypto-Key: p256ecdsa=...` header with no VAPID JWT and no Web Push
+      // payload encryption (aes128gcm). Every push service (Chrome/FCM,
+      // Mozilla autopush, etc.) requires both per RFC 8291/8292 and rejects
+      // anything else — so push notifications never actually reached a
+      // device regardless of auth. web-push implements both correctly.
+      webpush.setVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
     }
 
     // Send to all subscriptions
     for (const subscription of subscriptions) {
       try {
-        const pushSubscription = subscription.subscription_data as { 
-          endpoint: string; 
-          keys?: { p256dh: string; auth: string } 
+        const pushSubscription = subscription.subscription_data as {
+          endpoint: string;
+          keys?: { p256dh: string; auth: string };
         };
-        
-        if (!pushSubscription.endpoint) {
+
+        if (!pushSubscription.endpoint || !pushSubscription.keys?.p256dh || !pushSubscription.keys?.auth) {
           failedSubscriptionIds.push(subscription.id);
           continue;
         }
 
-        // Build headers for Web Push
-        const headers: Record<string, string> = {
-          'Content-Type': 'application/json',
-          'TTL': '86400',
-        };
-
-        // Add VAPID authorization if keys are available
-        if (vapidPublicKey && vapidPrivateKey && pushSubscription.keys) {
-          // For full VAPID signing, we add the public key
-          // Note: Full JWT signing would require additional crypto libraries
-          headers['Crypto-Key'] = `p256ecdsa=${vapidPublicKey}`;
+        if (!vapidPublicKey || !vapidPrivateKey) {
+          // Config problem, not a bad subscription — don't deactivate it.
+          console.warn(`Skipping push to ${subscription.id}: VAPID keys not configured`);
+          continue;
         }
 
-        const response = await fetch(pushSubscription.endpoint, {
-          method: 'POST',
-          headers,
-          body: payload,
-        });
-        
-        if (response.ok || response.status === 201) {
-          successCount++;
-          console.log(`Push sent successfully to endpoint`);
-        } else if (response.status === 410 || response.status === 404) {
+        await webpush.sendNotification(
+          { endpoint: pushSubscription.endpoint, keys: pushSubscription.keys },
+          payload,
+          { TTL: 86400 }
+        );
+        successCount++;
+        console.log(`Push sent successfully to endpoint`);
+      } catch (pushError) {
+        const statusCode = (pushError as { statusCode?: number })?.statusCode;
+        if (statusCode === 410 || statusCode === 404) {
           // Subscription expired or invalid
           failedSubscriptionIds.push(subscription.id);
           console.log(`Subscription expired: ${subscription.id}`);
         } else {
-          const responseText = await response.text();
-          console.log(`Push returned ${response.status}: ${responseText}`);
+          console.error("Error sending to subscription:", pushError);
         }
-      } catch (pushError) {
-        console.error("Error sending to subscription:", pushError);
       }
     }
 

@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { requireUser } from "../_shared/auth.ts";
+import { requireUser, escapeHtml, isSafePublicUrl } from "../_shared/auth.ts";
 
 
 const corsHeaders = {
@@ -18,6 +18,33 @@ interface NotificationEmailRequest {
   action_url?: string;
   actor_name?: string;
   actor_avatar_url?: string;
+}
+
+// The recipient (user_id) is legitimately someone other than the caller for
+// this endpoint — e.g. Alice's browser session triggers an email to Bob when
+// she sends him a connection request — so this can't be locked down with a
+// caller-must-equal-target check like send-password-reset. Instead, every
+// field that lands in the HTML/subject is either escaped or, for URLs,
+// restricted to the app's own domain so the endpoint can't be used to email
+// an arbitrary user an attacker-controlled phishing link or script payload.
+const ALLOWED_HOSTS = ['diasporanetwork.africa', 'www.diasporanetwork.africa', 'diaspora-network-of-africa.lovable.app'];
+
+/** Resolve action_url to a safe absolute https URL on our own domain, or undefined if unsafe. */
+function resolveSafeActionUrl(actionUrl: string | undefined): string | undefined {
+  if (!actionUrl) return undefined;
+  const appUrl = Deno.env.get("APP_URL") || "https://diasporanetwork.africa";
+  // Relative paths (the common case — callers pass e.g. `/dna/convey/posts/123`)
+  // are resolved against our own app domain, never the caller's input.
+  if (actionUrl.startsWith("/")) {
+    return `${appUrl}${actionUrl}`;
+  }
+  return isSafePublicUrl(actionUrl, ALLOWED_HOSTS) ? actionUrl : undefined;
+}
+
+/** Resolve actor_avatar_url to a safe https URL, or undefined if unsafe (dropped, not defaulted). */
+function resolveSafeAvatarUrl(avatarUrl: string | undefined): string | undefined {
+  if (!avatarUrl) return undefined;
+  return isSafePublicUrl(avatarUrl) ? avatarUrl : undefined;
 }
 
 // Map notification types to preference fields
@@ -57,6 +84,12 @@ const getNotificationIcon = (type: string): string => {
 const generateEmailHtml = (data: NotificationEmailRequest, userName: string, unsubscribeToken?: string): string => {
   const icon = getNotificationIcon(data.notification_type);
   const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
+  const safeActionUrl = resolveSafeActionUrl(data.action_url);
+  const safeAvatarUrl = resolveSafeAvatarUrl(data.actor_avatar_url);
+  const safeTitle = escapeHtml(data.title);
+  const safeMessage = escapeHtml(data.message);
+  const safeActorName = data.actor_name ? escapeHtml(data.actor_name) : undefined;
+  const safeUserName = escapeHtml(userName);
   
   // Build unsubscribe URLs
   const unsubscribeAllUrl = unsubscribeToken 
@@ -82,12 +115,12 @@ const generateEmailHtml = (data: NotificationEmailRequest, userName: string, uns
     ? `${supabaseUrl}/functions/v1/unsubscribe-email?token=${unsubscribeToken}&type=${unsubscribeType}`
     : unsubscribeAllUrl;
   
-  const actionButton = data.action_url ? `
+  const actionButton = safeActionUrl ? `
     <tr>
       <td style="padding: 24px 0;">
-        <a href="${data.action_url}" 
-           style="display: inline-block; background: linear-gradient(135deg, #D97706 0%, #B45309 100%); 
-                  color: white; padding: 14px 32px; border-radius: 8px; 
+        <a href="${escapeHtml(safeActionUrl)}"
+           style="display: inline-block; background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+                  color: white; padding: 14px 32px; border-radius: 8px;
                   text-decoration: none; font-weight: 600; font-size: 16px;
                   box-shadow: 0 4px 14px rgba(217, 119, 6, 0.3);">
           View on DNA
@@ -96,24 +129,24 @@ const generateEmailHtml = (data: NotificationEmailRequest, userName: string, uns
     </tr>
   ` : '';
 
-  const actorSection = data.actor_name ? `
+  const actorSection = safeActorName ? `
     <tr>
       <td style="padding-bottom: 16px;">
         <table cellpadding="0" cellspacing="0" border="0">
           <tr>
             <td style="vertical-align: middle;">
-              ${data.actor_avatar_url 
-                ? `<img src="${data.actor_avatar_url}" alt="${data.actor_name}" 
+              ${safeAvatarUrl
+                ? `<img src="${escapeHtml(safeAvatarUrl)}" alt="${safeActorName}"
                      style="width: 48px; height: 48px; border-radius: 50%; margin-right: 12px; object-fit: cover;">`
-                : `<div style="width: 48px; height: 48px; border-radius: 50%; margin-right: 12px; 
-                         background: linear-gradient(135deg, #D97706 0%, #B45309 100%); 
+                : `<div style="width: 48px; height: 48px; border-radius: 50%; margin-right: 12px;
+                         background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
                          display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
-                     ${data.actor_name.charAt(0).toUpperCase()}
+                     ${safeActorName.charAt(0).toUpperCase()}
                    </div>`
               }
             </td>
             <td style="vertical-align: middle;">
-              <span style="font-weight: 600; color: #1a1a1a;">${data.actor_name}</span>
+              <span style="font-weight: 600; color: #1a1a1a;">${safeActorName}</span>
             </td>
           </tr>
         </table>
@@ -127,7 +160,7 @@ const generateEmailHtml = (data: NotificationEmailRequest, userName: string, uns
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>${data.title}</title>
+      <title>${safeTitle}</title>
     </head>
     <body style="margin: 0; padding: 0; background-color: #f4f4f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f4f4f5;">
@@ -155,7 +188,7 @@ const generateEmailHtml = (data: NotificationEmailRequest, userName: string, uns
                     <!-- Greeting -->
                     <tr>
                       <td style="padding-bottom: 24px;">
-                        <p style="margin: 0; color: #71717a; font-size: 14px;">Hello ${userName},</p>
+                        <p style="margin: 0; color: #71717a; font-size: 14px;">Hello ${safeUserName},</p>
                       </td>
                     </tr>
                     
@@ -163,7 +196,7 @@ const generateEmailHtml = (data: NotificationEmailRequest, userName: string, uns
                     <tr>
                       <td style="padding-bottom: 16px;">
                         <span style="font-size: 32px; margin-right: 12px;">${icon}</span>
-                        <span style="font-size: 20px; font-weight: 700; color: #1a1a1a;">${data.title}</span>
+                        <span style="font-size: 20px; font-weight: 700; color: #1a1a1a;">${safeTitle}</span>
                       </td>
                     </tr>
                     
@@ -174,7 +207,7 @@ const generateEmailHtml = (data: NotificationEmailRequest, userName: string, uns
                     <tr>
                       <td style="padding-bottom: 24px;">
                         <p style="margin: 0; color: #3f3f46; font-size: 16px; line-height: 1.6;">
-                          ${data.message}
+                          ${safeMessage}
                         </p>
                       </td>
                     </tr>
@@ -333,7 +366,7 @@ const handler = async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: "DNA Platform <notifications@diasporanetwork.africa>",
       to: [profile.email],
-      subject: `${getNotificationIcon(data.notification_type)} ${data.title}`,
+      subject: `${getNotificationIcon(data.notification_type)} ${data.title}`.slice(0, 200),
       html: htmlContent,
     });
 

@@ -2,7 +2,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { getEmailContent } from "./emailTemplates.ts";
 import { EmailService } from "./emailService.ts";
-import { requireInternal } from "../_shared/auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -61,8 +60,13 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  const __auth = requireInternal(req);
-  if (!__auth.ok) return __auth.response;
+  // This backs public, pre-signup marketing forms (waitlist, ambassador
+  // signup, beta signup, feedback, survey, demo request) that anonymous
+  // site visitors submit before they have an account — there is no user
+  // session to require. It previously called requireInternal(), which
+  // demands the service-role key or CRON_SECRET; the browser never has
+  // either, so that gate silently rejected every one of this endpoint's
+  // 13+ real callers. Input is still sanitized/validated below before use.
 
   try {
     const { formType, formData, userEmail }: UniversalEmailRequest = await req.json();
