@@ -101,108 +101,31 @@ const HeroTriangleSection = () => {
               <em>You grow. The movement grows. Africa grows. That's the DNA way.</em>
             </p>
 
-            {/* Five Pillars Navigation - Hidden on mobile */}
+            {/* Five C's navigation - hidden on mobile */}
             <div className="hidden md:grid md:grid-cols-5 gap-6 mb-12">
-              {/* Connect Navigation Button */}
-              <button 
-                onClick={() => scrollToSection('connect-section')}
-                className="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer transform hover:scale-105"
-              >
-                <div className="flex justify-center mb-4">
-                  <div className="w-14 h-14 bg-gradient-to-br from-dna-emerald to-dna-forest rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Users className="w-7 h-7 text-white" />
+              {FIVE_CS.map(({ id, name, sectionId, blurb, Icon, surface, text, hoverBorder }) => (
+                <button
+                  key={id}
+                  onClick={() => scrollToSection(sectionId)}
+                  className={`bg-card border border-border rounded-lg p-6 transition-colors duration-150 group cursor-pointer ${hoverBorder}`}
+                >
+                  <div className="flex justify-center mb-4">
+                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${surface}`}>
+                      <Icon className="w-7 h-7 text-primary-foreground" />
+                    </div>
                   </div>
-                </div>
-                <h3 className="text-xl font-bold text-dna-forest mb-3">Connect</h3>
-                <p className="text-neutral-600 text-sm mb-4 leading-relaxed">
-                  Forge powerful bonds across the global African diaspora.
-                </p>
-                <div className="flex items-center justify-center text-dna-emerald group-hover:text-dna-forest transition-colors">
-                  <span className="text-sm font-medium mr-2">Learn More</span>
-                  <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
-                </div>
-              </button>
-
-              {/* Convene Navigation Button */}
-              <button 
-                onClick={() => scrollToSection('convene-section')}
-                className="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer transform hover:scale-105"
-              >
-                <div className="flex justify-center mb-4">
-                  <div className="w-14 h-14 bg-gradient-to-br from-dna-sunset to-dna-copper rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Calendar className="w-7 h-7 text-white" />
+                  <h3 className={`text-h2 mb-3 ${text}`}>{name}</h3>
+                  <p className="text-muted-foreground text-body mb-4 leading-relaxed">
+                    {blurb}
+                  </p>
+                  <div className={`flex items-center justify-center transition-colors ${text}`}>
+                    <span className="text-body font-medium mr-2">Learn more</span>
+                    <ArrowDown className="w-4 h-4" />
                   </div>
-                </div>
-                <h3 className="text-xl font-bold text-dna-sunset mb-3">Convene</h3>
-                <p className="text-neutral-600 text-sm mb-4 leading-relaxed">
-                  Gather for meaningful events and cultural celebrations.
-                </p>
-                <div className="flex items-center justify-center text-dna-sunset group-hover:text-dna-copper transition-colors">
-                  <span className="text-sm font-medium mr-2">Learn More</span>
-                  <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
-                </div>
-              </button>
-
-              {/* Collaborate Navigation Button */}
-              <button 
-                onClick={() => scrollToSection('collaborate-section')}
-                className="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer transform hover:scale-105"
-              >
-                <div className="flex justify-center mb-4">
-                  <div className="w-14 h-14 bg-gradient-to-br from-dna-copper to-dna-gold rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Handshake className="w-7 h-7 text-white" />
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold text-dna-copper mb-3">Collaborate</h3>
-                <p className="text-neutral-600 text-sm mb-4 leading-relaxed">
-                  Transform shared vision into action through partnerships.
-                </p>
-                <div className="flex items-center justify-center text-dna-copper group-hover:text-dna-gold transition-colors">
-                  <span className="text-sm font-medium mr-2">Learn More</span>
-                  <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
-                </div>
-              </button>
-
-              {/* Contribute Navigation Button */}
-              <button 
-                onClick={() => scrollToSection('contribute-section')}
-                className="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer transform hover:scale-105"
-              >
-                <div className="flex justify-center mb-4">
-                  <div className="w-14 h-14 bg-gradient-to-br from-dna-mint to-dna-emerald rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Heart className="w-7 h-7 text-white" />
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold text-dna-emerald mb-3">Contribute</h3>
-                <p className="text-neutral-600 text-sm mb-4 leading-relaxed">
-                  Step into your role in Africa's future with tangible impact.
-                </p>
-                <div className="flex items-center justify-center text-dna-emerald group-hover:text-dna-mint transition-colors">
-                  <span className="text-sm font-medium mr-2">Learn More</span>
-                  <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
-                </div>
-              </button>
-
-              {/* Convey Navigation Button */}
-              <button 
-                onClick={() => scrollToSection('convey-section')}
-                className="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer transform hover:scale-105"
-              >
-                <div className="flex justify-center mb-4">
-                  <div className="w-14 h-14 bg-gradient-to-br from-dna-ochre to-dna-gold rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Newspaper className="w-7 h-7 text-white" />
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold text-dna-ochre mb-3">Convey</h3>
-                <p className="text-neutral-600 text-sm mb-4 leading-relaxed">
-                  Share stories and amplify diaspora voices across platforms.
-                </p>
-                <div className="flex items-center justify-center text-dna-ochre group-hover:text-dna-gold transition-colors">
-                  <span className="text-sm font-medium mr-2">Learn More</span>
-                  <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
-                </div>
-              </button>
+                </button>
+              ))}
             </div>
+
           </div>
         </div>
       </section>
