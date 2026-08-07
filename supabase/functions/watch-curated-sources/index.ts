@@ -12,7 +12,7 @@
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.9";
 import { corsHeaders } from "../_shared/cors.ts";
-import { requireInternal } from "../_shared/auth.ts";
+import { requireInternal, isSafePublicUrl } from "../_shared/auth.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -71,6 +71,16 @@ Deno.serve(async (req) => {
   for (const e of (events ?? []) as Row[]) {
     if (!e.curated_source_url) continue;
     results.checked++;
+    // curated_source_url is LLM/admin-supplied (see curate-diaspora-events),
+    // not something this function controls — guard the outbound fetch
+    // against internal/private targets like every other fetch of an
+    // externally-supplied URL in this codebase (cf. link-preview).
+    if (!isSafePublicUrl(e.curated_source_url)) {
+      results.failed++;
+      console.warn("watch-curated-sources: unsafe curated_source_url skipped", { eventId: e.id });
+      await admin.from("events").update({ source_last_checked: now }).eq("id", e.id);
+      continue;
+    }
     try {
       const res = await fetch(e.curated_source_url, {
         headers: { "User-Agent": "DNA-CuratedWatcher/1.0" },

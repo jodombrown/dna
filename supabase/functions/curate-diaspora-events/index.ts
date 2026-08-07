@@ -199,7 +199,19 @@ Deno.serve(async (req: Request) => {
       });
 
       if (insertError) {
-        errors.push(`Failed to insert "${event.title}": ${insertError.message}`);
+        // 23505 = unique_violation. The in-memory existingSet check above
+        // only protects against duplicates already existing before THIS
+        // run started — it can't see another overlapping invocation's
+        // inserts. idx_events_curated_dedupe_key (migration 20260808110000)
+        // is the real guard against that race; a violation here just means
+        // another run beat us to the same event, which is a skip, not a
+        // failure.
+        if (insertError.code === "23505") {
+          skipped++;
+          existingSet.add(dedupeKey);
+        } else {
+          errors.push(`Failed to insert "${event.title}": ${insertError.message}`);
+        }
       } else {
         inserted++;
         existingSet.add(dedupeKey);

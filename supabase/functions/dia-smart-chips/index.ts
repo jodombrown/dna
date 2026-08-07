@@ -58,10 +58,17 @@ Deno.serve(async (req) => {
     const chips: Chip[] = [];
     const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
-    // 1) Recent event RSVPs by the user's connections (network signal).
+    // 1) Recent event RSVPs by the caller (network signal).
+    // Previously had no scoping filter at all — under a service-role client
+    // that would have been a system-wide "has anyone RSVP'd lately" check
+    // (always true), always lighting up a chip labeled "my network" for
+    // every caller. In practice RLS on event_registrations (self-or-host
+    // read only) already bounded it, but the query still didn't match what
+    // it claimed to check — scope it explicitly to the caller.
     const { data: recentJoins } = await supabase
       .from('event_registrations')
       .select('id')
+      .eq('user_id', user.id)
       .gte('created_at', since)
       .limit(1);
     if (recentJoins && recentJoins.length > 0) {
