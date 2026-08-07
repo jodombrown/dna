@@ -7888,7 +7888,6 @@ export type Database = {
           account_visibility: string | null
           achievements: string | null
           advocacy_interests: string[] | null
-          africa_focus_areas: string[] | null
           africa_visit_frequency: string | null
           african_causes: string[] | null
           agrees_to_values: boolean | null
@@ -7915,7 +7914,6 @@ export type Database = {
           bio: string | null
           certifications: string | null
           city: string | null
-          collaboration_needs: string[] | null
           collaboration_tags: Json | null
           community_involvement: string | null
           company: string | null
@@ -7952,8 +7950,8 @@ export type Database = {
           email: string | null
           email_notifications: boolean | null
           email_visible: boolean | null
-          engagement_intentions: string[] | null
           engagement_geography: string[] | null
+          engagement_intentions: string[] | null
           ethnic_heritage: string[] | null
           event_interest_tags: Json | null
           facebook_url: string | null
@@ -7972,7 +7970,6 @@ export type Database = {
           home_country_projects: string | null
           id: string
           impact_areas: string[] | null
-          impact_goals: string[] | null
           impact_regions: string[] | null
           impact_scores: Json | null
           impact_scores_updated_at: string | null
@@ -7981,9 +7978,6 @@ export type Database = {
           industry_sectors: string[] | null
           innovation_pathways: string | null
           instagram_url: string | null
-          intent_tags: Json | null
-          intentions: string[] | null
-          intents: string[] | null
           interest_tags: string[] | null
           interests: string[] | null
           intro_audio_url: string | null
@@ -8004,16 +7998,13 @@ export type Database = {
           location_preference: string | null
           looking_for_opportunities: boolean | null
           mentorship_areas: string[] | null
-          mentorship_interest: string[] | null
           mentorship_offering: boolean | null
           middle_initial: string | null
           my_dna_statement: string | null
-          needs: string[] | null
           networking_goals: string[] | null
           newsletter_emails: boolean | null
           notification_preferences: Json | null
           notifications_enabled: boolean | null
-          offers: string[] | null
           onboarding_completed: boolean | null
           onboarding_completed_at: string | null
           onboarding_progress: Json
@@ -8058,9 +8049,6 @@ export type Database = {
           show_read_receipts: boolean
           skill_tags: Json | null
           skills: string[] | null
-          skills_needed: string[] | null
-          skills_offered: string[] | null
-          support_areas: string[] | null
           threshold_fields: string[]
           timezone: string | null
           tour_completed_at: string | null
@@ -8088,8 +8076,6 @@ export type Database = {
           visibility: Json | null
           volunteer_experience: string | null
           website_url: string | null
-          what_to_give: string[] | null
-          what_to_receive: string[] | null
           whatsapp_number: string | null
           why_contribute: string | null
           years_experience: number | null
@@ -8099,7 +8085,6 @@ export type Database = {
           account_visibility?: string | null
           achievements?: string | null
           advocacy_interests?: string[] | null
-          africa_focus_areas?: string[] | null
           africa_visit_frequency?: string | null
           african_causes?: string[] | null
           agrees_to_values?: boolean | null
@@ -8126,7 +8111,6 @@ export type Database = {
           bio?: string | null
           certifications?: string | null
           city?: string | null
-          collaboration_needs?: string[] | null
           collaboration_tags?: Json | null
           community_involvement?: string | null
           company?: string | null
@@ -8163,6 +8147,7 @@ export type Database = {
           email?: string | null
           email_notifications?: boolean | null
           email_visible?: boolean | null
+          engagement_geography?: string[] | null
           engagement_intentions?: string[] | null
           ethnic_heritage?: string[] | null
           event_interest_tags?: Json | null
@@ -8182,19 +8167,14 @@ export type Database = {
           home_country_projects?: string | null
           id: string
           impact_areas?: string[] | null
-          impact_goals?: string[] | null
           impact_regions?: string[] | null
           impact_scores?: Json | null
           impact_scores_updated_at?: string | null
-          engagement_geography?: string[] | null
           industries?: string[] | null
           industry?: string | null
           industry_sectors?: string[] | null
           innovation_pathways?: string | null
           instagram_url?: string | null
-          intent_tags?: Json | null
-          intentions?: string[] | null
-          intents?: string[] | null
           interest_tags?: string[] | null
           interests?: string[] | null
           intro_audio_url?: string | null
@@ -8215,16 +8195,13 @@ export type Database = {
           location_preference?: string | null
           looking_for_opportunities?: boolean | null
           mentorship_areas?: string[] | null
-          mentorship_interest?: string[] | null
           mentorship_offering?: boolean | null
           middle_initial?: string | null
           my_dna_statement?: string | null
-          needs?: string[] | null
           networking_goals?: string[] | null
           newsletter_emails?: boolean | null
           notification_preferences?: Json | null
           notifications_enabled?: boolean | null
-          offers?: string[] | null
           onboarding_completed?: boolean | null
           onboarding_completed_at?: string | null
           onboarding_progress?: Json
@@ -8269,9 +8246,6 @@ export type Database = {
           show_read_receipts?: boolean
           skill_tags?: Json | null
           skills?: string[] | null
-          skills_needed?: string[] | null
-          skills_offered?: string[] | null
-          support_areas?: string[] | null
           threshold_fields?: string[]
           timezone?: string | null
           tour_completed_at?: string | null
@@ -8299,8 +8273,6 @@ export type Database = {
           visibility?: Json | null
           volunteer_experience?: string | null
           website_url?: string | null
-          what_to_give?: string[] | null
-          what_to_receive?: string[] | null
           whatsapp_number?: string | null
           why_contribute?: string | null
           years_experience?: number | null
@@ -8310,7 +8282,6 @@ export type Database = {
           account_visibility?: string | null
           achievements?: string | null
           advocacy_interests?: string[] | null
-          africa_focus_areas?: string[] | null
           africa_visit_frequency?: string | null
           african_causes?: string[] | null
           agrees_to_values?: boolean | null
@@ -8337,7 +8308,6 @@ export type Database = {
           bio?: string | null
           certifications?: string | null
           city?: string | null
-          collaboration_needs?: string[] | null
           collaboration_tags?: Json | null
           community_involvement?: string | null
           company?: string | null
@@ -8374,6 +8344,7 @@ export type Database = {
           email?: string | null
           email_notifications?: boolean | null
           email_visible?: boolean | null
+          engagement_geography?: string[] | null
           engagement_intentions?: string[] | null
           ethnic_heritage?: string[] | null
           event_interest_tags?: Json | null
@@ -8393,19 +8364,14 @@ export type Database = {
           home_country_projects?: string | null
           id?: string
           impact_areas?: string[] | null
-          impact_goals?: string[] | null
           impact_regions?: string[] | null
           impact_scores?: Json | null
           impact_scores_updated_at?: string | null
-          engagement_geography?: string[] | null
           industries?: string[] | null
           industry?: string | null
           industry_sectors?: string[] | null
           innovation_pathways?: string | null
           instagram_url?: string | null
-          intent_tags?: Json | null
-          intentions?: string[] | null
-          intents?: string[] | null
           interest_tags?: string[] | null
           interests?: string[] | null
           intro_audio_url?: string | null
@@ -8426,16 +8392,13 @@ export type Database = {
           location_preference?: string | null
           looking_for_opportunities?: boolean | null
           mentorship_areas?: string[] | null
-          mentorship_interest?: string[] | null
           mentorship_offering?: boolean | null
           middle_initial?: string | null
           my_dna_statement?: string | null
-          needs?: string[] | null
           networking_goals?: string[] | null
           newsletter_emails?: boolean | null
           notification_preferences?: Json | null
           notifications_enabled?: boolean | null
-          offers?: string[] | null
           onboarding_completed?: boolean | null
           onboarding_completed_at?: string | null
           onboarding_progress?: Json
@@ -8480,9 +8443,6 @@ export type Database = {
           show_read_receipts?: boolean
           skill_tags?: Json | null
           skills?: string[] | null
-          skills_needed?: string[] | null
-          skills_offered?: string[] | null
-          support_areas?: string[] | null
           threshold_fields?: string[]
           timezone?: string | null
           tour_completed_at?: string | null
@@ -8510,8 +8470,6 @@ export type Database = {
           visibility?: Json | null
           volunteer_experience?: string | null
           website_url?: string | null
-          what_to_give?: string[] | null
-          what_to_receive?: string[] | null
           whatsapp_number?: string | null
           why_contribute?: string | null
           years_experience?: number | null
@@ -12120,21 +12078,19 @@ export type Database = {
           current_city: string | null
           current_country: string | null
           display_name: string | null
+          engagement_geography: string[] | null
           first_name: string | null
           full_name: string | null
           headline: string | null
           id: string | null
           impact_areas: string[] | null
           impact_regions: string[] | null
-          engagement_geography: string[] | null
           industry: string | null
           interest_tags: string[] | null
           interests: string[] | null
           is_public: boolean | null
           last_name: string | null
-          needs: string[] | null
           networking_goals: string[] | null
-          offers: string[] | null
           primary_origin_country: string | null
           profession: string | null
           professional_role: string | null
@@ -12160,21 +12116,19 @@ export type Database = {
           current_city?: string | null
           current_country?: string | null
           display_name?: string | null
+          engagement_geography?: string[] | null
           first_name?: string | null
           full_name?: string | null
           headline?: string | null
           id?: string | null
           impact_areas?: string[] | null
           impact_regions?: string[] | null
-          engagement_geography?: string[] | null
           industry?: string | null
           interest_tags?: string[] | null
           interests?: string[] | null
           is_public?: boolean | null
           last_name?: string | null
-          needs?: string[] | null
           networking_goals?: string[] | null
-          offers?: string[] | null
           primary_origin_country?: never
           profession?: string | null
           professional_role?: string | null
@@ -12200,21 +12154,19 @@ export type Database = {
           current_city?: string | null
           current_country?: string | null
           display_name?: string | null
+          engagement_geography?: string[] | null
           first_name?: string | null
           full_name?: string | null
           headline?: string | null
           id?: string | null
           impact_areas?: string[] | null
           impact_regions?: string[] | null
-          engagement_geography?: string[] | null
           industry?: string | null
           interest_tags?: string[] | null
           interests?: string[] | null
           is_public?: boolean | null
           last_name?: string | null
-          needs?: string[] | null
           networking_goals?: string[] | null
-          offers?: string[] | null
           primary_origin_country?: never
           profession?: string | null
           professional_role?: string | null
@@ -12323,7 +12275,6 @@ export type Database = {
           account_visibility: string | null
           achievements: string | null
           advocacy_interests: string[] | null
-          africa_focus_areas: string[] | null
           africa_visit_frequency: string | null
           african_causes: string[] | null
           agrees_to_values: boolean | null
@@ -12350,7 +12301,6 @@ export type Database = {
           bio: string | null
           certifications: string | null
           city: string | null
-          collaboration_needs: string[] | null
           collaboration_tags: Json | null
           community_involvement: string | null
           company: string | null
@@ -12387,6 +12337,7 @@ export type Database = {
           email: string | null
           email_notifications: boolean | null
           email_visible: boolean | null
+          engagement_geography: string[] | null
           engagement_intentions: string[] | null
           ethnic_heritage: string[] | null
           event_interest_tags: Json | null
@@ -12406,7 +12357,6 @@ export type Database = {
           home_country_projects: string | null
           id: string
           impact_areas: string[] | null
-          impact_goals: string[] | null
           impact_regions: string[] | null
           impact_scores: Json | null
           impact_scores_updated_at: string | null
@@ -12415,9 +12365,6 @@ export type Database = {
           industry_sectors: string[] | null
           innovation_pathways: string | null
           instagram_url: string | null
-          intent_tags: Json | null
-          intentions: string[] | null
-          intents: string[] | null
           interest_tags: string[] | null
           interests: string[] | null
           intro_audio_url: string | null
@@ -12438,16 +12385,13 @@ export type Database = {
           location_preference: string | null
           looking_for_opportunities: boolean | null
           mentorship_areas: string[] | null
-          mentorship_interest: string[] | null
           mentorship_offering: boolean | null
           middle_initial: string | null
           my_dna_statement: string | null
-          needs: string[] | null
           networking_goals: string[] | null
           newsletter_emails: boolean | null
           notification_preferences: Json | null
           notifications_enabled: boolean | null
-          offers: string[] | null
           onboarding_completed: boolean | null
           onboarding_completed_at: string | null
           onboarding_progress: Json
@@ -12492,9 +12436,6 @@ export type Database = {
           show_read_receipts: boolean
           skill_tags: Json | null
           skills: string[] | null
-          skills_needed: string[] | null
-          skills_offered: string[] | null
-          support_areas: string[] | null
           threshold_fields: string[]
           timezone: string | null
           tour_completed_at: string | null
@@ -12522,8 +12463,6 @@ export type Database = {
           visibility: Json | null
           volunteer_experience: string | null
           website_url: string | null
-          what_to_give: string[] | null
-          what_to_receive: string[] | null
           whatsapp_number: string | null
           why_contribute: string | null
           years_experience: number | null
@@ -13675,7 +13614,6 @@ export type Database = {
           account_visibility: string | null
           achievements: string | null
           advocacy_interests: string[] | null
-          africa_focus_areas: string[] | null
           africa_visit_frequency: string | null
           african_causes: string[] | null
           agrees_to_values: boolean | null
@@ -13702,7 +13640,6 @@ export type Database = {
           bio: string | null
           certifications: string | null
           city: string | null
-          collaboration_needs: string[] | null
           collaboration_tags: Json | null
           community_involvement: string | null
           company: string | null
@@ -13739,6 +13676,7 @@ export type Database = {
           email: string | null
           email_notifications: boolean | null
           email_visible: boolean | null
+          engagement_geography: string[] | null
           engagement_intentions: string[] | null
           ethnic_heritage: string[] | null
           event_interest_tags: Json | null
@@ -13758,7 +13696,6 @@ export type Database = {
           home_country_projects: string | null
           id: string
           impact_areas: string[] | null
-          impact_goals: string[] | null
           impact_regions: string[] | null
           impact_scores: Json | null
           impact_scores_updated_at: string | null
@@ -13767,9 +13704,6 @@ export type Database = {
           industry_sectors: string[] | null
           innovation_pathways: string | null
           instagram_url: string | null
-          intent_tags: Json | null
-          intentions: string[] | null
-          intents: string[] | null
           interest_tags: string[] | null
           interests: string[] | null
           intro_audio_url: string | null
@@ -13790,16 +13724,13 @@ export type Database = {
           location_preference: string | null
           looking_for_opportunities: boolean | null
           mentorship_areas: string[] | null
-          mentorship_interest: string[] | null
           mentorship_offering: boolean | null
           middle_initial: string | null
           my_dna_statement: string | null
-          needs: string[] | null
           networking_goals: string[] | null
           newsletter_emails: boolean | null
           notification_preferences: Json | null
           notifications_enabled: boolean | null
-          offers: string[] | null
           onboarding_completed: boolean | null
           onboarding_completed_at: string | null
           onboarding_progress: Json
@@ -13844,9 +13775,6 @@ export type Database = {
           show_read_receipts: boolean
           skill_tags: Json | null
           skills: string[] | null
-          skills_needed: string[] | null
-          skills_offered: string[] | null
-          support_areas: string[] | null
           threshold_fields: string[]
           timezone: string | null
           tour_completed_at: string | null
@@ -13874,8 +13802,6 @@ export type Database = {
           visibility: Json | null
           volunteer_experience: string | null
           website_url: string | null
-          what_to_give: string[] | null
-          what_to_receive: string[] | null
           whatsapp_number: string | null
           why_contribute: string | null
           years_experience: number | null
@@ -14213,13 +14139,13 @@ export type Database = {
           current_location: string
           display_name: string
           email: string
+          engagement_geography: string[]
           first_name: string
           full_name: string
           headline: string
           id: string
           impact_areas: string[]
           impact_regions: string[]
-          engagement_geography: string[]
           industry: string
           interest_tags: string[]
           interests: string[]
@@ -14227,9 +14153,7 @@ export type Database = {
           last_name: string
           linkedin_url: string
           location: string
-          needs: string[]
           networking_goals: string[]
-          offers: string[]
           preferred_contact: string
           primary_origin_country: string
           profession: string
