@@ -69,9 +69,7 @@ const DnaAnalytics = lazy(() => import("./pages/dna/Analytics"));
 const DnaFeedback = lazy(() => import("./pages/dna/feedback/FeedbackPage"));
 const Affirm = lazy(() => import("./pages/dna/affirm/Affirm"));
 const AttestAffirmation = lazy(() => import("./pages/dna/affirm/AttestAffirmation"));
-const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
 const IconUsageGuide = lazy(() => import("./pages/dna/IconUsageGuide"));
-const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const EngagementDashboard = lazy(() => import("./pages/admin/EngagementDashboard"));
 const AdminSignals = lazy(() => import("./pages/admin/AdminSignals"));
 const WaitlistManagement = lazy(() => import("./pages/admin/WaitlistManagement"));
@@ -878,6 +876,13 @@ function App() {
                 <Route path="citations" element={<StatCitationsAdmin />} />
                 {/* Curated source review queue (Convene C2.4) */}
                 <Route path="curated-source-reviews" element={<CuratedSourceReviews />} />
+                {/* Migrated from retired /app/admin, BD402 */}
+                <Route path="waitlist" element={<WaitlistManagement />} />
+                <Route path="health" element={<PlatformHealth />} />
+                <Route path="signals" element={<AdminSignals />} />
+                <Route path="convey" element={<ConveyAnalytics />} />
+                <Route path="sponsorships" element={<SponsorshipManagement />} />
+                <Route path="sponsorships/logo-audit" element={<SponsorLogoAuditLog />} />
                 {/* Catch-all for sidebar links that don't have a page yet
                     (AdminDashboardLayout's nav lists several roadmap items
                     with no matching route) — keeps them in-shell instead of
@@ -885,19 +890,8 @@ function App() {
                 <Route path="*" element={<AdminComingSoon />} />
               </Route>
 
-              {/* Legacy Admin routes */}
-              <Route path="/app/admin" element={<AdminLayout />}>
-                <Route index element={<AdminDashboard />} />
-                <Route path="waitlist" element={<WaitlistManagement />} />
-                <Route path="users" element={<UserManagement />} />
-                <Route path="health" element={<PlatformHealth />} />
-                <Route path="engagement" element={<EngagementDashboard />} />
-                <Route path="signals" element={<AdminSignals />} />
-                <Route path="moderation" element={<ContentModeration />} />
-                <Route path="convey" element={<ConveyAnalytics />} />
-                <Route path="sponsorships" element={<SponsorshipManagement />} />
-                <Route path="sponsorships/logo-audit" element={<SponsorLogoAuditLog />} />
-              </Route>
+              {/* /app/admin retired per BD402; thin redirect kept for stale bookmarks/links */}
+              <Route path="/app/admin/*" element={<Navigate to="/admin" replace />} />
 
               {/* Static pages */}
 
