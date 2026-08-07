@@ -9,6 +9,7 @@
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireInternal } from "../_shared/auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -28,6 +29,12 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+  // Cron-only: it mass-archives every published, unpinned release older
+  // than the cutoff, system-wide, with no client callers. Without this
+  // gate, anyone who found the function URL could trigger it on demand.
+  const __auth = requireInternal(req);
+  if (!__auth.ok) return __auth.response;
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
