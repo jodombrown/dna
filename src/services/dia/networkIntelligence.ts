@@ -198,23 +198,44 @@ async function getCommunityCluster(userId: string): Promise<CommunityCluster[]> 
 // --- Internal helpers ---
 
 async function getMessageMetrics(userAId: string, userBId: string) {
+  // Scope to this pair's actual shared conversation(s) — the previous
+  // `.or(sender_id.eq.A, sender_id.eq.B)` filter only checked sender_id
+  // and never scoped to a shared conversation, so it counted each user's
+  // messages to *anyone* on the platform, not messages exchanged between
+  // the pair. Mirrors the same fix already applied to
+  // connection-health-analyzer (finding M4).
+  const { data: sharedConversations } = await supabase
+    .from('conversations')
+    .select('id')
+    .or(`and(user_a.eq.${userAId},user_b.eq.${userBId}),and(user_a.eq.${userBId},user_b.eq.${userAId})`);
+
+  const conversationIds = (sharedConversations || []).map((c: { id: string }) => c.id);
+  if (conversationIds.length === 0) {
+    return { frequency: 0, responseScore: 0 };
+  }
+
   const { count } = await supabase
     .from('messages')
     .select('*', { count: 'exact', head: true })
-    .or(`sender_id.eq.${userAId},sender_id.eq.${userBId}`)
+    .in('conversation_id', conversationIds)
     .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
 
   return { frequency: count || 0, responseScore: count ? Math.min(1, (count || 0) / 30) : 0 };
 }
 
 async function getMutualEngagements(userAId: string, userBId: string) {
-  // Count where both users engaged on same posts
-  const { count } = await supabase
-    .from('post_likes')
-    .select('post_id', { count: 'exact', head: true })
-    .eq('user_id', userAId);
+  // Count posts BOTH users liked — the previous query only filtered on
+  // userAId (userBId was an unused parameter), returning userAId's total
+  // like count rather than any actual intersection with userBId.
+  const [aLikes, bLikes] = await Promise.all([
+    supabase.from('post_likes').select('post_id').eq('user_id', userAId),
+    supabase.from('post_likes').select('post_id').eq('user_id', userBId),
+  ]);
 
-  return { count: count || 0 };
+  const bPostIds = new Set((bLikes.data || []).map((r: { post_id: string }) => r.post_id));
+  const mutualCount = (aLikes.data || []).filter((r: { post_id: string }) => bPostIds.has(r.post_id)).length;
+
+  return { count: mutualCount };
 }
 
 async function getSharedSpaces(userAId: string, userBId: string) {
