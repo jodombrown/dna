@@ -8,9 +8,6 @@ Main entry point showcasing DNA platform value proposition, features, and CTAs.
 ### `/about` - About Us
 Platform mission, vision, and team information.
 
-### `/contact` - Contact
-Contact form for inquiries and support.
-
 ### `/terms-of-service` - Terms of Service
 Legal terms and conditions.
 
