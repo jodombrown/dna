@@ -101,6 +101,11 @@ React Router resolves relative `".."` against route-tree nesting depth, not URL 
 
 **Fix:** Add `TO service_role` to all three, matching the correctly-scoped `adin_queries_all_service_role` policy elsewhere in the migrations.
 
+**Status: Fixed, with a significant correction.** Before writing the fix, traced the full migration history for all three tables (policies get dropped and recreated under new names across later migrations — the same class of gap as the H4 correction below) and found the picture had already changed:
+- `badge_counts`: the flagged policy is still exactly as described. Fixed with `ALTER POLICY "Service role manages badge counts" ON badge_counts TO service_role;` in `supabase/migrations/20260807130000_fix_service_role_policy_scope.sql`.
+- `entity_vectors`: its equivalent write policies were already dropped with no replacement by a later migration (`20260218053744_e5fb06ef-...sql`, "FIX 5"), correctly locking those writes down to `service_role` only (which bypasses RLS via `BYPASSRLS`) — no action needed.
+- `user_vectors`: its SELECT policy was likewise already corrected by that same migration (and superseded again by `20260713001028_...sql`) to `user_id = auth.uid() OR admin`. **What was never fixed** is `user_vectors`' three *write* policies (`"System can insert/update/delete user vectors"`, created in an intermediate migration under different names than the ones this finding originally cited) — they remain scoped to "any authenticated user" (`auth.uid() IS NOT NULL`) to this day, letting any signed-in user overwrite or delete any other user's personalization vector. Fixed by scoping those three to `service_role` in the same migration. The one client call site (`saveUserVector` in `src/services/embeddingService.ts`) is confirmed dead code — not imported anywhere in the app — so this is non-breaking.
+
 ### H2. PostgREST filter injection in search endpoints
 **Files:** `supabase/functions/global-search/index.ts:95-146`, `supabase/functions/ai-search/index.ts:184-236`
 
@@ -162,12 +167,16 @@ For each of up to 50 conversations, two-to-three more sequential queries run in 
 
 **Fix:** Batch with `.in()`, group in memory (pattern already used correctly in `groupMessageService.getParticipants`).
 
+**Status: Fixed.** `_offset` is now applied via `.range(offset, offset + limit - 1)`. Rather than aggregate-then-group-in-JS (which for "last message per conversation" would require an unbounded per-batch message scan with no window-function/RPC to bound it correctly), the per-conversation lookups were parallelized with `Promise.all` instead of the sequential `for...of` loop — same queries, same semantics, but ~150 sequential round trips become one round trip's worth of wall-clock latency. Confirmed no live caller passes a non-zero offset today, so this is purely additive.
+
 ### H9. `messageService.getMessages` always returns the oldest messages, ignoring the pagination cursor
 **File:** `src/services/messageService.ts:366-381`
 
 Orders ascending with `.limit(limit)` and no offset; `_beforeTimestamp` is accepted but never applied. For any conversation over the limit, this can never return recent messages or page further back. (Currently only reachable via an archived legacy component, but the service function itself is broken.)
 
 **Fix:** Order descending, apply `.lt('created_at', beforeTimestamp)`, reverse for display — as `groupMessageService.getMessages` already does correctly.
+
+**Status: Fixed.** Now orders `created_at` descending, applies `.lt('created_at', beforeTimestamp)` when paging further back, and reverses the page to chronological order for display — matching `groupMessageService.getMessages`. Renamed the param from `_beforeTimestamp` to `beforeTimestamp` now that it's used. All current callers pass no cursor and get the default page, so this is a strict improvement (previously-oldest-only → now-most-recent) with no behavior to preserve for existing callers.
 
 ### H10. Two shared URL-builder helpers produce links the app can't parse
 **File:** `src/lib/config.ts:94-102, 136-138`
@@ -176,6 +185,8 @@ Orders ascending with `.limit(limit)` and no offset; `_beforeTimestamp` is accep
 - `getProfileUrl`'s docstring claims it accepts "username or user ID," but `/u/:slug` is a literal passthrough redirect to `/dna/:slug` with no DB lookup — it only works for an exact real username. The one real caller, `connectionService.ts:140`, passes `full_name || user.id`, producing dead links on "connection accepted" notifications.
 
 **Fix:** Point `getConversationUrl` at `/dna/messages/${conversationId}` (matches the real route); fix `getProfileUrl`'s callers to pass the real `username` field and drop the false "or user ID" claim.
+
+**Status: Fixed.** `getConversationUrl` now points at `/dna/messages/${conversationId}`, confirmed against `Messages.tsx`'s actual `useParams().conversationId` read. Fixed the three duplicated `?conversation=` call sites too (`introductionService.ts:142,153`, `platformNotificationGenerator.ts:220`, `IntroductionModal.tsx:242`). `getProfileUrl` now takes a real `username` and builds `/dna/${username}` directly (the convention used everywhere else in this codebase — `MyProfileRedirect.tsx`, `EventOrganizerCard.tsx`, `ProfileCard.tsx`, etc. — skipping the `/u/:slug` passthrough hop entirely), with its docstring corrected to drop the false "or user ID" claim. Its one caller, `connectionService.ts:140`, now selects and passes the real `username` column, falling back to `/dna/connect` in the edge case where the accepter has no username yet.
 
 ### H11. Mic and camera streams never released on unmount
 **Files:** `src/components/messaging/inbox/VoiceMessageRecorder.tsx:39-53`; `src/components/convene/management/checkin/CheckInDashboard.tsx:289-366`; `src/components/events/checkin/Scanner.tsx:31-59`
@@ -186,6 +197,8 @@ Orders ascending with `.limit(limit)` and no offset; `_beforeTimestamp` is accep
 
 **Fix:** Add proper `useEffect` cleanup in all three that stops tracks/clears intervals/calls `reader.reset()`.
 
+**Status: Fixed.** `VoiceMessageRecorder`'s unmount cleanup now clears the recording timer, stops the `MediaRecorder` if still active, and stops the underlying `MediaStream`'s tracks (stored in a new `streamRef`), matching `FeedbackVoiceRecorder`'s already-correct pattern. Both QR scanners (`Scanner.tsx`, `CheckInDashboard.tsx`) now call `reader.reset()` in an unmount cleanup effect; `CheckInDashboard` additionally releases the camera when the active tab switches away from "scanner".
+
 ### H12. `Onboarding.tsx` bounces newly-authenticated users to `/auth`, dropping their resume step
 **File:** `src/pages/Onboarding.tsx:34, 90-94`
 
@@ -194,6 +207,8 @@ Unlike every other guarded page in the app (`AuthGuard`, `OnboardingGuard`, `Wel
 **Failure scenario:** `OnboardingGuard` sends a signed-in, incomplete-profile user to `/onboarding?step=4`; before auth resolves, this effect immediately bounces them to `/auth`, then back to a bare `/onboarding` (losing the `?step=4` context) once auth resolves — visible flash and lost progress.
 
 **Fix:** Destructure `loading` from `useAuth()` and guard: `if (loading) return; if (!user) navigate('/auth', {replace:true});`.
+
+**Status: Fixed** exactly as specified above. The component already returned `null` while `!user` (including during the loading window), so no additional loading-state UI was needed — the effect guard alone closes the bounce.
 
 ---
 
@@ -244,3 +259,5 @@ Unlike every other guarded page in the app (`AuthGuard`, `OnboardingGuard`, `Wel
 4. **H2–H7** (edge function security: search injection, unauthenticated LLM endpoint, missing usage limits, password-reset relay, newsletter Bcc, SSRF) — bundle as a security-hardening pass.
 5. **H8–H11** (messaging service correctness, broken deep links, camera/mic leaks) — user-facing but lower urgency than the above.
 6. Medium/Low items as capacity allows; several (M6, M7, L4, L5) are currently dormant and only need fixing before their dead code paths are reactivated.
+
+**Update (2026-08-07):** All Critical and High findings (C1–C4, H1–H12) are now fixed on this branch. Two findings were corrected during implementation after re-tracing the current live state rather than trusting the original grep-based finding at face value — see the "Status" notes on **H1** (the actually-unfixed policies were `user_vectors`' write policies, not the ones originally named — `entity_vectors` had already been hardened by a later migration) and **H4** (`dia-hub-intelligence` doesn't call an LLM at all, so there was nothing to gate there) and **H7** (decimal/hex IPv4 literals were already safe; the real gap was IPv4-mapped IPv6 literals). Remaining open work: 11 Medium and 6 Low findings below.

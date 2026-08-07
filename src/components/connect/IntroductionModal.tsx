@@ -239,7 +239,7 @@ export function IntroductionModal({
                       className="flex-1 h-12 rounded-xl text-base font-semibold"
                       onClick={() => {
                         handleOpenChange(false);
-                        navigate(`/dna/messages?conversation=${conversationId}`);
+                        navigate(`/dna/messages/${conversationId}`);
                       }}
                     >
                       View Conversation

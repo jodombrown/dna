@@ -128,7 +128,7 @@ export const connectionService = {
     if (data && user) {
       const { data: accepterProfile } = await supabase
         .from('profiles')
-        .select('full_name, avatar_url')
+        .select('full_name, avatar_url, username')
         .eq('id', user.id)
         .single();
 
@@ -137,7 +137,12 @@ export const connectionService = {
         notification_type: NOTIFICATION_TYPES.CONNECTION_ACCEPTED,
         title: 'Connection Request Accepted',
         message: `${accepterProfile?.full_name || 'Someone'} accepted your connection request. You are now connected!`,
-        action_url: getProfileUrl(accepterProfile?.full_name || user.id),
+        // getProfileUrl requires a real username (see its docstring) — a
+        // full name or raw user ID both produce a dead link. Fall back to
+        // the connections list if the accepter somehow has no username yet.
+        action_url: accepterProfile?.username
+          ? getProfileUrl(accepterProfile.username)
+          : getAppUrl('/dna/connect'),
         actor_name: accepterProfile?.full_name,
         actor_avatar_url: accepterProfile?.avatar_url,
       }).catch((err) => { logger.warn('ConnectionService', 'Failed to send connection accepted notification email', err); });
