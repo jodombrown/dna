@@ -83,8 +83,16 @@ const REPORT_REASONS = [
   { value: 'other', label: 'Other' },
 ] as const;
 
-const EventOverview = () => {
-  const { id: slugOrId } = useParams<{ id: string }>();
+interface EventOverviewProps {
+  // When provided, this wins over the URL param — the third-column caller
+  // (MyEvents) supplies it, the standalone route at /dna/convene/events/:id
+  // does not, so useParams still works there.
+  eventId?: string;
+}
+
+const EventOverview = ({ eventId: eventIdProp }: EventOverviewProps = {}) => {
+  const { id: paramId } = useParams<{ id: string }>();
+  const slugOrId = eventIdProp ?? paramId;
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();

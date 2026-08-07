@@ -15,6 +15,7 @@ import { MyEventsChromeBar } from '@/components/convene/MyEventsChromeBar';
 import { EventCalendarView } from '@/components/convene/EventCalendarView';
 import { ConveneEventRow } from '@/components/convene/ConveneEventRow';
 import { MyEventCard } from '@/components/convene/MyEventCard';
+import { EventOverviewPanel } from '@/components/convene/EventOverviewPanel';
 import { EventListRow } from '@/components/cards/EventListRow';
 import { EventRowList } from '@/components/convene/EventRowList';
 import { MyEventsStatsHeader } from '@/components/convene/MyEventsStatsHeader';
@@ -61,6 +62,10 @@ const MyEvents = () => {
   // ViewSwitch owns ?view=, LensBar/LensRail own ?lens=. The page only reads.
   const viewMode = (searchParams.get('view') as 'list' | 'calendar') || 'list';
   const activeTab = searchParams.get('lens') || 'attending';
+  // Desktop-only third column: a hosting card sets this instead of
+  // navigating away. Independent of ?lens=/?view= — selecting an event
+  // never touches either.
+  const selectedEventId = searchParams.get('event');
   const [pastHostingOpen, setPastHostingOpen] = useState(false);
   const [cancelledHostingOpen, setCancelledHostingOpen] = useState(false);
   const [pastAttendingOpen, setPastAttendingOpen] = useState(false);
@@ -563,6 +568,15 @@ const MyEvents = () => {
             </div>
           )}
             </div>
+
+            {/* Third column — desktop only, appears once a hosting event is
+                selected. Mobile never gets this: selecting a hosting card
+                there still navigates to the full event page. */}
+            {selectedEventId && (
+              <div className="hidden md:block shrink-0 md:w-2/5 border-l border-border pl-6">
+                <EventOverviewPanel eventId={selectedEventId} />
+              </div>
+            )}
           </div>
       </ContentColumn>
     </div>

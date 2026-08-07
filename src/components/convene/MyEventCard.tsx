@@ -13,7 +13,7 @@
  */
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Eye, Edit, Share2, Copy, RefreshCw } from 'lucide-react';
@@ -27,6 +27,7 @@ import { getEventStatus } from '@/utils/convene/getEventStatus';
 import { PastEventDiaNudge } from './PastEventDiaNudge';
 import { EventListRow } from '@/components/cards/EventListRow';
 import { toast } from 'sonner';
+import { useIsMobile } from '@/hooks/useMobile';
 
 interface MyEventCardEvent {
   id: string;
@@ -48,10 +49,16 @@ interface MyEventCardProps {
   event: MyEventCardEvent;
   isPast?: boolean;
   className?: string;
+  // Hosting cards select into the desktop third column instead of
+  // navigating; attending cards always navigate. Defaults to 'hosting' —
+  // the only lens this card is used from today.
+  variant?: 'hosting' | 'attending';
 }
 
-export function MyEventCard({ event, isPast = false, className }: MyEventCardProps) {
+export function MyEventCard({ event, isPast = false, className, variant = 'hosting' }: MyEventCardProps) {
   const navigate = useNavigate();
+  const [, setSearchParams] = useSearchParams();
+  const isMobile = useIsMobile();
   const attendeeCount = event.event_attendees?.[0]?.count ?? 0;
   // Canonical event state: `status` is the source of truth; the legacy
   // boolean mirror columns are trigger-derived and must not be read here.
@@ -91,6 +98,25 @@ export function MyEventCard({ event, isPast = false, className }: MyEventCardPro
   };
 
   const eventPath = `/dna/convene/events/${event.slug || event.id}`;
+
+  // Hosting, desktop: open in the third column instead of leaving the page.
+  // Attending cards, and hosting on mobile, keep navigating to the full page.
+  const selectOrNavigate = () => {
+    if (variant === 'hosting' && !isMobile) {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.set('event', event.id);
+        return next;
+      });
+    } else {
+      navigate(eventPath);
+    }
+  };
+
+  const handleSelectOrNavigate = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    selectOrNavigate();
+  };
 
   const registrationLabel = event.max_attendees
     ? `${attendeeCount}/${event.max_attendees} registered`
@@ -158,7 +184,7 @@ export function MyEventCard({ event, isPast = false, className }: MyEventCardPro
           </Button>
         ) : (
           <>
-            <Button variant="outline" size="sm" onClick={navigateTo(eventPath)}>
+            <Button variant="outline" size="sm" onClick={handleSelectOrNavigate}>
               <Eye className="h-3.5 w-3.5 mr-1.5" />
               Manage
             </Button>
@@ -179,7 +205,7 @@ export function MyEventCard({ event, isPast = false, className }: MyEventCardPro
   return (
     <div className={cn('space-y-2', className)}>
       <EventListRow
-        onClick={() => navigate(eventPath)}
+        onClick={selectOrNavigate}
         leading={leading}
         title={<h3 className="text-h3 line-clamp-1 text-foreground">{event.title}</h3>}
         titleTrailing={statusBadge}
