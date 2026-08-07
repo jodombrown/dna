@@ -229,7 +229,7 @@ const MyEvents = () => {
 
             <div className="md:flex-1 md:min-w-0">
           {/* ── Page Header ────────────────────────── */}
-          <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative overflow-hidden rounded-xl p-5">
+          <div className="hidden md:flex mb-6 flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative overflow-hidden rounded-xl p-5">
             <CulturalPattern pattern="kente" opacity={0.05} />
             <div className="relative z-10">
               <h1 className="text-h1 font-serif">My Events</h1>
