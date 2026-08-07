@@ -140,7 +140,6 @@ export const ROUTES = {
 
   // Static pages
   about: '/about',
-  contact: '/contact',
   termsOfService: '/terms-of-service',
   privacyPolicy: '/privacy-policy',
   install: '/install',

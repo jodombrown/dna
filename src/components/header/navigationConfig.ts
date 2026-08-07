@@ -12,7 +12,6 @@ export const publicNavItems: PublicNavItem[] = [];
 
 export const aboutUsDropdown = [
   { name: 'About Us', path: '/about' },
-  { name: 'Contact', path: '/contact' },
 ];
 
 // Main navigation for authenticated users - Pillar-based structure (5 C's)

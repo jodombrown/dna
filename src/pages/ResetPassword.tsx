@@ -130,7 +130,7 @@ export default function ResetPassword() {
 
         {/* Support */}
         <div className="text-xs text-center text-muted-foreground pt-2">
-          Need help? <Link to="/contact" className="underline text-dna-copper hover:text-dna-copper/80">Contact support</Link>
+          Need help? <a href="mailto:support@diasporanetworkofafrica.org" className="underline text-dna-copper hover:text-dna-copper/80">Email support</a>
         </div>
       </div>
     </div>
