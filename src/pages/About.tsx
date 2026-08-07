@@ -97,7 +97,7 @@ const About = () => {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
             <h2 className="text-h1 font-serif text-foreground">Why DNA exists</h2>
-            <div className="space-y-4 text-body text-muted-foreground leading-relaxed max-w-prose">
+            <div className="lg:col-span-2 space-y-4 text-body text-muted-foreground leading-relaxed max-w-prose">
               <p>
                 The diaspora is not short on will, skill or money. It is short on a place where
                 those three meet a specific need at a specific time. A surgeon in Houston, a
