@@ -566,20 +566,17 @@ const UnifiedHeader = () => {
                       <nav className="flex flex-col space-y-1 p-4 sm:p-6 pb-20">
                         {!isAuthenticated ? (
                           <>
-                            {/* About Us Section with submenu */}
+                            {/* About */}
                             <div className="border-b pb-4 mb-4">
-                              <p className="text-sm text-neutral-600 mb-2 font-medium px-4">About</p>
-                              {aboutUsDropdown.map((item) => (
-                                <Button
-                                  key={item.name}
-                                  variant="ghost"
-                                  className="justify-start text-left w-full hover:bg-dna-mint/20 hover:text-dna-forest transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                                  onClick={() => handleNavClick(item)}
-                                >
-                                  {item.name}
-                                </Button>
-                              ))}
+                              <Button
+                                variant="ghost"
+                                className="justify-start text-left w-full hover:bg-dna-mint/20 hover:text-dna-forest transition-all duration-200 focus:ring-0 focus:ring-offset-0"
+                                onClick={() => navigate('/about')}
+                              >
+                                About
+                              </Button>
                             </div>
+
 
                             {/* Featured items (e.g. ROADMAP) */}
                             {filteredNavItems.some((i) => i.featured) && (
