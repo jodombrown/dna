@@ -1,65 +1,40 @@
-# Mobile hub spacing and DIA cleanup
+# Open signup to everyone today
 
-## What is causing the spacing
+Signup on `/auth` currently only completes for an email you approved in Admin > Waitlist, and the Request access tab still announces "Signups open August 15, 2026 at 9:00 am PDT". Both go.
 
-The screenshots contain two overlapping problems:
+## What changes
 
-1. Connect and the shared mobile hub shell measure the full fixed header, then add an extra 12px buffer before rendering the body. Because this behavior is shared, the gap returns across multiple hub lenses whenever the shell is reused.
-2. Convene My Events also renders its desktop title panel on mobile directly below the mobile chrome. Its padding and bottom margin create the much larger blank region in that screenshot.
+**Sign up tab (/auth?mode=signup)**
 
-The fix will remove the extra buffer only from the affected hub shells. Feed will not be changed. My Events will keep its title panel on desktop and hide it on mobile.
+- The email approval lookup is gone. Full name, password, and confirm password are visible from the start, so any visitor can create an account and continue into orientation.
+- "This email is not approved yet" and the "Request access" nudge are removed from that tab.
+- Button reads "Create account" throughout.
 
-## Changes
+**Request access tab**
 
-### 1. Remove recurring mobile hub gaps
+- Stays, unchanged in function, for people who prefer to reach out. The dated line "Beta access opens August 15, 2026..." and the "Signups open ..." heading are replaced with copy that reflects open signup and points to the Sign up tab.
 
-- Make `DnaMobileHubShell` offset content by the measured header height only, with no added visual buffer.
-- Apply the same exact-height measurement to Connect's bespoke mobile shell.
-- Keep safe-area inset handling intact so content never sits under the device status bar.
-- Hide the redundant My Events title panel on mobile while preserving it on desktop.
+**Sign in tab**
 
-### 2. Remove the requested mobile intro rows
+- Untouched, including Continue with LinkedIn.
 
-- Hide the Collaborate title, description, and `Start a Space` row on mobile only.
-- Hide the Contribute title, description, and `Post a Need` row on mobile only.
-- Keep both rows unchanged on desktop. Their lens bars become the first mobile content below the shared header.
+**Admin > Waitlist**
 
-### 3. Expand the DIA search text area
+- Unchanged. Existing requests and the approve action stay; approval simply no longer gates signup.
 
-- Give the full DIA search surface two visible rows so `Discover stories, content, or trending topics...` can wrap and remain readable on mobile.
-- Keep the compact desktop DIA surface at one row.
-- Preserve the existing auto-grow and scrolling behavior for longer queries.
+## What is not part of this
 
-### 4. Remove the floating Convey icon
+No database change. The `is_signup_approved` function stays in the database, unused, so approval-only signup can be turned back on later without a migration. Supabase Auth signup itself is already enabled, so no Supabase dashboard setting needs flipping.
 
-- Remove the mobile floating `DiaContextual` launcher from Convey across its lenses.
-- Keep DIA accessible through the canonical MateMasie control already present in the shared mobile header.
-- Keep the desktop inline DIA panel unchanged.
+## Technical notes
 
-## Technical scope
+Files to edit:
 
-Expected source files:
+- `src/components/auth/SignUpApprovalGate.tsx`: drop the `is_signup_approved` RPC call, the `ApprovalState` machine, and the locked/unlocked branch. It becomes a plain signup form (email, full name, password, confirm) keeping the existing validation, `signUp`, toast, and `navigate('/onboarding')` flow. The `onRequestAccess` prop is removed since nothing calls it.
+- `src/pages/Auth.tsx`: drop the now-unused `onRequestAccess` prop; update the sign up subtitle from "Create your account with an approved email" to "Create your account".
+- `src/components/auth/BetaAccessForm.tsx`: remove the `SIGNUPS_OPEN_LABEL` import and the two dated lines, replacing them with open-signup copy.
+- `src/config/featureFlags.ts`: mark `SIGNUPS_OPEN_AT` / `SIGNUPS_OPEN_LABEL` / `areSignupsOpen` / `SIGNUP_BYPASS_KEY` as retired and remove them if nothing else imports them (a repo-wide check runs before deleting).
 
-- `src/components/mobile/DnaMobileHubShell.tsx`
-- `src/pages/dna/connect/Connect.tsx`
-- `src/pages/dna/convene/MyEvents.tsx`
-- `src/pages/dna/collaborate/CollaborateHub.tsx`
-- `src/pages/dna/contribute/ContributeHub.tsx`
-- `src/components/dia/DiaSearch.tsx`
-- `src/pages/dna/convey/ConveyStoryHub.tsx`
+Design system: existing `Button` / `Input` / `Label`, `text-body` / `text-meta` tokens only, no arbitrary values, no new tokens. Copy carries no em dashes.
 
-No schema, backend, Feed, desktop hub behavior, or public copy changes.
-
-## Verification
-
-- Run the focused mobile shell regression tests and the project design-system checks.
-- Verify the structural behavior at mobile width for Connect Members, Network, Map, Convene My Events, Collaborate, Contribute, and Convey.
-- Confirm the header and lens bars remain fixed without content overlap, the DIA placeholder wraps fully, and the floating icon is absent.
-- Authenticated browser verification may be limited because this project uses an external unmanaged Supabase session. If so, verify authenticated-only states through focused component tests and report that limitation explicitly.
-
-## Design system check
-
-- Reuse existing background, foreground, border, and module tokens.
-- Compose the existing mobile shell, lens bars, Button, and DIA components.
-- Add no token, component, dependency, arbitrary value, font, or color.
-- Preserve canonical mobile chrome and desktop menus.
+Verification before calling it done: typecheck, then walk `/auth?mode=signup` at 375px and 1440px confirming the fields are visible with no approval check, and confirm the Request access and Sign in tabs still render.
