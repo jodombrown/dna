@@ -4,6 +4,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders } from '../_shared/cors.ts';
+import { requireInternal } from '../_shared/auth.ts';
 
 interface OverdueTask {
   id: string;
@@ -29,6 +30,13 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
+
+  // Cron-only: this walks every overdue task and stalling space system-wide
+  // and fires nudges/DB writes for each. It has no client callers — an
+  // unauthenticated caller could otherwise trigger it repeatedly to spam
+  // nudges or hammer the database.
+  const __auth = requireInternal(req);
+  if (!__auth.ok) return __auth.response;
 
   try {
     // Initialize Supabase client with service role key for admin operations
