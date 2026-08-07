@@ -8,7 +8,7 @@ import SurveyDialog from '@/components/survey/SurveyDialog';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { PageSEO, getOrganizationSchema } from '@/components/seo/PageSEO';
 import { useStatCitations } from '@/hooks/useStatCitations';
-import dnaLogo from '@/assets/dna-logo.png';
+import dnaLogo from '@/assets/dna-logo-trimmed.png';
 
 const LINKEDIN_URL = 'https://www.linkedin.com/in/jaunelamarr/';
 const DNA_PROFILE_URL = 'https://diasporanetwork.africa/dna/jaunelamarro';
