@@ -57,13 +57,13 @@ const WhoIsDNAForSection = () => {
     <section className="py-12 lg:py-16 bg-gradient-to-br from-neutral-50 to-white">
       <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-8">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500 mb-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500 mb-2 text-center sm:text-left">
             FAQ
           </p>
-          <h2 className={`${TYPOGRAPHY.h2} text-dna-copper mb-3 lg:mb-4`}>
+          <h2 className={`${TYPOGRAPHY.h2} text-dna-copper mb-3 lg:mb-4 text-center sm:text-left`}>
             Who is DNA for?
           </h2>
-          <p className="text-base sm:text-lg text-neutral-700 mb-6 lg:mb-8">
+          <p className="text-base sm:text-lg text-neutral-700 mb-6 lg:mb-8 text-center sm:text-left">
             Diaspora, Continental Partners, and Allies building Africa's progress together, wherever they live.
           </p>
 
