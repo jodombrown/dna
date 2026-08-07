@@ -89,7 +89,7 @@ const ContributeSection = () => {
           <div className={`bg-gradient-to-r ${contribution.gradient} text-white p-6`}>
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold text-lg font-serif">{contribution.categoryTitle}</h3>
-              <Icon className="w-5 h-5" />
+              <Adinkrahene className="w-5 h-5" />
             </div>
             <p className="text-sm text-white/80">{contribution.categorySubtitle}</p>
           </div>
