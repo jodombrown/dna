@@ -31,7 +31,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
-import { publicNavItems, aboutUsDropdown } from './header/navigationConfig';
+import { publicNavItems } from './header/navigationConfig';
 import { useUnreadMessageCount } from '@/hooks/useUnreadMessageCount';
 import { MESSAGING_ENABLED } from '@/config/featureFlags';
 // useUnreadNotificationCount removed — UnifiedNotificationBell handles its own count
