@@ -1,7 +1,11 @@
 name: TEMP - regenerate bun.lockb
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - claude/migration-bugs-badge-counts-ird2xn
+    paths:
+      - '.github/workflows/_tmp-regen-bun-lockfile.yml'
 
 jobs:
   regen:
