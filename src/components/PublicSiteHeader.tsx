@@ -97,17 +97,13 @@ export const PublicSiteHeader = () => {
                 </div>
                 <ScrollArea className="flex-1 overflow-y-auto">
                   <nav className="flex flex-col gap-1 p-4 pb-20">
-                    <p className="text-sm text-neutral-600 mb-2 font-medium px-4">About</p>
-                    {aboutUsDropdown.map((item) => (
-                      <Button
-                        key={item.name}
-                        variant="ghost"
-                        className="justify-start w-full hover:bg-dna-mint/20 hover:text-dna-forest"
-                        onClick={() => go(item.path)}
-                      >
-                        {item.name}
-                      </Button>
-                    ))}
+                    <Button
+                      variant="ghost"
+                      className="justify-start w-full hover:bg-dna-mint/20 hover:text-dna-forest"
+                      onClick={() => go('/about')}
+                    >
+                      About
+                    </Button>
 
                     <div className="h-3" />
 
