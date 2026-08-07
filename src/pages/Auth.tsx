@@ -179,7 +179,7 @@ const Auth = () => {
       {authMode === 'request' ? (
         <BetaAccessForm />
       ) : authMode === 'signup' ? (
-        <SignUpApprovalGate onRequestAccess={() => setAuthMode('request')} />
+        <SignUpApprovalGate />
 
       ) : (
         <form onSubmit={handleSignIn} className="space-y-4">
