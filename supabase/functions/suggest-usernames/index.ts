@@ -1,12 +1,14 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.9";
 import { requireUser } from "../_shared/auth.ts";
-import { callModel, writeEvent, modelFor } from '../_shared/dia-core/index.ts';
+import { callModel, writeEvent, modelFor, checkLimit, recordUsage } from '../_shared/dia-core/index.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
+
+const CAPABILITY = 'suggest_usernames' as const;
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -49,10 +51,25 @@ Return ONLY a JSON array of objects with this exact format:
 
     console.log('Generating username suggestions for:', { fullName, industry, countryOrigin });
 
+    // Limits (dia-core → dia_check_limit). Check before spending a model call.
+    const limit = await checkLimit(admin, __auth.userId, CAPABILITY);
+    if (!limit.allowed) {
+      return new Response(
+        JSON.stringify({
+          error: 'Monthly query limit reached',
+          message: "You've used all your DIA queries this month",
+          limit: limit.limit,
+          used: limit.used,
+          suggestions: [],
+        }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
+
     let result;
     try {
       result = await callModel({
-        capability: 'suggest_usernames',
+        capability: CAPABILITY,
         messages: [
           {
             role: 'system',
@@ -67,8 +84,8 @@ Return ONLY a JSON array of objects with this exact format:
     } catch (e) {
       const msg = String((e as Error)?.message ?? e);
       console.error('Model error in suggest-usernames:', msg);
-      await writeEvent(admin, { userId: __auth.userId, capability: 'suggest_usernames', surface: 'suggest-usernames',
-        provider: 'gemini', model: modelFor('suggest_usernames'), success: false, latencyMs: Date.now() - startTime,
+      await writeEvent(admin, { userId: __auth.userId, capability: CAPABILITY, surface: 'suggest-usernames',
+        provider: 'gemini', model: modelFor(CAPABILITY), success: false, latencyMs: Date.now() - startTime,
         errorCode: msg.includes('429') ? 'rate_limited' : msg.includes('402') ? 'payment_required' : 'model_unavailable' });
       if (msg.includes('429')) return new Response(JSON.stringify({ error: 'Rate limit exceeded, please try again later.', suggestions: [] }), { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
       if (msg.includes('402')) return new Response(JSON.stringify({ error: 'AI service unavailable, please try again later.', suggestions: [] }), { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
@@ -127,8 +144,11 @@ Return ONLY a JSON array of objects with this exact format:
 
     console.log('Generated suggestions:', parsedSuggestions);
 
-    await writeEvent(admin, { userId: __auth.userId, capability: 'suggest_usernames', surface: 'suggest-usernames',
+    await writeEvent(admin, { userId: __auth.userId, capability: CAPABILITY, surface: 'suggest-usernames',
       provider: result.provider, model: result.model, success: true, latencyMs: Date.now() - startTime, tokens: result.tokens });
+
+    // Limits: record AFTER success so failed calls don't count.
+    await recordUsage(admin, __auth.userId, CAPABILITY, result.tokens ?? 0);
 
     return new Response(
       JSON.stringify({ suggestions: parsedSuggestions }),

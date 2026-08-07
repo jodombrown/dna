@@ -5,6 +5,7 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { callModel, writeEvent, modelFor } from '../_shared/dia-core/index.ts';
+import { requireInternal } from '../_shared/auth.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_ROLE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -81,6 +82,15 @@ Return: { "insights": [ ...6 items... ] }`;
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+
+  // Internal-only: this is a cron-triggered generator (like its siblings
+  // generate-daily-briefs, generate-opportunity-nudges, etc.), not a
+  // user-facing endpoint. Without this gate, any unauthenticated caller
+  // could invoke it directly, triggering a real LLM call and racing the
+  // "already generated today?" check.
+  const __auth = requireInternal(req);
+  if (!__auth.ok) return __auth.response;
+
   const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
   const today = new Date().toISOString().slice(0, 10);
 

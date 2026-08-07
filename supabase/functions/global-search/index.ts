@@ -25,12 +25,6 @@ serve(async (req) => {
   }
 
   try {
-    // Initialize Supabase client (service role; gated on caller auth below)
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
-
     // Require authenticated caller
     const authHeader = req.headers.get('Authorization') || '';
     const token = authHeader.replace(/^Bearer\s+/i, '').trim();
@@ -39,6 +33,18 @@ serve(async (req) => {
         status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+
+    // RLS-respecting client, scoped to the caller's own JWT — a user-facing
+    // search must only ever see what that user is allowed to see. This
+    // used to be a service-role client (bypasses RLS entirely), letting an
+    // authenticated caller search the full profiles/events/projects tables
+    // regardless of each row's real visibility rules.
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: `Bearer ${token}` } } }
+    );
+
     const { data: userRes, error: userErr } = await supabase.auth.getUser(token);
     if (userErr || !userRes?.user) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
@@ -90,9 +96,18 @@ serve(async (req) => {
   }
 });
 
+// Strip PostgREST filter-syntax metacharacters before interpolating user
+// input into a `.or()` filter string. Without this, a query containing
+// `,` or `)` breaks out of the intended filter and can append/alter
+// conditions (PostgREST filter injection) — the same class of bug the
+// `mcp` edge function's tools already guard against.
+function sanitizeForOrFilter(text: string): string {
+  return text.replace(/[*(),]/g, '').trim();
+}
+
 async function performDynamicSearch(supabase: any, query: string, searchType: string): Promise<GlobalSearchResult[]> {
   const results: GlobalSearchResult[] = [];
-  const searchTerm = `%${query.toLowerCase()}%`;
+  const searchTerm = `%${sanitizeForOrFilter(query.toLowerCase())}%`;
   
   try {
     // Search People/Profiles

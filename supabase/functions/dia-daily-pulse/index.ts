@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { callModel, writeEvent, modelFor, requireUser } from "../_shared/dia-core/index.ts";
+import { callModel, writeEvent, modelFor, requireUser, checkLimit, recordUsage } from "../_shared/dia-core/index.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -70,6 +70,24 @@ serve(async (req) => {
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
+    }
+
+    // Limits (dia-core → dia_check_limit). Only enforced when identity is
+    // known — this endpoint's "never 401" design means an unauthenticated
+    // caller has no per-user counter to check against anyway.
+    if (userId) {
+      const limit = await checkLimit(admin, userId, CAPABILITY);
+      if (!limit.allowed) {
+        return new Response(
+          JSON.stringify({
+            error: "Monthly query limit reached",
+            message: "You've used all your DIA queries this month",
+            limit: limit.limit,
+            used: limit.used,
+          }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
     }
 
     const context = JSON.stringify({
@@ -202,6 +220,11 @@ serve(async (req) => {
       tokens: result.tokens,
       meta: { totals },
     });
+
+    // Limits: record AFTER success so failed calls don't count.
+    if (userId) {
+      await recordUsage(admin, userId, CAPABILITY, result.tokens ?? 0);
+    }
 
     const toolCall = result.message?.tool_calls?.[0];
     const args = toolCall?.function?.arguments
