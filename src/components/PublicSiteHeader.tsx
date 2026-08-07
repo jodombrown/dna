@@ -54,7 +54,7 @@ export const PublicSiteHeader = () => {
             <Button
               variant="ghost"
               onClick={() => navigate('/about')}
-              className="text-neutral-700 hover:text-dna-forest font-medium"
+              className="text-foreground hover:text-dna-forest font-medium"
             >
               About
             </Button>

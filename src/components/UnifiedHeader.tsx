@@ -481,7 +481,7 @@ const UnifiedHeader = () => {
                     <Button
                       variant="ghost"
                       onClick={() => navigate('/about')}
-                      className="text-neutral-700 hover:text-dna-forest transition-colors font-medium"
+                      className="text-foreground hover:text-dna-forest transition-colors font-medium"
                     >
                       About
                     </Button>

@@ -59,28 +59,28 @@ const WhoIsDNAForSection = () => {
         <h2 className={`${TYPOGRAPHY.h2} text-dna-copper mb-3 lg:mb-4 text-center sm:text-left`}>
           Who is DNA for?
         </h2>
-        <p className="text-base sm:text-lg text-neutral-700 mb-6 lg:mb-8 text-center sm:text-left">
+        <p className="text-body text-foreground mb-6 lg:mb-8 text-center sm:text-left">
           Diaspora, Continental Partners, and Allies building Africa's progress together, wherever they live.
         </p>
 
         {/* FAQ Toggles */}
         <div className="space-y-2 sm:space-y-3">
           {faqs.map((faq, index) => (
-            <div key={index} className="bg-white rounded-lg border border-neutral-200 overflow-hidden">
+            <div key={index} className="bg-card rounded-lg border border-border overflow-hidden">
               <button
                 onClick={() => toggleFAQ(index)}
-                className="w-full flex items-center justify-between p-4 sm:p-5 hover:bg-neutral-50 transition-all duration-200 text-left"
+                className="w-full flex items-center justify-between p-4 sm:p-5 hover:bg-muted transition-all duration-200 text-left"
               >
-                <span className="text-sm sm:text-base text-neutral-900 font-medium pr-4">{faq.question}</span>
+                <span className="text-body text-foreground font-medium pr-4">{faq.question}</span>
                 <ChevronDown 
-                  className={`w-4 h-4 sm:w-5 sm:h-5 text-neutral-400 flex-shrink-0 transition-transform duration-200 ${
+                  className={`w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground flex-shrink-0 transition-transform duration-200 ${
                     openIndex === index ? 'rotate-180 text-dna-copper' : ''
                   }`} 
                 />
               </button>
               {openIndex === index && (
                 <div className="px-4 sm:px-5 pb-4 sm:pb-5 pt-0">
-                  <p className="text-sm sm:text-base text-neutral-600 leading-relaxed">
+                  <p className="text-body text-muted-foreground leading-relaxed">
                     {faq.answer}
                   </p>
                 </div>
@@ -89,7 +89,7 @@ const WhoIsDNAForSection = () => {
           ))}
         </div>
 
-        <p className="mt-6 text-sm sm:text-base text-neutral-600">
+        <p className="mt-6 text-body text-muted-foreground">
           Still have questions?{' '}
           <a
             href="mailto:support@diasporanetwork.africa"
