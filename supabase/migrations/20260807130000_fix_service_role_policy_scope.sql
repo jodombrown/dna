@@ -58,6 +58,6 @@
 -- to production in the future, its badge_counts policy will need this same
 -- service_role fix applied at that time.
 
-ALTER POLICY "Users insert own vectors" ON public.user_vectors TO service_role;
-ALTER POLICY "Users update own vectors" ON public.user_vectors TO service_role;
-ALTER POLICY "Users delete own vectors" ON public.user_vectors TO service_role;
+ALTER POLICY "System can insert user vectors" ON public.user_vectors TO service_role;
+ALTER POLICY "System can update user vectors" ON public.user_vectors TO service_role;
+ALTER POLICY "System can delete user vectors" ON public.user_vectors TO service_role;
