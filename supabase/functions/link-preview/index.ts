@@ -104,21 +104,51 @@ async function fetchOEmbed(url: string): Promise<Partial<LinkPreviewData> | null
   }
 }
 
+// Fetch a URL, manually following redirects while re-validating each hop
+// against the SSRF guard. `fetch(url, { redirect: 'follow' })` only
+// validates the *initial* URL — a URL that is public/https at validation
+// time can 3xx-redirect the actual fetch to an internal address (e.g.
+// 169.254.169.254 or localhost), which `follow` mode would chase with no
+// further checks.
+async function fetchFollowingSafeRedirects(
+  initialUrl: string,
+  init: RequestInit,
+  maxRedirects = 5
+): Promise<{ response: Response; finalUrl: string }> {
+  let currentUrl = initialUrl;
+  for (let i = 0; i <= maxRedirects; i++) {
+    if (!isSafePublicUrl(currentUrl)) {
+      throw new Error(`Redirect target not allowed: ${currentUrl}`);
+    }
+    const response = await fetch(currentUrl, { ...init, redirect: 'manual' });
+    if (response.status >= 300 && response.status < 400) {
+      const location = response.headers.get('location');
+      if (!location) return { response, finalUrl: currentUrl };
+      currentUrl = new URL(location, currentUrl).toString();
+      continue;
+    }
+    return { response, finalUrl: currentUrl };
+  }
+  throw new Error('Too many redirects');
+}
+
 // Fetch and parse Open Graph / Twitter Card meta tags
 async function fetchOpenGraph(url: string): Promise<Partial<LinkPreviewData>> {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
 
-    const response = await fetch(url, {
+    const { response, finalUrl } = await fetchFollowingSafeRedirects(url, {
       signal: controller.signal,
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; DNABot/1.0; +https://diasporanetwork.africa)',
         'Accept': 'text/html,application/xhtml+xml',
         'Accept-Language': 'en-US,en;q=0.9',
       },
-      redirect: 'follow',
     });
+    // Relative URLs (favicon, image) below resolve against the final,
+    // post-redirect URL, not the originally-requested one.
+    url = finalUrl;
 
     clearTimeout(timeoutId);
 

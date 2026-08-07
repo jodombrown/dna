@@ -3,7 +3,7 @@
 // message in a 1:1 conversation. Cheap, JSON-only, no streaming.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
-import { requireUser, callModel, writeEvent, modelFor, makeUserClient } from '../_shared/dia-core/index.ts';
+import { requireUser, callModel, writeEvent, modelFor, makeUserClient, checkLimit, recordUsage } from '../_shared/dia-core/index.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -64,6 +64,20 @@ Deno.serve(async (req) => {
       return new Response(
         JSON.stringify({ suggestions: [], basedOnMessageId: null } as Partial<SuggestionPayload>),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
+
+    // Limits (dia-core → dia_check_limit). Check before spending a model call.
+    const limit = await checkLimit(admin, userId, CAPABILITY);
+    if (!limit.allowed) {
+      return new Response(
+        JSON.stringify({
+          error: 'Monthly query limit reached',
+          message: "You've used all your DIA queries this month",
+          limit: limit.limit,
+          used: limit.used,
+        }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
       );
     }
 
@@ -137,6 +151,9 @@ Deno.serve(async (req) => {
       latencyMs: Date.now() - startTime, tokens: result.tokens,
       meta: { conversationId },
     });
+
+    // Limits: record AFTER success so failed calls don't count.
+    await recordUsage(admin, userId, CAPABILITY, result.tokens ?? 0);
 
     const toolCall = result.message?.tool_calls?.[0];
     const args = toolCall ? JSON.parse(toolCall.function?.arguments ?? '{}') : {};

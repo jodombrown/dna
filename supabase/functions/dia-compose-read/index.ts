@@ -13,7 +13,7 @@
 // composer. A wrong guess is worse than no guess.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
-import { requireUser, callModel, writeEvent, modelFor } from '../_shared/dia-core/index.ts';
+import { requireUser, callModel, writeEvent, modelFor, checkLimit, recordUsage } from '../_shared/dia-core/index.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -130,6 +130,12 @@ Deno.serve(async (req) => {
 
     if (text.length < MIN_CHARS) return quiet('too_short');
 
+    // Limits (dia-core → dia_check_limit). This fires on every pause while
+    // typing, so it must fail quiet like everything else here — never a
+    // 429 that could surface as a composer error.
+    const limit = await checkLimit(admin, userId, CAPABILITY);
+    if (!limit.allowed) return quiet('limit_reached');
+
     // Model (dia-core). Same messages/temperature/max_tokens as before; transport centralized.
     let result;
     try {
@@ -159,6 +165,9 @@ Deno.serve(async (req) => {
       latencyMs: Date.now() - startTime, tokens: result.tokens,
       meta: { chars: text.length },
     });
+
+    // Limits: record AFTER success so failed calls don't count.
+    await recordUsage(admin, userId, CAPABILITY, result.tokens ?? 0);
 
     const raw = result.message?.content ?? '';
 

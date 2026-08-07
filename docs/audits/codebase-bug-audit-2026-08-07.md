@@ -17,7 +17,7 @@
 | Medium | 11 |
 | Low | 6 |
 
-**Update (2026-08-07, same day):** All four critical findings (C1–C4) below are now fixed on this branch — see the "Status" note under each.
+**Update (2026-08-07, same day):** All four critical findings (C1–C4), and the High-severity edge-function security batch (H2–H7), are now fixed on this branch — see the "Status" note under each.
 
 Two findings stand out as needing immediate attention:
 
@@ -108,12 +108,16 @@ User-supplied query text is interpolated unescaped into `.or()` filter strings (
 
 **Fix:** Sanitize input the same way `mcp/index.ts` does, and query through an RLS-respecting client rather than service role for user-facing search.
 
+**Status: Fixed.** Both functions now build their `.or()` filter strings from a `sanitizeForOrFilter()` helper that strips PostgREST metacharacters (`*(),`) before interpolation, and both now query through a per-request client scoped to the caller's own JWT (anon key + forwarded `Authorization` header) instead of the service-role key — matching the `send-connection-request` pattern already used elsewhere in this codebase.
+
 ### H3. `dia-daily-insights` has no auth gate — unauthenticated callers trigger paid LLM calls
 **File:** `supabase/functions/dia-daily-insights/index.ts`; `supabase/config.toml` sets `verify_jwt = false` for it.
 
 Every sibling cron-style function (`generate-daily-briefs`, `generate-opportunity-nudges`, `engagement-reminders`, etc.) gates on `requireInternal`; this one doesn't. Anyone can invoke it, and the "already generated today?" check-then-insert is a TOCTOU race — concurrent unauthenticated calls can each trigger a real LLM call before either writes its result.
 
 **Fix:** Add `requireInternal(req)` like its siblings.
+
+**Status: Fixed.** Added the same `requireInternal(req)` gate used by `generate-daily-briefs` and `engagement-reminders`; `verify_jwt = false` stays in `config.toml` unchanged (that's the established pattern for cron-secret-invoked functions — the gate check happens in code, not at the gateway).
 
 ### H4. Per-tier LLM usage limits enforced in only 1 of ~10 DIA endpoints
 **File:** `supabase/functions/_shared/dia-core/limits.ts` (the gate) vs. callers.
@@ -122,12 +126,16 @@ Every sibling cron-style function (`generate-daily-briefs`, `generate-opportunit
 
 **Fix:** Route every DIA capability through `checkLimit`/`recordUsage`.
 
+**Status: Fixed, with one correction.** `dia-daily-pulse`, `dia-smart-compose`, `dia-smart-replies`, `dia-thread-summary`, `dia-inbox-brief`, `dia-compose-read`, `get-event-recommendations`, and `suggest-usernames` now call `checkLimit` before their model call (returning 429, or `quiet('limit_reached')` for `dia-compose-read`'s fail-quiet design) and `recordUsage` after a successful one — 8 of the 9 listed functions. **Correction:** `dia-hub-intelligence` does not actually call an LLM anywhere in its current source (it assembles static region/country config plus DB-driven feed queries) — there is no model call to gate there, so nothing was changed in that file. The original finding's count of "~10 DIA endpoints" appears to have included it in error; treat the real count as 8 (now fixed) of 9 (`dia-search` + these 8).
+
 ### H5. `send-password-reset` lets any account trigger a branded reset-style email to an arbitrary address
 **File:** `supabase/functions/send-password-reset/index.ts:26-51`
 
 Requires *a* logged-in user (`requireUser`) but sends to whatever `email` and (domain-allowlisted) `resetUrl` the client supplies in the body — it never checks that the target email belongs to the caller. Any account (trivial to create) can make the platform send a legitimate-looking "DNA Platform" email with an attacker-chosen link to any address — a phishing-enablement/email-relay bug.
 
 **Fix:** Derive the recipient from the authenticated user's own account or a server-verified reset token, not client-supplied JSON.
+
+**Status: Fixed.** `requireUser` (in `_shared/auth.ts`) now also returns the caller's own `email` from their validated JWT; `send-password-reset` uses that instead of a client-supplied `email` field, which was removed from the request shape entirely. No client caller of this function exists anywhere in the repo currently, so there was nothing else to update — but the endpoint itself is live and addressable regardless.
 
 ### H6. `send-newsletter` exposes all recipients' emails to each other
 **File:** `supabase/functions/send-newsletter/index.ts:131-140`
@@ -136,12 +144,16 @@ Requires *a* logged-in user (`requireUser`) but sends to whatever `email` and (d
 
 **Fix:** Send individually or use `bcc`.
 
+**Status: Fixed.** `resend.emails.send()` now passes the batch through `bcc` and sets `to` to the sending address itself (required non-empty by the mail API).
+
 ### H7. SSRF redirect bypass + weak IP-literal check in `link-preview`
 **File:** `supabase/functions/link-preview/index.ts:113-121`; guard in `supabase/functions/_shared/auth.ts:95-129`
 
 The initial URL is validated with `isSafePublicUrl`, but `fetch(url, { redirect: 'follow' })` never re-validates redirect targets — a URL public at validation time can 3xx to an internal address (e.g. `169.254.169.254`). Separately, the IP check only matches literal dotted-decimal hostnames, so decimal/hex IP literals (`http://2130706433/` → `127.0.0.1`) bypass it entirely.
 
 **Fix:** Use `redirect: 'manual'` and re-validate each hop; resolve/normalize the hostname before checking, not just the literal string.
+
+**Status: Fixed, with one correction.** `link-preview` now follows redirects manually via a new `fetchFollowingSafeRedirects()` helper that re-validates every hop (max 5) against `isSafePublicUrl` before fetching it. **Correction on the IP-literal claim:** decimal/hex/octal IPv4 literals turned out to already be caught — the WHATWG `URL` parser (used by both `new URL()` calls here) canonicalizes them to dotted-decimal form before `isSafePublicUrl` ever inspects `hostname`, verified with a standalone test (`2130706433`, `0x7f000001`, and `0177.0.0.1` all normalize to `127.0.0.1`). The real, verified gap was **IPv4-mapped/IPv4-compatible IPv6 literals** (e.g. `[::ffff:127.0.0.1]`, normalized by the parser to `[::ffff:7f00:1]`), which encode a blocked IPv4 address inside a bracketed IPv6 host that neither the IPv4 regex nor the plain IPv6 prefix checks ever inspected. `isSafePublicUrl` now strips IPv6 brackets and decodes the embedded IPv4 (both dotted and hex-compressed forms) before applying the same private-range check. All 14 cases in the standalone test (including a real public IPv6 address, to check for false positives) pass.
 
 ### H8. N+1 query storm in legacy `messageService.getConversations`; `_offset` silently ignored
 **File:** `src/services/messageService.ts:247-361`
