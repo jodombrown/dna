@@ -571,7 +571,10 @@ const UnifiedHeader = () => {
                               <Button
                                 variant="ghost"
                                 className="justify-start text-left w-full hover:bg-dna-mint/20 hover:text-dna-forest transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                                onClick={() => navigate('/about')}
+                                onClick={() => {
+                                  setIsMobileMenuOpen(false);
+                                  navigate('/about');
+                                }}
                               >
                                 About
                               </Button>
