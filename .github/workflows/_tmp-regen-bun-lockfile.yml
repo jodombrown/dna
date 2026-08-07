@@ -1,0 +1,35 @@
+name: TEMP - regenerate bun.lockb
+
+on:
+  workflow_dispatch:
+
+jobs:
+  regen:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: claude/migration-bugs-badge-counts-ird2xn
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Regenerate lockfile
+        run: bun install
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- bun.lockb; then
+            echo "bun.lockb unchanged, nothing to commit"
+          else
+            git add bun.lockb
+            git commit -m "chore: regenerate bun.lockb to match package.json (typescript-eslint bump)"
+            git push origin HEAD:claude/migration-bugs-badge-counts-ird2xn
+          fi
