@@ -39,7 +39,7 @@ const Auth = () => {
 
   const queryParams = new URLSearchParams(location.search);
   const queryMode = queryParams.get('mode');
-  // Three surfaces: approved-only sign up, access request, sign in.
+  // Three surfaces: open sign up, access request, sign in.
   const resolveMode = (value: string | null): AuthMode =>
     value === 'signup' ? 'signup' : value === 'request' ? 'request' : 'signin';
   const [authMode, setAuthMode] = useState<AuthMode>(resolveMode(queryMode));
@@ -144,7 +144,7 @@ const Auth = () => {
     }
   };
 
-  // Sign up lives in SignUpApprovalGate: it is gated on an admin-approved email.
+  // Sign up lives in SignUpApprovalGate: open to any visitor, no approval step.
 
 
   // Features for desktop hero
