@@ -106,7 +106,6 @@ const WhoIsDNAForSection = () => {
             </Link>{' '}
             and ask from inside.
           </p>
-        </div>
       </div>
     </section>
   );
