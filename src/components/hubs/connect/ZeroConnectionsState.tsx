@@ -45,8 +45,8 @@ export function ZeroConnectionsState({
     if (profile?.profession) {
       return `Based on your background in ${profile.profession}, you might connect with professionals across the diaspora.`;
     }
-    if (profile?.africa_focus_areas?.length) {
-      return `Based on your interest in ${profile.africa_focus_areas[0]}, discover professionals in similar regions.`;
+    if (profile?.focus_areas?.length) {
+      return `Based on your interest in ${profile.focus_areas[0]}, discover professionals in similar regions.`;
     }
     return "The diaspora is 200 million strong. Let's find your people.";
   };
