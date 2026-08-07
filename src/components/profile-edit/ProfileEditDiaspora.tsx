@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { TagMultiSelect } from '@/components/profile/TagMultiSelect';
+import { CountryMultiSelect } from '@/components/ui/CountryMultiSelect';
 import {
   DIASPORA_NETWORK_OPTIONS,
   ENGAGEMENT_INTENTION_OPTIONS,
@@ -79,6 +80,7 @@ const VisitFrequencyField: React.FC<VisitFrequencyFieldProps> = ({
 interface ProfileEditDiasporaProps {
   diasporaNetworks: string[];
   engagementIntentions: string[];
+  engagementGeography: string[];
   mentorshipAreas: string[];
   ethnicHeritage: string[];
   returnIntentions: string;
@@ -86,6 +88,7 @@ interface ProfileEditDiasporaProps {
   visitFrequency: string;
   onNetworksChange: (networks: string[]) => void;
   onIntentionsChange: (intentions: string[]) => void;
+  onEngagementGeographyChange: (countries: string[]) => void;
   onMentorshipAreasChange: (areas: string[]) => void;
   onEthnicHeritageChange: (heritage: string[]) => void;
   onReturnIntentionsChange: (value: string) => void;
@@ -96,6 +99,7 @@ interface ProfileEditDiasporaProps {
 const ProfileEditDiaspora: React.FC<ProfileEditDiasporaProps> = ({
   diasporaNetworks,
   engagementIntentions,
+  engagementGeography,
   mentorshipAreas,
   ethnicHeritage,
   returnIntentions,
@@ -103,6 +107,7 @@ const ProfileEditDiaspora: React.FC<ProfileEditDiasporaProps> = ({
   visitFrequency,
   onNetworksChange,
   onIntentionsChange,
+  onEngagementGeographyChange,
   onMentorshipAreasChange,
   onEthnicHeritageChange,
   onReturnIntentionsChange,
@@ -209,6 +214,20 @@ const ProfileEditDiaspora: React.FC<ProfileEditDiasporaProps> = ({
           colorClass="bg-dna-emerald/10 text-dna-emerald border-dna-emerald/20"
           allowCustom={true}
         />
+
+        {/* Engagement Geography */}
+        <div>
+          <Label>Where do you want to help?</Label>
+          <CountryMultiSelect
+            value={engagementGeography}
+            onChange={onEngagementGeographyChange}
+            placeholder="Select countries..."
+            aria-label="Where do you want to help?"
+          />
+          <p className="text-meta text-muted-foreground mt-1">
+            Countries where you'd like your time, skills, or support to make a difference. This can be different from where you're from.
+          </p>
+        </div>
 
         {/* Mentorship Areas */}
         <TagMultiSelect

@@ -88,6 +88,7 @@ const ProfileEdit = () => {
   // Diaspora state
   const [diasporaNetworks, setDiasporaNetworks] = useState<string[]>([]);
   const [engagementIntentions, setEngagementIntentions] = useState<string[]>([]);
+  const [engagementGeography, setEngagementGeography] = useState<string[]>([]);
   const [mentorshipAreas, setMentorshipAreas] = useState<string[]>([]);
   const [ethnicHeritage, setEthnicHeritage] = useState<string[]>([]);
   const [returnIntentions, setReturnIntentions] = useState('');
@@ -156,6 +157,7 @@ const ProfileEdit = () => {
       // Diaspora
       setDiasporaNetworks(Array.isArray(profile.diaspora_networks) ? profile.diaspora_networks : []);
       setEngagementIntentions(Array.isArray(profile.engagement_intentions) ? profile.engagement_intentions : []);
+      setEngagementGeography(Array.isArray((profile as any).engagement_geography) ? (profile as any).engagement_geography : []);
       setMentorshipAreas(Array.isArray(profile.mentorship_areas) ? profile.mentorship_areas : []);
       setEthnicHeritage(Array.isArray((profile as any).ethnic_heritage) ? (profile as any).ethnic_heritage : []);
       setReturnIntentions((profile as any).return_intentions || '');
@@ -342,6 +344,7 @@ const ProfileEdit = () => {
       // Diaspora
       diaspora_networks: diasporaNetworks,
       engagement_intentions: engagementIntentions,
+      engagement_geography: engagementGeography,
       mentorship_areas: mentorshipAreas,
       ethnic_heritage: ethnicHeritage,
       return_intentions: returnIntentions,
@@ -615,6 +618,7 @@ const ProfileEdit = () => {
           <ProfileEditDiaspora
             diasporaNetworks={diasporaNetworks}
             engagementIntentions={engagementIntentions}
+            engagementGeography={engagementGeography}
             mentorshipAreas={mentorshipAreas}
             ethnicHeritage={ethnicHeritage}
             returnIntentions={returnIntentions}
@@ -622,6 +626,7 @@ const ProfileEdit = () => {
             visitFrequency={visitFrequency}
             onNetworksChange={setDiasporaNetworks}
             onIntentionsChange={setEngagementIntentions}
+            onEngagementGeographyChange={setEngagementGeography}
             onMentorshipAreasChange={setMentorshipAreas}
             onEthnicHeritageChange={setEthnicHeritage}
             onReturnIntentionsChange={setReturnIntentions}
