@@ -77,9 +77,9 @@ const About = () => {
           <img
             src={dnaLogo}
             alt="Diaspora Network of Africa"
-            width={320}
-            height={180}
-            className="h-24 sm:h-28 w-auto mb-6"
+            width={661}
+            height={307}
+            className="h-16 sm:h-20 w-auto mb-6"
           />
           <h1 className="text-display sm:text-hero font-serif text-foreground max-w-3xl mb-6">
             DNA is the mobilization infrastructure for the Global African Diaspora's return.
