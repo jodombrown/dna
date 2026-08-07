@@ -524,9 +524,6 @@ export default function ConveyStoryHub() {
         />
       </div>
 
-      {/* Mobile: Floating DIA button */}
-      {isMobile && <DiaContextual pillar="convey" floatingButton />}
-
     </>
   );
 }

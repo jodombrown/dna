@@ -1,7 +1,7 @@
 import { useEffect, useState, type RefObject } from 'react';
 
 /** Extra pixels added below the measured header so content never touches it */
-const BUFFER_PX = 12;
+const BUFFER_PX = 0;
 
 /**
  * Measures the actual rendered height of a fixed mobile header container

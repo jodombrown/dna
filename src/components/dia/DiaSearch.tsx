@@ -787,7 +787,7 @@ export function DiaSearch({
               }
             }}
             placeholder={compact ? 'Ask DIA…' : placeholder}
-            rows={1}
+            rows={compact ? 1 : 2}
             className="flex-1 resize-none bg-transparent text-sm sm:text-base leading-relaxed py-2 focus:outline-none placeholder:text-muted-foreground/70 max-h-[200px] overflow-y-auto"
             disabled={isInputDisabled}
             maxLength={500}
