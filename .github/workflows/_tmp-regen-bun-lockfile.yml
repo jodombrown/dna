@@ -23,6 +23,10 @@ jobs:
         with:
           bun-version: latest
 
+      - name: Diagnostic - frozen lockfile check on raw branch checkout
+        run: bun install --frozen-lockfile
+        continue-on-error: true
+
       - name: Regenerate lockfile
         run: bun install
 
