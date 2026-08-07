@@ -477,26 +477,15 @@ const UnifiedHeader = () => {
               {!isAuthenticated && (
                 <>
                   <nav className="hidden md:flex items-center space-x-6">
-                    {/* About Us Dropdown */}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="text-neutral-700 hover:text-dna-forest transition-colors font-medium">
-                          About Us
-                          <ChevronDown className="w-4 h-4 ml-1" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="start" className="w-48">
-                        {aboutUsDropdown.map((item) => (
-                          <DropdownMenuItem
-                            key={item.name}
-                            onClick={() => navigate(item.path)}
-                            className="cursor-pointer"
-                          >
-                            {item.name}
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    {/* About */}
+                    <Button
+                      variant="ghost"
+                      onClick={() => navigate('/about')}
+                      className="text-neutral-700 hover:text-dna-forest transition-colors font-medium"
+                    >
+                      About
+                    </Button>
+
 
                     {publicNavItems.filter(item => item.path !== currentPath).map((item) => (
                       <NavLink
