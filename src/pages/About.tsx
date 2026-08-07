@@ -152,7 +152,7 @@ const About = () => {
               />
             </div>
 
-            <div>
+            <div className="lg:col-span-2">
               <h2 className="text-display font-serif text-foreground mb-1">Jaûne L. Odombrown</h2>
               <p className="text-h3 text-dna-copper mb-6">Founder and Chief Executive Officer</p>
 
