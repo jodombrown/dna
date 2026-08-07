@@ -79,7 +79,9 @@ export function useRealtimeMessaging({
     staleTime: 30_000,
   });
 
-  // Merge server messages with optimistic messages, deduplicating by client_id
+  // Merge server messages with optimistic messages, deduplicating by client_id.
+  // This must stay a pure derivation with no setState — see the effect below
+  // for pruning confirmed optimistic messages.
   const messages: GroupMessage[] = (() => {
     const merged = [...serverMessages];
 
@@ -92,21 +94,28 @@ export function useRealtimeMessaging({
       }
     }
 
-    // Remove confirmed optimistic messages
-    const confirmedClientIds = new Set(
-      serverMessages.filter(m => m.client_id).map(m => m.client_id)
-    );
-
-    if (confirmedClientIds.size > 0) {
-      setOptimisticMessages(prev =>
-        prev.filter(m => !confirmedClientIds.has(m._clientId ?? null))
-      );
-    }
-
     return merged.sort(
       (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
     );
   })();
+
+  // Remove optimistic messages once the server confirms them. This runs as
+  // an effect (after render), not during the render-phase merge above:
+  // calling setState unconditionally during render caused an infinite
+  // render loop, since serverMessages.filter(...).map(...) above always
+  // produces a new Set and `.filter()` on optimisticMessages always returns
+  // a new array reference even when nothing is actually removed.
+  useEffect(() => {
+    const confirmedClientIds = new Set(
+      serverMessages.filter(m => m.client_id).map(m => m.client_id)
+    );
+    if (confirmedClientIds.size === 0) return;
+
+    setOptimisticMessages(prev => {
+      const next = prev.filter(m => !confirmedClientIds.has(m._clientId ?? null));
+      return next.length === prev.length ? prev : next;
+    });
+  }, [serverMessages]);
 
   // Subscribe to realtime updates
   useEffect(() => {

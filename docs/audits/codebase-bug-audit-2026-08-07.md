@@ -17,7 +17,7 @@
 | Medium | 11 |
 | Low | 6 |
 
-**Update (2026-08-07, same day):** C1 (IDOR) and C2 (Manage-event routing) below are now fixed on this branch — see the "Status" note under each.
+**Update (2026-08-07, same day):** All four critical findings (C1–C4) below are now fixed on this branch — see the "Status" note under each.
 
 Two findings stand out as needing immediate attention:
 
@@ -75,6 +75,8 @@ React Router resolves relative `".."` against route-tree nesting depth, not URL 
 
 **Fix:** Move the pruning into a `useEffect` keyed on `serverMessages`, and only call `setOptimisticMessages` when the filtered result actually differs from `prev` (or track pruned IDs in a ref).
 
+**Status: Fixed** in `src/hooks/useRealtimeMessaging.ts`. The render-phase merge is now a pure derivation with no `setState` call; pruning confirmed optimistic messages moved into a `useEffect` keyed on `serverMessages`, which also bails out (returns the same array reference) when nothing was actually removed, avoiding an unnecessary extra render on top of fixing the crash.
+
 ### C4. Auth race condition: a stale session check can resurrect a just-signed-out session
 **File:** `src/contexts/AuthContext.tsx:139-214`
 
@@ -83,6 +85,8 @@ React Router resolves relative `".."` against route-tree nesting depth, not URL 
 **Failure scenario:** On load, `getInitialSession()` starts validating a stored session. Before it resolves, the user signs out (or another tab does). The sign-out immediately nulls state — but Supabase's default sign-out only invalidates the refresh token, so the still-valid access token passes the in-flight `getUser()` check. When `getInitialSession()` resolves, it overwrites the just-cleared state with the stale pre-signout session, silently re-authenticating the UI.
 
 **Fix:** Guard the async tail with a generation/mount flag set on `signOut()` and checked before each `setSession`/`setUser`/`setProfile` call, so a superseded response can never clobber a newer result.
+
+**Status: Fixed** in `src/contexts/AuthContext.tsx`. Added an `authVersionRef` counter bumped by every authoritative auth event (`onAuthStateChange` firing, or an explicit `signOut()`); `getInitialSession()` and `fetchProfile()` now capture the version at the start of each async chain and check it before every `setSession`/`setUser`/`setProfile` write, so a response that resolves after a newer event has already landed is discarded instead of applied. While in this file, also fixed the related dead-code bug (M9 below) that this rewrite depended on: `isInitialized` was `useState`, so the `onAuthStateChange` closure (created once, at mount) always read it as `false` and could never clear `loading` itself — replaced with `isInitializedRef` (a ref, correctly visible to that closure), and added logging (M10 below) to the previously-silent profile-fetch failure paths touched by this change.
 
 ---
 
@@ -191,8 +195,8 @@ Unlike every other guarded page in the app (`AuthGuard`, `OnboardingGuard`, `Wel
 - **M6.** Non-atomic read-modify-write counters: `useFollow.ts:88-104` (`follower_count`/`following_count`, errors silently swallowed) and `messagingPrdService.ts:374-389` (`unread_count`) can lose increments under concurrent access; should be DB-side atomic increments/triggers, as already done correctly in `groupMessageService`.
 - **M7.** `usePostSearch.ts:37-165` and `messageService.getConversations`/`useUniversalFeed.ts:14-17` have offset/limit values that don't actually affect the query or aren't part of the React Query cache key — "load more" silently reloads page 1, or a second caller with a different limit gets a stale cached page size.
 - **M8.** Admin dashboard sidebar (`AdminDashboardLayout.tsx:46-143`) links to ~14 routes never registered under `/admin` in `App.tsx` (e.g. `/admin/users/pending`, `/admin/settings`, `/admin/audit-log`) — clicking them exits the admin shell entirely to the global 404 page instead of an in-shell "coming soon" state.
-- **M9.** `AuthContext.tsx:143-159` — the `onAuthStateChange` closure captures `isInitialized` at mount (effect has `[]` deps) and never sees it update; the `if (isInitialized) setLoading(false)` branch can never fire. Currently harmless (every path already clears `loading` elsewhere) but is dead logic that will silently fail to do its job if a future code path relies on it.
-- **M10.** `AuthContext.tsx` swallows profile-fetch errors with empty/comment-only catch blocks (lines 98-100, 113-115, 127-129, 210-213) — an RLS misconfiguration or transient DB error results in `profile: null` for a fully authenticated user with zero logging, making the failure invisible in production.
+- **M9.** ~~`AuthContext.tsx:143-159` — the `onAuthStateChange` closure captures `isInitialized` at mount (effect has `[]` deps) and never sees it update; the `if (isInitialized) setLoading(false)` branch can never fire.~~ **Fixed** alongside C4: `isInitialized` state replaced with `isInitializedRef` (a ref, correctly visible to the long-lived closure).
+- **M10.** ~~`AuthContext.tsx` swallows profile-fetch errors with empty/comment-only catch blocks (lines 98-100, 113-115, 127-129, 210-213) — an RLS misconfiguration or transient DB error results in `profile: null` for a fully authenticated user with zero logging, making the failure invisible in production.~~ **Fixed** alongside C4: every previously-silent catch in `fetchProfile` now logs via `logger.error`/`logger.warn`.
 - **M11.** `Join.tsx:41-44` schedules an uncancelled `setTimeout(() => window.location.replace(...), 2000)` with no cleanup in its effect — navigating away within the 2s window still forces the stale redirect.
 
 ---
