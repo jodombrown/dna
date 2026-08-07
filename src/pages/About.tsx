@@ -67,15 +67,15 @@ const About = () => {
       {/* Hero */}
       <section className="py-12 border-b border-border">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-micro uppercase text-dna-copper mb-6">Our story</p>
+          <p className="text-micro uppercase text-dna-copper mb-6 text-center sm:text-left">Our story</p>
           <img
             src={dnaLogo}
             alt="Diaspora Network of Africa"
             width={661}
             height={307}
-            className="h-16 sm:h-20 w-auto mb-6"
+            className="h-16 sm:h-20 w-auto mb-6 mx-auto sm:mx-0"
           />
-          <h1 className="text-display sm:text-hero font-serif text-foreground max-w-3xl mb-6">
+          <h1 className="text-display sm:text-hero font-serif text-foreground max-w-3xl mb-6 text-center sm:text-left">
             DNA is the mobilization infrastructure for the Global African Diaspora's return.
           </h1>
           <p className="text-h3 text-muted-foreground max-w-2xl leading-relaxed">
@@ -90,7 +90,7 @@ const About = () => {
       <section className="py-12">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
-            <h2 className="text-h1 font-serif text-foreground">Why DNA exists</h2>
+            <h2 className="text-h1 font-serif text-foreground text-center sm:text-left">Why DNA exists</h2>
             <div className="lg:col-span-2 space-y-4 text-body text-muted-foreground leading-relaxed max-w-prose">
               <p>
                 The diaspora is not short on will, skill or money. It is short on a place where
@@ -135,7 +135,7 @@ const About = () => {
       {/* Meet the founder */}
       <section className="py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-micro uppercase text-dna-copper mb-4">Meet the founder</p>
+          <p className="text-micro uppercase text-dna-copper mb-4 text-center sm:text-left">Meet the founder</p>
           <div className="grid lg:grid-cols-3 gap-8 lg:gap-12 items-start">
             <div className="rounded-xl border border-border overflow-hidden bg-card">
               <img
@@ -147,8 +147,8 @@ const About = () => {
             </div>
 
             <div className="lg:col-span-2">
-              <h2 className="text-display font-serif text-foreground mb-1">Jaûne L. Odombrown</h2>
-              <p className="text-h3 text-dna-copper mb-6">Founder and Chief Executive Officer</p>
+              <h2 className="text-display font-serif text-foreground mb-1 text-center sm:text-left">Jaûne L. Odombrown</h2>
+              <p className="text-h3 text-dna-copper mb-6 text-center sm:text-left">Founder and Chief Executive Officer</p>
 
               <div className="space-y-4 text-body text-muted-foreground leading-relaxed max-w-prose">
                 <p>
@@ -164,14 +164,14 @@ const About = () => {
                 </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 mt-6">
-                <Button asChild variant="outline" className="touch-target justify-start">
+              <div className="flex flex-col sm:flex-row gap-3 mt-6 items-stretch sm:items-center">
+                <Button asChild variant="outline" className="touch-target justify-center sm:justify-start">
                   <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer">
                     <Linkedin className="w-4 h-4 mr-2" />
                     Connect with Jaûne on LinkedIn
                   </a>
                 </Button>
-                <Button asChild variant="ghost" className="touch-target justify-start">
+                <Button asChild variant="ghost" className="touch-target justify-center sm:justify-start">
                   <a href={DNA_PROFILE_URL} target="_blank" rel="noopener noreferrer">
                     View his DNA profile
                     <ArrowUpRight className="w-4 h-4 ml-2" />
@@ -198,7 +198,7 @@ const About = () => {
       {/* Core values */}
       <section className="py-12 bg-muted/40 border-y border-border">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-h1 font-serif text-foreground mb-8">Our core values</h2>
+          <h2 className="text-h1 font-serif text-foreground mb-8 text-center sm:text-left">Our core values</h2>
           <ol className="grid md:grid-cols-3 gap-6">
             {CORE_VALUES.map(({ numeral, name, copy }) => (
               <li
@@ -217,12 +217,12 @@ const About = () => {
       {/* Call to action */}
       <section className="py-12 border-t border-border">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-h1 font-serif text-foreground mb-4">Join the mobilization</h2>
+          <h2 className="text-h1 font-serif text-foreground mb-4 text-center sm:text-left">Join the mobilization</h2>
           <p className="text-body text-muted-foreground leading-relaxed mb-6 max-w-prose">
             Membership is where the work happens. Request access and we will let you know the
             moment your place is open.
           </p>
-          <div className="flex flex-wrap items-center gap-6">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-6">
             <Button onClick={() => setIsJoinDialogOpen(true)} className="touch-target">
               Request access
             </Button>
