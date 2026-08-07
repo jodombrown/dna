@@ -17,6 +17,8 @@
 | Medium | 11 |
 | Low | 6 |
 
+**Update (2026-08-07, same day):** C1 (IDOR) and C2 (Manage-event routing) below are now fixed on this branch — see the "Status" note under each.
+
 Two findings stand out as needing immediate attention:
 
 1. **A systemic IDOR vulnerability** lets any authenticated user read another user's private messages, notifications, drafts, and profile-viewer lists by passing that user's UUID (which is exposed all over the public API) into several `SECURITY DEFINER` RPCs.
@@ -46,6 +48,8 @@ Combined with `SECURITY DEFINER` functions (which bypass RLS, running as the own
 
 **Fix:** Add `IF p_user_id <> auth.uid() THEN RAISE EXCEPTION 'not authorized'; END IF;` to every one of these (or drop the parameter and use `auth.uid()` internally). Revisit the blanket `GRANT EXECUTE ... TO anon, authenticated` so new `SECURITY DEFINER` functions aren't world-callable by default. Reference the codebase's own correct pattern in `20260729073239_location_columns_owner_only.sql` (`get_own_location()`, no parameter) and `remove_connection()` in `20251105104827_...sql` (explicit `auth.uid()` check).
 
+**Status: Fixed** in `supabase/migrations/20260807120000_fix_idor_user_scoped_rpcs.sql`. All 8 functions listed in the table above now reject the call with `RAISE EXCEPTION` unless the identifying parameter (`p_user_id`, or `p_profile_id` for `get_profile_viewers`) matches `auth.uid()`. Verified every live client call site (`get_user_conversations`, `get_blocked_users`, `get_user_notifications`) already passes the caller's own ID, so this is non-breaking for legitimate use. The blanket `GRANT EXECUTE ... TO anon, authenticated` / `ALTER DEFAULT PRIVILEGES` in `20250809005352_...sql` is unchanged — still worth a follow-up decision on whether newly-added `SECURITY DEFINER` functions should be world-callable by default, but out of scope for this fix (it's additive policy, not a fix to a specific bug).
+
 ### C2. "Manage event" navigates organizers to the homepage instead of the event console
 **Files:** `src/App.tsx:612-618` (route defs); live callers: `src/components/convene/EventOverview.tsx:527`, `src/components/convene/StickyRSVPBar.tsx:106`, `src/components/feed/cards/EventCard.tsx:271`
 
@@ -59,6 +63,8 @@ React Router resolves relative `".."` against route-tree nesting depth, not URL 
 **Impact:** Three separate, currently-shipping "Manage" CTAs (event overview page, sticky RSVP bar, feed event card) send organizers to the homepage or a 404 instead of the management console.
 
 **Fix:** Nest these routes as children of `/dna/convene/events/:id`, or replace the bare `<Navigate to=".."/>` with a small redirect component (mirroring the existing, correct `EventSettingsRedirect`) that reads `useParams().id` and navigates to the absolute path.
+
+**Status: Fixed** in `src/components/routing/LegacyEventManageRedirect.tsx` (wired into `src/App.tsx`), following the `EventSettingsRedirect` pattern this file already recommended. Each `/manage*` route now renders `<LegacyEventManageRedirect to="...">`, which reads `useParams().id` and navigates to the absolute `/dna/convene/events/:id[/sub-path]`, sidestepping the relative-path depth issue entirely. Confirmed all three live callers (`EventOverview.tsx:527`, `StickyRSVPBar.tsx:106`, `EventCard.tsx:271`) target the base `/manage` route, which now correctly lands on the event overview instead of the site root.
 
 ### C3. Infinite render loop crashes any group chat thread with prior messages
 **File:** `src/hooks/useRealtimeMessaging.ts:83-109`

@@ -132,6 +132,7 @@ const TeamManager = lazy(() => import("./components/convene/management/team/Team
 // Event settings folded into the unified event form (EditEventPage) — old
 // /manage/settings links redirect there.
 const EventSettingsRedirect = lazy(() => import("./components/routing/EventSettingsRedirect"));
+const LegacyEventManageRedirect = lazy(() => import("./components/routing/LegacyEventManageRedirect"));
 
 // Collaborate M1-M5 pages
 const CollaborateHub = lazy(() => import("./pages/dna/collaborate/CollaborateHub"));
@@ -606,13 +607,13 @@ function App() {
                 <Route path="team" element={<TeamManager />} />
                 <Route path="settings" element={<EventSettingsRedirect />} />
               </Route>
-              <Route path="/dna/convene/events/:id/manage" element={<Navigate to=".." replace />} />
-              <Route path="/dna/convene/events/:id/manage/attendees" element={<Navigate to="../attendees" replace />} />
-              <Route path="/dna/convene/events/:id/manage/check-in" element={<Navigate to="../check-in" replace />} />
-              <Route path="/dna/convene/events/:id/manage/communications" element={<Navigate to="../communications" replace />} />
-              <Route path="/dna/convene/events/:id/manage/analytics" element={<Navigate to="../analytics" replace />} />
-              <Route path="/dna/convene/events/:id/manage/team" element={<Navigate to="../team" replace />} />
-              <Route path="/dna/convene/events/:id/manage/settings" element={<Navigate to="../settings" replace />} />
+              <Route path="/dna/convene/events/:id/manage" element={<LegacyEventManageRedirect />} />
+              <Route path="/dna/convene/events/:id/manage/attendees" element={<LegacyEventManageRedirect to="attendees" />} />
+              <Route path="/dna/convene/events/:id/manage/check-in" element={<LegacyEventManageRedirect to="check-in" />} />
+              <Route path="/dna/convene/events/:id/manage/communications" element={<LegacyEventManageRedirect to="communications" />} />
+              <Route path="/dna/convene/events/:id/manage/analytics" element={<LegacyEventManageRedirect to="analytics" />} />
+              <Route path="/dna/convene/events/:id/manage/team" element={<LegacyEventManageRedirect to="team" />} />
+              <Route path="/dna/convene/events/:id/manage/settings" element={<LegacyEventManageRedirect to="settings" />} />
               {/* Event creation wizard — full 5-step flow */}
               {/* Event creation now handled by Universal Composer */}
               <Route path="/dna/convene/events/:id/edit" element={
