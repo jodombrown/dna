@@ -39,7 +39,7 @@ export default function Reauthenticate() {
     }
 
     setStatus('success');
-    setTimeout(() => navigate('/dna/me'), 1500);
+    setTimeout(() => navigate('/dna/feed'), 1500);
   };
 
   return (

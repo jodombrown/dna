@@ -91,7 +91,7 @@ export default function ResetPasswordComplete() {
     }
 
     setStatus('success');
-    setTimeout(() => navigate('/dna/me'), 1800);
+    setTimeout(() => navigate('/dna/feed'), 1800);
   };
 
   return (
