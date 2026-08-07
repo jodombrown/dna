@@ -17,7 +17,7 @@ const BuildingTogetherSection = () => {
           <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold font-serif text-dna-forest mb-3 lg:mb-4">
             Join Us in Shaping Africa's Future
           </h3>
-          <p className="text-base sm:text-lg text-neutral-600 max-w-4xl mx-auto">
+          <p className="text-base sm:text-lg text-neutral-600 max-w-4xl mx-auto text-left sm:text-center">
             <span className="font-semibold text-dna-forest">Why we're building in the open:</span> We believe openness builds trust. Watch us create the 
             platform, share feedback, and join our community as we grow together.
           </p>
@@ -32,7 +32,7 @@ const BuildingTogetherSection = () => {
                 <MessageCircle className="w-7 h-7 lg:w-8 lg:h-8 text-dna-ochre" />
               </div>
               <h3 className="text-xl lg:text-2xl font-bold text-dna-forest mb-3 lg:mb-4">Share Feedback</h3>
-              <p className="text-sm sm:text-base text-neutral-600 mb-4 lg:mb-6 leading-relaxed">
+              <p className="text-sm sm:text-base text-neutral-600 mb-4 lg:mb-6 leading-relaxed text-left sm:text-center">
                 Help us build better by sharing your thoughts and ideas
               </p>
               <Button 
@@ -51,7 +51,7 @@ const BuildingTogetherSection = () => {
                 <Users className="w-7 h-7 lg:w-8 lg:h-8 text-dna-forest" />
               </div>
               <h3 className="text-xl lg:text-2xl font-bold text-dna-forest mb-3 lg:mb-4">African Diaspora Mobilization Starts Here</h3>
-              <p className="text-sm sm:text-base text-neutral-600 mb-4 lg:mb-6 leading-relaxed">
+              <p className="text-sm sm:text-base text-neutral-600 mb-4 lg:mb-6 leading-relaxed text-left sm:text-center">
                 Connect with visionary leaders, builders, and changemakers dedicated to accelerating Africa's development.
               </p>
               <Button 
