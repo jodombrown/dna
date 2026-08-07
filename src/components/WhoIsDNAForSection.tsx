@@ -101,12 +101,12 @@ const WhoIsDNAForSection = () => {
               Reach out
             </a>{' '}
             or{' '}
-            <a
-              href="/auth?mode=signup"
+            <Link
+              to="/auth?mode=signup"
               className="text-dna-emerald font-medium underline underline-offset-4 hover:text-dna-forest"
             >
               Affirm your Membership
-            </a>{' '}
+            </Link>{' '}
             and ask from inside.
           </p>
         </div>
