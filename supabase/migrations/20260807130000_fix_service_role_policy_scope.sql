@@ -57,7 +57,14 @@
 -- badge system; if the notification_system.sql migration is ever deployed
 -- to production in the future, its badge_counts policy will need this same
 -- service_role fix applied at that time.
+--
+-- Re-applied 2026-08-07: this fix landed correctly via PR #271, then was
+-- silently reverted to the old, wrong policy names when PR #270 (an
+-- unrelated, independently-open PR from an older branch with a stale copy
+-- of this file) merged into main twelve minutes later and won the 3-way
+-- merge for this file. No functional change from PR #271's version --
+-- restoring it.
 
-ALTER POLICY "System can insert user vectors" ON public.user_vectors TO service_role;
-ALTER POLICY "System can update user vectors" ON public.user_vectors TO service_role;
-ALTER POLICY "System can delete user vectors" ON public.user_vectors TO service_role;
+ALTER POLICY "Users insert own vectors" ON public.user_vectors TO service_role;
+ALTER POLICY "Users update own vectors" ON public.user_vectors TO service_role;
+ALTER POLICY "Users delete own vectors" ON public.user_vectors TO service_role;
