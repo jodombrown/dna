@@ -56,56 +56,56 @@ const WhoIsDNAForSection = () => {
   return (
     <section className="py-12 lg:py-16 bg-gradient-to-br from-neutral-50 to-white">
       <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-8">
-          <h2 className={`${TYPOGRAPHY.h2} text-dna-copper mb-3 lg:mb-4 text-center sm:text-left`}>
-            Who is DNA for?
-          </h2>
-          <p className="text-base sm:text-lg text-neutral-700 mb-6 lg:mb-8 text-center sm:text-left">
-            Diaspora, Continental Partners, and Allies building Africa's progress together, wherever they live.
-          </p>
+        <h2 className={`${TYPOGRAPHY.h2} text-dna-copper mb-3 lg:mb-4 text-center sm:text-left`}>
+          Who is DNA for?
+        </h2>
+        <p className="text-base sm:text-lg text-neutral-700 mb-6 lg:mb-8 text-center sm:text-left">
+          Diaspora, Continental Partners, and Allies building Africa's progress together, wherever they live.
+        </p>
 
-          {/* FAQ Toggles */}
-          <div className="space-y-2 sm:space-y-3">
-            {faqs.map((faq, index) => (
-              <div key={index} className="bg-white rounded-lg border border-neutral-200 overflow-hidden">
-                <button
-                  onClick={() => toggleFAQ(index)}
-                  className="w-full flex items-center justify-between p-4 sm:p-5 hover:bg-neutral-50 transition-all duration-200 text-left"
-                >
-                  <span className="text-sm sm:text-base text-neutral-900 font-medium pr-4">{faq.question}</span>
-                  <ChevronDown 
-                    className={`w-4 h-4 sm:w-5 sm:h-5 text-neutral-400 flex-shrink-0 transition-transform duration-200 ${
-                      openIndex === index ? 'rotate-180 text-dna-copper' : ''
-                    }`} 
-                  />
-                </button>
-                {openIndex === index && (
-                  <div className="px-4 sm:px-5 pb-4 sm:pb-5 pt-0">
-                    <p className="text-sm sm:text-base text-neutral-600 leading-relaxed">
-                      {faq.answer}
-                    </p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+        {/* FAQ Toggles */}
+        <div className="space-y-2 sm:space-y-3">
+          {faqs.map((faq, index) => (
+            <div key={index} className="bg-white rounded-lg border border-neutral-200 overflow-hidden">
+              <button
+                onClick={() => toggleFAQ(index)}
+                className="w-full flex items-center justify-between p-4 sm:p-5 hover:bg-neutral-50 transition-all duration-200 text-left"
+              >
+                <span className="text-sm sm:text-base text-neutral-900 font-medium pr-4">{faq.question}</span>
+                <ChevronDown 
+                  className={`w-4 h-4 sm:w-5 sm:h-5 text-neutral-400 flex-shrink-0 transition-transform duration-200 ${
+                    openIndex === index ? 'rotate-180 text-dna-copper' : ''
+                  }`} 
+                />
+              </button>
+              {openIndex === index && (
+                <div className="px-4 sm:px-5 pb-4 sm:pb-5 pt-0">
+                  <p className="text-sm sm:text-base text-neutral-600 leading-relaxed">
+                    {faq.answer}
+                  </p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
 
-          <p className="mt-6 text-sm sm:text-base text-neutral-600">
-            Still have questions?{' '}
-            <a
-              href="mailto:support@diasporanetwork.africa"
-              className="text-dna-emerald font-medium underline underline-offset-4 hover:text-dna-forest"
-            >
-              Reach out
-            </a>{' '}
-            or{' '}
-            <Link
-              to="/auth?mode=signup"
-              className="text-dna-emerald font-medium underline underline-offset-4 hover:text-dna-forest"
-            >
-              Affirm your Membership
-            </Link>{' '}
-            and ask from inside.
-          </p>
+        <p className="mt-6 text-sm sm:text-base text-neutral-600">
+          Still have questions?{' '}
+          <a
+            href="mailto:support@diasporanetwork.africa"
+            className="text-dna-emerald font-medium underline underline-offset-4 hover:text-dna-forest"
+          >
+            Reach out
+          </a>{' '}
+          or{' '}
+          <Link
+            to="/auth?mode=signup"
+            className="text-dna-emerald font-medium underline underline-offset-4 hover:text-dna-forest"
+          >
+            Affirm your Membership
+          </Link>{' '}
+          and ask from inside.
+        </p>
       </div>
     </section>
   );
