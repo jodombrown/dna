@@ -10,9 +10,7 @@ export type PublicNavItem = {
 // Five C's marketing pages temporarily removed from public nav pending redesign.
 export const publicNavItems: PublicNavItem[] = [];
 
-export const aboutUsDropdown = [
-  { name: 'About Us', path: '/about' },
-];
+export const aboutUsDropdown = [{ name: 'About', path: '/about' }];
 
 // Main navigation for authenticated users - Pillar-based structure (5 C's)
 export const mainNavItems = [
