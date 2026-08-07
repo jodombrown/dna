@@ -161,20 +161,15 @@ const Auth = () => {
   ];
 
   const modeSubtitle =
-    authMode === 'signup'
-      ? 'Create your account'
-      : authMode === 'request'
-        ? 'Request access and we will review it'
-        : 'Sign in to your account';
+    authMode === 'signup' ? 'Create your account' : 'Sign in to your account';
 
 
-  // Auth content switches between sign up, request access, and sign in
+  // Auth content switches between sign up and sign in
   const authContent = (
     <div className="w-full space-y-4">
-      {authMode === 'request' ? (
-        <BetaAccessForm />
-      ) : authMode === 'signup' ? (
+      {authMode === 'signup' ? (
         <SignUpApprovalGate />
+
 
       ) : (
         <form onSubmit={handleSignIn} className="space-y-4">
