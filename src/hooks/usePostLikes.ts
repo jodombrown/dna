@@ -24,7 +24,12 @@ export function usePostLikes(postId: string, userId?: string, notificationContex
 
   // Fetch like count and whether current user liked
   const { data: likeData, isLoading } = useQuery({
-    queryKey: ['post-likes', postId],
+    // userId is in the key because the query result embeds a userId-derived
+    // field (userHasLiked). Without it, the first fetch — often while auth
+    // is still resolving with userId undefined — caches userHasLiked:false
+    // under a key shared by every later userId, so a post the user already
+    // liked can render as not-liked until an unrelated invalidation fires.
+    queryKey: ['post-likes', postId, userId ?? 'anon'],
     queryFn: async () => {
       // Step 1: Fetch likes (no join - post_likes has no FK to profiles)
       const { data: likesData, error: likesError } = await supabase

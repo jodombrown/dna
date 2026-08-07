@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { MemberCard } from '@/components/connect/MemberCard';
@@ -53,7 +53,8 @@ export default function Discover() {
   const { user } = useAuth();
   const { isMobile } = useMobile();
   const context = useOutletContext<DiscoverOutletContext>();
-  
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [members, setMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -77,6 +78,23 @@ export default function Discover() {
       context.setShowMobileFilters(false);
     }
   }, [context?.showMobileFilters, isMobile]);
+
+  // Deep link from the zero-connections empty state: ?field=<industry>
+  // selects an industry filter on load. Previously nothing on this page
+  // read any query param at all, so the link navigated here but the
+  // filter never actually applied.
+  useEffect(() => {
+    const field = searchParams.get('field');
+    if (field) {
+      setFilters((prev) => ({ ...prev, industries: [field] }));
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete('field');
+        return next;
+      }, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Check for reduced motion preference
   const prefersReducedMotion =

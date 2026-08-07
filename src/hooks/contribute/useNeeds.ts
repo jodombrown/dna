@@ -63,6 +63,12 @@ export function useNeedMutations() {
     if (userId) {
       qc.invalidateQueries({ queryKey: ['contribute', 'needs', 'user', userId] });
     }
+    // ['contribute', 'needs', 'open', userId] (useOpenNeeds) never
+    // overlapped with either key above — its third element ('open')
+    // differs from both — so publishing/closing/deleting/updating a need
+    // never invalidated the community-wide Needs lens; it kept showing
+    // stale data until the 60s staleTime naturally expired.
+    qc.invalidateQueries({ queryKey: ['contribute', 'needs', 'open'] });
   }, [qc, userId]);
 
   const createNeed = useMutation({

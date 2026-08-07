@@ -1,11 +1,19 @@
 // src/components/hubs/shared/AspirationMode.tsx
 // Reusable aspiration mode template for hub marketing pages
+//
+// Dead code today — no *Aspiration wrapper (ConveneAspiration,
+// CollaborateAspiration, ConveyAspiration, ContributeAspiration) is
+// imported by a live route. This used to render its own <MobileBottomNav />
+// unconditionally; every real hub layout it would be mounted inside
+// (FeedLayout, LayoutController, DnaMobileHubShell, ConnectHubLayout)
+// already renders one itself, so reactivating this without removing that
+// would have doubled up the bottom nav on mobile. Removed; let the
+// surrounding layout own the bottom nav.
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Bell, ArrowRight } from 'lucide-react';
 import { ComingSoonList } from './ComingSoonList';
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { HubType } from '@/hooks/useHubMode';
 
 export interface AspirationModeProps {
@@ -132,8 +140,6 @@ export function AspirationMode({
           </p>
         </div>
       )}
-
-      <MobileBottomNav />
     </div>
   );
 }

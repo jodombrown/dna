@@ -79,6 +79,8 @@ const UserManagement = lazy(() => import("./pages/admin/UserManagement"));
 const PlatformHealth = lazy(() => import("./pages/admin/PlatformHealth"));
 const ErrorDashboard = lazy(() => import("./pages/admin/ErrorDashboard"));
 const ContentModeration = lazy(() => import("./pages/admin/ContentModeration"));
+const SponsorshipManagement = lazy(() => import("./pages/admin/SponsorshipManagement"));
+const SponsorLogoAuditLog = lazy(() => import("./pages/admin/SponsorLogoAuditLog"));
 
 // New Admin Dashboard Routes
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
@@ -912,6 +914,8 @@ function App() {
                 <Route path="signals" element={<AdminSignals />} />
                 <Route path="moderation" element={<ContentModeration />} />
                 <Route path="convey" element={<ConveyAnalytics />} />
+                <Route path="sponsorships" element={<SponsorshipManagement />} />
+                <Route path="sponsorships/logo-audit" element={<SponsorLogoAuditLog />} />
               </Route>
 
               {/* Static pages */}

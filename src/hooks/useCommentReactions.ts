@@ -12,7 +12,12 @@ export function useCommentReactions(commentId: string, userId?: string) {
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['comment-reactions', commentId],
+    // userId is in the key because the query result embeds userId-derived
+    // fields (userReaction/hasUserReacted). Without it, the first fetch —
+    // often while auth is still resolving with userId undefined — caches
+    // a result computed for "no user" under a key shared by every later
+    // userId, so it can keep showing as un-reacted after auth resolves.
+    queryKey: ['comment-reactions', commentId, userId ?? 'anon'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('comment_reactions')

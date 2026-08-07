@@ -207,6 +207,24 @@ export default function GroupSettingsPage() {
     );
   }
 
+  // The permission check above lived only inside the useEffect, which runs
+  // after render/commit. As soon as `group` resolved — regardless of
+  // role — this fell through to the full settings page render (tabs,
+  // "Danger Zone", the form) on that same render, with the redirect only
+  // firing afterward: a real flash of the settings UI for a non-admin.
+  // Guard synchronously here too.
+  if (!['owner', 'admin'].includes(group.user_role || '')) {
+    return (
+      <FeedLayout>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center py-12 text-muted-foreground">
+            Loading settings...
+          </div>
+        </div>
+      </FeedLayout>
+    );
+  }
+
   return (
     <FeedLayout>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
