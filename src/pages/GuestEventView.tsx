@@ -13,8 +13,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { PageFrame } from '@/components/layout/PageFrame';
 import { Calendar, MapPin, Video, Globe, ExternalLink } from 'lucide-react';
-import Footer from '@/components/Footer';
 
 interface DeliveryEndpoint {
   type: 'physical_room' | 'external_link';
@@ -50,23 +50,21 @@ export const GuestEventView = ({ guestToken }: { guestToken: string }) => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
+      <PageFrame centered>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </PageFrame>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="container max-w-2xl mx-auto px-4 py-16 text-center">
-          <Calendar className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-          <h1 className="text-3xl font-bold mb-4">Link not found</h1>
-          <p className="text-muted-foreground">
-            This guest link is invalid or has expired.
-          </p>
-        </div>
-      </div>
+      <PageFrame centered>
+        <Calendar className="w-16 h-16 text-muted-foreground" />
+        <h1 className="text-h1">Link not found</h1>
+        <p className="text-body text-muted-foreground text-center">
+          This guest link is invalid or has expired.
+        </p>
+      </PageFrame>
     );
   }
 
@@ -81,55 +79,48 @@ export const GuestEventView = ({ guestToken }: { guestToken: string }) => {
   const joinWindowOpen = !!joinOpensAt && Date.now() >= joinOpensAt.getTime();
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container max-w-2xl mx-auto px-4 pt-6 pb-6">
-        <Card className="overflow-hidden">
-          <CardContent className="p-4 sm:p-6">
-            <Badge variant="outline" className="capitalize flex items-center gap-1 w-fit mb-3">
-              {getFormatIcon(data.event_format)}
-              {data.event_format?.replace('_', ' ') || 'In Person'}
-            </Badge>
+    <PageFrame contained>
+      <Card className="overflow-hidden">
+        <CardContent className="p-4 sm:p-6 flex flex-col gap-4">
+          <Badge variant="outline" className="capitalize flex items-center gap-1 w-fit">
+            {getFormatIcon(data.event_format)}
+            {data.event_format?.replace('_', ' ') || 'In Person'}
+          </Badge>
 
-            <h1 className="text-2xl sm:text-3xl font-bold mb-4">{data.event_title}</h1>
+          <h1 className="text-h1 sm:text-display">{data.event_title}</h1>
 
-            {startTime && (
-              <div className="flex items-start gap-3 mb-4">
-                <Calendar className="w-5 h-5 mt-0.5 text-primary" />
-                <p className="font-medium">
-                  {startTime.toLocaleString(undefined, {
-                    dateStyle: 'full',
-                    timeStyle: 'short',
-                  })}
-                </p>
-              </div>
-            )}
+          {startTime && (
+            <div className="flex items-start gap-3">
+              <Calendar className="w-5 h-5 pt-0.5 text-primary" />
+              <p className="text-body font-medium">
+                {startTime.toLocaleString(undefined, {
+                  dateStyle: 'full',
+                  timeStyle: 'short',
+                })}
+              </p>
+            </div>
+          )}
 
-            {physicalEndpoint?.join_credential && (
-              <div className="flex items-start gap-3 mb-4">
-                <MapPin className="w-5 h-5 mt-0.5 text-muted-foreground" />
-                <p className="font-medium">{physicalEndpoint.join_credential}</p>
-              </div>
-            )}
+          {physicalEndpoint?.join_credential && (
+            <div className="flex items-start gap-3">
+              <MapPin className="w-5 h-5 pt-0.5 text-muted-foreground" />
+              <p className="text-body font-medium">{physicalEndpoint.join_credential}</p>
+            </div>
+          )}
 
-            {virtualEndpoint?.join_credential && (
-              <Button
-                className="w-full"
-                disabled={!joinWindowOpen}
-                asChild={joinWindowOpen}
-              >
-                {joinWindowOpen ? (
-                  <a href={virtualEndpoint.join_credential} target="_blank" rel="noopener noreferrer">
-                    Join <ExternalLink className="w-4 h-4 ml-2" />
-                  </a>
-                ) : (
-                  <span>Join opens {JOIN_WINDOW_MINUTES_BEFORE_START} minutes before start</span>
-                )}
-              </Button>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-      <Footer />
-    </div>
+          {virtualEndpoint?.join_credential && (
+            <Button className="w-full" disabled={!joinWindowOpen} asChild={joinWindowOpen}>
+              {joinWindowOpen ? (
+                <a href={virtualEndpoint.join_credential} target="_blank" rel="noopener noreferrer">
+                  Join <ExternalLink className="w-4 h-4 ml-2" />
+                </a>
+              ) : (
+                <span>Join opens {JOIN_WINDOW_MINUTES_BEFORE_START} minutes before start</span>
+              )}
+            </Button>
+          )}
+        </CardContent>
+      </Card>
+    </PageFrame>
   );
 };

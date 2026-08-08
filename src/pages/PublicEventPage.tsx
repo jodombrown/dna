@@ -558,9 +558,9 @@ const PublicEventPage = () => {
 
               {/* Guest RSVP — email only, no password/name/profile fields (BD415) */}
               {!isLoggedIn && !isPastEvent && !isCancelled && !isCompleted && (
-                <div className="mt-3 pt-3 border-t">
+                <div className="pt-3 border-t">
                   {guestRsvpSent ? (
-                    <p className="text-sm text-muted-foreground text-center">
+                    <p className="text-body text-muted-foreground text-center">
                       Check your email — we sent {guestEmail.trim()} a link to your RSVP.
                     </p>
                   ) : (
