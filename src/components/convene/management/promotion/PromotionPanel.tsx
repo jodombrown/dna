@@ -119,7 +119,7 @@ const PromotionPanel: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Promotion</h1>
+        <h1 className="text-h1">Promotion</h1>
         <p className="text-muted-foreground">Share this event and see how people are finding it</p>
       </div>
 
@@ -135,7 +135,7 @@ const PromotionPanel: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="rounded-lg border overflow-hidden bg-background">
-              <div className="aspect-[1.91/1] bg-muted overflow-hidden">
+              <div className="aspect-video bg-muted overflow-hidden">
                 <img
                   src={ogImage}
                   alt=""
@@ -143,12 +143,12 @@ const PromotionPanel: React.FC = () => {
                 />
               </div>
               <div className="p-3 space-y-1">
-                <p className="text-xs text-muted-foreground uppercase truncate">
+                <p className="text-micro text-muted-foreground uppercase truncate">
                   {new URL(config.APP_URL).hostname}
                 </p>
                 <p className="font-semibold truncate">{event.title}</p>
                 {description && (
-                  <p className="text-sm text-muted-foreground line-clamp-2">{description}</p>
+                  <p className="text-body text-muted-foreground line-clamp-2">{description}</p>
                 )}
               </div>
             </div>
@@ -189,9 +189,9 @@ const PromotionPanel: React.FC = () => {
                         <AvatarFallback>{(profile.full_name || profile.username || '?')[0]}</AvatarFallback>
                       </Avatar>
                       <div className="min-w-0">
-                        <p className="text-sm font-medium truncate">{profile.full_name || profile.username}</p>
+                        <p className="text-body font-medium truncate">{profile.full_name || profile.username}</p>
                         {profile.username && (
-                          <p className="text-xs text-muted-foreground truncate">@{profile.username}</p>
+                          <p className="text-meta text-muted-foreground truncate">@{profile.username}</p>
                         )}
                       </div>
                     </div>
@@ -203,7 +203,7 @@ const PromotionPanel: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground py-4 text-center">
+              <p className="text-body text-muted-foreground py-4 text-center">
                 No suggestions right now
               </p>
             )}
@@ -222,12 +222,12 @@ const PromotionPanel: React.FC = () => {
         </CardHeader>
         <CardContent>
           {!attributionFetched ? null : attribution.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-4 text-center">No registrations yet</p>
+            <p className="text-body text-muted-foreground py-4 text-center">No registrations yet</p>
           ) : (
             <div className="space-y-3">
               {attribution.map(row => (
                 <div key={row.source} className="space-y-1">
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center justify-between text-body">
                     <span className="font-medium">{SOURCE_LABELS[row.source] || row.source}</span>
                     <span className="text-muted-foreground">{row.count} · {row.pct}%</span>
                   </div>
