@@ -7,7 +7,7 @@
  * - Post-Event Follow-Up
  * - Event Hosting Nudge
  *
- * Uses event_registrations (not event_rsvps) and connections with requester_id/recipient_id.
+ * Uses event_attendees (not event_registrations or event_rsvps) and connections with requester_id/recipient_id.
  */
 
 import { supabase } from '@/integrations/supabase/client';
@@ -35,10 +35,10 @@ async function generateEventOverlap(userId: string): Promise<DIACard | null> {
     );
 
     const { data: connectionRegs } = await supabase
-      .from('event_registrations')
+      .from('event_attendees')
       .select('event_id, user_id')
       .in('user_id', connectionIds)
-      .eq('status', 'confirmed');
+      .eq('status', 'going');
 
     if (!connectionRegs || connectionRegs.length === 0) return null;
 
@@ -60,7 +60,7 @@ async function generateEventOverlap(userId: string): Promise<DIACard | null> {
     if (bestCount < 2) return null;
 
     const { count: userReg } = await supabase
-      .from('event_registrations')
+      .from('event_attendees')
       .select('*', { count: 'exact', head: true })
       .eq('event_id', bestEventId)
       .eq('user_id', userId);

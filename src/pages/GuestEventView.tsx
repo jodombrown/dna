@@ -17,7 +17,7 @@ import { PageFrame } from '@/components/layout/PageFrame';
 import { Calendar, MapPin, Video, Globe, ExternalLink } from 'lucide-react';
 
 interface DeliveryEndpoint {
-  type: 'physical_room' | 'external_link';
+  type: 'physical_room' | 'external_link' | 'in_app_stream';
   provider: string | null;
   join_credential: string | null;
 }
@@ -70,7 +70,7 @@ export const GuestEventView = ({ guestToken }: { guestToken: string }) => {
 
   const endpoints = (data.endpoints as DeliveryEndpoint[] | null) || [];
   const physicalEndpoint = endpoints.find((e) => e.type === 'physical_room');
-  const virtualEndpoint = endpoints.find((e) => e.type === 'external_link');
+  const virtualEndpoint = endpoints.find((e) => e.type === 'external_link' || e.type === 'in_app_stream');
 
   const startTime = data.event_start_time ? new Date(data.event_start_time) : null;
   const joinOpensAt = startTime
