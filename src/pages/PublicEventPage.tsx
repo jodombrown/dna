@@ -7,7 +7,7 @@
  * Designed for sharing via email, text, social media.
  */
 
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,7 +15,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Calendar, MapPin, Users, Clock, Share2, ExternalLink, Copy, Check, Video, Globe, Handshake, CalendarDays, UsersRound, Heart, MessageSquare } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Calendar, MapPin, Users, Clock, Share2, ExternalLink, Copy, Check, Video, Globe, Handshake, CalendarDays, UsersRound, Heart, MessageSquare, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
@@ -30,15 +31,20 @@ import { realCuratedCover } from '@/lib/events/curated';
 import { CuratedEventPreview } from '@/pages/dna/convene/CuratedEventPreview';
 import { getEventSchema } from '@/components/seo/PageSEO';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
+import { GuestEventView } from '@/pages/GuestEventView';
 
 const PublicEventPage = () => {
   const { slugOrId } = useParams<{ slugOrId: string }>();
+  const [searchParams] = useSearchParams();
+  const guestToken = searchParams.get('guest_token');
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [copied, setCopied] = useState(false);
   const [showBanner, setShowBanner] = useState(false);
+  const [guestEmail, setGuestEmail] = useState('');
+  const [guestRsvpSent, setGuestRsvpSent] = useState(false);
 
   const isLoggedIn = !!user;
 
@@ -65,7 +71,30 @@ const PublicEventPage = () => {
       if (!row) throw new Error('Event not found');
       return row;
     },
-    enabled: !!slugOrId,
+    enabled: !!slugOrId && !guestToken,
+  });
+
+  // Guest RSVP: email-only, no password/name/profile fields (BD415). Sends
+  // a magic link via the guest-rsvp edge function rather than creating a
+  // session — the guest never authenticates.
+  const guestRsvpMutation = useMutation({
+    mutationFn: async () => {
+      if (!event?.id) throw new Error('Event not loaded');
+      const { error } = await supabase.functions.invoke('guest-rsvp', {
+        body: { event_id: event.id, email: guestEmail.trim() },
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setGuestRsvpSent(true);
+    },
+    onError: () => {
+      toast({
+        title: 'Error',
+        description: "Couldn't send your RSVP. Please try again.",
+        variant: 'destructive',
+      });
+    },
   });
 
   // Fetch user's RSVP status if logged in
@@ -193,6 +222,12 @@ const PublicEventPage = () => {
     if (format === 'hybrid') return <Globe className="w-4 h-4" />;
     return <MapPin className="w-4 h-4" />;
   };
+
+  // A guest link skips the normal public-event fetch (and its RSVP UI)
+  // entirely — it resolves through the token-scoped guest projection.
+  if (guestToken) {
+    return <GuestEventView guestToken={guestToken} />;
+  }
 
   if (isLoading) {
     return (
@@ -518,6 +553,46 @@ const PublicEventPage = () => {
                       <Copy className="w-4 h-4" />
                     )}
                   </Button>
+                </div>
+              )}
+
+              {/* Guest RSVP — email only, no password/name/profile fields (BD415) */}
+              {!isLoggedIn && !isPastEvent && !isCancelled && !isCompleted && (
+                <div className="mt-3 pt-3 border-t">
+                  {guestRsvpSent ? (
+                    <p className="text-sm text-muted-foreground text-center">
+                      Check your email — we sent {guestEmail.trim()} a link to your RSVP.
+                    </p>
+                  ) : (
+                    <form
+                      className="flex items-center gap-2"
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        guestRsvpMutation.mutate();
+                      }}
+                    >
+                      <Input
+                        type="email"
+                        required
+                        placeholder="Your email"
+                        value={guestEmail}
+                        onChange={(e) => setGuestEmail(e.target.value)}
+                        disabled={guestRsvpMutation.isPending}
+                        className="flex-1"
+                      />
+                      <Button
+                        type="submit"
+                        variant="outline"
+                        disabled={guestRsvpMutation.isPending || !guestEmail.trim()}
+                      >
+                        {guestRsvpMutation.isPending ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          'Continue as guest'
+                        )}
+                      </Button>
+                    </form>
+                  )}
                 </div>
               )}
 
