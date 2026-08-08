@@ -1,6 +1,25 @@
 -- ============================================
 -- DNA FEATURE FIX: Reshares & Mutual Connections RPC Functions
--- Date: December 23, 2024
+-- Originally authored December 23, 2024, but filed under an 8-digit
+-- "20241223" prefix that predates the migrations creating posts/
+-- connections — a from-scratch replay failed on "relation posts does
+-- not exist" before this file's statements ever ran. It was never
+-- tracked in supabase_migrations.schema_migrations either, confirming
+-- it was applied directly against the database, not through migration
+-- history. Renamed into its actual dependency order; content unchanged
+-- (verified to match the live function bodies exactly).
+--
+-- 20251221231943_reshare_tracking_and_mutual_connections.sql, which
+-- looked like this file's successor, was removed alongside this rename:
+-- it redefines these same 4 functions with different return types
+-- (bigint/void/bigint -> INTEGER/BOOLEAN/INTEGER) and touches a
+-- reshare_count column/trigers that don't exist live, and it is also
+-- absent from schema_migrations — it was never applied. Besides
+-- reintroducing the "posts does not exist" ordering problem, keeping it
+-- would break 20251228020247_...sql's later CREATE OR REPLACE of these
+-- functions (which correctly restores the original bigint/void/bigint
+-- signatures this file establishes, plus a search_path hardening fix,
+-- and IS applied live) via the same return-type-change error.
 --
 -- This migration adds 4 RPC functions:
 -- 1. check_user_reshared - Check if user has reshared a post
