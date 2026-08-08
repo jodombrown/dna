@@ -103,14 +103,14 @@ serve(async (req) => {
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
 
     if (clientIp) {
-      const { count: recentIpSignalCount, error: ipRateLimitError } = await supabaseAdmin
-        .from('signup_abuse_signals')
+      const { count: recentIpRegCount, error: ipRateLimitError } = await supabaseAdmin
+        .from('event_guest_registrations')
         .select('*', { count: 'exact', head: true })
         .eq('ip_address', clientIp)
         .gte('created_at', oneHourAgo);
 
       if (ipRateLimitError) throw ipRateLimitError;
-      if ((recentIpSignalCount || 0) >= IP_RATE_LIMIT_WINDOW_COUNT) {
+      if ((recentIpRegCount || 0) >= IP_RATE_LIMIT_WINDOW_COUNT) {
         // Deliberately not a hard block: one IP can legitimately represent
         // many real people (e.g. shared wifi at an event). Flag for
         // visibility and let the registration proceed.
@@ -179,7 +179,7 @@ serve(async (req) => {
 
       const { data: registration, error: registrationError } = await supabaseAdmin
         .from('event_guest_registrations')
-        .insert({ attendee_id: attendee.id, email })
+        .insert({ attendee_id: attendee.id, email, ip_address: clientIp })
         .select('magic_link_token')
         .single();
 
