@@ -68,7 +68,7 @@ export const GuestEventView = ({ guestToken }: { guestToken: string }) => {
     );
   }
 
-  const endpoints = (data.endpoints as DeliveryEndpoint[] | null) || [];
+  const endpoints = (data.endpoints as unknown as DeliveryEndpoint[] | null) || [];
   const physicalEndpoint = endpoints.find((e) => e.type === 'physical_room');
   const virtualEndpoint = endpoints.find((e) => e.type === 'external_link' || e.type === 'in_app_stream');
 
