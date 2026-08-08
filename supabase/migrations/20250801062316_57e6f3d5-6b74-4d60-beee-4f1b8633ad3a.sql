@@ -23,11 +23,12 @@ COMMENT ON COLUMN public.profiles.sectors IS 'User''s preferred sectors to contr
 COMMENT ON COLUMN public.profiles.contribution_style IS 'How they prefer to contribute (e.g. mentor, build, fund, share)';
 COMMENT ON COLUMN public.profiles.adin_prompt_status IS 'ADIN status trigger state: none, eligible, prompted, declined, started, complete';
 
--- Add new column to adin_profiles table
-ALTER TABLE public.adin_profiles 
-ADD COLUMN IF NOT EXISTS prompted_by_event text;
-
-COMMENT ON COLUMN public.adin_profiles.prompted_by_event IS 'Trigger event for prompt (e.g. projects_created, invites_sent, profile_views_threshold)';
+-- The adin_profiles table this file originally added a column to does not
+-- exist in the live database (verified directly against the project) and
+-- is never created by any migration, so a from-scratch replay failed here
+-- on "relation adin_profiles does not exist". Removed; trigger_adin_prompt()
+-- below still references adin_profiles in its body, which is inert at
+-- CREATE FUNCTION time (only checked if the function is ever called).
 
 -- Create profile_views table
 CREATE TABLE IF NOT EXISTS public.profile_views (

@@ -282,9 +282,5 @@ DROP POLICY IF EXISTS "System can create badges" ON public.user_badges;
 -- Keep policies added previously: "Users can view their own badges" and "System can insert user badges"
 
 -- 8) adin_signals: replace is_user_admin with is_admin_user
-DROP POLICY IF EXISTS "Users can view and update their own signals" ON public.adin_signals;
-CREATE POLICY "Users can view and update their own signals"
-ON public.adin_signals
-FOR ALL
-USING ((user_id = (SELECT auth.uid())) OR is_admin_user((SELECT auth.uid())))
-WITH CHECK ((user_id = (SELECT auth.uid())) OR is_admin_user((SELECT auth.uid())));
+--    Removed: adin_signals does not exist in the live database, so a
+--    from-scratch replay failed on "relation adin_signals does not exist".

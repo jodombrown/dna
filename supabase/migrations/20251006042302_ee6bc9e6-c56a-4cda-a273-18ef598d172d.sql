@@ -2,7 +2,9 @@
 -- This migration removes the privilege escalation vulnerability
 
 -- 1. DROP ALL POLICIES THAT DEPEND ON is_user_admin()
-DROP POLICY IF EXISTS "Users can view and update their own signals" ON adin_signals;
+-- (adin_signals policy drop removed: the table does not exist in the live
+-- database, so a from-scratch replay failed on "relation adin_signals does
+-- not exist" here)
 DROP POLICY IF EXISTS "Admins can create invites or users with limits" ON invites;
 DROP POLICY IF EXISTS "Posts SELECT policy" ON posts;
 DROP POLICY IF EXISTS "Posts UPDATE policy" ON posts;
@@ -18,15 +20,9 @@ ALTER TABLE profiles DROP COLUMN IF EXISTS role;
 ALTER TABLE profiles DROP CONSTRAINT IF EXISTS profiles_required_on_completion;
 
 -- 5. RECREATE POLICIES USING SECURE has_role() FUNCTION
-
--- ADIN Signals policy - users see their own, admins see all
-CREATE POLICY "Users can view and update their own signals"
-ON adin_signals
-FOR ALL
-TO authenticated
-USING (
-  (user_id = auth.uid()) OR has_role(auth.uid(), 'admin'::app_role)
-);
+-- (ADIN Signals policy removed here too: adin_signals does not exist in
+-- the live database, so a from-scratch replay would fail on
+-- "relation adin_signals does not exist" on this CREATE POLICY)
 
 -- Invites policy - only admins can create invites
 CREATE POLICY "Admins can create invites"
