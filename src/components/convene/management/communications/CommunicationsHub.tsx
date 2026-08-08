@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Mail,
@@ -58,6 +59,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEventManagement } from '../EventManagementContext';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
+import { PartyRoleList, PARTY_ROLE_CATEGORIES } from './PartyRoleList';
 
 interface BlastSegment {
   type?: string;
@@ -99,9 +101,70 @@ const CommunicationsHub: React.FC = () => {
   const { event } = useEventManagement();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [searchParams] = useSearchParams();
 
   // Tab state
   const [activeTab, setActiveTab] = useState('compose');
+
+  // Party/Role list state — the pane's primary view. A category chip or a
+  // selected party parameterizes the Compose audience below; with neither
+  // active, Compose keeps its exact original all-attendees behavior.
+  const [activeCategory, setActiveCategory] = useState('all');
+  const selectedPartyId = searchParams.get('party');
+
+  const { data: selectedParty } = useQuery({
+    queryKey: ['party', selectedPartyId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('parties')
+        .select('id, name')
+        .eq('id', selectedPartyId as string)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!selectedPartyId,
+  });
+
+  const roleLabel = PARTY_ROLE_CATEGORIES.find((c) => c.value === activeCategory)?.label ?? activeCategory;
+
+  // Resolves the recipient set for a party/role audience. Not used when
+  // nothing is selected — the default attendee-segment path below is
+  // untouched.
+  const { data: partyAudience } = useQuery({
+    queryKey: ['party-audience', event.id, activeCategory, selectedPartyId],
+    queryFn: async () => {
+      if (selectedPartyId) {
+        const { data, error } = await supabase
+          .from('parties')
+          .select('linked_profile_id')
+          .eq('id', selectedPartyId)
+          .single();
+        if (error) throw error;
+        return {
+          label: selectedParty?.name ?? 'Selected party',
+          userIds: data.linked_profile_id ? [data.linked_profile_id] : [],
+        };
+      }
+      const { data, error } = await supabase
+        .from('event_engagements')
+        .select('parties(linked_profile_id), event_engagement_roles!inner(role)')
+        .eq('event_id', event.id)
+        .eq('event_engagement_roles.role', activeCategory);
+      if (error) throw error;
+      const userIds = (data ?? [])
+        .map((row) => (row.parties as { linked_profile_id: string | null } | null)?.linked_profile_id)
+        .filter((id): id is string => !!id);
+      return { label: roleLabel, userIds };
+    },
+    enabled: !!event.id && (!!selectedPartyId || activeCategory !== 'all'),
+  });
+
+  const audienceSource = selectedPartyId
+    ? { kind: 'party' as const, id: selectedPartyId, label: partyAudience?.label ?? 'Selected party', userIds: partyAudience?.userIds ?? [] }
+    : activeCategory !== 'all'
+      ? { kind: 'role' as const, role: activeCategory, label: roleLabel, userIds: partyAudience?.userIds ?? [] }
+      : { kind: 'attendees' as const };
 
   // Email compose state
   const [emailSubject, setEmailSubject] = useState('');
@@ -163,11 +226,17 @@ const CommunicationsHub: React.FC = () => {
   // Send email blast mutation
   const sendBlastMutation = useMutation({
     mutationFn: async () => {
+      const segment = audienceSource.kind === 'party'
+        ? { type: 'party', partyId: audienceSource.id }
+        : audienceSource.kind === 'role'
+          ? { type: 'engagement_role', role: audienceSource.role }
+          : emailSegment === 'all' ? null : { type: emailSegment };
+
       const blastData = {
         event_id: event.id,
         subject: emailSubject.trim(),
         body_markdown: emailBody.trim(),
-        segment: emailSegment === 'all' ? null : { type: emailSegment },
+        segment,
         scheduled_for: scheduleType === 'later' && scheduledFor
           ? new Date(scheduledFor).toISOString()
           : new Date().toISOString(),
@@ -213,40 +282,50 @@ const CommunicationsHub: React.FC = () => {
   // Send notification mutation
   const sendNotificationMutation = useMutation({
     mutationFn: async () => {
-      // Insert notifications for DNA members in the segment
-      const { data: attendees } = await supabase
-        .from('event_attendees')
-        .select('user_id')
-        .eq('event_id', event.id)
-        .not('user_id', 'is', null);
+      let targetUserIds: string[];
 
-      if (!attendees || attendees.length === 0) {
-        throw new Error('No DNA members to notify');
-      }
-
-      let targetUserIds = attendees.map(a => a.user_id);
-
-      // Filter by segment if needed
-      if (notifSegment !== 'all') {
-        const { data: filteredAttendees } = await supabase
+      if (audienceSource.kind !== 'attendees') {
+        // Party/role audience — resolved via linked DNA profiles, not event_attendees.
+        targetUserIds = audienceSource.userIds;
+        if (targetUserIds.length === 0) {
+          throw new Error('No DNA members linked to this selection');
+        }
+      } else {
+        // Insert notifications for DNA members in the segment
+        const { data: attendees } = await supabase
           .from('event_attendees')
-          .select('user_id, status, checked_in')
+          .select('user_id')
           .eq('event_id', event.id)
           .not('user_id', 'is', null);
 
-        if (filteredAttendees) {
-          targetUserIds = filteredAttendees
-            .filter(a => {
-              switch (notifSegment) {
-                case 'going': return a.status === 'going';
-                case 'maybe': return a.status === 'maybe';
-                case 'not_checked_in': return a.status === 'going' && !a.checked_in;
-                case 'checked_in': return a.checked_in;
-                case 'waitlist': return a.status === 'waitlist';
-                default: return true;
-              }
-            })
-            .map(a => a.user_id);
+        if (!attendees || attendees.length === 0) {
+          throw new Error('No DNA members to notify');
+        }
+
+        targetUserIds = attendees.map(a => a.user_id);
+
+        // Filter by segment if needed
+        if (notifSegment !== 'all') {
+          const { data: filteredAttendees } = await supabase
+            .from('event_attendees')
+            .select('user_id, status, checked_in')
+            .eq('event_id', event.id)
+            .not('user_id', 'is', null);
+
+          if (filteredAttendees) {
+            targetUserIds = filteredAttendees
+              .filter(a => {
+                switch (notifSegment) {
+                  case 'going': return a.status === 'going';
+                  case 'maybe': return a.status === 'maybe';
+                  case 'not_checked_in': return a.status === 'going' && !a.checked_in;
+                  case 'checked_in': return a.checked_in;
+                  case 'waitlist': return a.status === 'waitlist';
+                  default: return true;
+                }
+              })
+              .map(a => a.user_id);
+          }
         }
       }
 
@@ -316,8 +395,12 @@ const CommunicationsHub: React.FC = () => {
     }
   };
 
-  const selectedSegmentCount = segmentCounts[emailSegment as keyof typeof segmentCounts] || 0;
-  const notifSegmentCount = segmentCounts[notifSegment as keyof typeof segmentCounts] || 0;
+  const selectedSegmentCount = audienceSource.kind !== 'attendees'
+    ? audienceSource.userIds.length
+    : segmentCounts[emailSegment as keyof typeof segmentCounts] || 0;
+  const notifSegmentCount = audienceSource.kind !== 'attendees'
+    ? audienceSource.userIds.length
+    : segmentCounts[notifSegment as keyof typeof segmentCounts] || 0;
   const nonDnaMemberCount = (segmentCounts.all || 0) - (segmentCounts.dna_members || 0);
 
   return (
@@ -327,6 +410,23 @@ const CommunicationsHub: React.FC = () => {
         <h1 className="text-2xl font-bold">Communications</h1>
         <p className="text-muted-foreground">Send email blasts and notifications to attendees</p>
       </div>
+
+      {/* Party/Role list — Relationships Phase 1 primary view */}
+      <Card>
+        <CardHeader>
+          <CardTitle>People & organizations</CardTitle>
+          <CardDescription>
+            Sponsors, partners, vendors, exhibitors, volunteers, and team members tied to this event
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <PartyRoleList
+            eventId={event.id}
+            activeCategory={activeCategory}
+            onCategoryChange={setActiveCategory}
+          />
+        </CardContent>
+      </Card>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-3">
@@ -358,28 +458,43 @@ const CommunicationsHub: React.FC = () => {
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Segment Selector */}
-              <div className="space-y-2">
-                <Label>Audience</Label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {SEGMENT_OPTIONS.map((option) => (
-                    <Card
-                      key={option.value}
-                      className={`p-3 cursor-pointer transition-all ${
-                        emailSegment === option.value ? 'ring-2 ring-primary' : 'hover:bg-muted/50'
-                      }`}
-                      onClick={() => setEmailSegment(option.value)}
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <p className="font-medium text-sm">{option.label}</p>
-                        <Badge variant="outline">
-                          {segmentCounts[option.value as keyof typeof segmentCounts] || 0}
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground">{option.description}</p>
-                    </Card>
-                  ))}
+              {audienceSource.kind === 'attendees' ? (
+                <div className="space-y-2">
+                  <Label>Audience</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {SEGMENT_OPTIONS.map((option) => (
+                      <Card
+                        key={option.value}
+                        className={`p-3 cursor-pointer transition-all ${
+                          emailSegment === option.value ? 'ring-2 ring-primary' : 'hover:bg-muted/50'
+                        }`}
+                        onClick={() => setEmailSegment(option.value)}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="font-medium text-body">{option.label}</p>
+                          <Badge variant="outline">
+                            {segmentCounts[option.value as keyof typeof segmentCounts] || 0}
+                          </Badge>
+                        </div>
+                        <p className="text-meta text-muted-foreground">{option.description}</p>
+                      </Card>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="space-y-2">
+                  <Label>Audience</Label>
+                  <div className="flex items-center gap-2 p-3 rounded-lg border border-border bg-muted/30">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <p className="text-body font-medium">
+                      {audienceSource.kind === 'party' ? audienceSource.label : `All ${audienceSource.label}s`}
+                    </p>
+                    <Badge variant="outline" className="ml-auto">
+                      {audienceSource.userIds.length}
+                    </Badge>
+                  </div>
+                </div>
+              )}
 
               <Separator />
 
@@ -521,7 +636,7 @@ const CommunicationsHub: React.FC = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {nonDnaMemberCount > 0 && (
+              {audienceSource.kind === 'attendees' && nonDnaMemberCount > 0 && (
                 <div className="flex items-start gap-3 p-3 bg-dna-warning/10 dark:bg-dna-warning/20 rounded-lg border border-dna-warning/30 dark:border-dna-warning">
                   <AlertCircle className="h-5 w-5 text-dna-warning mt-0.5" />
                   <div>
@@ -536,21 +651,36 @@ const CommunicationsHub: React.FC = () => {
               )}
 
               {/* Segment Selector */}
-              <div className="space-y-2">
-                <Label>Audience (DNA Members Only)</Label>
-                <Select value={notifSegment} onValueChange={setNotifSegment}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {SEGMENT_OPTIONS.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label} ({segmentCounts[option.value as keyof typeof segmentCounts] || 0})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              {audienceSource.kind === 'attendees' ? (
+                <div className="space-y-2">
+                  <Label>Audience (DNA Members Only)</Label>
+                  <Select value={notifSegment} onValueChange={setNotifSegment}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {SEGMENT_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label} ({segmentCounts[option.value as keyof typeof segmentCounts] || 0})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <Label>Audience (DNA Members Only)</Label>
+                  <div className="flex items-center gap-2 p-3 rounded-lg border border-border bg-muted/30">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <p className="text-body font-medium">
+                      {audienceSource.kind === 'party' ? audienceSource.label : `All ${audienceSource.label}s`}
+                    </p>
+                    <Badge variant="outline" className="ml-auto">
+                      {audienceSource.userIds.length}
+                    </Badge>
+                  </div>
+                </div>
+              )}
 
               {/* Title */}
               <div className="space-y-2">
@@ -587,7 +717,9 @@ const CommunicationsHub: React.FC = () => {
               <div className="flex items-center justify-between pt-4">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Users className="h-4 w-4" />
-                  Will notify {Math.min(notifSegmentCount, segmentCounts.dna_members || 0)} DNA members
+                  Will notify {audienceSource.kind !== 'attendees'
+                    ? notifSegmentCount
+                    : Math.min(notifSegmentCount, segmentCounts.dna_members || 0)} DNA members
                 </div>
                 <Button
                   onClick={() => sendNotificationMutation.mutate()}

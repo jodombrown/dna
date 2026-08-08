@@ -3065,6 +3065,71 @@ export type Database = {
           },
         ]
       }
+      event_engagement_roles: {
+        Row: {
+          created_at: string
+          engagement_id: string
+          id: string
+          role: string
+        }
+        Insert: {
+          created_at?: string
+          engagement_id: string
+          id?: string
+          role: string
+        }
+        Update: {
+          created_at?: string
+          engagement_id?: string
+          id?: string
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_engagement_roles_engagement_id_fkey"
+            columns: ["engagement_id"]
+            isOneToOne: false
+            referencedRelation: "event_engagements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_engagements: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          party_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          party_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          party_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_engagements_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_engagements_party_id_fkey"
+            columns: ["party_id"]
+            isOneToOne: false
+            referencedRelation: "parties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_promo_codes: {
         Row: {
           code: string
@@ -6791,6 +6856,38 @@ export type Database = {
             columns: ["opportunity_id"]
             isOneToOne: false
             referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      parties: {
+        Row: {
+          created_at: string
+          id: string
+          linked_profile_id: string | null
+          name: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          linked_profile_id?: string | null
+          name: string
+          type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          linked_profile_id?: string | null
+          name?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parties_linked_profile_id_fkey"
+            columns: ["linked_profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]

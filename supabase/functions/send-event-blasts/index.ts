@@ -118,13 +118,36 @@ serve(async (req) => {
     const results: any[] = [];
 
     for (const blast of blasts) {
-      const seg = (blast.segment || {}) as { type?: string; status?: string };
+      const seg = (blast.segment || {}) as { type?: string; status?: string; partyId?: string; role?: string };
       const segType = (seg.type ?? seg.status ?? 'all') as string;
 
       // Collect recipient user IDs based on segment
       let userIds: string[] = [];
 
-      if (segType === 'waitlist') {
+      // Relationships Phase 1 (BD411/423): a Party/Role audience, resolved
+      // via parties.linked_profile_id, additive to the attendee-segment
+      // branches below.
+      if (segType === 'party' && seg.partyId) {
+        const { data: party, error: partyErr } = await supabase
+          .from('parties')
+          .select('linked_profile_id')
+          .eq('id', seg.partyId)
+          .maybeSingle();
+        if (partyErr) throw partyErr;
+        userIds = party?.linked_profile_id ? [party.linked_profile_id] : [];
+      } else if (segType === 'engagement_role' && seg.role) {
+        const { data: engagements, error: engagementsErr } = await supabase
+          .from('event_engagements')
+          .select('parties(linked_profile_id), event_engagement_roles!inner(role)')
+          .eq('event_id', blast.event_id)
+          .eq('event_engagement_roles.role', seg.role);
+        if (engagementsErr) throw engagementsErr;
+        userIds = Array.from(new Set(
+          ((engagements || []) as any[])
+            .map((row) => row.parties?.linked_profile_id)
+            .filter((id: string | null | undefined): id is string => !!id)
+        ));
+      } else if (segType === 'waitlist') {
         const { data: wl, error: wlErr } = await supabase
           .from('event_waitlist')
           .select('user_id')
