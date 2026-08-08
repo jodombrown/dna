@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, Calendar, FolderKanban, MessageSquare, Shield, BarChart3, Settings, ClipboardList, UserCog, ChevronDown, ChevronRight, Menu, X, LogOut, Bell, Search, Activity, ExternalLink, Boxes, Flag, HandHeart, Quote, UserPlus, Newspaper, Award } from 'lucide-react';
+import { LayoutDashboard, Users, Calendar, FolderKanban, MessageSquare, Shield, BarChart3, Settings, ClipboardList, UserCog, ChevronDown, ChevronRight, Menu, X, LogOut, Bell, Search, Activity, ExternalLink, Boxes, Flag, HandHeart, Quote, UserPlus, Newspaper, Award, ShieldAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -121,6 +121,11 @@ const navigation: NavItem[] = [
     icon: Bell,
     label: 'Signals',
     href: '/admin/signals'
+  },
+  {
+    icon: ShieldAlert,
+    label: 'Signup Abuse Signals',
+    href: '/admin/signup-abuse-signals'
   },
   {
     icon: Newspaper,

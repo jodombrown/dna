@@ -72,6 +72,7 @@ const AttestAffirmation = lazy(() => import("./pages/dna/affirm/AttestAffirmatio
 const IconUsageGuide = lazy(() => import("./pages/dna/IconUsageGuide"));
 const EngagementDashboard = lazy(() => import("./pages/admin/EngagementDashboard"));
 const AdminSignals = lazy(() => import("./pages/admin/AdminSignals"));
+const SignupAbuseSignals = lazy(() => import("./pages/admin/SignupAbuseSignals"));
 const WaitlistManagement = lazy(() => import("./pages/admin/WaitlistManagement"));
 const UserManagement = lazy(() => import("./pages/admin/UserManagement"));
 const PlatformHealth = lazy(() => import("./pages/admin/PlatformHealth"));
@@ -881,6 +882,7 @@ function App() {
                 <Route path="waitlist" element={<WaitlistManagement />} />
                 <Route path="health" element={<PlatformHealth />} />
                 <Route path="signals" element={<AdminSignals />} />
+                <Route path="signup-abuse-signals" element={<SignupAbuseSignals />} />
                 <Route path="convey" element={<ConveyAnalytics />} />
                 <Route path="sponsorships" element={<SponsorshipManagement />} />
                 <Route path="sponsorships/logo-audit" element={<SponsorLogoAuditLog />} />
