@@ -2881,6 +2881,69 @@ export type Database = {
           },
         ]
       }
+      event_attendance_records: {
+        Row: {
+          attendee_id: string
+          endpoint_id: string
+          evidence_type: string
+          id: string
+          recorded_at: string
+          recorded_by: string | null
+        }
+        Insert: {
+          attendee_id: string
+          endpoint_id: string
+          evidence_type: string
+          id?: string
+          recorded_at?: string
+          recorded_by?: string | null
+        }
+        Update: {
+          attendee_id?: string
+          endpoint_id?: string
+          evidence_type?: string
+          id?: string
+          recorded_at?: string
+          recorded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_attendance_records_attendee_id_fkey"
+            columns: ["attendee_id"]
+            isOneToOne: false
+            referencedRelation: "event_attendees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_attendance_records_endpoint_id_fkey"
+            columns: ["endpoint_id"]
+            isOneToOne: false
+            referencedRelation: "event_delivery_endpoints"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_attendance_records_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "event_attendance_records_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_attendance_records_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_attendees: {
         Row: {
           checked_in: boolean
@@ -2894,7 +2957,7 @@ export type Database = {
           source: string | null
           status: Database["public"]["Enums"]["rsvp_status"]
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           checked_in?: boolean
@@ -2908,7 +2971,7 @@ export type Database = {
           source?: string | null
           status?: Database["public"]["Enums"]["rsvp_status"]
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           checked_in?: boolean
@@ -2922,7 +2985,7 @@ export type Database = {
           source?: string | null
           status?: Database["public"]["Enums"]["rsvp_status"]
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -3065,6 +3128,47 @@ export type Database = {
           },
         ]
       }
+      event_delivery_endpoints: {
+        Row: {
+          attendance_telemetry_available: boolean
+          created_at: string
+          embed_capable: boolean
+          event_id: string
+          id: string
+          join_credential: string | null
+          provider: string | null
+          type: string
+        }
+        Insert: {
+          attendance_telemetry_available?: boolean
+          created_at?: string
+          embed_capable?: boolean
+          event_id: string
+          id?: string
+          join_credential?: string | null
+          provider?: string | null
+          type: string
+        }
+        Update: {
+          attendance_telemetry_available?: boolean
+          created_at?: string
+          embed_capable?: boolean
+          event_id?: string
+          id?: string
+          join_credential?: string | null
+          provider?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_delivery_endpoints_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_engagement_roles: {
         Row: {
           created_at: string
@@ -3126,6 +3230,38 @@ export type Database = {
             columns: ["party_id"]
             isOneToOne: false
             referencedRelation: "parties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_guest_registrations: {
+        Row: {
+          attendee_id: string
+          created_at: string
+          email: string
+          id: string
+          magic_link_token: string
+        }
+        Insert: {
+          attendee_id: string
+          created_at?: string
+          email: string
+          id?: string
+          magic_link_token?: string
+        }
+        Update: {
+          attendee_id?: string
+          created_at?: string
+          email?: string
+          id?: string
+          magic_link_token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_guest_registrations_attendee_id_fkey"
+            columns: ["attendee_id"]
+            isOneToOne: true
+            referencedRelation: "event_attendees"
             referencedColumns: ["id"]
           },
         ]
@@ -3639,6 +3775,7 @@ export type Database = {
           is_flagship: boolean | null
           is_public: boolean
           is_published: boolean
+          lifecycle_state: string | null
           location_address: string | null
           location_city: string | null
           location_country: string | null
@@ -3653,6 +3790,7 @@ export type Database = {
           meeting_platform: string | null
           meeting_url: string | null
           organizer_id: string | null
+          registration_state: string | null
           requires_approval: boolean
           short_description: string | null
           slug: string | null
@@ -3696,6 +3834,7 @@ export type Database = {
           is_flagship?: boolean | null
           is_public?: boolean
           is_published?: boolean
+          lifecycle_state?: string | null
           location_address?: string | null
           location_city?: string | null
           location_country?: string | null
@@ -3710,6 +3849,7 @@ export type Database = {
           meeting_platform?: string | null
           meeting_url?: string | null
           organizer_id?: string | null
+          registration_state?: string | null
           requires_approval?: boolean
           short_description?: string | null
           slug?: string | null
@@ -3753,6 +3893,7 @@ export type Database = {
           is_flagship?: boolean | null
           is_public?: boolean
           is_published?: boolean
+          lifecycle_state?: string | null
           location_address?: string | null
           location_city?: string | null
           location_country?: string | null
@@ -3767,6 +3908,7 @@ export type Database = {
           meeting_platform?: string | null
           meeting_url?: string | null
           organizer_id?: string | null
+          registration_state?: string | null
           requires_approval?: boolean
           short_description?: string | null
           slug?: string | null
@@ -6887,7 +7029,21 @@ export type Database = {
             foreignKeyName: "parties_linked_profile_id_fkey"
             columns: ["linked_profile_id"]
             isOneToOne: true
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "parties_linked_profile_id_fkey"
+            columns: ["linked_profile_id"]
+            isOneToOne: true
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parties_linked_profile_id_fkey"
+            columns: ["linked_profile_id"]
+            isOneToOne: true
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -11065,6 +11221,42 @@ export type Database = {
         }
         Relationships: []
       }
+      workspace_relationships: {
+        Row: {
+          first_engaged_at: string
+          id: string
+          party_id: string
+          workspace_id: string
+        }
+        Insert: {
+          first_engaged_at?: string
+          id?: string
+          party_id: string
+          workspace_id: string
+        }
+        Update: {
+          first_engaged_at?: string
+          id?: string
+          party_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspace_relationships_party_id_fkey"
+            columns: ["party_id"]
+            isOneToOne: false
+            referencedRelation: "parties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workspace_relationships_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workspaces: {
         Row: {
           created_at: string
@@ -14100,6 +14292,17 @@ export type Database = {
         Returns: {
           distance_m: number
           event_id: string
+        }[]
+      }
+      rpc_get_guest_registration: {
+        Args: { p_token: string }
+        Returns: {
+          attendee_id: string
+          endpoints: Json
+          event_format: string
+          event_id: string
+          event_start_time: string
+          event_title: string
         }[]
       }
       rpc_get_profile_bundle: {
