@@ -41,6 +41,18 @@ serve(async (req) => {
       return json({ error: 'A valid email is required' }, 400);
     }
 
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const { count: recentRequestCount, error: rateLimitError } = await supabaseAdmin
+      .from('event_guest_registrations')
+      .select('*', { count: 'exact', head: true })
+      .eq('email', email)
+      .gte('created_at', oneHourAgo);
+
+    if (rateLimitError) throw rateLimitError;
+    if ((recentRequestCount || 0) >= 5) {
+      return json({ error: 'Too many requests. Please try again later.' }, 429);
+    }
+
     const { data: event, error: eventError } = await supabaseAdmin
       .from('events')
       .select('id, slug, title')
