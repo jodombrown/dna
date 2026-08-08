@@ -15,11 +15,54 @@ const supabaseAdmin = SUPABASE_URL && SERVICE_ROLE_KEY ? createClient(SUPABASE_U
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Starting set; extendable later without touching the check logic.
+const DISPOSABLE_DOMAINS = new Set([
+  'mailinator.com',
+  'guerrillamail.com',
+  '10minutemail.com',
+  'tempmail.com',
+  'throwawaymail.com',
+  'yopmail.com',
+]);
+
+const IP_RATE_LIMIT_WINDOW_COUNT = 10;
+
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
     status,
     headers: { 'Content-Type': 'application/json', ...corsHeaders },
   });
+
+async function sha256Hex(text: string): Promise<string> {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+function getClientIp(req: Request): string | null {
+  const forwardedFor = req.headers.get('x-forwarded-for');
+  if (!forwardedFor) return null;
+  return forwardedFor.split(',')[0].trim() || null;
+}
+
+async function recordAbuseSignal(
+  supabaseAdmin: ReturnType<typeof createClient>,
+  signal: {
+    signal_type: string;
+    action: 'blocked' | 'flagged';
+    email_domain: string | null;
+    email_hash: string;
+    ip_address: string | null;
+    event_id: string | null;
+  },
+) {
+  const { error } = await supabaseAdmin.from('signup_abuse_signals').insert({
+    source: 'guest_rsvp',
+    ...signal,
+  });
+  if (error) console.error('signup_abuse_signals insert error:', error);
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -41,7 +84,47 @@ serve(async (req) => {
       return json({ error: 'A valid email is required' }, 400);
     }
 
+    const emailDomain = email.split('@')[1] || null;
+    const emailHash = await sha256Hex(email);
+    const clientIp = getClientIp(req);
+
+    if (emailDomain && DISPOSABLE_DOMAINS.has(emailDomain)) {
+      await recordAbuseSignal(supabaseAdmin, {
+        signal_type: 'disposable_domain',
+        action: 'blocked',
+        email_domain: emailDomain,
+        email_hash: emailHash,
+        ip_address: clientIp,
+        event_id,
+      });
+      return json({ error: 'Please use a non-disposable email address' }, 400);
+    }
+
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+
+    if (clientIp) {
+      const { count: recentIpSignalCount, error: ipRateLimitError } = await supabaseAdmin
+        .from('signup_abuse_signals')
+        .select('*', { count: 'exact', head: true })
+        .eq('ip_address', clientIp)
+        .gte('created_at', oneHourAgo);
+
+      if (ipRateLimitError) throw ipRateLimitError;
+      if ((recentIpSignalCount || 0) >= IP_RATE_LIMIT_WINDOW_COUNT) {
+        // Deliberately not a hard block: one IP can legitimately represent
+        // many real people (e.g. shared wifi at an event). Flag for
+        // visibility and let the registration proceed.
+        await recordAbuseSignal(supabaseAdmin, {
+          signal_type: 'ip_rate_pattern',
+          action: 'flagged',
+          email_domain: emailDomain,
+          email_hash: emailHash,
+          ip_address: clientIp,
+          event_id,
+        });
+      }
+    }
+
     const { count: recentRequestCount, error: rateLimitError } = await supabaseAdmin
       .from('event_guest_registrations')
       .select('*', { count: 'exact', head: true })
