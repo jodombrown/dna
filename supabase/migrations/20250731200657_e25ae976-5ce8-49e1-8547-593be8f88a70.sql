@@ -1,8 +1,8 @@
 -- Add indexes for unindexed foreign keys to improve query performance
-
--- Index for adin_signals foreign keys
-CREATE INDEX IF NOT EXISTS idx_adin_signals_created_by ON public.adin_signals(created_by);
-CREATE INDEX IF NOT EXISTS idx_adin_signals_user_id ON public.adin_signals(user_id);
+--
+-- The adin_signals indexes that originally followed this comment are
+-- removed: the table does not exist in the live database, so a
+-- from-scratch replay failed on "relation adin_signals does not exist".
 
 -- Index for admin_analytics foreign key
 CREATE INDEX IF NOT EXISTS idx_admin_analytics_admin_id ON public.admin_analytics(admin_id);

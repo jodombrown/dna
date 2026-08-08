@@ -1,26 +1,13 @@
 -- Fix auth RLS initialization plan issues by wrapping auth.uid() calls in SELECT
 -- This prevents re-evaluation for each row, improving performance
-
--- Fix adin_profiles policy
-DROP POLICY IF EXISTS "Users can view and update their own ADIN profile" ON public.adin_profiles;
-CREATE POLICY "Users can view and update their own ADIN profile" 
-ON public.adin_profiles 
-FOR ALL 
-USING ((id = (SELECT auth.uid())) OR is_user_admin((SELECT auth.uid())));
-
--- Fix adin_signals policy
-DROP POLICY IF EXISTS "Users can view and update their own signals" ON public.adin_signals;
-CREATE POLICY "Users can view and update their own signals" 
-ON public.adin_signals 
-FOR ALL 
-USING ((user_id = (SELECT auth.uid())) OR is_user_admin((SELECT auth.uid())));
-
--- Fix adin_connection_matches policy
-DROP POLICY IF EXISTS "Users can view their own matches" ON public.adin_connection_matches;
-CREATE POLICY "Users can view their own matches" 
-ON public.adin_connection_matches 
-FOR SELECT 
-USING ((SELECT auth.uid()) = user_id);
+--
+-- The adin_profiles/adin_signals/adin_connection_matches policy fixes that
+-- originally opened this file are removed: none of those tables exist in
+-- the live database (verified directly against the project), so a
+-- from-scratch replay failed immediately on "relation adin_profiles does
+-- not exist" before any statement in this file could run. This file is
+-- also absent from supabase_migrations.schema_migrations, so it was never
+-- applied through tracked migration history either.
 
 -- Fix feature_flags policies - consolidate multiple permissive policies
 DROP POLICY IF EXISTS "Feature flags are viewable by everyone" ON public.feature_flags;
