@@ -3604,6 +3604,7 @@ export type Database = {
           updated_at: string
           visibility: string
           window_basis: string | null
+          workspace_id: string | null
         }
         Insert: {
           agenda?: Json | null
@@ -3660,6 +3661,7 @@ export type Database = {
           updated_at?: string
           visibility?: string
           window_basis?: string | null
+          workspace_id?: string | null
         }
         Update: {
           agenda?: Json | null
@@ -3716,6 +3718,7 @@ export type Database = {
           updated_at?: string
           visibility?: string
           window_basis?: string | null
+          workspace_id?: string | null
         }
         Relationships: [
           {
@@ -3723,6 +3726,13 @@ export type Database = {
             columns: ["group_id"]
             isOneToOne: false
             referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
             referencedColumns: ["id"]
           },
         ]
@@ -10957,6 +10967,55 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      workspaces: {
+        Row: {
+          created_at: string
+          id: string
+          name: string | null
+          owner_user_id: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name?: string | null
+          owner_user_id: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string | null
+          owner_user_id?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspaces_owner_user_id_fkey"
+            columns: ["owner_user_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "workspaces_owner_user_id_fkey"
+            columns: ["owner_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workspaces_owner_user_id_fkey"
+            columns: ["owner_user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
