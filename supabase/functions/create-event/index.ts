@@ -143,6 +143,28 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Look up the organizer's personal workspace, creating one on first use —
+    // a workspace only means something once someone actually organizes an
+    // event, so this stays lazy rather than eager at signup.
+    const { data: existingWorkspace } = await supabase
+      .from('workspaces')
+      .select('id')
+      .eq('owner_user_id', user.id)
+      .eq('type', 'personal')
+      .maybeSingle();
+
+    let workspaceId = existingWorkspace?.id ?? null;
+
+    if (!workspaceId) {
+      const { data: newWorkspace, error: workspaceError } = await supabase
+        .from('workspaces')
+        .insert({ owner_user_id: user.id, type: 'personal' })
+        .select('id')
+        .single();
+      if (workspaceError) throw new Error('Failed to set up your workspace. Please try again.');
+      workspaceId = newWorkspace.id;
+    }
+
     // Parse request body
     const eventData: CreateEventRequest = await req.json();
 
@@ -228,6 +250,7 @@ Deno.serve(async (req) => {
       .from('events')
       .insert({
         organizer_id: user.id,
+        workspace_id: workspaceId,
         title: eventData.title,
         description: eventData.description,
         event_type: eventData.event_type,
