@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, ShieldAlert } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -57,7 +56,7 @@ export default function SignupAbuseSignals() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-foreground">Signup Abuse Signals</h1>
+        <h1>Signup Abuse Signals</h1>
         <p className="text-muted-foreground">
           Disposable-domain blocks and IP-pattern flags from guest RSVP registration
         </p>
@@ -95,11 +94,11 @@ export default function SignupAbuseSignals() {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="flex items-center justify-center py-8">
+            <div className="flex items-center justify-center gap-2">
               <Loader2 className="h-6 w-6 animate-spin text-primary" />
             </div>
           ) : (
-            <ScrollArea className="h-[600px]">
+            <>
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -114,20 +113,20 @@ export default function SignupAbuseSignals() {
                 <TableBody>
                   {signals?.map((signal) => (
                     <TableRow key={signal.id}>
-                      <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
+                      <TableCell className="text-meta text-muted-foreground whitespace-nowrap">
                         {format(new Date(signal.created_at), 'MMM d, HH:mm:ss')}
                       </TableCell>
-                      <TableCell className="text-sm">{signal.source}</TableCell>
-                      <TableCell className="text-sm">{signal.signal_type}</TableCell>
+                      <TableCell>{signal.source}</TableCell>
+                      <TableCell>{signal.signal_type}</TableCell>
                       <TableCell>
                         <Badge variant={actionBadgeVariant[signal.action]} className="capitalize">
                           {signal.action}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
+                      <TableCell className="text-muted-foreground">
                         {signal.email_domain || '—'}
                       </TableCell>
-                      <TableCell className="text-sm">
+                      <TableCell>
                         {signal.event_id ? (
                           <Link to={`/event/${signal.event_id}`} className="text-primary hover:underline">
                             View event
@@ -141,12 +140,12 @@ export default function SignupAbuseSignals() {
                 </TableBody>
               </Table>
               {signals?.length === 0 && (
-                <div className="flex flex-col items-center justify-center gap-2 py-12 text-muted-foreground">
+                <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground">
                   <ShieldAlert className="h-8 w-8" />
                   <p>No signals found matching your filters</p>
                 </div>
               )}
-            </ScrollArea>
+            </>
           )}
         </CardContent>
       </Card>
