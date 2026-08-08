@@ -3237,23 +3237,29 @@ export type Database = {
       event_guest_registrations: {
         Row: {
           attendee_id: string
+          confirmed_at: string | null
           created_at: string
           email: string
           id: string
+          ip_address: string | null
           magic_link_token: string
         }
         Insert: {
           attendee_id: string
+          confirmed_at?: string | null
           created_at?: string
           email: string
           id?: string
+          ip_address?: string | null
           magic_link_token?: string
         }
         Update: {
           attendee_id?: string
+          confirmed_at?: string | null
           created_at?: string
           email?: string
           id?: string
+          ip_address?: string | null
           magic_link_token?: string
         }
         Relationships: [
@@ -9572,6 +9578,50 @@ export type Database = {
         }
         Relationships: []
       }
+      signup_abuse_signals: {
+        Row: {
+          action: string
+          created_at: string
+          email_domain: string | null
+          email_hash: string | null
+          event_id: string | null
+          id: string
+          ip_address: string | null
+          signal_type: string
+          source: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          email_domain?: string | null
+          email_hash?: string | null
+          event_id?: string | null
+          id?: string
+          ip_address?: string | null
+          signal_type: string
+          source: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          email_domain?: string | null
+          email_hash?: string | null
+          event_id?: string | null
+          id?: string
+          ip_address?: string | null
+          signal_type?: string
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "signup_abuse_signals_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       skill_analytics: {
         Row: {
           action_type: string
@@ -9646,50 +9696,6 @@ export type Database = {
           name?: string
         }
         Relationships: []
-      }
-      signup_abuse_signals: {
-        Row: {
-          action: string
-          created_at: string
-          email_domain: string | null
-          email_hash: string | null
-          event_id: string | null
-          id: string
-          ip_address: string | null
-          signal_type: string
-          source: string
-        }
-        Insert: {
-          action: string
-          created_at?: string
-          email_domain?: string | null
-          email_hash?: string | null
-          event_id?: string | null
-          id?: string
-          ip_address?: string | null
-          signal_type: string
-          source: string
-        }
-        Update: {
-          action?: string
-          created_at?: string
-          email_domain?: string | null
-          email_hash?: string | null
-          event_id?: string | null
-          id?: string
-          ip_address?: string | null
-          signal_type?: string
-          source?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "signup_abuse_signals_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       space_activity_log: {
         Row: {
