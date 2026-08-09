@@ -20,7 +20,7 @@ interface ContributeShellProps {
 export function ContributeShell({
   children,
   maxWidthClassName = 'max-w-2xl',
-  tabs = null,
+  tabs,
 }: ContributeShellProps) {
   const composer = useUniversalComposer();
   return (

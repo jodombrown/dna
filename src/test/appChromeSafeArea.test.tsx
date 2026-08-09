@@ -114,7 +114,7 @@ const DECLARED_CHROME: Array<{ file: string; edges: Array<'top' | 'bottom'> }> =
   // <UnifiedHeader> (listed above) owns the top edge and its inset (BD363 §2).
   // Feed no longer pins its own chrome either: it renders through
   // <DnaMobileHubShell> (listed above), which owns the top edge and its inset.
-  { file: 'src/pages/dna/convey/ConveyStoryHub.tsx', edges: ['top'] },
+  // Convey no longer pins its own chrome either, for the same reason.
   { file: 'src/components/convene/EventOverview.tsx', edges: ['top'] },
   { file: 'src/components/admin/AdminDashboardLayout.tsx', edges: ['top'] },
   { file: 'src/components/ui/toast.tsx', edges: ['top', 'bottom'] },
