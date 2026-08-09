@@ -3765,6 +3765,7 @@ export type Database = {
           curated_at: string | null
           curated_source: string | null
           curated_source_url: string | null
+          currency: string | null
           date_confirmed: boolean
           date_decay_notified_at: string | null
           description: string
@@ -3824,6 +3825,7 @@ export type Database = {
           curated_at?: string | null
           curated_source?: string | null
           curated_source_url?: string | null
+          currency?: string | null
           date_confirmed?: boolean
           date_decay_notified_at?: string | null
           description: string
@@ -3883,6 +3885,7 @@ export type Database = {
           curated_at?: string | null
           curated_source?: string | null
           curated_source_url?: string | null
+          currency?: string | null
           date_confirmed?: boolean
           date_decay_notified_at?: string | null
           description?: string
