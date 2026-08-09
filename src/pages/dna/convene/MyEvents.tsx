@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Calendar, BarChart3, List, CalendarDays } from 'lucide-react';
+import { Calendar, BarChart3, List, CalendarDays, Pencil, CircleSlash } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -15,6 +15,8 @@ import { MyEventsChromeBar } from '@/components/convene/MyEventsChromeBar';
 import { EventCalendarView } from '@/components/convene/EventCalendarView';
 import { ConveneEventRow } from '@/components/convene/ConveneEventRow';
 import { MyEventCard } from '@/components/convene/MyEventCard';
+import { ManagingEventRow, DraftedEventRow, CancelledEventRow } from '@/components/convene/MyEventsStateRows';
+import { LensEmpty } from '@/components/hubs/shared/LensEmpty';
 import { EventOverviewPanel } from '@/components/convene/EventOverviewPanel';
 import { EventListRow } from '@/components/cards/EventListRow';
 import { EventRowList } from '@/components/convene/EventRowList';
@@ -32,6 +34,20 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { ChevronDown } from 'lucide-react';
 import { format } from 'date-fns';
+import type { Database } from '@/integrations/supabase/types';
+
+// A managing-lens row: an event_roles record for the current user, joined to
+// its event. `events` is null only if the row's event was deleted out from
+// under it (a dangling FK is filtered before render, never rendered raw).
+type ManagingRow = {
+  role: string;
+  event_id: string;
+  events:
+    | (Database['public']['Tables']['events']['Row'] & {
+        event_attendees: Array<{ count: number }>;
+      })
+    | null;
+};
 
 // The list-row date box — the same 44×44 Convene anchor MyEventCard and
 // ConveneEventRow carry (BD226). Dated → month abbrev over day number;
@@ -117,6 +133,69 @@ const MyEvents = () => {
           rsvp_status: attendeeData.find((a) => a.event_id === event.id)?.status,
         })) || []
       );
+    },
+    enabled: !!user,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // ── Managing events ──────────────────────────────────
+  // event_roles rows for the current user where they hold a role but are NOT
+  // the organizer (the organizer already sees the event under Hosting).
+  // event_roles has zero rows live, so this renders empty for everyone at
+  // ship — that is correct, not a bug (BD455).
+  const { data: managingRows = [], isLoading: managingLoading } = useQuery({
+    queryKey: ['managing-events', user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from('event_roles')
+        .select('role, event_id, events(*, event_attendees(count))')
+        .eq('user_id', user.id);
+      if (error) throw error;
+      const rows = (data || []) as unknown as ManagingRow[];
+      return rows.filter(
+        (row): row is ManagingRow & { events: NonNullable<ManagingRow['events']> } =>
+          !!row.events && row.events.organizer_id !== user.id
+      );
+    },
+    enabled: !!user,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // ── Drafted events ───────────────────────────────────
+  // organizer_id = auth user AND lifecycle_state = 'draft' — the canonical
+  // column, not the trigger-mirrored `status`.
+  const { data: draftedEvents = [], isLoading: draftedLoading } = useQuery({
+    queryKey: ['drafted-events', user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from('events')
+        .select('*, event_attendees(count)')
+        .eq('organizer_id', user.id)
+        .eq('lifecycle_state', 'draft')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!user,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // ── Cancelled events ─────────────────────────────────
+  // organizer_id = auth user AND lifecycle_state = 'cancelled'.
+  const { data: cancelledEvents = [], isLoading: cancelledLoading } = useQuery({
+    queryKey: ['cancelled-lens-events', user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from('events')
+        .select('*, event_attendees(count)')
+        .eq('organizer_id', user.id)
+        .eq('lifecycle_state', 'cancelled')
+        .order('updated_at', { ascending: false });
+      if (error) throw error;
+      return data || [];
     },
     enabled: !!user,
     staleTime: 5 * 60 * 1000,
@@ -228,6 +307,9 @@ const MyEvents = () => {
                 lenses={[
                   { id: 'attending', label: 'Attending', icon: Calendar, count: attendingEvents.length },
                   { id: 'hosting', label: 'Hosting', icon: BarChart3, count: hostingEvents.length },
+                  { id: 'managing', label: 'Managing', icon: List, count: managingRows.length },
+                  { id: 'drafted', label: 'Drafted', icon: Pencil, count: draftedEvents.length },
+                  { id: 'cancelled', label: 'Cancelled', icon: CircleSlash, count: cancelledEvents.length },
                 ]}
               />
             </div>
@@ -563,6 +645,69 @@ const MyEvents = () => {
                     )}
                   </>
                 )}
+                </div>
+              )}
+
+              {/* ═══ MANAGING ═══ */}
+              {activeTab === 'managing' && (
+                <div className="space-y-5">
+                  {managingLoading ? (
+                    <p className="text-center text-muted-foreground py-8">Loading events...</p>
+                  ) : managingRows.length === 0 ? (
+                    <LensEmpty
+                      icon={List}
+                      title="No events to manage yet"
+                      body="When an organizer adds you to their event's team, it shows up here."
+                    />
+                  ) : (
+                    <div className="divide-y divide-border">
+                      {managingRows.map((row) => (
+                        <ManagingEventRow key={row.event_id} event={row.events} role={row.role} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ═══ DRAFTED ═══ */}
+              {activeTab === 'drafted' && (
+                <div className="space-y-5">
+                  {draftedLoading ? (
+                    <p className="text-center text-muted-foreground py-8">Loading events...</p>
+                  ) : draftedEvents.length === 0 ? (
+                    <LensEmpty
+                      icon={Pencil}
+                      title="No drafts"
+                      body="Events you start but haven't published yet land here."
+                    />
+                  ) : (
+                    <div className="space-y-3">
+                      {draftedEvents.map((event) => (
+                        <DraftedEventRow key={event.id} event={event} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ═══ CANCELLED ═══ */}
+              {activeTab === 'cancelled' && (
+                <div className="space-y-5">
+                  {cancelledLoading ? (
+                    <p className="text-center text-muted-foreground py-8">Loading events...</p>
+                  ) : cancelledEvents.length === 0 ? (
+                    <LensEmpty
+                      icon={CircleSlash}
+                      title="No cancelled events"
+                      body="Events you cancel as organizer are kept here."
+                    />
+                  ) : (
+                    <div className="space-y-3">
+                      {cancelledEvents.map((event) => (
+                        <CancelledEventRow key={event.id} event={event} />
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

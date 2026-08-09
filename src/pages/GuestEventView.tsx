@@ -81,7 +81,7 @@ export const GuestEventView = ({ guestToken }: { guestToken: string }) => {
   return (
     // BD450: PulseDock now renders for this route (guest event view), so the
     // content needs the same bottom clearance every other PulseDock page
-    // reserves — matches BaseLayout's own "pb-20 lg:pb-0" convention.
+    // reserves — matches BaseLayout's own "pb-20 md:pb-0" convention.
     <PageFrame contained className="pb-20 md:pb-0">
       <Card className="overflow-hidden">
         <CardContent className="p-4 sm:p-6 flex flex-col gap-4">

@@ -24,7 +24,7 @@ interface DnaMobileHubShellProps {
   children: ReactNode;
   /** Extra classes on the scrolling content wrapper. */
   contentClassName?: string;
-  /** Set false to omit the MobileBottomNav mount (page renders its own). */
+  /** Set false when BaseLayout already supplies the bottom clearance, so this shell does not add a second pb-bottom-nav. */
   showBottomNav?: boolean;
 }
 
