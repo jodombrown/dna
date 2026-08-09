@@ -19,6 +19,8 @@ import { ManagingEventRow, DraftedEventRow, CancelledEventRow } from '@/componen
 import { LensEmpty } from '@/components/hubs/shared/LensEmpty';
 import { EventOverviewPanel } from '@/components/convene/EventOverviewPanel';
 import { EventListRow } from '@/components/cards/EventListRow';
+import { EventPriceMeta } from '@/components/cards/EventPriceMeta';
+import type { EventPriceTicketType } from '@/components/cards/resolveEventPrice';
 import { EventRowList } from '@/components/convene/EventRowList';
 import { MyEventsStatsHeader } from '@/components/convene/MyEventsStatsHeader';
 import { PastEventDiaNudge } from '@/components/convene/PastEventDiaNudge';
@@ -45,9 +47,16 @@ type ManagingRow = {
   events:
     | (Database['public']['Tables']['events']['Row'] & {
         event_attendees: Array<{ count: number }>;
+        event_ticket_types: EventPriceTicketType[];
       })
     | null;
 };
+
+// The ticket-type columns resolveEventPrice needs — joined in the SAME
+// select as the events, the way event_attendees(count) already is (BD111).
+// One query per lens, never one per card.
+const TICKET_TYPES_SELECT =
+  'event_ticket_types(hidden, sales_start, sales_end, payment_type, price_cents, min_price_cents)';
 
 // The list-row date box — the same 44×44 Convene anchor MyEventCard and
 // ConveneEventRow carry (BD226). Dated → month abbrev over day number;
@@ -96,7 +105,7 @@ const MyEvents = () => {
       if (!user) return [];
       const { data, error } = await supabase
         .from('events')
-        .select('*, event_attendees(count)')
+        .select(`*, event_attendees(count), ${TICKET_TYPES_SELECT}`)
         .eq('organizer_id', user.id)
         .order('start_time', { ascending: true });
       if (error) throw error;
@@ -122,7 +131,7 @@ const MyEvents = () => {
       const eventIds = attendeeData.map((a) => a.event_id);
       const { data: events, error: eventsError } = await supabase
         .from('events')
-        .select('*, event_attendees(count)')
+        .select(`*, event_attendees(count), ${TICKET_TYPES_SELECT}`)
         .in('id', eventIds)
         .order('start_time', { ascending: true });
       if (eventsError) throw eventsError;
@@ -149,7 +158,7 @@ const MyEvents = () => {
       if (!user) return [];
       const { data, error } = await supabase
         .from('event_roles')
-        .select('role, event_id, events(*, event_attendees(count))')
+        .select(`role, event_id, events(*, event_attendees(count), ${TICKET_TYPES_SELECT})`)
         .eq('user_id', user.id);
       if (error) throw error;
       const rows = (data || []) as unknown as ManagingRow[];
@@ -171,7 +180,7 @@ const MyEvents = () => {
       if (!user) return [];
       const { data, error } = await supabase
         .from('events')
-        .select('*, event_attendees(count)')
+        .select(`*, event_attendees(count), ${TICKET_TYPES_SELECT}`)
         .eq('organizer_id', user.id)
         .eq('lifecycle_state', 'draft')
         .order('created_at', { ascending: false });
@@ -190,7 +199,7 @@ const MyEvents = () => {
       if (!user) return [];
       const { data, error } = await supabase
         .from('events')
-        .select('*, event_attendees(count)')
+        .select(`*, event_attendees(count), ${TICKET_TYPES_SELECT}`)
         .eq('organizer_id', user.id)
         .eq('lifecycle_state', 'cancelled')
         .order('updated_at', { ascending: false });
@@ -320,7 +329,7 @@ const MyEvents = () => {
           <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative overflow-hidden rounded-xl p-5">
             <CulturalPattern pattern="kente" opacity={0.05} />
             <div className="relative z-10">
-              <h1 className="text-h1 font-serif">My Events</h1>
+              <h1 className="text-h1 font-display">My Events</h1>
               <p className="text-muted-foreground text-sm mt-1">
                 Manage events you're hosting and attending
               </p>
@@ -540,6 +549,13 @@ const MyEvents = () => {
                                   className="text-meta text-muted-foreground"
                                 />
                               }
+                              meta={
+                                <EventPriceMeta
+                                  ticketTypes={event.event_ticket_types}
+                                  currency={event.currency}
+                                  className="block text-right font-display text-meta text-foreground"
+                                />
+                              }
                               body={
                                 <div className="flex flex-col gap-3">
                                   <MutualAttendeesLine eventId={event.id} />
@@ -629,6 +645,13 @@ const MyEvents = () => {
                                     variant="compact"
                                     notifyAction={false}
                                     className="text-meta text-muted-foreground"
+                                  />
+                                }
+                                meta={
+                                  <EventPriceMeta
+                                    ticketTypes={event.event_ticket_types}
+                                    currency={event.currency}
+                                    className="block text-right font-display text-meta text-foreground"
                                   />
                                 }
                               />
