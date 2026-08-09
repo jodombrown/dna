@@ -55,6 +55,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { useEventManagement } from '../EventManagementContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { useIsMobile } from '@/hooks/useMobile';
@@ -87,9 +88,32 @@ type SortOrder = 'asc' | 'desc';
 
 const AttendeeManagement: React.FC = () => {
   const { event } = useEventManagement();
+  const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
+
+  const isOrganizerForExport = !!user && event.organizer_id === user.id;
+
+  // Check whether the current non-organizer viewer has export permission
+  const { data: canExportGuestList = false } = useQuery({
+    queryKey: ['event-role-export-permission', event.id, user?.id],
+    queryFn: async (): Promise<boolean> => {
+      const { data, error } = await supabase
+        .from('event_roles')
+        .select('permissions')
+        .eq('event_id', event.id)
+        .eq('user_id', user!.id)
+        .maybeSingle();
+
+      if (error) throw error;
+      const permissions = data?.permissions as { can_export_guest_list?: boolean } | null;
+      return permissions?.can_export_guest_list === true;
+    },
+    enabled: !!event.id && !!user?.id && !isOrganizerForExport,
+  });
+
+  const canExport = isOrganizerForExport || canExportGuestList;
 
   // State
   const [searchQuery, setSearchQuery] = useState('');
@@ -363,10 +387,12 @@ const AttendeeManagement: React.FC = () => {
           <p className="text-muted-foreground">Manage your event attendees</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={handleExport}>
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </Button>
+          {canExport && (
+            <Button variant="outline" onClick={handleExport}>
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
+          )}
           <Button onClick={() => setShowAddModal(true)}>
             <UserPlus className="h-4 w-4 mr-2" />
             Add Attendee
