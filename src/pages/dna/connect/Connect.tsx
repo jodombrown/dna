@@ -199,7 +199,7 @@ const Connect = () => {
           activeFilterCount: mobileActiveFilterCount,
         }}
         tabs={<ConnectMobileTabs />}
-        contentClassName="px-3"
+        contentPadding
       >
         {activeLens === 'map' ? (
           <DiasporaDensityMap inShell />

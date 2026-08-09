@@ -153,8 +153,9 @@ const DnaFeed = () => {
               <FeedLensBar />
             </HubTabsRow>
           }
+          contentPadding
         >
-          <main className="px-3 space-y-0">
+          <main className="space-y-0">
             {/* Profile completion banner */}
             <MobileProfileCompletionBanner threshold={100} />
             {activeTab === 'for_you' ? (
