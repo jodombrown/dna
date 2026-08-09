@@ -36,7 +36,7 @@ export function SpacesShell({
   return (
     <DnaMobileHubShell bubble={bubble} tabs={tabs ?? undefined}>
       <div className="min-h-[60vh] bg-background">
-        <div className={`mx-auto ${maxWidthClassName} px-4 py-6 sm:py-8`}>
+        <div className={`mx-auto ${maxWidthClassName} px-4 pb-6 sm:pb-8`}>
           {children}
         </div>
       </div>

@@ -44,6 +44,7 @@ export default {
 			3:  '0.75rem',      // 12px  — between-group gap, card gap, card pad @320
 			3.5:'0.875rem',     // 14px  — card pad @321–389
 			4:  '1rem',         // 16px  — card pad @>=390
+			5:  '1.25rem',      // 20px  — hub content gap, BD467
 			6:  '1.5rem',       // 24px
 			8:  '2rem',         // 32px
 			12: '3rem',         // 48px

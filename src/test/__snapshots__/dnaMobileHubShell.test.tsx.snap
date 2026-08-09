@@ -25,7 +25,7 @@ exports[`DnaMobileHubShell > renders the canonical fixed top bar, tabs slot, and
       </div>
     </div>
     <div
-      class="transition-[padding] duration-200 pt-3"
+      class="transition-[padding] duration-200 pt-5"
       style="padding-top: 96px;"
     >
       <main>
