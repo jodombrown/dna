@@ -19,15 +19,11 @@ import { FeedLeftPanel } from '@/components/feed/FeedLeftPanel';
 import { FeedCommunityPulse } from '@/components/feed/FeedCommunityPulse';
 import { FeedColumn } from '@/components/feed/FeedColumn';
 import { FeedTab, RankingMode } from '@/types/feed';
-import { MobileHeader } from '@/components/mobile/MobileHeader';
+import { DnaMobileHubShell } from '@/components/mobile/DnaMobileHubShell';
 import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { useMobile } from '@/hooks/useMobile';
-import { cn } from '@/lib/utils';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
-import { useScrollDirection } from '@/hooks/useScrollDirection';
 // Adinkra icons reserved for module identity surfaces; feed tabs use lucide.
-// Dynamic header spacing replaces hardcoded constants from mobileHeaderSpacing
-import { useMobileHeaderHeight } from '@/hooks/useMobileHeaderHeight';
 import { incrementSessionCount } from '@/services/dia-feed-cadence';
 import { useSearchParams } from 'react-router-dom';
 
@@ -82,14 +78,10 @@ const DnaFeed = () => {
   const [rankingMode, setRankingMode] = useState<RankingMode>('latest');
   const [showSearchDialog, setShowSearchDialog] = useState(false);
   const feedContainerRef = useRef<HTMLDivElement>(null);
-  const mobileHeaderRef = useRef<HTMLDivElement>(null);
   const mainScrollRef = useRef<HTMLElement>(null);
-  const mobileHeaderPadding = useMobileHeaderHeight(mobileHeaderRef);
   const composer = useUniversalComposer();
   const { isMobile } = useMobile();
   const { hideHeader: hideUnifiedHeader, showHeader } = useHeaderVisibility();
-  const { isScrollingDown, isAtTop } = useScrollDirection(30);
-  const headerHidden = isMobile && isScrollingDown && !isAtTop;
 
   // Increment session count for DIA cadence engine
   useEffect(() => {
@@ -150,39 +142,19 @@ const DnaFeed = () => {
         {/* First-time user walkthrough */}
         <FirstTimeWalkthrough />
         
-        <div className="min-h-screen bg-background">
-          {/* Single measured container for both fixed header rows */}
-          <div
-            ref={mobileHeaderRef}
-            className="fixed top-0 left-0 right-0"
-            // BD157: this element owns the notch strip in the installed PWA.
-            style={{ zIndex: 50, paddingTop: 'env(safe-area-inset-top, 0px)' }}
-          >
-            {/* Header row - hides on scroll down */}
-            <div className={cn(
-              "bg-background transition-all duration-300 overflow-hidden",
-              headerHidden ? "max-h-0 opacity-0" : "max-h-20 opacity-100"
-            )}>
-              <MobileHeader
-                variant="feed"
-                showSearch={true}
-                onSearchClick={() => setShowSearchDialog(true)}
-                onComposerClick={() => composer.open('story')}
-                className="border-b-0"
-              />
-            </div>
-
-            {/* Tabs row - always visible */}
+        <DnaMobileHubShell
+          bubble={{
+            kind: 'composer',
+            placeholder: "What's on your mind?",
+            onClick: () => composer.open('story'),
+          }}
+          tabs={
             <HubTabsRow>
               <FeedLensBar />
             </HubTabsRow>
-          </div>
-
-          {/* Content with dynamic padding from measured header */}
-          <main
-            className="pb-bottom-nav px-3 space-y-0 transition-[padding] duration-300"
-            style={{ paddingTop: mobileHeaderPadding || undefined }}
-          >
+          }
+        >
+          <main className="px-3 space-y-0">
             {/* Profile completion banner */}
             <MobileProfileCompletionBanner threshold={100} />
             {activeTab === 'for_you' ? (
@@ -215,7 +187,7 @@ const DnaFeed = () => {
             isOpen={showSearchDialog}
             onClose={() => setShowSearchDialog(false)}
           />
-        </div>
+        </DnaMobileHubShell>
       </>
     );
   }
