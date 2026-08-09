@@ -303,6 +303,32 @@ Deno.serve(async (req) => {
     // Note: Feed post is automatically created by database trigger (trg_create_event_feed_post)
     // No need to manually insert here - the trigger ensures consistency across all event creation paths
 
+    // Create delivery endpoints (physical room and/or virtual link) so
+    // attendees have a single place to look up how to join. Best-effort:
+    // a failure here must never fail event creation.
+    const endpointRows: Record<string, unknown>[] = [];
+
+    if (eventData.format === 'in_person' || eventData.format === 'hybrid') {
+      const joinCredential = eventData.location_address || eventData.location_name;
+      if (joinCredential) {
+        endpointRows.push({ event_id: event.id, type: 'physical_room', join_credential: joinCredential });
+      }
+    }
+
+    if (eventData.format === 'virtual' || eventData.format === 'hybrid') {
+      if (eventData.meeting_url) {
+        const provider = eventData.meeting_platform === 'Zoom' ? 'zoom'
+          : eventData.meeting_platform === 'Microsoft Teams' ? 'teams'
+          : null;
+        endpointRows.push({ event_id: event.id, type: 'external_link', provider, join_credential: eventData.meeting_url });
+      }
+    }
+
+    if (endpointRows.length > 0) {
+      const { error: endpointError } = await supabase.from('event_delivery_endpoints').insert(endpointRows);
+      if (endpointError) console.error('Endpoint creation error:', endpointError); // never fail event creation over this
+    }
+
     // Track event creation in analytics — a failure here must never fail the request
     const { error: analyticsError } = await supabase.from('analytics_events').insert({
       user_id: user.id,
