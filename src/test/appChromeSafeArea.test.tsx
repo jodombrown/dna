@@ -135,7 +135,11 @@ describe('BD157 / BD159 — every declared chrome surface insets its edges', () 
 
   it('the scan finds containers at all (guards the matcher)', () => {
     // A walk that returned nothing would make every assertion below vacuous.
-    expect(containers.length).toBeGreaterThan(8);
+    // Floor is 6, not the live count (8, per BD460): a strict boundary at the
+    // live count fails on every legitimate removal of a chrome container, as
+    // it did when Feed stopped pinning its own top edge. The floor only needs
+    // to catch the matcher returning nothing.
+    expect(containers.length).toBeGreaterThan(6);
   });
 
   it('every DECLARED chrome surface insets the edge it is pinned to', () => {
