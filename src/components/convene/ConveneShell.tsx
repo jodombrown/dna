@@ -28,7 +28,7 @@ import { LensBar, type Lens } from '@/components/shell/LensBar';
 import { HubTabsRow } from '@/components/shell/HubTabsRow';
 
 export const CONVENE_LENSES: Lens[] = [
-  { id: 'all', label: 'All', icon: CalendarDays, description: 'Browse every upcoming event across the diaspora community' },
+  { id: 'all', label: 'All', icon: CalendarDays, description: 'Every upcoming event across the diaspora' },
   { id: 'near_me', label: 'Near Me', icon: MapPin, description: 'Events happening close to your current location' },
   { id: 'this_week', label: 'This Week', icon: Clock, description: 'Events taking place within the next seven days' },
   { id: 'online', label: 'Virtual', icon: Video, description: 'Virtual events you can join from anywhere in the world' },
