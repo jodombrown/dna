@@ -109,7 +109,7 @@ export function ManagingEventRow({ event, role }: ManagingEventRowProps) {
           <EventPriceMeta
             ticketTypes={event.event_ticket_types}
             currency={event.currency}
-            className="font-serif text-meta text-foreground shrink-0"
+            className="font-display text-meta text-foreground shrink-0"
           />
         </div>
       }
@@ -213,7 +213,7 @@ export function DraftedEventRow({ event }: DraftedEventRowProps) {
               <EventPriceMeta
                 ticketTypes={event.event_ticket_types}
                 currency={event.currency}
-                className="font-serif text-meta text-foreground shrink-0 ml-auto"
+                className="font-display text-meta text-foreground shrink-0 ml-auto"
               />
             </div>
           ) : null

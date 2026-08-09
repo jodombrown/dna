@@ -162,7 +162,7 @@ export function MyEventCard({ event, isPast = false, className, variant = 'hosti
       <EventPriceMeta
         ticketTypes={event.event_ticket_types}
         currency={event.currency}
-        className="font-serif text-meta text-foreground shrink-0"
+        className="font-display text-meta text-foreground shrink-0"
       />
     </div>
   );

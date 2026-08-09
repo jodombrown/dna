@@ -153,7 +153,7 @@ export function ConveneEventRow({
       <EventPriceMeta
         ticketTypes={event.event_ticket_types}
         currency={event.currency}
-        className="ml-auto font-serif text-foreground"
+        className="ml-auto font-display text-foreground"
       />
     </div>
   );

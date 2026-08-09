@@ -329,7 +329,7 @@ const MyEvents = () => {
           <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative overflow-hidden rounded-xl p-5">
             <CulturalPattern pattern="kente" opacity={0.05} />
             <div className="relative z-10">
-              <h1 className="text-h1 font-serif">My Events</h1>
+              <h1 className="text-h1 font-display">My Events</h1>
               <p className="text-muted-foreground text-sm mt-1">
                 Manage events you're hosting and attending
               </p>
@@ -553,7 +553,7 @@ const MyEvents = () => {
                                 <EventPriceMeta
                                   ticketTypes={event.event_ticket_types}
                                   currency={event.currency}
-                                  className="block text-right font-serif text-meta text-foreground"
+                                  className="block text-right font-display text-meta text-foreground"
                                 />
                               }
                               body={
@@ -651,7 +651,7 @@ const MyEvents = () => {
                                   <EventPriceMeta
                                     ticketTypes={event.event_ticket_types}
                                     currency={event.currency}
-                                    className="block text-right font-serif text-meta text-foreground"
+                                    className="block text-right font-display text-meta text-foreground"
                                   />
                                 }
                               />
