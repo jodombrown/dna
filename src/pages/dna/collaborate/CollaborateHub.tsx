@@ -306,9 +306,15 @@ export default function CollaborateHub() {
   }
 
   return (
-    <SpacesShell tabs={null}>
+    <SpacesShell
+      tabs={
+        <HubTabsRow>
+          <CollaborateLensBar />
+        </HubTabsRow>
+      }
+    >
       <div className="flex flex-col gap-6">
-        <CollaborateLensBar />
+        {!isMobile && <CollaborateLensBar />}
 
         {renderLensBody()}
       </div>
