@@ -110,9 +110,10 @@ function findChromeContainers(): Container[] {
 const DECLARED_CHROME: Array<{ file: string; edges: Array<'top' | 'bottom'> }> = [
   { file: 'src/components/UnifiedHeader.tsx', edges: ['top'] },
   { file: 'src/components/mobile/DnaMobileHubShell.tsx', edges: ['top'] },
-  { file: 'src/pages/dna/Feed.tsx', edges: ['top'] },
   // Connect no longer pins its own chrome: it renders through <AppShell>, whose
   // <UnifiedHeader> (listed above) owns the top edge and its inset (BD363 §2).
+  // Feed no longer pins its own chrome either: it renders through
+  // <DnaMobileHubShell> (listed above), which owns the top edge and its inset.
   { file: 'src/pages/dna/convey/ConveyStoryHub.tsx', edges: ['top'] },
   { file: 'src/components/convene/EventOverview.tsx', edges: ['top'] },
   { file: 'src/components/admin/AdminDashboardLayout.tsx', edges: ['top'] },
@@ -134,7 +135,11 @@ describe('BD157 / BD159 — every declared chrome surface insets its edges', () 
 
   it('the scan finds containers at all (guards the matcher)', () => {
     // A walk that returned nothing would make every assertion below vacuous.
-    expect(containers.length).toBeGreaterThan(8);
+    // Floor is 6, not the live count (8, per BD460): a strict boundary at the
+    // live count fails on every legitimate removal of a chrome container, as
+    // it did when Feed stopped pinning its own top edge. The floor only needs
+    // to catch the matcher returning nothing.
+    expect(containers.length).toBeGreaterThan(6);
   });
 
   it('every DECLARED chrome surface insets the edge it is pinned to', () => {

@@ -53,7 +53,7 @@ export const DnaMobileHeader: React.FC<DnaMobileHeaderProps> = ({
   return (
     <div
       className={cn(
-        'md:hidden bg-background transition-all duration-200',
+        'md:hidden bg-background shadow-dna-1 transition-all duration-200',
         isVisible ? 'max-h-16 opacity-100' : 'max-h-0 opacity-0 overflow-hidden',
         className,
       )}

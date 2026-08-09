@@ -238,32 +238,6 @@ export default function ConveyStoryHub() {
         <div className="border-b border-border">
           <LensBar lenses={CONVEY_LENSES} ariaLabel="Convey lenses" c="convey" />
         </div>
-
-        {/* Category Pills (only on Pulse tab) */}
-        {activeTab === 'pulse' && (
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide py-2">
-            {categoryPills.map((cat) => {
-              const Icon = cat.icon;
-              const isActive = selectedCategory === cat.id;
-              return (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={cn(
-                    'flex items-center gap-1.5 rounded-full whitespace-nowrap transition-all',
-                    'text-xs font-medium border shrink-0 px-3 py-1.5',
-                    isActive
-                      ? 'bg-dna-gold text-white border-dna-gold'
-                      : 'bg-background border-border hover:border-dna-gold/50'
-                  )}
-                >
-                  <Icon className={cn('h-3.5 w-3.5', isActive ? 'text-white' : 'text-muted-foreground')} />
-                  {cat.label}
-                </button>
-              );
-            })}
-          </div>
-        )}
       </div>
 
       {/* Daily lens — cross-module day view rehomed from DailyPulseSheet (D086) */}

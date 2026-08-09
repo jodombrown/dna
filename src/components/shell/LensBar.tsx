@@ -221,7 +221,7 @@ export function LensBar({ lenses, ariaLabel, c }: LensBarProps) {
             descriptorHidden ? 'max-h-0' : 'max-h-20',
           )}
         >
-          <p className="text-meta text-muted-foreground italic pt-2 pb-3">
+          <p className="text-meta text-muted-foreground italic pt-2 pb-3 truncate">
             {activeLens.description}
           </p>
         </div>
