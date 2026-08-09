@@ -24,6 +24,9 @@ interface DnaMobileHubShellProps {
   children: ReactNode;
   /** Extra classes on the scrolling content wrapper. */
   contentClassName?: string;
+  /** Apply the standard horizontal content gutter. Pages that already nest
+   *  their own padded container (e.g. Convene, Collaborate) leave this off. */
+  contentPadding?: boolean;
   /** Set false when BaseLayout already supplies the bottom clearance, so this shell does not add a second pb-bottom-nav. */
   showBottomNav?: boolean;
 }
@@ -33,6 +36,7 @@ export function DnaMobileHubShell({
   tabs,
   children,
   contentClassName,
+  contentPadding = false,
   showBottomNav = true,
 }: DnaMobileHubShellProps) {
   const { isMobile } = useMobile();
@@ -95,7 +99,7 @@ export function DnaMobileHubShell({
       </div>
 
       <div
-        className={cn('transition-[padding] duration-200', contentClassName)}
+        className={cn('transition-[padding] duration-200', contentPadding && 'px-3', contentClassName)}
         /*
           The fallback runs only for the frame before ResizeObserver reports.
           It has to carry the inset too, or that frame renders content under the

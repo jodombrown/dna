@@ -25,6 +25,7 @@ import { CalendarDays, MapPin, Clock, Video, Ticket, UserCheck } from 'lucide-re
 import { DnaMobileHubShell } from '@/components/mobile/DnaMobileHubShell';
 import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { LensBar, type Lens } from '@/components/shell/LensBar';
+import { HubTabsRow } from '@/components/shell/HubTabsRow';
 
 export const CONVENE_LENSES: Lens[] = [
   { id: 'all', label: 'All', icon: CalendarDays, description: 'Browse every upcoming event across the diaspora community' },
@@ -37,9 +38,9 @@ export const CONVENE_LENSES: Lens[] = [
 
 function ConveneTabStrip() {
   return (
-    <div className="md:hidden px-3 py-1.5 bg-background border-b border-border">
+    <HubTabsRow>
       <LensBar lenses={CONVENE_LENSES} ariaLabel="Convene lenses" c="convene" />
-    </div>
+    </HubTabsRow>
   );
 }
 

@@ -1,15 +1,12 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { messageService } from '@/services/messageService';
 import { MESSAGING_ENABLED } from '@/config/featureFlags';
 import { useNavigate, Outlet, useLocation, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useMobile } from '@/hooks/useMobile';
-import { useScrollDirection } from '@/hooks/useScrollDirection';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
-import { cn } from '@/lib/utils';
-// Dynamic header spacing replaces hardcoded constants from mobileHeaderSpacing
-import { useMobileHeaderHeight } from '@/hooks/useMobileHeaderHeight';
+import { DnaMobileHubShell } from '@/components/mobile/DnaMobileHubShell';
 
 // New Hub Components
 import {
@@ -23,7 +20,7 @@ import {
 
 // Mobile components
 
-import { ConnectMobileTabs, ConnectMobileTopBar, type ConnectTab } from '@/components/connect/ConnectMobileHeader';
+import { ConnectMobileTabs, type ConnectTab } from '@/components/connect/ConnectMobileHeader';
 
 // Diaspora density map — rendered in-shell as the Map tab (mobile) / right
 // column (desktop). The same component also backs the standalone
@@ -49,11 +46,7 @@ const Connect = () => {
   const { user } = useAuth();
   const { data: profile, isLoading } = useProfile();
   const { isMobile } = useMobile();
-  const { isScrollingDown, isAtTop } = useScrollDirection(30);
   const { hideHeader: hideUnifiedHeader, showHeader } = useHeaderVisibility();
-  const headerHidden = isMobile && isScrollingDown && !isAtTop;
-  const connectHeaderRef = useRef<HTMLDivElement>(null);
-  const connectHeaderPadding = useMobileHeaderHeight(connectHeaderRef);
 
   // Hide unified header on mobile connect (has its own header)
   useEffect(() => {
@@ -196,56 +189,29 @@ const Connect = () => {
   // Mobile view - use Outlet for child routes to prevent hook count issues
   if (isMobile) {
     return (
-      <div className="min-h-screen bg-background pb-bottom-nav overflow-x-hidden">
-        {/* Single measured wrapper for fixed header */}
-        <div
-          ref={connectHeaderRef}
-          className="fixed top-0 left-0 right-0"
-          // BD157
-          style={{ zIndex: 50, paddingTop: 'env(safe-area-inset-top, 0px)' }}
-        >
-          <div className={cn(
-            "bg-background transition-all duration-300 overflow-hidden",
-            headerHidden ? "max-h-0 opacity-0" : "max-h-20 opacity-100"
-          )}>
-            <ConnectMobileTopBar
-              searchQuery={mobileSearchQuery}
-              onSearchChange={setMobileSearchQuery}
-              onFiltersClick={() => setShowMobileFilters(true)}
-              activeFilterCount={mobileActiveFilterCount}
-            />
-          </div>
-          {/* Tabs row - always visible (matches Feed behavior) */}
-          <ConnectMobileTabs />
-        </div>
-
-        {/* Mobile Content - dynamic padding from measured header */}
-        <div
-          className="overflow-x-hidden transition-[padding] duration-300"
-          // Horizontal gutter lives here as an inline value rather than a
-          // page-level padding utility (the layout primitives own page width
-          // and none exists in this bespoke mobile shell). Co-located with the
-          // dynamic top pad.
-          style={{
-            paddingTop: connectHeaderPadding || undefined,
-            paddingLeft: '0.75rem',
-            paddingRight: '0.75rem',
-          }}
-        >
-          {activeLens === 'map' ? (
-            <DiasporaDensityMap inShell />
-          ) : (
-            <Outlet context={{
-              mobileSearchQuery,
-              showMobileFilters,
-              setShowMobileFilters,
-              setMobileActiveFilterCount,
-            }} />
-          )}
-        </div>
-
-        
-      </div>
+      <DnaMobileHubShell
+        bubble={{
+          kind: 'search',
+          placeholder: 'Search members...',
+          value: mobileSearchQuery,
+          onChange: setMobileSearchQuery,
+          onFiltersClick: () => setShowMobileFilters(true),
+          activeFilterCount: mobileActiveFilterCount,
+        }}
+        tabs={<ConnectMobileTabs />}
+        contentPadding
+      >
+        {activeLens === 'map' ? (
+          <DiasporaDensityMap inShell />
+        ) : (
+          <Outlet context={{
+            mobileSearchQuery,
+            showMobileFilters,
+            setShowMobileFilters,
+            setMobileActiveFilterCount,
+          }} />
+        )}
+      </DnaMobileHubShell>
     );
   }
 
