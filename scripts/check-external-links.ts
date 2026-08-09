@@ -56,6 +56,8 @@ const ALLOWLIST_HOSTS = new Set<string>([
   // curated.test.ts. Blocks/404s bot probes from CI; not actually dead.
   'nyadiff.org',
   'www.nyadiff.org',
+  'diasporaafricaconference.com',
+  'www.diasporaafricaconference.com',
   // Supabase project URLs are validated by other checks
   'ybhssuehmfnxrzneobok.supabase.co',
 ]);
