@@ -29,6 +29,8 @@ import {
 import { LensEmpty } from '@/components/collaborate/SpacesLensEmpty';
 import { useJoinSpace } from '@/hooks/collaborate/useJoinSpace';
 import type { SpaceVisibility } from '@/types/collaborate';
+import { HubTabsRow } from '@/components/shell/HubTabsRow';
+import { useMobile } from '@/hooks/useMobile';
 
 interface SpaceRow {
   id: string;
@@ -66,6 +68,7 @@ const VALID_LENS_IDS = COLLABORATE_LENSES.map((l) => l.id);
 
 export default function CollaborateHub() {
   const { user } = useAuth();
+  const { isMobile } = useMobile();
   const joinSpace = useJoinSpace();
   const composer = useUniversalComposer();
   const [searchParams] = useSearchParams();
@@ -306,9 +309,15 @@ export default function CollaborateHub() {
   }
 
   return (
-    <SpacesShell tabs={null}>
+    <SpacesShell
+      tabs={
+        <HubTabsRow>
+          <CollaborateLensBar />
+        </HubTabsRow>
+      }
+    >
       <div className="flex flex-col gap-6">
-        <CollaborateLensBar />
+        {!isMobile && <CollaborateLensBar />}
 
         {renderLensBody()}
       </div>
