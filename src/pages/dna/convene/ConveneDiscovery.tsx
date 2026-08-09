@@ -284,7 +284,7 @@ export function ConveneDiscovery() {
             phone.
             ═══════════════════════════════════════ */}
         {isMobile && (
-          <div className="pt-2">
+          <div>
             <Button
               variant="outline"
               size="sm"

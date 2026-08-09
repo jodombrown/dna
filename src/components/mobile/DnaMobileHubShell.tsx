@@ -99,7 +99,7 @@ export function DnaMobileHubShell({
       </div>
 
       <div
-        className={cn('transition-[padding] duration-200 pt-3', contentPadding && 'px-3', contentClassName)}
+        className={cn('transition-[padding] duration-200 pt-5', contentPadding && 'px-3', contentClassName)}
         /*
           The fallback runs only for the frame before ResizeObserver reports.
           It has to carry the inset too, or that frame renders content under the

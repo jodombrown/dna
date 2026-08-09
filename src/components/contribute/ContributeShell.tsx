@@ -29,7 +29,7 @@ export function ContributeShell({
       tabs={tabs ?? undefined}
     >
       <div className="bg-background">
-        <div className={`mx-auto ${maxWidthClassName} px-4 py-6 sm:py-8`}>{children}</div>
+        <div className={`mx-auto ${maxWidthClassName} px-4 pb-6 sm:pb-8`}>{children}</div>
       </div>
     </DnaMobileHubShell>
   );
