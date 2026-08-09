@@ -3239,7 +3239,7 @@ export type Database = {
           attendee_id: string
           confirmed_at: string | null
           created_at: string
-          email: string
+          email: string | null
           id: string
           ip_address: string | null
           magic_link_token: string
@@ -3248,7 +3248,7 @@ export type Database = {
           attendee_id: string
           confirmed_at?: string | null
           created_at?: string
-          email: string
+          email?: string | null
           id?: string
           ip_address?: string | null
           magic_link_token?: string
@@ -3257,7 +3257,7 @@ export type Database = {
           attendee_id?: string
           confirmed_at?: string | null
           created_at?: string
-          email?: string
+          email?: string | null
           id?: string
           ip_address?: string | null
           magic_link_token?: string
@@ -14147,6 +14147,12 @@ export type Database = {
         }
       }
       purge_expired_dia_history: { Args: never; Returns: undefined }
+      purge_expired_guest_data: {
+        Args: never
+        Returns: {
+          purged_count: number
+        }[]
+      }
       purge_stale_curations: { Args: never; Returns: number }
       reactivate_personal_hashtag: {
         Args: { p_hashtag_id: string; p_user_id: string }
@@ -14225,9 +14231,10 @@ export type Database = {
         Args: { p_affirmation_id: string }
         Returns: undefined
       }
-      rpc_check_in_by_token:
-        | { Args: { p_event: string; p_token: string }; Returns: Json }
-        | { Args: { p_token: string }; Returns: Json }
+      rpc_check_in_by_token: {
+        Args: { p_event: string; p_token: string }
+        Returns: Json
+      }
       rpc_create_post:
         | {
             Args: {
@@ -14390,6 +14397,10 @@ export type Database = {
             }
             Returns: undefined
           }
+      rpc_manual_admission: {
+        Args: { p_attendee_id: string; p_event: string }
+        Returns: Json
+      }
       rpc_membership_approve: {
         Args: { p_space: string; p_user: string }
         Returns: undefined
