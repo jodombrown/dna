@@ -26,6 +26,8 @@ import { ConveneEventBadge } from './ConveneEventBadge';
 import { getEventStatus } from '@/utils/convene/getEventStatus';
 import { PastEventDiaNudge } from './PastEventDiaNudge';
 import { EventListRow } from '@/components/cards/EventListRow';
+import { EventPriceMeta } from '@/components/cards/EventPriceMeta';
+import type { EventPriceTicketType } from '@/components/cards/resolveEventPrice';
 import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/useMobile';
 
@@ -43,6 +45,8 @@ interface MyEventCardEvent {
   event_type?: string;
   format?: string;
   event_attendees?: Array<{ count: number }>;
+  currency?: string | null;
+  event_ticket_types?: EventPriceTicketType[];
 }
 
 interface MyEventCardProps {
@@ -143,17 +147,24 @@ export function MyEventCard({ event, isPast = false, className, variant = 'hosti
 
   // ── meta — the organizer's own card, so no Notify-me ─────────────
   const meta = (
-    <p className="text-meta text-muted-foreground">
-      <EventTime
-        event={{
-          start_time: event.start_time,
-          time_confirmed: event.time_confirmed,
-          date_confirmed: event.date_confirmed,
-        }}
-        variant="datetime"
-        notifyAction={false}
+    <div className="flex items-center justify-between gap-2">
+      <p className="text-meta text-muted-foreground">
+        <EventTime
+          event={{
+            start_time: event.start_time,
+            time_confirmed: event.time_confirmed,
+            date_confirmed: event.date_confirmed,
+          }}
+          variant="datetime"
+          notifyAction={false}
+        />
+      </p>
+      <EventPriceMeta
+        ticketTypes={event.event_ticket_types}
+        currency={event.currency}
+        className="font-serif text-meta text-foreground shrink-0"
       />
-    </p>
+    </div>
   );
 
   // ── body — registration count, then contextual actions ───────────

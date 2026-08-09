@@ -25,6 +25,7 @@ import { formatEventPlace } from '@/lib/events/formatPlace';
 import { EventTime } from '@/components/events/EventTime';
 import { eventStartMs } from '@/lib/events/eventTime';
 import { EventListRow } from '@/components/cards/EventListRow';
+import { EventPriceMeta } from '@/components/cards/EventPriceMeta';
 import type { ConveneEventCardProps } from './ConveneEventCard';
 
 interface ConveneEventRowProps {
@@ -149,6 +150,11 @@ export function ConveneEventRow({
           {locationInfo.text}
         </span>
       )}
+      <EventPriceMeta
+        ticketTypes={event.event_ticket_types}
+        currency={event.currency}
+        className="ml-auto font-serif text-foreground"
+      />
     </div>
   );
 

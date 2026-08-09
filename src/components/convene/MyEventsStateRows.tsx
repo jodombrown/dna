@@ -1,5 +1,5 @@
 /**
- * DNA | CONVENE — My Events state rows (BD455).
+ * DNA | CONVENE: My Events state rows (BD455).
  *
  * The row treatments for the three lenses added alongside Attending/Hosting:
  * Managing, Drafted, Cancelled. Each is a thin composition over the
@@ -21,6 +21,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Eye, Share2, Copy, MoreHorizontal } from 'lucide-react';
 import { EventListRow } from '@/components/cards/EventListRow';
+import { EventPriceMeta } from '@/components/cards/EventPriceMeta';
+import type { EventPriceTicketType } from '@/components/cards/resolveEventPrice';
 import { EventTime } from '@/components/events/EventTime';
 import { eventStartMs } from '@/lib/events/eventTime';
 import { ROUTES } from '@/config/routes';
@@ -48,6 +50,8 @@ interface StateRowEvent {
   start_time: string | null;
   time_confirmed?: boolean | null;
   date_confirmed?: boolean | null;
+  currency?: string | null;
+  event_ticket_types?: EventPriceTicketType[];
 }
 
 // ── Managing ────────────────────────────────────────────────────────────
@@ -91,16 +95,23 @@ export function ManagingEventRow({ event, role }: ManagingEventRowProps) {
         </Badge>
       }
       meta={
-        <EventTime
-          event={{
-            start_time: event.start_time,
-            time_confirmed: event.time_confirmed,
-            date_confirmed: event.date_confirmed,
-          }}
-          variant="datetime"
-          notifyAction={false}
-          className="text-meta text-muted-foreground"
-        />
+        <div className="flex items-center justify-between gap-2">
+          <EventTime
+            event={{
+              start_time: event.start_time,
+              time_confirmed: event.time_confirmed,
+              date_confirmed: event.date_confirmed,
+            }}
+            variant="datetime"
+            notifyAction={false}
+            className="text-meta text-muted-foreground"
+          />
+          <EventPriceMeta
+            ticketTypes={event.event_ticket_types}
+            currency={event.currency}
+            className="font-serif text-meta text-foreground shrink-0"
+          />
+        </div>
       }
       body={
         <div className="flex items-center gap-2 mt-3">
@@ -185,17 +196,26 @@ export function DraftedEventRow({ event }: DraftedEventRowProps) {
         title={<h3 className="text-h3 line-clamp-1 text-foreground">{event.title}</h3>}
         titleTrailing={<Badge variant="outline">Draft</Badge>}
         meta={
-          startMs !== null ? (
-            <EventTime
-              event={{
-                start_time: event.start_time,
-                time_confirmed: event.time_confirmed,
-                date_confirmed: event.date_confirmed,
-              }}
-              variant="datetime"
-              notifyAction={false}
-              className="text-meta text-muted-foreground"
-            />
+          startMs !== null || event.event_ticket_types?.length ? (
+            <div className="flex items-center justify-between gap-2">
+              {startMs !== null && (
+                <EventTime
+                  event={{
+                    start_time: event.start_time,
+                    time_confirmed: event.time_confirmed,
+                    date_confirmed: event.date_confirmed,
+                  }}
+                  variant="datetime"
+                  notifyAction={false}
+                  className="text-meta text-muted-foreground"
+                />
+              )}
+              <EventPriceMeta
+                ticketTypes={event.event_ticket_types}
+                currency={event.currency}
+                className="font-serif text-meta text-foreground shrink-0 ml-auto"
+              />
+            </div>
           ) : null
         }
         body={

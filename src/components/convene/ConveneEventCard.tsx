@@ -12,6 +12,7 @@ import { eventStartMs } from '@/lib/events/eventTime';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
 import { EventCardFrame } from '@/components/cards/EventCardFrame';
 import { EventPlate } from '@/components/cards/EventPlate';
+import type { EventPriceTicketType } from '@/components/cards/resolveEventPrice';
 
 // The card-padding token steps with the viewport (16 / 14 / 12); it has no
 // Tailwind utility, so the identity band applies it inline — the one certified
@@ -61,6 +62,8 @@ export interface ConveneEventCardProps {
     event_attendees?: Array<{ count: number }>;
     rsvp_status?: string | null;
     user_rsvp_status?: string | null;
+    currency?: string | null;
+    event_ticket_types?: EventPriceTicketType[];
   };
   showRsvp?: boolean;
   rsvpStatus?: 'going' | 'maybe' | 'not_going' | null;
