@@ -5,8 +5,8 @@
  *  - fixed top-0 header container (z-50, bg-background)
  *  - collapsible top bar row (hide-on-scroll target)
  *  - optional always-visible tabs row directly beneath the top bar
- *  - MobileBottomNav mounted by default; suppressed when showBottomNav={false}
- *  - min-h-screen + pb-bottom-nav content wrapper
+ *  - min-h-screen + pb-bottom-nav content wrapper (PulseDock, mounted
+ *    globally in BaseLayout, is the sole mobile bottom nav)
  */
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
@@ -32,15 +32,10 @@ vi.mock('@/components/mobile/DnaMobileHeader', () => ({
   ),
 }));
 
-vi.mock('@/components/mobile/MobileBottomNav', () => ({
-  __esModule: true,
-  default: () => <nav data-testid="mobile-bottom-nav" />,
-}));
-
 import { DnaMobileHubShell } from '@/components/mobile/DnaMobileHubShell';
 
 describe('DnaMobileHubShell', () => {
-  it('renders the canonical fixed top bar, tabs slot, content, and bottom nav', () => {
+  it('renders the canonical fixed top bar, tabs slot, and content', () => {
     const { container, getByTestId, getByText } = render(
       <DnaMobileHubShell
         bubble={{ kind: 'static', placeholder: 'Discover' }}
@@ -50,10 +45,9 @@ describe('DnaMobileHubShell', () => {
       </DnaMobileHubShell>,
     );
 
-    // Header + tabs + bottom nav all present.
+    // Header + tabs present.
     expect(getByTestId('dna-mobile-header')).toBeInTheDocument();
     expect(getByTestId('hub-tabs')).toBeInTheDocument();
-    expect(getByTestId('mobile-bottom-nav')).toBeInTheDocument();
     expect(getByText('Body')).toBeInTheDocument();
 
     // Fixed header wrapper carries the expected chrome classes.
@@ -68,14 +62,5 @@ describe('DnaMobileHubShell', () => {
 
     // Snapshot the whole tree so future JSX/layout changes are surfaced.
     expect(container).toMatchSnapshot();
-  });
-
-  it('omits MobileBottomNav when showBottomNav is false', () => {
-    const { queryByTestId } = render(
-      <DnaMobileHubShell bubble={{ kind: 'static', placeholder: 'X' }} showBottomNav={false}>
-        <div />
-      </DnaMobileHubShell>,
-    );
-    expect(queryByTestId('mobile-bottom-nav')).toBeNull();
   });
 });

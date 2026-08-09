@@ -22,6 +22,8 @@ import { useMobile } from '@/hooks/useMobile';
 import { useAuth } from '@/contexts/AuthContext';
 import { useKeyboardDetection } from '@/hooks/useKeyboardDetection';
 import { scheduleHubPrefetch } from '@/lib/prefetchHubRoutes';
+import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
 
 import { PulseDockItem } from './PulseDockItem';
 
@@ -32,6 +34,14 @@ interface PrimaryItemBase {
   href: string;
   isAdinkra?: boolean;
 }
+
+// BD416: reused verbatim from usePulseBar's per-C microText, not new copy.
+const GUEST_POPOVER_SUBTITLE: Partial<Record<PulseKey, string>> = {
+  connect: 'Grow your network',
+  collaborate: 'Start collaborating',
+  contribute: 'Browse opportunities',
+  convey: 'Share your story',
+};
 
 const ADINKRA_ICONS: Record<string, LucideIcon> = {
   Sankofa,
@@ -57,6 +67,7 @@ export function PulseDock() {
   const pulseNav = usePulseNavigation();
   const location = useLocation();
   const navigate = useNavigate();
+  const [guestPopoverKey, setGuestPopoverKey] = React.useState<PulseKey | null>(null);
 
   // Activate keyboard detection to auto-hide dock when typing
   useKeyboardDetection();
@@ -72,12 +83,31 @@ export function PulseDock() {
   // Hide dock only in full-screen chat threads (Messages with active conversation)
   const isFullScreenChat = location.pathname.includes('/dna/messages');
 
-  // Only render on mobile and for authenticated users
-  if (!isMobile || !user) return null;
+  // BD450: a guest holding an /event/:id?guest_token=... link has no session,
+  // but is still on mobile and still wants the dock — usePulseNavigation()
+  // returns undefined pulse data for them (its query is gated on
+  // enabled: !!user?.id), so nothing below has to special-case guest data.
+  const searchParams = new URLSearchParams(location.search);
+  const isGuestEventView = location.pathname.startsWith('/event/') && !!searchParams.get('guest_token');
+
+  // Only render on mobile, and for authenticated users or a guest event view
+  if (!isMobile || (!user && !isGuestEventView)) return null;
   if (isFullScreenChat) return null;
 
   const handleItemClick = (item: PrimaryItemBase) => {
+    // BD416: Convene is exactly what the guest link is for, so it navigates
+    // normally. Every other C is out of scope for a guest — never navigate,
+    // never disable the item, just surface what joining DNA would unlock.
+    if (isGuestEventView && item.key !== 'convene') {
+      setGuestPopoverKey(item.key);
+      return;
+    }
     navigate(item.href);
+  };
+
+  const handleGuestJoinClick = () => {
+    setGuestPopoverKey(null);
+    navigate(`/auth?redirect=${encodeURIComponent(location.pathname + location.search)}`);
   };
 
   const isActive = (href: string) => {
@@ -116,13 +146,35 @@ export function PulseDock() {
       >
         <div className="flex items-center justify-around h-16 px-2">
           {PRIMARY_ITEMS.map((item) => (
-            <PulseDockItem
+            <Popover
               key={item.key}
-              item={item}
-              pulseData={getPulseData(item)}
-              isActive={isActive(item.href)}
-              onClick={() => handleItemClick(item)}
-            />
+              open={guestPopoverKey === item.key}
+              onOpenChange={(open) => !open && setGuestPopoverKey(null)}
+            >
+              <PopoverAnchor asChild>
+                <div className="contents">
+                  <PulseDockItem
+                    item={item}
+                    pulseData={getPulseData(item)}
+                    isActive={isActive(item.href)}
+                    onClick={() => handleItemClick(item)}
+                  />
+                </div>
+              </PopoverAnchor>
+              {isGuestEventView && item.key !== 'convene' && (
+                <PopoverContent side="top" align="center" className="w-64">
+                  <div className="flex flex-col gap-2">
+                    <p className="font-semibold text-sm">{GUEST_POPOVER_SUBTITLE[item.key]}</p>
+                    <p className="text-xs text-muted-foreground">
+                      This is part of DNA — join to unlock {item.label.toLowerCase()}.
+                    </p>
+                    <Button size="sm" className="mt-1" onClick={handleGuestJoinClick}>
+                      Join DNA to Attend
+                    </Button>
+                  </div>
+                </PopoverContent>
+              )}
+            </Popover>
           ))}
         </div>
       </nav>

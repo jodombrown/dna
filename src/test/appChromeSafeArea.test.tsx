@@ -117,7 +117,6 @@ const DECLARED_CHROME: Array<{ file: string; edges: Array<'top' | 'bottom'> }> =
   { file: 'src/components/convene/EventOverview.tsx', edges: ['top'] },
   { file: 'src/components/admin/AdminDashboardLayout.tsx', edges: ['top'] },
   { file: 'src/components/ui/toast.tsx', edges: ['top', 'bottom'] },
-  { file: 'src/components/mobile/MobileBottomNav.tsx', edges: ['bottom'] },
   { file: 'src/components/pulse/PulseDock.tsx', edges: ['bottom'] },
   { file: 'src/components/convene/StickyRSVPBar.tsx', edges: ['bottom'] },
 ];
