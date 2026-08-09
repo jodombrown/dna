@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { PenSquare, TrendingUp, Search, Clock, Camera, Calendar, BookOpen } from 'lucide-react';
+import { PenSquare, TrendingUp, Search, Clock } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ProfileCompletionNudge } from '@/components/profile/ProfileCompletionNudge';
+import { FeedComposerTeaser } from '@/components/feed/FeedComposerTeaser';
 import { UniversalFeedInfinite } from '@/components/feed/UniversalFeedInfinite';
 import { PersonalizedFeed } from '@/components/feed/PersonalizedFeed';
 import { SearchDialog } from '@/components/feed/SearchDialog';
@@ -235,41 +235,12 @@ const DnaFeed = () => {
           {/* Sticky header: Composer + Tabs */}
           <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm pb-2 space-y-3">
             {/* Chat-style Composer Bar */}
-            <div
-              className="flex items-center gap-3 bg-card rounded-full px-3 py-2 shadow-dna-1 border border-border/40 cursor-pointer hover:shadow-dna-2 transition-all duration-200"
-              onClick={() => composer.open('story')}
-            >
-              <Avatar className="h-8 w-8 shrink-0">
-                <AvatarImage src={profile.avatar_url || ''} />
-                <AvatarFallback className="text-xs">{profile.display_name?.[0] || profile.username?.[0] || 'U'}</AvatarFallback>
-              </Avatar>
-              <span className="flex-1 text-sm text-muted-foreground">
-                What's on your mind?
-              </span>
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={(e) => { e.stopPropagation(); composer.open('story'); }}
-                  className="p-1.5 rounded-full hover:bg-muted transition-colors"
-                  title="Photo"
-                >
-                  <Camera className="h-4 w-4 text-dna-convey" />
-                </button>
-                <button
-                  onClick={(e) => { e.stopPropagation(); composer.open('event'); }}
-                  className="p-1.5 rounded-full hover:bg-muted transition-colors"
-                  title="Event"
-                >
-                  <Calendar className="h-4 w-4 text-dna-gold" />
-                </button>
-                <button
-                  onClick={(e) => { e.stopPropagation(); composer.open('story'); }}
-                  className="p-1.5 rounded-full hover:bg-muted transition-colors"
-                  title="Story"
-                >
-                  <BookOpen className="h-4 w-4 text-dna-copper" />
-                </button>
-              </div>
-            </div>
+            <FeedComposerTeaser
+              avatarUrl={profile.avatar_url}
+              avatarFallback={profile.display_name?.[0] || profile.username?.[0] || 'U'}
+              onOpenStory={() => composer.open('story')}
+              onOpenEvent={() => composer.open('event')}
+            />
 
             {/* Feed Header + Ranking Toggle */}
             <div className="flex items-center justify-between">

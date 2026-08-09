@@ -16,6 +16,8 @@ import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/useMobile';
 
 import { ConveneLocationSelector } from '@/components/convene/ConveneLocationSelector';
+import { ConvenePillFilterBar } from '@/components/convene/ConvenePillFilterBar';
+import { ConveneDiscoveryFrame } from '@/components/convene/ConveneDiscoveryFrame';
 import { ConveneCitiesSection } from '@/components/convene/ConveneCitiesSection';
 import { ConveneHeroEvent } from '@/components/convene/ConveneHeroEvent';
 import { DiscoveryLane } from '@/components/convene/DiscoveryLane';
@@ -43,49 +45,6 @@ import type { MapEventData } from '@/components/convene/mapEventData';
 import { ROUTES } from '@/config/routes';
 
 const LazyMapView = lazy(() => import('@/components/convene/ConveneMapView'));
-
-/* ──────────────────────────────────────────────
-   Pill Filter Bar (Desktop only now)
-   ────────────────────────────────────────────── */
-const PILLS = [
-  { id: 'all', label: 'All' },
-  { id: 'near_me', label: 'Near Me' },
-  { id: 'this_week', label: 'This Week' },
-  { id: 'online', label: 'Virtual' },
-  { id: 'free', label: 'Free' },
-  { id: 'network', label: 'My Network' },
-] as const;
-
-function PillFilterBar({
-  active,
-  onSelect,
-}: {
-  active: string;
-  onSelect: (id: string) => void;
-}) {
-  return (
-    <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
-      {PILLS.map((pill) => {
-        const isActive = active === pill.id;
-        return (
-          <button
-            key={pill.id}
-            onClick={() => onSelect(pill.id)}
-            className={cn(
-              'px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all shrink-0',
-              'border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-              isActive
-                ? 'bg-dna-copper text-white border-dna-copper shadow-sm'
-                : 'bg-background text-foreground border-border hover:border-dna-copper/40 hover:bg-dna-copper/5',
-            )}
-          >
-            {pill.label}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
 
 /* ──────────────────────────────────────────────
    Section Divider — thin Copper line
@@ -276,7 +235,7 @@ export function ConveneDiscovery() {
     // comes from the shared ConveneShell — this page renders body only.
     <ConveneShell>
     <div className="w-full min-h-dvh bg-background">
-      <div className="container max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 pt-0 pb-0 lg:py-6 space-y-3 md:space-y-4 lg:space-y-5">
+      <ConveneDiscoveryFrame className="pb-0 lg:pb-6 space-y-3 md:space-y-4 lg:space-y-5">
         {/* ═══════════════════════════════════════
             MOBILE: MY EVENTS DOOR
             The fixed mobile header has no room for it, and without this
@@ -358,7 +317,7 @@ export function ConveneDiscovery() {
               </div>
             </div>
 
-            <PillFilterBar
+            <ConvenePillFilterBar
               active={activePill}
               onSelect={handlePillChange}
             />
@@ -493,7 +452,7 @@ export function ConveneDiscovery() {
                 weekendEvents.length === 0 &&
                 networkEvents.length === 0 &&
                 diasporaEvents.length === 0 && (
-                  <div className="text-center py-12 space-y-3">
+                  <div className="text-center pb-12 space-y-3">
                     <Calendar className="w-10 h-10 mx-auto text-muted-foreground/40" />
                     <p className="text-muted-foreground text-sm">
                       {selectedCity
@@ -576,7 +535,7 @@ export function ConveneDiscovery() {
             />
           </div>
         )}
-      </div>
+      </ConveneDiscoveryFrame>
 
       <ConveneSearchOverlay
         isOpen={isSearchOpen}
