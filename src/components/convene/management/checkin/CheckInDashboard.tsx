@@ -438,16 +438,16 @@ const CheckInDashboard: React.FC = () => {
         <CardContent className="py-6">
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <p className="text-sm text-muted-foreground">Registered</p>
-              <p className="text-3xl font-bold">{stats?.registered ?? 0}</p>
+              <p className="text-meta text-muted-foreground">Registered</p>
+              <p className="text-h1 font-bold">{stats?.registered ?? 0}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Admitted</p>
-              <p className="text-3xl font-bold">{stats?.admitted ?? 0}</p>
+              <p className="text-meta text-muted-foreground">Admitted</p>
+              <p className="text-h1 font-bold">{stats?.admitted ?? 0}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Joined</p>
-              <p className="text-3xl font-bold">{stats?.joined ?? 0}</p>
+              <p className="text-meta text-muted-foreground">Joined</p>
+              <p className="text-h1 font-bold">{stats?.joined ?? 0}</p>
             </div>
           </div>
         </CardContent>
