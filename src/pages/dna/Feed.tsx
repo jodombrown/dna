@@ -11,6 +11,7 @@ import { UniversalFeedInfinite } from '@/components/feed/UniversalFeedInfinite';
 import { PersonalizedFeed } from '@/components/feed/PersonalizedFeed';
 import { SearchDialog } from '@/components/feed/SearchDialog';
 import { FeedLensBar, FEED_LENSES } from '@/components/feed/FeedLensBar';
+import { HubTabsRow } from '@/components/shell/HubTabsRow';
 import { MobileProfileCompletionBanner } from '@/components/feed/MobileProfileCompletionBanner';
 import { FirstTimeWalkthrough } from '@/components/onboarding/FirstTimeWalkthrough';
 import { FeedHeroGreeting } from '@/components/feed/FeedHeroGreeting';
@@ -172,11 +173,9 @@ const DnaFeed = () => {
             </div>
 
             {/* Tabs row - always visible */}
-            <div className="bg-background border-b border-border">
-              <div className="px-3 py-1.5">
-                <FeedLensBar />
-              </div>
-            </div>
+            <HubTabsRow>
+              <FeedLensBar />
+            </HubTabsRow>
           </div>
 
           {/* Content with dynamic padding from measured header */}
