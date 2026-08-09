@@ -44,6 +44,24 @@ const clearDevelopmentPreviewCache = async () => {
 
 const RETRY_FLAG = 'dna-bootstrap-retry';
 
+const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+const importMainWithRetry = async () => {
+  // A dev-server restart or a dropped chunk fetch can kill this import.
+  // Retry a few times with backoff before falling back to a reload.
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      await import(/* @vite-ignore */ `./main.tsx?boot=${attempt}`);
+      return;
+    } catch (error) {
+      lastError = error;
+      await wait(300 * (attempt + 1));
+    }
+  }
+  throw lastError;
+};
+
 const boot = async () => {
   const clearedState = await clearDevelopmentPreviewCache();
 
@@ -53,10 +71,9 @@ const boot = async () => {
   }
 
   try {
-    await import('./main.tsx');
+    await importMainWithRetry();
     sessionStorage.removeItem(RETRY_FLAG);
   } catch (error) {
-    // A dev-server restart or dropped chunk fetch can kill this import.
     // Reload once so the app self-heals instead of leaving a blank screen.
     if (!sessionStorage.getItem(RETRY_FLAG)) {
       sessionStorage.setItem(RETRY_FLAG, '1');
@@ -66,5 +83,6 @@ const boot = async () => {
     throw error;
   }
 };
+
 
 void boot();
