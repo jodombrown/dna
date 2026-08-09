@@ -4,7 +4,7 @@
  * The row treatments for the three lenses added alongside Attending/Hosting:
  * Managing, Drafted, Cancelled. Each is a thin composition over the
  * `EventListRow` primitive, matching the pattern MyEventCard and
- * ConveneEventRow already use — geometry lives in the primitive, these files
+ * ConveneEventRow already use: geometry lives in the primitive, these files
  * only map a row's state onto its slots.
  */
 
@@ -26,7 +26,7 @@ import { eventStartMs } from '@/lib/events/eventTime';
 import { ROUTES } from '@/config/routes';
 import { toast } from 'sonner';
 
-// The list-row date box — same 44×44 Convene anchor MyEventCard,
+// The list-row date box, the same 44×44 Convene anchor MyEventCard,
 // ConveneEventRow and the page's own list carry (BD226).
 function stateDateBox(event: Parameters<typeof eventStartMs>[0]) {
   const startMs = eventStartMs(event);
@@ -147,7 +147,7 @@ export function ManagingEventRow({ event, role }: ManagingEventRowProps) {
 
 // ── Drafted ─────────────────────────────────────────────────────────────
 // organizer_id = auth user AND lifecycle_state = 'draft'. No date renders
-// when there is none — no placeholder, no em dash, no "TBA". The progress
+// when there is none: no placeholder, no em dash, no "TBA". The progress
 // line names which fields are actually empty, read straight off the row.
 interface DraftedEventRowProps {
   event: StateRowEvent & {
@@ -221,7 +221,7 @@ export function DraftedEventRow({ event }: DraftedEventRowProps) {
 
 // ── Cancelled ───────────────────────────────────────────────────────────
 // organizer_id = auth user AND lifecycle_state = 'cancelled'. Neutral bevel,
-// recessed fill, muted type, no action at all — and no notification claim:
+// recessed fill, muted type, no action at all, and no notification claim:
 // no trigger on events or event_attendees notifies anyone, so a line saying
 // attendees were told would be false.
 interface CancelledEventRowProps {
@@ -233,14 +233,21 @@ export function CancelledEventRow({ event }: CancelledEventRowProps) {
     <div className="rounded-xl border-bevel border-border bg-muted/40">
       <EventListRow
         leading={
-          <div className="w-11 h-11 border border-border rounded-lg bg-muted flex flex-col items-center justify-center gap-0.5">
-            <span className="text-micro text-muted-foreground uppercase leading-none">
-              {eventStartMs(event) !== null ? format(new Date(eventStartMs(event) as number), 'MMM').toUpperCase() : 'TBA'}
-            </span>
-            <span className="text-h2 leading-none text-muted-foreground">
-              {eventStartMs(event) !== null ? format(new Date(eventStartMs(event) as number), 'd') : '·'}
-            </span>
-          </div>
+          eventStartMs(event) !== null ? (
+            <div className="w-11 h-11 border border-border rounded-lg bg-muted flex flex-col items-center justify-center gap-0.5">
+              <span className="text-micro text-muted-foreground uppercase leading-none">
+                {format(new Date(eventStartMs(event) as number), 'MMM').toUpperCase()}
+              </span>
+              <span className="text-h2 leading-none text-muted-foreground">
+                {format(new Date(eventStartMs(event) as number), 'd')}
+              </span>
+            </div>
+          ) : (
+            // A cancelled event has nothing to announce, so TBA is false
+            // here (unlike the live-event BD226 convention): a neutral empty
+            // box, DraftedEventRow's treatment for a missing date.
+            <div className="w-11 h-11 border border-dashed border-bevel-event/50 rounded-lg bg-background" />
+          )
         }
         title={<h3 className="text-h3 line-clamp-1 text-muted-foreground">{event.title}</h3>}
         titleTrailing={<Badge variant="secondary">Cancelled</Badge>}
