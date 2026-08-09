@@ -84,8 +84,9 @@ const BaseLayoutChrome: React.FC<BaseLayoutProps> = ({ children }) => {
           // every route now sits on --background with a single heritage texture
           // (the CulturalPattern overlay below), never a route-specific gradient.
           "bg-background",
-          // Add bottom padding on mobile to account for PulseDock
-          "pb-20 lg:pb-0",
+          // bottom padding for PulseDock, which renders only below 768 (useMobile), so the
+          // clearance must clear at md, not lg.
+          "pb-20 md:pb-0",
           "transition-colors duration-300 ease-in-out",
           "overflow-x-hidden"
         )}
