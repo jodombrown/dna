@@ -1,4 +1,4 @@
-import { useEffect, useState, type RefObject } from 'react';
+import { useLayoutEffect, useState, type RefObject } from 'react';
 
 /** Extra pixels added below the measured header so content never touches it */
 const BUFFER_PX = 0;
@@ -18,7 +18,7 @@ export function useMobileHeaderHeight(
 ): number {
   const [height, setHeight] = useState(0);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
 

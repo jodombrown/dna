@@ -53,7 +53,7 @@ export const DnaMobileHeader: React.FC<DnaMobileHeaderProps> = ({
   return (
     <div
       className={cn(
-        'md:hidden bg-background shadow-dna-1 transition-all duration-200',
+        'md:hidden bg-background shadow-dna-1 border-b border-border transition-all duration-200',
         isVisible ? 'max-h-16 opacity-100' : 'max-h-0 opacity-0 overflow-hidden',
         className,
       )}
@@ -81,7 +81,7 @@ export const DnaMobileHeader: React.FC<DnaMobileHeaderProps> = ({
               value={bubble.value ?? ''}
               onChange={(e) => bubble.onChange?.(e.target.value)}
               onFocus={bubble.onClick}
-              className="w-full h-9 rounded-full bg-muted border-0 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full h-9 rounded-full bg-muted border-0 pl-4 pr-10 text-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             />
             {bubble.onFiltersClick && (
               <button
@@ -105,7 +105,7 @@ export const DnaMobileHeader: React.FC<DnaMobileHeaderProps> = ({
             role={bubble.onClick ? 'button' : undefined}
             tabIndex={bubble.onClick ? 0 : undefined}
             className={cn(
-              'flex-1 min-w-0 h-9 flex items-center bg-muted rounded-full px-4 text-sm text-muted-foreground transition-colors',
+              'flex-1 min-w-0 h-9 flex items-center bg-muted rounded-full px-4 text-body text-muted-foreground transition-colors',
               bubble.onClick && 'cursor-pointer hover:bg-muted/80',
             )}
           >

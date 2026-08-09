@@ -19,9 +19,11 @@ import { useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Megaphone, UserRound, CircleCheckBig, Plus } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useMobile } from '@/hooks/useMobile';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ContributeShell } from '@/components/contribute/ContributeShell';
+import { HubTabsRow } from '@/components/shell/HubTabsRow';
 import {
   ContributeLensBar,
   CONTRIBUTE_LENSES,
@@ -45,6 +47,7 @@ function LensSkeletons() {
 
 export default function ContributeHub() {
   const { user } = useAuth();
+  const { isMobile } = useMobile();
   const [searchParams] = useSearchParams();
 
   const lensParam = searchParams.get('lens');
@@ -166,9 +169,15 @@ export default function ContributeHub() {
   }
 
   return (
-    <ContributeShell>
+    <ContributeShell
+      tabs={
+        <HubTabsRow>
+          <ContributeLensBar />
+        </HubTabsRow>
+      }
+    >
       <div className="flex flex-col gap-6">
-        <ContributeLensBar />
+        {!isMobile && <ContributeLensBar />}
 
         {renderLensBody()}
       </div>

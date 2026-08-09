@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import LayoutController from '@/components/LayoutController';
@@ -12,8 +12,8 @@ import { LensBar, type Lens } from '@/components/shell/LensBar';
 import { useMobile } from '@/hooks/useMobile';
 import { STORY_TYPE_CONFIG, type StoryType } from '@/types/storyTypes';
 import { cn } from '@/lib/utils';
-import { DnaMobileHeader } from '@/components/mobile/DnaMobileHeader';
-import { useMobileHeaderHeight } from '@/hooks/useMobileHeaderHeight';
+import { DnaMobileHubShell } from '@/components/mobile/DnaMobileHubShell';
+import { HubTabsRow } from '@/components/shell/HubTabsRow';
 import { useInfiniteUniversalFeed } from '@/hooks/useInfiniteUniversalFeed';
 import { ConveyTrendingSection } from '@/components/convey/ConveyTrendingSection';
 import { ConveyEditorialCard } from '@/components/convey/ConveyEditorialCards';
@@ -82,8 +82,6 @@ export default function ConveyStoryHub() {
   const [selectedCategory, setSelectedCategory] = useState<StoryType | 'all'>('all');
   const composer = useUniversalComposer();
   const { isMobile } = useMobile();
-  const mobileHeaderRef = useRef<HTMLDivElement>(null);
-  const mobileHeaderPadding = useMobileHeaderHeight(mobileHeaderRef);
 
   // Category filtering is per-lens; reset it to All whenever the lens changes
   // (the old tab bar did this in its onTabChange, now driven by the URL).
@@ -225,20 +223,13 @@ export default function ConveyStoryHub() {
   // ─── Main Center Content ───────────────────────────────────────────
   const centerColumn = (
     <div className="space-y-4">
-      {/* Sticky Header */}
-      <div
-        className={cn(
-          'bg-background/95 backdrop-blur-sm z-10',
-          isMobile ? 'sticky top-0 pt-1 pb-0 -mx-4 px-4' : 'pb-0'
-        )}
-      >
-        {/* Editorial Lens Bar (BD332): route-driven via ?lens=<id>. The
-            descriptor line beneath the bar is now rendered by the LensBar
-            primitive itself (BD332e), the one pattern every surface shares. */}
-        <div className="border-b border-border">
-          <LensBar lenses={CONVEY_LENSES} ariaLabel="Convey lenses" c="convey" />
+      {!isMobile && (
+        <div className="bg-background/95 backdrop-blur-sm z-10 pb-0">
+          <div className="border-b border-border">
+            <LensBar lenses={CONVEY_LENSES} ariaLabel="Convey lenses" c="convey" />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Daily lens — cross-module day view rehomed from DailyPulseSheet (D086) */}
       {activeTab === 'daily' && <DailyPulseContent active />}
@@ -428,34 +419,26 @@ export default function ConveyStoryHub() {
   );
 
   return (
-    <>
-      {isMobile && (
-        <div
-          ref={mobileHeaderRef}
-          className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border md:hidden"
-          /* BD157 */
-          style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
-        >
-          <DnaMobileHeader
-            bubble={{
-              kind: 'composer',
-              placeholder: 'Write a story, update...',
-              onClick: () => composer.open('story'),
-            }}
-          />
-        </div>
-      )}
-      <div
-        className="min-h-screen bg-background pb-bottom-nav md:pb-0"
-        style={isMobile ? { paddingTop: mobileHeaderPadding || 56 } : undefined}
-      >
+    <DnaMobileHubShell
+      bubble={{
+        kind: 'composer',
+        placeholder: 'Write a story, update...',
+        onClick: () => composer.open('story'),
+      }}
+      tabs={
+        <HubTabsRow>
+          <LensBar lenses={CONVEY_LENSES} ariaLabel="Convey lenses" c="convey" />
+        </HubTabsRow>
+      }
+      contentPadding
+    >
+      <div className="min-h-screen bg-background pb-bottom-nav md:pb-0">
         <LayoutController
           leftColumn={leftColumn}
           centerColumn={centerColumn}
           rightColumn={rightColumn}
         />
       </div>
-
-    </>
+    </DnaMobileHubShell>
   );
 }
