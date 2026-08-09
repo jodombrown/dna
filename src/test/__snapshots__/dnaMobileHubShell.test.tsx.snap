@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`DnaMobileHubShell > renders the canonical fixed top bar, tabs slot, content, and bottom nav 1`] = `
+exports[`DnaMobileHubShell > renders the canonical fixed top bar, tabs slot, and content 1`] = `
 <div>
   <div
     class="min-h-screen bg-background overflow-x-hidden pb-bottom-nav"
@@ -32,9 +32,6 @@ exports[`DnaMobileHubShell > renders the canonical fixed top bar, tabs slot, con
         Body
       </main>
     </div>
-    <nav
-      data-testid="mobile-bottom-nav"
-    />
   </div>
 </div>
 `;

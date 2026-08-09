@@ -74,16 +74,19 @@ describe('composer collapse — structural', () => {
     expect(source).not.toMatch(/<Sheet[\s>]/);
   });
 
-  it('the two dead mounts are gone, not migrated', () => {
-    for (const rel of [
-      'src/components/mobile/MobileBottomNav.tsx',
-      'src/pages/dna/convene/EventDetail.tsx',
-    ]) {
-      const s = code(readFileSync(resolve(repoRoot, rel), 'utf8'));
-      expect(s, `${rel} should no longer reference the composer`).not.toMatch(
-        /useUniversalComposer|<UniversalComposer/,
-      );
-    }
+  it('MobileBottomNav.tsx is gone, not migrated', () => {
+    expect(
+      files.some((f) => f.endsWith('src/components/mobile/MobileBottomNav.tsx')),
+      'MobileBottomNav.tsx should no longer exist in the tree',
+    ).toBe(false);
+  });
+
+  it('the other dead mount is gone, not migrated', () => {
+    const rel = 'src/pages/dna/convene/EventDetail.tsx';
+    const s = code(readFileSync(resolve(repoRoot, rel), 'utf8'));
+    expect(s, `${rel} should no longer reference the composer`).not.toMatch(
+      /useUniversalComposer|<UniversalComposer/,
+    );
   });
 });
 

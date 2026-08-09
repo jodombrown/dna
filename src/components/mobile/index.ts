@@ -6,7 +6,6 @@ export { default as MobileButton } from './MobileButton';
 export { default as MobilePostButton } from './MobilePostButton';
 
 // Mobile Navigation & Layout
-export { default as MobileBottomNav } from './MobileBottomNav';
 export { MobileHeader } from './MobileHeader';
 export { MobileViewContainer } from './MobileViewContainer';
 
