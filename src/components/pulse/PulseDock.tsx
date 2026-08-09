@@ -102,6 +102,12 @@ export function PulseDock() {
       setGuestPopoverKey(item.key);
       return;
     }
+    // BD451: item.href for Convene is the general authenticated hub, which
+    // OnboardingGuard bounces a sessionless guest to /auth. A guest tapping
+    // Convene is already on their event page and should just stay there.
+    if (isGuestEventView && item.key === 'convene') {
+      return;
+    }
     navigate(item.href);
   };
 
@@ -112,6 +118,10 @@ export function PulseDock() {
 
   const isActive = (href: string) => {
     const path = location.pathname;
+    // BD451: a guest event view never has a path under /dna/convene, so the
+    // prefix match below never fires for them — special-case it so the icon
+    // still shows active while they're legitimately using it.
+    if (isGuestEventView && href === '/dna/convene') return true;
     // Direct prefix match
     if (path.startsWith(href)) return true;
     // Map related routes to their parent module
