@@ -29,6 +29,8 @@ import {
 import { LensEmpty } from '@/components/collaborate/SpacesLensEmpty';
 import { useJoinSpace } from '@/hooks/collaborate/useJoinSpace';
 import type { SpaceVisibility } from '@/types/collaborate';
+import { HubTabsRow } from '@/components/shell/HubTabsRow';
+import { useMobile } from '@/hooks/useMobile';
 
 interface SpaceRow {
   id: string;
