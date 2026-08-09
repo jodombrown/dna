@@ -164,8 +164,8 @@ export function PulseDock() {
               {isGuestEventView && item.key !== 'convene' && (
                 <PopoverContent side="top" align="center" className="w-64">
                   <div className="flex flex-col gap-2">
-                    <p className="font-semibold text-sm">{GUEST_POPOVER_SUBTITLE[item.key]}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="font-semibold text-body">{GUEST_POPOVER_SUBTITLE[item.key]}</p>
+                    <p className="text-meta text-muted-foreground">
                       This is part of DNA — join to unlock {item.label.toLowerCase()}.
                     </p>
                     <Button size="sm" className="mt-1" onClick={handleGuestJoinClick}>
