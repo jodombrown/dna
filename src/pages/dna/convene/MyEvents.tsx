@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Calendar, BarChart3, List, CalendarDays, Pencil, CircleSlash } from 'lucide-react';
+import { Calendar, BarChart3, List, CalendarDays, Pencil, CircleSlash, Shield } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -142,7 +142,7 @@ const MyEvents = () => {
   // event_roles rows for the current user where they hold a role but are NOT
   // the organizer (the organizer already sees the event under Hosting).
   // event_roles has zero rows live, so this renders empty for everyone at
-  // ship — that is correct, not a bug (BD455).
+  // ship, that is correct, not a bug (BD455).
   const { data: managingRows = [], isLoading: managingLoading } = useQuery({
     queryKey: ['managing-events', user?.id],
     queryFn: async () => {
@@ -163,7 +163,7 @@ const MyEvents = () => {
   });
 
   // ── Drafted events ───────────────────────────────────
-  // organizer_id = auth user AND lifecycle_state = 'draft' — the canonical
+  // organizer_id = auth user AND lifecycle_state = 'draft': the canonical
   // column, not the trigger-mirrored `status`.
   const { data: draftedEvents = [], isLoading: draftedLoading } = useQuery({
     queryKey: ['drafted-events', user?.id],
@@ -307,7 +307,7 @@ const MyEvents = () => {
                 lenses={[
                   { id: 'attending', label: 'Attending', icon: Calendar, count: attendingEvents.length },
                   { id: 'hosting', label: 'Hosting', icon: BarChart3, count: hostingEvents.length },
-                  { id: 'managing', label: 'Managing', icon: List, count: managingRows.length },
+                  { id: 'managing', label: 'Managing', icon: Shield, count: managingRows.length },
                   { id: 'drafted', label: 'Drafted', icon: Pencil, count: draftedEvents.length },
                   { id: 'cancelled', label: 'Cancelled', icon: CircleSlash, count: cancelledEvents.length },
                 ]}

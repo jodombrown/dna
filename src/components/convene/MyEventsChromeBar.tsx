@@ -8,7 +8,7 @@
  * same two controls appear as LensRail + a header ViewSwitch instead.
  */
 import React from 'react';
-import { Calendar, BarChart3, List, CalendarDays, Pencil, CircleSlash } from 'lucide-react';
+import { Calendar, BarChart3, List, CalendarDays, Pencil, CircleSlash, Shield } from 'lucide-react';
 import { LensBar } from '@/components/shell/LensBar';
 import { ViewSwitch } from '@/components/shell/ViewSwitch';
 
@@ -21,7 +21,7 @@ export function MyEventsChromeBar() {
         lenses={[
           { id: 'attending', label: 'Attending', icon: Calendar },
           { id: 'hosting', label: 'Hosting', icon: BarChart3 },
-          { id: 'managing', label: 'Managing', icon: List },
+          { id: 'managing', label: 'Managing', icon: Shield },
           { id: 'drafted', label: 'Drafted', icon: Pencil },
           { id: 'cancelled', label: 'Cancelled', icon: CircleSlash },
         ]}
