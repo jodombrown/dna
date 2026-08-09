@@ -652,7 +652,7 @@ const MyEvents = () => {
               {activeTab === 'managing' && (
                 <div className="space-y-5">
                   {managingLoading ? (
-                    <p className="text-center text-muted-foreground py-8">Loading events...</p>
+                    <p className="text-center text-muted-foreground">Loading events...</p>
                   ) : managingRows.length === 0 ? (
                     <LensEmpty
                       icon={List}
@@ -673,7 +673,7 @@ const MyEvents = () => {
               {activeTab === 'drafted' && (
                 <div className="space-y-5">
                   {draftedLoading ? (
-                    <p className="text-center text-muted-foreground py-8">Loading events...</p>
+                    <p className="text-center text-muted-foreground">Loading events...</p>
                   ) : draftedEvents.length === 0 ? (
                     <LensEmpty
                       icon={Pencil}
@@ -694,7 +694,7 @@ const MyEvents = () => {
               {activeTab === 'cancelled' && (
                 <div className="space-y-5">
                   {cancelledLoading ? (
-                    <p className="text-center text-muted-foreground py-8">Loading events...</p>
+                    <p className="text-center text-muted-foreground">Loading events...</p>
                   ) : cancelledEvents.length === 0 ? (
                     <LensEmpty
                       icon={CircleSlash}
