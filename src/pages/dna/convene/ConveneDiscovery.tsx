@@ -72,7 +72,7 @@ function PillFilterBar({
             key={pill.id}
             onClick={() => onSelect(pill.id)}
             className={cn(
-              'px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all shrink-0',
+              'h-9 flex items-center px-4 rounded-full text-sm font-medium whitespace-nowrap transition-all shrink-0',
               'border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
               isActive
                 ? 'bg-dna-copper text-white border-dna-copper shadow-sm'
@@ -276,7 +276,7 @@ export function ConveneDiscovery() {
     // comes from the shared ConveneShell — this page renders body only.
     <ConveneShell>
     <div className="w-full min-h-dvh bg-background">
-      <div className="container max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 pt-0 pb-0 lg:py-6 space-y-3 md:space-y-4 lg:space-y-5">
+      <div className="container max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 pb-0 lg:pb-6 space-y-3 md:space-y-4 lg:space-y-5">
         {/* ═══════════════════════════════════════
             MOBILE: MY EVENTS DOOR
             The fixed mobile header has no room for it, and without this
@@ -493,7 +493,7 @@ export function ConveneDiscovery() {
                 weekendEvents.length === 0 &&
                 networkEvents.length === 0 &&
                 diasporaEvents.length === 0 && (
-                  <div className="text-center py-12 space-y-3">
+                  <div className="text-center mt-12 pb-12 space-y-3">
                     <Calendar className="w-10 h-10 mx-auto text-muted-foreground/40" />
                     <p className="text-muted-foreground text-sm">
                       {selectedCity

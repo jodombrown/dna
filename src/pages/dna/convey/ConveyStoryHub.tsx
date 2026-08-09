@@ -292,7 +292,7 @@ export default function ConveyStoryHub() {
               ))}
             </div>
           ) : filteredStories.length === 0 ? (
-            <div className="text-center py-12">
+            <div className="text-center mt-12 pb-12">
               <div className="p-4 rounded-full bg-muted/50 w-fit mx-auto mb-4">
                 <BookOpen className="h-8 w-8 text-muted-foreground" />
               </div>
@@ -335,7 +335,7 @@ export default function ConveyStoryHub() {
 
           {/* Load More */}
           {hasNextPage && (
-            <div className="text-center pt-4">
+            <div className="text-center mt-4">
               <Button
                 variant="outline"
                 onClick={() => fetchNextPage()}
@@ -364,7 +364,7 @@ export default function ConveyStoryHub() {
             <p className="text-white/80 text-xs">Inspire the diaspora with your journey</p>
           </div>
         </div>
-        <CardContent className="pt-4">
+        <CardContent className="mt-4">
           <Button onClick={() => composer.open('story')} className="w-full bg-dna-gold hover:bg-dna-gold/90">
             <PenSquare className="h-4 w-4 mr-2" />
             Start Writing

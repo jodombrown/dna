@@ -236,7 +236,7 @@ const DnaFeed = () => {
           <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm pb-2 space-y-3">
             {/* Chat-style Composer Bar */}
             <div
-              className="flex items-center gap-3 bg-card rounded-full px-3 py-2 shadow-dna-1 border border-border/40 cursor-pointer hover:shadow-dna-2 transition-all duration-200"
+              className="flex items-center gap-3 h-11 bg-card rounded-full px-3 shadow-dna-1 border border-border/40 cursor-pointer hover:shadow-dna-2 transition-all duration-200"
               onClick={() => composer.open('story')}
             >
               <Avatar className="h-8 w-8 shrink-0">
