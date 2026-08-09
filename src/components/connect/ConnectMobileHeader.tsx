@@ -3,6 +3,7 @@ import { Users, Network, Map, MessageCircle } from 'lucide-react';
 import { DnaMobileHeader } from '@/components/mobile/DnaMobileHeader';
 import { MESSAGING_ENABLED } from '@/config/featureFlags';
 import { LensBar, type Lens } from '@/components/shell/LensBar';
+import { HubTabsRow } from '@/components/shell/HubTabsRow';
 
 export type ConnectTab = 'discover' | 'network' | 'map' | 'messages';
 
@@ -59,9 +60,9 @@ export function ConnectMobileHeader({
 
 export function ConnectMobileTabs() {
   return (
-    <div className="px-3 py-1.5 bg-background border-b border-border">
+    <HubTabsRow>
       <LensBar lenses={CONNECT_LENSES} ariaLabel="Connect lenses" c="connect" />
-    </div>
+    </HubTabsRow>
   );
 }
 
