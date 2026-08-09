@@ -8,7 +8,6 @@ import {
   CheckCircle2,
   XCircle,
   AlertCircle,
-  Users,
   Camera,
   CameraOff,
   Loader2,
@@ -96,20 +95,31 @@ const CheckInDashboard: React.FC = () => {
   // Tab state
   const [activeTab, setActiveTab] = useState('scanner');
 
-  // Fetch stats
-  const { data: stats, refetch: refetchStats } = useQuery({
-    queryKey: ['checkin-stats', event.id],
+  // Fetch stats - three distinct admission-evidence metrics, never summed
+  const { data: stats } = useQuery({
+    queryKey: ['admission-stats', event.id],
     queryFn: async () => {
-      const { data: attendees } = await supabase
+      const { count: registered } = await supabase
         .from('event_attendees')
-        .select('checked_in, status')
+        .select('*', { count: 'exact', head: true })
         .eq('event_id', event.id)
-        .in('status', ['going', 'maybe', 'pending', 'waitlist']);
+        .eq('status', 'going');
 
-      const total = attendees?.filter(a => a.status === 'going').length || 0;
-      const checkedIn = attendees?.filter(a => a.checked_in).length || 0;
+      const { data: admittedRows } = await supabase
+        .from('event_attendance_records')
+        .select('attendee_id, event_attendees!inner(event_id)')
+        .eq('event_attendees.event_id', event.id)
+        .eq('evidence_type', 'scan');
+      const admitted = new Set((admittedRows ?? []).map(r => r.attendee_id)).size;
 
-      return { total, checkedIn };
+      const { data: joinedRows } = await supabase
+        .from('event_attendance_records')
+        .select('attendee_id, event_attendees!inner(event_id)')
+        .eq('event_attendees.event_id', event.id)
+        .eq('evidence_type', 'stream_telemetry');
+      const joined = new Set((joinedRows ?? []).map(r => r.attendee_id)).size;
+
+      return { registered: registered ?? 0, admitted, joined };
     },
     enabled: !!event.id,
   });
@@ -228,40 +238,45 @@ const CheckInDashboard: React.FC = () => {
   // Check-in mutation
   const checkInMutation = useMutation({
     mutationFn: async (attendeeId: string) => {
-      const { error } = await supabase
-        .from('event_attendees')
-        .update({ checked_in: true, checked_in_at: new Date().toISOString() })
-        .eq('id', attendeeId)
-        .eq('event_id', event.id);
-
+      const { data, error } = await supabase.rpc('rpc_manual_admission', {
+        p_event: event.id,
+        p_attendee_id: attendeeId,
+      });
       if (error) throw error;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['checkin-attendees', event.id] });
       queryClient.invalidateQueries({ queryKey: ['recent-checkins', event.id] });
-      refetchStats();
+      queryClient.invalidateQueries({ queryKey: ['admission-stats', event.id] });
       toast({ title: 'Checked In', description: 'Attendee has been checked in successfully.' });
     },
-    onError: () => {
-      toast({ title: 'Error', description: 'Failed to check in attendee.', variant: 'destructive' });
+    onError: (error: Error) => {
+      toast({ title: 'Error', description: error.message || 'Failed to check in attendee.', variant: 'destructive' });
     },
   });
 
   // Undo check-in mutation
   const undoCheckInMutation = useMutation({
     mutationFn: async (attendeeId: string) => {
+      const { error: deleteError } = await supabase
+        .from('event_attendance_records')
+        .delete()
+        .eq('attendee_id', attendeeId)
+        .eq('evidence_type', 'scan');
+      if (deleteError) throw deleteError;
+
       const { error } = await supabase
         .from('event_attendees')
         .update({ checked_in: false, checked_in_at: null })
         .eq('id', attendeeId)
         .eq('event_id', event.id);
-
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['checkin-attendees', event.id] });
       queryClient.invalidateQueries({ queryKey: ['recent-checkins', event.id] });
-      refetchStats();
+      queryClient.invalidateQueries({ queryKey: ['admission-stats', event.id] });
       toast({ title: 'Check-in Undone', description: 'Attendee check-in has been reversed.' });
     },
     onError: () => {
@@ -272,7 +287,7 @@ const CheckInDashboard: React.FC = () => {
   // Walk-up registration mutation
   const walkUpMutation = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase
+      const { data: inserted, error } = await supabase
         .from('event_attendees')
         .insert({
           event_id: event.id,
@@ -283,14 +298,24 @@ const CheckInDashboard: React.FC = () => {
           response_note: walkUpNotes || null,
           checked_in: walkUpCheckIn,
           checked_in_at: walkUpCheckIn ? new Date().toISOString() : null,
-        });
+        })
+        .select('id')
+        .single();
 
       if (error) throw error;
+
+      if (walkUpCheckIn && inserted) {
+        const { error: admissionError } = await supabase.rpc('rpc_manual_admission', {
+          p_event: event.id,
+          p_attendee_id: inserted.id,
+        });
+        if (admissionError) throw admissionError;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['checkin-attendees', event.id] });
       queryClient.invalidateQueries({ queryKey: ['recent-checkins', event.id] });
-      refetchStats();
+      queryClient.invalidateQueries({ queryKey: ['admission-stats', event.id] });
       toast({ title: 'Walk-up Added', description: `${walkUpName} has been added${walkUpCheckIn ? ' and checked in' : ''}.` });
       setShowWalkUpModal(false);
       setWalkUpName('');
@@ -349,9 +374,9 @@ const CheckInDashboard: React.FC = () => {
             } else {
               setScanResult({ state: 'success', message: 'Checked in successfully!' });
               vibrate([100]);
-              refetchStats();
               queryClient.invalidateQueries({ queryKey: ['checkin-attendees', event.id] });
               queryClient.invalidateQueries({ queryKey: ['recent-checkins', event.id] });
+              queryClient.invalidateQueries({ queryKey: ['admission-stats', event.id] });
             }
 
             // Auto-reset after 2 seconds
@@ -400,10 +425,6 @@ const CheckInDashboard: React.FC = () => {
     return name.includes(query) || username.includes(query);
   });
 
-  const checkInPercentage = stats && stats.total > 0
-    ? Math.round((stats.checkedIn / stats.total) * 100)
-    : 0;
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -412,24 +433,21 @@ const CheckInDashboard: React.FC = () => {
         <p className="text-muted-foreground">Scan QR codes or search to check in attendees</p>
       </div>
 
-      {/* Stats Bar */}
+      {/* Stats Bar - three distinct admission-evidence metrics, never summed or shown as a rate */}
       <Card className="bg-gradient-to-r from-primary/10 to-primary/5">
         <CardContent className="py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-full bg-primary/20 flex items-center justify-center">
-                <Users className="h-7 w-7 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Check-in Progress</p>
-                <p className="text-3xl font-bold">
-                  {stats?.checkedIn || 0} / {stats?.total || 0}
-                </p>
-              </div>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <p className="text-sm text-muted-foreground">Registered</p>
+              <p className="text-3xl font-bold">{stats?.registered ?? 0}</p>
             </div>
-            <div className="text-right">
-              <p className="text-sm text-muted-foreground">Show-up Rate</p>
-              <p className="text-3xl font-bold">{checkInPercentage}%</p>
+            <div>
+              <p className="text-sm text-muted-foreground">Admitted</p>
+              <p className="text-3xl font-bold">{stats?.admitted ?? 0}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Joined</p>
+              <p className="text-3xl font-bold">{stats?.joined ?? 0}</p>
             </div>
           </div>
         </CardContent>
