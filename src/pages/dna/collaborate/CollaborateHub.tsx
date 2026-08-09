@@ -68,6 +68,7 @@ const VALID_LENS_IDS = COLLABORATE_LENSES.map((l) => l.id);
 
 export default function CollaborateHub() {
   const { user } = useAuth();
+  const { isMobile } = useMobile();
   const joinSpace = useJoinSpace();
   const composer = useUniversalComposer();
   const [searchParams] = useSearchParams();
