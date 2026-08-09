@@ -49,10 +49,12 @@ const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, 
 const importMainWithRetry = async () => {
   // A dev-server restart or a dropped chunk fetch can kill this import.
   // Retry a few times with backoff before falling back to a reload.
+  // Keep the specifier static: a `?boot=` query string is not part of Vite's
+  // module graph, so those requests 404 in the preview and never recover.
   let lastError: unknown;
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
-      await import(/* @vite-ignore */ `./main.tsx?boot=${attempt}`);
+      await import('./main');
       return;
     } catch (error) {
       lastError = error;
