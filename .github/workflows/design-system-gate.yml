@@ -288,8 +288,8 @@ jobs:
           git fetch --no-tags origin "$BASE_REF"
           BASE="origin/$BASE_REF"
 
-          if git diff --quiet "$BASE"...HEAD -- public/sw.js; then
-            echo "public/sw.js unchanged. Gate passes."
+          if git diff --quiet "$BASE"...HEAD -- public/sw.js tailwind.config.ts src/index.css; then
+            echo "No cache-relevant files changed. Gate passes."
             exit 0
           fi
 
