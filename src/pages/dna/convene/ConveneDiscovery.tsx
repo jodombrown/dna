@@ -26,7 +26,7 @@ import { HappeningNowSection } from '@/components/convene/HappeningNowSection';
 import { ConveneDIADiscoveryCard } from '@/components/convene/ConveneDIADiscoveryCard';
 import { DIAHubSection } from '@/components/dia/DIAHubSection';
 import { UpcomingEventsSection } from '@/components/convene/UpcomingEventsSection';
-import { ConveneShell } from '@/components/convene/ConveneShell';
+import { ConveneShell, CONVENE_LENSES } from '@/components/convene/ConveneShell';
 import { useConveneCities, useUserCity } from '@/hooks/convene/useConveneCities';
 import {
   useHeroEvent,
@@ -522,7 +522,7 @@ export function ConveneDiscovery() {
               <NearMeEventsLane events={filteredEvents} />
             ) : (
               <DiscoveryLane
-                title={`${PILLS.find((p) => p.id === activePill)?.label ?? 'Filtered'} Events`}
+                title={`${CONVENE_LENSES.find((l) => l.id === activePill)?.label ?? 'Filtered'} Events`}
                 events={filteredEvents}
                 emptyMessage={`No events found for this filter. Try another or host one!`}
                 onSeeAll={() => navigate('/dna/convene/events')}

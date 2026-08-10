@@ -99,13 +99,24 @@ export function DnaMobileHubShell({
       </div>
 
       <div
-        className={cn('transition-[padding] duration-200 pt-5', contentPadding && 'px-3', contentClassName)}
+        className={cn('transition-[padding] duration-200', contentPadding && 'px-3', contentClassName)}
         /*
+          The measured header height is the OFFSET, not the rhythm. A fixed 12px
+          breathing gap is added on top of it so the first card never sits flush
+          against the tabs row, whether the lens descriptor is open or collapsed
+          (the descriptor is inside the measured element, so the gap holds
+          through the collapse animation).
+
           The fallback runs only for the frame before ResizeObserver reports.
           It has to carry the inset too, or that frame renders content under the
           header on exactly the devices this fix is for.
         */
-        style={{ paddingTop: headerPadding || 'calc(env(safe-area-inset-top, 0px) + 56px)' }}
+        style={{
+          paddingTop: headerPadding
+            ? `calc(${headerPadding}px + 0.75rem)`
+            : 'calc(env(safe-area-inset-top, 0px) + 56px + 0.75rem)',
+        }}
+
       >
         {children}
       </div>
