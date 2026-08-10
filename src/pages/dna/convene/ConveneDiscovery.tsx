@@ -126,13 +126,49 @@ export function ConveneDiscovery() {
   // than intercepting the click — and never overwrites a facet the member
   // has already set independently.
   const prevPillRef = useRef(activePill);
+  // Tracks the {key, value} the CURRENT lens wrote via this effect, or null
+  // if it wrote nothing (either it has no facet equivalent, or the member
+  // already held that key). Used on the next transition to decide whether
+  // this lens's writing is still "owned" by the lens (safe to clear) or the
+  // member has since changed it (leave it alone).
+  const lensWroteRef = useRef<{ key: ConveneFacetKey; value: string } | null>(null);
   useEffect(() => {
     if (prevPillRef.current !== activePill) {
-      if (activePill === 'this_week' && !searchParams.get('when')) {
-        updateFilters({ when: 'this_week' });
-      } else if (activePill === 'online' && !searchParams.get('format')) {
-        updateFilters({ format: 'virtual' });
+      // Step 1: clear what the previous lens wrote, but only if the URL
+      // still holds exactly that value — if the member changed it since,
+      // leave it. Track the resulting value per key so step 2 sees it even
+      // though `searchParams` itself won't update until the write below.
+      const written = lensWroteRef.current;
+      const updates: Record<string, string | null> = {};
+      const currentValues: Record<string, string> = {
+        when: searchParams.get('when') || '',
+        format: searchParams.get('format') || '',
+      };
+      if (written && currentValues[written.key] === written.value) {
+        updates[written.key] = null;
+        currentValues[written.key] = '';
       }
+
+      // Step 2: apply the new lens's facet, but never over a member-set value.
+      if (activePill === 'this_week' && !currentValues.when) {
+        updates.when = 'this_week';
+      } else if (activePill === 'online' && !currentValues.format) {
+        updates.format = 'virtual';
+      }
+
+      if (Object.keys(updates).length > 0) {
+        updateFilters(updates);
+      }
+
+      // Step 3: remember what this lens wrote (or null).
+      if (activePill === 'this_week' && updates.when === 'this_week') {
+        lensWroteRef.current = { key: 'when', value: 'this_week' };
+      } else if (activePill === 'online' && updates.format === 'virtual') {
+        lensWroteRef.current = { key: 'format', value: 'virtual' };
+      } else {
+        lensWroteRef.current = null;
+      }
+
       prevPillRef.current = activePill;
     }
     // Deliberately reacting to `activePill` alone: `searchParams` and
