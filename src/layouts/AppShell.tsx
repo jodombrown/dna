@@ -14,18 +14,28 @@
  *              it is rendered unchanged)
  *   left     — the `context` rail (280): filters, an index, the member's own
  *              object. Surface CONTEXT only, NEVER navigation.
- *   content  — the `children` column (1fr). A surface's LensBar sits at the TOP
- *              of this column, rendered as the first node of `children` by the
- *              surface itself — AppShell changes no nav slot and converts no C
- *              surface, it only supplies the column.
+ *   content  — the `children` column (1fr). When `tabs` is absent, a surface's
+ *              LensBar sits at the TOP of this column, rendered as the first
+ *              node of `children` by the surface itself. When `tabs` IS
+ *              supplied, it owns the lens bar instead (see `tabs` below) and
+ *              `children` starts at content — AppShell changes no nav slot and
+ *              converts no C surface, it only supplies the column.
  *   right    — the `related` rail (340). Renders nothing when `related` is
  *              absent and the grid DROPS the track — there is never an empty 340.
+ *   tabs     — optional. Per BD458, the lens bar for hubs that have one lives
+ *              here instead of as the first node of `children`, so it sits in
+ *              the fixed, scroll-collapsing top treatment on mobile rather
+ *              than scrolling away with the content. Desktop renders it ABOVE
+ *              the content column, inside the 1400px cap, spanning the
+ *              content track only — never the rails, which is the content's
+ *              neighbour, not its container.
  *
  * Mobile (<768px): the shell renders DnaMobileHubShell's header treatment (the
  * canonical logo / bubble / bell / avatar top bar with its BD157 safe-area
- * inset) plus PulseDock — reused, not re-implemented. The rails fold beneath the
- * well: content first (LensBar is its first node), then `context`, then
- * `related`.
+ * inset) plus PulseDock — reused, not re-implemented. `tabs`, when supplied,
+ * passes straight through to DnaMobileHubShell's own `tabs` slot. The rails
+ * fold beneath the well: content first (LensBar is its first node when `tabs`
+ * is absent), then `context`, then `related`.
  *
  * The shell owns height. There is no `min-h-screen` in this file's DESKTOP grid;
  * the mobile branch delegates height to DnaMobileHubShell, which owns it there.
@@ -63,14 +73,21 @@ interface AppShellProps {
   /** Left rail (280). Surface CONTEXT only — filters, an index, the member's
    *  own object. Never navigation. The track drops when this is absent. */
   context?: React.ReactNode;
-  /** Content column (1fr). A surface's LensBar is the first node here. */
+  /** Content column (1fr). When `tabs` is absent, a surface's LensBar is the
+   *  first node here. When `tabs` is supplied, it owns the lens bar and
+   *  `children` starts at content. */
   children: React.ReactNode;
   /** Right rail (340). The track drops entirely when this is absent — the grid
    *  never reserves an empty 340. */
   related?: React.ReactNode;
+  /** The hub's lens bar (BD458). Mobile: passed straight through to
+   *  DnaMobileHubShell's `tabs` slot, in the fixed top treatment. Desktop:
+   *  rendered above the content column, inside the 1400px cap, spanning the
+   *  content track only. Absent renders nothing — no reserved space. */
+  tabs?: React.ReactNode;
 }
 
-export function AppShell({ bubble, context, children, related }: AppShellProps) {
+export function AppShell({ bubble, context, children, related, tabs }: AppShellProps) {
   const inPanel = useIdentitySheetSafe() !== null;
   const { isMobile } = useMobile();
   const { claim, release } = useChromeOwner();
@@ -110,7 +127,7 @@ export function AppShell({ bubble, context, children, related }: AppShellProps) 
   if (isMobile) {
     return (
       <>
-        <DnaMobileHubShell bubble={bubble}>
+        <DnaMobileHubShell bubble={bubble} tabs={tabs}>
           {children}
           {context != null && (
             <div className="border-t border-border/40">{context}</div>
@@ -160,14 +177,16 @@ export function AppShell({ bubble, context, children, related }: AppShellProps) 
           </aside>
         )}
 
-        <main
-          id="main-content"
-          tabIndex={-1}
-          data-scroll-container="main"
-          className="overflow-y-auto scrollbar-thin focus:outline-none"
-          style={{ minWidth: 0 }}
-        >
-          {children}
+        <main className="flex flex-col overflow-hidden" style={{ minWidth: 0 }}>
+          {tabs}
+          <div
+            id="main-content"
+            tabIndex={-1}
+            data-scroll-container="main"
+            className="flex-1 overflow-y-auto scrollbar-thin focus:outline-none"
+          >
+            {children}
+          </div>
         </main>
 
         {hasRelated && (
