@@ -126,7 +126,7 @@ describe('AppShell — route context', () => {
     expect(cols).toContain('1fr');
   });
 
-  it('drops the right (340) track in the 768-1023 tablet band even when `related` is supplied (Pack 14 S68)', () => {
+  it('drops the right (340) track in the 768-1023 tablet band even when `related` is supplied (Pack 14 S68), and narrows the left rail to 240', () => {
     mockIsTablet = true;
     const c = renderOnRoute(
       <AppShell bubble={BUBBLE} context={<p>filters</p>} related={<p>related</p>}>
@@ -134,7 +134,8 @@ describe('AppShell — route context', () => {
       </AppShell>,
     );
     const cols = gridColumns(c.container);
-    expect(cols).toContain('280px'); // context still renders — tablet keeps it
+    expect(cols).toContain('240px'); // context still renders — tablet keeps it, narrowed
+    expect(cols).not.toContain('280px');
     expect(cols).not.toContain('340px'); // right rail track absent, not empty
     expect(screen.queryByText('related')).toBeNull();
   });
@@ -179,7 +180,7 @@ describe('AppShell — mobile', () => {
     expect(screen.queryByTestId('c-nav')).toBeNull();
   });
 
-  it('folds the rails BENEATH the well: content, then context, then related', () => {
+  it('folds `related` beneath the well, but never renders `context` — a control surface owns its own mobile pattern', () => {
     mockIsMobile = true;
     renderOnRoute(
       <AppShell bubble={BUBBLE} context={<p>the-filters</p>} related={<p>the-related</p>}>
@@ -188,9 +189,10 @@ describe('AppShell — mobile', () => {
     );
     const shell = screen.getByTestId('mobile-hub-shell');
     const text = shell.textContent ?? '';
-    // Order is positional: the well (LensBar's home) first, filters next, related last.
+    // The well (LensBar's home) first, then related — but context is absent
+    // from the DOM entirely, not merely hidden.
     expect(text.indexOf('the-well')).toBeGreaterThanOrEqual(0);
-    expect(text.indexOf('the-well')).toBeLessThan(text.indexOf('the-filters'));
-    expect(text.indexOf('the-filters')).toBeLessThan(text.indexOf('the-related'));
+    expect(text.indexOf('the-well')).toBeLessThan(text.indexOf('the-related'));
+    expect(screen.queryByText('the-filters')).toBeNull();
   });
 });

@@ -12,8 +12,11 @@
  *   C nav    — <PulseBar />, full width, fixed directly under the header at
  *              top: var(--unified-header-height) (PulseBar owns that positioning;
  *              it is rendered unchanged)
- *   left     — the `context` rail (280): filters, an index, the member's own
- *              object. Surface CONTEXT only, NEVER navigation.
+ *   left     — the `context` rail: filters, an index, the member's own
+ *              object. Surface CONTEXT only, NEVER navigation. 280 at lg:
+ *              (1024+); narrows to 240 in the 768–1023 tablet band, since the
+ *              content column is where the Lens Bar lives and a wider column
+ *              is what un-cramps it.
  *   content  — the `children` column (1fr). When `tabs` is absent, a surface's
  *              LensBar sits at the TOP of this column, rendered as the first
  *              node of `children` by the surface itself. When `tabs` IS
@@ -36,9 +39,12 @@
  * Mobile (<768px): the shell renders DnaMobileHubShell's header treatment (the
  * canonical logo / bubble / bell / avatar top bar with its BD157 safe-area
  * inset) plus PulseDock — reused, not re-implemented. `tabs`, when supplied,
- * passes straight through to DnaMobileHubShell's own `tabs` slot. The rails
- * fold beneath the well: content first (LensBar is its first node when `tabs`
- * is absent), then `context`, then `related`.
+ * passes straight through to DnaMobileHubShell's own `tabs` slot. `context` is
+ * a CONTROL SURFACE (filters, an index, the member's own object), not content,
+ * so it does NOT fold on mobile — a control surface owns its own mobile
+ * pattern (Browse's Narrow sheet is the existing one). `related` folds beneath
+ * `children` because it is supplementary CONTENT: DIA and Upcoming stack under
+ * the list correctly.
  *
  * The shell owns height. There is no `min-h-screen` in this file's DESKTOP grid;
  * the mobile branch delegates height to DnaMobileHubShell, which owns it there.
@@ -77,7 +83,8 @@ import { useMobile } from '@/hooks/useMobile';
  * means more columns, not a fixed reading column with dead space beside it.
  */
 export const READING_MAX_WIDTH = 1400;
-const LEFT_RAIL = '280px';
+const LEFT_RAIL_TABLET = '240px';
+const LEFT_RAIL_DESKTOP = '280px';
 const RIGHT_RAIL = '340px';
 
 interface AppShellProps {
@@ -86,8 +93,10 @@ interface AppShellProps {
    *  differs per surface. Required — a mobile header with no bubble is a
    *  half-rendered header, which is the defect this frame repairs. */
   bubble: DnaMobileHeaderBubble;
-  /** Left rail (280). Surface CONTEXT only — filters, an index, the member's
-   *  own object. Never navigation. The track drops when this is absent. */
+  /** Left rail. Surface CONTEXT only — filters, an index, the member's own
+   *  object. Never navigation. The track drops when this is absent. 280 at
+   *  lg: and up, 240 in the 768-1023 tablet band. Absent below 768 — a
+   *  control surface owns its own mobile pattern instead of folding. */
   context?: React.ReactNode;
   /** Content column (1fr). When `tabs` is absent, a surface's LensBar is the
    *  first node here. When `tabs` is supplied, it owns the lens bar and
@@ -144,11 +153,8 @@ export function AppShell({ bubble, context, children, related, tabs }: AppShellP
   if (isMobile) {
     return (
       <>
-        <DnaMobileHubShell bubble={bubble} tabs={tabs}>
+        <DnaMobileHubShell bubble={bubble} tabs={tabs} contentPadding>
           {children}
-          {context != null && (
-            <div className="border-t border-border/40">{context}</div>
-          )}
           {related != null && (
             <div className="border-t border-border/40">{related}</div>
           )}
@@ -168,7 +174,7 @@ export function AppShell({ bubble, context, children, related, tabs }: AppShellP
   const hasContext = context != null;
   const hasRelated = related != null && !isTablet;
   const gridTemplateColumns = [
-    hasContext ? LEFT_RAIL : null,
+    hasContext ? (isTablet ? LEFT_RAIL_TABLET : LEFT_RAIL_DESKTOP) : null,
     '1fr',
     hasRelated ? RIGHT_RAIL : null,
   ]
@@ -180,14 +186,18 @@ export function AppShell({ bubble, context, children, related, tabs }: AppShellP
       <UnifiedHeader />
       <PulseBar />
       <div
-        className="grid w-full gap-5 px-4"
+        className="grid w-full gap-6 px-5"
         style={{
           gridTemplateColumns,
-          // Clear the fixed header + C nav, then own the remaining viewport.
-          // Margin sits OUTSIDE the box, so the grid height is not reduced a
-          // second time by the chrome under border-box (paddingTop would be).
-          marginTop: 'var(--total-header-height, 7.5rem)',
-          height: 'calc(100dvh - var(--total-header-height, 7.5rem))',
+          // Clear the fixed header + C nav, then own the remaining viewport,
+          // pulled one BD176 rung (4px) closer to the chrome — the columns'
+          // top 4px sits behind PulseBar's fixed layer, not below it. Height
+          // gains the same rung back so the grid still fills to the bottom
+          // of the viewport. Margin sits OUTSIDE the box, so the grid height
+          // is not reduced a second time by the chrome under border-box
+          // (paddingTop would be).
+          marginTop: 'calc(var(--total-header-height, 7.5rem) - 0.25rem)',
+          height: 'calc(100dvh - var(--total-header-height, 7.5rem) + 0.25rem)',
         }}
       >
         {hasContext && (
