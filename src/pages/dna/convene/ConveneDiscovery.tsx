@@ -7,7 +7,7 @@
  * Desktop: max-w-6xl centered, grid lanes.
  */
 
-import React, { useState, useMemo, Suspense, lazy } from 'react';
+import React, { useState, useMemo, useEffect, useRef, Suspense, lazy } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Calendar, CalendarCheck, Plus, Search, Map, List } from 'lucide-react';
@@ -16,7 +16,6 @@ import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/useMobile';
 
 import { ConveneLocationSelector } from '@/components/convene/ConveneLocationSelector';
-import { ConvenePillFilterBar } from '@/components/convene/ConvenePillFilterBar';
 import { ConveneDiscoveryFrame } from '@/components/convene/ConveneDiscoveryFrame';
 import { ConveneCitiesSection } from '@/components/convene/ConveneCitiesSection';
 import { ConveneHeroEvent } from '@/components/convene/ConveneHeroEvent';
@@ -27,7 +26,14 @@ import { ConveneDIADiscoveryCard } from '@/components/convene/ConveneDIADiscover
 import { DIAHubSection } from '@/components/dia/DIAHubSection';
 import { UpcomingEventsSection } from '@/components/convene/UpcomingEventsSection';
 import { ConveneShell, CONVENE_LENSES } from '@/components/convene/ConveneShell';
+import { LensBar } from '@/components/shell/LensBar';
+import { ConveneFacetRail } from '@/components/convene/ConveneFacetRail';
+import { ConveneNarrowSheet } from '@/components/convene/ConveneNarrowSheet';
+import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
+import type { ConveneFacetKey, ConveneFacetValues } from '@/components/convene/ConveneFacetControls';
 import { useConveneCities, useUserCity } from '@/hooks/convene/useConveneCities';
+import { useConveneEventTags } from '@/hooks/convene/useConveneEventTags';
+import { useConveneBrowseList } from '@/hooks/convene/useConveneBrowseList';
 import {
   useHeroEvent,
   useWeekendEvents,
@@ -41,6 +47,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { EVENT_PLACE_SELECT, pickEventPlace } from '@/lib/events/formatPlace';
 import { EVENT_TIME_SELECT } from '@/lib/events/eventTime';
+import { isEventCompleted } from '@/lib/events/lifecycle';
 import type { MapEventData } from '@/components/convene/mapEventData';
 import { ROUTES } from '@/config/routes';
 
@@ -64,17 +71,36 @@ export function ConveneDiscovery() {
   const isMobile = useIsMobile();
 
   const selectedCity = searchParams.get('city');
-  // Route-driven lens (BD332b): the hub filters off ?lens=, the same param the
-  // mobile LensBar and the desktop PillFilterBar write.
+  // Route-driven lens (BD332b): the hub filters off ?lens=, the same param
+  // the Lens bar writes at every width — mobile via ConveneShell's tab
+  // strip, desktop/tablet via the LensBar rendered directly below.
   const activePill = searchParams.get('lens') || 'all';
   const viewMode = (searchParams.get('view') as 'list' | 'map') || 'list';
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  // The six Browse facets — when/where/format/type/category/price — each one
+  // lowercase snake_case URL key, folded from EventsIndex's filter set.
+  const facetValues: ConveneFacetValues = {
+    when: searchParams.get('when') || '',
+    where: searchParams.get('where') || '',
+    format: searchParams.get('format') || '',
+    type: searchParams.get('type') || '',
+    category: searchParams.get('category') || '',
+    price: searchParams.get('price') || '',
+  };
+  const hasActiveFacets = Object.values(facetValues).some(Boolean);
 
   // Discovery shows upcoming lanes plus the undated ("Dates not yet
   // announced") lane, so the city picker draws from that same scope —
   // an undated Accra event still puts Accra in the picker.
   const { data: cities = [] } = useConveneCities('upcoming');
   const { data: userLocation } = useUserCity();
+  const { data: categoryTags = [] } = useConveneEventTags();
+
+  const countries = useMemo(
+    () => Array.from(new Set(cities.map((c) => c.country).filter((c): c is string => !!c))).sort(),
+    [cities],
+  );
 
   const updateFilters = (updates: Record<string, string | null>) => {
     const next = new URLSearchParams(searchParams);
@@ -88,9 +114,33 @@ export function ConveneDiscovery() {
     setSearchParams(next, { replace: true });
   };
 
-  const handlePillChange = (pill: string) => {
-    updateFilters({ lens: pill === 'all' ? null : pill });
+  const handleFacetChange = (key: ConveneFacetKey, value: string) => {
+    updateFilters({ [key]: value || null });
   };
+
+  // Lens and facet compose: a lens with a facet equivalent (this_week,
+  // online) also writes the matching facet key on selection, so the member
+  // can see and clear the narrowing from the Rail/Narrow sheet without
+  // losing the lens's meaning. LensBar owns the ?lens= write itself (it is
+  // shared across every C-surface), so this reacts to the transition rather
+  // than intercepting the click — and never overwrites a facet the member
+  // has already set independently.
+  const prevPillRef = useRef(activePill);
+  useEffect(() => {
+    if (prevPillRef.current !== activePill) {
+      if (activePill === 'this_week' && !searchParams.get('when')) {
+        updateFilters({ when: 'this_week' });
+      } else if (activePill === 'online' && !searchParams.get('format')) {
+        updateFilters({ format: 'virtual' });
+      }
+      prevPillRef.current = activePill;
+    }
+    // Deliberately reacting to `activePill` alone: `searchParams` and
+    // `updateFilters` change on every facet edit too, and re-running this
+    // body then would just re-check the same guard and no-op — but listing
+    // them keeps the linter's exhaustive-deps check honest.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activePill]);
 
   // ── Discovery Lane Queries ──────────────────────
   const { data: heroEvent } = useHeroEvent(selectedCity);
@@ -108,7 +158,13 @@ export function ConveneDiscovery() {
   const { data: diasporaEvents = [] } = useDiasporaEvents(shownIds);
   const { data: undatedEvents = [] } = useUndatedEvents();
 
-  // ── Filtered events for pill-specific queries ──
+  const showDiscoveryLanes = activePill === 'all' && !hasActiveFacets;
+  // Near Me keeps its real-distance sort (NearMeEventsLane) as long as no
+  // facet has narrowed it further; any facet composes it into the generic
+  // paginated list below instead, same as every other lens.
+  const useNearMeLane = activePill === 'near_me' && !hasActiveFacets;
+
+  // ── Filtered events for the Near Me lane ──
   const { data: filteredEvents = [] } = useQuery({
     queryKey: ['convene-pill-filtered', selectedCity, activePill],
     queryFn: async () => {
@@ -129,17 +185,9 @@ export function ConveneDiscovery() {
 
       if (selectedCity) query = query.ilike('location_city', selectedCity);
 
-      // Pill-specific filters
-      if (activePill === 'online') {
-        query = query.eq('format', 'virtual');
-      } else if (activePill === 'this_week') {
-        const weekEnd = new Date();
-        weekEnd.setDate(weekEnd.getDate() + 7);
-        query = query.lte('start_time', weekEnd.toISOString());
-      }
-      // 'near_me' intentionally applies no server filter here: the loaded
-      // upcoming set is reordered client-side by rpc_events_near (real
-      // distance), not narrowed to a single city string. See NearMeEventsLane.
+      // No server-side "near me" filter: the loaded upcoming set is reordered
+      // client-side by rpc_events_near (real distance), not narrowed to a
+      // single city string. See NearMeEventsLane.
 
       const { data, error } = await query;
       if (error) return [];
@@ -170,9 +218,20 @@ export function ConveneDiscovery() {
         organizer: organizerMap[e.organizer_id ?? ''] ?? null,
       }));
     },
-    enabled: activePill !== 'all' && activePill !== 'network',
+    enabled: useNearMeLane,
     staleTime: 60_000,
   });
+
+  // ── Browse's flat, paginated list — every lens other than "all" with no
+  // facets, and every facet narrowing, resolves here instead of lanes.
+  const browseList = useConveneBrowseList(
+    {
+      lens: activePill,
+      ...facetValues,
+      city: selectedCity,
+    },
+    !showDiscoveryLanes && !useNearMeLane && activePill !== 'network',
+  );
 
   // ── Map events ─────────────────────────────────
   const mapEvents = useMemo((): MapEventData[] => {
@@ -221,14 +280,14 @@ export function ConveneDiscovery() {
     return 'Discover Events';
   }, [selectedCity, userLocation?.city]);
 
-  const showDiscoveryLanes = activePill === 'all';
-
   const totalCount = showDiscoveryLanes
     ? (heroEvent ? 1 : 0) +
       weekendEvents.length +
       networkEvents.length +
       diasporaEvents.length
-    : filteredEvents.length;
+    : useNearMeLane
+      ? filteredEvents.length
+      : browseList.events.length;
 
   return (
     // Mobile chrome (DNA header, composer bubble, bell, avatar, tab strip)
@@ -243,16 +302,23 @@ export function ConveneDiscovery() {
             phone.
             ═══════════════════════════════════════ */}
         {isMobile && (
-          <div>
+          <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="sm"
-              className="w-full rounded-full"
+              className="flex-1 rounded-full"
               onClick={() => navigate(ROUTES.convene.myEvents)}
             >
               <CalendarCheck className="w-4 h-4 mr-1.5" />
               My Events
             </Button>
+            <ConveneNarrowSheet
+              values={facetValues}
+              onChange={handleFacetChange}
+              countries={countries}
+              categories={categoryTags}
+              activeCount={Object.values(facetValues).filter(Boolean).length}
+            />
           </div>
         )}
 
@@ -317,10 +383,7 @@ export function ConveneDiscovery() {
               </div>
             </div>
 
-            <ConvenePillFilterBar
-              active={activePill}
-              onSelect={handlePillChange}
-            />
+            <LensBar lenses={CONVENE_LENSES} ariaLabel="Convene lenses" c="convene" />
 
             <CopperDivider />
           </>
@@ -341,144 +404,217 @@ export function ConveneDiscovery() {
               onEventSelect={() => {}}
             />
           </Suspense>
-        ) : showDiscoveryLanes ? (
-          /* ═══════════════════════════════════════
-             DISCOVERY LANES MODE
-             ═══════════════════════════════════════ */
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-4 md:gap-6 lg:gap-8 items-start">
-            {/* LEFT — Main discovery content */}
+        ) : (
+          /* Content + Rail. The layout switch is md: — tablet gets the Rail
+             and the two-across lane arrangement; the Upcoming/DIA sidebar
+             (nested inside the Rail below) alone waits for lg:. */
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] gap-4 md:gap-6 lg:gap-8 items-start">
+            {/* LEFT — lanes (lens=all, no facets) or the flat, paginated list */}
             <div className="space-y-4 md:space-y-6 min-w-0">
-              {/* Happening Now — live pulse */}
-              <HappeningNowSection />
-
-              {/* HERO — Single commanding featured event */}
-              {heroEvent && <ConveneHeroEvent event={heroEvent} />}
-
-              {heroEvent && <CopperDivider />}
-
-              {/* DIA Discovery Card */}
-              <ConveneDIADiscoveryCard
-                selectedCity={selectedCity}
-                eventCount={totalCount}
-                onOpenComposer={() => composer.open('event')}
-                onSetCategory={(cat) => updateFilters({ lens: cat })}
-              />
-
-              {/* Lane: Happening Near You */}
-              {userLocation?.city && (
+              {showDiscoveryLanes ? (
+                /* ═══════════════════════════════════
+                   DISCOVERY LANES — the resting state
+                   ═══════════════════════════════════ */
                 <>
+                  {/* Happening Now — live pulse */}
+                  <HappeningNowSection />
+
+                  {/* HERO — Single commanding featured event */}
+                  {heroEvent && <ConveneHeroEvent event={heroEvent} />}
+
+                  {heroEvent && <CopperDivider />}
+
+                  {/* DIA Discovery Card */}
+                  <ConveneDIADiscoveryCard
+                    selectedCity={selectedCity}
+                    eventCount={totalCount}
+                    onOpenComposer={() => composer.open('event')}
+                    onSetCategory={(cat) => updateFilters({ category: cat })}
+                  />
+
+                  {/* Lane: Happening Near You */}
+                  {userLocation?.city && (
+                    <>
+                      <DiscoveryLane
+                        title="Happening Near You"
+                        events={diasporaEvents.filter(
+                          (e) =>
+                            e.location_city
+                              ?.toLowerCase()
+                              .includes(userLocation.city?.toLowerCase() ?? '') ??
+                            false,
+                        )}
+                        emptyMessage={`No events near ${userLocation.city} yet`}
+                        onSeeAll={() =>
+                          navigate(
+                            `/dna/convene/events?city=${userLocation.city}`,
+                          )
+                        }
+                      />
+                      <CopperDivider />
+                    </>
+                  )}
+
+                  {/* Lane: Your Network Is Going */}
+                  {networkEvents.length > 0 && (
+                    <>
+                      <DiscoveryLane
+                        title="Your Network Is Going"
+                        events={networkEvents}
+                        showMutualAttendees
+                        onSeeAll={
+                          networkEvents.length > 3
+                            ? () => updateFilters({ lens: 'network' })
+                            : undefined
+                        }
+                      />
+                      <CopperDivider />
+                    </>
+                  )}
+
+                  {/* Lane: This Weekend */}
+                  {weekendEvents.length > 0 && (
+                    <>
+                      <DiscoveryLane
+                        title="This Weekend"
+                        events={weekendEvents}
+                        onSeeAll={
+                          weekendEvents.length > 3
+                            ? () =>
+                                navigate(
+                                  '/dna/convene/events?filter=weekend',
+                                )
+                            : undefined
+                        }
+                      />
+                      <CopperDivider />
+                    </>
+                  )}
+
+                  {/* Lane: Across the Diaspora */}
                   <DiscoveryLane
-                    title="Happening Near You"
-                    events={diasporaEvents.filter(
-                      (e) =>
-                        e.location_city
-                          ?.toLowerCase()
-                          .includes(userLocation.city?.toLowerCase() ?? '') ??
-                        false,
+                    title="Across the Diaspora"
+                    events={diasporaEvents}
+                    onSeeAll={() => navigate('/dna/convene/events')}
+                    emptyMessage="No upcoming events yet. Be the first to host one!"
+                  />
+
+                  {/* Lane: Dates not yet announced — undated events live here,
+                      never sorted into the timeline lanes above */}
+                  {undatedEvents.length > 0 && (
+                    <>
+                      <CopperDivider />
+                      <DiscoveryLane
+                        title="Dates not yet announced"
+                        events={undatedEvents}
+                        suppressDateTbc
+                      />
+                    </>
+                  )}
+
+                  {/* Empty state — absolutely nothing */}
+                  {!heroEvent &&
+                    weekendEvents.length === 0 &&
+                    networkEvents.length === 0 &&
+                    diasporaEvents.length === 0 && (
+                      <div className="text-center pb-12 space-y-3">
+                        <Calendar className="w-10 h-10 mx-auto text-muted-foreground/40" />
+                        <p className="text-muted-foreground text-body">
+                          {selectedCity
+                            ? `No upcoming events in ${selectedCity} yet. Be the first to host one!`
+                            : 'No upcoming events found. Be the first to host one!'}
+                        </p>
+                        <Button
+                          size="sm"
+                          className="bg-dna-copper hover:bg-dna-copper-dark text-white"
+                          onClick={() => composer.open('event')}
+                        >
+                          <Plus className="w-4 h-4 mr-1" /> Host an Event
+                        </Button>
+                      </div>
                     )}
-                    emptyMessage={`No events near ${userLocation.city} yet`}
-                    onSeeAll={() =>
-                      navigate(
-                        `/dna/convene/events?city=${userLocation.city}`,
-                      )
-                    }
-                  />
-                  <CopperDivider />
-                </>
-              )}
 
-              {/* Lane: Your Network Is Going */}
-              {networkEvents.length > 0 && (
+                  <CopperDivider />
+
+                  {/* Explore Cities */}
+                  <ConveneCitiesSection
+                    cities={cities}
+                    onCitySelect={(city) => updateFilters({ city })}
+                    activeCity={selectedCity}
+                  />
+                </>
+              ) : (
+                /* ═══════════════════════════════════
+                   EVERY OTHER LENS + EVERY FACET —
+                   resolves into the flat list, in place.
+                   ═══════════════════════════════════ */
                 <>
-                  <DiscoveryLane
-                    title="Your Network Is Going"
-                    events={networkEvents}
-                    showMutualAttendees
-                    onSeeAll={
-                      networkEvents.length > 3
-                        ? () =>
-                            navigate(
-                              '/dna/convene/events?filter=network',
-                            )
-                        : undefined
-                    }
+                  <HappeningNowSection />
+
+                  {useNearMeLane ? (
+                    <NearMeEventsLane events={filteredEvents} />
+                  ) : activePill === 'network' ? (
+                    <DiscoveryLane
+                      title="Your Network Is Going"
+                      events={networkEvents}
+                      showMutualAttendees
+                      emptyMessage="None of your connections have RSVP'd to upcoming events yet."
+                    />
+                  ) : (
+                    <section className="space-y-3">
+                      <h3 className="text-h2 text-dna-forest">
+                        {CONVENE_LENSES.find((l) => l.id === activePill)?.label ?? 'Events'}
+                      </h3>
+                      <div className="h-px bg-dna-copper/20" />
+
+                      {browseList.isLoading ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                          {[1, 2, 3, 4, 5].map((i) => (
+                            <div key={i} className="h-64 animate-pulse rounded-lg bg-muted" />
+                          ))}
+                        </div>
+                      ) : browseList.events.length === 0 ? (
+                        <p className="text-body text-muted-foreground py-4 text-center">
+                          No events found for this filter. Try another or host one!
+                        </p>
+                      ) : (
+                        <>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                            {browseList.events.map((event) => (
+                              <ConveneEventCard
+                                key={event.id}
+                                event={event}
+                                showRsvp={!isEventCompleted(event)}
+                                onRsvp={() => navigate(`/dna/convene/events/${event.slug || event.id}`)}
+                                onClick={() => navigate(`/dna/convene/events/${event.slug || event.id}`)}
+                              />
+                            ))}
+                          </div>
+                          {browseList.hasMore && (
+                            <div className="flex justify-center pt-2">
+                              <Button
+                                variant="outline"
+                                onClick={() => browseList.loadMore()}
+                                disabled={browseList.isFetchingMore}
+                              >
+                                {browseList.isFetchingMore ? 'Loading…' : 'Show More'}
+                              </Button>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </section>
+                  )}
+
+                  <ConveneCitiesSection
+                    cities={cities}
+                    onCitySelect={(city) => updateFilters({ city })}
+                    activeCity={selectedCity}
                   />
-                  <CopperDivider />
                 </>
               )}
 
-              {/* Lane: This Weekend */}
-              {weekendEvents.length > 0 && (
-                <>
-                  <DiscoveryLane
-                    title="This Weekend"
-                    events={weekendEvents}
-                    onSeeAll={
-                      weekendEvents.length > 3
-                        ? () =>
-                            navigate(
-                              '/dna/convene/events?filter=weekend',
-                            )
-                        : undefined
-                    }
-                  />
-                  <CopperDivider />
-                </>
-              )}
-
-              {/* Lane: Across the Diaspora */}
-              <DiscoveryLane
-                title="Across the Diaspora"
-                events={diasporaEvents}
-                onSeeAll={() => navigate('/dna/convene/events')}
-                emptyMessage="No upcoming events yet. Be the first to host one!"
-              />
-
-              {/* Lane: Dates not yet announced — undated events live here,
-                  never sorted into the timeline lanes above */}
-              {undatedEvents.length > 0 && (
-                <>
-                  <CopperDivider />
-                  <DiscoveryLane
-                    title="Dates not yet announced"
-                    events={undatedEvents}
-                    suppressDateTbc
-                  />
-                </>
-              )}
-
-              {/* Empty state — absolutely nothing */}
-              {!heroEvent &&
-                weekendEvents.length === 0 &&
-                networkEvents.length === 0 &&
-                diasporaEvents.length === 0 && (
-                  <div className="text-center pb-12 space-y-3">
-                    <Calendar className="w-10 h-10 mx-auto text-muted-foreground/40" />
-                    <p className="text-muted-foreground text-sm">
-                      {selectedCity
-                        ? `No upcoming events in ${selectedCity} yet. Be the first to host one!`
-                        : 'No upcoming events found. Be the first to host one!'}
-                    </p>
-                    <Button
-                      size="sm"
-                      className="bg-dna-copper hover:bg-dna-copper-dark text-white"
-                      onClick={() => composer.open('event')}
-                    >
-                      <Plus className="w-4 h-4 mr-1" /> Host an Event
-                    </Button>
-                  </div>
-                )}
-
-              <CopperDivider />
-
-              {/* Explore Cities */}
-              <ConveneCitiesSection
-                cities={cities}
-                onCitySelect={(city) => updateFilters({ city })}
-                activeCity={selectedCity}
-              />
-
-              {/* Upcoming Events — below lanes on mobile only */}
+              {/* Upcoming Events — below the list on mobile/tablet only */}
               <div className="lg:hidden">
                 <UpcomingEventsSection
                   onCreateEvent={() => composer.open('event')}
@@ -486,53 +622,20 @@ export function ConveneDiscovery() {
               </div>
             </div>
 
-            {/* RIGHT — Sticky sidebar (desktop only) */}
-            <div className="hidden lg:block sticky space-y-6" style={{ top: 'var(--total-header-height, 7.5rem)' }}>
-              <UpcomingEventsSection
-                onCreateEvent={() => composer.open('event')}
-              />
-              <DIAHubSection surface="convene_hub" limit={2} />
-            </div>
-          </div>
-        ) : activePill === 'network' ? (
-          /* ═══════════════════════════════════════
-             MY NETWORK FILTER
-             ═══════════════════════════════════════ */
-          <div className="space-y-6">
-            <HappeningNowSection />
-            <DiscoveryLane
-              title="Your Network Is Going"
-              events={networkEvents}
-              showMutualAttendees
-              emptyMessage="None of your connections have RSVP'd to upcoming events yet."
-            />
-            <ConveneCitiesSection
-              cities={cities}
-              onCitySelect={(city) => updateFilters({ city })}
-              activeCity={selectedCity}
-            />
-          </div>
-        ) : (
-          /* ═══════════════════════════════════════
-             FILTERED PILL MODE (Near Me / This Week / Online / Free)
-             ═══════════════════════════════════════ */
-          <div className="space-y-6">
-            <HappeningNowSection />
-            {activePill === 'near_me' ? (
-              <NearMeEventsLane events={filteredEvents} />
-            ) : (
-              <DiscoveryLane
-                title={`${CONVENE_LENSES.find((l) => l.id === activePill)?.label ?? 'Filtered'} Events`}
-                events={filteredEvents}
-                emptyMessage={`No events found for this filter. Try another or host one!`}
-                onSeeAll={() => navigate('/dna/convene/events')}
-              />
-            )}
-            <ConveneCitiesSection
-              cities={cities}
-              onCitySelect={(city) => updateFilters({ city })}
-              activeCity={selectedCity}
-            />
+            {/* RIGHT — the Rail: facets always, Upcoming/DIA sidebar at lg: */}
+            <ConveneFacetRail
+              values={facetValues}
+              onChange={handleFacetChange}
+              countries={countries}
+              categories={categoryTags}
+            >
+              <div className="hidden lg:block space-y-6">
+                <UpcomingEventsSection
+                  onCreateEvent={() => composer.open('event')}
+                />
+                <DIAHubSection surface="convene_hub" limit={2} />
+              </div>
+            </ConveneFacetRail>
           </div>
         )}
       </ConveneDiscoveryFrame>
