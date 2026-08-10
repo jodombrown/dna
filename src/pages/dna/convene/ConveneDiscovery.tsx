@@ -6,8 +6,9 @@
  * Mobile-first: single column, horizontal-scroll lanes.
  * Desktop: AppShell's three-column frame — facets (context, 280) / lanes or
  * list (content) / Upcoming + DIA (related, 340). The shell fills the
- * viewport (no cap); the flat paginated list's grid-cols rungs below are
- * what keep its cards from stretching on a wide content column.
+ * viewport (no cap); the flat paginated list uses grid-cols-cards (BD333)
+ * so its column count tracks the content column's own width, not the
+ * viewport's — the viewport minus the rails is not the viewport.
  */
 
 import React, { useState, useMemo, useEffect, useRef, Suspense, lazy } from 'react';
@@ -624,7 +625,7 @@ export function ConveneDiscovery() {
                       <div className="h-px bg-dna-copper/20" />
 
                       {browseList.isLoading ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4">
+                        <div className="grid grid-cols-cards gap-4">
                           {[1, 2, 3, 4, 5, 6, 7].map((i) => (
                             <div key={i} className="h-64 animate-pulse rounded-lg bg-muted" />
                           ))}
@@ -635,15 +636,13 @@ export function ConveneDiscovery() {
                         </p>
                       ) : (
                         <>
-                          {/* BD176 rungs only — sm/md/lg unchanged from before this
-                              frame (their content width was never affected by the
-                              shell's cap). xl/2xl are new: the shell used to clamp
-                              the content column at ~708px past 1400px viewport, so
-                              5 columns was the widest this grid ever ran. It now
-                              keeps growing past 1536px — up to ~1851px at 2543 — so
-                              two more rungs land cards near their five-column
-                              width instead of stretching five cards across it. */}
-                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4">
+                          {/* BD333: column count tracks the content column's own
+                              width, not the viewport's — the column sits between
+                              280px and 340px rails, so viewport breakpoints run
+                              optimistic by however much the rails take. auto-fill
+                              with a 240px floor (grid-cols-cards, tailwind.config.ts)
+                              fills whatever the column actually measures. */}
+                          <div className="grid grid-cols-cards gap-4">
                             {browseList.events.map((event) => (
                               <ConveneEventCard
                                 key={event.id}

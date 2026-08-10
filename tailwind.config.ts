@@ -49,6 +49,13 @@ export default {
 			8:  '2rem',         // 32px
 			12: '3rem',         // 48px
 		},
+		gridTemplateColumns: {
+			// Column count tracks the column's own width, not the viewport's
+			// (BD333) — a card grid inside AppShell's content column sees
+			// viewport minus rails, not the viewport itself. 240px is a floor
+			// to confirm on device, not a ruled value.
+			cards: 'repeat(auto-fill, minmax(240px, 1fr))',
+		},
 		borderWidth: {
 			// Makes --bevel-width load-bearing for the first time. Before BD176 the
 			// variable was declared in index.css and read by nothing; the frame was a

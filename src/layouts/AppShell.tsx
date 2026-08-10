@@ -191,7 +191,7 @@ export function AppShell({ bubble, context, children, related, tabs }: AppShellP
         }}
       >
         {hasContext && (
-          <aside className="overflow-y-auto scrollbar-thin" style={{ minWidth: 0 }}>
+          <aside className="overflow-y-auto overflow-x-hidden scrollbar-thin" style={{ minWidth: 0 }}>
             {context}
           </aside>
         )}
@@ -202,14 +202,14 @@ export function AppShell({ bubble, context, children, related, tabs }: AppShellP
             id="main-content"
             tabIndex={-1}
             data-scroll-container="main"
-            className="flex-1 overflow-y-auto scrollbar-thin focus:outline-none"
+            className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin focus:outline-none"
           >
             {children}
           </div>
         </main>
 
         {hasRelated && (
-          <aside className="overflow-y-auto scrollbar-thin" style={{ minWidth: 0 }}>
+          <aside className="overflow-y-auto overflow-x-hidden scrollbar-thin" style={{ minWidth: 0 }}>
             {related}
           </aside>
         )}
