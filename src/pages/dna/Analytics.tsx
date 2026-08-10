@@ -31,23 +31,21 @@ const DnaAnalytics = () => {
   // absorb extra width as more columns), so its content column claims its
   // own reading-width cap here — the shell itself no longer caps anything.
   const centerColumn = (
-    <div className="w-full" style={{ maxWidth: READING_MAX_WIDTH }}>
-      <TierGate
-        hasAccess={tierAccess.allowed}
-        requiredTier="pro"
-        featureLabel="Cross-C Analytics"
-      >
-        <div className="space-y-6">
-          <div className="flex items-center gap-3 mb-6">
-            <BarChart3 className="w-6 h-6 text-primary" />
-            <h1 className="text-h2 font-serif">Analytics Dashboard</h1>
-          </div>
-          <Card className="p-6">
-            <p className="text-muted-foreground">Analytics content coming soon...</p>
-          </Card>
+    <TierGate
+      hasAccess={tierAccess.allowed}
+      requiredTier="pro"
+      featureLabel="Cross-C Analytics"
+    >
+      <div className="w-full space-y-6" style={{ maxWidth: READING_MAX_WIDTH }}>
+        <div className="flex items-center gap-3 mb-6">
+          <BarChart3 className="w-6 h-6 text-primary" />
+          <h1 className="text-h2 font-serif">Analytics Dashboard</h1>
         </div>
-      </TierGate>
-    </div>
+        <Card className="p-6">
+          <p className="text-muted-foreground">Analytics content coming soon...</p>
+        </Card>
+      </div>
+    </TierGate>
   );
 
   return (
