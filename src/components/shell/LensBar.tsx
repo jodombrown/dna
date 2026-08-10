@@ -189,15 +189,17 @@ export function LensBar({ lenses, ariaLabel, c }: LensBarProps) {
                 className={cn('h-4 w-4 shrink-0', isActive && (c ? C_ICON[c] : 'text-foreground'))}
                 aria-hidden="true"
               />
-              {/* Label renders on the active lens only below md: — the icon-only
-                  inactive shape is what fits six lenses on a 375px screen. At
-                  md: and up there is room for every label, so all six render. */}
+              {/* Label renders on the active lens only below lg: — the icon-only
+                  inactive shape is what fits six lenses on a 375px screen, and
+                  still what an 820px tablet needs (six labels don't fit and
+                  stack). At lg: and up there is room for every label, so all
+                  six render. */}
               <span
                 className={cn(
                   'whitespace-nowrap text-meta font-medium',
                   isActive
                     ? 'animate-in fade-in duration-100'
-                    : 'hidden md:inline',
+                    : 'hidden lg:inline',
                 )}
               >
                 {lens.label}
