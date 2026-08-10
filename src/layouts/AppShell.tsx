@@ -145,11 +145,16 @@ export function AppShell({ bubble, context, children, related, tabs }: AppShellP
   // plus PulseDock. This branch renders NO UnifiedHeader; UnifiedHeader used to
   // self-hide on these paths and left mobile Connect with no header at all.
   //
-  // The rails cannot be side columns at this width, so they FOLD BENEATH the
-  // well (Frame 01): the content (`children`, whose first node is the surface's
-  // LensBar) comes first, then `context`, then `related`. The lens bar is the
-  // first thing under the header at 390. The tracks only DROP when the surface
-  // omits them, never because the viewport is narrow.
+  // `related` folds beneath the well (Frame 01), after `children` (whose
+  // first node is the surface's LensBar): it's supplementary CONTENT, and
+  // stacking it under a list still reads correctly. `context` does not
+  // render here at all — by this shell's own prop contract (filters, an
+  // index, the member's own object) it's a CONTROL SURFACE, and a control
+  // surface needs a mobile-native pattern the consuming surface owns
+  // (Browse's is the Narrow sheet). The lens bar is the first thing under
+  // the header at 390. Tracks drop for two reasons now: the surface omits
+  // the prop, or the viewport can't carry it — `related` drops in the
+  // 768-1023 tablet band too (Pack 14 S68), `context` drops below 768.
   if (isMobile) {
     return (
       <>
