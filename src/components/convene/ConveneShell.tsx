@@ -21,19 +21,22 @@
  * On desktop this is a pass-through — pages keep their desktop chrome.
  */
 import React, { type ReactNode } from 'react';
-import { CalendarDays, MapPin, Clock, Video, Ticket, UserCheck } from 'lucide-react';
+import { CalendarDays, MapPin, Clock, Video, UserCheck, Sparkles } from 'lucide-react';
 import { DnaMobileHubShell } from '@/components/mobile/DnaMobileHubShell';
 import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { LensBar, type Lens } from '@/components/shell/LensBar';
 import { HubTabsRow } from '@/components/shell/HubTabsRow';
 
+// Six lenses, canonical order and wording (Browse Lens Bar spec). Free is not
+// a lens — it lives as the Price facet's value, so a member narrowing to
+// free events does so from the Rail/Narrow sheet, not from the bar.
 export const CONVENE_LENSES: Lens[] = [
   { id: 'all', label: 'All', icon: CalendarDays, description: 'Every upcoming event across the diaspora' },
   { id: 'near_me', label: 'Near Me', icon: MapPin, description: 'Events happening close to your current location' },
   { id: 'this_week', label: 'This Week', icon: Clock, description: 'Events taking place within the next seven days' },
-  { id: 'online', label: 'Virtual', icon: Video, description: 'Virtual events you can join from anywhere in the world' },
-  { id: 'free', label: 'Free', icon: Ticket, description: 'No-cost events open to all community members' },
+  { id: 'online', label: 'Online', icon: Video, description: 'Virtual events you can join from anywhere in the world' },
   { id: 'network', label: 'Network', icon: UserCheck, description: 'Events hosted by or attended by people in your network' },
+  { id: 'curated', label: 'Curated by DNA', icon: Sparkles, description: 'Events selected by the DNA team' },
 ];
 
 function ConveneTabStrip() {

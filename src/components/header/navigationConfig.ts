@@ -17,7 +17,7 @@ export const mainNavItems = [
   { name: 'Home', path: '/dna/feed', icon: 'Home' },
   { name: 'Discover', path: '/dna/connect/discover', icon: 'Search' },
   { name: 'Connect', path: '/dna/connect/network', icon: 'Users2' },
-  { name: 'Convene', path: '/dna/convene/events', icon: 'Calendar' },
+  { name: 'Convene', path: '/dna/convene', icon: 'Calendar' },
   // BD063 hide-and-freeze: Messages hidden while DM/group messaging is OUT at v0.0.
   ...(MESSAGING_ENABLED
     ? [{ name: 'Messages', path: '/dna/connect/messages', icon: 'MessageCircle' }]
@@ -50,7 +50,7 @@ export const pillarNavigation = {
     label: 'Convene',
     icon: 'Calendar',
     items: [
-      { name: 'Events', path: '/dna/convene/events' },
+      { name: 'Events', path: '/dna/convene' },
     ],
   },
   contribute: {
