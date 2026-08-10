@@ -58,20 +58,25 @@ const BaseLayoutChrome: React.FC<BaseLayoutProps> = ({ children }) => {
   }, [user?.id]);
 
   // Routes that render their own mobile header (a DnaMobileHubShell inside the
-  // page) hide BaseLayout's mobile spacer. Connect is NOT in this list: it runs
-  // on AppShell now, so it CLAIMS chrome ownership and BaseLayout's whole chrome
-  // block — spacer included — stands down for it by claim, never by route match.
+  // page) hide BaseLayout's mobile spacer. Connect renders DnaMobileHubShell
+  // directly (not through AppShell), so it never CLAIMS chrome ownership: without
+  // it in this list BaseLayout kept reserving --total-header-height on mobile,
+  // which is the phantom band that sat between the Connect lens bar and the first
+  // member card on /dna/connect/discover.
   const isFeedRoute = location.pathname.includes('/dna/feed');
+  const isConnectRoute = location.pathname.startsWith('/dna/connect');
   const isConveneHubRoute = location.pathname === '/dna/convene';
   const isContributeHubRoute = location.pathname === '/dna/contribute';
   const isConveyHubRoute = location.pathname === '/dna/convey';
   const isCollaborateHubRoute = location.pathname === '/dna/collaborate';
   const hasCustomMobileHeader =
     isFeedRoute ||
+    isConnectRoute ||
     isConveneHubRoute ||
     isContributeHubRoute ||
     isConveyHubRoute ||
     isCollaborateHubRoute;
+
 
   return (
     <>
