@@ -54,7 +54,10 @@ export const EventCardFrame: React.FC<EventCardFrameProps> = ({
     <div
       style={{ borderColor: `hsl(var(--bevel-${bevelToken}))`, height }}
       className={cn(
-        'flex flex-col overflow-hidden rounded-xl bg-card',
+        // min-w-0: the frame is the grid item in an event grid — without it,
+        // a flex/grid item defaults to min-width:auto and refuses to shrink
+        // below its content, blowing out the track (the BD185 mechanism).
+        'flex min-w-0 flex-col overflow-hidden rounded-xl bg-card',
         // 2px four-sided bevel; colour applied via inline style above (BD083).
         'border-bevel',
         className,
@@ -71,9 +74,11 @@ export const EventCardFrame: React.FC<EventCardFrameProps> = ({
       </div>
 
       {/* Band 3 — fact. Absorbs the height variation between cards so the frame
-          stays uniform; clips anything that would push the geometry. */}
+          stays uniform; clips anything that would push the geometry. min-w-0
+          lets any horizontal row inside (e.g. a date/price meta line) shrink
+          with the card instead of setting its own content floor. */}
       <div
-        className="min-h-0 flex-1 overflow-hidden"
+        className="min-h-0 min-w-0 flex-1 overflow-hidden"
         style={{ padding: CARD_PADDING }}
       >
         {fact}

@@ -289,8 +289,6 @@ const CheckInDashboard: React.FC = () => {
           status: 'going',
           source: 'walk-up',
           response_note: walkUpNotes || null,
-          checked_in: walkUpCheckIn,
-          checked_in_at: walkUpCheckIn ? new Date().toISOString() : null,
         })
         .select('id')
         .single();
@@ -317,8 +315,8 @@ const CheckInDashboard: React.FC = () => {
       setWalkUpNotes('');
       setWalkUpCheckIn(true);
     },
-    onError: () => {
-      toast({ title: 'Error', description: 'Failed to add walk-up attendee.', variant: 'destructive' });
+    onError: (error: Error) => {
+      toast({ title: 'Error', description: error.message || 'Failed to add walk-up attendee.', variant: 'destructive' });
     },
   });
 

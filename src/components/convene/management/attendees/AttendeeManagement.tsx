@@ -267,7 +267,7 @@ const AttendeeManagement: React.FC = () => {
   // Add walk-up attendee mutation
   const addAttendeeMutation = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('event_attendees')
         .insert({
           event_id: event.id,
@@ -276,10 +276,18 @@ const AttendeeManagement: React.FC = () => {
           status: 'going',
           source: 'walk-up',
           response_note: newAttendeeNote || null,
-          checked_in: checkInImmediately,
-          checked_in_at: checkInImmediately ? new Date().toISOString() : null,
-        });
+        })
+        .select('id')
+        .single();
       if (error) throw error;
+
+      if (checkInImmediately) {
+        const { error: admissionError } = await supabase.rpc('rpc_manual_admission', {
+          p_event: event.id,
+          p_attendee_id: data.id,
+        });
+        if (admissionError) throw admissionError;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['event-management-attendees', event.id] });
@@ -290,8 +298,8 @@ const AttendeeManagement: React.FC = () => {
       setNewAttendeeNote('');
       setCheckInImmediately(true);
     },
-    onError: () => {
-      toast({ title: 'Error', description: 'Failed to add attendee.', variant: 'destructive' });
+    onError: (error: Error) => {
+      toast({ title: 'Error', description: error.message || 'Failed to add attendee.', variant: 'destructive' });
     },
   });
 

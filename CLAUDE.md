@@ -82,3 +82,4 @@ Never solve a styling problem at the call site. That is how this codebase got in
 - The page renders correctly at 360px, 768px, and 1440px.
 - Keyboard focus is visible on every interactive element.
 - No new font, color, size, or spacing value entered the codebase.
+- No lane writes "founder-ruled" or "locked" into any artifact without a founder message it can point at. A proposal is labelled a proposal until the founder's own words exist.

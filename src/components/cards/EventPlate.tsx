@@ -56,7 +56,7 @@ export const EventPlate: React.FC<EventPlateProps> = ({ event, className }) => {
 
   return (
     <div
-      className={cn('relative h-full w-full overflow-hidden', className)}
+      className={cn('relative h-full min-w-0 w-full overflow-hidden', className)}
       style={{ backgroundImage: `linear-gradient(135deg, ${field.from}, ${field.to})` }}
     >
       {/* Mark layer — decorative, behind the lockup. Absolutely positioned and
