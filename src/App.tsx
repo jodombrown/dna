@@ -121,7 +121,6 @@ const MyEvents = lazy(() => import("./pages/dna/convene/MyEvents"));
 const OrganizerAnalytics = lazy(() => import("./pages/dna/convene/OrganizerAnalytics"));
 const GroupsBrowse = lazy(() => import("./pages/dna/convene/GroupsBrowse"));
 const GroupEventsPage = lazy(() => import("./pages/dna/convene/GroupEventsPage"));
-const EventCheckIn = lazy(() => import("./pages/dna/convene/EventCheckIn"));
 
 // Event Management Console
 const AttendeeManagement = lazy(() => import("./components/convene/management/attendees/AttendeeManagement"));

@@ -9,6 +9,7 @@
  */
 
 import React from 'react';
+import { cn } from '@/lib/utils';
 import { resolveEventPrice, type EventPriceTicketType } from './resolveEventPrice';
 
 interface EventPriceMetaProps {
@@ -24,7 +25,11 @@ export const EventPriceMeta: React.FC<EventPriceMetaProps> = ({
 }) => {
   const price = resolveEventPrice(ticketTypes ?? [], currency ?? null);
   if (!price) return null;
-  return <span className={className}>{price}</span>;
+  // min-w-0: as a flex item in the meta row, the price otherwise sets its own
+  // content floor and blocks the row (and the card) from shrinking to the
+  // track. Wrap vs. truncate at the narrow end is an open copy call — not
+  // decided here (whitespace-nowrap / shrink-0 stay off).
+  return <span className={cn('min-w-0', className)}>{price}</span>;
 };
 
 export default EventPriceMeta;
