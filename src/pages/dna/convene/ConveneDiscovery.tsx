@@ -574,7 +574,7 @@ export function ConveneDiscovery() {
                           ))}
                         </div>
                       ) : browseList.events.length === 0 ? (
-                        <p className="text-body text-muted-foreground py-4 text-center">
+                        <p className="text-body text-muted-foreground text-center">
                           No events found for this filter. Try another or host one!
                         </p>
                       ) : (
