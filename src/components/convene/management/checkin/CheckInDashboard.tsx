@@ -265,13 +265,6 @@ const CheckInDashboard: React.FC = () => {
         .eq('attendee_id', attendeeId)
         .eq('evidence_type', 'scan');
       if (deleteError) throw deleteError;
-
-      const { error } = await supabase
-        .from('event_attendees')
-        .update({ checked_in: false, checked_in_at: null })
-        .eq('id', attendeeId)
-        .eq('event_id', event.id);
-      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['checkin-attendees', event.id] });
