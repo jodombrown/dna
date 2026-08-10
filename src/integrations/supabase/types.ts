@@ -3035,35 +3035,6 @@ export type Database = {
           },
         ]
       }
-      event_checkins: {
-        Row: {
-          by_profile_id: string | null
-          checked_in_at: string | null
-          id: string
-          registration_id: string | null
-        }
-        Insert: {
-          by_profile_id?: string | null
-          checked_in_at?: string | null
-          id?: string
-          registration_id?: string | null
-        }
-        Update: {
-          by_profile_id?: string | null
-          checked_in_at?: string | null
-          id?: string
-          registration_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "event_checkins_registration_id_fkey"
-            columns: ["registration_id"]
-            isOneToOne: true
-            referencedRelation: "event_registrations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       event_comments: {
         Row: {
           author_id: string
