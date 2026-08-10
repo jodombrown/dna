@@ -212,10 +212,10 @@ const AttendeeManagement: React.FC = () => {
   // Check-in mutation
   const checkInMutation = useMutation({
     mutationFn: async (attendeeId: string) => {
-      const { error } = await supabase
-        .from('event_attendees')
-        .update({ checked_in: true, checked_in_at: new Date().toISOString() })
-        .eq('id', attendeeId);
+      const { error } = await supabase.rpc('rpc_manual_admission', {
+        p_event: event.id,
+        p_attendee_id: attendeeId,
+      });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -231,9 +231,10 @@ const AttendeeManagement: React.FC = () => {
   const undoCheckInMutation = useMutation({
     mutationFn: async (attendeeId: string) => {
       const { error } = await supabase
-        .from('event_attendees')
-        .update({ checked_in: false, checked_in_at: null })
-        .eq('id', attendeeId);
+        .from('event_attendance_records')
+        .delete()
+        .eq('attendee_id', attendeeId)
+        .eq('evidence_type', 'scan');
       if (error) throw error;
     },
     onSuccess: () => {
@@ -297,11 +298,16 @@ const AttendeeManagement: React.FC = () => {
   // Bulk check-in mutation
   const bulkCheckInMutation = useMutation({
     mutationFn: async (attendeeIds: string[]) => {
-      const { error } = await supabase
-        .from('event_attendees')
-        .update({ checked_in: true, checked_in_at: new Date().toISOString() })
-        .in('id', attendeeIds);
-      if (error) throw error;
+      const results = await Promise.all(
+        attendeeIds.map(attendeeId =>
+          supabase.rpc('rpc_manual_admission', {
+            p_event: event.id,
+            p_attendee_id: attendeeId,
+          })
+        )
+      );
+      const failed = results.find(r => r.error);
+      if (failed?.error) throw failed.error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['event-management-attendees', event.id] });
