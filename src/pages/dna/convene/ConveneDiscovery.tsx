@@ -4,7 +4,8 @@
  * Hero → Pill Filter Bar → Named Discovery Lanes → Explore Cities
  *
  * Mobile-first: single column, horizontal-scroll lanes.
- * Desktop: max-w-6xl centered, grid lanes.
+ * Desktop: AppShell's three-column frame — facets (context, 280) / lanes or
+ * list (content) / Upcoming + DIA (related, 340), capped at 1400px.
  */
 
 import React, { useState, useMemo, useEffect, useRef, Suspense, lazy } from 'react';
@@ -15,8 +16,8 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/useMobile';
 
+import { AppShell } from '@/layouts/AppShell';
 import { ConveneLocationSelector } from '@/components/convene/ConveneLocationSelector';
-import { ConveneDiscoveryFrame } from '@/components/convene/ConveneDiscoveryFrame';
 import { ConveneCitiesSection } from '@/components/convene/ConveneCitiesSection';
 import { ConveneHeroEvent } from '@/components/convene/ConveneHeroEvent';
 import { DiscoveryLane } from '@/components/convene/DiscoveryLane';
@@ -25,8 +26,7 @@ import { HappeningNowSection } from '@/components/convene/HappeningNowSection';
 import { ConveneDIADiscoveryCard } from '@/components/convene/ConveneDIADiscoveryCard';
 import { DIAHubSection } from '@/components/dia/DIAHubSection';
 import { UpcomingEventsSection } from '@/components/convene/UpcomingEventsSection';
-import { ConveneShell, CONVENE_LENSES } from '@/components/convene/ConveneShell';
-import { LensBar } from '@/components/shell/LensBar';
+import { CONVENE_LENSES, ConveneTabStrip } from '@/components/convene/ConveneShell';
 import { ConveneFacetRail } from '@/components/convene/ConveneFacetRail';
 import { ConveneNarrowSheet } from '@/components/convene/ConveneNarrowSheet';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
@@ -72,8 +72,8 @@ export function ConveneDiscovery() {
 
   const selectedCity = searchParams.get('city');
   // Route-driven lens (BD332b): the hub filters off ?lens=, the same param
-  // the Lens bar writes at every width — mobile via ConveneShell's tab
-  // strip, desktop/tablet via the LensBar rendered directly below.
+  // the Lens bar writes at every width via ConveneTabStrip, mounted in
+  // AppShell's `tabs` slot.
   const activePill = searchParams.get('lens') || 'all';
   const viewMode = (searchParams.get('view') as 'list' | 'map') || 'list';
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -326,11 +326,33 @@ export function ConveneDiscovery() {
       : browseList.events.length;
 
   return (
-    // Mobile chrome (DNA header, composer bubble, bell, avatar, tab strip)
-    // comes from the shared ConveneShell — this page renders body only.
-    <ConveneShell>
-    <div className="w-full min-h-dvh bg-background">
-      <ConveneDiscoveryFrame className="pb-0 lg:pb-6 space-y-3 md:space-y-4 lg:space-y-5">
+    // Chrome (DNA header, composer bubble, bell, avatar, tabs) and the
+    // three-column frame (facets / content / Upcoming+DIA) come from
+    // AppShell — this page supplies the four slots and renders body only.
+    <>
+    <AppShell
+      bubble={{
+        kind: 'composer',
+        placeholder: 'Host or find an event...',
+        onClick: () => composer.open('event'),
+      }}
+      tabs={<ConveneTabStrip />}
+      context={
+        <ConveneFacetRail
+          values={facetValues}
+          onChange={handleFacetChange}
+          countries={countries}
+          categories={categoryTags}
+        />
+      }
+      related={
+        <div className="space-y-6">
+          <UpcomingEventsSection onCreateEvent={() => composer.open('event')} />
+          <DIAHubSection surface="convene_hub" limit={2} />
+        </div>
+      }
+    >
+      <div className="space-y-3 md:space-y-4 lg:space-y-5">
         {/* ═══════════════════════════════════════
             MOBILE: MY EVENTS DOOR
             The fixed mobile header has no room for it, and without this
@@ -419,8 +441,6 @@ export function ConveneDiscovery() {
               </div>
             </div>
 
-            <LensBar lenses={CONVENE_LENSES} ariaLabel="Convene lenses" c="convene" />
-
             <CopperDivider />
           </>
         )}
@@ -441,13 +461,11 @@ export function ConveneDiscovery() {
             />
           </Suspense>
         ) : (
-          /* Content + Rail. The layout switch is md: — tablet gets the Rail
-             and the two-across lane arrangement; the Upcoming/DIA sidebar
-             (nested inside the Rail below) alone waits for lg:. */
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] gap-4 md:gap-6 lg:gap-8 items-start">
-            {/* LEFT — lanes (lens=all, no facets) or the flat, paginated list */}
-            <div className="space-y-4 md:space-y-6 min-w-0">
-              {showDiscoveryLanes ? (
+          /* AppShell's content column: lanes (lens=all, no facets) or the
+             flat, paginated list, plus Explore Cities. Facets and the
+             Upcoming/DIA sidebar are AppShell's context and related rails. */
+          <div className="space-y-4 md:space-y-6 min-w-0">
+            {showDiscoveryLanes ? (
                 /* ═══════════════════════════════════
                    DISCOVERY LANES — the resting state
                    ═══════════════════════════════════ */
@@ -649,40 +667,16 @@ export function ConveneDiscovery() {
                   />
                 </>
               )}
-
-              {/* Upcoming Events — below the list on mobile/tablet only */}
-              <div className="lg:hidden">
-                <UpcomingEventsSection
-                  onCreateEvent={() => composer.open('event')}
-                />
-              </div>
-            </div>
-
-            {/* RIGHT — the Rail: facets always, Upcoming/DIA sidebar at lg: */}
-            <ConveneFacetRail
-              values={facetValues}
-              onChange={handleFacetChange}
-              countries={countries}
-              categories={categoryTags}
-            >
-              <div className="hidden lg:block space-y-6">
-                <UpcomingEventsSection
-                  onCreateEvent={() => composer.open('event')}
-                />
-                <DIAHubSection surface="convene_hub" limit={2} />
-              </div>
-            </ConveneFacetRail>
           </div>
         )}
-      </ConveneDiscoveryFrame>
+      </div>
+    </AppShell>
 
-      <ConveneSearchOverlay
-        isOpen={isSearchOpen}
-        onClose={() => setIsSearchOpen(false)}
-      />
-
-    </div>
-    </ConveneShell>
+    <ConveneSearchOverlay
+      isOpen={isSearchOpen}
+      onClose={() => setIsSearchOpen(false)}
+    />
+    </>
   );
 }
 

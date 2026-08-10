@@ -39,7 +39,7 @@ export const CONVENE_LENSES: Lens[] = [
   { id: 'curated', label: 'Curated by DNA', icon: Sparkles, description: 'Events selected by the DNA team' },
 ];
 
-function ConveneTabStrip() {
+export function ConveneTabStrip() {
   return (
     <HubTabsRow>
       <LensBar lenses={CONVENE_LENSES} ariaLabel="Convene lenses" c="convene" />
