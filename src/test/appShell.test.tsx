@@ -46,10 +46,11 @@ vi.mock('@/components/mobile/DnaMobileHubShell', () => ({
   ),
 }));
 
-// Breakpoint is switched per-test through this mutable flag.
+// Breakpoint is switched per-test through these mutable flags.
 let mockIsMobile = false;
+let mockIsTablet = false;
 vi.mock('@/hooks/useMobile', () => ({
-  useMobile: () => ({ isMobile: mockIsMobile }),
+  useMobile: () => ({ isMobile: mockIsMobile, isTablet: mockIsTablet }),
   useIsMobile: () => mockIsMobile,
 }));
 
@@ -83,6 +84,7 @@ function gridColumns(container: HTMLElement): string {
 
 beforeEach(() => {
   mockIsMobile = false;
+  mockIsTablet = false;
 });
 
 describe('AppShell — route context', () => {
@@ -122,6 +124,31 @@ describe('AppShell — route context', () => {
     expect(cols).not.toContain('280px');
     expect(cols).not.toContain('340px');
     expect(cols).toContain('1fr');
+  });
+
+  it('drops the right (340) track in the 768-1023 tablet band even when `related` is supplied (Pack 14 S68)', () => {
+    mockIsTablet = true;
+    const c = renderOnRoute(
+      <AppShell bubble={BUBBLE} context={<p>filters</p>} related={<p>related</p>}>
+        <p>surface</p>
+      </AppShell>,
+    );
+    const cols = gridColumns(c.container);
+    expect(cols).toContain('280px'); // context still renders — tablet keeps it
+    expect(cols).not.toContain('340px'); // right rail track absent, not empty
+    expect(screen.queryByText('related')).toBeNull();
+  });
+
+  it('renders the right (340) track again at 1024+ when `related` is supplied', () => {
+    mockIsTablet = false;
+    const c = renderOnRoute(
+      <AppShell bubble={BUBBLE} context={<p>filters</p>} related={<p>related</p>}>
+        <p>surface</p>
+      </AppShell>,
+    );
+    const cols = gridColumns(c.container);
+    expect(cols).toContain('340px');
+    expect(screen.getByText('related')).toBeTruthy();
   });
 });
 

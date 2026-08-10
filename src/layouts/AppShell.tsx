@@ -20,15 +20,18 @@
  *              supplied, it owns the lens bar instead (see `tabs` below) and
  *              `children` starts at content — AppShell changes no nav slot and
  *              converts no C surface, it only supplies the column.
- *   right    — the `related` rail (340). Renders nothing when `related` is
- *              absent and the grid DROPS the track — there is never an empty 340.
+ *   right    — the `related` rail (340). Renders nothing, and the grid DROPS
+ *              the track, when `related` is absent OR the viewport is in the
+ *              768–1023 tablet band — there is never an empty 340. Pack 14
+ *              S68: tablet takes desktop's arrangement and drops the sidebar,
+ *              it does not get three fixed rails jammed into 768px.
  *   tabs     — optional. Per BD458, the lens bar for hubs that have one lives
  *              here instead of as the first node of `children`, so it sits in
  *              the fixed, scroll-collapsing top treatment on mobile rather
  *              than scrolling away with the content. Desktop renders it ABOVE
- *              the content column, inside the 1400px cap, spanning the
- *              content track only — never the rails, which is the content's
- *              neighbour, not its container.
+ *              the content column, spanning the content track only — never
+ *              the rails, which is the content's neighbour, not its
+ *              container.
  *
  * Mobile (<768px): the shell renders DnaMobileHubShell's header treatment (the
  * canonical logo / bubble / bell / avatar top bar with its BD157 safe-area
@@ -58,9 +61,22 @@ import { useIdentitySheetSafe } from '@/components/ui/settings-kit';
 import { useChromeOwner } from '@/layouts/ChromeOwnerContext';
 import { useMobile } from '@/hooks/useMobile';
 
-/** The content column is capped with the rails at a 1400px total (px, so the
- *  gate never sees a bracketed arbitrary value; matches ThreeColumnLayout). */
-const CONTENT_MAX_WIDTH = 1400;
+/**
+ * READING_MAX_WIDTH — a reading-width cap for PROSE CONTENT, not a shell cap.
+ *
+ * This used to be CONTENT_MAX_WIDTH, applied to the whole shell grid — rails
+ * included. That conflated a reading-width limit (right for a column of
+ * prose) with a viewport cap (wrong for a shell with fixed rails): on a wide
+ * viewport the rails held their width and the content column absorbed the
+ * entire loss, down to 708px of a 2543px viewport.
+ *
+ * The shell no longer caps anything; it fills the viewport. This constant
+ * moved to where reading-width limits belong: inside a content column,
+ * applied by the surface that owns that column, only when that surface's
+ * content is prose-like. A card grid must NOT apply this — more width there
+ * means more columns, not a fixed reading column with dead space beside it.
+ */
+export const READING_MAX_WIDTH = 1400;
 const LEFT_RAIL = '280px';
 const RIGHT_RAIL = '340px';
 
@@ -77,19 +93,20 @@ interface AppShellProps {
    *  first node here. When `tabs` is supplied, it owns the lens bar and
    *  `children` starts at content. */
   children: React.ReactNode;
-  /** Right rail (340). The track drops entirely when this is absent — the grid
-   *  never reserves an empty 340. */
+  /** Right rail (340). The track drops entirely when this is absent, or when
+   *  the viewport is in the 768-1023 tablet band — the grid never reserves an
+   *  empty 340. */
   related?: React.ReactNode;
   /** The hub's lens bar (BD458). Mobile: passed straight through to
    *  DnaMobileHubShell's `tabs` slot, in the fixed top treatment. Desktop:
-   *  rendered above the content column, inside the 1400px cap, spanning the
-   *  content track only. Absent renders nothing — no reserved space. */
+   *  rendered above the content column, spanning the content track only.
+   *  Absent renders nothing — no reserved space. */
   tabs?: React.ReactNode;
 }
 
 export function AppShell({ bubble, context, children, related, tabs }: AppShellProps) {
   const inPanel = useIdentitySheetSafe() !== null;
-  const { isMobile } = useMobile();
+  const { isMobile, isTablet } = useMobile();
   const { claim, release } = useChromeOwner();
 
   // ── Chrome ownership (BD110) ──────────────────────────────────────────────
@@ -142,11 +159,14 @@ export function AppShell({ bubble, context, children, related, tabs }: AppShellP
   }
 
   // ── Desktop (>=768px) ────────────────────────────────────────────────────
-  // The right track is present only when `related` is; the left track only when
-  // `context` is. `1fr` is always the content column. Dynamic grid template ->
-  // an inline style (rule 7), the same call ThreeColumnLayout makes.
+  // The left track is present only when `context` is. The right track is
+  // present only when `related` is supplied AND the viewport is 1024+ — the
+  // 768-1023 tablet band takes desktop's arrangement minus the sidebar (Pack
+  // 14 S68), so `related` never renders there even if the surface supplied
+  // it. `1fr` is always the content column, and the shell carries no width
+  // cap of its own — it fills the viewport (see READING_MAX_WIDTH above).
   const hasContext = context != null;
-  const hasRelated = related != null;
+  const hasRelated = related != null && !isTablet;
   const gridTemplateColumns = [
     hasContext ? LEFT_RAIL : null,
     '1fr',
@@ -160,9 +180,8 @@ export function AppShell({ bubble, context, children, related, tabs }: AppShellP
       <UnifiedHeader />
       <PulseBar />
       <div
-        className="mx-auto grid w-full gap-5 px-4"
+        className="grid w-full gap-5 px-4"
         style={{
-          maxWidth: CONTENT_MAX_WIDTH,
           gridTemplateColumns,
           // Clear the fixed header + C nav, then own the remaining viewport.
           // Margin sits OUTSIDE the box, so the grid height is not reduced a

@@ -1,6 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { AppShell } from '@/layouts/AppShell';
+import { AppShell, READING_MAX_WIDTH } from '@/layouts/AppShell';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { Card } from '@/components/ui/card';
 import { BarChart3 } from 'lucide-react';
@@ -27,22 +27,27 @@ const DnaAnalytics = () => {
   // Tier gating — free users cannot access cross-C analytics
   const tierAccess = checkTierAccess(UserTier.FREE, 'canViewCrossCAnalytics');
 
+  // Analytics is prose-ish (headings, cards of text, no grid that wants to
+  // absorb extra width as more columns), so its content column claims its
+  // own reading-width cap here — the shell itself no longer caps anything.
   const centerColumn = (
-    <TierGate
-      hasAccess={tierAccess.allowed}
-      requiredTier="pro"
-      featureLabel="Cross-C Analytics"
-    >
-      <div className="space-y-6">
-        <div className="flex items-center gap-3 mb-6">
-          <BarChart3 className="w-6 h-6 text-primary" />
-          <h1 className="text-h2 font-serif">Analytics Dashboard</h1>
+    <div className="w-full" style={{ maxWidth: READING_MAX_WIDTH }}>
+      <TierGate
+        hasAccess={tierAccess.allowed}
+        requiredTier="pro"
+        featureLabel="Cross-C Analytics"
+      >
+        <div className="space-y-6">
+          <div className="flex items-center gap-3 mb-6">
+            <BarChart3 className="w-6 h-6 text-primary" />
+            <h1 className="text-h2 font-serif">Analytics Dashboard</h1>
+          </div>
+          <Card className="p-6">
+            <p className="text-muted-foreground">Analytics content coming soon...</p>
+          </Card>
         </div>
-        <Card className="p-6">
-          <p className="text-muted-foreground">Analytics content coming soon...</p>
-        </Card>
-      </div>
-    </TierGate>
+      </TierGate>
+    </div>
   );
 
   return (
