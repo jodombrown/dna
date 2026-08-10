@@ -177,7 +177,7 @@ export function LensBar({ lenses, ariaLabel, c }: LensBarProps) {
                 // the active chip leaves, evenly, and the scroll track only kicks in
                 // when the set genuinely cannot fit, nothing clips.
                 'relative z-10 flex min-h-9 items-center justify-center gap-1.5 rounded-md',
-                isActive ? 'flex-none p-2' : 'min-w-8 flex-1',
+                isActive ? 'flex-none p-2' : 'min-w-8 flex-1 md:px-2',
                 'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
                 lens.disabled
                   ? 'cursor-default border border-dashed border-border'
@@ -189,13 +189,19 @@ export function LensBar({ lenses, ariaLabel, c }: LensBarProps) {
                 className={cn('h-4 w-4 shrink-0', isActive && (c ? C_ICON[c] : 'text-foreground'))}
                 aria-hidden="true"
               />
-              {/* Label renders on the active lens only; the icon-only inactive
-                  shape is what fits six lenses on a 375px screen. */}
-              {isActive && (
-                <span className="whitespace-nowrap text-meta font-medium animate-in fade-in duration-100">
-                  {lens.label}
-                </span>
-              )}
+              {/* Label renders on the active lens only below md: — the icon-only
+                  inactive shape is what fits six lenses on a 375px screen. At
+                  md: and up there is room for every label, so all six render. */}
+              <span
+                className={cn(
+                  'whitespace-nowrap text-meta font-medium',
+                  isActive
+                    ? 'animate-in fade-in duration-100'
+                    : 'hidden md:inline',
+                )}
+              >
+                {lens.label}
+              </span>
             </button>
           );
         })}

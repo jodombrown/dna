@@ -94,12 +94,11 @@ export function DiscoveryLane({
       {events.length === 0 && emptyMessage ? (
         <p className="text-sm text-muted-foreground py-4 text-center">{emptyMessage}</p>
       ) : (
-        /* Horizontal scroll on mobile, grid on desktop */
-        <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 -mx-3 px-3 md:mx-0 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible">
+        /* Horizontal-scroll rail at every width — Width Doctrine rule 2: width
+           changes how many cards are visible, never whether it's a rail. */
+        <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 -mx-3 px-3 md:mx-0 md:px-0">
           {events.map((event) => (
-            /* The card carries its own geometry under BD190; the rail item just
-               fixes the scroll width on phones and releases it into the grid at md. */
-            <div key={event.id} className="w-80 flex-shrink-0 md:w-auto">
+            <div key={event.id} className="w-80 flex-shrink-0">
               {event.is_curated ? (
                 <CuratedEventCard
                   event={{
