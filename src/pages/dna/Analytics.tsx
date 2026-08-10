@@ -1,6 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import LayoutController from '@/components/LayoutController';
+import { AppShell } from '@/layouts/AppShell';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { Card } from '@/components/ui/card';
 import { BarChart3 } from 'lucide-react';
@@ -46,10 +46,12 @@ const DnaAnalytics = () => {
   );
 
   return (
-    <LayoutController
-      centerColumn={centerColumn}
-      rightColumn={<RightWidgets variant="default" />}
-    />
+    <AppShell
+      bubble={{ kind: 'static', placeholder: 'Analytics Dashboard' }}
+      related={<RightWidgets variant="default" />}
+    >
+      {centerColumn}
+    </AppShell>
   );
 };
 
