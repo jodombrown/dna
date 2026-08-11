@@ -61,14 +61,14 @@ export function ConveneLocationSelector({
   const triggerButton = (
     <button
       className={cn(
-        'flex items-center gap-1.5 text-left transition-colors',
+        'flex min-w-0 items-center gap-1.5 text-left transition-colors',
         'hover:text-[hsl(var(--module-convene))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md px-1 -mx-1',
       )}
       onClick={isMobile ? () => setOpen(true) : undefined}
     >
-      <MapPin className="w-4 h-4 text-[hsl(var(--module-convene))]" />
-      <span className="text-lg font-bold text-foreground">{displayCity}</span>
-      <ChevronDown className="w-4 h-4 text-muted-foreground" />
+      <MapPin className="w-4 h-4 shrink-0 text-[hsl(var(--module-convene))]" />
+      <span className="truncate text-h2 font-bold text-foreground">{displayCity}</span>
+      <ChevronDown className="w-4 h-4 shrink-0 text-muted-foreground" />
     </button>
   );
 

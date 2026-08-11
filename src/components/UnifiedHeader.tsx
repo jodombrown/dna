@@ -358,7 +358,11 @@ const UnifiedHeader = () => {
                   <TooltipTrigger asChild>
                     <Button
                       size="sm"
-                      onClick={() => composer.open('story')}
+                      onClick={() =>
+                        composer.open(
+                          location.pathname.startsWith('/dna/convene') ? 'event' : 'story',
+                        )
+                      }
                       className="bg-primary hover:bg-primary/90 text-primary-foreground gap-1 hidden md:flex"
                     >
                       <Plus className="w-4 h-4" />
