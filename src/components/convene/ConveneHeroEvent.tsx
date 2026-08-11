@@ -17,11 +17,11 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Calendar, MapPin, Video, Globe, Users, ExternalLink } from 'lucide-react';
 import { EventTime } from '@/components/events/EventTime';
-import { eventStartMs } from '@/lib/events/eventTime';
+import { cn } from '@/lib/utils';
 import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 import { LocationLine } from '@/components/maps/LocationLine';
 import { EventPriceMeta } from '@/components/cards/EventPriceMeta';
-import { resolveEventAction } from '@/components/cards/resolveEventAction';
+import { resolveEventAction, EVENT_ACTION_LABELS } from '@/components/cards/resolveEventAction';
 import type { EventPriceTicketType } from '@/components/cards/resolveEventPrice';
 
 const CARD_PADDING = 'var(--card-padding)';
@@ -43,7 +43,6 @@ interface HeroEventProps {
     short_description?: string | null;
     is_curated?: boolean;
     is_cancelled?: boolean;
-    rsvp_status?: 'going' | 'maybe' | 'not_going' | null;
     meeting_url?: string | null;
     location_lat?: number | null;
     location_lng?: number | null;
@@ -60,9 +59,6 @@ interface HeroEventProps {
 export function ConveneHeroEvent({ event }: HeroEventProps) {
   const navigate = useNavigate();
   const imageUrl = event.cover_image_url ?? null;
-  const startMs = eventStartMs(event);
-  const startDate = startMs !== null ? new Date(startMs) : null;
-  const isPast = startDate ? startDate < new Date() : false;
   const attendeeCount = event.event_attendees?.[0]?.count ?? 0;
 
   const isVirtual = event.format === 'virtual';
@@ -74,16 +70,17 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
     navigate(`/dna/convene/events/${event.slug || event.id}`);
   };
 
-  const actionLabel = resolveEventAction({
-    isCancelled: event.is_cancelled,
-    isPast,
-    rsvpStatus: event.rsvp_status,
-  });
-  const actionDisabled = Boolean(event.is_cancelled) || isPast;
+  // The primary action always just navigates to the event page — no inline
+  // RSVP flow here — so it shares one action word resolved from the ticket
+  // types, same as ConveneEventCard and CuratedEventCard.
+  const actionLabel = EVENT_ACTION_LABELS[resolveEventAction(event.event_ticket_types ?? [])];
 
   return (
     <div
-      className="relative w-full cursor-pointer overflow-hidden rounded-xl bg-card border-bevel"
+      className={cn(
+        'relative w-full cursor-pointer overflow-hidden rounded-xl bg-card border-bevel',
+        event.is_cancelled && 'opacity-60',
+      )}
       style={{ borderColor: 'hsl(var(--bevel-event))' }}
       onClick={handleClick}
     >
@@ -177,7 +174,6 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
             <Button
               size="hero"
               className="w-full sm:w-auto"
-              disabled={actionDisabled}
               onClick={(e) => {
                 e.stopPropagation();
                 handleClick();
