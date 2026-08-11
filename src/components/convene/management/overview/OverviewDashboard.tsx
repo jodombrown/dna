@@ -9,9 +9,11 @@ import {
   Send,
   QrCode,
   BarChart3,
-  UserPlus
+  UserPlus,
+  AlertTriangle
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -135,6 +137,27 @@ const OverviewDashboard: React.FC = () => {
     enabled: !!event.id,
   });
 
+  // No check-in location: same EXISTS-against-event_delivery_endpoints check
+  // BD490's publish gate uses, not a re-derivation from location_name.
+  const needsCheckInLocation = event.format === 'in_person' || event.format === 'hybrid';
+  const { data: hasPhysicalRoom, isLoading: physicalRoomLoading } = useQuery({
+    queryKey: ['event-has-physical-room', event.id],
+    queryFn: async (): Promise<boolean> => {
+      const { count, error } = await supabase
+        .from('event_delivery_endpoints')
+        .select('id', { count: 'exact', head: true })
+        .eq('event_id', event.id)
+        .eq('type', 'physical_room');
+
+      if (error) throw error;
+      return (count ?? 0) > 0;
+    },
+    enabled: !!event.id && needsCheckInLocation,
+  });
+
+  const showNoCheckInLocationWarning =
+    needsCheckInLocation && !physicalRoomLoading && hasPhysicalRoom === false;
+
   // Fetch registration trend data
   const { data: trendData = [] } = useQuery({
     queryKey: ['event-registration-trend', event.id],
@@ -206,6 +229,26 @@ const OverviewDashboard: React.FC = () => {
         <h1 className="text-2xl font-bold">Overview</h1>
         <p className="text-muted-foreground">Event dashboard and key metrics</p>
       </div>
+
+      {showNoCheckInLocationWarning && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>No check-in location</AlertTitle>
+          <AlertDescription className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <span>
+              This event has no check-in location. Attendees cannot be admitted until you add one.
+            </span>
+            <Button
+              size="sm"
+              variant="outline"
+              className="shrink-0"
+              onClick={() => navigate(`/dna/convene/events/${event.slug || event.id}/edit`)}
+            >
+              Add check-in location
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Metrics Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
