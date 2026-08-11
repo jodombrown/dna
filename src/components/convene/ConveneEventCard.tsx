@@ -13,6 +13,7 @@ import { Nkonsonkonson } from '@/components/icons/adinkra';
 import { EventCardFrame } from '@/components/cards/EventCardFrame';
 import { EventPlate } from '@/components/cards/EventPlate';
 import type { EventPriceTicketType } from '@/components/cards/resolveEventPrice';
+import { resolveEventAction, EVENT_ACTION_LABELS } from '@/components/cards/resolveEventAction';
 
 // The card-padding token steps with the viewport (16 / 14 / 12); it has no
 // Tailwind utility, so the identity band applies it inline — the one certified
@@ -159,6 +160,11 @@ export function ConveneEventCard({
   };
 
   const imageUrl = event.cover_image_url || event.banner_url || event.image_url;
+
+  // Both the RSVP branch and the fallback branch below just navigate to the
+  // event page — neither submits an RSVP inline — so they share one action
+  // word resolved from the same ticket types.
+  const actionLabel = EVENT_ACTION_LABELS[resolveEventAction(event.event_ticket_types ?? [])];
 
   // ── Composes the shared four-band frame (BD190) ───────────────────────
   // Byte-identical in shape to CuratedEventCard and every other event surface:
@@ -307,7 +313,7 @@ export function ConveneEventCard({
           onRsvp('going');
         }}
       >
-        I&apos;m going
+        {actionLabel}
       </Button>
     ) : showActions && isOrganizer ? (
       <Button
@@ -331,7 +337,7 @@ export function ConveneEventCard({
           handleClick();
         }}
       >
-        I&apos;m going
+        {actionLabel}
       </Button>
     );
 

@@ -11,6 +11,7 @@ import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
 import { CuratedEventCard } from '@/components/convene/CuratedEventCard';
 import { pickEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 import { cn } from '@/lib/utils';
+import type { EventPriceTicketType } from '@/components/cards/resolveEventPrice';
 
 export interface DiscoveryEvent extends EventPlaceInput {
   id: string;
@@ -38,6 +39,8 @@ export interface DiscoveryEvent extends EventPlaceInput {
     avatar_url?: string | null;
     username?: string;
   } | null;
+  currency?: string | null;
+  event_ticket_types?: EventPriceTicketType[];
 }
 
 interface DiscoveryLaneProps {
@@ -146,6 +149,8 @@ export function DiscoveryLane({
                       username: event.organizer.username,
                     } : undefined,
                     event_attendees: event.event_attendees,
+                    currency: event.currency,
+                    event_ticket_types: event.event_ticket_types,
                   }}
                   showOrganizer
                   showMutualAttendees={showMutualAttendees}

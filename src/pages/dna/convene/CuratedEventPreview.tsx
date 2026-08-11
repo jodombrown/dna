@@ -35,6 +35,7 @@ import { EventTime } from '@/components/events/EventTime';
 import { isEventCompleted } from '@/lib/events/lifecycle';
 import { formatEventPlace, pickEventPlace } from '@/lib/events/formatPlace';
 import { curatedHostName, curatedSourceDomain, realCuratedCover } from '@/lib/events/curated';
+import { resolveEventAction, EVENT_ACTION_LABELS } from '@/components/cards/resolveEventAction';
 import { useCuratedEventPulse } from '@/hooks/convene/useCuratedEventPulse';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
 import { LocationMap } from '@/components/maps/LocationMap';
@@ -98,6 +99,11 @@ export function CuratedEventPreview({ event, showBack = true }: CuratedEventPrev
   const chapterCount = pulse?.chapterCount ?? 0;
   const isGoing = pulse?.isGoing ?? false;
   const attendeePreview = (pulse?.attendees ?? []).slice(0, 8);
+
+  // A curated event is never ticketed through DNA, so this always resolves
+  // to 'rsvp' — routed through the shared resolver so the label is never a
+  // second hardcoded literal.
+  const actionLabel = EVENT_ACTION_LABELS[resolveEventAction([])];
 
   const eventPath = `/dna/convene/events/${slug || eventId}`;
 
@@ -282,7 +288,7 @@ export function CuratedEventPreview({ event, showBack = true }: CuratedEventPrev
                 <Check className="h-4 w-4 mr-1.5" /> Going
               </>
             ) : (
-              "I'm going"
+              actionLabel
             )}
           </Button>
         </div>
