@@ -388,7 +388,7 @@ export function ConveneDiscovery() {
             ═══════════════════════════════════════ */}
         {!isMobile && (
           <>
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center justify-between gap-3 py-2">
               <ConveneLocationSelector
                 selectedCity={selectedCity}
                 userCity={userLocation?.city ?? null}
@@ -432,14 +432,6 @@ export function ConveneDiscovery() {
                 >
                   <CalendarCheck className="w-4 h-4 mr-1" />
                   My Events
-                </Button>
-                <Button
-                  size="sm"
-                  className="bg-dna-copper hover:bg-dna-copper-dark text-white rounded-full h-9 px-4"
-                  onClick={() => composer.open('event')}
-                >
-                  <Plus className="w-4 h-4 mr-1" />
-                  <span className="hidden sm:inline">Host</span>
                 </Button>
               </div>
             </div>

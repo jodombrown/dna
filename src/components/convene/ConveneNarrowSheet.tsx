@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import { SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
 import { ConveneFacetControls, type ConveneFacetKey, type ConveneFacetValues } from './ConveneFacetControls';
 
 interface ConveneNarrowSheetProps {
@@ -21,8 +21,8 @@ export function ConveneNarrowSheet({ values, onChange, countries, categories, ac
   const [open, setOpen] = useState(false);
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger asChild>
         <Button variant="outline" size="sm" className="md:hidden rounded-full gap-1.5">
           <SlidersHorizontal className="w-4 h-4" />
           Narrow
@@ -32,20 +32,20 @@ export function ConveneNarrowSheet({ values, onChange, countries, categories, ac
             </span>
           )}
         </Button>
-      </SheetTrigger>
-      <SheetContent side="bottom">
-        <SheetHeader>
-          <SheetTitle className="text-h3">Narrow Results</SheetTitle>
-        </SheetHeader>
+      </DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle className="text-h3">Narrow Results</DrawerTitle>
+        </DrawerHeader>
         <ConveneFacetControls
           values={values}
           onChange={onChange}
           countries={countries}
           categories={categories}
-          className="space-y-4 py-4"
+          className="space-y-4 px-4 pb-6"
         />
-      </SheetContent>
-    </Sheet>
+      </DrawerContent>
+    </Drawer>
   );
 }
 

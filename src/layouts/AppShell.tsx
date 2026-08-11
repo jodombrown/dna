@@ -195,14 +195,14 @@ export function AppShell({ bubble, context, children, related, tabs }: AppShellP
         style={{
           gridTemplateColumns,
           // Clear the fixed header + C nav, then own the remaining viewport,
-          // pulled one BD176 rung (4px) closer to the chrome — the columns'
-          // top 4px sits behind PulseBar's fixed layer, not below it. Height
-          // gains the same rung back so the grid still fills to the bottom
-          // of the viewport. Margin sits OUTSIDE the box, so the grid height
-          // is not reduced a second time by the chrome under border-box
-          // (paddingTop would be).
-          marginTop: 'calc(var(--total-header-height, 7.5rem) - 0.25rem)',
-          height: 'calc(100dvh - var(--total-header-height, 7.5rem) + 0.25rem)',
+          // with two BD176 rungs (8px) of clearance BELOW the chrome — the
+          // columns sit clear of PulseBar's fixed layer instead of tucked
+          // under it. Height loses the same amount so the grid still fills
+          // to the bottom of the viewport. Margin sits OUTSIDE the box, so
+          // the grid height is not reduced a second time by the chrome
+          // under border-box (paddingTop would be).
+          marginTop: 'calc(var(--total-header-height, 7.5rem) + 0.5rem)',
+          height: 'calc(100dvh - var(--total-header-height, 7.5rem) - 0.5rem)',
         }}
       >
         {hasContext && (
