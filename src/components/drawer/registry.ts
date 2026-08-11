@@ -123,11 +123,11 @@ export const ACCOUNT_SURFACE: DrawerSurface = {
       id: 'my-events',
       label: 'My events',
       group: 'my-work',
-      // DR3: was `/dna/convene/events`, the GLOBAL events index. The row
+      // DR3: was `/dna/convene`, the GLOBAL events index. The row
       // promised the member's own events and delivered everybody's.
       //
       // The registry gate did not catch it and could not have: check 1 only
-      // asks whether the path is declared in App.tsx, and `/dna/convene/events`
+      // asks whether the path is declared in App.tsx, and `/dna/convene`
       // is a real route. A route string cannot express whose rows it returns.
       // Same defect class as BD139's `My stories`, which pointed at the
       // unfiltered Convey hub. The durable fix is a member-filter contract on

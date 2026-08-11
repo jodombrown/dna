@@ -285,7 +285,7 @@ const EventOverview = ({ eventId: eventIdProp }: EventOverviewProps = {}) => {
     onSuccess: () => {
       invalidateAllEventCaches(queryClient, eventId ?? undefined);
       toast({ title: 'Event Deleted', description: 'Your event has been permanently deleted.' });
-      navigate('/dna/convene/events');
+      navigate('/dna/convene');
     },
     onError: () => {
       toast({ title: 'Error', description: 'Failed to delete event', variant: 'destructive' });

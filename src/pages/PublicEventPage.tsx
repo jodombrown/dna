@@ -247,7 +247,7 @@ const PublicEventPage = () => {
             This event doesn't exist, has been removed, or is no longer available.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button onClick={() => navigate('/dna/convene/events')}>
+            <Button onClick={() => navigate('/dna/convene')}>
               Browse Events
             </Button>
             {!isLoggedIn && (

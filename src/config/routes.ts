@@ -38,7 +38,7 @@ export const ROUTES = {
   // Convene (Pillar 2)
   convene: {
     base: '/dna/convene',
-    events: '/dna/convene/events',
+    events: '/dna/convene',
     myEvents: '/dna/convene/mine',
     analytics: '/dna/convene/analytics',
     groups: '/dna/convene/groups',

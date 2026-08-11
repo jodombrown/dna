@@ -112,8 +112,7 @@ const ArchivedFeaturesIndex = lazy(() => import("./pages/features/archived/Archi
 const ArchivedFeatureDetail = lazy(() => import("./pages/features/archived/ArchivedFeatureDetail"));
 
 // Convene M1-M3 pages
-const ConveneHub = lazy(() => import("./pages/dna/convene/ConveneHub"));
-const EventsIndex = lazy(() => import("./pages/dna/convene/EventsIndex"));
+const ConveneDiscovery = lazy(() => import("./pages/dna/convene/ConveneDiscovery"));
 const EventDetail = lazy(() => import("./pages/dna/convene/EventDetail"));
 const EventOverview = lazy(() => import("./components/convene/EventOverview"));
 const Welcome = lazy(() => import("./pages/dna/Welcome"));
@@ -589,12 +588,7 @@ function App() {
               {/* ========== CONVENE PILLAR M1 ========== */}
               <Route path="/dna/convene" element={
                 <OnboardingGuard>
-                  <ConveneHub />
-                </OnboardingGuard>
-              } />
-              <Route path="/dna/convene/events" element={
-                <OnboardingGuard>
-                  <EventsIndex />
+                  <ConveneDiscovery />
                 </OnboardingGuard>
               } />
               {/* Event detail is members-only: once the session resolves,
@@ -751,8 +745,8 @@ function App() {
               <Route path="/dna/convey/post/:id" element={<ConveyPostRedirect />} />
               
               {/* Legacy convene route redirects */}
-              <Route path="/dna/events" element={<Navigate to="/dna/convene/events" replace />} />
-              <Route path="/events" element={<Navigate to="/dna/convene/events" replace />} />
+              <Route path="/dna/events" element={<Navigate to="/dna/convene" replace />} />
+              <Route path="/events" element={<Navigate to="/dna/convene" replace />} />
               <Route path="/events/:id" element={<LegacyEventRedirect />} />
               <Route path="/dna/convene-example" element={<Navigate to="/dna/convene" replace />} />
               

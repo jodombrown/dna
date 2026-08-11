@@ -83,7 +83,7 @@ export function ConveneDiscovery() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   // The six Browse facets (when/where/format/type/category/price), each one
-  // lowercase snake_case URL key, folded from EventsIndex's filter set.
+  // lowercase snake_case URL key, folded from the old events index's filter set.
   const facetValues: ConveneFacetValues = {
     when: searchParams.get('when') || '',
     where: searchParams.get('where') || '',
@@ -550,7 +550,7 @@ export function ConveneDiscovery() {
                   <DiscoveryLane
                     title="Across the Diaspora"
                     events={diasporaEvents}
-                    onSeeAll={() => navigate('/dna/convene/events')}
+                    onSeeAll={() => navigate('/dna/convene')}
                     emptyMessage="No upcoming events yet. Be the first to host one!"
                   />
 

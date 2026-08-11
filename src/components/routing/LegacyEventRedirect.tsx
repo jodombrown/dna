@@ -17,7 +17,7 @@ export default function LegacyEventRedirect() {
       navigate(`/dna/convene/events/${id}`, { replace: true });
     } else {
       // If no ID, go to events list
-      navigate('/dna/convene/events', { replace: true });
+      navigate('/dna/convene', { replace: true });
     }
   }, [id, navigate]);
 

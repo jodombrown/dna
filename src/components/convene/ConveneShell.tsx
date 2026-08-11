@@ -57,7 +57,7 @@ interface ConveneShellProps {
   /** The discovery lens bar (All / Near Me / This Week / Virtual / Free /
    *  Network) filters events on the hub, and ONLY the hub. Per BD375, no
    *  other Convene page may inherit it by default: MyEvents has its own
-   *  Hosting/Attending toggle, EventsIndex has its own six-facet filter set,
+   *  Hosting/Attending toggle, Browse has its own six-facet filter set,
    *  EventDetail has nothing to filter, it's one event. Every non-hub caller
    *  must pass tabs={null} explicitly. Defaults to the hub's bar so
    *  ConveneDiscovery, which already calls <ConveneShell> with no props,
