@@ -228,6 +228,11 @@ export function ConveneDiscovery() {
       // No server-side "near me" filter: the loaded upcoming set is reordered
       // client-side by rpc_events_near (real distance), not narrowed to a
       // single city string. See NearMeEventsLane.
+      //
+      // BD480: virtual events ARE excluded here, outright — an event with no
+      // physical location cannot be "near" anyone, so it never enters the Near
+      // Me set in the first place, ahead of the distance call.
+      if (activePill === 'near_me') query = query.neq('format', 'virtual');
 
       const { data, error } = await query;
       if (error) return [];

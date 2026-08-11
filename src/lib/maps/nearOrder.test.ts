@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatDistanceM, buildNearOrdering, nearHeader } from './nearOrder';
+import { formatDistanceM, buildNearOrdering, nearEmptyMessage, nearHeader } from './nearOrder';
 
 describe('formatDistanceM', () => {
   it('coarsens sub-kilometre distances to 50m steps', () => {
@@ -29,14 +29,23 @@ describe('buildNearOrdering', () => {
     { id: 'd' },
   ];
 
-  it('reorders matched events nearest-first and trails the rest in original order', () => {
+  it('reorders matched events nearest-first and drops everything the RPC did not match', () => {
     const order = [
       { eventId: 'c', distanceM: 500 },
       { eventId: 'a', distanceM: 2000 },
     ];
     const { ordered, matched } = buildNearOrdering(events, order);
-    expect(ordered.map((e) => e.id)).toEqual(['c', 'a', 'b', 'd']);
+    expect(ordered.map((e) => e.id)).toEqual(['c', 'a']);
     expect(matched).toBe(2);
+  });
+
+  it('a non-matching event is absent from `ordered`, not merely last', () => {
+    const order = [{ eventId: 'c', distanceM: 500 }];
+    const { ordered } = buildNearOrdering(events, order);
+    expect(ordered.map((e) => e.id)).toEqual(['c']);
+    expect(ordered.find((e) => e.id === 'a')).toBeUndefined();
+    expect(ordered.find((e) => e.id === 'b')).toBeUndefined();
+    expect(ordered.find((e) => e.id === 'd')).toBeUndefined();
   });
 
   it('labels only the events the RPC placed', () => {
@@ -45,9 +54,9 @@ describe('buildNearOrdering', () => {
     expect(distanceLabels).toEqual({ b: '1.2 km' });
   });
 
-  it('is a no-op ordering with zero matches when the RPC returned nothing', () => {
+  it('returns an empty ordering with zero matches when the RPC returned nothing', () => {
     const { ordered, matched, distanceLabels } = buildNearOrdering(events, []);
-    expect(ordered.map((e) => e.id)).toEqual(['a', 'b', 'c', 'd']);
+    expect(ordered).toEqual([]);
     expect(matched).toBe(0);
     expect(distanceLabels).toEqual({});
   });
@@ -58,8 +67,25 @@ describe('buildNearOrdering', () => {
       { eventId: 'd', distanceM: 800 },
     ];
     const { ordered, matched } = buildNearOrdering(events, order);
-    expect(ordered.map((e) => e.id)).toEqual(['d', 'a', 'b', 'c']);
+    expect(ordered.map((e) => e.id)).toEqual(['d']);
     expect(matched).toBe(1);
+  });
+
+  it('excludes virtual events outright, even when the RPC matched one', () => {
+    const withFormats = [
+      { id: 'a', format: 'in_person' },
+      { id: 'b', format: 'virtual' },
+      { id: 'c', format: 'hybrid' },
+    ];
+    const order = [
+      { eventId: 'a', distanceM: 100 },
+      { eventId: 'b', distanceM: 50 },
+      { eventId: 'c', distanceM: 200 },
+    ];
+    const { ordered, matched, distanceLabels } = buildNearOrdering(withFormats, order);
+    expect(ordered.map((e) => e.id)).toEqual(['a', 'c']);
+    expect(matched).toBe(2);
+    expect(distanceLabels.b).toBeUndefined();
   });
 });
 
@@ -73,5 +99,31 @@ describe('nearHeader', () => {
   it('falls back to an honest empty header with no anchor or no matches', () => {
     expect(nearHeader('none', 0)).toBe('Nothing near you yet');
     expect(nearHeader('device', 0)).toBe('Nothing near you yet');
+  });
+});
+
+describe('nearEmptyMessage', () => {
+  it('names the radius and the resolved anchor', () => {
+    expect(nearEmptyMessage('declared', 'Los Angeles', 250_000)).toBe(
+      'No events within 250km of Los Angeles.',
+    );
+  });
+
+  it('falls back to a generic anchor label when none is resolved', () => {
+    expect(nearEmptyMessage('device', null, 250_000)).toBe(
+      'No events within 250km of your location.',
+    );
+    expect(nearEmptyMessage('declared', null, 250_000)).toBe(
+      'No events within 250km of your saved location.',
+    );
+    expect(nearEmptyMessage('chapter', null, 250_000)).toBe(
+      'No events within 250km of your chapter.',
+    );
+  });
+
+  it('asks for location instead of naming a bound when there is no anchor at all', () => {
+    expect(nearEmptyMessage('none', null, 250_000)).toBe(
+      'Turn on location to see events near you.',
+    );
   });
 });

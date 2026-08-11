@@ -23,13 +23,15 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { getEventsNear, type NearAnchor } from '@/lib/maps/eventsNear';
-import { buildNearOrdering, nearHeader } from '@/lib/maps/nearOrder';
+import { getEventsNear, SOFT_RADIUS_M, type NearAnchor } from '@/lib/maps/eventsNear';
+import { buildNearOrdering, nearEmptyMessage, nearHeader } from '@/lib/maps/nearOrder';
 
 export interface NearMeEvents<T> {
   ordered: T[];
   distanceLabels: Record<string, string>;
   header: string;
+  /** Honest empty-state copy: names the radius and the resolved anchor (BD480). */
+  emptyMessage: string;
   anchor: NearAnchor;
   isPending: boolean;
   isError: boolean;
@@ -43,15 +45,25 @@ export function useNearMeEvents<T extends { id: string }>(
 
   // Declared anchor: the profile's own current coordinate, read-only. This is
   // the projection the fallback chain reads when device geolocation is denied.
+  // current_city is fetched alongside it purely for display — it is a public
+  // profile column, not the SECURITY DEFINER-gated coordinate — so the empty
+  // state can name the anchor ("Los Angeles") instead of a vague "your area".
   const declaredQuery = useQuery({
     queryKey: ['near-me-declared', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
-      const { data, error } = await supabase.rpc('get_own_location');
-      if (error) throw error;
-      const row = Array.isArray(data) ? data[0] : null;
+      const [locationRes, cityRes] = await Promise.all([
+        supabase.rpc('get_own_location'),
+        supabase.from('profiles').select('current_city').eq('id', user.id).maybeSingle(),
+      ]);
+      if (locationRes.error) throw locationRes.error;
+      const row = Array.isArray(locationRes.data) ? locationRes.data[0] : null;
       if (!row || row.current_lat == null || row.current_lng == null) return null;
-      return { lat: row.current_lat, lng: row.current_lng };
+      return {
+        lat: row.current_lat,
+        lng: row.current_lng,
+        city: cityRes.data?.current_city ?? null,
+      };
     },
     enabled: enabled && !!user?.id,
     staleTime: 300_000,
@@ -80,6 +92,7 @@ export function useNearMeEvents<T extends { id: string }>(
         ordered: events,
         distanceLabels: {},
         header: '',
+        emptyMessage: '',
         anchor: 'none' as NearAnchor,
         isPending: false,
         isError: false,
@@ -89,10 +102,13 @@ export function useNearMeEvents<T extends { id: string }>(
     const order = nearQuery.data?.order ?? [];
     const { ordered, distanceLabels, matched } = buildNearOrdering(events, order);
     const isPending = !declaredReady || (nearQuery.isPending && nearQuery.fetchStatus !== 'idle');
+    // device has no reverse-geocoded name; declared uses the profile's own city.
+    const anchorLabel = anchor === 'declared' ? declared?.city ?? null : null;
     return {
       ordered,
       distanceLabels,
       header: nearHeader(anchor, matched),
+      emptyMessage: nearEmptyMessage(anchor, anchorLabel, SOFT_RADIUS_M),
       anchor,
       isPending,
       isError: nearQuery.isError,
@@ -100,6 +116,7 @@ export function useNearMeEvents<T extends { id: string }>(
   }, [
     enabled,
     events,
+    declared,
     declaredReady,
     nearQuery.data,
     nearQuery.isPending,

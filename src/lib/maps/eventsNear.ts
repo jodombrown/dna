@@ -11,7 +11,7 @@ export type NearAnchor = "device" | "declared" | "chapter" | "none";
 export interface NearOrder { eventId: string; distanceM: number }
 export interface NearResult { order: NearOrder[]; anchor: NearAnchor }
 
-const SOFT_RADIUS_M = 250_000; // fixed at v0.0 per BD212; matches the RPC default
+export const SOFT_RADIUS_M = 250_000; // fixed at v0.0 per BD212; matches the RPC default
 
 function getDevicePosition(): Promise<GeolocationPosition> {
   return new Promise((resolve, reject) => {

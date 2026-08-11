@@ -17,7 +17,7 @@ export function formatDistanceM(meters: number): string {
 }
 
 export interface NearOrdering<T> {
-  /** events reordered by ascending RPC distance; unmatched keep original order at the end */
+  /** events the RPC matched, reordered by ascending distance. Non-matches are absent, not last. */
   ordered: T[];
   /** eventId → distance label, only for events the RPC actually placed */
   distanceLabels: Record<string, string>;
@@ -25,15 +25,18 @@ export interface NearOrdering<T> {
   matched: number;
 }
 
-// Reorder the loaded events by the RPC's ranking. Events the RPC returned come
-// first, nearest-first; everything else keeps its original relative order and
-// trails behind. A stable secondary sort on the original index guarantees the
-// tail is not reshuffled (Array.prototype.sort is stable on modern engines, but
-// the explicit tiebreak makes the intent unmistakable and test-provable).
-export function buildNearOrdering<T extends { id: string }>(
+// Reorder the loaded events by the RPC's ranking, nearest-first, and DROP
+// everything the RPC didn't match: the radius is a filter, not just a sort
+// key, so an event with no rank is out of the Near Me set entirely.
+//
+// Virtual events are excluded before the distance step even runs — an event
+// with no physical location cannot be "near" anyone, RPC match or not.
+export function buildNearOrdering<T extends { id: string; format?: string | null }>(
   events: T[],
   order: NearOrder[],
 ): NearOrdering<T> {
+  const physical = events.filter((e) => e.format !== 'virtual');
+
   const rank = new Map<string, number>();
   const distance = new Map<string, number>();
   order.forEach((o, i) => {
@@ -41,11 +44,12 @@ export function buildNearOrdering<T extends { id: string }>(
     distance.set(o.eventId, o.distanceM);
   });
 
-  const ordered = events
+  const ordered = physical
+    .filter((e) => rank.has(e.id))
     .map((e, i) => ({ e, i }))
     .sort((a, b) => {
-      const ra = rank.has(a.e.id) ? (rank.get(a.e.id) as number) : Number.POSITIVE_INFINITY;
-      const rb = rank.has(b.e.id) ? (rank.get(b.e.id) as number) : Number.POSITIVE_INFINITY;
+      const ra = rank.get(a.e.id) as number;
+      const rb = rank.get(b.e.id) as number;
       if (ra !== rb) return ra - rb;
       return a.i - b.i;
     })
@@ -53,7 +57,7 @@ export function buildNearOrdering<T extends { id: string }>(
 
   const distanceLabels: Record<string, string> = {};
   let matched = 0;
-  for (const e of events) {
+  for (const e of physical) {
     if (distance.has(e.id)) {
       const label = formatDistanceM(distance.get(e.id) as number);
       if (label) {
@@ -81,4 +85,26 @@ export function nearHeader(anchor: NearAnchor, matched: number): string {
     default:
       return 'Nothing near you yet';
   }
+}
+
+const DEFAULT_ANCHOR_LABEL: Record<Exclude<NearAnchor, 'none'>, string> = {
+  device: 'your location',
+  declared: 'your saved location',
+  chapter: 'your chapter',
+};
+
+// The honest empty state. A bounded search returning nothing must read as a
+// true statement about its bound ("no events within the radius of the
+// anchor"), never as a broken lens. With no anchor at all — geolocation
+// denied and no profile city — there is no bound to state, so this says what
+// would fix it instead of pretending an empty search happened.
+export function nearEmptyMessage(
+  anchor: NearAnchor,
+  anchorLabel: string | null,
+  radiusM: number,
+): string {
+  if (anchor === 'none') return 'Turn on location to see events near you.';
+  const km = Math.round(radiusM / 1000);
+  const label = anchorLabel ?? DEFAULT_ANCHOR_LABEL[anchor];
+  return `No events within ${km}km of ${label}.`;
 }
