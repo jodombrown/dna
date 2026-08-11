@@ -93,7 +93,7 @@ const CheckInDashboard: React.FC = () => {
   const [walkUpCheckIn, setWalkUpCheckIn] = useState(true);
 
   // Tab state
-  const [activeTab, setActiveTab] = useState('scanner');
+  const [activeTab, setActiveTab] = useState(() => event.format === 'virtual' ? 'search' : 'scanner');
 
   // Fetch stats - three distinct admission-evidence metrics, never summed
   const { data: stats } = useQuery({
@@ -416,12 +416,16 @@ const CheckInDashboard: React.FC = () => {
     return name.includes(query) || username.includes(query);
   });
 
+  const isVirtual = event.format === 'virtual';
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold">Check-In</h1>
-        <p className="text-muted-foreground">Scan QR codes or search to check in attendees</p>
+        <p className="text-muted-foreground">
+          {isVirtual ? 'Search to check in attendees' : 'Scan QR codes or search to check in attendees'}
+        </p>
       </div>
 
       {/* Stats Bar - three distinct admission-evidence metrics, never summed or shown as a rate */}
@@ -445,18 +449,20 @@ const CheckInDashboard: React.FC = () => {
       </Card>
 
       {/* Main Actions */}
-      <div className="grid grid-cols-2 gap-4">
-        <Button
-          size="lg"
-          className="h-20 text-lg"
-          onClick={() => {
-            setActiveTab('scanner');
-            if (!scannerActive) startScanner();
-          }}
-        >
-          <Camera className="h-6 w-6 mr-3" />
-          Scan QR
-        </Button>
+      <div className={cn('grid gap-4', isVirtual ? 'grid-cols-1' : 'grid-cols-2')}>
+        {!isVirtual && (
+          <Button
+            size="lg"
+            className="h-20 text-lg"
+            onClick={() => {
+              setActiveTab('scanner');
+              if (!scannerActive) startScanner();
+            }}
+          >
+            <Camera className="h-6 w-6 mr-3" />
+            Scan QR
+          </Button>
+        )}
         <Button
           size="lg"
           variant="outline"
@@ -476,6 +482,118 @@ const CheckInDashboard: React.FC = () => {
       </div>
 
       {/* Tabs */}
+      {isVirtual ? (
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Search Attendees</CardTitle>
+              <CardDescription>Find and check in attendees by name</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Search Input */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="checkin-search-input"
+                  placeholder="Search by name or username..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                  autoFocus
+                />
+              </div>
+
+              {/* Walk-up Button */}
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setShowWalkUpModal(true)}
+              >
+                <UserPlus className="h-4 w-4 mr-2" />
+                Add Walk-up Registration
+              </Button>
+
+              {/* Attendee List */}
+              {attendeesLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                </div>
+              ) : filteredAttendees.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  {searchQuery ? 'No attendees found' : 'No registered attendees'}
+                </div>
+              ) : (
+                <div className="space-y-2 max-h-[400px] overflow-y-auto">
+                  {filteredAttendees.map((attendee) => (
+                    <div
+                      key={attendee.id}
+                      className={cn(
+                        'flex items-center justify-between p-3 rounded-lg border',
+                        attendee.checked_in
+                          ? 'bg-dna-success/10 dark:bg-dna-success/20 border-dna-success/30 dark:border-dna-success'
+                          : 'bg-background'
+                      )}
+                    >
+                      <div className="flex items-center gap-3">
+                        {attendee.checked_in ? (
+                          <CheckCircle2 className="h-5 w-5 text-dna-success flex-shrink-0" />
+                        ) : (
+                          <div className="h-5 w-5 rounded-full border-2 border-muted-foreground flex-shrink-0" />
+                        )}
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={attendee.profile?.avatar_url || ''} />
+                          <AvatarFallback>
+                            {(attendee.profile?.full_name || attendee.guest_name)?.[0] || '?'}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium">
+                            {attendee.profile?.full_name || attendee.guest_name || 'Unknown'}
+                          </p>
+                          <div className="flex items-center gap-2">
+                            {attendee.profile?.username && (
+                              <span className="text-sm text-muted-foreground">
+                                @{attendee.profile.username}
+                              </span>
+                            )}
+                            <Badge variant="outline" className="text-xs capitalize">
+                              {attendee.status}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        {attendee.checked_in ? (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => undoCheckInMutation.mutate(attendee.id)}
+                            disabled={undoCheckInMutation.isPending}
+                          >
+                            Undo
+                          </Button>
+                        ) : (
+                          <Button
+                            size="sm"
+                            onClick={() => checkInMutation.mutate(attendee.id)}
+                            disabled={checkInMutation.isPending}
+                          >
+                            {checkInMutation.isPending ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              'Check In'
+                            )}
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      ) : (
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="scanner">
@@ -690,6 +808,7 @@ const CheckInDashboard: React.FC = () => {
           </Card>
         </TabsContent>
       </Tabs>
+      )}
 
       {/* Recent Check-ins */}
       <Card>
