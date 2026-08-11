@@ -1,14 +1,14 @@
 /**
- * DNA | CONVENE — Discovery Hub (Redesigned)
+ * DNA | CONVENE: Discovery Hub (Redesigned)
  * Editorial discovery experience with Arrival Energy.
  * Hero → Pill Filter Bar → Named Discovery Lanes → Explore Cities
  *
  * Mobile-first: single column, horizontal-scroll lanes.
- * Desktop: AppShell's three-column frame — facets (context, 280) / lanes or
+ * Desktop: AppShell's three-column frame: facets (context, 280) / lanes or
  * list (content) / Upcoming + DIA (related, 340). The shell fills the
  * viewport (no cap); the flat paginated list uses grid-cols-cards (BD333)
  * so its column count tracks the content column's own width, not the
- * viewport's — the viewport minus the rails is not the viewport.
+ * viewport's - the viewport minus the rails is not the viewport.
  */
 
 import React, { useState, useMemo, useEffect, useRef, Suspense, lazy } from 'react';
@@ -58,7 +58,7 @@ import { ROUTES } from '@/config/routes';
 const LazyMapView = lazy(() => import('@/components/convene/ConveneMapView'));
 
 /* ──────────────────────────────────────────────
-   Section Divider — thin Copper line
+   Section Divider: thin Copper line
    ────────────────────────────────────────────── */
 function CopperDivider() {
   return <div className="h-px bg-dna-copper/20" />;
@@ -82,7 +82,7 @@ export function ConveneDiscovery() {
   const viewMode = (searchParams.get('view') as 'list' | 'map') || 'list';
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  // The six Browse facets — when/where/format/type/category/price — each one
+  // The six Browse facets (when/where/format/type/category/price), each one
   // lowercase snake_case URL key, folded from EventsIndex's filter set.
   const facetValues: ConveneFacetValues = {
     when: searchParams.get('when') || '',
@@ -95,7 +95,7 @@ export function ConveneDiscovery() {
   const hasActiveFacets = Object.values(facetValues).some(Boolean);
 
   // Discovery shows upcoming lanes plus the undated ("Dates not yet
-  // announced") lane, so the city picker draws from that same scope —
+  // announced") lane, so the city picker draws from that same scope:
   // an undated Accra event still puts Accra in the picker.
   const { data: cities = [] } = useConveneCities('upcoming');
   const { data: userLocation } = useUserCity();
@@ -127,7 +127,7 @@ export function ConveneDiscovery() {
   // can see and clear the narrowing from the Rail/Narrow sheet without
   // losing the lens's meaning. LensBar owns the ?lens= write itself (it is
   // shared across every C-surface), so this reacts to the transition rather
-  // than intercepting the click — and never overwrites a facet the member
+    // than intercepting the click, and never overwrites a facet the member
   // has already set independently.
   const prevPillRef = useRef(activePill);
   // Tracks the {key, value} the CURRENT lens wrote via this effect, or null
@@ -139,7 +139,7 @@ export function ConveneDiscovery() {
   useEffect(() => {
     if (prevPillRef.current !== activePill) {
       // Step 1: clear what the previous lens wrote, but only if the URL
-      // still holds exactly that value — if the member changed it since,
+      // still holds exactly that value. If the member changed it since,
       // leave it. Track the resulting value per key so step 2 sees it even
       // though `searchParams` itself won't update until the write below.
       const written = lensWroteRef.current;
@@ -177,7 +177,7 @@ export function ConveneDiscovery() {
     }
     // Deliberately reacting to `activePill` alone: `searchParams` and
     // `updateFilters` change on every facet edit too, and re-running this
-    // body then would just re-check the same guard and no-op — but listing
+    // body then would just re-check the same guard and no-op, but listing
     // them keeps the linter's exhaustive-deps check honest.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activePill]);
@@ -262,7 +262,7 @@ export function ConveneDiscovery() {
     staleTime: 60_000,
   });
 
-  // ── Browse's flat, paginated list — every lens other than "all" with no
+  // Browse's flat, paginated list: every lens other than "all" with no
   // facets, and every facet narrowing, resolves here instead of lanes.
   const browseList = useConveneBrowseList(
     {
@@ -332,7 +332,7 @@ export function ConveneDiscovery() {
   return (
     // Chrome (DNA header, composer bubble, bell, avatar, tabs) and the
     // three-column frame (facets / content / Upcoming+DIA) come from
-    // AppShell — this page supplies the four slots and renders body only.
+    // AppShell: this page supplies the four slots and renders body only.
     <>
     <AppShell
       bubble={{
@@ -463,13 +463,13 @@ export function ConveneDiscovery() {
           <div className="space-y-4 md:space-y-6 min-w-0">
             {showDiscoveryLanes ? (
                 /* ═══════════════════════════════════
-                   DISCOVERY LANES — the resting state
+                   DISCOVERY LANES: the resting state
                    ═══════════════════════════════════ */
                 <>
-                  {/* Happening Now — live pulse */}
+                  {/* Happening Now: live pulse */}
                   <HappeningNowSection />
 
-                  {/* HERO — Single commanding featured event */}
+                  {/* HERO: Single commanding featured event */}
                   {heroEvent && <ConveneHeroEvent event={heroEvent} />}
 
                   {heroEvent && <CopperDivider />}
@@ -549,7 +549,7 @@ export function ConveneDiscovery() {
                     emptyMessage="No upcoming events yet. Be the first to host one!"
                   />
 
-                  {/* Lane: Dates not yet announced — undated events live here,
+                  {/* Lane: Dates not yet announced: undated events live here,
                       never sorted into the timeline lanes above */}
                   {undatedEvents.length > 0 && (
                     <>
@@ -562,7 +562,7 @@ export function ConveneDiscovery() {
                     </>
                   )}
 
-                  {/* Empty state — absolutely nothing */}
+                  {/* Empty state: absolutely nothing */}
                   {!heroEvent &&
                     weekendEvents.length === 0 &&
                     networkEvents.length === 0 &&
@@ -595,7 +595,7 @@ export function ConveneDiscovery() {
                 </>
               ) : (
                 /* ═══════════════════════════════════
-                   EVERY OTHER LENS + EVERY FACET —
+                   EVERY OTHER LENS + EVERY FACET:
                    resolves into the flat list, in place.
                    ═══════════════════════════════════ */
                 <>
@@ -630,11 +630,12 @@ export function ConveneDiscovery() {
                       ) : (
                         <>
                           {/* BD333: column count tracks the content column's own
-                              width, not the viewport's — the column sits between
+                              width, not the viewport's; the column sits between
                               280px and 340px rails, so viewport breakpoints run
                               optimistic by however much the rails take. auto-fill
-                              with a 240px floor (grid-cols-cards, tailwind.config.ts)
-                              fills whatever the column actually measures. */}
+                              with a 280px content floor (grid-cols-cards,
+                              tailwind.config.ts) fills whatever the column
+                              actually measures. */}
                           <div className="grid grid-cols-cards gap-4">
                             {browseList.events.map((event) => (
                               <ConveneEventCard
@@ -661,12 +662,6 @@ export function ConveneDiscovery() {
                       )}
                     </section>
                   )}
-
-                  <ConveneCitiesSection
-                    cities={cities}
-                    onCitySelect={(city) => updateFilters({ city })}
-                    activeCity={selectedCity}
-                  />
                 </>
               )}
           </div>
