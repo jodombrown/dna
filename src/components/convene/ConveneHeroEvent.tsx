@@ -1,19 +1,30 @@
 /**
  * DNA | CONVENE — Hero Event Section
- * Single commanding featured event at the top of the discovery hub.
- * Full-width cinematic with Copper accent and overlay text.
+ *
+ * The single featured event at the top of the discovery hub. Same species as
+ * the cards beneath it (flat warm chassis, 3px Convene bevel) — bigger and
+ * carrying more fields, not a different look: a context pill, the title at
+ * real size, a date block, a linked venue, going count, and price/action.
+ *
+ * The cover is a slot, not the surface: inset inside the card's own padding,
+ * roughly a third of the card, never full-bleed, never carrying overlaid
+ * text. Every field beneath it is a real slot — nothing renders a
+ * placeholder when the data behind it is absent (BD111).
  */
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Calendar, MapPin, Video, Globe, Clock, Users } from 'lucide-react';
-import { isToday, isTomorrow, differenceInDays } from 'date-fns';
+import { Calendar, MapPin, Video, Globe, Users, ExternalLink } from 'lucide-react';
 import { EventTime } from '@/components/events/EventTime';
 import { eventStartMs } from '@/lib/events/eventTime';
-import { cn } from '@/lib/utils';
 import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
+import { LocationLine } from '@/components/maps/LocationLine';
+import { EventPriceMeta } from '@/components/cards/EventPriceMeta';
+import { resolveEventAction } from '@/components/cards/resolveEventAction';
+import type { EventPriceTicketType } from '@/components/cards/resolveEventPrice';
+
+const CARD_PADDING = 'var(--card-padding)';
 
 interface HeroEventProps {
   event: EventPlaceInput & {
@@ -31,6 +42,13 @@ interface HeroEventProps {
     description?: string | null;
     short_description?: string | null;
     is_curated?: boolean;
+    is_cancelled?: boolean;
+    rsvp_status?: 'going' | 'maybe' | 'not_going' | null;
+    meeting_url?: string | null;
+    location_lat?: number | null;
+    location_lng?: number | null;
+    currency?: string | null;
+    event_ticket_types?: EventPriceTicketType[];
     event_attendees?: Array<{ count: number }>;
     organizer?: {
       full_name: string;
@@ -44,128 +62,134 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
   const imageUrl = event.cover_image_url ?? null;
   const startMs = eventStartMs(event);
   const startDate = startMs !== null ? new Date(startMs) : null;
+  const isPast = startDate ? startDate < new Date() : false;
   const attendeeCount = event.event_attendees?.[0]?.count ?? 0;
 
   const isVirtual = event.format === 'virtual';
   const isHybrid = event.format === 'hybrid';
-  const placeText = formatEventPlace(event, 'compact');
-
-  // Urgency
-  const getUrgencyLabel = () => {
-    if (!startDate) return null;
-    if (isToday(startDate)) return { label: 'Today', color: 'bg-destructive' };
-    if (isTomorrow(startDate)) return { label: 'Tomorrow', color: 'bg-destructive/90' };
-    const days = differenceInDays(startDate, new Date());
-    if (days <= 7) return { label: `${days} days away`, color: 'bg-module-convene' };
-    return null;
-  };
-  const urgency = getUrgencyLabel();
+  const formatLabel = isVirtual ? 'Virtual' : isHybrid ? 'Hybrid' : 'In Person';
+  const place = formatEventPlace(event, 'full');
 
   const handleClick = () => {
     navigate(`/dna/convene/events/${event.slug || event.id}`);
   };
 
+  const actionLabel = resolveEventAction({
+    isCancelled: event.is_cancelled,
+    isPast,
+    rsvpStatus: event.rsvp_status,
+  });
+  const actionDisabled = Boolean(event.is_cancelled) || isPast;
+
   return (
     <div
-      className="relative w-full rounded-lg overflow-hidden cursor-pointer group shadow-xl"
+      className="relative w-full cursor-pointer overflow-hidden rounded-xl bg-card border-bevel"
+      style={{ borderColor: 'hsl(var(--bevel-event))' }}
       onClick={handleClick}
     >
-      {/* Image — taller hero */}
-      <div className="relative h-[240px] sm:h-[280px] md:h-[320px] overflow-hidden">
-        {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt={event.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-dna-copper/80 via-module-convene/60 to-dna-forest/80 flex items-center justify-center">
-            <Calendar className="h-20 w-20 text-white/15" />
-          </div>
-        )}
-
-        {/* Two-layer gradient overlay — bulletproof text legibility */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/45 to-black/10" />
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/40 to-transparent" />
-
-        {/* Featured label — top left */}
-        <div className="absolute top-4 left-4">
-          <Badge className="bg-dna-copper hover:bg-dna-copper text-white border-0 text-xs font-semibold px-3 py-1 shadow-lg backdrop-blur-sm">
-            Featured Event
-          </Badge>
+      <div
+        className="grid grid-cols-3 gap-4"
+        style={{ padding: CARD_PADDING }}
+      >
+        {/* Image — inset in the card's own padding, roughly a third of the
+            card at every width, never full-bleed, never overlaid with text. */}
+        <div className="relative col-span-1 min-h-0 overflow-hidden rounded-lg">
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt={event.title}
+              className="h-full w-full object-cover"
+              loading="lazy"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).style.display = 'none';
+              }}
+            />
+          ) : (
+            <div className="h-full w-full bg-muted" />
+          )}
         </div>
 
-        {/* Urgency — top right */}
-        {urgency && (
-          <div className="absolute top-4 right-4">
-            <Badge className={cn(urgency.color, 'text-white border-0 text-xs font-semibold px-3 py-1 shadow-lg backdrop-blur-sm')}>
-              <Clock className="h-3 w-3 mr-1" />
-              {urgency.label}
-            </Badge>
-          </div>
-        )}
+        {/* Fact — every field a real slot; the context pill leads. */}
+        <div className="col-span-2 flex min-w-0 flex-col gap-3">
+          <span className="inline-flex w-fit items-center rounded-full border border-bevel-event bg-bevel-event/10 px-3 py-1 text-micro uppercase text-bevel-event">
+            {event.location_city ? `Featured in ${event.location_city}` : 'Featured Event'}
+          </span>
 
-        {/* Overlay text — bottom */}
-        <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
-          {/* Category */}
-          {event.event_type && (
-            <span className="text-[11px] font-medium text-dna-copper uppercase tracking-wider mb-1.5 block" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.6)' }}>
-              {event.event_type}
-            </span>
-          )}
+          <h2 className="text-h2 text-foreground">{event.title}</h2>
 
-          {/* Title */}
-          <h2 className="text-xl sm:text-2xl font-bold text-white leading-tight line-clamp-2 mb-2" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.7)' }}>
-            {event.title}
-          </h2>
+          <p className="flex items-center gap-1.5 text-body text-muted-foreground">
+            <Calendar className="h-4 w-4 shrink-0" />
+            <EventTime
+              event={{
+                start_time: event.start_time,
+                end_time: event.end_time,
+                time_confirmed: event.time_confirmed,
+                date_confirmed: event.date_confirmed,
+              }}
+              eventId={event.id}
+              variant="datetime"
+            />
+          </p>
 
-          {/* Meta row */}
-          <div className="flex flex-wrap items-center gap-3 text-white/80 text-sm mb-3" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.6)' }}>
-            <span className="flex items-center gap-1">
-              <Calendar className="h-3.5 w-3.5" />
-              <EventTime
-                event={{
-                  start_time: event.start_time,
-                  end_time: event.end_time,
-                  time_confirmed: event.time_confirmed,
-                  date_confirmed: event.date_confirmed,
-                }}
-                eventId={event.id}
-                variant="datetime"
-              />
-            </span>
-            {placeText && (
-              <span className="flex items-center gap-1">
-                {isVirtual ? (
-                  <Video className="h-3.5 w-3.5" />
-                ) : isHybrid ? (
-                  <Globe className="h-3.5 w-3.5" />
-                ) : (
-                  <MapPin className="h-3.5 w-3.5" />
-                )}
-                {placeText}
-              </span>
-            )}
-            {attendeeCount > 0 && (
-              <span className="flex items-center gap-1">
-                <Users className="h-3.5 w-3.5" /> {attendeeCount} going
-              </span>
-            )}
+          <div className="flex items-start gap-1.5 text-body text-muted-foreground" onClick={(e) => e.stopPropagation()}>
+            {isVirtual ? <Video className="mt-0.5 h-4 w-4 shrink-0" /> : isHybrid ? <Globe className="mt-0.5 h-4 w-4 shrink-0" /> : <MapPin className="mt-0.5 h-4 w-4 shrink-0" />}
+            <div className="flex min-w-0 flex-col">
+              <span className="text-meta text-muted-foreground">{formatLabel}</span>
+              {isVirtual ? (
+                event.meeting_url && (
+                  <a
+                    href={event.meeting_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-body text-primary hover:underline"
+                  >
+                    Join meeting <ExternalLink className="h-3 w-3" />
+                  </a>
+                )
+              ) : (
+                <LocationLine
+                  locationName={place.venue}
+                  locationAddress={place.street}
+                  locality={place.locality}
+                  lat={event.location_lat ?? undefined}
+                  lng={event.location_lng ?? undefined}
+                  className="text-body text-foreground"
+                />
+              )}
+            </div>
           </div>
 
-          {/* CTA */}
-          <Button
-            size="sm"
-            className="bg-dna-copper hover:bg-dna-copper/90 text-white rounded-full px-6 h-9 font-semibold shadow-lg"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleClick();
-            }}
-          >
-            Explore Event
-          </Button>
+          <p className="flex items-center gap-1.5 text-meta">
+            <Users className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+            {attendeeCount > 0 ? (
+              <span className="font-semibold text-foreground">{attendeeCount} going</span>
+            ) : (
+              <span className="text-muted-foreground">No Members yet. Be the first.</span>
+            )}
+          </p>
+
+          <div className="mt-auto flex flex-col gap-3 pt-1 sm:flex-row sm:items-center sm:justify-between">
+            <EventPriceMeta
+              ticketTypes={event.event_ticket_types}
+              currency={event.currency}
+              className="text-h3 text-foreground"
+            />
+            <Button
+              size="hero"
+              className="w-full sm:w-auto"
+              disabled={actionDisabled}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClick();
+              }}
+            >
+              {actionLabel}
+            </Button>
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
+export default ConveneHeroEvent;

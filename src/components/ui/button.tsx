@@ -29,6 +29,8 @@ const buttonVariants = cva(
         sm: "h-8 rounded-dna-lg px-4 text-[13px] [&_svg]:size-3.5",
         default: "h-10 rounded-dna-lg px-6 text-[15px] [&_svg]:size-4",
         lg: "h-12 rounded-dna-lg px-8 text-base [&_svg]:size-5",
+        // 44px touch target, e.g. a card's single full-width primary action.
+        hero: "h-11 rounded-dna-lg px-6 text-body [&_svg]:size-4",
         icon: "h-10 w-10 rounded-dna-md [&_svg]:size-5",
         touch: "h-12 w-12 min-w-[48px] min-h-[48px] rounded-dna-md [&_svg]:size-5",
       },
