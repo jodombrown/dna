@@ -88,6 +88,10 @@ export function useConveneBrowseList(filters: ConveneBrowseFilters, enabled: boo
 
       if (where) query = query.eq(EVENT_PLACE_COLUMNS.country, where);
       if (format) query = query.eq('format', format as 'in_person' | 'virtual' | 'hybrid');
+      // Online has no single facet equivalent: it composes 'virtual' OR
+      // 'hybrid' rather than writing a single-value `format` facet, so it's
+      // applied here directly off the lens instead of through `format`.
+      if (lens === 'online') query = query.in('format', ['virtual', 'hybrid']);
       if (type) {
         query = query.eq(
           'event_type',
