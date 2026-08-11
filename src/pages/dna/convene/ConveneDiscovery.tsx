@@ -32,6 +32,7 @@ import { UpcomingEventsSection } from '@/components/convene/UpcomingEventsSectio
 import { CONVENE_LENSES, ConveneTabStrip } from '@/components/convene/ConveneShell';
 import { ConveneFacetRail } from '@/components/convene/ConveneFacetRail';
 import { ConveneNarrowSheet } from '@/components/convene/ConveneNarrowSheet';
+import { ConveneDiscoveryHeaderRow } from '@/components/convene/ConveneDiscoveryHeaderRow';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
 import type { ConveneFacetKey, ConveneFacetValues } from '@/components/convene/ConveneFacetControls';
 import { useConveneCities, useUserCity } from '@/hooks/convene/useConveneCities';
@@ -388,7 +389,7 @@ export function ConveneDiscovery() {
             ═══════════════════════════════════════ */}
         {!isMobile && (
           <>
-            <div className="flex items-center justify-between gap-3 py-2">
+            <ConveneDiscoveryHeaderRow>
               <ConveneLocationSelector
                 selectedCity={selectedCity}
                 userCity={userLocation?.city ?? null}
@@ -434,7 +435,7 @@ export function ConveneDiscovery() {
                   My Events
                 </Button>
               </div>
-            </div>
+            </ConveneDiscoveryHeaderRow>
 
             <CopperDivider />
           </>

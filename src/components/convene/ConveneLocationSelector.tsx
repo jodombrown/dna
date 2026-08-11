@@ -67,7 +67,7 @@ export function ConveneLocationSelector({
       onClick={isMobile ? () => setOpen(true) : undefined}
     >
       <MapPin className="w-4 h-4 shrink-0 text-[hsl(var(--module-convene))]" />
-      <span className="truncate text-lg font-bold text-foreground">{displayCity}</span>
+      <span className="truncate text-h2 font-bold text-foreground">{displayCity}</span>
       <ChevronDown className="w-4 h-4 shrink-0 text-muted-foreground" />
     </button>
   );
