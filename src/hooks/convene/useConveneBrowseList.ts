@@ -16,6 +16,12 @@ import { EVENT_TIME_SELECT } from '@/lib/events/eventTime';
 
 export const PAGE_SIZE = 24;
 
+// The ticket-type columns resolveEventAction (and resolveEventPrice) need —
+// joined in the SAME select as the events, the way event_attendees(count)
+// already is. One query per page, never one per card.
+const TICKET_TYPES_SELECT =
+  'event_ticket_types(hidden, sales_start, sales_end, payment_type, price_cents, min_price_cents)';
+
 export interface ConveneBrowseFilters {
   lens: string;
   when: string;
@@ -57,7 +63,7 @@ export function useConveneBrowseList(filters: ConveneBrowseFilters, enabled: boo
           description, short_description, tags,
           cover_image_url, event_type, format, is_cancelled, max_attendees,
           organizer_id, is_curated, curated_source, curated_source_url,
-          event_attendees(count)
+          currency, event_attendees(count), ${TICKET_TYPES_SELECT}
         `)
         .eq('status', 'published')
         .eq('visibility', 'public');
@@ -88,6 +94,10 @@ export function useConveneBrowseList(filters: ConveneBrowseFilters, enabled: boo
 
       if (where) query = query.eq(EVENT_PLACE_COLUMNS.country, where);
       if (format) query = query.eq('format', format as 'in_person' | 'virtual' | 'hybrid');
+      // Online has no single facet equivalent: it composes 'virtual' OR
+      // 'hybrid' rather than writing a single-value `format` facet, so it's
+      // applied here directly off the lens instead of through `format`.
+      if (lens === 'online') query = query.in('format', ['virtual', 'hybrid']);
       if (type) {
         query = query.eq(
           'event_type',

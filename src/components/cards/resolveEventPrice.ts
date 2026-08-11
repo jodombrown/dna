@@ -56,17 +56,29 @@ interface TypeAmount {
   isFlex: boolean;
 }
 
-export function resolveEventPrice(
+/**
+ * The visible-ticket-types filter, shared with resolveEventAction so both
+ * resolvers agree on what "visible" means: hidden is not true, and now sits
+ * inside the sales window.
+ */
+export function getVisibleTicketTypes(
   ticketTypes: EventPriceTicketType[],
-  currency: string | null,
   now: Date = new Date(),
-): string | null {
-  const visible = ticketTypes.filter((t) => {
+): EventPriceTicketType[] {
+  return ticketTypes.filter((t) => {
     if (t.hidden === true) return false;
     if (t.sales_start && new Date(t.sales_start) > now) return false;
     if (t.sales_end && new Date(t.sales_end) < now) return false;
     return true;
   });
+}
+
+export function resolveEventPrice(
+  ticketTypes: EventPriceTicketType[],
+  currency: string | null,
+  now: Date = new Date(),
+): string | null {
+  const visible = getVisibleTicketTypes(ticketTypes, now);
 
   if (visible.length === 0) return null;
 

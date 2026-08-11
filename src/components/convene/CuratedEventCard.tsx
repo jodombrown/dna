@@ -33,6 +33,7 @@ import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace
 import { realCuratedCover } from '@/lib/events/curated';
 import { EventCardFrame } from '@/components/cards/EventCardFrame';
 import { EventPlate } from '@/components/cards/EventPlate';
+import { resolveEventAction, EVENT_ACTION_LABELS } from '@/components/cards/resolveEventAction';
 import { useCuratedEventPulse } from '@/hooks/convene/useCuratedEventPulse';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
 
@@ -68,6 +69,10 @@ export function CuratedEventCard({ event, className, suppressDateTbc }: CuratedE
   const { user } = useAuth();
   const { pulse, setGoing, isSettingGoing } = useCuratedEventPulse(event.id);
 
+  // A curated event is never ticketed through DNA — no event_ticket_types
+  // exist for it — so this always resolves to 'rsvp'. Routed through the
+  // shared resolver anyway so the label is never a second hardcoded literal.
+  const actionLabel = EVENT_ACTION_LABELS[resolveEventAction([])];
   const realCover = realCuratedCover(event);
   const cityLine = formatEventPlace(event, 'compact');
   const eventPath = `/dna/convene/events/${event.slug || event.id}`;
@@ -187,7 +192,7 @@ export function CuratedEventCard({ event, className, suppressDateTbc }: CuratedE
             <Check className="mr-1 h-3.5 w-3.5" /> Going
           </>
         ) : (
-          "I'm going"
+          actionLabel
         )}
       </Button>
       {event.curated_source_url && (

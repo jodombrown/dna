@@ -1,24 +1,35 @@
 /**
  * resolveEventAction — the ONE action word for an event's primary CTA.
  *
- * Pure: given the event's cancelled/past state and the viewer's own RSVP,
- * returns the label the primary action prints. Mirrors the word set already
- * live on StickyRSVPBar and the event cards (Cancelled / Event Ended / Going
- * / I'm going) so a hero, a card, and the detail page never disagree on what
- * an identical state is called.
+ * Pure: no fetching, no Supabase. Callers fetch `event_ticket_types` and hand
+ * the rows in here, same discipline as resolveEventPrice.ts. Shares that
+ * file's visible-ticket-types filter (getVisibleTicketTypes) so the two
+ * resolvers never disagree about what "visible" means.
+ *
+ *   visible ticket types empty (no ticketing at all) -> 'rsvp'      "I'm going"
+ *   every visible type free                          -> 'register' "Register"
+ *   anything else (paid, flex, PWYW)                  -> 'tickets'  "Get tickets"
  */
 
-export interface EventActionInput {
-  isCancelled?: boolean;
-  isPast?: boolean;
-  rsvpStatus?: 'going' | 'maybe' | 'not_going' | null;
+import { getVisibleTicketTypes, type EventPriceTicketType } from './resolveEventPrice';
+
+export type EventAction = 'rsvp' | 'register' | 'tickets';
+
+export function resolveEventAction(
+  ticketTypes: EventPriceTicketType[],
+  now: Date = new Date(),
+): EventAction {
+  const visible = getVisibleTicketTypes(ticketTypes, now);
+
+  if (visible.length === 0) return 'rsvp';
+  if (visible.every((t) => t.payment_type === 'free')) return 'register';
+  return 'tickets';
 }
 
-export function resolveEventAction({ isCancelled, isPast, rsvpStatus }: EventActionInput): string {
-  if (isCancelled) return 'Cancelled';
-  if (isPast) return 'Event Ended';
-  if (rsvpStatus === 'going') return 'Going';
-  return "I'm going";
-}
+export const EVENT_ACTION_LABELS: Record<EventAction, string> = {
+  rsvp: "I'm going",
+  register: 'Register',
+  tickets: 'Get tickets',
+};
 
 export default resolveEventAction;
