@@ -37,24 +37,31 @@ export default {
 		},
 		extend: {
 		spacing: {
-			// DNA spacing scale — 4pt base. See BD176.
+			// DNA spacing scale, 4pt base. See BD176.
 			'0.5': '0.125rem',  //  2px  hairline nudge
 			1:  '0.25rem',      //  4px
-			2:  '0.5rem',       //  8px  — within-group gap
-			3:  '0.75rem',      // 12px  — between-group gap, card gap, card pad @320
-			3.5:'0.875rem',     // 14px  — card pad @321–389
-			4:  '1rem',         // 16px  — card pad @>=390
-			5:  '1.25rem',      // 20px  — hub content gap, BD467
+			2:  '0.5rem',       //  8px, within-group gap
+			3:  '0.75rem',      // 12px, between-group gap, card gap, card pad @320
+			3.5:'0.875rem',     // 14px, card pad @321-389
+			4:  '1rem',         // 16px, card pad @>=390
+			5:  '1.25rem',      // 20px, hub content gap, BD467
 			6:  '1.5rem',       // 24px
 			8:  '2rem',         // 32px
 			12: '3rem',         // 48px
 		},
 		gridTemplateColumns: {
 			// Column count tracks the column's own width, not the viewport's
-			// (BD333) — a card grid inside AppShell's content column sees
-			// viewport minus rails, not the viewport itself. 240px is a floor
-			// to confirm on device, not a ruled value.
-			cards: 'repeat(auto-fill, minmax(240px, 1fr))',
+			// (BD333): a card grid inside AppShell's content column sees
+			// viewport minus rails, not the viewport itself. 280px is the
+			// content floor, measured: the curated identity band needs the
+			// "Curated by DNA" chip (~138px, Inter 600 11px + icon) plus the
+			// widest realistic compact date-range chip (~96px, e.g. "Aug
+			// 30-Sep 30") plus the 8px gap between them, inside 16px card
+			// padding each side: 32 + 138 + 8 + 96 ~= 274px, so 280px is the
+			// floor with a small margin. Below this the header row must
+			// degrade (see CuratedEventCard identity band), never clip
+			// mid-word.
+			cards: 'repeat(auto-fill, minmax(280px, 1fr))',
 		},
 		borderWidth: {
 			// Makes --bevel-width load-bearing for the first time. Before BD176 the
@@ -66,9 +73,9 @@ export default {
 			// Drawer surface widths. A surface declares which it needs; the shell
 			// applies it. DR1 shipped a single width for every surface and crushed
 			// the composer from 860px to 448px.
-			drawer: '28rem',        /* 448px — settings, account, nav-style surfaces */
+			drawer: '28rem',        /* 448px, settings, account, nav-style surfaces */
 			'drawer-wide': '860px', /* composing surfaces that need room to write */
-			feed: '35rem',   /* 560px — feed column ceiling. Mobile fills the viewport;
+			feed: '35rem',   /* 560px, feed column ceiling. Mobile fills the viewport;
 			                    tablet and desktop cap. This is the lever that prevents
 			                    media elongation on wide viewports, not the aspect ratio. */
 		},
@@ -96,8 +103,8 @@ export default {
 				// Bottom-sheet height: leaves a strip of the underlying surface visible.
 				sheet: '92dvh',   // dvh, not vh: accounts for mobile browser chrome
 				// Map surfaces (Convene discovery map, Diaspora density map).
-				map: '31.25rem',      // 500px — mobile map viewport
-				'map-lg': '37.5rem',  // 600px — desktop map viewport
+				map: '31.25rem',      // 500px, mobile map viewport
+				'map-lg': '37.5rem',  // 600px, desktop map viewport
 			},
 			maxHeight: {
 				sheet: '92dvh',   // must mirror height.sheet; same name, same unit
@@ -160,7 +167,7 @@ export default {
 				},
 				// DNA Brand Identity Colors (Design System PRD)
 				dna: {
-					// Core Brand — Emerald
+					// Core Brand: Emerald
 					emerald: {
 						DEFAULT: 'hsl(var(--dna-emerald))',
 						light: 'hsl(var(--dna-emerald-light))',
@@ -329,7 +336,7 @@ export default {
 					black: 'hsl(var(--sudan-black))',
 					green: 'hsl(var(--sudan-green))'
 				},
-				// ─── PHASE 3 TOKEN LOCK-IN — full 11-rung scales ───
+				// --- PHASE 3 TOKEN LOCK-IN, full 11-rung scales ---
 				emerald: {
 					50: 'hsl(var(--emerald-50))',
 					100: 'hsl(var(--emerald-100))',
@@ -396,7 +403,7 @@ export default {
 				lg: 'var(--radius)',                       /* 8px */
 				md: 'calc(var(--radius) - 2px)',           /* 6px */
 				sm: 'calc(var(--radius) - 4px)',           /* 4px */
-				xl: 'calc(var(--radius) + 4px)',           /* 12px — large CTAs / hero media only */
+				xl: 'calc(var(--radius) + 4px)',           /* 12px, large CTAs / hero media only */
 				'dna-sm': 'var(--radius-sm, 6px)',
 				'dna-md': 'var(--radius-md, 10px)',
 				'dna-lg': 'var(--radius-lg, 12px)',

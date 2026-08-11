@@ -95,21 +95,30 @@ export function CuratedEventCard({ event, className, suppressDateTbc }: CuratedE
 
   // Band 1 — provenance chip leading, compact time trailing. Both sit on a
   // token-card ground so they read over a photo or a coloured plate alike.
+  //
+  // The row's width tracks its grid column, not the viewport (BD333), so a
+  // fixed floor alone can't guarantee the header row always fits: a long
+  // enough date or title can still outgrow it. Both chips get min-w-0 so
+  // flexbox can shrink them below content size, and each chip's own text
+  // truncates with an ellipsis rather than a hard mid-word clip — the
+  // curated label degrades to as much of "Curated by DNA" as fits (icon
+  // always survives, it has its own shrink-0), the date degrades the same
+  // way if it is ever the longer string.
   const identity = (
     <div
       className="flex w-full items-center justify-between gap-2"
       style={{ paddingLeft: CARD_PADDING, paddingRight: CARD_PADDING }}
     >
-      <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-border/60 bg-card/90 px-2 py-0.5 text-micro uppercase text-foreground backdrop-blur-sm">
-        <Nkonsonkonson className="h-2.5 w-2.5" />
-        Curated by DNA
+      <span className="inline-flex min-w-0 items-center gap-1 rounded-full border border-border/60 bg-card/90 px-2 py-0.5 text-micro uppercase text-foreground backdrop-blur-sm">
+        <Nkonsonkonson className="h-2.5 w-2.5 shrink-0" />
+        <span className="truncate">Curated by DNA</span>
       </span>
       <EventTime
         event={event}
         variant="compact"
         notifyAction={false}
         suppressDateTbc={suppressDateTbc}
-        className="inline-flex shrink-0 items-center rounded-full border border-border/60 bg-card/90 px-2 py-0.5 text-micro text-foreground backdrop-blur-sm"
+        className="inline-flex min-w-0 shrink items-center truncate rounded-full border border-border/60 bg-card/90 px-2 py-0.5 text-micro text-foreground backdrop-blur-sm"
       />
     </div>
   );
