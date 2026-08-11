@@ -195,6 +195,30 @@ export function useEventForm({
 
       setIsSubmitting(true);
       try {
+        // Publish-time delivery-endpoint gate (BD490): an in-person/hybrid
+        // event cannot go live without a physical_room row in
+        // event_delivery_endpoints. The DB trigger is the backstop; this
+        // check is what makes the block legible instead of a raised
+        // exception surfacing raw. Only meaningful once the event exists
+        // (edit mode) — at creation the physical_room row is derived from
+        // these same location fields, already required by eventFormSchema
+        // for non-virtual formats.
+        if (mode === 'edit' && intent === 'publish' && current.format !== 'virtual' && eventId) {
+          const { count, error: endpointError } = await supabase
+            .from('event_delivery_endpoints')
+            .select('id', { count: 'exact', head: true })
+            .eq('event_id', eventId)
+            .eq('type', 'physical_room');
+          if (endpointError) throw endpointError;
+          if (!count) {
+            toast({
+              variant: 'destructive',
+              description: 'Add a check-in location before publishing.',
+            });
+            return;
+          }
+        }
+
         // 1. Geocode, awaited, inside the submit path. Never blocks the save.
         //    A place RESOLVED via search already carries lat/lng — the
         //    (lat === null || lng === null) guard below means we never
