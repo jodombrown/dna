@@ -27,7 +27,7 @@ export default function LegacyEventManageRedirect({ to }: LegacyEventManageRedir
     if (eventId) {
       navigate(`/dna/convene/events/${eventId}${to ? `/${to}` : ''}`, { replace: true });
     } else {
-      navigate('/dna/convene/events', { replace: true });
+      navigate('/dna/convene', { replace: true });
     }
   }, [eventId, to, navigate]);
 

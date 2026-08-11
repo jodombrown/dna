@@ -65,14 +65,14 @@ const BaseLayoutChrome: React.FC<BaseLayoutProps> = ({ children }) => {
   // member card on /dna/connect/discover.
   const isFeedRoute = location.pathname.includes('/dna/feed');
   const isConnectRoute = location.pathname.startsWith('/dna/connect');
-  const isConveneHubRoute = location.pathname === '/dna/convene';
+  const isConveneRoute = location.pathname === '/dna/convene';
   const isContributeHubRoute = location.pathname === '/dna/contribute';
   const isConveyHubRoute = location.pathname === '/dna/convey';
   const isCollaborateHubRoute = location.pathname === '/dna/collaborate';
   const hasCustomMobileHeader =
     isFeedRoute ||
     isConnectRoute ||
-    isConveneHubRoute ||
+    isConveneRoute ||
     isContributeHubRoute ||
     isConveyHubRoute ||
     isCollaborateHubRoute;

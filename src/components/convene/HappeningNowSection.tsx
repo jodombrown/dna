@@ -1,6 +1,6 @@
 /**
  * DNA | CONVENE — "Happening Now" Section
- * Shows currently live events with pulsing indicator at the top of ConveneHub.
+ * Shows currently live events with pulsing indicator at the top of Convene.
  */
 
 import React from 'react';

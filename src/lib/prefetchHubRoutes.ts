@@ -15,7 +15,7 @@
 
 const ROUTE_PREFETCH: Record<string, () => Promise<unknown>> = {
   '/dna/connect': () => import('@/pages/dna/connect/Connect'),
-  '/dna/convene': () => import('@/pages/dna/convene/ConveneHub'),
+  '/dna/convene': () => import('@/pages/dna/convene/ConveneDiscovery'),
   '/dna/collaborate': () => import('@/pages/dna/collaborate/CollaborateHub'),
   '/dna/contribute': () => import('@/pages/dna/contribute/ContributeHub'),
   '/dna/convey': () => import('@/pages/dna/Convey'),

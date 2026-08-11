@@ -3,8 +3,8 @@
  *
  * Every Lens other than "all" (with no facets set), and every facet
  * narrowing, resolves into this one query instead of the lane arrangement.
- * `when`/`where`/`format`/`type`/`category` mirror EventsIndex's filter
- * predicates under the Browse facet names; `price` is derived from
+ * `when`/`where`/`format`/`type`/`category` mirror the old events index's
+ * filter predicates under the Browse facet names; `price` is derived from
  * event_ticket_types rows, never a fabricated string.
  *
  * Real pagination via .range() — no silent fifty-row ceiling.
@@ -63,8 +63,8 @@ export function useConveneBrowseList(filters: ConveneBrowseFilters, enabled: boo
         .eq('visibility', 'public');
 
       // 'when' shares its 'upcoming'/'watching' predicates with useConveneCities
-      // and EventsIndex — an undated event (date_confirmed false / NULL
-      // start_time) still belongs in 'upcoming'.
+      // — an undated event (date_confirmed false / NULL start_time) still
+      // belongs in 'upcoming'.
       const now = new Date().toISOString();
       if (!when || when === 'upcoming') {
         query = query.or(`start_time.gte.${now},start_time.is.null,date_confirmed.eq.false`);

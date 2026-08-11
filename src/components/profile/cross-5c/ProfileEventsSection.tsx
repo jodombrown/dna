@@ -144,7 +144,7 @@ export const ProfileEventsSection: React.FC<ProfileEventsSectionProps> = ({ user
             variant="ghost"
             size="sm"
             className="w-full"
-            onClick={() => navigate('/dna/convene/events')}
+            onClick={() => navigate('/dna/convene')}
           >
             View all events
           </Button>

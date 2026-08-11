@@ -4,8 +4,8 @@
  * desktop/tablet Rail and the mobile Narrow sheet — never two different
  * facet UIs.
  *
- * Folded from EventsIndex's filters, with two corrections: Type carries all
- * seven event_type values including "other" (EventsIndex's dropdown only
+ * Folded from the old events index's filters, with two corrections: Type
+ * carries all seven event_type values including "other" (that dropdown only
  * ever offered six), and Price is new — Free lives here as a facet value,
  * not as a Lens.
  */

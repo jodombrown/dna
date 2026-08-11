@@ -15,7 +15,7 @@ export default function EventSettingsRedirect() {
     if (eventId) {
       navigate(`/dna/convene/events/${eventId}/edit`, { replace: true });
     } else {
-      navigate('/dna/convene/events', { replace: true });
+      navigate('/dna/convene', { replace: true });
     }
   }, [eventId, navigate]);
 

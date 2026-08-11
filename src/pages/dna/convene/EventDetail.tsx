@@ -206,8 +206,10 @@ const EventDetail = () => {
             </button>
             <Card>
               <CardContent className="py-12 text-center">
-                <p className="text-muted-foreground">Event not found</p>
-                <Button variant="link" onClick={() => navigate('/dna/convene/events')} className="mt-4">Back to events</Button>
+                <div className="flex flex-col items-center gap-4">
+                  <p className="text-muted-foreground">Event not found</p>
+                  <Button variant="link" onClick={() => navigate('/dna/convene')}>Back to events</Button>
+                </div>
               </CardContent>
             </Card>
           </div>

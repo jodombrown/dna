@@ -80,7 +80,7 @@ export const FIRST_RUN_TOUR_STEPS: TourStep[] = [
     title: 'Find an event',
     description: 'Browse upcoming diaspora events and RSVP to one.',
     ctaLabel: 'Browse events',
-    href: '/dna/convene/events',
+    href: '/dna/convene',
     requirement: 'RSVP to at least one event.',
   },
 ];

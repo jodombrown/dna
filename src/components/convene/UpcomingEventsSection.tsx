@@ -184,7 +184,7 @@ export const UpcomingEventsSection = ({ onCreateEvent }: { onCreateEvent?: () =>
                 : "You're not hosting any events yet. Host one and invite your community."}
             </p>
             <Button
-              onClick={() => activeTab === 'attending' ? navigate('/dna/convene/events') : onCreateEvent?.()}
+              onClick={() => activeTab === 'attending' ? navigate('/dna/convene') : onCreateEvent?.()}
               variant="outline"
             >
               {activeTab === 'attending' ? 'Explore Events' : 'Host an Event'}

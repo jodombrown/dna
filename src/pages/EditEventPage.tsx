@@ -80,7 +80,7 @@ export default function EditEventPage() {
           <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
             <div className="py-12 text-center">
               <h2 className="mb-2 text-2xl font-bold">Event not found</h2>
-              <Button onClick={() => navigate('/dna/convene/events')}>Back to Events</Button>
+              <Button onClick={() => navigate('/dna/convene')}>Back to Events</Button>
             </div>
           </div>
         </div>
@@ -120,7 +120,7 @@ export default function EditEventPage() {
             initialValues={eventRowToFormValues(row)}
             currentStatus={status}
             onSuccess={() => navigate(`/dna/convene/events/${event.slug || event.id}`)}
-            onDeleted={() => navigate('/dna/convene/events')}
+            onDeleted={() => navigate('/dna/convene')}
           />
         </Card>
       </div>

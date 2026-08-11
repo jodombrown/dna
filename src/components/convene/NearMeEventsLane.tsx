@@ -45,7 +45,7 @@ export function NearMeEventsLane({ events }: { events: DiscoveryEvent[] }) {
             ? 'Finding events near you…'
             : emptyMessage
       }
-      onSeeAll={() => navigate('/dna/convene/events')}
+      onSeeAll={() => navigate('/dna/convene')}
     />
   );
 }

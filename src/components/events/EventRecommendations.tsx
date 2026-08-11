@@ -219,7 +219,7 @@ export const EventRecommendations = () => {
         <Button 
           variant="outline" 
           className="w-full"
-          onClick={() => navigate('/dna/convene/events')}
+          onClick={() => navigate('/dna/convene')}
         >
           View All {recommendations.length} Recommendations
         </Button>
