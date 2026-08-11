@@ -154,10 +154,11 @@ export function ConveneDiscovery() {
       }
 
       // Step 2: apply the new lens's facet, but never over a member-set value.
+      // Online has no facet equivalent — it composes format IN ('virtual',
+      // 'hybrid'), and two values can't collapse into one facet write — so,
+      // like Curated by DNA and Network, it writes nothing here.
       if (activePill === 'this_week' && !currentValues.when) {
         updates.when = 'this_week';
-      } else if (activePill === 'online' && !currentValues.format) {
-        updates.format = 'virtual';
       }
 
       if (Object.keys(updates).length > 0) {
@@ -167,8 +168,6 @@ export function ConveneDiscovery() {
       // Step 3: remember what this lens wrote (or null).
       if (activePill === 'this_week' && updates.when === 'this_week') {
         lensWroteRef.current = { key: 'when', value: 'this_week' };
-      } else if (activePill === 'online' && updates.format === 'virtual') {
-        lensWroteRef.current = { key: 'format', value: 'virtual' };
       } else {
         lensWroteRef.current = null;
       }
