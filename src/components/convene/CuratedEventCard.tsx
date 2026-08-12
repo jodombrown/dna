@@ -1,7 +1,7 @@
 /**
  * DNA | CONVENE — Curated Event Card
  *
- * A curated event is one DNA has SEEN at a source, not one DNA hosts. This
+ * A curated event is one DNA has curated from a source, not one DNA hosts. This
  * card composes the shared geometry primitive (EventCardFrame, BD190) so it is
  * byte-identical in shape to every other event surface, and fills the four
  * bands with the curated read:

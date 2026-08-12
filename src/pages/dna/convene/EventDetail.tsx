@@ -236,7 +236,16 @@ const EventDetail = ({ eventId: eventIdProp, hosted = false }: EventDetailProps 
 
   // ── Curated event → render lightweight preview ──
   if (event.is_curated) {
-    if (hosted) return <CuratedEventPreview event={event} />;
+    if (hosted) {
+      return (
+        <div className="space-y-3">
+          <button onClick={handleBack} className="inline-flex items-center text-meta text-muted-foreground hover:text-foreground">
+            <ArrowLeft className="w-4 h-4 mr-1" /> Close
+          </button>
+          <CuratedEventPreview event={event} hosted />
+        </div>
+      );
+    }
     return (
       <ConveneShell tabs={null}>
         <div className="min-h-screen bg-background">

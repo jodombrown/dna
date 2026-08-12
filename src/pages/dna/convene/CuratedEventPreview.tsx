@@ -1,7 +1,7 @@
 /**
  * DNA | CONVENE — Curated Event Page (shared body)
  *
- * The detail surface for events DNA has SEEN at a source, not hosted.
+ * The detail surface for events DNA has curated from a source, not hosted.
  * Rendered by EventDetail (signed-in shell) and PublicEventPage (anon
  * chrome) whenever is_curated is true.
  *
@@ -45,9 +45,13 @@ interface CuratedEventPreviewProps {
   event: Record<string, unknown>;
   /** PublicEventPage brings its own chrome; the in-app shell wants a back row. */
   showBack?: boolean;
+  /** True when rendered inside another page's layout (e.g. AppShell's
+   *  `related` slot via EventDetail), which renders its own Close affordance.
+   *  Same shape as EventOverview's `hosted` prop. */
+  hosted?: boolean;
 }
 
-export function CuratedEventPreview({ event, showBack = true }: CuratedEventPreviewProps) {
+export function CuratedEventPreview({ event, showBack = true, hosted = false }: CuratedEventPreviewProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const composer = useUniversalComposer();
@@ -156,7 +160,7 @@ export function CuratedEventPreview({ event, showBack = true }: CuratedEventPrev
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 space-y-6">
       {/* Back + actions */}
       <div className="flex items-center justify-between">
-        {showBack ? (
+        {showBack && !hosted ? (
           <button
             onClick={() => navigate(-1)}
             className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"

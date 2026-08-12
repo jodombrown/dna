@@ -11,7 +11,7 @@
  * viewport's - the viewport minus the rails is not the viewport.
  */
 
-import React, { useState, useMemo, useEffect, useRef, Suspense, lazy } from 'react';
+import React, { useMemo, useEffect, useRef, Suspense, lazy } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Calendar, CalendarCheck, Plus, Search, Map, List } from 'lucide-react';
@@ -93,8 +93,17 @@ export function ConveneDiscovery() {
   // the Lens bar writes at every width via ConveneTabStrip, mounted in
   // AppShell's `tabs` slot.
   const activePill = searchParams.get('lens') || 'all';
-  const viewMode = (searchParams.get('view') as 'list' | 'map') || 'list';
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const viewMode = (searchParams.get('view') as 'list' | 'map' | 'search') || 'list';
+  // Search is a third view swapped into the content column (not a modal), so
+  // its back affordance needs to know which view to return to. Tracked
+  // outside the URL: refreshing mid-search has no "prior" view to recover,
+  // so it falls back to list, same as landing on ?view=search cold.
+  const lastContentViewRef = useRef<'list' | 'map'>(viewMode === 'map' ? 'map' : 'list');
+  useEffect(() => {
+    if (viewMode !== 'search') {
+      lastContentViewRef.current = viewMode;
+    }
+  }, [viewMode]);
 
   // The six Browse facets (when/where/format/type/category/price), each one
   // lowercase snake_case URL key, folded from the old events index's filter set.
@@ -143,6 +152,18 @@ export function ConveneDiscovery() {
 
   const handleFacetChange = (key: ConveneFacetKey, value: string) => {
     updateFilters({ [key]: value || null });
+  };
+
+  // Search is a history entry (push), matching selectHostedEvent, so a
+  // browser back also lands where closeSearch would take it. Closing returns
+  // to whichever of list/map was active before search opened.
+  const openSearch = () => {
+    const next = new URLSearchParams(searchParams);
+    next.set('view', 'search');
+    setSearchParams(next);
+  };
+  const closeSearch = () => {
+    updateFilters({ view: lastContentViewRef.current === 'map' ? 'map' : null });
   };
 
   // Lens and facet compose: a lens with a facet equivalent (this_week,
@@ -384,7 +405,6 @@ export function ConveneDiscovery() {
     // three-column frame (facets / content / Upcoming+DIA) come from
     // AppShell: this page supplies the four slots and renders body only.
     <ConveneEventSelectionContext.Provider value={isDesktop ? selectHostedEvent : null}>
-    <>
     <AppShell
       bubble={{
         kind: 'composer',
@@ -468,7 +488,7 @@ export function ConveneDiscovery() {
                   variant="ghost"
                   size="icon"
                   className="h-9 w-9 rounded-full"
-                  onClick={() => setIsSearchOpen(true)}
+                  onClick={openSearch}
                   aria-label="Search events"
                 >
                   <Search className="w-4.5 h-4.5" />
@@ -523,6 +543,10 @@ export function ConveneDiscovery() {
               onEventSelect={() => {}}
             />
           </Suspense>
+        ) : viewMode === 'search' ? (
+          /* SEARCH VIEW: swapped into the content column, same as list/map —
+             never a fixed-position modal. Back returns to list or map. */
+          <ConveneSearchOverlay onBack={closeSearch} />
         ) : (
           /* AppShell's content column: lanes (lens=all, no facets) or the
              flat, paginated list, plus Explore Cities. Facets and the
@@ -795,12 +819,6 @@ export function ConveneDiscovery() {
         )}
       </div>
     </AppShell>
-
-    <ConveneSearchOverlay
-      isOpen={isSearchOpen}
-      onClose={() => setIsSearchOpen(false)}
-    />
-    </>
     </ConveneEventSelectionContext.Provider>
   );
 }
