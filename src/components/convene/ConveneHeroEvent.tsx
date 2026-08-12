@@ -25,6 +25,7 @@ import { EventPriceMeta } from '@/components/cards/EventPriceMeta';
 import { resolveEventAction, EVENT_ACTION_LABELS } from '@/components/cards/resolveEventAction';
 import type { EventPriceTicketType } from '@/components/cards/resolveEventPrice';
 import { EventPlate } from '@/components/cards/EventPlate';
+import { useConveneEventSelection } from '@/contexts/convene/ConveneEventSelectionContext';
 
 const CARD_PADDING = 'var(--card-padding)';
 
@@ -73,6 +74,7 @@ interface HeroEventProps {
 
 export function ConveneHeroEvent({ event }: HeroEventProps) {
   const navigate = useNavigate();
+  const selectHostedEvent = useConveneEventSelection();
   const imageUrl = event.cover_image_url ?? null;
   const attendeeCount = event.event_attendees?.[0]?.count ?? 0;
 
@@ -82,7 +84,11 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
   const place = formatEventPlace(event, 'full');
 
   const handleClick = () => {
-    navigate(`/dna/convene/events/${event.slug || event.id}`);
+    if (selectHostedEvent) {
+      selectHostedEvent(event.slug || event.id);
+    } else {
+      navigate(`/dna/convene/events/${event.slug || event.id}`);
+    }
   };
 
   // The primary action always just navigates to the event page — no inline
