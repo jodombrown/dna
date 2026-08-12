@@ -1,10 +1,10 @@
-// DNA Platform Service Worker v11
+// DNA Platform Service Worker v13
 // Hardened caching strategy with version-bump and empty-response protection
 //
 // BUILD VERSION: Updated automatically — bump CACHE_VERSION to force invalidation
 // SAFETY: Never caches empty or broken HTML responses
 
-const CACHE_VERSION = 12;
+const CACHE_VERSION = 13;
 const CACHE_NAME = `dna-cache-v${CACHE_VERSION}`;
 const RUNTIME_CACHE = `dna-runtime-v${CACHE_VERSION}`;
 
