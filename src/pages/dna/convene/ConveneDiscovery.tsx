@@ -49,6 +49,7 @@ import {
   useNetworkEvents,
   useDiasporaEvents,
   useUndatedEvents,
+  useMyUpcomingEvents,
 } from '@/hooks/convene/useConveneDiscoveryLanes';
 import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { ConveneSearchOverlay } from '@/components/convene/ConveneSearchOverlay';
@@ -205,6 +206,13 @@ export function ConveneDiscovery() {
         updates.when = 'this_week';
       }
 
+      // Selecting a lens is browsing: if search is open, it yields, same as
+      // switching away from map already implicitly does. One combined write
+      // with any facet updates above, not a second history entry.
+      if (viewMode === 'search') {
+        updates.view = lastContentViewRef.current === 'map' ? 'map' : null;
+      }
+
       if (Object.keys(updates).length > 0) {
         updateFilters(updates);
       }
@@ -229,6 +237,11 @@ export function ConveneDiscovery() {
   const { data: heroEvent } = useHeroEvent(selectedCity);
   const { data: weekendEvents = [] } = useWeekendEvents(selectedCity);
   const { data: networkEvents = [] } = useNetworkEvents();
+  // "mine" is not a bar lens (CONVENE_LENSES stays six) — Upcoming's View
+  // All (BD: convene-search-map-parity) writes it directly, the same
+  // ?lens= mechanism the bar itself uses, so it resolves through this same
+  // "every other lens" branch rather than a parallel filter path.
+  const { data: myUpcomingEvents = [] } = useMyUpcomingEvents();
 
   const shownIds = useMemo(() => {
     const ids: string[] = [];
@@ -334,7 +347,7 @@ export function ConveneDiscovery() {
       ...facetValues,
       city: selectedCity,
     },
-    !showDiscoveryLanes && !useNearMeLane && activePill !== 'network',
+    !showDiscoveryLanes && !useNearMeLane && activePill !== 'network' && activePill !== 'mine',
   );
 
   // ── Map events ─────────────────────────────────
@@ -437,7 +450,10 @@ export function ConveneDiscovery() {
           </Suspense>
         ) : (
           <div className="space-y-6">
-            <UpcomingEventsSection onCreateEvent={() => composer.open('event')} />
+            <UpcomingEventsSection
+              onCreateEvent={() => composer.open('event')}
+              onViewAll={() => updateFilters({ lens: 'mine' })}
+            />
             <DIAHubSection surface="convene_hub" limit={2} />
           </div>
         )
@@ -487,9 +503,13 @@ export function ConveneDiscovery() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9 rounded-full"
-                  onClick={openSearch}
-                  aria-label="Search events"
+                  className={cn(
+                    'h-9 w-9 rounded-full',
+                    viewMode === 'search' &&
+                      'bg-dna-copper/12 text-dna-copper',
+                  )}
+                  onClick={() => (viewMode === 'search' ? closeSearch() : openSearch())}
+                  aria-label={viewMode === 'search' ? 'Close search' : 'Search events'}
                 >
                   <Search className="w-4.5 h-4.5" />
                 </Button>
@@ -738,6 +758,12 @@ export function ConveneDiscovery() {
                       events={networkEvents}
                       showMutualAttendees
                       emptyMessage="None of your connections have RSVP'd to upcoming events yet."
+                    />
+                  ) : activePill === 'mine' ? (
+                    <DiscoveryLane
+                      title="Your Upcoming Events"
+                      events={myUpcomingEvents}
+                      emptyMessage="You're not hosting or attending any upcoming events yet."
                     />
                   ) : (
                     <section className="space-y-3">

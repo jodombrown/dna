@@ -10,7 +10,6 @@ import { useState } from 'react';
 import { logger } from '@/lib/logger';
 import { EVENT_PLACE_SELECT, formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 import { EventTime } from '@/components/events/EventTime';
-import { ROUTES } from '@/config/routes';
 
 interface EventItem extends EventPlaceInput {
   id: string;
@@ -29,7 +28,15 @@ interface MyEventsData {
   attending: EventItem[];
 }
 
-export const UpcomingEventsSection = ({ onCreateEvent }: { onCreateEvent?: () => void }) => {
+export const UpcomingEventsSection = ({
+  onCreateEvent,
+  onViewAll,
+}: {
+  onCreateEvent?: () => void;
+  /** Filters Browse in place to the member's own upcoming events, rather
+   *  than navigating to My Events (BD: convene-search-map-parity). */
+  onViewAll: () => void;
+}) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'attending' | 'hosting'>('attending');
@@ -149,7 +156,7 @@ export const UpcomingEventsSection = ({ onCreateEvent }: { onCreateEvent?: () =>
         <h2 className="text-2xl font-bold">Your Upcoming Events</h2>
         <Button
           variant="ghost"
-          onClick={() => navigate(ROUTES.convene.myEvents)}
+          onClick={onViewAll}
         >
           View All
           <ArrowRight className="ml-2 h-4 w-4" />

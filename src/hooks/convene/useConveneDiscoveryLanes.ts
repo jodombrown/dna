@@ -197,6 +197,65 @@ export function useNetworkEvents() {
 }
 
 /**
+ * Your Events — events the member is hosting or attending (going/maybe),
+ * upcoming and not cancelled. Powers the "mine" lens that Upcoming's View
+ * All narrows Browse to (BD: convene-search-map-parity), so it mirrors
+ * UpcomingEventsSection's own hosting+attending fetch rather than the
+ * published/public-only predicate every other lane uses — a member's own
+ * event belongs here regardless of its visibility.
+ */
+export function useMyUpcomingEvents() {
+  const { user } = useAuth();
+
+  return useQuery({
+    queryKey: ['convene-my-events', user?.id],
+    queryFn: async (): Promise<EventRow[]> => {
+      if (!user?.id) return [];
+
+      const now = new Date().toISOString();
+
+      const { data: hosting } = await supabase
+        .from('events')
+        .select(BASE_SELECT)
+        .eq('organizer_id', user.id)
+        .neq('status', 'cancelled')
+        .gte('start_time', now);
+
+      const { data: attendeeRows } = await supabase
+        .from('event_attendees')
+        .select('event_id')
+        .eq('user_id', user.id)
+        .in('status', ['going', 'maybe']);
+
+      const attendingIds = [...new Set((attendeeRows ?? []).map((a) => a.event_id))];
+
+      let attending: Record<string, unknown>[] = [];
+      if (attendingIds.length > 0) {
+        const { data } = await supabase
+          .from('events')
+          .select(BASE_SELECT)
+          .in('id', attendingIds)
+          .neq('status', 'cancelled')
+          .gte('start_time', now);
+        attending = data || [];
+      }
+
+      const merged = new Map<string, Record<string, unknown>>();
+      for (const e of [...(hosting || []), ...attending]) {
+        merged.set(e.id as string, e);
+      }
+      const events = Array.from(merged.values()).sort((a, b) =>
+        String(a.start_time ?? '').localeCompare(String(b.start_time ?? '')),
+      );
+
+      return attachOrganizers(events);
+    },
+    enabled: !!user?.id,
+    staleTime: 60_000,
+  });
+}
+
+/**
  * Dates not yet announced — published events whose dates the source hasn't
  * announced (date_confirmed false / start_time null). They have no place on
  * a timeline lane, so they hold their own.
