@@ -506,10 +506,10 @@ export function ConveneDiscovery() {
                   }
                   aria-label={viewMode === 'map' ? 'List view' : 'Map view'}
                 >
-                  {viewMode === 'list' ? (
-                    <Map className="w-4.5 h-4.5" />
-                  ) : (
+                  {viewMode === 'map' ? (
                     <List className="w-4.5 h-4.5" />
+                  ) : (
+                    <Map className="w-4.5 h-4.5" />
                   )}
                 </Button>
                 <Button
