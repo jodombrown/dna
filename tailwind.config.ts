@@ -105,6 +105,16 @@ export default {
 				// Map surfaces (Convene discovery map, Diaspora density map).
 				map: '31.25rem',      // 500px, mobile map viewport
 				'map-lg': '37.5rem',  // 600px, desktop map viewport
+				// Convene hero image band below 768px (S93). Fixed, not 3:2 — 3:2
+				// at mobile widths computes too tall and pushes the action button
+				// off the first screen.
+				'hero-cover-mobile': '11rem', // 176px
+			},
+			aspectRatio: {
+				// Convene hero image band from 768px up (S92). Locks the band's
+				// height to the column width so it no longer derives from the
+				// image's own intrinsic ratio.
+				'hero-cover': '3 / 2',
 			},
 			maxHeight: {
 				sheet: '92dvh',   // must mirror height.sheet; same name, same unit

@@ -102,7 +102,7 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
             the fix: a wrapper with neither lets CSS Grid derive row height
             from the image's natural size, producing dead space on wide
             columns and an aggressive crop on narrow ones. */}
-        <div className="relative h-[176px] w-full overflow-hidden rounded-lg md:col-span-1 md:aspect-[3/2] md:h-auto">
+        <div className="relative h-hero-cover-mobile w-full overflow-hidden rounded-lg md:col-span-1 md:aspect-hero-cover md:h-auto">
           {imageUrl ? (
             <img
               src={imageUrl}
