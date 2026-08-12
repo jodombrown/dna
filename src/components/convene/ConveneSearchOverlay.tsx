@@ -111,7 +111,7 @@ export function ConveneSearchOverlay({ onBack }: ConveneSearchOverlayProps) {
                 saveRecentSearch(searchTerm.trim());
               }
             }}
-            className="w-full pl-10 pr-10 py-2.5 bg-muted/50 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--module-convene))]/30 border-0"
+            className="w-full pl-10 pr-10 py-2.5 bg-muted/50 rounded-lg text-body focus:outline-none focus:ring-2 focus:ring-[hsl(var(--module-convene))]/30 border-0"
           />
           {searchTerm && (
             <button
@@ -133,7 +133,7 @@ export function ConveneSearchOverlay({ onBack }: ConveneSearchOverlayProps) {
               key={`${chip.key}-${chip.value}`}
               onClick={() => toggleFilter(chip.key as keyof EventSearchFilters, chip.value)}
               className={cn(
-                'px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors',
+                'px-3 py-1.5 rounded-full text-meta font-medium whitespace-nowrap transition-colors',
                 isActive
                   ? 'bg-[hsl(var(--module-convene))] text-white'
                   : 'bg-muted text-muted-foreground hover:bg-muted/80'
@@ -150,7 +150,7 @@ export function ConveneSearchOverlay({ onBack }: ConveneSearchOverlayProps) {
         {hasActiveSearch ? (
           /* Search Results */
           <div>
-            <p className="text-xs text-muted-foreground mb-3">
+            <p className="text-meta text-muted-foreground mb-3">
               {isSearching ? 'Searching...' : `${searchResults.length} result${searchResults.length !== 1 ? 's' : ''}${searchTerm ? ` for "${searchTerm}"` : ''}`}
             </p>
             {searchResults.length > 0 ? (
@@ -166,8 +166,8 @@ export function ConveneSearchOverlay({ onBack }: ConveneSearchOverlayProps) {
             ) : !isSearching ? (
               <div className="text-center py-12">
                 <Search className="h-8 w-8 text-muted-foreground/50 mx-auto mb-3" />
-                <p className="text-sm text-muted-foreground">No events found</p>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-body text-muted-foreground">No events found</p>
+                <p className="text-meta text-muted-foreground mt-1">
                   Try a different search term or browse categories
                 </p>
               </div>
@@ -180,7 +180,7 @@ export function ConveneSearchOverlay({ onBack }: ConveneSearchOverlayProps) {
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <Clock className="h-4 w-4 text-muted-foreground" />
-                  <h3 className="text-sm font-semibold">Recent Searches</h3>
+                  <h3 className="text-body font-semibold">Recent Searches</h3>
                 </div>
                 <div className="space-y-1">
                   {recentSearches.map(term => (
@@ -189,7 +189,7 @@ export function ConveneSearchOverlay({ onBack }: ConveneSearchOverlayProps) {
                       className="flex items-center justify-between py-2 px-2 rounded-lg hover:bg-muted/50 cursor-pointer group"
                       onClick={() => setSearchTerm(term)}
                     >
-                      <span className="text-sm">{term}</span>
+                      <span className="text-body">{term}</span>
                       <button
                         onClick={e => {
                           e.stopPropagation();
@@ -209,7 +209,7 @@ export function ConveneSearchOverlay({ onBack }: ConveneSearchOverlayProps) {
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                  <h3 className="text-sm font-semibold">Upcoming Events</h3>
+                  <h3 className="text-body font-semibold">Upcoming Events</h3>
                 </div>
                 <div className="space-y-2">
                   {trendingEvents.map(event => (
