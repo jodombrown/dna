@@ -61,7 +61,7 @@ export function EventOverviewPanel({ eventId }: EventOverviewPanelProps) {
     <EventManagementContext.Provider
       value={{
         event: event as unknown as ConveneEvent,
-        userRole: 'owner',
+        userRole: 'manager',
         isOrganizer: true,
         refetchEvent: () => { refetch(); },
       }}

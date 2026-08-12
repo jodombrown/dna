@@ -89,8 +89,8 @@ const ROLES: RoleDefinition[] = [
     permissions: ['overview', 'attendees', 'check-in', 'communications', 'analytics', 'team', 'settings'],
   },
   {
-    value: 'manager',
-    label: 'Manager',
+    value: 'organizer',
+    label: 'Organizer',
     description: 'Manage attendees and communications',
     icon: Clipboard,
     permissions: ['overview', 'attendees', 'check-in', 'communications', 'analytics'],
@@ -120,7 +120,7 @@ const TeamManager: React.FC = () => {
   // State
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteRole, setInviteRole] = useState('manager');
+  const [inviteRole, setInviteRole] = useState('organizer');
   const [inviteMessage, setInviteMessage] = useState('');
   const [removeMemberId, setRemoveMemberId] = useState<string | null>(null);
   const [changingRole, setChangingRole] = useState<{ memberId: string; newRole: string } | null>(null);
@@ -232,7 +232,7 @@ const TeamManager: React.FC = () => {
       toast({ title: 'Team member added', description: 'The team member has been added successfully.' });
       setShowInviteModal(false);
       setInviteEmail('');
-      setInviteRole('manager');
+      setInviteRole('organizer');
       setInviteMessage('');
     },
     onError: (error: Error) => {

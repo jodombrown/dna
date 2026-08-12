@@ -13,13 +13,13 @@ import type { Event as ConveneEvent } from '@/types/eventTypes';
 
 // Edit is deliberately absent — it's a header action, not a pane.
 export const EVENT_MANAGE_NAV: SectionNavItem[] = [
-  { label: 'Overview', path: '', icon: LayoutDashboard, roles: ['owner', 'co-host', 'manager', 'promoter'] },
-  { label: 'Attendees', path: 'attendees', icon: Users, roles: ['owner', 'co-host', 'manager'] },
-  { label: 'Check-In', path: 'check-in', icon: QrCode, roles: ['owner', 'co-host', 'manager', 'check-in'] },
-  { label: 'Relationships', path: 'communications', icon: Mail, roles: ['owner', 'co-host', 'manager'] },
-  { label: 'Promotion', path: 'promotion', icon: Share2, roles: ['owner', 'co-host', 'manager', 'promoter'] },
-  { label: 'Team', path: 'team', icon: UserCog, roles: ['owner', 'co-host'] },
-  { label: 'Analytics', path: 'analytics', icon: BarChart3, roles: ['owner', 'co-host', 'manager', 'promoter'] },
+  { label: 'Overview', path: '', icon: LayoutDashboard, roles: ['manager', 'co-host', 'organizer', 'promoter'] },
+  { label: 'Attendees', path: 'attendees', icon: Users, roles: ['manager', 'co-host', 'organizer'] },
+  { label: 'Check-In', path: 'check-in', icon: QrCode, roles: ['manager', 'co-host', 'organizer', 'check-in'] },
+  { label: 'Relationships', path: 'communications', icon: Mail, roles: ['manager', 'co-host', 'organizer'] },
+  { label: 'Promotion', path: 'promotion', icon: Share2, roles: ['manager', 'co-host', 'organizer', 'promoter'] },
+  { label: 'Team', path: 'team', icon: UserCog, roles: ['manager', 'co-host'] },
+  { label: 'Analytics', path: 'analytics', icon: BarChart3, roles: ['manager', 'co-host', 'organizer', 'promoter'] },
 ];
 
 interface EventDetailProps {
@@ -164,6 +164,11 @@ const EventDetail = ({ eventId: eventIdProp, hosted = false }: EventDetailProps 
   // and the projection carries no organizer_id, so both sides would be
   // undefined and wrongly read as "organizer". This is the ONLY isOrganizer
   // determination in the merged page — every pane reads it from context.
+  // NOTE: this variable name predates the Manager/Organizer rename (BD506).
+  // isOrganizer means "viewer is this event's organizer_id" — under current
+  // terminology that is the Manager persona, NOT the new Organizer persona
+  // (old 'manager' role). Do not rename this variable as part of a future
+  // Organizer-persona change without checking all 13 consumers first.
   const isOrganizer = !!user && !!event && user.id === event.organizer_id;
 
   // Role-gating within the six panes (who sees Team, who sees Analytics)
@@ -173,7 +178,7 @@ const EventDetail = ({ eventId: eventIdProp, hosted = false }: EventDetailProps 
     queryKey: ['event-role', eventId, user?.id],
     queryFn: async () => {
       if (!user || !event) return 'none';
-      if (isOrganizer) return 'owner';
+      if (isOrganizer) return 'manager';
       const { data: roleData } = await supabase
         .from('event_roles')
         .select('role')
