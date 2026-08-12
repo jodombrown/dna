@@ -86,6 +86,13 @@ export const READING_MAX_WIDTH = 1400;
 const LEFT_RAIL_TABLET = '240px';
 const LEFT_RAIL_DESKTOP = '280px';
 const RIGHT_RAIL = '340px';
+// Pack 19 S97: when a hosted detail (BD-EventDetail-host-agnostic) is showing
+// in `related`, context collapses to an icon-only strip and detail widens to
+// clear EventDetail's management tabs. 64px doubles as the icon strip's
+// width AND its buttons' touch target — the standing floor chosen so the
+// collapsed lens switch stays genuinely tappable, not decorative.
+const LEFT_RAIL_HOSTED = '64px';
+const RIGHT_RAIL_HOSTED = '640px';
 
 interface AppShellProps {
   /** The mobile header's action bubble (search/composer/static). The shell owns
@@ -111,9 +118,20 @@ interface AppShellProps {
    *  rendered above the content column, spanning the content track only.
    *  Absent renders nothing: no reserved space. */
   tabs?: React.ReactNode;
+  /** Pack 19 S97: true while `related` is hosting an in-place detail (the
+   *  same condition that gates the hosted render itself — never a second,
+   *  independent trigger). Desktop only: `context` narrows from its normal
+   *  280/240 to a 64px icon strip and `related` widens from 340 to 640, in
+   *  the SAME render, so the two tracks can never desync. The consumer still
+   *  owns what `context` actually renders at 64px (an icon-only rail is a
+   *  different component, not a prop this shell interprets); this only
+   *  changes the column's width. No effect on mobile/tablet, where the
+   *  right track is already absent or `related` already folds beneath the
+   *  well. */
+  hostedDetail?: boolean;
 }
 
-export function AppShell({ bubble, context, children, related, tabs }: AppShellProps) {
+export function AppShell({ bubble, context, children, related, tabs, hostedDetail = false }: AppShellProps) {
   const inPanel = useIdentitySheetSafe() !== null;
   const { isMobile, isTablet } = useMobile();
   const { claim, release } = useChromeOwner();
@@ -179,9 +197,15 @@ export function AppShell({ bubble, context, children, related, tabs }: AppShellP
   const hasContext = context != null;
   const hasRelated = related != null && !isTablet;
   const gridTemplateColumns = [
-    hasContext ? (isTablet ? LEFT_RAIL_TABLET : LEFT_RAIL_DESKTOP) : null,
+    hasContext
+      ? hostedDetail
+        ? LEFT_RAIL_HOSTED
+        : isTablet
+          ? LEFT_RAIL_TABLET
+          : LEFT_RAIL_DESKTOP
+      : null,
     '1fr',
-    hasRelated ? RIGHT_RAIL : null,
+    hasRelated ? (hostedDetail ? RIGHT_RAIL_HOSTED : RIGHT_RAIL) : null,
   ]
     .filter(Boolean)
     .join(' ');
