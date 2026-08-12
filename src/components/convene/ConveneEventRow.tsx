@@ -36,6 +36,9 @@ interface ConveneEventRowProps {
   onClick?: () => void;
   showMutualAttendees?: boolean;
   className?: string;
+  /** BD230: the undated lane already says "Dates not yet announced" — pass
+   *  true there so the row's date slot stays empty instead of repeating it. */
+  suppressDateTbc?: boolean;
 }
 
 export function ConveneEventRow({
@@ -46,6 +49,7 @@ export function ConveneEventRow({
   onClick,
   showMutualAttendees = true,
   className,
+  suppressDateTbc,
 }: ConveneEventRowProps) {
   const navigate = useNavigate();
 
@@ -143,6 +147,7 @@ export function ConveneEventRow({
         }}
         eventId={event.id}
         variant="datetime"
+        suppressDateTbc={suppressDateTbc}
       />
       {locationInfo && (
         <span className="flex items-center gap-1">
