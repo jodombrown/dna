@@ -333,9 +333,9 @@ const MyEvents = () => {
           {/* ── Page Header ────────────────────────── */}
           <div className="hidden md:flex items-start sm:items-center justify-between gap-4 relative overflow-hidden rounded-xl p-5">
             <CulturalPattern pattern="kente" opacity={0.05} />
-            <div className="relative z-10">
+            <div className="relative z-10 flex flex-col gap-1">
               <h1 className="text-h1 font-display">My Events</h1>
-              <p className="text-muted-foreground text-body mt-1">
+              <p className="text-muted-foreground text-body">
                 Manage events you're hosting and attending
               </p>
             </div>
