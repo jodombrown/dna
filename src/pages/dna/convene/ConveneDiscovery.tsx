@@ -32,6 +32,7 @@ import { DIAHubSection } from '@/components/dia/DIAHubSection';
 import { UpcomingEventsSection } from '@/components/convene/UpcomingEventsSection';
 import { CONVENE_LENSES, ConveneTabStrip } from '@/components/convene/ConveneShell';
 import { ConveneFacetRail } from '@/components/convene/ConveneFacetRail';
+import { ConveneFacetRailCollapsed } from '@/components/convene/ConveneFacetRailCollapsed';
 import { ConveneNarrowSheet } from '@/components/convene/ConveneNarrowSheet';
 import { ConveneDiscoveryHeaderRow } from '@/components/convene/ConveneDiscoveryHeaderRow';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
@@ -372,13 +373,23 @@ export function ConveneDiscovery() {
         onClick: () => composer.open('event'),
       }}
       tabs={<ConveneTabStrip />}
+      hostedDetail={showHostedDetail}
       context={
-        <ConveneFacetRail
-          values={facetValues}
-          onChange={handleFacetChange}
-          countries={countries}
-          categories={categoryTags}
-        />
+        showHostedDetail ? (
+          <ConveneFacetRailCollapsed
+            values={facetValues}
+            onChange={handleFacetChange}
+            countries={countries}
+            categories={categoryTags}
+          />
+        ) : (
+          <ConveneFacetRail
+            values={facetValues}
+            onChange={handleFacetChange}
+            countries={countries}
+            categories={categoryTags}
+          />
+        )
       }
       related={
         showHostedDetail ? (
