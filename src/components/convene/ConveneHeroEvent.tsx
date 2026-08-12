@@ -7,9 +7,10 @@
  * real size, a date block, a linked venue, going count, and price/action.
  *
  * The cover is a slot, not the surface: inset inside the card's own padding,
- * roughly a third of the card, never full-bleed, never carrying overlaid
- * text. Every field beneath it is a real slot — nothing renders a
- * placeholder when the data behind it is absent (BD111).
+ * a fixed 280px-wide track (S95) regardless of card width, never
+ * full-bleed, never carrying overlaid text. Every field beneath it is a
+ * real slot — nothing renders a placeholder when the data behind it is
+ * absent (BD111).
  */
 
 import React from 'react';
@@ -26,6 +27,13 @@ import type { EventPriceTicketType } from '@/components/cards/resolveEventPrice'
 import { EventPlate } from '@/components/cards/EventPlate';
 
 const CARD_PADDING = 'var(--card-padding)';
+
+// The hero photo's own fixed track width — independent of AppShell's
+// LEFT_RAIL_DESKTOP (a nav rail's width happens to match today, but the two
+// represent unrelated decisions and must stay free to diverge). At md and
+// up the grid is this fixed column plus a 1fr text column, so the image
+// holds 280x187 (3:2, S92) at any card width and all growth goes to text.
+const HERO_IMAGE_COLUMN = '280px';
 
 interface HeroEventProps {
   event: EventPlaceInput & {
@@ -92,17 +100,19 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
       onClick={handleClick}
     >
       <div
-        className="flex flex-col gap-3 md:grid md:grid-cols-3 md:gap-4"
-        style={{ padding: CARD_PADDING }}
+        className="flex flex-col gap-3 md:grid md:gap-4"
+        style={{ padding: CARD_PADDING, gridTemplateColumns: `${HERO_IMAGE_COLUMN} 1fr` }}
       >
         {/* Image — a fixed 176px band above the content below 768 (S93); a
-            locked 3:2 crop, inset a third of the card, from 768 up (S92). No
-            explicit height below md and no aspect-ratio above it — either one
+            locked 3:2 crop in a fixed HERO_IMAGE_COLUMN-wide track from 768
+            up (S92 ratio, S95 fixed-width track), so the image holds
+            280x187 at any card width and never scales with it — growth on a
+            wider card goes entirely into the 1fr text column. No explicit
+            height below md and no aspect-ratio above it — either one
             decouples the band from the image's own intrinsic ratio, which is
             the fix: a wrapper with neither lets CSS Grid derive row height
-            from the image's natural size, producing dead space on wide
-            columns and an aggressive crop on narrow ones. */}
-        <div className="relative h-hero-cover-mobile w-full overflow-hidden rounded-lg md:col-span-1 md:aspect-hero-cover md:h-auto">
+            from the image's natural size. */}
+        <div className="relative h-hero-cover-mobile w-full overflow-hidden rounded-lg md:aspect-hero-cover md:h-auto">
           {imageUrl ? (
             <img
               src={imageUrl}
@@ -128,7 +138,7 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
         </div>
 
         {/* Fact — every field a real slot; the context pill leads. */}
-        <div className="flex min-w-0 flex-col gap-3 md:col-span-2">
+        <div className="flex min-w-0 flex-col gap-3">
           <span className="inline-flex w-fit items-center rounded-full border border-bevel-event bg-bevel-event/10 px-3 py-1 text-micro uppercase text-bevel-event">
             {event.location_city ? `Featured in ${event.location_city}` : 'Featured Event'}
           </span>
