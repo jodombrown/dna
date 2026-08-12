@@ -2,14 +2,13 @@ import { useParams, useNavigate, useSearchParams, Navigate, Outlet } from 'react
 import { CuratedEventPreview } from '@/pages/dna/convene/CuratedEventPreview';
 import { useQuery } from '@tanstack/react-query';
 import { Loader2, ArrowLeft, LayoutDashboard, Users, QrCode, Mail, BarChart3, UserCog, Share2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { ConveneShell } from '@/components/convene/ConveneShell';
 import { SectionNav, type SectionNavItem } from '@/components/shell/SectionNav';
 import { EventManagementContext } from '@/components/convene/management/EventManagementContext';
 import EventOverview from '@/components/convene/EventOverview';
+import { EventDetailLoading, EventDetailNotFound } from '@/components/convene/EventDetailStates';
 import type { Event as ConveneEvent } from '@/types/eventTypes';
 
 // Edit is deliberately absent — it's a header action, not a pane.
@@ -209,50 +208,42 @@ const EventDetail = ({ eventId: eventIdProp, hosted = false }: EventDetailProps 
   }
 
   if (isLoading) {
-    const loadingBody = (
-      <div className={hosted ? undefined : 'min-h-screen bg-background'}>
-        <div className={hosted ? undefined : 'max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6'}>
-          <button onClick={handleBack} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6">
-            <ArrowLeft className="w-4 h-4 mr-1" /> Back
-          </button>
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+    if (hosted) return <EventDetailLoading onBack={handleBack} />;
+    return (
+      <ConveneShell tabs={null}>
+        <div className="min-h-screen bg-background">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <EventDetailLoading onBack={handleBack} />
           </div>
         </div>
-      </div>
+      </ConveneShell>
     );
-    return hosted ? loadingBody : <ConveneShell tabs={null}>{loadingBody}</ConveneShell>;
   }
 
   if (!event) {
-    const notFoundBody = (
-      <div className={hosted ? undefined : 'min-h-screen bg-background'}>
-        <div className={hosted ? undefined : 'max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6'}>
-          <button onClick={handleBack} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6">
-            <ArrowLeft className="w-4 h-4 mr-1" /> Back
-          </button>
-          <Card>
-            <CardContent className="py-12 text-center">
-              <div className="flex flex-col items-center gap-4">
-                <p className="text-muted-foreground">Event not found</p>
-                <Button variant="link" onClick={() => navigate('/dna/convene')}>Back to events</Button>
-              </div>
-            </CardContent>
-          </Card>
+    const onBrowse = () => navigate('/dna/convene');
+    if (hosted) return <EventDetailNotFound onBack={handleBack} onBrowse={onBrowse} />;
+    return (
+      <ConveneShell tabs={null}>
+        <div className="min-h-screen bg-background">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <EventDetailNotFound onBack={handleBack} onBrowse={onBrowse} />
+          </div>
         </div>
-      </div>
+      </ConveneShell>
     );
-    return hosted ? notFoundBody : <ConveneShell tabs={null}>{notFoundBody}</ConveneShell>;
   }
 
   // ── Curated event → render lightweight preview ──
   if (event.is_curated) {
-    const curatedBody = (
-      <div className={hosted ? undefined : 'min-h-screen bg-background'}>
-        <CuratedEventPreview event={event} />
-      </div>
+    if (hosted) return <CuratedEventPreview event={event} />;
+    return (
+      <ConveneShell tabs={null}>
+        <div className="min-h-screen bg-background">
+          <CuratedEventPreview event={event} />
+        </div>
+      </ConveneShell>
     );
-    return hosted ? curatedBody : <ConveneShell tabs={null}>{curatedBody}</ConveneShell>;
   }
 
   const mainContent = (
@@ -266,7 +257,7 @@ const EventDetail = ({ eventId: eventIdProp, hosted = false }: EventDetailProps 
     >
       {hosted ? (
         <div className="space-y-3">
-          <button onClick={handleBack} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground">
+          <button onClick={handleBack} className="inline-flex items-center text-meta text-muted-foreground hover:text-foreground">
             <ArrowLeft className="w-4 h-4 mr-1" /> Close
           </button>
           <EventOverview eventId={eventId ?? undefined} />
