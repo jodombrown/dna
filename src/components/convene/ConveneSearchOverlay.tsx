@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Search, X, TrendingUp, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -25,11 +24,11 @@ const FILTER_CHIPS = [
 ] as const;
 
 interface ConveneSearchOverlayProps {
-  isOpen: boolean;
-  onClose: () => void;
+  /** Returns to whichever view (list or map) was active before search opened. */
+  onBack: () => void;
 }
 
-export function ConveneSearchOverlay({ isOpen, onClose }: ConveneSearchOverlayProps) {
+export function ConveneSearchOverlay({ onBack }: ConveneSearchOverlayProps) {
   const navigate = useNavigate();
   const selectHostedEvent = useConveneEventSelection();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -45,15 +44,12 @@ export function ConveneSearchOverlay({ isOpen, onClose }: ConveneSearchOverlayPr
     } catch { /* ignore */ }
   }, []);
 
-  // Auto-focus input when overlay opens
+  // Auto-focus input on mount — this view is only ever mounted while active,
+  // so there is no isOpen toggle to key off.
   useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 100);
-    } else {
-      setSearchTerm('');
-      setFilters({});
-    }
-  }, [isOpen]);
+    const timer = setTimeout(() => inputRef.current?.focus(), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const { data: searchResults = [], isLoading: isSearching } = useEventSearch(searchTerm, filters);
   const { data: trendingEvents = [] } = useTrendingEvents();
@@ -79,7 +75,7 @@ export function ConveneSearchOverlay({ isOpen, onClose }: ConveneSearchOverlayPr
 
   const handleEventClick = (eventId: string, slug: string | null) => {
     if (searchTerm.trim()) saveRecentSearch(searchTerm.trim());
-    onClose();
+    onBack();
     if (selectHostedEvent) selectHostedEvent(slug || eventId);
     else navigate(`/dna/convene/events/${slug || eventId}`);
   };
@@ -95,79 +91,128 @@ export function ConveneSearchOverlay({ isOpen, onClose }: ConveneSearchOverlayPr
     });
   };
 
-  if (!isOpen) return null;
-
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] bg-background flex flex-col"
-      >
-        {/* Search Header */}
-        <div className="border-b border-border px-4 py-3 flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={onClose} className="shrink-0">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input
-              ref={inputRef}
-              type="text"
-              placeholder="Search events..."
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === 'Enter' && searchTerm.trim()) {
-                  saveRecentSearch(searchTerm.trim());
-                }
-              }}
-              className="w-full pl-10 pr-10 py-2.5 bg-muted/50 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--module-convene))]/30 border-0"
-            />
-            {searchTerm && (
-              <button
-                onClick={() => setSearchTerm('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2"
-              >
-                <X className="h-4 w-4 text-muted-foreground" />
-              </button>
-            )}
+    <div className="flex flex-col">
+      {/* Search Header */}
+      <div className="border-b border-border px-4 py-3 flex items-center gap-3">
+        <Button variant="ghost" size="icon" onClick={onBack} className="shrink-0">
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            ref={inputRef}
+            type="text"
+            placeholder="Search events..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && searchTerm.trim()) {
+                saveRecentSearch(searchTerm.trim());
+              }
+            }}
+            className="w-full pl-10 pr-10 py-2.5 bg-muted/50 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--module-convene))]/30 border-0"
+          />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2"
+            >
+              <X className="h-4 w-4 text-muted-foreground" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Filter Chips */}
+      <div className="px-4 py-2 flex gap-2 overflow-x-auto scrollbar-hide border-b border-border">
+        {FILTER_CHIPS.map(chip => {
+          const isActive = filters[chip.key as keyof EventSearchFilters] === chip.value;
+          return (
+            <button
+              key={`${chip.key}-${chip.value}`}
+              onClick={() => toggleFilter(chip.key as keyof EventSearchFilters, chip.value)}
+              className={cn(
+                'px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors',
+                isActive
+                  ? 'bg-[hsl(var(--module-convene))] text-white'
+                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
+              )}
+            >
+              {chip.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Content Area */}
+      <div className="flex-1 overflow-y-auto px-4 py-4">
+        {hasActiveSearch ? (
+          /* Search Results */
+          <div>
+            <p className="text-xs text-muted-foreground mb-3">
+              {isSearching ? 'Searching...' : `${searchResults.length} result${searchResults.length !== 1 ? 's' : ''}${searchTerm ? ` for "${searchTerm}"` : ''}`}
+            </p>
+            {searchResults.length > 0 ? (
+              <div className="space-y-2">
+                {searchResults.map(event => (
+                  <SearchResultCard
+                    key={event.id}
+                    event={event}
+                    onClick={() => handleEventClick(event.id, event.slug)}
+                  />
+                ))}
+              </div>
+            ) : !isSearching ? (
+              <div className="text-center py-12">
+                <Search className="h-8 w-8 text-muted-foreground/50 mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground">No events found</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Try a different search term or browse categories
+                </p>
+              </div>
+            ) : null}
           </div>
-        </div>
+        ) : (
+          /* Empty State: Recent Searches + Trending */
+          <div className="space-y-6">
+            {recentSearches.length > 0 && (
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <h3 className="text-sm font-semibold">Recent Searches</h3>
+                </div>
+                <div className="space-y-1">
+                  {recentSearches.map(term => (
+                    <div
+                      key={term}
+                      className="flex items-center justify-between py-2 px-2 rounded-lg hover:bg-muted/50 cursor-pointer group"
+                      onClick={() => setSearchTerm(term)}
+                    >
+                      <span className="text-sm">{term}</span>
+                      <button
+                        onClick={e => {
+                          e.stopPropagation();
+                          removeRecentSearch(term);
+                        }}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="h-3.5 w-3.5 text-muted-foreground" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
-        {/* Filter Chips */}
-        <div className="px-4 py-2 flex gap-2 overflow-x-auto scrollbar-hide border-b border-border">
-          {FILTER_CHIPS.map(chip => {
-            const isActive = filters[chip.key as keyof EventSearchFilters] === chip.value;
-            return (
-              <button
-                key={`${chip.key}-${chip.value}`}
-                onClick={() => toggleFilter(chip.key as keyof EventSearchFilters, chip.value)}
-                className={cn(
-                  'px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors',
-                  isActive
-                    ? 'bg-[hsl(var(--module-convene))] text-white'
-                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                )}
-              >
-                {chip.label}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Content Area */}
-        <div className="flex-1 overflow-y-auto px-4 py-4">
-          {hasActiveSearch ? (
-            /* Search Results */
-            <div>
-              <p className="text-xs text-muted-foreground mb-3">
-                {isSearching ? 'Searching...' : `${searchResults.length} result${searchResults.length !== 1 ? 's' : ''}${searchTerm ? ` for "${searchTerm}"` : ''}`}
-              </p>
-              {searchResults.length > 0 ? (
+            {trendingEvents.length > 0 && (
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                  <h3 className="text-sm font-semibold">Upcoming Events</h3>
+                </div>
                 <div className="space-y-2">
-                  {searchResults.map(event => (
+                  {trendingEvents.map(event => (
                     <SearchResultCard
                       key={event.id}
                       event={event}
@@ -175,70 +220,12 @@ export function ConveneSearchOverlay({ isOpen, onClose }: ConveneSearchOverlayPr
                     />
                   ))}
                 </div>
-              ) : !isSearching ? (
-                <div className="text-center py-12">
-                  <Search className="h-8 w-8 text-muted-foreground/50 mx-auto mb-3" />
-                  <p className="text-sm text-muted-foreground">No events found</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Try a different search term or browse categories
-                  </p>
-                </div>
-              ) : null}
-            </div>
-          ) : (
-            /* Empty State: Recent Searches + Trending */
-            <div className="space-y-6">
-              {recentSearches.length > 0 && (
-                <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <h3 className="text-sm font-semibold">Recent Searches</h3>
-                  </div>
-                  <div className="space-y-1">
-                    {recentSearches.map(term => (
-                      <div
-                        key={term}
-                        className="flex items-center justify-between py-2 px-2 rounded-lg hover:bg-muted/50 cursor-pointer group"
-                        onClick={() => setSearchTerm(term)}
-                      >
-                        <span className="text-sm">{term}</span>
-                        <button
-                          onClick={e => {
-                            e.stopPropagation();
-                            removeRecentSearch(term);
-                          }}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <X className="h-3.5 w-3.5 text-muted-foreground" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {trendingEvents.length > 0 && (
-                <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                    <h3 className="text-sm font-semibold">Upcoming Events</h3>
-                  </div>
-                  <div className="space-y-2">
-                    {trendingEvents.map(event => (
-                      <SearchResultCard
-                        key={event.id}
-                        event={event}
-                        onClick={() => handleEventClick(event.id, event.slug)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </motion.div>
-    </AnimatePresence>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 

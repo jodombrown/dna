@@ -1,6 +1,6 @@
 // Curated-event identity helpers.
 //
-// A curated event is one DNA has seen at a source, not one DNA hosts. The
+// A curated event is one DNA has curated from a source, not one DNA hosts. The
 // events row carries no host column — curated_source names the discovery
 // agent (e.g. "perplexity"), not the host — so the only honest host identity
 // is the source itself: the domain people will register at. These helpers
