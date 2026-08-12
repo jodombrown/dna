@@ -148,7 +148,7 @@ export type EventVisibility = 'public' | 'unlisted' | 'private' | 'invite_only';
 export type VirtualUrlVisibility = 'public' | 'on_rsvp' | 'on_checkin' | 'hidden';
 
 // Event team roles
-export type EventRole = 'owner' | 'cohost' | 'manager' | 'checkin' | 'promoter';
+export type EventRole = 'manager' | 'cohost' | 'organizer' | 'checkin' | 'promoter';
 
 // Ticket status
 export type TicketStatus = 'valid' | 'used' | 'cancelled' | 'refunded' | 'transferred' | 'expired';

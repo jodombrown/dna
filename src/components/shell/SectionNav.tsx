@@ -22,7 +22,7 @@ interface SectionNavProps {
 }
 
 export function SectionNav({ items, userRole }: SectionNavProps) {
-  const visible = items.filter((item) => userRole === 'owner' || item.roles.includes(userRole));
+  const visible = items.filter((item) => userRole === 'manager' || item.roles.includes(userRole));
   return (
     <nav
       aria-label="Event sections"
