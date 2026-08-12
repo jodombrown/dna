@@ -51,7 +51,7 @@ export const EVENT_TIME_SELECT =
   'start_time, end_time, timezone, time_confirmed, date_confirmed' as const;
 
 /** The one phrase for an event whose dates aren't announced. */
-export const DATES_TBA = 'Dates not yet announced';
+export const DATES_TBA = 'Date TBD';
 
 /** Shape for the null-safe helpers below — no truth flags required, since
  *  a null result already says "don't treat this as a point in time". */
