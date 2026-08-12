@@ -502,9 +502,9 @@ export function ConveneDiscovery() {
                       'bg-dna-copper/12 text-dna-copper',
                   )}
                   onClick={() =>
-                    updateFilters({ view: viewMode === 'list' ? 'map' : null })
+                    updateFilters({ view: viewMode === 'map' ? null : 'map' })
                   }
-                  aria-label={viewMode === 'list' ? 'Map view' : 'List view'}
+                  aria-label={viewMode === 'map' ? 'List view' : 'Map view'}
                 >
                   {viewMode === 'list' ? (
                     <Map className="w-4.5 h-4.5" />
@@ -541,6 +541,7 @@ export function ConveneDiscovery() {
               events={mapEvents}
               selectedCity={selectedCity}
               onEventSelect={() => {}}
+              onBackToList={() => updateFilters({ view: null })}
             />
           </Suspense>
         ) : viewMode === 'search' ? (

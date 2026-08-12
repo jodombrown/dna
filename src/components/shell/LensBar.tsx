@@ -126,6 +126,24 @@ export function LensBar({ lenses, ariaLabel, c }: LensBarProps) {
     }
   }, [activeId, lenses]);
 
+  // The layout effect above only re-fires on [activeId, lenses]. A rail
+  // collapse/expand (e.g. BD500's 64px icon-only state while a hosted detail
+  // is open) changes the active button's rendered width without touching
+  // either dependency, leaving the indicator floating at its old size (BD333:
+  // a measured layout value must be re-measured reactively, not only on a
+  // hand-enumerated trigger list). Re-measure on any observed resize of the
+  // active button itself.
+  useEffect(() => {
+    const btn = activeId ? btnRefs.current[activeId] : null;
+    if (!btn) return;
+
+    const ro = new ResizeObserver(() => {
+      setIndicator({ x: btn.offsetLeft, w: btn.offsetWidth });
+    });
+    ro.observe(btn);
+    return () => ro.disconnect();
+  }, [activeId]);
+
   useLayoutEffect(() => {
     if (indicator && !ready) setReady(true);
   }, [indicator, ready]);

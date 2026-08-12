@@ -12,6 +12,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapPin } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   loadMapbox,
   getMapboxToken,
@@ -32,6 +33,8 @@ interface ConveneMapViewProps {
   events: MapEventData[];
   selectedCity: string | null;
   onEventSelect: (eventId: string) => void;
+  /** Returns to list view. Surfaced in the zero-result empty state. */
+  onBackToList: () => void;
 }
 
 // Default view: the African continent. Mapbox uses [lng, lat] order.
@@ -112,7 +115,7 @@ function buildPopupHtml(event: MapEventData): string {
   ].join('');
 }
 
-function ConveneMapView({ events, selectedCity, onEventSelect }: ConveneMapViewProps) {
+function ConveneMapView({ events, selectedCity, onEventSelect, onBackToList }: ConveneMapViewProps) {
   const navigate = useNavigate();
   const selectHostedEvent = useConveneEventSelection();
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -253,15 +256,35 @@ function ConveneMapView({ events, selectedCity, onEventSelect }: ConveneMapViewP
     <div className="relative w-full h-map md:h-map-lg rounded-xl overflow-hidden border border-border">
       <div ref={containerRef} className="w-full h-full" />
 
-      {/* Event count overlay */}
-      <div className="absolute top-3 left-3 z-10 bg-background/90 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-md border border-border">
-        <span className="text-meta font-medium text-foreground">
-          {mappableEvents.length} event{mappableEvents.length !== 1 ? 's' : ''} on map
-          {selectedCity && (
-            <span className="text-muted-foreground"> in {selectedCity}</span>
-          )}
-        </span>
-      </div>
+      {mappableEvents.length === 0 ? (
+        /* Sparse-data outcome, not a bug: a lens/facet combination can
+           genuinely have no events with a mappable location. Say so plainly
+           and give a one-click way back rather than leaving the member
+           looking at an empty map. Lens changes still land here on
+           purpose — see ConveneMapView's caller for why this stays. */
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/90 backdrop-blur-sm px-6">
+          <div className="flex flex-col items-center gap-3 text-center max-w-xs">
+            <MapPin className="w-6 h-6 text-muted-foreground" aria-hidden="true" />
+            <p className="text-body text-foreground">
+              Nothing here has a mappable location
+              {selectedCity && <> in {selectedCity}</>}.
+            </p>
+            <Button variant="outline" size="sm" onClick={onBackToList}>
+              Back to list
+            </Button>
+          </div>
+        </div>
+      ) : (
+        /* Event count overlay */
+        <div className="absolute top-3 left-3 z-10 bg-background/90 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-md border border-border">
+          <span className="text-meta font-medium text-foreground">
+            {mappableEvents.length} event{mappableEvents.length !== 1 ? 's' : ''} on map
+            {selectedCity && (
+              <span className="text-muted-foreground"> in {selectedCity}</span>
+            )}
+          </span>
+        </div>
+      )}
     </div>
   );
 }
