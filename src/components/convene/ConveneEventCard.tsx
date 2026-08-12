@@ -14,6 +14,7 @@ import { EventCardFrame } from '@/components/cards/EventCardFrame';
 import { EventPlate } from '@/components/cards/EventPlate';
 import type { EventPriceTicketType } from '@/components/cards/resolveEventPrice';
 import { resolveEventAction, EVENT_ACTION_LABELS } from '@/components/cards/resolveEventAction';
+import { useConveneEventSelection } from '@/contexts/convene/ConveneEventSelectionContext';
 
 // The card-padding token steps with the viewport (16 / 14 / 12); it has no
 // Tailwind utility, so the identity band applies it inline — the one certified
@@ -111,6 +112,7 @@ export function ConveneEventCard({
   suppressDateTbc,
 }: ConveneEventCardProps) {
   const navigate = useNavigate();
+  const selectHostedEvent = useConveneEventSelection();
 
   // Normalize data
   const rsvpStatus = rsvpStatusProp ?? event.rsvp_status ?? event.user_rsvp_status ?? null;
@@ -149,6 +151,8 @@ export function ConveneEventCard({
   const handleClick = () => {
     if (onClick) {
       onClick();
+    } else if (selectHostedEvent) {
+      selectHostedEvent(event.slug || event.id);
     } else {
       navigate(`/dna/convene/events/${event.slug || event.id}`);
     }

@@ -24,6 +24,7 @@ import { type MapEventData } from './mapEventData';
 import { formatEventDateTime } from '@/lib/events/eventTime';
 import { formatEventPlace } from '@/lib/events/formatPlace';
 import { logger } from '@/lib/logger';
+import { useConveneEventSelection } from '@/contexts/convene/ConveneEventSelectionContext';
 
 export type { MapEventData };
 
@@ -113,6 +114,7 @@ function buildPopupHtml(event: MapEventData): string {
 
 function ConveneMapView({ events, selectedCity, onEventSelect }: ConveneMapViewProps) {
   const navigate = useNavigate();
+  const selectHostedEvent = useConveneEventSelection();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapboxMap | null>(null);
   const markersRef = useRef<MapboxMarker[]>([]);
@@ -200,7 +202,8 @@ function ConveneMapView({ events, selectedCity, onEventSelect }: ConveneMapViewP
 
         const openEvent = () => {
           onEventSelectRef.current(event.id);
-          navigate(`/dna/convene/events/${event.slug || event.id}`);
+          if (selectHostedEvent) selectHostedEvent(event.slug || event.id);
+          else navigate(`/dna/convene/events/${event.slug || event.id}`);
         };
         el.addEventListener('click', openEvent);
         el.addEventListener('keydown', (e) => {
@@ -229,7 +232,7 @@ function ConveneMapView({ events, selectedCity, onEventSelect }: ConveneMapViewP
         map.fitBounds(bounds, { padding: 60, maxZoom: 11, duration: 0 });
       }
     });
-  }, [mapReady, mappableEvents, navigate]);
+  }, [mapReady, mappableEvents, navigate, selectHostedEvent]);
 
   if (!token || failed) {
     return (

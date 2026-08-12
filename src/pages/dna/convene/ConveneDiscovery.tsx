@@ -17,7 +17,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Calendar, CalendarCheck, Plus, Search, Map, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useIsMobile } from '@/hooks/useMobile';
+import { useMobile } from '@/hooks/useMobile';
+import { ConveneEventSelectionContext } from '@/contexts/convene/ConveneEventSelectionContext';
 
 import { AppShell } from '@/layouts/AppShell';
 import { ConveneLocationSelector } from '@/components/convene/ConveneLocationSelector';
@@ -56,6 +57,7 @@ import type { MapEventData } from '@/components/convene/mapEventData';
 import { ROUTES } from '@/config/routes';
 
 const LazyMapView = lazy(() => import('@/components/convene/ConveneMapView'));
+const LazyEventDetail = lazy(() => import('@/pages/dna/convene/EventDetail'));
 
 /* ──────────────────────────────────────────────
    Section Divider: thin Copper line
@@ -72,9 +74,17 @@ export function ConveneDiscovery() {
   const { user } = useAuth();
   const composer = useUniversalComposer();
   const [searchParams, setSearchParams] = useSearchParams();
-  const isMobile = useIsMobile();
+  const { isMobile, isDesktop } = useMobile();
 
   const selectedCity = searchParams.get('city');
+  // Host-agnostic EventDetail (BD-EventDetail-host-agnostic): selecting a card
+  // writes ?event= instead of navigating away, and the related slot renders
+  // EventDetail hosted, in place, beside the still-mounted list. Only wired at
+  // desktop width (1024+, matching AppShell's own related-rail threshold) —
+  // below that the context stays null so every card falls through to its
+  // normal standalone-route navigate, and mobile stays pixel-for-pixel
+  // unchanged even if ?event= is present on the URL (e.g. a stale/shared link).
+  const selectedEventId = searchParams.get('event');
   // Route-driven lens (BD332b): the hub filters off ?lens=, the same param
   // the Lens bar writes at every width via ConveneTabStrip, mounted in
   // AppShell's `tabs` slot.
@@ -116,6 +126,15 @@ export function ConveneDiscovery() {
       }
     }
     setSearchParams(next, { replace: true });
+  };
+
+  // Selecting an event is a real navigation (a history entry, so back/forward
+  // work), unlike a filter edit — so this writes ?event= directly rather than
+  // going through updateFilters' replace:true.
+  const selectHostedEvent = (slugOrId: string) => {
+    const next = new URLSearchParams(searchParams);
+    next.set('event', slugOrId);
+    setSearchParams(next);
   };
 
   const handleFacetChange = (key: ConveneFacetKey, value: string) => {
@@ -333,10 +352,18 @@ export function ConveneDiscovery() {
       ? filteredEvents.length
       : browseList.events.length;
 
+  // Below 1024, AppShell folds `related` beneath the list instead of dropping
+  // it (Shell 03) — the one path that could put a hosted detail panel where
+  // mobile has never had one. Gate on width here too, not just on the
+  // entry-point context, so a stale/shared ?event= link on a phone still
+  // renders today's Upcoming+DIA sidebar exactly as before (Exit gate 7).
+  const showHostedDetail = isDesktop && !!selectedEventId;
+
   return (
     // Chrome (DNA header, composer bubble, bell, avatar, tabs) and the
     // three-column frame (facets / content / Upcoming+DIA) come from
     // AppShell: this page supplies the four slots and renders body only.
+    <ConveneEventSelectionContext.Provider value={isDesktop ? selectHostedEvent : null}>
     <>
     <AppShell
       bubble={{
@@ -354,10 +381,16 @@ export function ConveneDiscovery() {
         />
       }
       related={
-        <div className="space-y-6">
-          <UpcomingEventsSection onCreateEvent={() => composer.open('event')} />
-          <DIAHubSection surface="convene_hub" limit={2} />
-        </div>
+        showHostedDetail ? (
+          <Suspense fallback={<div className="h-40 animate-pulse rounded-xl bg-muted" />}>
+            <LazyEventDetail eventId={selectedEventId!} hosted />
+          </Suspense>
+        ) : (
+          <div className="space-y-6">
+            <UpcomingEventsSection onCreateEvent={() => composer.open('event')} />
+            <DIAHubSection surface="convene_hub" limit={2} />
+          </div>
+        )
       }
     >
       <div className="space-y-3 md:space-y-4 lg:space-y-5">
@@ -646,8 +679,16 @@ export function ConveneDiscovery() {
                                 key={event.id}
                                 event={event}
                                 showRsvp={!isEventCompleted(event)}
-                                onRsvp={() => navigate(`/dna/convene/events/${event.slug || event.id}`)}
-                                onClick={() => navigate(`/dna/convene/events/${event.slug || event.id}`)}
+                                onRsvp={() =>
+                                  isDesktop
+                                    ? selectHostedEvent(event.slug || event.id)
+                                    : navigate(`/dna/convene/events/${event.slug || event.id}`)
+                                }
+                                onClick={() =>
+                                  isDesktop
+                                    ? selectHostedEvent(event.slug || event.id)
+                                    : navigate(`/dna/convene/events/${event.slug || event.id}`)
+                                }
                               />
                             ))}
                           </div>
@@ -678,6 +719,7 @@ export function ConveneDiscovery() {
       onClose={() => setIsSearchOpen(false)}
     />
     </>
+    </ConveneEventSelectionContext.Provider>
   );
 }
 

@@ -13,9 +13,15 @@ import { Button } from '@/components/ui/button';
 import { Users, ArrowRight, MapPin } from 'lucide-react';
 import { EVENT_PLACE_SELECT, formatEventPlace, pickEventPlace } from '@/lib/events/formatPlace';
 import { EVENT_TIME_SELECT, formatEventDateTime } from '@/lib/events/eventTime';
+import { useConveneEventSelection } from '@/contexts/convene/ConveneEventSelectionContext';
 
 export function HappeningNowSection() {
   const navigate = useNavigate();
+  const selectHostedEvent = useConveneEventSelection();
+  const openEvent = (slugOrId: string) => {
+    if (selectHostedEvent) selectHostedEvent(slugOrId);
+    else navigate(`/dna/convene/events/${slugOrId}`);
+  };
 
   const { data: liveEvents = [] } = useQuery({
     queryKey: ['happening-now-events'],
@@ -67,7 +73,7 @@ export function HappeningNowSection() {
             <Card
               key={event.id as string}
               className="overflow-hidden cursor-pointer hover:shadow-lg transition-all border-dna-success/30 bg-gradient-to-br from-dna-success/5 to-transparent group"
-              onClick={() => navigate(`/dna/convene/events/${(event.slug as string) || (event.id as string)}`)}
+              onClick={() => openEvent((event.slug as string) || (event.id as string))}
             >
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-2">
@@ -129,7 +135,7 @@ export function HappeningNowSection() {
                   className="w-full mt-3 text-meta border-dna-success/30 hover:bg-dna-success/10 hover:text-dna-success"
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate(`/dna/convene/events/${(event.slug as string) || (event.id as string)}`);
+                    openEvent((event.slug as string) || (event.id as string));
                   }}
                 >
                   View Event <ArrowRight className="h-3 w-3 ml-1" />

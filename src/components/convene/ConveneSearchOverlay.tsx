@@ -11,6 +11,7 @@ import { ConveneEventBadge } from '@/components/convene/ConveneEventBadge';
 import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 import { formatEventFormat } from '@/lib/events/eventFormat';
 import { cn } from '@/lib/utils';
+import { useConveneEventSelection } from '@/contexts/convene/ConveneEventSelectionContext';
 
 const RECENT_SEARCHES_KEY = 'dna-convene-recent-searches';
 const MAX_RECENT = 5;
@@ -30,6 +31,7 @@ interface ConveneSearchOverlayProps {
 
 export function ConveneSearchOverlay({ isOpen, onClose }: ConveneSearchOverlayProps) {
   const navigate = useNavigate();
+  const selectHostedEvent = useConveneEventSelection();
   const inputRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<EventSearchFilters>({});
@@ -78,7 +80,8 @@ export function ConveneSearchOverlay({ isOpen, onClose }: ConveneSearchOverlayPr
   const handleEventClick = (eventId: string, slug: string | null) => {
     if (searchTerm.trim()) saveRecentSearch(searchTerm.trim());
     onClose();
-    navigate(`/dna/convene/events/${slug || eventId}`);
+    if (selectHostedEvent) selectHostedEvent(slug || eventId);
+    else navigate(`/dna/convene/events/${slug || eventId}`);
   };
 
   const toggleFilter = (key: keyof EventSearchFilters, value: string) => {
