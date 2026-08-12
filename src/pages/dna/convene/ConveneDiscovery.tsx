@@ -25,6 +25,9 @@ import { ConveneLocationSelector } from '@/components/convene/ConveneLocationSel
 import { ConveneCitiesSection } from '@/components/convene/ConveneCitiesSection';
 import { ConveneHeroEvent } from '@/components/convene/ConveneHeroEvent';
 import { DiscoveryLane } from '@/components/convene/DiscoveryLane';
+import type { DiscoveryEvent } from '@/components/convene/DiscoveryLane';
+import { EventRowList } from '@/components/convene/EventRowList';
+import { ConveneEventRow } from '@/components/convene/ConveneEventRow';
 import { NearMeEventsLane } from '@/components/convene/NearMeEventsLane';
 import { HappeningNowSection } from '@/components/convene/HappeningNowSection';
 import { ConveneDIADiscoveryCard } from '@/components/convene/ConveneDIADiscoveryCard';
@@ -36,6 +39,7 @@ import { ConveneFacetRailCollapsed } from '@/components/convene/ConveneFacetRail
 import { ConveneNarrowSheet } from '@/components/convene/ConveneNarrowSheet';
 import { ConveneDiscoveryHeaderRow } from '@/components/convene/ConveneDiscoveryHeaderRow';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
+import type { ConveneEventCardProps } from '@/components/convene/ConveneEventCard';
 import type { ConveneFacetKey, ConveneFacetValues } from '@/components/convene/ConveneFacetControls';
 import { useConveneCities, useUserCity } from '@/hooks/convene/useConveneCities';
 import { useConveneEventTags } from '@/hooks/convene/useConveneEventTags';
@@ -65,6 +69,84 @@ const LazyEventDetail = lazy(() => import('@/pages/dna/convene/EventDetail'));
    ────────────────────────────────────────────── */
 function CopperDivider() {
   return <div className="h-px bg-dna-copper/20" />;
+}
+
+// Maps a lane's DiscoveryEvent into ConveneEventRow's event shape — the same
+// field-by-field normalization DiscoveryLane already does for ConveneEventCard,
+// reused here so a hosted detail's row rendering matches the card rendering it
+// replaces.
+function toRowEvent(event: DiscoveryEvent): ConveneEventCardProps['event'] {
+  return {
+    id: event.id,
+    title: event.title,
+    start_time: event.start_time,
+    end_time: event.end_time,
+    time_confirmed: event.time_confirmed,
+    date_confirmed: event.date_confirmed,
+    ...pickEventPlace(event),
+    cover_image_url: event.cover_image_url,
+    event_type: event.event_type || undefined,
+    format: event.format || undefined,
+    is_cancelled: event.is_cancelled,
+    slug: event.slug,
+    max_attendees: event.max_attendees,
+    organizer: event.organizer
+      ? {
+          id: event.organizer.id,
+          full_name: event.organizer.full_name,
+          avatar_url: event.organizer.avatar_url,
+          username: event.organizer.username,
+        }
+      : undefined,
+    event_attendees: event.event_attendees,
+    currency: event.currency,
+    event_ticket_types: event.event_ticket_types,
+  };
+}
+
+/* ──────────────────────────────────────────────
+   Section Divider + Rows: a hosted detail (Pack 18, extended to the flat
+   case) turns a lane into a labelled vertical section of ConveneEventRows
+   instead of a horizontal-scroll card rail — same section header, same
+   emptyMessage, just rows in place of cards so the row list can sit beside
+   the detail panel without wrapping.
+   ────────────────────────────────────────────── */
+function DiscoveryLaneRows({
+  title,
+  events,
+  emptyMessage,
+  suppressDateTbc,
+  onEventClick,
+}: {
+  title: string;
+  events: DiscoveryEvent[];
+  emptyMessage?: string;
+  suppressDateTbc?: boolean;
+  onEventClick: (event: DiscoveryEvent) => void;
+}) {
+  if (events.length === 0 && !emptyMessage) return null;
+
+  return (
+    <section className="space-y-3">
+      <h3 className="text-lg font-bold text-dna-forest">{title}</h3>
+      <div className="h-px bg-dna-copper/20" />
+
+      {events.length === 0 && emptyMessage ? (
+        <p className="text-sm text-muted-foreground py-4 text-center">{emptyMessage}</p>
+      ) : (
+        <EventRowList>
+          {events.map((event) => (
+            <ConveneEventRow
+              key={event.id}
+              event={toRowEvent(event)}
+              onClick={() => onEventClick(event)}
+              suppressDateTbc={suppressDateTbc}
+            />
+          ))}
+        </EventRowList>
+      )}
+    </section>
+  );
 }
 
 /* ══════════════════════════════════════════════
@@ -216,6 +298,22 @@ export function ConveneDiscovery() {
 
   const { data: diasporaEvents = [] } = useDiasporaEvents(shownIds);
   const { data: undatedEvents = [] } = useUndatedEvents();
+
+  // "Happening Near You" lane's events: diasporaEvents narrowed to the
+  // member's own city. Shared between the card and row renderings of the
+  // lane, so both stay in sync with the same set.
+  const nearYouEvents = useMemo(
+    () =>
+      userLocation?.city
+        ? diasporaEvents.filter(
+            (e) =>
+              e.location_city
+                ?.toLowerCase()
+                .includes(userLocation.city?.toLowerCase() ?? '') ?? false,
+          )
+        : [],
+    [diasporaEvents, userLocation?.city],
+  );
 
   const showDiscoveryLanes = activePill === 'all' && !hasActiveFacets;
   // Near Me keeps its real-distance sort (NearMeEventsLane) as long as no
@@ -533,22 +631,25 @@ export function ConveneDiscovery() {
                   {/* Lane: Happening Near You */}
                   {userLocation?.city && (
                     <>
-                      <DiscoveryLane
-                        title="Happening Near You"
-                        events={diasporaEvents.filter(
-                          (e) =>
-                            e.location_city
-                              ?.toLowerCase()
-                              .includes(userLocation.city?.toLowerCase() ?? '') ??
-                            false,
-                        )}
-                        emptyMessage={`No events near ${userLocation.city} yet`}
-                        onSeeAll={() =>
-                          navigate(
-                            `/dna/convene/events?city=${userLocation.city}`,
-                          )
-                        }
-                      />
+                      {showHostedDetail ? (
+                        <DiscoveryLaneRows
+                          title="Happening Near You"
+                          events={nearYouEvents}
+                          emptyMessage={`No events near ${userLocation.city} yet`}
+                          onEventClick={(event) => selectHostedEvent(event.slug || event.id)}
+                        />
+                      ) : (
+                        <DiscoveryLane
+                          title="Happening Near You"
+                          events={nearYouEvents}
+                          emptyMessage={`No events near ${userLocation.city} yet`}
+                          onSeeAll={() =>
+                            navigate(
+                              `/dna/convene/events?city=${userLocation.city}`,
+                            )
+                          }
+                        />
+                      )}
                       <CopperDivider />
                     </>
                   )}
@@ -556,16 +657,24 @@ export function ConveneDiscovery() {
                   {/* Lane: Your Network Is Going */}
                   {networkEvents.length > 0 && (
                     <>
-                      <DiscoveryLane
-                        title="Your Network Is Going"
-                        events={networkEvents}
-                        showMutualAttendees
-                        onSeeAll={
-                          networkEvents.length > 3
-                            ? () => updateFilters({ lens: 'network' })
-                            : undefined
-                        }
-                      />
+                      {showHostedDetail ? (
+                        <DiscoveryLaneRows
+                          title="Your Network Is Going"
+                          events={networkEvents}
+                          onEventClick={(event) => selectHostedEvent(event.slug || event.id)}
+                        />
+                      ) : (
+                        <DiscoveryLane
+                          title="Your Network Is Going"
+                          events={networkEvents}
+                          showMutualAttendees
+                          onSeeAll={
+                            networkEvents.length > 3
+                              ? () => updateFilters({ lens: 'network' })
+                              : undefined
+                          }
+                        />
+                      )}
                       <CopperDivider />
                     </>
                   )}
@@ -573,40 +682,66 @@ export function ConveneDiscovery() {
                   {/* Lane: This Weekend */}
                   {weekendEvents.length > 0 && (
                     <>
-                      <DiscoveryLane
-                        title="This Weekend"
-                        events={weekendEvents}
-                        onSeeAll={
-                          weekendEvents.length > 3
-                            ? () =>
-                                navigate(
-                                  '/dna/convene/events?filter=weekend',
-                                )
-                            : undefined
-                        }
-                      />
+                      {showHostedDetail ? (
+                        <DiscoveryLaneRows
+                          title="This Weekend"
+                          events={weekendEvents}
+                          onEventClick={(event) => selectHostedEvent(event.slug || event.id)}
+                        />
+                      ) : (
+                        <DiscoveryLane
+                          title="This Weekend"
+                          events={weekendEvents}
+                          onSeeAll={
+                            weekendEvents.length > 3
+                              ? () =>
+                                  navigate(
+                                    '/dna/convene/events?filter=weekend',
+                                  )
+                              : undefined
+                          }
+                        />
+                      )}
                       <CopperDivider />
                     </>
                   )}
 
                   {/* Lane: Across the Diaspora */}
-                  <DiscoveryLane
-                    title="Across the Diaspora"
-                    events={diasporaEvents}
-                    onSeeAll={() => navigate('/dna/convene')}
-                    emptyMessage="No upcoming events yet. Be the first to host one!"
-                  />
+                  {showHostedDetail ? (
+                    <DiscoveryLaneRows
+                      title="Across the Diaspora"
+                      events={diasporaEvents}
+                      emptyMessage="No upcoming events yet. Be the first to host one!"
+                      onEventClick={(event) => selectHostedEvent(event.slug || event.id)}
+                    />
+                  ) : (
+                    <DiscoveryLane
+                      title="Across the Diaspora"
+                      events={diasporaEvents}
+                      onSeeAll={() => navigate('/dna/convene')}
+                      emptyMessage="No upcoming events yet. Be the first to host one!"
+                    />
+                  )}
 
                   {/* Lane: Dates not yet announced: undated events live here,
                       never sorted into the timeline lanes above */}
                   {undatedEvents.length > 0 && (
                     <>
                       <CopperDivider />
-                      <DiscoveryLane
-                        title="Dates not yet announced"
-                        events={undatedEvents}
-                        suppressDateTbc
-                      />
+                      {showHostedDetail ? (
+                        <DiscoveryLaneRows
+                          title="Dates not yet announced"
+                          events={undatedEvents}
+                          suppressDateTbc
+                          onEventClick={(event) => selectHostedEvent(event.slug || event.id)}
+                        />
+                      ) : (
+                        <DiscoveryLane
+                          title="Dates not yet announced"
+                          events={undatedEvents}
+                          suppressDateTbc
+                        />
+                      )}
                     </>
                   )}
 
@@ -677,32 +812,47 @@ export function ConveneDiscovery() {
                         </p>
                       ) : (
                         <>
-                          {/* BD333: column count tracks the content column's own
-                              width, not the viewport's; the column sits between
-                              280px and 340px rails, so viewport breakpoints run
-                              optimistic by however much the rails take. auto-fill
-                              with a 280px content floor (grid-cols-cards,
-                              tailwind.config.ts) fills whatever the column
-                              actually measures. */}
-                          <div className="grid grid-cols-cards gap-4">
-                            {browseList.events.map((event) => (
-                              <ConveneEventCard
-                                key={event.id}
-                                event={event}
-                                showRsvp={!isEventCompleted(event)}
-                                onRsvp={() =>
-                                  isDesktop
-                                    ? selectHostedEvent(event.slug || event.id)
-                                    : navigate(`/dna/convene/events/${event.slug || event.id}`)
-                                }
-                                onClick={() =>
-                                  isDesktop
-                                    ? selectHostedEvent(event.slug || event.id)
-                                    : navigate(`/dna/convene/events/${event.slug || event.id}`)
-                                }
-                              />
-                            ))}
-                          </div>
+                          {showHostedDetail ? (
+                            /* A detail is hosted beside this column: rows,
+                               same primitive as the lane sections above, so
+                               the list never wraps against the panel. */
+                            <EventRowList>
+                              {browseList.events.map((event) => (
+                                <ConveneEventRow
+                                  key={event.id}
+                                  event={event}
+                                  onClick={() => selectHostedEvent(event.slug || event.id)}
+                                />
+                              ))}
+                            </EventRowList>
+                          ) : (
+                            /* BD333: column count tracks the content column's own
+                                width, not the viewport's; the column sits between
+                                280px and 340px rails, so viewport breakpoints run
+                                optimistic by however much the rails take. auto-fill
+                                with a 280px content floor (grid-cols-cards,
+                                tailwind.config.ts) fills whatever the column
+                                actually measures. */
+                            <div className="grid grid-cols-cards gap-4">
+                              {browseList.events.map((event) => (
+                                <ConveneEventCard
+                                  key={event.id}
+                                  event={event}
+                                  showRsvp={!isEventCompleted(event)}
+                                  onRsvp={() =>
+                                    isDesktop
+                                      ? selectHostedEvent(event.slug || event.id)
+                                      : navigate(`/dna/convene/events/${event.slug || event.id}`)
+                                  }
+                                  onClick={() =>
+                                    isDesktop
+                                      ? selectHostedEvent(event.slug || event.id)
+                                      : navigate(`/dna/convene/events/${event.slug || event.id}`)
+                                  }
+                                />
+                              ))}
+                            </div>
+                          )}
                           {browseList.hasMore && (
                             <div className="flex justify-center pt-2">
                               <Button
