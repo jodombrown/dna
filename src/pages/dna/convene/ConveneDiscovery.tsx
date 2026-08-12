@@ -25,7 +25,7 @@ import { ConveneLocationSelector } from '@/components/convene/ConveneLocationSel
 import { ConveneCitiesSection } from '@/components/convene/ConveneCitiesSection';
 import { ConveneHeroEvent } from '@/components/convene/ConveneHeroEvent';
 import { DiscoveryLane } from '@/components/convene/DiscoveryLane';
-import type { DiscoveryEvent } from '@/components/convene/DiscoveryLane';
+import { DiscoveryLaneRows } from '@/components/convene/DiscoveryLaneRows';
 import { EventRowList } from '@/components/convene/EventRowList';
 import { ConveneEventRow } from '@/components/convene/ConveneEventRow';
 import { NearMeEventsLane } from '@/components/convene/NearMeEventsLane';
@@ -39,7 +39,6 @@ import { ConveneFacetRailCollapsed } from '@/components/convene/ConveneFacetRail
 import { ConveneNarrowSheet } from '@/components/convene/ConveneNarrowSheet';
 import { ConveneDiscoveryHeaderRow } from '@/components/convene/ConveneDiscoveryHeaderRow';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
-import type { ConveneEventCardProps } from '@/components/convene/ConveneEventCard';
 import type { ConveneFacetKey, ConveneFacetValues } from '@/components/convene/ConveneFacetControls';
 import { useConveneCities, useUserCity } from '@/hooks/convene/useConveneCities';
 import { useConveneEventTags } from '@/hooks/convene/useConveneEventTags';
@@ -69,84 +68,6 @@ const LazyEventDetail = lazy(() => import('@/pages/dna/convene/EventDetail'));
    ────────────────────────────────────────────── */
 function CopperDivider() {
   return <div className="h-px bg-dna-copper/20" />;
-}
-
-// Maps a lane's DiscoveryEvent into ConveneEventRow's event shape — the same
-// field-by-field normalization DiscoveryLane already does for ConveneEventCard,
-// reused here so a hosted detail's row rendering matches the card rendering it
-// replaces.
-function toRowEvent(event: DiscoveryEvent): ConveneEventCardProps['event'] {
-  return {
-    id: event.id,
-    title: event.title,
-    start_time: event.start_time,
-    end_time: event.end_time,
-    time_confirmed: event.time_confirmed,
-    date_confirmed: event.date_confirmed,
-    ...pickEventPlace(event),
-    cover_image_url: event.cover_image_url,
-    event_type: event.event_type || undefined,
-    format: event.format || undefined,
-    is_cancelled: event.is_cancelled,
-    slug: event.slug,
-    max_attendees: event.max_attendees,
-    organizer: event.organizer
-      ? {
-          id: event.organizer.id,
-          full_name: event.organizer.full_name,
-          avatar_url: event.organizer.avatar_url,
-          username: event.organizer.username,
-        }
-      : undefined,
-    event_attendees: event.event_attendees,
-    currency: event.currency,
-    event_ticket_types: event.event_ticket_types,
-  };
-}
-
-/* ──────────────────────────────────────────────
-   Section Divider + Rows: a hosted detail (Pack 18, extended to the flat
-   case) turns a lane into a labelled vertical section of ConveneEventRows
-   instead of a horizontal-scroll card rail — same section header, same
-   emptyMessage, just rows in place of cards so the row list can sit beside
-   the detail panel without wrapping.
-   ────────────────────────────────────────────── */
-function DiscoveryLaneRows({
-  title,
-  events,
-  emptyMessage,
-  suppressDateTbc,
-  onEventClick,
-}: {
-  title: string;
-  events: DiscoveryEvent[];
-  emptyMessage?: string;
-  suppressDateTbc?: boolean;
-  onEventClick: (event: DiscoveryEvent) => void;
-}) {
-  if (events.length === 0 && !emptyMessage) return null;
-
-  return (
-    <section className="space-y-3">
-      <h3 className="text-lg font-bold text-dna-forest">{title}</h3>
-      <div className="h-px bg-dna-copper/20" />
-
-      {events.length === 0 && emptyMessage ? (
-        <p className="text-sm text-muted-foreground py-4 text-center">{emptyMessage}</p>
-      ) : (
-        <EventRowList>
-          {events.map((event) => (
-            <ConveneEventRow
-              key={event.id}
-              event={toRowEvent(event)}
-              onClick={() => onEventClick(event)}
-              suppressDateTbc={suppressDateTbc}
-            />
-          ))}
-        </EventRowList>
-      )}
-    </section>
-  );
 }
 
 /* ══════════════════════════════════════════════
