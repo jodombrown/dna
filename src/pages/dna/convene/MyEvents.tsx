@@ -1,17 +1,16 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Calendar, BarChart3, List, CalendarDays, Pencil, CircleSlash, Shield } from 'lucide-react';
+import { Calendar, BarChart3, List, CalendarDays, Pencil, CircleSlash } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { ContentColumn } from '@/components/layout/ContentColumn';
+import { AppShell } from '@/layouts/AppShell';
 import { ViewSwitch } from '@/components/shell/ViewSwitch';
-import { LensRail } from '@/components/shell/LensRail';
-import { MyEventsChromeBar } from '@/components/convene/MyEventsChromeBar';
+import { MyEventsTabStrip } from '@/components/convene/MyEventsTabStrip';
 import { EventCalendarView } from '@/components/convene/EventCalendarView';
 import { ConveneEventRow } from '@/components/convene/ConveneEventRow';
 import { MyEventCard } from '@/components/convene/MyEventCard';
@@ -24,7 +23,6 @@ import type { EventPriceTicketType } from '@/components/cards/resolveEventPrice'
 import { EventRowList } from '@/components/convene/EventRowList';
 import { MyEventsStatsHeader } from '@/components/convene/MyEventsStatsHeader';
 import { PastEventDiaNudge } from '@/components/convene/PastEventDiaNudge';
-import { ConveneShell } from '@/components/convene/ConveneShell';
 import { MutualAttendeesLine } from '@/components/convene/MutualAttendeesLine';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
 import { useOrganizerStats } from '@/hooks/convene/useOrganizerStats';
@@ -84,12 +82,13 @@ const MyEvents = () => {
   const composer = useUniversalComposer();
   const queryClient = useQueryClient();
   // View (list/calendar) and lens (attending/hosting) both live in the URL —
-  // ViewSwitch owns ?view=, LensBar/LensRail own ?lens=. The page only reads.
+  // ViewSwitch owns ?view=, MyEventsTabStrip's LensBar owns ?lens=. The page
+  // only reads.
   const viewMode = (searchParams.get('view') as 'list' | 'calendar') || 'list';
   const activeTab = searchParams.get('lens') || 'attending';
-  // Desktop-only third column: a hosting card sets this instead of
-  // navigating away. Independent of ?lens=/?view= — selecting an event
-  // never touches either.
+  // AppShell's related rail: a hosting card sets this instead of navigating
+  // away. Independent of ?lens=/?view= — selecting an event never touches
+  // either.
   const selectedEventId = searchParams.get('event');
   const [pastHostingOpen, setPastHostingOpen] = useState(false);
   const [cancelledHostingOpen, setCancelledHostingOpen] = useState(false);
@@ -300,32 +299,36 @@ const MyEvents = () => {
   );
 
   return (
-    // Mobile chrome comes from the shared ConveneShell. PulseDock (mounted
-    // globally in BaseLayout) is the sole mobile bottom nav, so the shell must
-    // not add a second one.
-    <ConveneShell showBottomNav={false} tabs={<MyEventsChromeBar />}>
-    {/* Desktop gets a full-width wrapper (the hub's own pattern), not the 60%
-        column TwoColumnLayout would impose — the lens rail needs the room. */}
-    <div className="w-full min-h-dvh bg-background">
-      <ContentColumn width="wide">
-          <div className="md:flex md:gap-4">
-            {/* Desktop lens rail — mobile uses the ConveneShell chrome bar above */}
-            <div className="hidden md:block shrink-0">
-              <LensRail
-                ariaLabel="My events"
-                lenses={[
-                  { id: 'attending', label: 'Attending', icon: Calendar, count: attendingEvents.length },
-                  { id: 'hosting', label: 'Hosting', icon: BarChart3, count: hostingEvents.length },
-                  { id: 'managing', label: 'Managing', icon: Shield, count: managingRows.length },
-                  { id: 'drafted', label: 'Drafted', icon: Pencil, count: draftedEvents.length },
-                  { id: 'cancelled', label: 'Cancelled', icon: CircleSlash, count: cancelledEvents.length },
-                ]}
-              />
-            </div>
+    // Chrome (DNA header, composer bubble, bell, avatar, the lens tabs) and
+    // the frame (content / EventOverviewPanel rail) come from AppShell —
+    // the same shell Browse (ConveneDiscovery) mounts, so moving between the
+    // two reads as staying in one app rather than leaving it. My Events has
+    // no facets of its own (BD375: it narrows entirely through its five
+    // lenses, unlike Browse's six-facet set), so `context` is omitted here.
+    <AppShell
+      bubble={{
+        kind: 'composer',
+        placeholder: 'Host or find an event...',
+        onClick: () => composer.open('event'),
+      }}
+      tabs={<MyEventsTabStrip />}
+      related={selectedEventId ? <EventOverviewPanel eventId={selectedEventId} /> : undefined}
+    >
+      <div className="space-y-6">
+        {/* Mobile view switch — the lens switcher now lives in AppShell's
+            tabs slot above, so mobile's chrome row is List/Calendar only. */}
+        <div className="md:hidden flex items-center justify-end">
+          <ViewSwitch
+            ariaLabel="View"
+            options={[
+              { id: 'list', label: 'List', icon: List },
+              { id: 'calendar', label: 'Calendar', icon: CalendarDays },
+            ]}
+          />
+        </div>
 
-            <div className="md:flex-1 md:min-w-0">
-          {/* ── Page Header ────────────────────────── */}
-          <div className="hidden md:block">
+        {/* ── Page Header ────────────────────────── */}
+        <div className="hidden md:block">
           <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative overflow-hidden rounded-xl p-5">
             <CulturalPattern pattern="kente" opacity={0.05} />
             <div className="relative z-10">
@@ -334,9 +337,8 @@ const MyEvents = () => {
                 Manage events you're hosting and attending
               </p>
             </div>
-            {/* Desktop view switch — trailing end of the list column header.
-                Mobile uses the ConveneShell chrome bar instead. */}
-            <div className="hidden md:block relative z-10">
+            {/* Desktop view switch — trailing end of the header row. */}
+            <div className="relative z-10">
               <ViewSwitch
                 ariaLabel="View"
                 options={[
@@ -346,7 +348,7 @@ const MyEvents = () => {
               />
             </div>
           </div>
-          </div>
+        </div>
 
           {/* ── Calendar View ──────────────────────── */}
           {viewMode === 'calendar' && (
@@ -735,20 +737,8 @@ const MyEvents = () => {
               )}
             </div>
           )}
-            </div>
-
-            {/* Third column — desktop only, appears once a hosting event is
-                selected. Mobile never gets this: selecting a hosting card
-                there still navigates to the full event page. */}
-            {selectedEventId && (
-              <div className="hidden md:block shrink-0 md:w-2/5 border-l border-border pl-6">
-                <EventOverviewPanel eventId={selectedEventId} />
-              </div>
-            )}
-          </div>
-      </ContentColumn>
-    </div>
-    </ConveneShell>
+      </div>
+    </AppShell>
   );
 };
 
