@@ -4,7 +4,7 @@
 // BUILD VERSION: Updated automatically — bump CACHE_VERSION to force invalidation
 // SAFETY: Never caches empty or broken HTML responses
 
-const CACHE_VERSION = 11;
+const CACHE_VERSION = 12;
 const CACHE_NAME = `dna-cache-v${CACHE_VERSION}`;
 const RUNTIME_CACHE = `dna-runtime-v${CACHE_VERSION}`;
 
