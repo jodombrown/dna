@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useMobile } from '@/hooks/useMobile';
 import { AppShell } from '@/layouts/AppShell';
 import { ViewSwitch } from '@/components/shell/ViewSwitch';
 import { MyEventsTabStrip } from '@/components/convene/MyEventsTabStrip';
@@ -81,15 +82,19 @@ const MyEvents = () => {
   const { user } = useAuth();
   const composer = useUniversalComposer();
   const queryClient = useQueryClient();
+  const { isDesktop } = useMobile();
   // View (list/calendar) and lens (attending/hosting) both live in the URL —
   // ViewSwitch owns ?view=, MyEventsTabStrip's LensBar owns ?lens=. The page
   // only reads.
   const viewMode = (searchParams.get('view') as 'list' | 'calendar') || 'list';
   const activeTab = searchParams.get('lens') || 'attending';
-  // AppShell's related rail: a hosting card sets this instead of navigating
-  // away. Independent of ?lens=/?view= — selecting an event never touches
-  // either.
+  // AppShell's related rail: a hosting card sets ?event= instead of
+  // navigating away, same as MyEventCard's existing desktop-only wiring
+  // (BD226). Gated on isDesktop, matching ConveneDiscovery's own hosted-detail
+  // gate, so a stale/shared ?event= link on a phone still renders the plain
+  // list — AppShell would otherwise fold `related` beneath `children` there.
   const selectedEventId = searchParams.get('event');
+  const showEventPanel = isDesktop && !!selectedEventId;
   const [pastHostingOpen, setPastHostingOpen] = useState(false);
   const [cancelledHostingOpen, setCancelledHostingOpen] = useState(false);
   const [pastAttendingOpen, setPastAttendingOpen] = useState(false);
@@ -299,45 +304,43 @@ const MyEvents = () => {
   );
 
   return (
-    // Chrome (DNA header, composer bubble, bell, avatar, the lens tabs) and
-    // the frame (content / EventOverviewPanel rail) come from AppShell —
-    // the same shell Browse (ConveneDiscovery) mounts, so moving between the
-    // two reads as staying in one app rather than leaving it. My Events has
-    // no facets of its own (BD375: it narrows entirely through its five
-    // lenses, unlike Browse's six-facet set), so `context` is omitted here.
+    // Chrome (DNA header, composer bubble, bell, avatar, tabs) and the
+    // three-column frame (lens rail / content / hosted detail) come from
+    // AppShell, the same pattern ConveneDiscovery established: this page
+    // supplies the four slots and renders body only.
     <AppShell
       bubble={{
         kind: 'composer',
         placeholder: 'Host or find an event...',
         onClick: () => composer.open('event'),
       }}
-      tabs={<MyEventsTabStrip />}
-      related={selectedEventId ? <EventOverviewPanel eventId={selectedEventId} /> : undefined}
+      tabs={<MyEventsChromeBar />}
+      context={
+        <LensRail
+          ariaLabel="My events"
+          lenses={[
+            { id: 'attending', label: 'Attending', icon: Calendar, count: attendingEvents.length },
+            { id: 'hosting', label: 'Hosting', icon: BarChart3, count: hostingEvents.length },
+            { id: 'managing', label: 'Managing', icon: Shield, count: managingRows.length },
+            { id: 'drafted', label: 'Drafted', icon: Pencil, count: draftedEvents.length },
+            { id: 'cancelled', label: 'Cancelled', icon: CircleSlash, count: cancelledEvents.length },
+          ]}
+        />
+      }
+      related={showEventPanel ? <EventOverviewPanel eventId={selectedEventId!} /> : undefined}
     >
-      <div className="space-y-6">
-        {/* Mobile view switch — the lens switcher now lives in AppShell's
-            tabs slot above, so mobile's chrome row is List/Calendar only. */}
-        <div className="md:hidden flex items-center justify-end">
-          <ViewSwitch
-            ariaLabel="View"
-            options={[
-              { id: 'list', label: 'List', icon: List },
-              { id: 'calendar', label: 'Calendar', icon: CalendarDays },
-            ]}
-          />
-        </div>
-
-        {/* ── Page Header ────────────────────────── */}
-        <div className="hidden md:block">
-          <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative overflow-hidden rounded-xl p-5">
+      <div className="space-y-4 md:space-y-5">
+          {/* ── Page Header ────────────────────────── */}
+          <div className="hidden md:flex items-start sm:items-center justify-between gap-4 relative overflow-hidden rounded-xl p-5">
             <CulturalPattern pattern="kente" opacity={0.05} />
-            <div className="relative z-10">
+            <div className="relative z-10 flex flex-col gap-1">
               <h1 className="text-h1 font-display">My Events</h1>
-              <p className="text-muted-foreground text-sm mt-1">
+              <p className="text-muted-foreground text-body">
                 Manage events you're hosting and attending
               </p>
             </div>
-            {/* Desktop view switch — trailing end of the header row. */}
+            {/* Desktop view switch — trailing end of the header. Mobile uses
+                the MyEventsChromeBar (AppShell's tabs slot) instead. */}
             <div className="relative z-10">
               <ViewSwitch
                 ariaLabel="View"
@@ -348,7 +351,6 @@ const MyEvents = () => {
               />
             </div>
           </div>
-        </div>
 
           {/* ── Calendar View ──────────────────────── */}
           {viewMode === 'calendar' && (
