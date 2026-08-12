@@ -23,6 +23,7 @@ import { LocationLine } from '@/components/maps/LocationLine';
 import { EventPriceMeta } from '@/components/cards/EventPriceMeta';
 import { resolveEventAction, EVENT_ACTION_LABELS } from '@/components/cards/resolveEventAction';
 import type { EventPriceTicketType } from '@/components/cards/resolveEventPrice';
+import { EventPlate } from '@/components/cards/EventPlate';
 
 const CARD_PADDING = 'var(--card-padding)';
 
@@ -53,6 +54,12 @@ interface HeroEventProps {
       full_name: string;
       avatar_url?: string | null;
     } | null;
+    // EventPlate's no-cover fallback (BD214): a curated event's host is the
+    // source domain (resolved from these two inside the plate), never the
+    // DNA-side profile join — which is why organizer_name below is gated on
+    // is_curated rather than passed straight through from `organizer`.
+    curated_source?: string | null;
+    curated_source_url?: string | null;
   };
 }
 
@@ -85,12 +92,17 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
       onClick={handleClick}
     >
       <div
-        className="grid grid-cols-3 gap-4"
+        className="flex flex-col gap-3 md:grid md:grid-cols-3 md:gap-4"
         style={{ padding: CARD_PADDING }}
       >
-        {/* Image — inset in the card's own padding, roughly a third of the
-            card at every width, never full-bleed, never overlaid with text. */}
-        <div className="relative col-span-1 min-h-0 overflow-hidden rounded-lg">
+        {/* Image — a fixed 176px band above the content below 768 (S93); a
+            locked 3:2 crop, inset a third of the card, from 768 up (S92). No
+            explicit height below md and no aspect-ratio above it — either one
+            decouples the band from the image's own intrinsic ratio, which is
+            the fix: a wrapper with neither lets CSS Grid derive row height
+            from the image's natural size, producing dead space on wide
+            columns and an aggressive crop on narrow ones. */}
+        <div className="relative h-[176px] w-full overflow-hidden rounded-lg md:col-span-1 md:aspect-[3/2] md:h-auto">
           {imageUrl ? (
             <img
               src={imageUrl}
@@ -102,12 +114,21 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
               }}
             />
           ) : (
-            <div className="h-full w-full bg-muted" />
+            <EventPlate
+              event={{
+                id: event.id,
+                event_type: event.event_type,
+                organizer_name: event.is_curated ? null : event.organizer?.full_name || null,
+                curated_source: event.curated_source,
+                curated_source_url: event.curated_source_url,
+                location_city: event.location_city,
+              }}
+            />
           )}
         </div>
 
         {/* Fact — every field a real slot; the context pill leads. */}
-        <div className="col-span-2 flex min-w-0 flex-col gap-3">
+        <div className="flex min-w-0 flex-col gap-3 md:col-span-2">
           <span className="inline-flex w-fit items-center rounded-full border border-bevel-event bg-bevel-event/10 px-3 py-1 text-micro uppercase text-bevel-event">
             {event.location_city ? `Featured in ${event.location_city}` : 'Featured Event'}
           </span>
@@ -156,7 +177,9 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
             </div>
           </div>
 
-          <p className="flex items-center gap-1.5 text-meta">
+          {/* Going — its own row from 768 up. Below 768, folded into the row
+              with price instead (S93's field order), so it's hidden here. */}
+          <p className="hidden items-center gap-1.5 text-meta md:flex">
             <Users className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
             {attendeeCount > 0 ? (
               <span className="font-semibold text-foreground">{attendeeCount} going</span>
@@ -165,15 +188,34 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
             )}
           </p>
 
-          <div className="mt-auto flex flex-col gap-3 pt-1 sm:flex-row sm:items-center sm:justify-between">
+          {/* Going + price, one row — mobile only (S93). Same fields as the
+              desktop going row and the desktop price slot below; only the
+              grouping changes. */}
+          <div className="flex items-center justify-between gap-3 md:hidden">
+            <p className="flex items-center gap-1.5 text-meta">
+              <Users className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+              {attendeeCount > 0 ? (
+                <span className="font-semibold text-foreground">{attendeeCount} going</span>
+              ) : (
+                <span className="text-muted-foreground">No Members yet. Be the first.</span>
+              )}
+            </p>
             <EventPriceMeta
               ticketTypes={event.event_ticket_types}
               currency={event.currency}
               className="text-h3 text-foreground"
             />
+          </div>
+
+          <div className="mt-auto flex flex-col gap-3 pt-1 md:flex-row md:items-center md:justify-between">
+            <EventPriceMeta
+              ticketTypes={event.event_ticket_types}
+              currency={event.currency}
+              className="hidden text-h3 text-foreground md:block"
+            />
             <Button
               size="hero"
-              className="w-full sm:w-auto"
+              className="w-full md:w-auto"
               onClick={(e) => {
                 e.stopPropagation();
                 handleClick();
