@@ -260,7 +260,7 @@ const EventDetail = ({ eventId: eventIdProp, hosted = false }: EventDetailProps 
           <button onClick={handleBack} className="inline-flex items-center text-meta text-muted-foreground hover:text-foreground">
             <ArrowLeft className="w-4 h-4 mr-1" /> Close
           </button>
-          <EventOverview eventId={eventId ?? undefined} />
+          <EventOverview eventId={eventId ?? undefined} hosted />
         </div>
       ) : (
         <Outlet />

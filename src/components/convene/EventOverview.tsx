@@ -88,9 +88,13 @@ interface EventOverviewProps {
   // (MyEvents) supplies it, the standalone route at /dna/convene/events/:id
   // does not, so useParams still works there.
   eventId?: string;
+  // When true, EventDetail is rendering its own "Close" affordance above
+  // this component — suppress the standalone "Back to Events" button so
+  // the two don't stack.
+  hosted?: boolean;
 }
 
-const EventOverview = ({ eventId: eventIdProp }: EventOverviewProps = {}) => {
+const EventOverview = ({ eventId: eventIdProp, hosted = false }: EventOverviewProps = {}) => {
   const { id: paramId } = useParams<{ id: string }>();
   const slugOrId = eventIdProp ?? paramId;
   const navigate = useNavigate();
@@ -466,14 +470,16 @@ const EventOverview = ({ eventId: eventIdProp }: EventOverviewProps = {}) => {
       )}
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-6 sm:pt-6">
-        {/* Back Navigation */}
-        <button
-          onClick={() => navigate(-1)}
-          className="inline-flex items-center text-body text-muted-foreground hover:text-foreground mb-3 sm:mb-6 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4 mr-1" />
-          Back to Events
-        </button>
+        {/* Back Navigation — hosted callers (e.g. EventDetail) render their own Close affordance */}
+        {!hosted && (
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center text-body text-muted-foreground hover:text-foreground mb-3 sm:mb-6 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Back to Events
+          </button>
+        )}
 
         {isDraft && isOrganizer && (
           <DraftBanner
