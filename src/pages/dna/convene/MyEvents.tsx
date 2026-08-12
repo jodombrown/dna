@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Calendar, BarChart3, List, CalendarDays, Pencil, CircleSlash } from 'lucide-react';
+import { Calendar, BarChart3, List, CalendarDays, Pencil, CircleSlash, Shield } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -11,7 +11,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useMobile } from '@/hooks/useMobile';
 import { AppShell } from '@/layouts/AppShell';
 import { ViewSwitch } from '@/components/shell/ViewSwitch';
-import { MyEventsTabStrip } from '@/components/convene/MyEventsTabStrip';
+import { LensRail } from '@/components/shell/LensRail';
+import { MyEventsChromeBar } from '@/components/convene/MyEventsChromeBar';
 import { EventCalendarView } from '@/components/convene/EventCalendarView';
 import { ConveneEventRow } from '@/components/convene/ConveneEventRow';
 import { MyEventCard } from '@/components/convene/MyEventCard';
@@ -84,8 +85,7 @@ const MyEvents = () => {
   const queryClient = useQueryClient();
   const { isDesktop } = useMobile();
   // View (list/calendar) and lens (attending/hosting) both live in the URL —
-  // ViewSwitch owns ?view=, MyEventsTabStrip's LensBar owns ?lens=. The page
-  // only reads.
+  // ViewSwitch owns ?view=, LensBar/LensRail own ?lens=. The page only reads.
   const viewMode = (searchParams.get('view') as 'list' | 'calendar') || 'list';
   const activeTab = searchParams.get('lens') || 'attending';
   // AppShell's related rail: a hosting card sets ?event= instead of
