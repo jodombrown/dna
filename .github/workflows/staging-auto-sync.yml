@@ -1,0 +1,182 @@
+name: Auto-sync staging into main
+
+# Keeps main caught up with dna-lovable-staging without a human running the
+# sync manually. On every push to dna-lovable-staging (Lovable's commits
+# land here) this opens or reuses a PR into main, waits for the checks that
+# have always gated a real merge, and merges automatically once they're
+# green. check-links and the Supabase Preview check are intentionally left
+# out of the required list — both are known to fail on pre-existing,
+# unrelated issues and have never blocked a manual merge.
+#
+# If a required check fails, this workflow does NOT merge. It leaves the PR
+# open with the failure visible — the same state a human found it in before,
+# now surfaced automatically instead of requiring someone to run the sync
+# script to discover it.
+
+on:
+  push:
+    branches: [dna-lovable-staging]
+  workflow_dispatch:
+  schedule:
+    # Safety net in case a push event is ever missed. Lovable's commits are
+    # not frequent enough to need anything tighter.
+    - cron: '*/30 * * * *'
+
+permissions:
+  contents: write
+  pull-requests: write
+  checks: read
+  statuses: read
+  actions: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Open or reuse staging -> main PR
+        id: pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git fetch origin main dna-lovable-staging
+
+          MAIN_SHA=$(git rev-parse origin/main)
+          STAGING_SHA=$(git rev-parse origin/dna-lovable-staging)
+
+          if [ "$MAIN_SHA" = "$STAGING_SHA" ]; then
+            echo "Already in sync. Nothing to do."
+            echo "pr_number=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # main must be an ancestor of staging. If it is not, staging has
+          # diverged in a way this workflow cannot resolve on its own — that
+          # needs a human (or a Claude session) to reconcile deliberately,
+          # the same way the archived-repo split had to be untangled by hand.
+          if ! git merge-base --is-ancestor "$MAIN_SHA" "$STAGING_SHA"; then
+            echo "::error::main is not an ancestor of dna-lovable-staging — refusing to auto-merge. This needs manual reconciliation."
+            exit 1
+          fi
+
+          EXISTING=$(gh pr list --base main --head dna-lovable-staging --state open --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING" ]; then
+            PR="$EXISTING"
+            echo "Reusing existing PR #$PR"
+          else
+            PR=$(gh pr create \
+              --base main \
+              --head dna-lovable-staging \
+              --title "Dna lovable staging" \
+              --body "Automated sync — merges dna-lovable-staging into main once the required checks pass. Opened by the staging-auto-sync workflow." \
+              | grep -oE '[0-9]+$')
+            echo "Opened PR #$PR"
+          fi
+          echo "pr_number=$PR" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for required checks and merge
+        if: steps.pr.outputs.pr_number != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ steps.pr.outputs.pr_number }}
+        run: |
+          set -euo pipefail
+
+          # Everything that has actually gated a merge by hand, every time.
+          # check-links, Supabase Preview, and the Mapbox probe are
+          # deliberately excluded — informational, never blocking.
+          REQUIRED_CHECKS=(
+            "gate"
+            "sw-version"
+            "Every text-* token resolves"
+            "Check duplicate navigation icons"
+            "No chrome inside a drawer surface or panel"
+            "Run security integration tests"
+          )
+
+          echo "Waiting on required checks for PR #$PR: ${REQUIRED_CHECKS[*]}"
+
+          # Several required checks are path-filtered (type-scale, icon
+          # dupes, panel chrome all skip diffs that don't touch src/). A
+          # staging push that only changes docs or this workflow file never
+          # triggers them, so they never appear in statusCheckRollup at all.
+          # Wait GRACE_SECONDS for a check to show up at all; if it still
+          # hasn't by then, treat it as not applicable to this diff rather
+          # than blocking the merge on a check that was never going to run.
+          GRACE_SECONDS=90
+          START=$SECONDS
+          DEADLINE=$((SECONDS + 20*60))
+          while [ "$SECONDS" -lt "$DEADLINE" ]; do
+            ROLLUP=$(gh pr view "$PR" --json statusCheckRollup --jq '.statusCheckRollup')
+            ELAPSED=$((SECONDS - START))
+            ALL_DONE=true
+            ANY_FAILED=false
+            FAILED_NAMES=""
+            PENDING_NAMES=""
+
+            for NAME in "${REQUIRED_CHECKS[@]}"; do
+              ENTRY=$(echo "$ROLLUP" | jq -r --arg n "$NAME" '[.[] | select(.name == $n)][0] // empty')
+              if [ -z "$ENTRY" ]; then
+                if [ "$ELAPSED" -lt "$GRACE_SECONDS" ]; then
+                  ALL_DONE=false
+                  PENDING_NAMES="$PENDING_NAMES $NAME(not-seen-yet)"
+                fi
+                # Past the grace period with no sign of this check: its
+                # workflow was never triggered by this diff. Don't wait on it.
+                continue
+              fi
+              STATUS=$(echo "$ENTRY" | jq -r '.status // empty' | tr '[:upper:]' '[:lower:]')
+              CONCLUSION=$(echo "$ENTRY" | jq -r '.conclusion // empty' | tr '[:upper:]' '[:lower:]')
+
+              if [ "$STATUS" != "completed" ]; then
+                ALL_DONE=false
+                PENDING_NAMES="$PENDING_NAMES $NAME"
+              elif [ "$CONCLUSION" != "success" ]; then
+                ANY_FAILED=true
+                FAILED_NAMES="$FAILED_NAMES $NAME"
+              fi
+            done
+
+            if [ "$ANY_FAILED" = "true" ]; then
+              echo "::error::Required check(s) failed on PR #$PR:$FAILED_NAMES. Leaving the PR open — not merging."
+              gh pr comment "$PR" --body "Auto-sync cannot merge: required check(s) failed —$FAILED_NAMES. This needs a fix pushed to \`dna-lovable-staging\` before it will merge automatically." || true
+              exit 1
+            fi
+
+            if [ "$ALL_DONE" = "true" ]; then
+              echo "All required checks green (or not applicable to this diff). Merging PR #$PR."
+              gh pr merge "$PR" --merge --delete-branch=false
+              break
+            fi
+
+            echo "Still waiting on:$PENDING_NAMES"
+            sleep 20
+          done
+
+          if [ "${ALL_DONE:-false}" != "true" ]; then
+            echo "::error::Timed out after 20 minutes waiting on required checks for PR #$PR. Leaving it open."
+            exit 1
+          fi
+
+      - name: Ensure dna-lovable-staging survives the merge
+        if: steps.pr.outputs.pr_number != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          # Some repos auto-delete a PR's head branch on merge. staging is
+          # not a throwaway feature branch — Lovable pushes to it forever —
+          # so if the merge took it out, put it right back at the commit
+          # that just landed on main.
+          sleep 5
+          if ! git ls-remote --exit-code origin refs/heads/dna-lovable-staging > /dev/null 2>&1; then
+            echo "dna-lovable-staging was removed by the merge. Recreating it."
+            git fetch origin main
+            git push origin origin/main:refs/heads/dna-lovable-staging
+          fi
