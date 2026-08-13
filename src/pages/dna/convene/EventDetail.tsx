@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useMobile } from '@/hooks/useMobile';
 import { ConveneShell } from '@/components/convene/ConveneShell';
 import { SectionNav, type SectionNavItem } from '@/components/shell/SectionNav';
+import { EventManageDesktopNav } from '@/components/convene/EventManageDesktopNav';
 import { EventManagementContext } from '@/components/convene/management/EventManagementContext';
 import EventOverview from '@/components/convene/EventOverview';
 import { EventDetailLoading, EventDetailNotFound } from '@/components/convene/EventDetailStates';
@@ -299,9 +300,7 @@ const EventDetail = ({ eventId: eventIdProp, hosted = false }: EventDetailProps 
           DnaMobileHubShell itself uses, so there is no width gap and no
           double-render. BD508/BD509. */}
       {!isMobile && isOrganizer && (
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-          <SectionNav items={EVENT_MANAGE_NAV} userRole={userRole} />
-        </div>
+        <EventManageDesktopNav items={EVENT_MANAGE_NAV} userRole={userRole} />
       )}
       {mainContent}
     </ConveneShell>
