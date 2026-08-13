@@ -322,7 +322,7 @@ export const UniversalComposer = ({
   // form: body → description, DIA's title/when/where → their fields.
   const isEventMode = mode === 'event';
   const eventSeed = useMemo<Partial<EventFormValues> | null>(() => {
-    if (!isEventMode) return null;
+    if (!hasSeeded) return null;
     const seed: Partial<EventFormValues> = {};
     if (body.trim()) seed.description = body.trim();
     if (fields.title?.trim()) seed.title = fields.title.trim();
