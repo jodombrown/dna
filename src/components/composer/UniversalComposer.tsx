@@ -483,11 +483,36 @@ export const UniversalComposer = ({
             <div className="min-w-0 flex-1 space-y-3">
               <ComposerVerbRail mode={mode} onPick={pickVerb} disabledModes={disabledModes} />
 
-              {isEventMode ? (
+              {isEventMode && !hasSeeded ? (
+                /* Seed step: event mode gets the same free-text entry as every
+                   other verb, so DIA has something to read here too. */
+                <>
+                  <Textarea
+                    value={body}
+                    onChange={(e) => setBody(e.target.value)}
+                    placeholder="Paste your event details, or describe it in your own words. DIA will fill in what it can."
+                    autoFocus
+                    className="min-h-[120px] resize-y text-[15px] leading-relaxed"
+                  />
+
+                  <div className="flex min-h-[18px] items-center gap-1.5 text-xs" aria-live="polite">
+                    {diaLine && <Sparkles className="h-3 w-3 flex-shrink-0 text-bevel-opportunity" />}
+                    {diaLine}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setHasSeeded(true)}
+                    className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground"
+                  >
+                    Skip, I'll fill it in myself
+                  </button>
+                </>
+              ) : isEventMode ? (
                 /* Hosting an event renders the unified event form at its
                    compact level; "More options" expands it right here. */
                 <EventForm
-                  key="composer-event-form"
+                  key={hasSeeded ? 'composer-event-form-seeded' : 'composer-event-form-empty'}
                   level="compact"
                   mode="create"
                   initialValues={eventSeed ?? undefined}
