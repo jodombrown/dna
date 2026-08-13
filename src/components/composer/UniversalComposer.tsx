@@ -347,7 +347,9 @@ export const UniversalComposer = ({
       // where a free-text guess is survivable.
       seed.location_name = fields.where.trim();
     }
-    return seed;
+    // Skipping the seed step with nothing written is a pure opt-out: an empty
+    // form, exactly as before.
+    return Object.keys(seed).length ? seed : null;
     // Snapshot at the moment the seed step ends (DIA read the text, or the
     // member skipped it) — the form owns its state from there.
     // eslint-disable-next-line react-hooks/exhaustive-deps
