@@ -348,9 +348,10 @@ export const UniversalComposer = ({
       seed.location_name = fields.where.trim();
     }
     return seed;
-    // Snapshot on entering event mode — the form owns its state from there.
+    // Snapshot at the moment the seed step ends (DIA read the text, or the
+    // member skipped it) — the form owns its state from there.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEventMode]);
+  }, [hasSeeded]);
 
   const handleEventPublished = useCallback(() => {
     if (userId) {
