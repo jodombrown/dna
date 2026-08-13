@@ -206,8 +206,17 @@ export const UniversalComposer = ({
     setOwnedByAuthor(new Set());
     setPreviewOpenMobile(false);
     setDraftSavedAt(null);
+    setHasSeeded(false);
     reset();
   }, [reset]);
+
+  // A closed composer forgets the seed step, so reopening Host an Event lands
+  // on the free-text entry again rather than a stale structured form.
+  useEffect(() => {
+    if (!isOpen) setHasSeeded(false);
+  }, [isOpen]);
+
+
 
   // ---- Draft: refresh-safe, quiet, one per member -------------------------
   useEffect(() => {
