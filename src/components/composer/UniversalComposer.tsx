@@ -111,6 +111,13 @@ export const UniversalComposer = ({
   const [ownedByAuthor, setOwnedByAuthor] = useState<Set<string>>(new Set());
   const [previewOpenMobile, setPreviewOpenMobile] = useState(false);
   const [draftSavedAt, setDraftSavedAt] = useState<number | null>(null);
+  /**
+   * Host an Event used to skip the free-text step entirely, which left DIA with
+   * nothing to read once the member was inside event mode. Now event mode opens
+   * on the same Textarea every other verb uses; `hasSeeded` flips once DIA has
+   * read it (or the member opts out) and the structured form takes over.
+   */
+  const [hasSeeded, setHasSeeded] = useState(false);
 
   const hydratedRef = useRef(false);
   const draftTimerRef = useRef<ReturnType<typeof setTimeout>>();
