@@ -229,6 +229,18 @@ Deno.serve(async (req) => {
         ? 'private'
         : 'public';
 
+    // BD511/BD512: an INSERT that sets lifecycle_state='published' directly
+    // fires publish_delivery_endpoint_gate_insert before this function's own
+    // later endpoint-row insert can possibly run, so a single-shot
+    // create-as-published for in-person/hybrid events always fails. Insert
+    // as draft, create the endpoint row, then transition to published in a
+    // follow-up UPDATE — that re-fires the UPDATE-scoped gate, which by then
+    // finds the endpoint row it needs.
+    const needsTwoPhasePublish =
+      status === 'published' &&
+      (eventData.format === 'in_person' || eventData.format === 'hybrid');
+    const insertStatus: EventStatus = needsTwoPhasePublish ? 'draft' : status;
+
     console.log('Validation passed, creating event...');
 
     // Generate SEO-friendly slug from title
@@ -272,7 +284,7 @@ Deno.serve(async (req) => {
         max_attendees: eventData.max_attendees || null,
         // (status, visibility) plus the transitional legacy mirror
         // (is_public / is_published / is_cancelled).
-        ...eventStateWrite({ status, visibility }),
+        ...eventStateWrite({ status: insertStatus, visibility }),
         requires_approval: eventData.requires_approval || false,
         allow_guests: eventData.allow_guests !== false,
         cover_image_url: eventData.cover_image_url || null,
@@ -309,7 +321,7 @@ Deno.serve(async (req) => {
     const endpointRows: Record<string, unknown>[] = [];
 
     if (eventData.format === 'in_person' || eventData.format === 'hybrid') {
-      const joinCredential = eventData.location_address || eventData.location_name;
+      const joinCredential = eventData.location_address || eventData.location_name || eventData.location_city;
       if (joinCredential) {
         endpointRows.push({ event_id: event.id, type: 'physical_room', join_credential: joinCredential });
       }
@@ -327,6 +339,31 @@ Deno.serve(async (req) => {
     if (endpointRows.length > 0) {
       const { error: endpointError } = await supabase.from('event_delivery_endpoints').insert(endpointRows);
       if (endpointError) console.error('Endpoint creation error:', endpointError); // never fail event creation over this
+    }
+
+    if (needsTwoPhasePublish) {
+      const { error: publishError } = await supabase
+        .from('events')
+        .update(eventStateWrite({ status: 'published', visibility }))
+        .eq('id', event.id);
+
+      if (publishError) {
+        console.error('Publish transition error:', publishError);
+        // Preserve today's "nothing created on failure" guarantee — don't
+        // leave an orphaned draft behind. Best-effort: log but don't mask
+        // the real error if cleanup itself fails.
+        const { error: cleanupError } = await supabase
+          .from('events')
+          .delete()
+          .eq('id', event.id);
+        if (cleanupError) console.error('Draft cleanup error:', cleanupError);
+
+        throw new Error(
+          publishError.message?.includes('physical_room')
+            ? 'Add a venue name, address, or city before publishing an in-person or hybrid event.'
+            : 'Event could not be published. Please try again.'
+        );
+      }
     }
 
     // Track event creation in analytics — a failure here must never fail the request
