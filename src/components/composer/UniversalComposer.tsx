@@ -111,6 +111,13 @@ export const UniversalComposer = ({
   const [ownedByAuthor, setOwnedByAuthor] = useState<Set<string>>(new Set());
   const [previewOpenMobile, setPreviewOpenMobile] = useState(false);
   const [draftSavedAt, setDraftSavedAt] = useState<number | null>(null);
+  /**
+   * Host an Event used to skip the free-text step entirely, which left DIA with
+   * nothing to read once the member was inside event mode. Now event mode opens
+   * on the same Textarea every other verb uses; `hasSeeded` flips once DIA has
+   * read it (or the member opts out) and the structured form takes over.
+   */
+  const [hasSeeded, setHasSeeded] = useState(false);
 
   const hydratedRef = useRef(false);
   const draftTimerRef = useRef<ReturnType<typeof setTimeout>>();
@@ -133,6 +140,9 @@ export const UniversalComposer = ({
       });
       return next;
     });
+    // Event mode: DIA has read the text, so hand straight over to the seeded
+    // form. Batched with setFields above, so the seed snapshot sees them.
+    if (mode === 'event' || proposal.verb === 'event') setHasSeeded(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [proposal]);
 
@@ -196,8 +206,17 @@ export const UniversalComposer = ({
     setOwnedByAuthor(new Set());
     setPreviewOpenMobile(false);
     setDraftSavedAt(null);
+    setHasSeeded(false);
     reset();
   }, [reset]);
+
+  // A closed composer forgets the seed step, so reopening Host an Event lands
+  // on the free-text entry again rather than a stale structured form.
+  useEffect(() => {
+    if (!isOpen) setHasSeeded(false);
+  }, [isOpen]);
+
+
 
   // ---- Draft: refresh-safe, quiet, one per member -------------------------
   useEffect(() => {
@@ -303,7 +322,7 @@ export const UniversalComposer = ({
   // form: body → description, DIA's title/when/where → their fields.
   const isEventMode = mode === 'event';
   const eventSeed = useMemo<Partial<EventFormValues> | null>(() => {
-    if (!isEventMode) return null;
+    if (!hasSeeded) return null;
     const seed: Partial<EventFormValues> = {};
     if (body.trim()) seed.description = body.trim();
     if (fields.title?.trim()) seed.title = fields.title.trim();
@@ -328,10 +347,13 @@ export const UniversalComposer = ({
       // where a free-text guess is survivable.
       seed.location_name = fields.where.trim();
     }
-    return seed;
-    // Snapshot on entering event mode — the form owns its state from there.
+    // Skipping the seed step with nothing written is a pure opt-out: an empty
+    // form, exactly as before.
+    return Object.keys(seed).length ? seed : null;
+    // Snapshot at the moment the seed step ends (DIA read the text, or the
+    // member skipped it) — the form owns its state from there.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEventMode]);
+  }, [hasSeeded]);
 
   const handleEventPublished = useCallback(() => {
     if (userId) {
@@ -463,11 +485,36 @@ export const UniversalComposer = ({
             <div className="min-w-0 flex-1 space-y-3">
               <ComposerVerbRail mode={mode} onPick={pickVerb} disabledModes={disabledModes} />
 
-              {isEventMode ? (
+              {isEventMode && !hasSeeded ? (
+                /* Seed step: event mode gets the same free-text entry as every
+                   other verb, so DIA has something to read here too. */
+                <>
+                  <Textarea
+                    value={body}
+                    onChange={(e) => setBody(e.target.value)}
+                    placeholder="Paste your event details, or describe it in your own words. DIA will fill in what it can."
+                    autoFocus
+                    className="min-h-[120px] resize-y text-[15px] leading-relaxed"
+                  />
+
+                  <div className="flex min-h-[18px] items-center gap-1.5 text-xs" aria-live="polite">
+                    {diaLine && <Sparkles className="h-3 w-3 flex-shrink-0 text-bevel-opportunity" />}
+                    {diaLine}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setHasSeeded(true)}
+                    className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground"
+                  >
+                    Skip, I'll fill it in myself
+                  </button>
+                </>
+              ) : isEventMode ? (
                 /* Hosting an event renders the unified event form at its
                    compact level; "More options" expands it right here. */
                 <EventForm
-                  key="composer-event-form"
+                  key={hasSeeded ? 'composer-event-form-seeded' : 'composer-event-form-empty'}
                   level="compact"
                   mode="create"
                   initialValues={eventSeed ?? undefined}
