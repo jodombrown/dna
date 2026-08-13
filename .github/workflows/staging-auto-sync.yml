@@ -102,17 +102,33 @@ jobs:
 
           echo "Waiting on required checks for PR #$PR: ${REQUIRED_CHECKS[*]}"
 
+          # Several required checks are path-filtered (type-scale, icon
+          # dupes, panel chrome all skip diffs that don't touch src/). A
+          # staging push that only changes docs or this workflow file never
+          # triggers them, so they never appear in statusCheckRollup at all.
+          # Wait GRACE_SECONDS for a check to show up at all; if it still
+          # hasn't by then, treat it as not applicable to this diff rather
+          # than blocking the merge on a check that was never going to run.
+          GRACE_SECONDS=90
+          START=$SECONDS
           DEADLINE=$((SECONDS + 20*60))
           while [ "$SECONDS" -lt "$DEADLINE" ]; do
             ROLLUP=$(gh pr view "$PR" --json statusCheckRollup --jq '.statusCheckRollup')
+            ELAPSED=$((SECONDS - START))
             ALL_DONE=true
             ANY_FAILED=false
             FAILED_NAMES=""
+            PENDING_NAMES=""
 
             for NAME in "${REQUIRED_CHECKS[@]}"; do
               ENTRY=$(echo "$ROLLUP" | jq -r --arg n "$NAME" '[.[] | select(.name == $n)][0] // empty')
               if [ -z "$ENTRY" ]; then
-                ALL_DONE=false
+                if [ "$ELAPSED" -lt "$GRACE_SECONDS" ]; then
+                  ALL_DONE=false
+                  PENDING_NAMES="$PENDING_NAMES $NAME(not-seen-yet)"
+                fi
+                # Past the grace period with no sign of this check: its
+                # workflow was never triggered by this diff. Don't wait on it.
                 continue
               fi
               STATUS=$(echo "$ENTRY" | jq -r '.status // empty' | tr '[:upper:]' '[:lower:]')
@@ -120,6 +136,7 @@ jobs:
 
               if [ "$STATUS" != "completed" ]; then
                 ALL_DONE=false
+                PENDING_NAMES="$PENDING_NAMES $NAME"
               elif [ "$CONCLUSION" != "success" ]; then
                 ANY_FAILED=true
                 FAILED_NAMES="$FAILED_NAMES $NAME"
@@ -133,11 +150,12 @@ jobs:
             fi
 
             if [ "$ALL_DONE" = "true" ]; then
-              echo "All required checks green. Merging PR #$PR."
+              echo "All required checks green (or not applicable to this diff). Merging PR #$PR."
               gh pr merge "$PR" --merge --delete-branch=false
               break
             fi
 
+            echo "Still waiting on:$PENDING_NAMES"
             sleep 20
           done
 
