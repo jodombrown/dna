@@ -140,6 +140,9 @@ export const UniversalComposer = ({
       });
       return next;
     });
+    // Event mode: DIA has read the text, so hand straight over to the seeded
+    // form. Batched with setFields above, so the seed snapshot sees them.
+    if (mode === 'event' || proposal.verb === 'event') setHasSeeded(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [proposal]);
 
