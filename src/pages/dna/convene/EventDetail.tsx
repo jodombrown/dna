@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Loader2, ArrowLeft, LayoutDashboard, Users, QrCode, Mail, BarChart3, UserCog, Share2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useMobile } from '@/hooks/useMobile';
 import { ConveneShell } from '@/components/convene/ConveneShell';
 import { SectionNav, type SectionNavItem } from '@/components/shell/SectionNav';
 import { EventManagementContext } from '@/components/convene/management/EventManagementContext';
@@ -39,6 +40,7 @@ const EventDetail = ({ eventId: eventIdProp, hosted = false }: EventDetailProps 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user, loading: authLoading } = useAuth();
+  const { isMobile } = useMobile();
 
   // Hosted mode has no shell of its own to supply a back affordance, so the
   // close control lives here: it unwinds exactly the `?event=` selection
@@ -289,6 +291,18 @@ const EventDetail = ({ eventId: eventIdProp, hosted = false }: EventDetailProps 
       showBottomNav={false}
       tabs={isOrganizer ? <SectionNav items={EVENT_MANAGE_NAV} userRole={userRole} /> : null}
     >
+      {/* DnaMobileHubShell drops the `tabs` prop entirely on tablet/desktop
+          ("if (!isMobile) return children" — its own doc comment says
+          "page keeps its own desktop chrome"). This is that desktop
+          chrome: the same SectionNav, rendered inline instead of the
+          fixed mobile header, gated on the identical !isMobile boundary
+          DnaMobileHubShell itself uses, so there is no width gap and no
+          double-render. BD508/BD509. */}
+      {!isMobile && isOrganizer && (
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+          <SectionNav items={EVENT_MANAGE_NAV} userRole={userRole} />
+        </div>
+      )}
       {mainContent}
     </ConveneShell>
   );

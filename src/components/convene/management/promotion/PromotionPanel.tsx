@@ -117,7 +117,7 @@ const PromotionPanel: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <div>
         <h1 className="text-h1">Promotion</h1>
         <p className="text-muted-foreground">Share this event and see how people are finding it</p>
