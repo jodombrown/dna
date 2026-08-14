@@ -44,7 +44,6 @@ const BUCKET = 'post-media';
 const MAX_IMAGE_BYTES = 25 * 1024 * 1024;
 const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
 const IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
-const VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/mov'];
 const DEFAULT_MAX_FILES = 6;
 
 type AttachmentStatus = 'uploading' | 'done' | 'error' | 'cancelled';
@@ -77,10 +76,8 @@ interface MultiAttachmentUploaderProps {
 
 function detectKind(type: string, name: string): 'image' | 'video' | null {
   if (IMAGE_TYPES.includes(type)) return 'image';
-  if (VIDEO_TYPES.includes(type)) return 'video';
   const lower = name.toLowerCase();
   if (/\.(jpe?g|png|webp|gif)$/.test(lower)) return 'image';
-  if (/\.(mp4|webm|mov)$/.test(lower)) return 'video';
   return null;
 }
 
@@ -270,7 +267,7 @@ export const MultiAttachmentUploader = forwardRef<
     }
     const kind = detectKind(file.type, file.name);
     if (!kind) {
-      return { ok: false, reason: 'Unsupported format. Use JPG, PNG, WebP, GIF, MP4, WebM or MOV.' };
+      return { ok: false, reason: 'Unsupported format. Use JPG, PNG, WebP or GIF.' };
     }
     const max = kind === 'video' ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
     if (file.size > max) {
@@ -397,7 +394,7 @@ export const MultiAttachmentUploader = forwardRef<
 
   useImperativeHandle(ref, () => ({ addFiles }), [addFiles]);
 
-  const accepted = useMemo(() => [...IMAGE_TYPES, ...VIDEO_TYPES].join(','), []);
+  const accepted = useMemo(() => IMAGE_TYPES.join(','), []);
   const slotsLeft = Math.max(0, maxFiles - items.length);
 
   const handleTileKeyDown = (e: React.KeyboardEvent<HTMLDivElement>, a: UploaderAttachment) => {
@@ -631,7 +628,7 @@ export const MultiAttachmentUploader = forwardRef<
       )}
 
       <p className="text-[11px] text-muted-foreground">
-        Up to {maxFiles} files. Images auto-optimize up to 25 MB, videos &lt;= 50 MB. Drag tiles or use Alt + arrow keys to reorder.
+        Up to {maxFiles} files. Images auto-optimize up to 25 MB. Drag tiles or use Alt + arrow keys to reorder.
       </p>
     </div>
   );
