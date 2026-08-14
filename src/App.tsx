@@ -61,6 +61,7 @@ const ProfileV2 = lazy(() => import("./pages/ProfileV2"));
 const SavedPostsPage = lazy(() => import("./pages/SavedPostsPage"));
 const DnaFeed = lazy(() => import("./pages/dna/Feed"));
 const HashtagFeed = lazy(() => import("./pages/dna/HashtagFeed"));
+const DraftsAndScheduled = lazy(() => import("./pages/dna/DraftsAndScheduled"));
 const DebugUniversalFeed = lazy(() => import("./pages/dna/DebugUniversalFeed"));
 const DnaMessages = lazy(() => import("./pages/dna/Messages"));
 const GroupThreadPage = lazy(() => import("./pages/dna/GroupThread"));
@@ -550,6 +551,12 @@ function App() {
                <Route path="/dna/hashtag/:hashtag" element={
                  <OnboardingGuard>
                    <HashtagFeed />
+                 </OnboardingGuard>
+               } />
+               {/* Drafts & Scheduled (BD534 step 5) */}
+               <Route path="/dna/feed/drafts" element={
+                 <OnboardingGuard>
+                   <DraftsAndScheduled />
                  </OnboardingGuard>
                } />
                {/* Messages: Canonical routes.

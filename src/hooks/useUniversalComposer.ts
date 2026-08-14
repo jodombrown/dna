@@ -18,6 +18,7 @@ import { toast } from '@/hooks/use-toast';
 import { MODE_HANDLERS } from '@/components/composer/modeHandlers';
 import type { ComposerSubmitContext } from '@/components/composer/modeHandlers';
 import { logHighError } from '@/lib/errorLogger';
+import { deletePostDraft } from '@/services/postDraftsService';
 import type { UniversalFeedItem } from '@/types/feed';
 import { DEFAULT_MODE, type ComposerMode } from '@/config/composerModes';
 
@@ -66,6 +67,17 @@ export interface ComposerContext {
     tagline?: string;
     description?: string;
     spaceType?: string;
+  };
+  // BD534 step 5: editing an existing post_drafts row (draft/scheduled/failed)
+  // from the Drafts & Scheduled page. Present only when the composer was
+  // opened to resume one of those rows — its cleanup path (delete/update on
+  // publish, save, or reschedule) is keyed off editDraft.id.
+  editDraft?: {
+    id: string;
+    mode: 'connect' | 'story';
+    payload: Record<string, unknown>;
+    status: 'draft' | 'scheduled' | 'failed';
+    scheduledAt?: string;
   };
 }
 
@@ -282,6 +294,17 @@ export const useComposerState = (initialContext?: ComposerContext) => {
       // Invalidate as backup so server state reconciles
       await queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       await queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
+
+      // BD534 step 5: publishing an edit session's content — the post_drafts
+      // row it came from has no further purpose. Best-effort; a failure here
+      // must never block the publish the member already saw succeed.
+      if (context.editDraft) {
+        deletePostDraft(context.editDraft.id).catch((error) => {
+          logHighError(error, 'composer', 'Failed to delete draft after publish', {
+            draftId: context.editDraft?.id,
+          });
+        });
+      }
 
       // Track submission
       trackComposerEvent('submit', mode, {
