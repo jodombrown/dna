@@ -269,6 +269,14 @@ export const UniversalComposer = ({
 
 
 
+  // A closed composer forgets the seed step, so reopening Host an Event lands
+  // on the free-text entry again rather than a stale structured form.
+  useEffect(() => {
+    if (!isOpen) setHasSeeded(false);
+  }, [isOpen]);
+
+
+
   // ---- Draft: refresh-safe, quiet, one per member -------------------------
   useEffect(() => {
     if (!isOpen || !userId || successData) return;
@@ -543,7 +551,7 @@ export const UniversalComposer = ({
                   <Textarea
                     value={body}
                     onChange={(e) => setBody(e.target.value)}
-                    placeholder="Paste your event details, or describe it in your own words. DIA picks up the name, date, time, and location — everything else you'll fill in below."
+                    placeholder="Paste your event details, or describe it in your own words. DIA will fill in what it can."
                     autoFocus
                     className="min-h-[120px] resize-y text-[15px] leading-relaxed"
                   />
