@@ -11,10 +11,8 @@
  * regardless of which section the row came from.
  */
 
-import { useState } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { formatDistanceToNow } from 'date-fns';
 import { CalendarClock, Loader2, Pencil, Trash2, TriangleAlert } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -31,86 +29,14 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUniversalComposer } from '@/contexts/ComposerContext';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
-import { getErrorMessage } from '@/lib/errorLogger';
-
-type DraftStatus = 'draft' | 'scheduled' | 'failed';
-
-interface PostDraftRow {
-  id: string;
-  mode: string;
-  payload: Record<string, unknown>;
-  status: string;
-  scheduled_at: string | null;
-  failure_reason: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-const PREVIEW_LENGTH = 100;
-
-function contentPreview(payload: Record<string, unknown>): string {
-  const content = typeof payload.content === 'string' ? payload.content : '';
-  const trimmed = content.trim();
-  if (!trimmed) return '(No text)';
-  return trimmed.length > PREVIEW_LENGTH ? `${trimmed.slice(0, PREVIEW_LENGTH)}…` : trimmed;
-}
+import { usePostDraftRows, contentPreview, openDraftInComposer, type PostDraftRow } from '@/hooks/usePostDraftRows';
 
 export default function DraftsAndScheduled() {
   const { user } = useAuth();
   const composer = useUniversalComposer();
-  const queryClient = useQueryClient();
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const { isLoading, scheduled, drafts, failed, deletingId, handleDelete } = usePostDraftRows();
 
-  const { data: rows, isLoading } = useQuery({
-    queryKey: ['post-drafts', user?.id],
-    queryFn: async (): Promise<PostDraftRow[]> => {
-      const { data, error } = await supabase
-        .from('post_drafts')
-        .select('id, mode, payload, status, scheduled_at, failure_reason, created_at, updated_at')
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return (data ?? []) as unknown as PostDraftRow[];
-    },
-    enabled: !!user,
-  });
-
-  const scheduled = (rows ?? [])
-    .filter((r) => r.status === 'scheduled')
-    .sort((a, b) => (a.scheduled_at ?? '').localeCompare(b.scheduled_at ?? ''));
-  const drafts = (rows ?? [])
-    .filter((r) => r.status === 'draft')
-    .sort((a, b) => b.updated_at.localeCompare(a.updated_at));
-  const failed = (rows ?? []).filter((r) => r.status === 'failed');
-
-  const handleDelete = async (id: string) => {
-    setDeletingId(id);
-    try {
-      const { error } = await supabase.from('post_drafts').delete().eq('id', id);
-      if (error) throw error;
-      queryClient.setQueryData<PostDraftRow[]>(['post-drafts', user?.id], (old) =>
-        (old ?? []).filter((r) => r.id !== id)
-      );
-    } catch (error) {
-      toast({ variant: 'destructive', description: getErrorMessage(error) });
-    } finally {
-      setDeletingId(null);
-    }
-  };
-
-  const openInComposer = (row: PostDraftRow) => {
-    const mode = row.mode === 'story' ? 'story' : 'connect';
-    composer.open(mode, {
-      editDraft: {
-        id: row.id,
-        mode,
-        payload: row.payload,
-        status: row.status as DraftStatus,
-        scheduledAt: row.scheduled_at ?? undefined,
-      },
-    });
-  };
+  const openInComposer = (row: PostDraftRow) => openDraftInComposer(composer, row);
 
   if (!user) return null;
 

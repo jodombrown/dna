@@ -251,7 +251,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
               is_video: item.link_metadata?.is_video,
             }}
             showRemoveButton={false}
-            size="full"
+            size="compact"
           />
         </div>
       )}

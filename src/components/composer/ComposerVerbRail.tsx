@@ -11,8 +11,8 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight, UserPlus, Calendar, Gift, BookOpen, LucideIcon } from 'lucide-react';
-import { MateMasie } from '@/components/icons/adinkra';
+import { ChevronLeft, ChevronRight, Calendar, LucideIcon } from 'lucide-react';
+import { MateMasie, Nkonsonkonson, Sankofa, Mpatapo } from '@/components/icons/adinkra';
 import { ComposerMode, COMPOSER_MODE_CONFIG, MODE_ORDER } from '@/config/composerModes';
 import { cn } from '@/lib/utils';
 
@@ -25,11 +25,11 @@ interface ComposerVerbRailProps {
 }
 
 const CHIP_ICON: Record<ComposerMode, LucideIcon | typeof MateMasie> = {
-  connect: UserPlus,
+  connect: Nkonsonkonson,
   event: Calendar,
   space: MateMasie,
-  need: Gift,
-  story: BookOpen,
+  need: Mpatapo,
+  story: Sankofa,
 };
 
 /** Literal active-fill classes per verb — legible on every fill. */
