@@ -1,4 +1,5 @@
-import { Camera, Calendar, BookOpen } from 'lucide-react';
+import { Camera } from 'lucide-react';
+import { Nkonsonkonson, Mpatapo } from '@/components/icons/adinkra';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 /**
@@ -42,14 +43,14 @@ export function FeedComposerTeaser({
           className="p-1.5 rounded-full hover:bg-muted transition-colors"
           title="Event"
         >
-          <Calendar className="h-4 w-4 text-dna-gold" />
+          <Nkonsonkonson className="h-4 w-4 text-dna-gold" />
         </button>
         <button
           onClick={(e) => { e.stopPropagation(); onOpenStory(); }}
           className="p-1.5 rounded-full hover:bg-muted transition-colors"
           title="Story"
         >
-          <BookOpen className="h-4 w-4 text-dna-copper" />
+          <Mpatapo className="h-4 w-4 text-dna-copper" />
         </button>
       </div>
     </div>
