@@ -23,12 +23,24 @@ interface CreateFeedPostOptions {
   eventId?: string;
   mediaUrl?: string;
   privacyLevel?: 'public' | 'connections';
+  linkUrl?: string;
+  linkTitle?: string;
+  linkDescription?: string;
+  linkThumbnail?: string;
+  linkProviderName?: string;
 }
 
 /**
  * Base function to create any feed post
  */
 export async function createFeedPost(options: CreateFeedPostOptions) {
+  const linkMetadata = options.linkUrl ? {
+    embed_type: 'video',
+    provider_name: options.linkProviderName || undefined,
+    thumbnail_url: options.linkThumbnail || undefined,
+    is_video: true,
+  } : null;
+
   const { error } = await supabase.from('posts').insert({
     author_id: options.authorId,
     post_type: options.postType,
@@ -39,6 +51,10 @@ export async function createFeedPost(options: CreateFeedPostOptions) {
     event_id: options.eventId || null,
     image_url: options.mediaUrl || null,
     privacy_level: options.privacyLevel || 'public',
+    link_url: options.linkUrl || null,
+    link_title: options.linkTitle || null,
+    link_description: options.linkDescription || null,
+    link_metadata: linkMetadata,
   });
 
   if (error) {
@@ -137,10 +153,22 @@ export async function createStoryPost(params: {
   eventId?: string;
   imageUrl?: string;
   galleryUrls?: string[];
+  linkUrl?: string;
+  linkTitle?: string;
+  linkDescription?: string;
+  linkThumbnail?: string;
+  linkProviderName?: string;
 }): Promise<any> {
-  const { authorId, storyTitle, storyBody, storySubtitle, storyType, spaceId, eventId, imageUrl, galleryUrls } = params;
+  const { authorId, storyTitle, storyBody, storySubtitle, storyType, spaceId, eventId, imageUrl, galleryUrls, linkUrl, linkTitle, linkDescription, linkThumbnail, linkProviderName } = params;
 
   try {
+    const linkMetadata = linkUrl ? {
+      embed_type: 'video',
+      provider_name: linkProviderName || undefined,
+      thumbnail_url: linkThumbnail || undefined,
+      is_video: true,
+    } : null;
+
     // Insert story post with title and story_type
     const insertPayload = {
       author_id: authorId,
@@ -156,6 +184,10 @@ export async function createStoryPost(params: {
       privacy_level: 'public' as const,
       linked_entity_type: null,
       linked_entity_id: null,
+      link_url: linkUrl || null,
+      link_title: linkTitle || null,
+      link_description: linkDescription || null,
+      link_metadata: linkMetadata,
     };
 
     // Debug logging removed for production

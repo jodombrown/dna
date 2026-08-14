@@ -4,7 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { uploadMedia, ACCEPT } from '@/lib/uploadMedia';
+import { uploadMedia } from '@/lib/uploadMedia';
+
+const IMAGE_ACCEPT = 'image/jpeg,image/jpg,image/png,image/webp,image/gif';
 
 interface MediaUploadButtonProps {
   label?: string;
@@ -29,24 +31,22 @@ export function MediaUploadButton({
     if (!file || !user) return;
 
     const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
-    const validVideoTypes = ['video/mp4', 'video/webm', 'video/mov'];
     const isImage = validImageTypes.includes(file.type);
-    const isVideo = validVideoTypes.includes(file.type);
 
-    if (!isImage && !isVideo) {
+    if (!isImage) {
       toast({
         title: 'Invalid file type',
-        description: 'Please upload a JPG, PNG, WebP, GIF image or MP4, WebM video.',
+        description: 'Please upload a JPG, PNG, WebP, or GIF image.',
         variant: 'destructive',
       });
       return;
     }
 
-    const maxSize = isVideo ? 50 * 1024 * 1024 : 25 * 1024 * 1024;
+    const maxSize = 25 * 1024 * 1024;
     if (file.size > maxSize) {
       toast({
         title: 'File too large',
-        description: isVideo ? 'Please upload a video smaller than 50MB.' : 'Please upload an image smaller than 25MB.',
+        description: 'Please upload an image smaller than 25MB.',
         variant: 'destructive',
       });
       return;
@@ -57,7 +57,7 @@ export function MediaUploadButton({
     try {
       const { url } = await uploadMedia(file, 'post');
       onUpload(url);
-      toast({ description: `${isVideo ? 'Video' : 'Image'} uploaded successfully.` });
+      toast({ description: 'Image uploaded successfully.' });
     } catch (error) {
       toast({
         title: 'Upload failed',
@@ -109,7 +109,7 @@ export function MediaUploadButton({
         <input
           ref={fileInputRef}
           type="file"
-          accept={ACCEPT.post}
+          accept={IMAGE_ACCEPT}
           onChange={handleFileSelect}
           className="hidden"
         />
@@ -122,7 +122,7 @@ export function MediaUploadButton({
       <input
         ref={fileInputRef}
         type="file"
-        accept={ACCEPT.post}
+        accept={IMAGE_ACCEPT}
         onChange={handleFileSelect}
         className="hidden"
       />
