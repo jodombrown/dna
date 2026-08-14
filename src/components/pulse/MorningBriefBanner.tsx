@@ -26,6 +26,13 @@ const todayKey = () => {
   return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
 };
 
+const briefLabel = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Morning brief';
+  if (hour < 17) return 'Afternoon brief';
+  return 'Evening brief';
+};
+
 /**
  * Phase 16 - Morning brief.
  * Once per calendar day, after the user lands on the feed, surface a small
@@ -148,7 +155,7 @@ export const MorningBriefBanner: React.FC = () => {
             <div className="flex items-center gap-2 mb-0.5">
               <MateMasie className="h-3.5 w-3.5 text-primary" />
               <span className="text-[11px] uppercase tracking-wide text-primary font-medium">
-                Morning brief
+                {briefLabel()}
               </span>
               <span className="text-[11px] text-muted-foreground ml-auto">
                 {brief.data.totalUnread} unread - {brief.data.unreadThreadCount} threads

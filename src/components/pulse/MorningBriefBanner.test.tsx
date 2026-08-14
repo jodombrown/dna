@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -129,5 +129,37 @@ describe('MorningBriefBanner', () => {
     expect(screen.getByTestId('inbox-digest-sheet').getAttribute('data-open')).toBe('false');
     const names = trackEventMock.mock.calls.map((c) => c[0]);
     expect(names).toContain('morning_brief_banner_dismiss');
+  });
+
+  describe('time-of-day label', () => {
+    const setHour = (hour: number) => {
+      const RealDate = Date;
+      vi.spyOn(global, 'Date').mockImplementation(
+        (...args: ConstructorParameters<typeof Date>) =>
+          args.length === 0 ? new RealDate(2024, 0, 1, hour) : new RealDate(...args),
+      );
+    };
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('shows "Morning brief" before noon', () => {
+      setHour(9);
+      renderBanner();
+      expect(screen.getByTestId('morning-brief-banner')).toHaveTextContent('Morning brief');
+    });
+
+    it('shows "Afternoon brief" from noon to before 5pm', () => {
+      setHour(14);
+      renderBanner();
+      expect(screen.getByTestId('morning-brief-banner')).toHaveTextContent('Afternoon brief');
+    });
+
+    it('shows "Evening brief" at 5pm and later', () => {
+      setHour(19);
+      renderBanner();
+      expect(screen.getByTestId('morning-brief-banner')).toHaveTextContent('Evening brief');
+    });
   });
 });
