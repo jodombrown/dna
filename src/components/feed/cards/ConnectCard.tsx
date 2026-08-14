@@ -29,6 +29,8 @@ import { UniversalFeedItem } from '@/types/feed';
 import { FeedCardBase } from './FeedCardBase';
 import { CardActionRow } from './CardActionRow';
 import { ProofSheet } from '@/components/feed/ProofSheet';
+import { ReshareDialog } from '@/components/feed/dialogs/ReshareDialog';
+import { useReshare } from '@/hooks/useReshare';
 import { linkifyContent } from '@/utils/linkifyContent';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -60,7 +62,6 @@ interface ConnectCardProps {
   onUpdate: () => void;
   showComments?: boolean;
   onCommentClick?: () => void;
-  onReshare?: (postId: string) => void;
   /** "I can help" / "Reach out" — opens a message to the author. */
   onRespond?: (authorId: string) => void;
   /** Broker from your own network. */
@@ -111,7 +112,6 @@ export const ConnectCard: React.FC<ConnectCardProps> = ({
   onUpdate,
   showComments = false,
   onCommentClick,
-  onReshare,
   onRespond,
   onIntroduce,
 }) => {
@@ -121,6 +121,23 @@ export const ConnectCard: React.FC<ConnectCardProps> = ({
 
   const { likeCount, userHasLiked, toggleLike } = usePostLikes(item.post_id, currentUserId);
   const { userHasBookmarked, toggleBookmark } = usePostBookmarks(item.post_id, currentUserId);
+
+  // Reshare — same hook + dialog PostCard uses, so a resharable post is
+  // created the same way regardless of which card the click came from.
+  const {
+    hasReshared,
+    isLoading: isResharing,
+    isReshareDialogOpen,
+    openReshareDialog,
+    closeReshareDialog,
+    handleReshare,
+  } = useReshare({
+    postId: item.post_id,
+    userId: currentUserId,
+    originalAuthorId: item.author_id,
+    originalAuthorName: item.author_display_name,
+    onSuccess: onUpdate,
+  });
 
   const isOwner = item.author_id === currentUserId;
   const authorName = item.author_display_name || item.author_username || 'Member';
@@ -292,9 +309,8 @@ export const ConnectCard: React.FC<ConnectCardProps> = ({
           {
             icon: Repeat2,
             label: 'Reshare',
-            onClick: () => onReshare?.(item.post_id),
-            active: item.has_reshared,
-            disabled: !onReshare,
+            onClick: openReshareDialog,
+            active: hasReshared,
           },
         ]}
         trailing={{
@@ -321,6 +337,15 @@ export const ConnectCard: React.FC<ConnectCardProps> = ({
         kind="mutual_connections"
         entityId={item.author_id}
         title={`People you and ${firstName} both know`}
+      />
+
+      <ReshareDialog
+        open={isReshareDialogOpen}
+        onOpenChange={closeReshareDialog}
+        post={item}
+        currentUserId={currentUserId}
+        onReshare={handleReshare}
+        isLoading={isResharing}
       />
     </FeedCardBase>
   );

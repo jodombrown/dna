@@ -123,6 +123,7 @@ export const UniversalComposer = ({
 
   const hydratedRef = useRef(false);
   const draftTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const eventSeedTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   const { proposal, isReading, diaFilled, releaseField, reset } = useDIACompose({
     text: body,
@@ -189,11 +190,22 @@ export const UniversalComposer = ({
       });
       return next;
     });
-    // Event mode: DIA has read the text, so hand straight over to the seeded
-    // form. Batched with setFields above, so the seed snapshot sees them.
-    if (mode === 'event' || proposal.verb === 'event') setHasSeeded(true);
+    // Event mode: don't hand off to the structured form while the member
+    // is still typing — a proposal landing mid-sentence would yank the
+    // text box away. Wait for a real pause after the read lands. BD525.
+    if (mode === 'event' || proposal.verb === 'event') {
+      clearTimeout(eventSeedTimerRef.current);
+      eventSeedTimerRef.current = setTimeout(() => setHasSeeded(true), 1500);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [proposal]);
+
+  // Any further typing cancels a pending event-mode handoff — the member
+  // gets the full pause after their LAST keystroke, not whatever was left
+  // of the timer from an earlier one. BD525.
+  useEffect(() => {
+    clearTimeout(eventSeedTimerRef.current);
+  }, [body]);
 
   // The author touches a field → it is theirs forever.
   const editField = useCallback(
@@ -258,13 +270,17 @@ export const UniversalComposer = ({
     setHasSeeded(false);
     clearEmbedData();
     strippedEmbedUrlRef.current = null;
+    clearTimeout(eventSeedTimerRef.current);
     reset();
   }, [reset, clearEmbedData]);
 
   // A closed composer forgets the seed step, so reopening Host an Event lands
   // on the free-text entry again rather than a stale structured form.
   useEffect(() => {
-    if (!isOpen) setHasSeeded(false);
+    if (!isOpen) {
+      setHasSeeded(false);
+      clearTimeout(eventSeedTimerRef.current);
+    }
   }, [isOpen]);
 
 
@@ -272,7 +288,10 @@ export const UniversalComposer = ({
   // A closed composer forgets the seed step, so reopening Host an Event lands
   // on the free-text entry again rather than a stale structured form.
   useEffect(() => {
-    if (!isOpen) setHasSeeded(false);
+    if (!isOpen) {
+      setHasSeeded(false);
+      clearTimeout(eventSeedTimerRef.current);
+    }
   }, [isOpen]);
 
 
@@ -341,7 +360,7 @@ export const UniversalComposer = ({
   }, [isOpen, context]);
 
   useEffect(() => {
-    if (!isOpen || !userId || successData) return;
+    if (!isOpen || !userId || successData || (mode === 'event' && hasSeeded)) return;
     clearTimeout(draftTimerRef.current);
     draftTimerRef.current = setTimeout(() => {
       try {
@@ -358,7 +377,21 @@ export const UniversalComposer = ({
       }
     }, 600);
     return () => clearTimeout(draftTimerRef.current);
-  }, [body, fields, mediaUrl, roles, galleryUrls, resolvedWhen, mode, isOpen, userId, successData]);
+  }, [body, fields, mediaUrl, roles, galleryUrls, resolvedWhen, mode, isOpen, userId, successData, hasSeeded]);
+
+  // Once the structured event form takes over, the seed-step draft it
+  // was built from is stale and has no further use — clear it so
+  // re-editing the form's own fields never gets shadowed by it on
+  // reopen. BD525.
+  useEffect(() => {
+    if (hasSeeded && userId) {
+      try {
+        localStorage.removeItem(draftKey(userId));
+      } catch {
+        // best-effort
+      }
+    }
+  }, [hasSeeded, userId]);
 
   // ---- Success: DIA doesn't ceremonize. Close, toast, clear. ---------------
   useEffect(() => {
@@ -551,7 +584,7 @@ export const UniversalComposer = ({
                   <Textarea
                     value={body}
                     onChange={(e) => setBody(e.target.value)}
-                    placeholder="Paste your event details, or describe it in your own words. DIA will fill in what it can."
+                    placeholder="Paste your event details, or describe it in your own words. DIA picks up the name, date, time, and location — everything else you'll fill in below."
                     autoFocus
                     className="min-h-[120px] resize-y text-[15px] leading-relaxed"
                   />
