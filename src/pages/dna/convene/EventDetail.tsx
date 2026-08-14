@@ -306,11 +306,23 @@ const EventDetail = ({ eventId: eventIdProp, hosted = false }: EventDetailProps 
           chrome: the same SectionNav, rendered inline instead of the
           fixed mobile header, gated on the identical !isMobile boundary
           DnaMobileHubShell itself uses, so there is no width gap and no
-          double-render. BD508/BD509. */}
-      {!isMobile && hasManagementAccess && (
-        <EventManageDesktopNav items={EVENT_MANAGE_NAV} userRole={userRole} />
+          double-render. BD508/BD509.
+
+          BD556: the panes are now that element's CHILDREN rather than its
+          siblings. The tab row could not stay pinned while it and the content
+          it should pin above were two adjacent boxes — a sticky box may only
+          travel inside its own containing block. EventManageDesktopNav owns
+          the scrolling region that holds both; see its header comment for why
+          the scrollport is created there and not by relaxing the app-wide
+          overflow-x rules. Mobile is untouched: the row rides the fixed
+          header via `tabs` above, and this branch does not run. */}
+      {!isMobile && hasManagementAccess ? (
+        <EventManageDesktopNav items={EVENT_MANAGE_NAV} userRole={userRole}>
+          {mainContent}
+        </EventManageDesktopNav>
+      ) : (
+        mainContent
       )}
-      {mainContent}
     </ConveneShell>
   );
 };
