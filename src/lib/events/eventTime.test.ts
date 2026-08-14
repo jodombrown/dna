@@ -37,10 +37,10 @@ describe('clock variant', () => {
     expect(formatEventDateTime(UNCONFIRMED, 'clock')).toBe('');
   });
 
-  it('appends the zone label when provided', () => {
-    expect(
-      formatEventDateTime({ ...CONFIRMED, timezone: 'Africa/Lagos' }, 'clock')
-    ).toContain('(Africa/Lagos)');
+  it('appends the VIEWER zone label, not the event-stored one — a mismatched zone must not print', () => {
+    const result = formatEventDateTime({ ...CONFIRMED, timezone: 'Africa/Lagos' }, 'clock');
+    expect(result).toMatch(/\([A-Za-z+\-0-9:]+\)$/);
+    expect(result).not.toContain('Africa/Lagos');
   });
 });
 

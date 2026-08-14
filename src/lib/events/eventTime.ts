@@ -126,7 +126,14 @@ export function formatEventDateTime(e: EventTimeInput, variant: EventTimeVariant
       const startClock = format(start, 'h:mm a');
       const range =
         validEnd && !multiDay ? `${startClock} – ${format(validEnd, 'h:mm a')}` : startClock;
-      return e.timezone ? `${range} (${e.timezone})` : range;
+      // Label the viewer's own zone, derived at render time — the event's
+      // stored `timezone` is the organizer's, not whoever is looking at this.
+      const viewerZoneAbbr = new Intl.DateTimeFormat('en-US', {
+        timeZoneName: 'short',
+      })
+        .formatToParts(start)
+        .find((p) => p.type === 'timeZoneName')?.value;
+      return viewerZoneAbbr ? `${range} (${viewerZoneAbbr})` : range;
     }
 
     case 'date': {
