@@ -30,6 +30,8 @@ import { ChevronDown, Loader2, Sparkles } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useDIACompose } from '@/hooks/useDIACompose';
+import { useAutoEmbedDetection } from '@/hooks/useAutoEmbedDetection';
+import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
 import { ComposerMode, ComposerContext, ComposerFormData } from '@/hooks/useUniversalComposer';
 import type { ComposerSuccessData } from '@/hooks/useUniversalComposer';
 import { DEFAULT_MODE, modeConfig } from '@/config/composerModes';
@@ -129,6 +131,53 @@ export const UniversalComposer = ({
     enabled: isOpen && !successData,
   });
 
+  // Link/video preview — reconnects the existing auto-embed infrastructure
+  // (useAutoEmbedDetection, link-preview edge function) to the live composer.
+  const {
+    loading: embedLoading,
+    embedData,
+    handleContentChange: handleEmbedContentChange,
+    clearEmbedData,
+  } = useAutoEmbedDetection();
+  const strippedEmbedUrlRef = useRef<string | null>(null);
+
+  const handleBodyChange = useCallback((value: string) => {
+    setBody(value);
+    handleEmbedContentChange(value);
+  }, [handleEmbedContentChange]);
+
+  // Once a URL resolves to a preview, the raw link is clutter — the card
+  // beneath now represents it. Only after a successful fetch, never for a
+  // still-typing URL that hasn't resolved yet.
+  useEffect(() => {
+    if (embedLoading || !embedData) return;
+    if (strippedEmbedUrlRef.current === embedData.url) return;
+    if (!body.includes(embedData.url)) return;
+    strippedEmbedUrlRef.current = embedData.url;
+    setBody((prev) =>
+      prev
+        .replace(embedData.url, '')
+        .replace(/[ \t]{2,}/g, ' ')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim()
+    );
+  }, [embedLoading, embedData, body]);
+
+  const removeEmbed = useCallback(() => {
+    const url = embedData?.url;
+    clearEmbedData();
+    strippedEmbedUrlRef.current = null;
+    if (url) {
+      setBody((prev) =>
+        prev
+          .replace(url, '')
+          .replace(/[ \t]{2,}/g, ' ')
+          .replace(/\n{3,}/g, '\n\n')
+          .trim()
+      );
+    }
+  }, [embedData, clearEmbedData]);
+
   // DIA acts. It does not ask. (The member can always override via the rail.)
   useEffect(() => {
     if (!proposal) return;
@@ -207,8 +256,18 @@ export const UniversalComposer = ({
     setPreviewOpenMobile(false);
     setDraftSavedAt(null);
     setHasSeeded(false);
+    clearEmbedData();
+    strippedEmbedUrlRef.current = null;
     reset();
-  }, [reset]);
+  }, [reset, clearEmbedData]);
+
+  // A closed composer forgets the seed step, so reopening Host an Event lands
+  // on the free-text entry again rather than a stale structured form.
+  useEffect(() => {
+    if (!isOpen) setHasSeeded(false);
+  }, [isOpen]);
+
+
 
   // A closed composer forgets the seed step, so reopening Host an Event lands
   // on the free-text entry again rather than a stale structured form.
@@ -372,8 +431,8 @@ export const UniversalComposer = ({
   // edit round-trip tests) so there is exactly ONE forward implementation.
   const buildFormData = useCallback(
     (): ComposerFormData | null =>
-      seedToFormData(mode, { body, fields, mediaUrl, galleryUrls, roles }),
-    [mode, body, fields, mediaUrl, galleryUrls, roles]
+      seedToFormData(mode, { body, fields, mediaUrl, galleryUrls, roles, embedData }),
+    [mode, body, fields, mediaUrl, galleryUrls, roles, embedData]
   );
 
   const handleSubmit = useCallback(() => {
@@ -525,7 +584,7 @@ export const UniversalComposer = ({
                   {/* Textarea — always first. Writing is the whole point. */}
                   <Textarea
                     value={body}
-                    onChange={(e) => setBody(e.target.value)}
+                    onChange={(e) => handleBodyChange(e.target.value)}
                     placeholder={modeConfig(mode).placeholder}
                     autoFocus
                     className="min-h-[120px] resize-y text-[15px] leading-relaxed"
@@ -536,6 +595,25 @@ export const UniversalComposer = ({
                     {diaLine && <Sparkles className="h-3 w-3 flex-shrink-0 text-bevel-opportunity" />}
                     {diaLine}
                   </div>
+
+                  {/* Link/video preview — LinkedIn/oEmbed pattern (BD074),
+                      same position StoryCard renders it in the feed. */}
+                  {!embedLoading && embedData && (
+                    <LinkPreviewCard
+                      data={{
+                        url: embedData.url,
+                        title: embedData.title,
+                        description: embedData.description,
+                        provider_name: embedData.provider_name || embedData.site_name,
+                        thumbnail_url: embedData.thumbnail_url || embedData.image,
+                        type: embedData.type,
+                        is_video: embedData.is_video,
+                      }}
+                      onRemove={removeEmbed}
+                      showRemoveButton
+                      size="full"
+                    />
+                  )}
 
                   <ComposerFields
                     mode={mode}

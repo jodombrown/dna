@@ -222,10 +222,15 @@ function buildUniversalFeedItemForStory(
     has_reshared: false,
     pinned_at: null,
     comments_disabled: false,
-    link_url: null,
-    link_title: null,
-    link_description: null,
-    link_metadata: null,
+    link_url: formData.linkUrl || null,
+    link_title: formData.linkTitle || null,
+    link_description: formData.linkDescription || null,
+    link_metadata: formData.linkThumbnail ? {
+      embed_type: 'video',
+      provider_name: formData.linkProviderName,
+      thumbnail_url: formData.linkThumbnail,
+      is_video: true,
+    } : null,
     original_post_id: null,
     original_author_id: null,
     original_author_username: null,
@@ -296,6 +301,13 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
         (u): u is string => typeof u === 'string' && u.length > 0
       );
 
+      const linkMetadata = data.linkUrl ? {
+        embed_type: 'video',
+        provider_name: data.linkProviderName || undefined,
+        thumbnail_url: data.linkThumbnail || undefined,
+        is_video: true,
+      } : null;
+
       const { data: row, error } = await supabase
         .from('posts')
         .insert({
@@ -308,6 +320,10 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
           event_id: context.eventId || null,
           privacy_level: 'public',
           metadata,
+          link_url: data.linkUrl || null,
+          link_title: data.linkTitle || null,
+          link_description: data.linkDescription || null,
+          link_metadata: linkMetadata,
         })
         .select('id, author_id, content, image_url, gallery_urls, created_at')
         .single();
@@ -404,6 +420,11 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
         galleryUrls: data.galleryUrls,
         spaceId: context.spaceId,
         eventId: context.eventId,
+        linkUrl: data.linkUrl,
+        linkTitle: data.linkTitle,
+        linkDescription: data.linkDescription,
+        linkThumbnail: data.linkThumbnail,
+        linkProviderName: data.linkProviderName,
       });
 
       const createdPost = buildUniversalFeedItemForStory(story, { ...data, title }, context);
@@ -511,6 +532,11 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
         linkedEntityId: created.id,
         spaceId: created.id,
         mediaUrl: data.mediaUrl,
+        linkUrl: data.linkUrl,
+        linkTitle: data.linkTitle,
+        linkDescription: data.linkDescription,
+        linkThumbnail: data.linkThumbnail,
+        linkProviderName: data.linkProviderName,
       });
 
       return { success: true, createdPost: null };
@@ -597,6 +623,11 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
           linkedEntityId: row.id,
           spaceId: context.spaceId,
           mediaUrl: data.mediaUrl,
+          linkUrl: data.linkUrl,
+          linkTitle: data.linkTitle,
+          linkDescription: data.linkDescription,
+          linkThumbnail: data.linkThumbnail,
+          linkProviderName: data.linkProviderName,
         });
       } catch {
         // Envelope is best-effort; the substrate write already succeeded.

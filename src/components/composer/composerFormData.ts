@@ -13,6 +13,7 @@
  */
 
 import type { ComposerMode, ComposerFormData } from '@/hooks/useUniversalComposer';
+import type { EmbedMetadata } from '@/hooks/useAutoEmbedDetection';
 
 /**
  * The subset of composer state seedToFormData reads. `ComposerEditSeed` (the
@@ -25,6 +26,8 @@ export interface SeedToFormDataInput {
   mediaUrl?: string;
   galleryUrls: string[];
   roles: string[];
+  /** Resolved link/video preview, if the member's text carried a URL. */
+  embedData?: EmbedMetadata | null;
 }
 
 /**
@@ -36,9 +39,20 @@ export function seedToFormData(
   mode: ComposerMode,
   input: SeedToFormDataInput
 ): ComposerFormData | null {
-  const { body, fields, mediaUrl, galleryUrls, roles } = input;
+  const { body, fields, mediaUrl, galleryUrls, roles, embedData } = input;
   const cleanedGallery = galleryUrls.filter((u) => typeof u === 'string' && u.length > 0);
-  const base: ComposerFormData = { content: body, mediaUrl, galleryUrls: cleanedGallery };
+  const base: ComposerFormData = {
+    content: body,
+    mediaUrl,
+    galleryUrls: cleanedGallery,
+    ...(embedData ? {
+      linkUrl: embedData.url,
+      linkTitle: embedData.title,
+      linkDescription: embedData.description,
+      linkThumbnail: embedData.thumbnail_url || embedData.image,
+      linkProviderName: embedData.provider_name || embedData.site_name,
+    } : {}),
+  };
 
   switch (mode) {
     case 'story':
