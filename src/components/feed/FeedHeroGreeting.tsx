@@ -1,7 +1,7 @@
 /**
  * FeedHeroGreeting — Warm, heritage-infused greeting banner
  * Replaces the plain "Good morning" text with an editorial hero zone
- * Features: Lora typography, Kente pattern, quick-action chips, platform pulse
+ * Features: Lora typography, Kente pattern, platform pulse
  */
 
 import React from 'react';
@@ -10,16 +10,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useNavigate } from 'react-router-dom';
-import { PenSquare, Calendar, BookOpen, Activity } from 'lucide-react';
+import { Activity } from 'lucide-react';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
-import { GatedActionButton } from '@/components/gating/GatedActionButton';
 
-
-interface FeedHeroGreetingProps {
-  onComposerOpen: (mode: string) => void;
-}
-
-export const FeedHeroGreeting: React.FC<FeedHeroGreetingProps> = ({ onComposerOpen }) => {
+export const FeedHeroGreeting: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { data: profile } = useProfile();
@@ -53,12 +47,6 @@ export const FeedHeroGreeting: React.FC<FeedHeroGreetingProps> = ({ onComposerOp
   };
 
   const firstName = profile?.display_name?.split(' ')[0] || profile?.username || '';
-
-  const quickActions = [
-    { label: 'Start a Post', icon: PenSquare, mode: 'post' },
-    { label: 'Create Event', icon: Calendar, mode: 'event' },
-    { label: 'Share a Story', icon: BookOpen, mode: 'story' },
-  ];
 
   const pulseItems: { label: string; to: string }[] = [];
   if (pulse?.upcomingEvents) pulseItems.push({ label: `${pulse.upcomingEvents} upcoming events`, to: '/dna/convene' });
@@ -95,44 +83,6 @@ export const FeedHeroGreeting: React.FC<FeedHeroGreetingProps> = ({ onComposerOp
             ))}
           </p>
         )}
-
-        {/* Quick action chips */}
-        <div className="flex items-center gap-2 mt-4">
-          {quickActions.map((action) => {
-            const chipClass =
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-card border border-border/60 text-foreground hover:border-primary/40 hover:shadow-dna-1 transition-all duration-200';
-            const chipContent = (
-              <>
-                <action.icon className="h-3.5 w-3.5 text-muted-foreground" />
-                {action.label}
-              </>
-            );
-            if (action.mode === 'event') {
-              return (
-                <GatedActionButton
-                  key={action.mode}
-                  feature="event_create"
-                  onAllowed={() => onComposerOpen(action.mode)}
-                  asChildTrigger={
-                    <button type="button" className={chipClass}>
-                      {chipContent}
-                    </button>
-                  }
-                />
-              );
-            }
-            return (
-              <button
-                key={action.mode}
-                onClick={() => onComposerOpen(action.mode)}
-                className={chipClass}
-              >
-                {chipContent}
-              </button>
-            );
-          })}
-        </div>
-
       </div>
     </div>
   );

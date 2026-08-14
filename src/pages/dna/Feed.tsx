@@ -1,14 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { PenSquare, TrendingUp, Search, Clock } from 'lucide-react';
+import { PenSquare, TrendingUp, Clock } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ProfileCompletionNudge } from '@/components/profile/ProfileCompletionNudge';
 import { FeedComposerTeaser } from '@/components/feed/FeedComposerTeaser';
 import { UniversalFeedInfinite } from '@/components/feed/UniversalFeedInfinite';
-import { PersonalizedFeed } from '@/components/feed/PersonalizedFeed';
 import { SearchDialog } from '@/components/feed/SearchDialog';
 import { FeedLensBar, FEED_LENSES } from '@/components/feed/FeedLensBar';
 import { HubTabsRow } from '@/components/shell/HubTabsRow';
@@ -135,6 +134,36 @@ const DnaFeed = () => {
     return null;
   }
 
+  // Shared feed content across mobile/desktop and across lenses — always the
+  // same component so a lens switch updates it in place instead of
+  // unmounting to a different component tree (BD533: that unmount/remount
+  // was the source of the scroll-jump-on-lens-switch bug).
+  const feedContent = (
+    <UniversalFeedInfinite
+      viewerId={user.id}
+      tab={activeTab}
+      rankingMode={activeTab === 'for_you' ? 'top' : rankingMode}
+      emptyMessage={
+        activeTab === 'my_posts'
+          ? "You haven't posted anything yet"
+          : activeTab === 'network'
+          ? "Your connections haven't posted yet"
+          : activeTab === 'for_you'
+          ? 'Your personalized feed is being prepared'
+          : 'No posts to show'
+      }
+      emptyAction={
+        <Button
+          onClick={() => composer.open('story')}
+          className="bg-dna-emerald hover:bg-dna-emerald/90 text-white mt-4"
+        >
+          <PenSquare className="h-4 w-4 mr-2" />
+          Create Your First Post
+        </Button>
+      }
+    />
+  );
+
   // Mobile layout with custom header - hide UnifiedHeader
   if (isMobile) {
     return (
@@ -158,31 +187,7 @@ const DnaFeed = () => {
           <main className="space-y-0">
             {/* Profile completion banner */}
             <MobileProfileCompletionBanner threshold={100} />
-            {activeTab === 'for_you' ? (
-              <PersonalizedFeed />
-            ) : (
-              <UniversalFeedInfinite
-                viewerId={user.id}
-                tab={activeTab}
-                rankingMode={rankingMode}
-                emptyMessage={
-                  activeTab === 'my_posts'
-                    ? "You haven't posted anything yet"
-                    : activeTab === 'network'
-                    ? "Your connections haven't posted yet"
-                    : 'No posts to show'
-                }
-                emptyAction={
-                  <Button
-                    onClick={() => composer.open('story')}
-                    className="bg-dna-emerald hover:bg-dna-emerald/90 text-white mt-4"
-                  >
-                    <PenSquare className="h-4 w-4 mr-2" />
-                    Create Your First Post
-                  </Button>
-                }
-              />
-            )}
+            {feedContent}
           </main>
           <SearchDialog
             isOpen={showSearchDialog}
@@ -213,36 +218,19 @@ const DnaFeed = () => {
           className="overflow-y-auto scrollbar-thin shrink-0"
           style={{ width: '260px' }}
         >
-          <FeedLeftPanel />
+          <FeedLeftPanel onSearchClick={() => setShowSearchDialog(true)} />
         </aside>
 
         {/* Center Column — Main Feed */}
         <FeedColumn ref={mainScrollRef}>
           {/* Hero Greeting Zone */}
           <div className="space-y-3 mb-3">
-            <FeedHeroGreeting
-              onComposerOpen={(mode) => {
-                // Map 'post' greeting pill to the story composer since
-                // ComposerMode doesn't have a 'post' variant.
-                const resolved = mode === 'post' ? 'story' : mode;
-                composer.open(resolved as 'event' | 'story');
-              }}
-            />
+            <FeedHeroGreeting />
 
             <ProfileCompletionNudge variant="banner" threshold={40} />
 
-            {/* Feed Header + Ranking Toggle */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowSearchDialog(true)}
-                  className="h-8 w-8 p-0"
-                >
-                  <Search className="h-4 w-4" />
-                </Button>
-              </div>
+            {/* Ranking Toggle */}
+            <div className="flex items-center justify-end">
               <Tabs value={rankingMode} onValueChange={(v) => setRankingMode(v as RankingMode)} className="w-auto">
                 <TabsList className="h-8 bg-muted/30 rounded-full">
                    <TabsTrigger value="top" className="flex items-center gap-1.5 text-xs px-3 rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
@@ -277,31 +265,7 @@ const DnaFeed = () => {
           </div>
 
           {/* Feed Content */}
-          {activeTab === 'for_you' ? (
-            <PersonalizedFeed />
-          ) : (
-            <UniversalFeedInfinite
-              viewerId={user.id}
-              tab={activeTab}
-              rankingMode={rankingMode}
-              emptyMessage={
-                activeTab === 'my_posts'
-                  ? "You haven't posted anything yet"
-                  : activeTab === 'network'
-                  ? "Your connections haven't posted yet"
-                  : 'No posts to show'
-              }
-              emptyAction={
-                <Button
-                  onClick={() => composer.open('story')}
-                  className="bg-dna-emerald hover:bg-dna-emerald/90 text-white mt-4"
-                >
-                  <PenSquare className="h-4 w-4 mr-2" />
-                  Create Your First Post
-                </Button>
-              }
-            />
-          )}
+          {feedContent}
         </FeedColumn>
 
         {/* Right Sidebar — Community Pulse */}

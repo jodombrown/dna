@@ -352,8 +352,12 @@ const UnifiedHeader = () => {
                 </div>
               )}
               
-              {/* Global Create Button - Opens Universal Composer */}
-              {isAuthenticated && (
+              {/* Global Create Button - Opens Universal Composer.
+                  Hidden on Feed: FeedComposerTeaser is pinned there and is
+                  a duplicate entry point for the same action (BD533). Other
+                  routes (event detail, profile, etc.) keep this as their
+                  header-level composer entry point. */}
+              {isAuthenticated && !location.pathname.startsWith('/dna/feed') && (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
