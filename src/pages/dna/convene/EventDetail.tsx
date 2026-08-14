@@ -193,6 +193,14 @@ const EventDetail = ({ eventId: eventIdProp, hosted = false }: EventDetailProps 
     enabled: !!user && !!event,
   });
 
+  // Whether the viewer has ANY event-management access — the literal
+  // creator (isOrganizer) or any team-assigned role via event_roles
+  // (userRole). isOrganizer alone only covers the creator; a team-
+  // invited Organizer/Promoter/Check-in Staff member has userRole set
+  // but isOrganizer false, and needs this to see any management chrome
+  // at all. BD549.
+  const hasManagementAccess = isOrganizer || userRole !== 'none';
+
   // Never redirect on an unresolved session: `loading` is true during the
   // initial session check, so `user` is null for a signed-in visitor on any
   // cold load or hard refresh. A bare `!user` redirect here would bounce
@@ -290,7 +298,7 @@ const EventDetail = ({ eventId: eventIdProp, hosted = false }: EventDetailProps 
   ) : (
     <ConveneShell
       showBottomNav={false}
-      tabs={isOrganizer ? <SectionNav items={EVENT_MANAGE_NAV} userRole={userRole} /> : null}
+      tabs={hasManagementAccess ? <SectionNav items={EVENT_MANAGE_NAV} userRole={userRole} /> : null}
     >
       {/* DnaMobileHubShell drops the `tabs` prop entirely on tablet/desktop
           ("if (!isMobile) return children" — its own doc comment says
@@ -299,7 +307,7 @@ const EventDetail = ({ eventId: eventIdProp, hosted = false }: EventDetailProps 
           fixed mobile header, gated on the identical !isMobile boundary
           DnaMobileHubShell itself uses, so there is no width gap and no
           double-render. BD508/BD509. */}
-      {!isMobile && isOrganizer && (
+      {!isMobile && hasManagementAccess && (
         <EventManageDesktopNav items={EVENT_MANAGE_NAV} userRole={userRole} />
       )}
       {mainContent}
