@@ -144,7 +144,13 @@ export const UniversalComposer = ({
 
   const handleBodyChange = useCallback((value: string) => {
     setBody(value);
-    handleEmbedContentChange(value);
+    // Once a URL has been confirmed and stripped this session, further
+    // typing must not re-trigger detection — that's what was wiping the
+    // preview on every keystroke after the strip fired. BD530. Detection
+    // resumes once removeEmbed() resets the ref (a genuinely new paste).
+    if (strippedEmbedUrlRef.current === null) {
+      handleEmbedContentChange(value);
+    }
   }, [handleEmbedContentChange]);
 
   // Once a URL resolves to a preview, the raw link is clutter — the card

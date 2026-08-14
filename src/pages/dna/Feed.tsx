@@ -230,17 +230,6 @@ const DnaFeed = () => {
             />
 
             <ProfileCompletionNudge variant="banner" threshold={40} />
-          </div>
-
-          {/* Sticky header: Composer + Tabs */}
-          <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm pb-2 space-y-3">
-            {/* Chat-style Composer Bar */}
-            <FeedComposerTeaser
-              avatarUrl={profile.avatar_url}
-              avatarFallback={profile.display_name?.[0] || profile.username?.[0] || 'U'}
-              onOpenStory={() => composer.open('story')}
-              onOpenEvent={() => composer.open('event')}
-            />
 
             {/* Feed Header + Ranking Toggle */}
             <div className="flex items-center justify-between">
@@ -267,6 +256,17 @@ const DnaFeed = () => {
                 </TabsList>
               </Tabs>
             </div>
+          </div>
+
+          {/* Sticky header: Composer + Lens */}
+          <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm pb-2 space-y-3">
+            {/* Chat-style Composer Bar */}
+            <FeedComposerTeaser
+              avatarUrl={profile.avatar_url}
+              avatarFallback={profile.display_name?.[0] || profile.username?.[0] || 'U'}
+              onOpenStory={() => composer.open('story')}
+              onOpenEvent={() => composer.open('event')}
+            />
 
             {/* Filter lenses — same primitive, lens definition, and route-driven
                 behaviour as mobile. LensBar writes ?lens= itself and collapses
