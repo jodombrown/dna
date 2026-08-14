@@ -26,11 +26,19 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { ChevronDown, Loader2, Sparkles } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useDIACompose } from '@/hooks/useDIACompose';
 import { useAutoEmbedDetection } from '@/hooks/useAutoEmbedDetection';
+import { useToast } from '@/hooks/use-toast';
 import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
 import { ComposerMode, ComposerContext, ComposerFormData } from '@/hooks/useUniversalComposer';
 import type { ComposerSuccessData } from '@/hooks/useUniversalComposer';
@@ -42,9 +50,10 @@ import { ComposerFields } from './ComposerFields';
 import { ComposerCardPreview } from './ComposerCardPreview';
 import { MediaUploadButton } from './fields/MediaUploadButton';
 import { resolveDate, type ResolvedDate } from '@/services/composeResolvers';
+import { saveDraft, scheduleDraft } from '@/services/postDraftsService';
 import { EventForm } from '@/components/events/EventForm';
 import type { EventFormValues } from '@/lib/events/eventFormSchema';
-import { utcToWallTime, browserTimezone } from '@/lib/events/timezone';
+import { utcToWallTime, wallTimeToUtc, browserTimezone } from '@/lib/events/timezone';
 import { cn } from '@/lib/utils';
 
 interface UniversalComposerProps {
@@ -101,6 +110,7 @@ export const UniversalComposer = ({
   const { user } = useAuth();
   const { data: profile } = useProfile();
   const userId = user?.id ?? '';
+  const { toast } = useToast();
 
   const [body, setBody] = useState('');
   const [fields, setFields] = useState<Record<string, string>>({});
@@ -113,6 +123,15 @@ export const UniversalComposer = ({
   const [ownedByAuthor, setOwnedByAuthor] = useState<Set<string>>(new Set());
   const [previewOpenMobile, setPreviewOpenMobile] = useState(false);
   const [draftSavedAt, setDraftSavedAt] = useState<number | null>(null);
+  // Post-action split button (BD534: connect/story only) — save-as-draft and
+  // schedule-for-later against post_drafts. Separate from the seed-step
+  // localStorage autosave above; these are two different drafting concepts.
+  const [postMenuOpen, setPostMenuOpen] = useState(false);
+  const [schedulePanelOpen, setSchedulePanelOpen] = useState(false);
+  const [scheduleDate, setScheduleDate] = useState('');
+  const [scheduleTime, setScheduleTime] = useState('');
+  const [scheduleError, setScheduleError] = useState<string | null>(null);
+  const [isDraftActionBusy, setIsDraftActionBusy] = useState(false);
   /**
    * Host an Event used to skip the free-text step entirely, which left DIA with
    * nothing to read once the member was inside event mode. Now event mode opens
@@ -480,6 +499,103 @@ export const UniversalComposer = ({
     onSubmit(formData);
   }, [buildFormData, onSubmit]);
 
+  // ---- Save as draft / Schedule for later (BD534, connect/story only) ------
+  // Both leave the composer open on failure — same as today's failed-submit
+  // behavior — and both clear the seed-step localStorage draft on success,
+  // exactly like a normal publish, since the post_drafts row now owns it.
+  const isSchedulableMode = mode === 'connect' || mode === 'story';
+  const schedulableMode = isSchedulableMode ? (mode as 'connect' | 'story') : null;
+
+  const finishDraftAction = useCallback(
+    (message: string) => {
+      if (userId) {
+        try {
+          localStorage.removeItem(draftKey(userId));
+        } catch {
+          // best-effort
+        }
+      }
+      clearAll();
+      onClose();
+      toast({ description: message });
+    },
+    [userId, clearAll, onClose, toast]
+  );
+
+  const handleSaveDraft = useCallback(async () => {
+    if (!userId || !schedulableMode) return;
+    const formData = buildFormData();
+    if (!formData) return;
+    setIsDraftActionBusy(true);
+    try {
+      await saveDraft({ authorId: userId, mode: schedulableMode, payload: formData });
+      setPostMenuOpen(false);
+      finishDraftAction('Saved as draft.');
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        description: error instanceof Error ? error.message : 'Failed to save draft.',
+      });
+    } finally {
+      setIsDraftActionBusy(false);
+    }
+  }, [userId, schedulableMode, buildFormData, finishDraftAction, toast]);
+
+  const openSchedulePanel = useCallback(() => {
+    setScheduleError(null);
+    setSchedulePanelOpen(true);
+  }, []);
+
+  const cancelSchedulePanel = useCallback(() => {
+    setSchedulePanelOpen(false);
+    setScheduleError(null);
+  }, []);
+
+  const handleConfirmSchedule = useCallback(async () => {
+    if (!userId || !schedulableMode) return;
+    if (!scheduleDate || !scheduleTime) {
+      setScheduleError('Pick a date and time.');
+      return;
+    }
+    const formData = buildFormData();
+    if (!formData) return;
+
+    const zone = browserTimezone();
+    const scheduledAt = wallTimeToUtc(scheduleDate, scheduleTime, zone);
+    if (scheduledAt.getTime() <= Date.now()) {
+      setScheduleError('Pick a time in the future.');
+      return;
+    }
+
+    setIsDraftActionBusy(true);
+    try {
+      await scheduleDraft({ authorId: userId, mode: schedulableMode, payload: formData, scheduledAt });
+      const when = scheduledAt.toLocaleString(undefined, {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+      });
+      setSchedulePanelOpen(false);
+      setPostMenuOpen(false);
+      finishDraftAction(`Scheduled for ${when}.`);
+    } catch (error) {
+      setScheduleError(error instanceof Error ? error.message : 'Failed to schedule post.');
+    } finally {
+      setIsDraftActionBusy(false);
+    }
+  }, [userId, schedulableMode, scheduleDate, scheduleTime, buildFormData, finishDraftAction]);
+
+  // A closed composer forgets the schedule panel, same as every other
+  // per-open transient in this component.
+  useEffect(() => {
+    if (!isOpen) {
+      setPostMenuOpen(false);
+      setSchedulePanelOpen(false);
+      setScheduleDate('');
+      setScheduleTime('');
+      setScheduleError(null);
+    }
+  }, [isOpen]);
+
   // ---- DIA line ------------------------------------------------------------
   const diaLine = useMemo(() => {
     if (isReading) {
@@ -718,8 +834,99 @@ export const UniversalComposer = ({
             <Button variant="ghost" onClick={onClose} disabled={isSubmitting}>
               Cancel
             </Button>
-            {/* Every verb has one. Labeled for what it does. */}
-            {!isEventMode && (
+            {/* Every verb has one. Labeled for what it does. Connect/story get a
+                split button — schedule/draft only succeed for these two modes,
+                so the affordance doesn't exist anywhere else (BD534). */}
+            {!isEventMode && isSchedulableMode && (
+              <div className="flex">
+                <Button
+                  onClick={handleSubmit}
+                  disabled={!canPost}
+                  className={cn('min-h-[44px] min-w-[110px] rounded-r-none font-semibold', POST_FILL[mode])}
+                >
+                  {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {isSubmitting ? handler.submittingLabel : handler.submitLabel}
+                </Button>
+                <DropdownMenu
+                  open={postMenuOpen}
+                  onOpenChange={(open) => {
+                    setPostMenuOpen(open);
+                    if (!open) cancelSchedulePanel();
+                  }}
+                >
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      disabled={!canPost || isSubmitting || isDraftActionBusy}
+                      className={cn(
+                        'min-h-[44px] rounded-l-none border-l border-white/20 px-2 font-semibold',
+                        POST_FILL[mode]
+                      )}
+                      aria-label="More post options"
+                    >
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-64">
+                    {schedulePanelOpen ? (
+                      <div className="space-y-2 p-2">
+                        <p className="text-xs font-medium text-foreground">Schedule for later</p>
+                        <div className="flex gap-2">
+                          <Input
+                            type="date"
+                            value={scheduleDate}
+                            onChange={(e) => setScheduleDate(e.target.value)}
+                            className="flex-1"
+                          />
+                          <Input
+                            type="time"
+                            value={scheduleTime}
+                            onChange={(e) => setScheduleTime(e.target.value)}
+                            className="w-28"
+                          />
+                        </div>
+                        {scheduleError && (
+                          <p className="text-xs text-destructive">{scheduleError}</p>
+                        )}
+                        <div className="flex justify-end gap-2 pt-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={cancelSchedulePanel}
+                            disabled={isDraftActionBusy}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={handleConfirmSchedule}
+                            disabled={isDraftActionBusy}
+                          >
+                            {isDraftActionBusy && <Loader2 className="mr-2 h-3 w-3 animate-spin" />}
+                            Confirm
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <DropdownMenuItem
+                          disabled={isDraftActionBusy}
+                          onSelect={(e) => {
+                            e.preventDefault();
+                            openSchedulePanel();
+                          }}
+                        >
+                          Schedule for later
+                        </DropdownMenuItem>
+                        <DropdownMenuItem disabled={isDraftActionBusy} onClick={handleSaveDraft}>
+                          Save as draft
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            )}
+            {!isEventMode && !isSchedulableMode && (
               <Button
                 onClick={handleSubmit}
                 disabled={!canPost}
