@@ -1,0 +1,64 @@
+name: Sync main into dna-lovable-staging
+
+# Closes the other half of the sync loop that staging-auto-sync.yml
+# started. That workflow carries Lovable's own commits on
+# dna-lovable-staging forward into main once checks pass. This one carries
+# the reverse: whenever a Claude Code PR (or anything else) merges into
+# main, dna-lovable-staging needs to catch up too, or Lovable keeps
+# building from a codebase that's missing that work. This used to be a
+# manual step (scripts/sync-lovable-staging.sh, run by hand before opening
+# Lovable) -- this workflow is that script, automated.
+#
+# This is a plain fast-forward, not a PR. dna-lovable-staging is Lovable's
+# own working branch, not a protected/reviewed one, and main's tip has
+# already been through whatever review gated its own merge -- there's
+# nothing left to gate here.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    # Safety net in case a push event is ever missed.
+    - cron: '15 * * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fast-forward dna-lovable-staging to main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git fetch origin main dna-lovable-staging
+
+          MAIN_SHA=$(git rev-parse origin/main)
+          STAGING_SHA=$(git rev-parse origin/dna-lovable-staging)
+
+          if [ "$MAIN_SHA" = "$STAGING_SHA" ]; then
+            echo "Already in sync. Nothing to do."
+            exit 0
+          fi
+
+          if git merge-base --is-ancestor "$MAIN_SHA" "$STAGING_SHA"; then
+            echo "dna-lovable-staging already contains main (has its own unmerged commits ahead). Nothing to do."
+            exit 0
+          fi
+
+          if ! git merge-base --is-ancestor "$STAGING_SHA" "$MAIN_SHA"; then
+            echo "::error::main and dna-lovable-staging have diverged -- dna-lovable-staging has commits that are not on main, so this can't be a fast-forward. This needs manual reconciliation (the same case scripts/sync-lovable-staging.sh used to STOP on)."
+            exit 1
+          fi
+
+          echo "Fast-forwarding dna-lovable-staging: $STAGING_SHA -> $MAIN_SHA"
+          git push origin "$MAIN_SHA:refs/heads/dna-lovable-staging"
