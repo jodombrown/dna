@@ -24,6 +24,7 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -111,6 +112,7 @@ export const UniversalComposer = ({
   const { data: profile } = useProfile();
   const userId = user?.id ?? '';
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const [body, setBody] = useState('');
   const [fields, setFields] = useState<Record<string, string>>({});
@@ -358,7 +360,6 @@ export const UniversalComposer = ({
       setScheduleDate(wallTime.date);
       setScheduleTime(wallTime.time);
       setSchedulePanelOpen(true);
-      setPostMenuOpen(true);
     }
   }, [isOpen, context.editDraft]);
 
@@ -557,11 +558,13 @@ export const UniversalComposer = ({
           // best-effort
         }
       }
+      // The sidebar's Drafts & Scheduled badge count reads this same query key.
+      queryClient.invalidateQueries({ queryKey: ['post-drafts', userId] });
       clearAll();
       onClose();
       toast({ description: message });
     },
-    [userId, clearAll, onClose, toast]
+    [userId, clearAll, onClose, toast, queryClient]
   );
 
   const handleSaveDraft = useCallback(async () => {
@@ -589,6 +592,7 @@ export const UniversalComposer = ({
 
   const openSchedulePanel = useCallback(() => {
     setScheduleError(null);
+    setPostMenuOpen(false);
     setSchedulePanelOpen(true);
   }, []);
 
@@ -816,7 +820,7 @@ export const UniversalComposer = ({
                       }}
                       onRemove={removeEmbed}
                       showRemoveButton
-                      size="full"
+                      size="compact"
                     />
                   )}
 
@@ -869,6 +873,52 @@ export const UniversalComposer = ({
           className="sticky bottom-0 z-10 border-t bg-background px-4 pt-3 sm:px-6"
           style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 12px), 12px)' }}
         >
+          {/* Schedule panel: normal in-flow JSX, not Popper/Portal. The composer
+              runs inside a vaul drawer (AppDrawer) whose slide-animation transform
+              breaks Radix Popper's position:fixed math for anything floating
+              nested inside it — this is why it used to render inside
+              DropdownMenuContent and land cut off at the screen edge. */}
+          {!isEventMode && isSchedulableMode && schedulePanelOpen && (
+            <div className="mb-3 space-y-2 rounded-lg border bg-muted/30 p-3">
+              <p className="text-xs font-medium text-foreground">Schedule for later</p>
+              <div className="flex gap-2">
+                <Input
+                  type="date"
+                  value={scheduleDate}
+                  onChange={(e) => setScheduleDate(e.target.value)}
+                  className="flex-1"
+                />
+                <Input
+                  type="time"
+                  value={scheduleTime}
+                  onChange={(e) => setScheduleTime(e.target.value)}
+                  className="w-28"
+                />
+              </div>
+              {scheduleError && (
+                <p className="text-xs text-destructive">{scheduleError}</p>
+              )}
+              <div className="flex justify-end gap-2 pt-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={cancelSchedulePanel}
+                  disabled={isDraftActionBusy}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleConfirmSchedule}
+                  disabled={isDraftActionBusy}
+                >
+                  {isDraftActionBusy && <Loader2 className="mr-2 h-3 w-3 animate-spin" />}
+                  Confirm
+                </Button>
+              </div>
+            </div>
+          )}
+
           <div className="flex items-center gap-2">
             {!isEventMode && (
               <MediaUploadButton
@@ -917,61 +967,18 @@ export const UniversalComposer = ({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-64">
-                    {schedulePanelOpen ? (
-                      <div className="space-y-2 p-2">
-                        <p className="text-xs font-medium text-foreground">Schedule for later</p>
-                        <div className="flex gap-2">
-                          <Input
-                            type="date"
-                            value={scheduleDate}
-                            onChange={(e) => setScheduleDate(e.target.value)}
-                            className="flex-1"
-                          />
-                          <Input
-                            type="time"
-                            value={scheduleTime}
-                            onChange={(e) => setScheduleTime(e.target.value)}
-                            className="w-28"
-                          />
-                        </div>
-                        {scheduleError && (
-                          <p className="text-xs text-destructive">{scheduleError}</p>
-                        )}
-                        <div className="flex justify-end gap-2 pt-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={cancelSchedulePanel}
-                            disabled={isDraftActionBusy}
-                          >
-                            Cancel
-                          </Button>
-                          <Button
-                            size="sm"
-                            onClick={handleConfirmSchedule}
-                            disabled={isDraftActionBusy}
-                          >
-                            {isDraftActionBusy && <Loader2 className="mr-2 h-3 w-3 animate-spin" />}
-                            Confirm
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <DropdownMenuItem
-                          disabled={isDraftActionBusy}
-                          onSelect={(e) => {
-                            e.preventDefault();
-                            openSchedulePanel();
-                          }}
-                        >
-                          Schedule for later
-                        </DropdownMenuItem>
-                        <DropdownMenuItem disabled={isDraftActionBusy} onClick={handleSaveDraft}>
-                          Save as draft
-                        </DropdownMenuItem>
-                      </>
-                    )}
+                    <DropdownMenuItem
+                      disabled={isDraftActionBusy}
+                      onSelect={(e) => {
+                        e.preventDefault();
+                        openSchedulePanel();
+                      }}
+                    >
+                      Schedule for later
+                    </DropdownMenuItem>
+                    <DropdownMenuItem disabled={isDraftActionBusy} onClick={handleSaveDraft}>
+                      Save as draft
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
