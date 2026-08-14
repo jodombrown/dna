@@ -267,7 +267,7 @@ export const ConnectCard: React.FC<ConnectCardProps> = ({
             onClick={() => onIntroduce?.(item.author_id)}
           >
             <ArrowLeftRight className="h-3.5 w-3.5" />
-            Introduce
+            Connect
           </Button>
         </div>
       )}

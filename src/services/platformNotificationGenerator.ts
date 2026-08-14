@@ -215,7 +215,7 @@ export const platformNotifications = {
     await createPlatformNotification({
       userId: recipientId,
       type: 'introduction',
-      title: `${introducerName} introduced you to ${otherPersonName}`,
+      title: `${introducerName} connected you with ${otherPersonName}`,
       message: messagePreview.slice(0, 120),
       linkUrl: `/dna/messages/${conversationId}`,
       entityType: 'introduction',
