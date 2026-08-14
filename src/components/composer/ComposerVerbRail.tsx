@@ -12,7 +12,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Calendar, LucideIcon } from 'lucide-react';
-import { MateMasie, Nkonsonkonson, Sankofa, Mpatapo } from '@/components/icons/adinkra';
+import { Sankofa, Nkonsonkonson, FuntunfunefuDenkyemfunefu, Adinkrahene, Mpatapo } from '@/components/icons/adinkra';
 import { ComposerMode, COMPOSER_MODE_CONFIG, MODE_ORDER } from '@/config/composerModes';
 import { cn } from '@/lib/utils';
 
@@ -24,12 +24,12 @@ interface ComposerVerbRailProps {
   disabledModes?: ComposerMode[];
 }
 
-const CHIP_ICON: Record<ComposerMode, LucideIcon | typeof MateMasie> = {
-  connect: Nkonsonkonson,
-  event: Calendar,
-  space: MateMasie,
-  need: Mpatapo,
-  story: Sankofa,
+const CHIP_ICON: Record<ComposerMode, LucideIcon | typeof Sankofa> = {
+  connect: Sankofa,
+  event: Nkonsonkonson,
+  space: FuntunfunefuDenkyemfunefu,
+  need: Adinkrahene,
+  story: Mpatapo,
 };
 
 /** Literal active-fill classes per verb — legible on every fill. */
