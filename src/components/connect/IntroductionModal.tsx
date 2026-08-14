@@ -155,7 +155,7 @@ export function IntroductionModal({
     } else {
       setModalState('compose');
       toast({
-        title: 'Introduction failed',
+        title: 'Connection failed',
         description: result.error || 'Something went wrong. Please try again.',
         variant: 'destructive',
       });
@@ -208,7 +208,7 @@ export function IntroductionModal({
               /* Success State */
               <div className="flex flex-col items-center px-8 pb-8 text-center">
                 <h2 className="text-2xl font-bold text-foreground mb-1 font-display">
-                  Introduction Sent!
+                  Connection Sent!
                 </h2>
                 <p className="text-sm text-muted-foreground mb-8">
                   {profileA?.full_name} and {profileB?.full_name} are now connected in a group thread.
@@ -259,7 +259,7 @@ export function IntroductionModal({
               <div className="px-8 pb-8">
                 {/* Headline */}
                 <h2 className="text-center text-2xl font-bold text-foreground mb-6 font-display">
-                  Make an Introduction
+                  Make a Connection
                 </h2>
 
                 {/* Profile photos with animated connection arrow */}
@@ -367,7 +367,7 @@ export function IntroductionModal({
                 {/* Message composer */}
                 <div className="mb-5">
                   <label className="text-xs font-medium text-muted-foreground block mb-1.5 text-center">
-                    Your introduction message
+                    Your connection message
                   </label>
                   <textarea
                     value={message}
@@ -384,7 +384,7 @@ export function IntroductionModal({
                         ? 'border-destructive'
                         : 'border-border'
                     )}
-                    placeholder="Write a warm introduction..."
+                    placeholder="Write a warm connection message..."
                     style={{ fieldSizing: 'content' } as React.CSSProperties}
                   />
                   <p className={cn(
@@ -407,7 +407,7 @@ export function IntroductionModal({
                       Sending...
                     </>
                   ) : (
-                    'Send Introduction'
+                    'Send Connection'
                   )}
                 </Button>
               </div>

@@ -24,7 +24,7 @@ const TONE_OPTIONS: ToneOption[] = [
     generate: (a, b, ha, hb) => {
       const aDesc = ha ? ` — ${ha}` : '';
       const bDesc = hb ? ` — ${hb}` : '';
-      return `I'd like to introduce you both. ${a}${aDesc}, meet ${b}${bDesc}. I believe there's strong potential for collaboration between you two.`;
+      return `I'd like to connect you both. ${a}${aDesc}, meet ${b}${bDesc}. I believe there's strong potential for collaboration between you two.`;
     },
   },
   {

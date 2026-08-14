@@ -91,7 +91,7 @@ export function IntroductionMessageCard({
               <div className="flex items-center gap-1.5">
                 <MateMasie className="w-3.5 h-3.5 text-[hsl(var(--dna-gold))]" />
                 <span className="text-sm font-bold text-foreground font-display">
-                  You've been introduced!
+                  You've been connected!
                 </span>
                 <MateMasie className="w-3.5 h-3.5 text-[hsl(var(--dna-gold))]" />
               </div>
@@ -162,7 +162,7 @@ export function IntroductionMessageCard({
                 </AvatarFallback>
               </Avatar>
               <span className="text-[10px] text-muted-foreground">
-                Introduced by{' '}
+                Connected by{' '}
                 <button
                   type="button"
                   onClick={() => goToProfile(introducer.username)}

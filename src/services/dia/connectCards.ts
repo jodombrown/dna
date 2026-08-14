@@ -284,14 +284,14 @@ async function generateMutualBridge(userId: string): Promise<DIACard | null> {
       id: `connect-bridge-${personA}-${personB}`,
       category: 'connect',
       cardType: 'mutual_bridge',
-      headline: `Introduce ${profileA.full_name} and ${profileB.full_name}?`,
-      body: `They're both in your network but don't know each other. A warm introduction could spark collaboration.`,
+      headline: `Connect ${profileA.full_name} and ${profileB.full_name}?`,
+      body: `They're both in your network but don't know each other. A warm connection could spark collaboration.`,
       accentColor: ACCENT,
       icon: 'GitBranch',
       priority: 50,
       actions: [
         {
-          label: 'Make Introduction',
+          label: 'Make a Connection',
           type: 'custom' as const,
           payload: {
             action: 'open_introduction',

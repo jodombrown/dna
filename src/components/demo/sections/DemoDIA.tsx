@@ -20,7 +20,7 @@ const DIA_FEATURES = [
 const CHAT_MESSAGES = [
   {
     from: 'dia',
-    message: "Based on your mentorship interests and the event you attended last week, I found 3 educators in Accra who are building similar programs. Would you like me to introduce you?",
+    message: "Based on your mentorship interests and the event you attended last week, I found 3 educators in Accra who are building similar programs. Would you like me to connect you?",
   },
   {
     from: 'user',

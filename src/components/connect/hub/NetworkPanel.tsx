@@ -395,7 +395,7 @@ export function NetworkPanel({
         {/* My Introductions - Collapsible */}
         <Collapsible defaultOpen={!!myIntroductions?.length}>
           <CollapsibleTrigger className="flex items-center justify-between w-full p-3 rounded-lg hover:bg-muted/50 transition-colors group">
-            <span className="text-sm font-medium text-foreground">My Introductions</span>
+            <span className="text-sm font-medium text-foreground">Connections Brokered</span>
             <div className="flex items-center gap-1.5">
               {myIntroductions && myIntroductions.length > 0 && (
                 <Badge variant="secondary" className="h-5 px-1.5 text-xs">
@@ -411,7 +411,7 @@ export function NetworkPanel({
                 <div className="p-3 text-center">
                   <GitBranch className="h-5 w-5 text-muted-foreground mx-auto mb-1.5" />
                   <p className="text-xs text-muted-foreground">
-                    No introductions yet. When DIA suggests a bridge, click "Make Introduction" to get started.
+                    No connections brokered yet. When DIA suggests a bridge, click "Make a Connection" to get started.
                   </p>
                 </div>
               ) : (

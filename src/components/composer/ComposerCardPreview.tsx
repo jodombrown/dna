@@ -36,7 +36,7 @@ const SUBTITLE: Record<ComposerMode, (f: Record<string, string>) => string> = {
 };
 
 const ACTIONS: Record<ComposerMode, (f: Record<string, string>) => [string, string]> = {
-  connect: () => ['I can help', 'Introduce'],
+  connect: () => ['I can help', 'Connect'],
   event: () => ['RSVP', 'Details'],
   space: () => ['Request to join', 'View Space'],
   need: (f) => [f.direction === 'need' ? 'I can fill this' : 'Request this', 'Refer'],
