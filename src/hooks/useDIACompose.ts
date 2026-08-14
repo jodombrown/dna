@@ -22,8 +22,12 @@ import type { ComposerMode } from '@/config/composerModes';
 
 /** DIA does not interrupt before the member has said enough to be read. */
 const MIN_CHARS = 18;
-/** Long enough to feel like reading, short enough to feel live. */
-const DEBOUNCE_MS = 550;
+/** A paste lands whole — read it at the original, fast cadence. */
+const DEBOUNCE_MS_PASTE = 550;
+/** Live typing needs a real pause to read as a finished thought — matches
+ *  eventSeedTimerRef's own settle window so DIA and the seed handoff agree
+ *  on what "done typing" means. */
+const DEBOUNCE_MS_TYPE = 1500;
 
 /**
  * The edge function speaks in C verbs; the composer speaks in modes.
@@ -46,6 +50,11 @@ export interface DIAProposal {
 
 interface UseDIAComposeArgs {
   text: string;
+  /** True only for the change immediately following a paste event — set by
+   *  the caller's own onPaste handler, not derived from length. Determines
+   *  which debounce window this change gets; it is read fresh per change,
+   *  never sticky across renders. */
+  wasPaste?: boolean;
   /** True once the member has picked a verb by hand — DIA defers to them. */
   userPickedVerb: boolean;
   /** Fields the member has edited. DIA will never touch these again. */
@@ -66,6 +75,7 @@ interface UseDIAComposeResult {
 
 export function useDIACompose({
   text,
+  wasPaste = false,
   userPickedVerb,
   ownedByAuthor,
   enabled = true,
@@ -156,12 +166,12 @@ export function useDIACompose({
         setProposal(null);
         setIsReading(false);
       }
-    }, DEBOUNCE_MS);
+    }, wasPaste ? DEBOUNCE_MS_PASTE : DEBOUNCE_MS_TYPE);
 
     return () => clearTimeout(timer.current);
     // `ownedByAuthor` is read at fire time (ownedRef); it must not re-trigger the call.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [text, enabled]);
+  }, [text, wasPaste, enabled]);
 
   // RULE 2 — the member has spoken. DIA stops proposing verbs. Fields still
   // flow (into unowned inputs); only the verb goes quiet.

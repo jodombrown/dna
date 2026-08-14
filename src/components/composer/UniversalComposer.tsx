@@ -56,6 +56,8 @@ import { EventForm } from '@/components/events/EventForm';
 import type { EventFormValues } from '@/lib/events/eventFormSchema';
 import { utcToWallTime, wallTimeToUtc, browserTimezone } from '@/lib/events/timezone';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
+import { placeToLocationPatch, type PlaceSearchResponse } from '@/lib/events/placeSearch';
 
 interface UniversalComposerProps {
   isOpen: boolean;
@@ -141,17 +143,42 @@ export const UniversalComposer = ({
    * read it (or the member opts out) and the structured form takes over.
    */
   const [hasSeeded, setHasSeeded] = useState(false);
+  // Resolved place fields for the seeded event's location, filled in behind
+  // the scenes once DIA's free-text "where" geocodes to a single confident
+  // match. null until (if ever) that resolves — the seed-step UI never waits
+  // on it. See eventSeedTimerRef below.
+  const [geocodedLocation, setGeocodedLocation] = useState<Partial<EventFormValues> | null>(
+    null
+  );
 
   const hydratedRef = useRef(false);
   const draftTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const eventSeedTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  // True only for the keystroke immediately following a paste — set by the
+  // Textareas' own onPaste, consumed and cleared on the very next body
+  // change so normal typing right after a paste falls back to the patient
+  // debounce window.
+  const pasteRef = useRef(false);
+  const [wasPaste, setWasPaste] = useState(false);
 
   const { proposal, isReading, diaFilled, releaseField, reset } = useDIACompose({
     text: body,
+    wasPaste,
     userPickedVerb,
     ownedByAuthor,
     enabled: isOpen && !successData,
   });
+
+  const handleTextareaPaste = useCallback(() => {
+    pasteRef.current = true;
+  }, []);
+
+  /** setBody + the wasPaste bookkeeping, shared by both Textareas. */
+  const setBodyTracked = useCallback((value: string) => {
+    setBody(value);
+    setWasPaste(pasteRef.current);
+    pasteRef.current = false;
+  }, []);
 
   // Link/video preview — reconnects the existing auto-embed infrastructure
   // (useAutoEmbedDetection, link-preview edge function) to the live composer.
@@ -164,7 +191,7 @@ export const UniversalComposer = ({
   const strippedEmbedUrlRef = useRef<string | null>(null);
 
   const handleBodyChange = useCallback((value: string) => {
-    setBody(value);
+    setBodyTracked(value);
     // Once a URL has been confirmed and stripped this session, further
     // typing must not re-trigger detection — that's what was wiping the
     // preview on every keystroke after the strip fired. BD530. Detection
@@ -172,7 +199,7 @@ export const UniversalComposer = ({
     if (strippedEmbedUrlRef.current === null) {
       handleEmbedContentChange(value);
     }
-  }, [handleEmbedContentChange]);
+  }, [handleEmbedContentChange, setBodyTracked]);
 
   // Once a URL resolves to a preview, the raw link is clutter — the card
   // beneath now represents it. Only after a successful fetch, never for a
@@ -222,7 +249,31 @@ export const UniversalComposer = ({
     // text box away. Wait for a real pause after the read lands. BD525.
     if (mode === 'event' || proposal.verb === 'event') {
       clearTimeout(eventSeedTimerRef.current);
-      eventSeedTimerRef.current = setTimeout(() => setHasSeeded(true), 1500);
+      eventSeedTimerRef.current = setTimeout(async () => {
+        // DIA's "where" is free text ("Jonathan Club Los Angeles"). Try to
+        // resolve it to a real place — same search PlaceSearchField itself
+        // calls — before handing off to the structured form, so a confident
+        // match seeds a resolved place card instead of opening manual entry.
+        // Only a single, unambiguous result counts as confident; anything
+        // else (none, or several) falls back to today's location_name-only
+        // behavior exactly, which is correct and intentional.
+        const where = proposal.fields.where?.trim();
+        if (where) {
+          try {
+            const { data, error } = await supabase.functions.invoke('place-search', {
+              body: { query: where },
+            });
+            const response = (data ?? {}) as PlaceSearchResponse;
+            const places = !error && Array.isArray(response.places) ? response.places : [];
+            if (places.length === 1) {
+              setGeocodedLocation(placeToLocationPatch(places[0]));
+            }
+          } catch {
+            // Silence — falls back to location_name only, same as today.
+          }
+        }
+        setHasSeeded(true);
+      }, 1500);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [proposal]);
@@ -295,6 +346,9 @@ export const UniversalComposer = ({
     setPreviewOpenMobile(false);
     setDraftSavedAt(null);
     setHasSeeded(false);
+    setGeocodedLocation(null);
+    pasteRef.current = false;
+    setWasPaste(false);
     clearEmbedData();
     strippedEmbedUrlRef.current = null;
     clearTimeout(eventSeedTimerRef.current);
@@ -306,6 +360,7 @@ export const UniversalComposer = ({
   useEffect(() => {
     if (!isOpen) {
       setHasSeeded(false);
+      setGeocodedLocation(null);
       clearTimeout(eventSeedTimerRef.current);
     }
   }, [isOpen]);
@@ -501,17 +556,28 @@ export const UniversalComposer = ({
       seed.endTime = end.time;
     }
     if (fields.where?.trim()) {
-      // DIA's "where" is unresolved free text ("Los Angeles, California").
-      // location_city is published verbatim to strangers via get_public_event,
-      // so only the place picker may write it — seed the venue name instead,
-      // where a free-text guess is survivable.
-      seed.location_name = fields.where.trim();
+      if (geocodedLocation) {
+        // A confident single-place match resolved for "where" — seed the
+        // FULL place (place_id, coordinates, structured address, city), the
+        // same as if the member had picked it from PlaceSearchField.
+        Object.assign(seed, geocodedLocation);
+      } else {
+        // No confident match (none found, or ambiguous). DIA's "where" is
+        // unresolved free text ("Los Angeles, California"). location_city is
+        // published verbatim to strangers via get_public_event, so only the
+        // place picker may write it — seed the venue name instead, where a
+        // free-text guess is survivable. PlaceSearchField opens manual entry
+        // for it, exactly as today.
+        seed.location_name = fields.where.trim();
+      }
     }
     // Skipping the seed step with nothing written is a pure opt-out: an empty
     // form, exactly as before.
     return Object.keys(seed).length ? seed : null;
     // Snapshot at the moment the seed step ends (DIA read the text, or the
-    // member skipped it) — the form owns its state from there.
+    // member skipped it) — the form owns its state from there. geocodedLocation
+    // is set in the same batch as the hasSeeded flip that reads it, so this
+    // still only ever snapshots once.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasSeeded]);
 
@@ -759,7 +825,8 @@ export const UniversalComposer = ({
                 <>
                   <Textarea
                     value={body}
-                    onChange={(e) => setBody(e.target.value)}
+                    onChange={(e) => setBodyTracked(e.target.value)}
+                    onPaste={handleTextareaPaste}
                     placeholder="Paste your event details, or describe it in your own words. DIA picks up the name, date, time, and location — everything else you'll fill in below."
                     autoFocus
                     className="min-h-[120px] resize-y text-[15px] leading-relaxed"
@@ -772,7 +839,13 @@ export const UniversalComposer = ({
 
                   <button
                     type="button"
-                    onClick={() => setHasSeeded(true)}
+                    onClick={() => {
+                      // Skipping opts out of DIA's read entirely — never wait
+                      // on a pending geocode lookup for a "where" that was
+                      // read moments ago.
+                      clearTimeout(eventSeedTimerRef.current);
+                      setHasSeeded(true);
+                    }}
                     className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground"
                   >
                     Skip, I'll fill it in myself
@@ -794,6 +867,7 @@ export const UniversalComposer = ({
                   <Textarea
                     value={body}
                     onChange={(e) => handleBodyChange(e.target.value)}
+                    onPaste={handleTextareaPaste}
                     placeholder={modeConfig(mode).placeholder}
                     autoFocus
                     className="min-h-[120px] resize-y text-[15px] leading-relaxed"
