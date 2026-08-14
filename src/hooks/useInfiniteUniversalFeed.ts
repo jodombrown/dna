@@ -4,7 +4,7 @@
  * Cursor-based infinite loading for the Universal Feed.
  */
 
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, keepPreviousData } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { UniversalFeedItem, FeedFilters } from '@/types/feed';
 import { logHighError } from '@/lib/errorLogger';
@@ -86,6 +86,12 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
     initialPageParam: 0 as number,
     enabled: !!filters.viewerId,
     staleTime: STALE_TIMES.feed,
+    // Lens switches (tab/rankingMode) change the queryKey. Keep rendering the
+    // previous lens's pages while the new one fetches so the feed column's
+    // height never collapses to the loading skeleton and back — that
+    // collapse-then-grow is what reads as a scroll jump on an
+    // independently-scrolling column (BD533).
+    placeholderData: keepPreviousData,
   });
 
   // PERFORMANCE: Removed aggressive realtime subscriptions that were causing
