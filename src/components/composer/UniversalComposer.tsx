@@ -50,7 +50,7 @@ import { ComposerFields } from './ComposerFields';
 import { ComposerCardPreview } from './ComposerCardPreview';
 import { MediaUploadButton } from './fields/MediaUploadButton';
 import { resolveDate, type ResolvedDate } from '@/services/composeResolvers';
-import { saveDraft, scheduleDraft } from '@/services/postDraftsService';
+import { saveDraft, scheduleDraft, updateDraft, updateSchedule } from '@/services/postDraftsService';
 import { EventForm } from '@/components/events/EventForm';
 import type { EventFormValues } from '@/lib/events/eventFormSchema';
 import { utcToWallTime, wallTimeToUtc, browserTimezone } from '@/lib/events/timezone';
@@ -321,9 +321,51 @@ export const UniversalComposer = ({
 
 
 
+  // ---- Edit mode: resuming a post_drafts row (BD534 step 5) ----------------
+  // Hydrates body/fields/mediaUrl/galleryUrls from editDraft.payload — the
+  // SAME four state setters the localStorage draft-restore effect below
+  // uses, just fed from a different source. userPickedVerb is set so DIA
+  // never tries to reclassify content the member already committed to a
+  // mode, and every hydrated field is marked owned so a stray DIA read can't
+  // overwrite it either.
+  const editDraftHydratedRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!isOpen) {
+      editDraftHydratedRef.current = null;
+      return;
+    }
+    const editDraft = context.editDraft;
+    if (!editDraft || editDraftHydratedRef.current === editDraft.id) return;
+    editDraftHydratedRef.current = editDraft.id;
+
+    const payload = editDraft.payload as Partial<ComposerFormData>;
+    setBody(payload.content ?? '');
+    setMediaUrl(payload.mediaUrl);
+    setGalleryUrls(payload.galleryUrls ?? []);
+
+    const draftFields: Record<string, string> =
+      editDraft.mode === 'story'
+        ? { title: payload.title ?? '' }
+        : { intent: payload.intent ?? '', where: payload.where ?? '' };
+    setFields(draftFields);
+    setOwnedByAuthor(new Set(Object.keys(draftFields)));
+    setUserPickedVerb(true);
+    hydratedRef.current = true; // never let the localStorage seed-draft clobber this
+
+    if (editDraft.status === 'scheduled' && editDraft.scheduledAt) {
+      const zone = browserTimezone();
+      const wallTime = utcToWallTime(editDraft.scheduledAt, zone);
+      setScheduleDate(wallTime.date);
+      setScheduleTime(wallTime.time);
+      setSchedulePanelOpen(true);
+      setPostMenuOpen(true);
+    }
+  }, [isOpen, context.editDraft]);
+
   // ---- Draft: refresh-safe, quiet, one per member -------------------------
   useEffect(() => {
     if (!isOpen || !userId || successData) return;
+    if (context.editDraft) return; // edit-mode hydration owns these fields instead
     if (hydratedRef.current) return;
     hydratedRef.current = true;
     try {
@@ -528,7 +570,11 @@ export const UniversalComposer = ({
     if (!formData) return;
     setIsDraftActionBusy(true);
     try {
-      await saveDraft({ authorId: userId, mode: schedulableMode, payload: formData });
+      if (context.editDraft) {
+        await updateDraft({ id: context.editDraft.id, mode: schedulableMode, payload: formData });
+      } else {
+        await saveDraft({ authorId: userId, mode: schedulableMode, payload: formData });
+      }
       setPostMenuOpen(false);
       finishDraftAction('Saved as draft.');
     } catch (error) {
@@ -539,7 +585,7 @@ export const UniversalComposer = ({
     } finally {
       setIsDraftActionBusy(false);
     }
-  }, [userId, schedulableMode, buildFormData, finishDraftAction, toast]);
+  }, [userId, schedulableMode, buildFormData, finishDraftAction, toast, context.editDraft]);
 
   const openSchedulePanel = useCallback(() => {
     setScheduleError(null);
@@ -569,7 +615,11 @@ export const UniversalComposer = ({
 
     setIsDraftActionBusy(true);
     try {
-      await scheduleDraft({ authorId: userId, mode: schedulableMode, payload: formData, scheduledAt });
+      if (context.editDraft) {
+        await updateSchedule({ id: context.editDraft.id, mode: schedulableMode, payload: formData, scheduledAt });
+      } else {
+        await scheduleDraft({ authorId: userId, mode: schedulableMode, payload: formData, scheduledAt });
+      }
       const when = scheduledAt.toLocaleString(undefined, {
         dateStyle: 'medium',
         timeStyle: 'short',
@@ -582,7 +632,7 @@ export const UniversalComposer = ({
     } finally {
       setIsDraftActionBusy(false);
     }
-  }, [userId, schedulableMode, scheduleDate, scheduleTime, buildFormData, finishDraftAction]);
+  }, [userId, schedulableMode, scheduleDate, scheduleTime, buildFormData, finishDraftAction, context.editDraft]);
 
   // A closed composer forgets the schedule panel, same as every other
   // per-open transient in this component.

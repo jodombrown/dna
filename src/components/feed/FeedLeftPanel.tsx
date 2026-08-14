@@ -11,7 +11,7 @@ import { useProfile } from '@/hooks/useProfile';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Bookmark, ChevronRight, Users, Calendar, Layers, HandHeart, BookOpen, MapPin, Search } from 'lucide-react';
+import { Bookmark, ChevronRight, Users, Calendar, Layers, HandHeart, BookOpen, MapPin, Search, FileClock } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { FeedUpcomingEvents } from '@/components/feed/FeedUpcomingEvents';
 import { FeedActiveSpaces } from '@/components/feed/FeedActiveSpaces';
@@ -145,6 +145,16 @@ export const FeedLeftPanel: React.FC<FeedLeftPanelProps> = ({ onSearchClick }) =
           <Bookmark className="h-3.5 w-3.5 text-dna-gold" />
           <span>Saved Items</span>
           <ChevronRight className="h-3 w-3 ml-auto opacity-0 group-hover/saved:opacity-100 transition-opacity" />
+        </button>
+
+        {/* Drafts & Scheduled */}
+        <button
+          className="w-full flex items-center gap-2 mt-2 pt-2.5 border-t border-border/50 text-xs text-muted-foreground hover:text-foreground transition-colors group/drafts"
+          onClick={() => navigate('/dna/feed/drafts')}
+        >
+          <FileClock className="h-3.5 w-3.5 text-dna-emerald" />
+          <span>Drafts &amp; Scheduled</span>
+          <ChevronRight className="h-3 w-3 ml-auto opacity-0 group-hover/drafts:opacity-100 transition-opacity" />
         </button>
 
         {/* Search posts, authors, hashtags */}
