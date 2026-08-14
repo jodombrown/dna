@@ -7275,6 +7275,74 @@ export type Database = {
           },
         ]
       }
+      post_drafts: {
+        Row: {
+          author_id: string
+          created_at: string
+          failure_reason: string | null
+          id: string
+          mode: string
+          payload: Json
+          published_post_id: string | null
+          scheduled_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          created_at?: string
+          failure_reason?: string | null
+          id?: string
+          mode: string
+          payload: Json
+          published_post_id?: string | null
+          scheduled_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          created_at?: string
+          failure_reason?: string | null
+          id?: string
+          mode?: string
+          payload?: Json
+          published_post_id?: string | null
+          scheduled_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_drafts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "post_drafts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_drafts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_drafts_published_post_id_fkey"
+            columns: ["published_post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       post_hashtags: {
         Row: {
           created_at: string
