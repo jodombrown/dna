@@ -570,6 +570,119 @@ export type Database = {
           },
         ]
       }
+      connection_introductions: {
+        Row: {
+          conversation_id: string | null
+          created_at: string
+          id: string
+          introducer_id: string
+          message: string
+          party_a_id: string
+          party_a_status: string
+          party_b_id: string
+          party_b_status: string
+          updated_at: string
+          why_connect: Json | null
+        }
+        Insert: {
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          introducer_id: string
+          message: string
+          party_a_id: string
+          party_a_status?: string
+          party_b_id: string
+          party_b_status?: string
+          updated_at?: string
+          why_connect?: Json | null
+        }
+        Update: {
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          introducer_id?: string
+          message?: string
+          party_a_id?: string
+          party_a_status?: string
+          party_b_id?: string
+          party_b_status?: string
+          updated_at?: string
+          why_connect?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connection_introductions_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations_new"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connection_introductions_introducer_id_fkey"
+            columns: ["introducer_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "connection_introductions_introducer_id_fkey"
+            columns: ["introducer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connection_introductions_introducer_id_fkey"
+            columns: ["introducer_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connection_introductions_party_a_id_fkey"
+            columns: ["party_a_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "connection_introductions_party_a_id_fkey"
+            columns: ["party_a_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connection_introductions_party_a_id_fkey"
+            columns: ["party_a_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connection_introductions_party_b_id_fkey"
+            columns: ["party_b_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "connection_introductions_party_b_id_fkey"
+            columns: ["party_b_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connection_introductions_party_b_id_fkey"
+            columns: ["party_b_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       connections: {
         Row: {
           created_at: string
@@ -14277,6 +14390,15 @@ export type Database = {
         Args: { p_event: string; p_token: string }
         Returns: Json
       }
+      rpc_create_connection_introduction: {
+        Args: {
+          p_message: string
+          p_party_a_id: string
+          p_party_b_id: string
+          p_why_connect?: Json
+        }
+        Returns: string
+      }
       rpc_create_post:
         | {
             Args: {
@@ -14518,6 +14640,10 @@ export type Database = {
         }[]
       }
       rpc_request_join_space: { Args: { p_space: string }; Returns: undefined }
+      rpc_respond_connection_introduction: {
+        Args: { p_introduction_id: string; p_response: string }
+        Returns: Json
+      }
       rpc_run_cron_overdue_task_reminders: { Args: never; Returns: undefined }
       rpc_save_opportunity: { Args: { p_op: string }; Returns: undefined }
       rpc_seed_verified_contributor: { Args: never; Returns: undefined }
