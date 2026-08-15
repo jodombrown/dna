@@ -65,7 +65,33 @@ const BaseLayoutChrome: React.FC<BaseLayoutProps> = ({ children }) => {
   // member card on /dna/connect/discover.
   const isFeedRoute = location.pathname.includes('/dna/feed');
   const isConnectRoute = location.pathname.startsWith('/dna/connect');
-  const isConveneRoute = location.pathname === '/dna/convene';
+  // BD558: the Convene entry matched the hub and ONLY the hub (`===`), so every
+  // /dna/convene/events/* surface — the event detail, its six nested management
+  // panes, and the edit page — fell through to the `block` branch below and
+  // reserved --total-header-height on mobile for chrome that is not there.
+  // UnifiedHeader already stands down across the whole /dna/convene subtree on
+  // mobile (it matches with `includes`), and PulseBar forces --pulse-bar-height
+  // to 0 there, so what the spacer reserved was --unified-header-height alone:
+  // 56px plus the notch inset, ~103px on a device with a safe-area top.
+  //
+  // That is the SECOND reservation. Those routes render ConveneShell →
+  // DnaMobileHubShell, which already offsets its content by the header's
+  // MEASURED height (ResizeObserver, the Width Doctrine pattern) — tabs row
+  // included, whether tabs are present or absent. Stacking a stale token-sized
+  // band on top of a live measurement is the empty gap between the pinned tab
+  // row and "Back to Events". Identical in shape to the Connect phantom band
+  // described above, and it predates BD556/BD557: this line has matched the hub
+  // exactly since it was written, and BD556 never touched mobile.
+  //
+  // Scoped to the /events/ subtree, not the whole /dna/convene subtree, on
+  // purpose. /dna/convene/mine is already handled — it renders AppShell, which
+  // CLAIMS chrome ownership, so this whole block stands down there by claim
+  // rather than by path (BD110). /dna/convene/groups and /analytics render no
+  // mobile shell at all, so whether their band is also phantom is a separate
+  // question with a different answer, and not this fix's to settle.
+  const isConveneHubRoute = location.pathname === '/dna/convene';
+  const isConveneEventRoute = location.pathname.startsWith('/dna/convene/events/');
+  const isConveneRoute = isConveneHubRoute || isConveneEventRoute;
   const isContributeHubRoute = location.pathname === '/dna/contribute';
   const isConveyHubRoute = location.pathname === '/dna/convey';
   const isCollaborateHubRoute = location.pathname === '/dna/collaborate';
@@ -116,6 +142,7 @@ const BaseLayoutChrome: React.FC<BaseLayoutProps> = ({ children }) => {
         {!claimed && (
           <div
             aria-hidden
+            data-chrome-spacer
             style={{
               // Always reserve space for header + pulse bar to prevent columns
               // rendering behind the PulseBar before the measurement hook runs.
