@@ -12,7 +12,7 @@ import {
 import { CheckCircle2, Lock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { CONTINENT_COUNTRIES } from '@/data/continentCountries';
+import { COUNTRIES } from '@/data/countries';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -31,7 +31,7 @@ export const BetaAccessForm: React.FC = () => {
   const [isDone, setIsDone] = useState(false);
 
   const countries = useMemo(
-    () => Array.from(new Set(Object.values(CONTINENT_COUNTRIES).flat())).sort((a, b) => a.localeCompare(b)),
+    () => [...COUNTRIES].sort((a, b) => a.name.localeCompare(b.name)),
     []
   );
 
@@ -183,8 +183,8 @@ export const BetaAccessForm: React.FC = () => {
               <SelectValue placeholder="Where are you based?" />
             </SelectTrigger>
             <SelectContent>
-              {countries.map((name) => (
-                <SelectItem key={name} value={name}>
+              {countries.map(({ code, name }) => (
+                <SelectItem key={code} value={name}>
                   {name}
                 </SelectItem>
               ))}
