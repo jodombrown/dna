@@ -8,7 +8,7 @@ interface AuthModeToggleProps {
 }
 
 const TABS: Array<{ value: AuthMode; label: string }> = [
-  { value: 'signup', label: 'Sign up' },
+  { value: 'signup', label: 'Request access' },
   { value: 'signin', label: 'Sign in' },
 ];
 

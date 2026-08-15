@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { getErrorMessage } from '@/lib/errorLogger';
-import { SignUpApprovalGate } from '@/components/auth/SignUpApprovalGate';
+import { BetaAccessForm } from '@/components/auth/BetaAccessForm';
 import { AuthModeToggle } from '@/components/auth/AuthModeToggle';
 
 type AuthMode = 'signup' | 'signin';
@@ -138,7 +138,7 @@ const Auth = () => {
     }
   };
 
-  // Sign up lives in SignUpApprovalGate: open to any visitor, no approval step.
+  // Signup is closed for the beta: the sign up tab is a beta access request form.
 
 
   // Features for desktop hero
@@ -161,14 +161,14 @@ const Auth = () => {
   ];
 
   const modeSubtitle =
-    authMode === 'signup' ? 'Create your account' : 'Sign in to your account';
+    authMode === 'signup' ? 'Request beta access' : 'Sign in to your account';
 
 
   // Auth content switches between sign up and sign in
   const authContent = (
     <div className="w-full space-y-4">
       {authMode === 'signup' ? (
-        <SignUpApprovalGate />
+        <BetaAccessForm />
 
 
       ) : (
