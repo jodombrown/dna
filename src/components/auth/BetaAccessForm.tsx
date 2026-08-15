@@ -1,34 +1,50 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { CheckCircle2, CalendarClock } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { CheckCircle2, Lock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-
+import { COUNTRIES } from '@/data/countries';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
- * Beta access request. Writes to `beta_waitlist`, which the Admin > Waitlist
- * tracker already reads, so requests are visible the moment they land.
+ * Beta access request. Signup is closed: this is the only way in until the
+ * beta opens. Writes to `beta_waitlist`, which Admin > Waitlist already
+ * reads, so requests are visible the moment they land.
  */
 export const BetaAccessForm: React.FC = () => {
   const { toast } = useToast();
-  const [fullName, setFullName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+  const [country, setCountry] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDone, setIsDone] = useState(false);
+
+  const countries = useMemo(
+    () => [...COUNTRIES].sort((a, b) => a.name.localeCompare(b.name)),
+    []
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!fullName.trim() || fullName.trim().length > 160) {
+    const first = firstName.trim();
+    const last = lastName.trim();
+
+    if (!first || first.length > 80 || !last || last.length > 80) {
       toast({
         title: 'Name needed',
-        description: 'Enter your name, up to 160 characters.',
+        description: 'Enter your first and last name, up to 80 characters each.',
         variant: 'destructive',
       });
       return;
@@ -41,10 +57,10 @@ export const BetaAccessForm: React.FC = () => {
       });
       return;
     }
-    if (message.length > 2000) {
+    if (!country) {
       toast({
-        title: 'Message too long',
-        description: 'Keep it under 2000 characters.',
+        title: 'Country needed',
+        description: 'Select the country you are based in.',
         variant: 'destructive',
       });
       return;
@@ -54,13 +70,18 @@ export const BetaAccessForm: React.FC = () => {
     try {
       const { error } = await supabase.from('beta_waitlist').insert({
         email: email.trim().toLowerCase(),
-        full_name: fullName.trim(),
-        message: message.trim() || null,
+        full_name: `${first} ${last}`,
+        country,
         status: 'pending',
       });
 
       if (error) {
-        if (error.code === '23505' || error.code === '23503' || error.code === '23514' || error.message.includes('duplicate')) {
+        if (
+          error.code === '23505' ||
+          error.code === '23503' ||
+          error.code === '23514' ||
+          error.message.includes('duplicate')
+        ) {
           setIsDone(true);
           toast({
             title: 'You are already on the list',
@@ -92,10 +113,9 @@ export const BetaAccessForm: React.FC = () => {
     return (
       <div className="text-center space-y-3 py-6">
         <CheckCircle2 className="w-10 h-10 mx-auto text-dna-emerald" />
-        <h2 className="text-h3">You are on the list</h2>
+        <h2 className="text-h3">You are on the beta list</h2>
         <p className="text-body text-muted-foreground">
-          We have your request. Signup is open now, so you can also create your account from the
-          Sign up tab.
+          We have your request. You will get an email with your access as soon as the beta opens.
         </p>
       </div>
     );
@@ -105,28 +125,43 @@ export const BetaAccessForm: React.FC = () => {
     <div className="space-y-5">
       <div className="space-y-2">
         <div className="flex items-start gap-2">
-          <CalendarClock className="w-4 h-4 mt-1 shrink-0 text-dna-copper" />
-          <h2 className="text-h3">Signup is open</h2>
+          <Lock className="w-4 h-4 mt-1 shrink-0 text-dna-copper" />
+          <h2 className="text-h3">Signup is closed for the beta</h2>
         </div>
         <p className="text-body text-muted-foreground">
-          You can create your account right now from the Sign up tab. Prefer to hear from us first?
-          Leave your details and we will reach out.
+          We are building DNA with a first group of beta Members. Request access below and we will
+          email you when your account is ready. Already a Member? Use the Sign in tab.
         </p>
       </div>
 
-
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="beta-name">Full name</Label>
-          <Input
-            id="beta-name"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            placeholder="Your full name"
-            maxLength={160}
-            required
-            disabled={isSubmitting}
-          />
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-2">
+            <Label htmlFor="beta-first-name">First name</Label>
+            <Input
+              id="beta-first-name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="First name"
+              maxLength={80}
+              autoComplete="given-name"
+              required
+              disabled={isSubmitting}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="beta-last-name">Last name</Label>
+            <Input
+              id="beta-last-name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="Last name"
+              maxLength={80}
+              autoComplete="family-name"
+              required
+              disabled={isSubmitting}
+            />
+          </div>
         </div>
         <div className="space-y-2">
           <Label htmlFor="beta-email">Email</Label>
@@ -136,21 +171,25 @@ export const BetaAccessForm: React.FC = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="your@email.com"
+            autoComplete="email"
             required
             disabled={isSubmitting}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="beta-why">Why you want in</Label>
-          <Textarea
-            id="beta-why"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="What you are hoping to do on DNA. Optional."
-            maxLength={2000}
-            rows={3}
-            disabled={isSubmitting}
-          />
+          <Label htmlFor="beta-country">Country</Label>
+          <Select value={country} onValueChange={setCountry} disabled={isSubmitting}>
+            <SelectTrigger id="beta-country">
+              <SelectValue placeholder="Where are you based?" />
+            </SelectTrigger>
+            <SelectContent>
+              {countries.map(({ code, name }) => (
+                <SelectItem key={code} value={name}>
+                  {name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <Button type="submit" className="w-full" disabled={isSubmitting}>
           {isSubmitting ? 'Sending...' : 'Request beta access'}

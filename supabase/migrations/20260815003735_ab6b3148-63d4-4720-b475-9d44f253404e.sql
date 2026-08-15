@@ -1,0 +1,1 @@
+ALTER TABLE public.beta_waitlist ADD COLUMN IF NOT EXISTS country text;
