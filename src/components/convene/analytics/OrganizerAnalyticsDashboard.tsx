@@ -17,6 +17,16 @@ interface OrganizerAnalyticsDashboardProps {
 
 export const OrganizerAnalyticsDashboard = ({ analytics }: OrganizerAnalyticsDashboardProps) => {
   const { events_hosted, avg_rsvps_per_event, avg_going_per_event, avg_show_up_rate, event_list } = analytics;
+  // The RPC's runtime shape isn't guaranteed to match OrganizerAnalytics
+  // (get_organizer_analytics can return a partial object), so default every
+  // events_hosted field rather than trust the declared type at render time.
+  const safeEventsHosted = {
+    total: events_hosted?.total ?? 0,
+    last_30_days: events_hosted?.last_30_days ?? 0,
+    last_90_days: events_hosted?.last_90_days ?? 0,
+    upcoming: events_hosted?.upcoming ?? 0,
+    past: events_hosted?.past ?? 0,
+  };
 
   return (
     <div className="space-y-6">
@@ -32,9 +42,9 @@ export const OrganizerAnalyticsDashboard = ({ analytics }: OrganizerAnalyticsDas
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{events_hosted.total}</div>
+            <div className="text-3xl font-bold">{safeEventsHosted.total}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              {events_hosted.last_30_days} in last 30 days
+              {safeEventsHosted.last_30_days} in last 30 days
             </p>
           </CardContent>
         </Card>
@@ -80,10 +90,10 @@ export const OrganizerAnalyticsDashboard = ({ analytics }: OrganizerAnalyticsDas
           </CardHeader>
           <CardContent>
             <div className="text-display font-bold text-dna-success">
-              {events_hosted.upcoming}
+              {safeEventsHosted.upcoming}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              {events_hosted.past} completed
+              {safeEventsHosted.past} completed
             </p>
           </CardContent>
         </Card>

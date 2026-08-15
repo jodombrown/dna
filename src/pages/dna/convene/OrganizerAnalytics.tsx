@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import LayoutController from '@/components/LayoutController';
+import { AppShell } from '@/layouts/AppShell';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -18,105 +18,92 @@ const OrganizerAnalytics = () => {
 
   const { data: analytics, isLoading, error } = useOrganizerAnalytics(user?.id, timeRange);
 
+  let content: JSX.Element;
+
   if (isLoading) {
-    return (
-      <LayoutController
-        centerColumn={
-          <div className="flex items-center justify-center min-h-[400px]">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          </div>
-        }
-        rightColumn={<RightWidgets variant="convene" />}
-      />
+    content = (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
     );
-  }
+  } else if (error) {
+    content = (
+      <div className="space-y-4">
+        <Button variant="ghost" onClick={() => navigate(ROUTES.convene.myEvents)}>
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to My Events
+        </Button>
 
-  if (error) {
-    return (
-      <LayoutController
-        centerColumn={
-          <div className="space-y-4">
+        <Alert variant="destructive">
+          <AlertTitle>Error Loading Analytics</AlertTitle>
+          <AlertDescription>
+            {error instanceof Error ? error.message : 'Failed to load your analytics data.'}
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  } else if (!analytics) {
+    content = (
+      <div className="space-y-4">
+        <Button variant="ghost" onClick={() => navigate(ROUTES.convene.myEvents)}>
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to My Events
+        </Button>
+
+        <Alert>
+          <AlertTitle>No Data Available</AlertTitle>
+          <AlertDescription>
+            You haven't hosted any events yet. Create your first event to start tracking analytics!
+          </AlertDescription>
+        </Alert>
+
+        <Button onClick={() => navigate('/dna/convene')}>
+          Create Your First Event
+        </Button>
+      </div>
+    );
+  } else {
+    content = (
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
             <Button variant="ghost" onClick={() => navigate(ROUTES.convene.myEvents)}>
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to My Events
+              My Events
             </Button>
-            
-            <Alert variant="destructive">
-              <AlertTitle>Error Loading Analytics</AlertTitle>
-              <AlertDescription>
-                {error instanceof Error ? error.message : 'Failed to load your analytics data.'}
-              </AlertDescription>
-            </Alert>
+            <div>
+              <h1 className="text-h2 font-serif">Your Event Analytics</h1>
+              <p className="text-sm text-muted-foreground">
+                Track your event performance and engagement
+              </p>
+            </div>
           </div>
-        }
-        rightColumn={<RightWidgets variant="convene" />}
-      />
-    );
-  }
 
-  if (!analytics) {
-    return (
-      <LayoutController
-        centerColumn={
-          <div className="space-y-4">
-            <Button variant="ghost" onClick={() => navigate(ROUTES.convene.myEvents)}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to My Events
-            </Button>
-            
-            <Alert>
-              <AlertTitle>No Data Available</AlertTitle>
-              <AlertDescription>
-                You haven't hosted any events yet. Create your first event to start tracking analytics!
-              </AlertDescription>
-            </Alert>
+          <Select value={timeRange.toString()} onValueChange={(v) => setTimeRange(parseInt(v))}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Time range" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="30">Last 30 days</SelectItem>
+              <SelectItem value="90">Last 90 days</SelectItem>
+              <SelectItem value="180">Last 6 months</SelectItem>
+              <SelectItem value="365">Last year</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-            <Button onClick={() => navigate('/dna/convene')}>
-              Create Your First Event
-            </Button>
-          </div>
-        }
-        rightColumn={<RightWidgets variant="convene" />}
-      />
+        <OrganizerAnalyticsDashboard analytics={analytics} />
+      </div>
     );
   }
 
   return (
-    <LayoutController
-      centerColumn={
-        <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" onClick={() => navigate(ROUTES.convene.myEvents)}>
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                My Events
-              </Button>
-              <div>
-                <h1 className="text-h2 font-serif">Your Event Analytics</h1>
-                <p className="text-sm text-muted-foreground">
-                  Track your event performance and engagement
-                </p>
-              </div>
-            </div>
-
-            <Select value={timeRange.toString()} onValueChange={(v) => setTimeRange(parseInt(v))}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Time range" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="30">Last 30 days</SelectItem>
-                <SelectItem value="90">Last 90 days</SelectItem>
-                <SelectItem value="180">Last 6 months</SelectItem>
-                <SelectItem value="365">Last year</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <OrganizerAnalyticsDashboard analytics={analytics} />
-        </div>
-      }
-      rightColumn={<RightWidgets variant="convene" />}
-    />
+    <AppShell
+      bubble={{ kind: 'static', placeholder: 'Event Analytics' }}
+      related={<RightWidgets variant="convene" />}
+    >
+      {content}
+    </AppShell>
   );
 };
 
