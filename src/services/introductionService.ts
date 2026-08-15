@@ -38,7 +38,6 @@ export async function sendGroupIntroduction(
       .from('conversations_new')
       .insert({
         conversation_type: 'group',
-        origin_type: 'introduction',
         created_by: introducerId,
         title: 'Introduction',
         metadata: { introduction: true },
@@ -86,7 +85,7 @@ export async function sendGroupIntroduction(
     };
 
     const { error: msgError } = await supabase
-      .from('messages')
+      .from('messages_new')
       .insert({
         conversation_id: conversationId,
         sender_id: introducerId,
@@ -96,16 +95,7 @@ export async function sendGroupIntroduction(
       });
 
     if (msgError) {
-      // Try alternate messages table
-      await (supabase as unknown as { from: (t: string) => typeof supabase extends { from: infer F } ? ReturnType<F extends (...a: unknown[]) => infer R ? () => R : never> : never })
-        .from('messaging_messages' as never)
-        .insert({
-          conversation_id: conversationId,
-          sender_id: introducerId,
-          content: message,
-          message_type: 'text',
-          payload: introPayload,
-        } as never);
+      return { success: false, error: msgError.message };
     }
 
     // 4. Update conversation last_message_at
