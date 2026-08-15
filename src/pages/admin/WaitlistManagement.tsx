@@ -19,6 +19,7 @@ interface WaitlistEntry {
   full_name: string | null;
   message: string | null;
   linkedin_url: string | null;
+  country: string | null;
   status: string;
   created_at: string;
   updated_at: string;
@@ -183,10 +184,11 @@ export default function WaitlistManagement() {
   };
 
   const handleDownloadCSV = () => {
-    const csvHeaders = ['Name', 'Email', 'LinkedIn', 'Message', 'Status', 'Joined Date'];
+    const csvHeaders = ['Name', 'Email', 'Country', 'LinkedIn', 'Message', 'Status', 'Joined Date'];
     const csvData = filteredEntries.map(entry => [
       entry.full_name || 'N/A',
       entry.email,
+      entry.country || 'N/A',
       entry.linkedin_url || 'N/A',
       entry.message || 'N/A',
       entry.status,
@@ -465,6 +467,10 @@ export default function WaitlistManagement() {
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">Email</label>
                   <p className="text-foreground">{selectedEntry.email}</p>
+                </div>
+                <div>
+                  <label className="text-meta font-medium text-muted-foreground">Country</label>
+                  <p className="text-foreground">{selectedEntry.country || 'Not provided'}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">LinkedIn</label>
