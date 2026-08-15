@@ -1,3 +1,4 @@
+// Lovable sync trigger, 2026-08-14 — no functional change.
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
