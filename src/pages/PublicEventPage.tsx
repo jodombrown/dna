@@ -31,7 +31,6 @@ import { realCuratedCover } from '@/lib/events/curated';
 import { CuratedEventPreview } from '@/pages/dna/convene/CuratedEventPreview';
 import { FiveCsDiscoverySection } from '@/components/five-cs/FiveCsDiscoverySection';
 import { getEventSchema } from '@/components/seo/PageSEO';
-import { Nkonsonkonson } from '@/components/icons/adinkra';
 import { GuestEventView } from '@/pages/GuestEventView';
 
 const PublicEventPage = () => {
@@ -43,19 +42,10 @@ const PublicEventPage = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [copied, setCopied] = useState(false);
-  const [showBanner, setShowBanner] = useState(false);
   const [guestEmail, setGuestEmail] = useState('');
   const [guestRsvpSent, setGuestRsvpSent] = useState(false);
 
   const isLoggedIn = !!user;
-
-  // Animate banner in after a short delay for non-logged-in users
-  useEffect(() => {
-    if (!isLoggedIn) {
-      const timer = setTimeout(() => setShowBanner(true), 500);
-      return () => clearTimeout(timer);
-    }
-  }, [isLoggedIn]);
 
   // Fetch event data through the public projection — SECURITY DEFINER,
   // granted to anon. It resolves slug OR uuid itself and returns only the
@@ -381,36 +371,6 @@ const PublicEventPage = () => {
       {helmet}
 
       <div className="min-h-screen bg-background">
-
-        {/* CTA Banner for non-logged-in users */}
-        {!isLoggedIn && showBanner && (
-          <div className="px-4 sm:px-0 pt-3">
-            <motion.div
-              initial={{ y: -10, opacity: 0 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-              className="bg-gradient-to-r from-dna-forest via-dna-emerald to-dna-forest sm:mx-auto sm:max-w-3xl rounded-lg shadow-md"
-            >
-              <div className="px-4 py-2.5 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2 text-white min-w-0">
-                  <Nkonsonkonson className="w-4 h-4 shrink-0" />
-                  <span className="text-sm font-medium truncate">
-                    You're invited! Join DNA to attend this event
-                  </span>
-                </div>
-                <Button
-                  size="sm"
-                  className="bg-white text-dna-forest hover:bg-white/90 shrink-0 h-7 text-xs px-3"
-                  asChild
-                >
-                  <Link to="/auth?mode=signup">
-                    Sign up
-                  </Link>
-                </Button>
-              </div>
-            </motion.div>
-          </div>
-        )}
 
         <div className="container max-w-3xl mx-auto px-4 pt-3 pb-6">
 
