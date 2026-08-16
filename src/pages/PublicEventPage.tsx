@@ -16,7 +16,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { Calendar, MapPin, Users, Clock, Share2, ExternalLink, Copy, Check, Video, Globe, Handshake, CalendarDays, UsersRound, Heart, MessageSquare, Loader2 } from 'lucide-react';
+import { Calendar, MapPin, Users, Clock, Share2, ExternalLink, Copy, Check, Video, Globe, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
@@ -31,7 +31,6 @@ import { realCuratedCover } from '@/lib/events/curated';
 import { CuratedEventPreview } from '@/pages/dna/convene/CuratedEventPreview';
 import { FiveCsDiscoverySection } from '@/components/five-cs/FiveCsDiscoverySection';
 import { getEventSchema } from '@/components/seo/PageSEO';
-import { Nkonsonkonson } from '@/components/icons/adinkra';
 import { GuestEventView } from '@/pages/GuestEventView';
 
 const PublicEventPage = () => {
@@ -43,19 +42,10 @@ const PublicEventPage = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [copied, setCopied] = useState(false);
-  const [showBanner, setShowBanner] = useState(false);
   const [guestEmail, setGuestEmail] = useState('');
   const [guestRsvpSent, setGuestRsvpSent] = useState(false);
 
   const isLoggedIn = !!user;
-
-  // Animate banner in after a short delay for non-logged-in users
-  useEffect(() => {
-    if (!isLoggedIn) {
-      const timer = setTimeout(() => setShowBanner(true), 500);
-      return () => clearTimeout(timer);
-    }
-  }, [isLoggedIn]);
 
   // Fetch event data through the public projection — SECURITY DEFINER,
   // granted to anon. It resolves slug OR uuid itself and returns only the
@@ -382,36 +372,6 @@ const PublicEventPage = () => {
 
       <div className="min-h-screen bg-background">
 
-        {/* CTA Banner for non-logged-in users */}
-        {!isLoggedIn && showBanner && (
-          <div className="px-4 sm:px-0 pt-3">
-            <motion.div
-              initial={{ y: -10, opacity: 0 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-              className="bg-gradient-to-r from-dna-forest via-dna-emerald to-dna-forest sm:mx-auto sm:max-w-3xl rounded-lg shadow-md"
-            >
-              <div className="px-4 py-2.5 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2 text-white min-w-0">
-                  <Nkonsonkonson className="w-4 h-4 shrink-0" />
-                  <span className="text-sm font-medium truncate">
-                    You're invited! Join DNA to attend this event
-                  </span>
-                </div>
-                <Button
-                  size="sm"
-                  className="bg-white text-dna-forest hover:bg-white/90 shrink-0 h-7 text-xs px-3"
-                  asChild
-                >
-                  <Link to="/auth?mode=signup">
-                    Sign up
-                  </Link>
-                </Button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-
         <div className="container max-w-3xl mx-auto px-4 pt-3 pb-6">
 
           {/* Cancellation banner — shown to everyone, carries the organizer's reason */}
@@ -654,73 +614,6 @@ const PublicEventPage = () => {
                       </p>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
-
-          {/* Why Join DNA? - Five C's Benefits Block for non-logged-in users */}
-          {!isLoggedIn && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.4 } as const}
-            >
-              <Card className="mb-4">
-                <CardContent className="p-5 sm:p-6">
-                  <h3 className="font-bold text-lg mb-4 text-center">Why Join DNA?</h3>
-                  
-                  {/* Four C's in quadrant layout */}
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    {[
-                      { icon: Handshake, label: 'Connect', desc: 'Build your network', href: '/connect' },
-                      { icon: CalendarDays, label: 'Convene', desc: 'Attend events', href: '/convene' },
-                      { icon: UsersRound, label: 'Collaborate', desc: 'Join projects', href: '/collaborate' },
-                      { icon: Heart, label: 'Contribute', desc: 'Make an impact', href: '/contribute' },
-                    ].map((item, index) => (
-                      <motion.a
-                        key={item.label}
-                        href={item.href}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ 
-                          duration: 0.3, 
-                          delay: 0.5 + index * 0.1,
-                          type: "spring",
-                          stiffness: 400,
-                          damping: 30
-                        } as const}
-                        className="flex flex-col items-center text-center p-3 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer"
-                      >
-                        <div className="w-10 h-10 rounded-full bg-dna-emerald/10 flex items-center justify-center mb-2">
-                          <item.icon className="w-5 h-5 text-dna-emerald" />
-                        </div>
-                        <span className="font-semibold text-sm">{item.label}</span>
-                        <span className="text-xs text-muted-foreground">{item.desc}</span>
-                      </motion.a>
-                    ))}
-                  </div>
-                  
-                  {/* Convey centered below */}
-                  <motion.a
-                    href="/convey"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ 
-                      duration: 0.3, 
-                      delay: 0.9,
-                      type: "spring",
-                      stiffness: 400,
-                      damping: 30
-                    } as const}
-                    className="flex flex-col items-center text-center p-3 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer mx-auto w-fit"
-                  >
-                    <div className="w-10 h-10 rounded-full bg-dna-emerald/10 flex items-center justify-center mb-2">
-                      <MessageSquare className="w-5 h-5 text-dna-emerald" />
-                    </div>
-                    <span className="font-semibold text-sm">Convey</span>
-                    <span className="text-xs text-muted-foreground">Share your story</span>
-                  </motion.a>
                 </CardContent>
               </Card>
             </motion.div>
