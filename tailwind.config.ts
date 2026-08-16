@@ -115,6 +115,10 @@ export default {
 				// height to the column width so it no longer derives from the
 				// image's own intrinsic ratio.
 				'hero-cover': '3 / 2',
+				// Event-detail cover banner (EventOverview.tsx, PublicEventPage.tsx).
+				// Distinct surface from hero-cover: full-width detail-page banner,
+				// not the discovery-card thumbnail track.
+				'event-cover': '2.5 / 1',
 			},
 			maxHeight: {
 				sheet: '92dvh',   // must mirror height.sheet; same name, same unit
