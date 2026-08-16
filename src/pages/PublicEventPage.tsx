@@ -29,6 +29,7 @@ import { datesAnnounced } from '@/lib/events/eventTime';
 import { isEventCompleted } from '@/lib/events/lifecycle';
 import { realCuratedCover } from '@/lib/events/curated';
 import { CuratedEventPreview } from '@/pages/dna/convene/CuratedEventPreview';
+import { FiveCsDiscoverySection } from '@/components/five-cs/FiveCsDiscoverySection';
 import { getEventSchema } from '@/components/seo/PageSEO';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
 import { GuestEventView } from '@/pages/GuestEventView';
@@ -365,6 +366,11 @@ const PublicEventPage = () => {
         {helmet}
         <div className="min-h-screen bg-background">
           <CuratedEventPreview event={event} showBack={false} />
+          {!isLoggedIn && (
+            <div className="px-4 mt-8">
+              <FiveCsDiscoverySection source="public_event" />
+            </div>
+          )}
         </div>
       </>
     );
@@ -786,6 +792,18 @@ const PublicEventPage = () => {
           )}
 
         </div>
+
+        {/* Five C's discovery — signed-out visitors only. Rendered OUTSIDE
+            the max-w-3xl content column so FiveCsDiscoverySection's own
+            max-w-6xl / lg:grid-cols-5 row gets its full width, matching
+            the public profile and post pages — inside the narrow column
+            the cards crush to one word per line (same constraint
+            PublicPostView.tsx documents at its own call site). */}
+        {!isLoggedIn && (
+          <div className="px-4 mt-8">
+            <FiveCsDiscoverySection source="public_event" />
+          </div>
+        )}
         <Footer />
       </div>
 
