@@ -117,7 +117,7 @@ export function StickyRSVPBar({
       return (
         <Button
           variant="outline"
-          className="shrink-0 border-[hsl(var(--module-convene))] text-[hsl(var(--module-convene))]"
+          className="shrink-0 border-c5-convene text-c5-convene-text"
           onClick={() => onRsvp('not_going')}
           disabled={isSubmitting}
         >

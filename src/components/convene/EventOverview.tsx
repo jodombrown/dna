@@ -452,7 +452,7 @@ const EventOverview = ({ eventId: eventIdProp, hosted = false }: EventOverviewPr
             initial={{ y: -30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-            className="bg-gradient-to-r from-[hsl(var(--module-convene))] via-[hsl(var(--module-convene))]/90 to-[hsl(var(--module-convene))] sm:mx-auto sm:max-w-3xl rounded-lg shadow-md"
+            className="bg-gradient-to-r from-c5-convene via-c5-convene/90 to-c5-convene sm:mx-auto sm:max-w-3xl rounded-lg shadow-md"
           >
             <div className="px-4 py-2.5 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-white min-w-0">
@@ -492,7 +492,7 @@ const EventOverview = ({ eventId: eventIdProp, hosted = false }: EventOverviewPr
         {(event.cover_image_url as string) && (
           <div ref={heroRef} className="relative overflow-hidden rounded-lg mb-6 sm:mb-8">
             <CulturalPattern pattern="kente" opacity={0.05} />
-            <div className="aspect-[2.5/1] w-full overflow-hidden">
+            <div className="aspect-event-cover w-full overflow-hidden">
               <img src={event.cover_image_url as string} alt={event.title as string} className="w-full h-full object-cover" />
             </div>
           </div>

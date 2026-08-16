@@ -32,6 +32,7 @@ import { CuratedEventPreview } from '@/pages/dna/convene/CuratedEventPreview';
 import { getEventSchema } from '@/components/seo/PageSEO';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
 import { GuestEventView } from '@/pages/GuestEventView';
+import { PublicSiteHeader } from '@/components/PublicSiteHeader';
 
 const PublicEventPage = () => {
   const { slugOrId } = useParams<{ slugOrId: string }>();
@@ -231,8 +232,11 @@ const PublicEventPage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-background flex flex-col">
+        <PublicSiteHeader />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
       </div>
     );
   }
@@ -240,6 +244,7 @@ const PublicEventPage = () => {
   if (error || !event) {
     return (
       <div className="min-h-screen bg-background">
+        <PublicSiteHeader />
         <div className="container max-w-2xl mx-auto px-4 py-16 text-center">
           <Calendar className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
           <h1 className="text-3xl font-bold mb-4">Event Not Found</h1>
@@ -364,6 +369,7 @@ const PublicEventPage = () => {
       <>
         {helmet}
         <div className="min-h-screen bg-background">
+          <PublicSiteHeader />
           <CuratedEventPreview event={event} showBack={false} />
         </div>
       </>
@@ -375,6 +381,7 @@ const PublicEventPage = () => {
       {helmet}
 
       <div className="min-h-screen bg-background">
+        <PublicSiteHeader />
 
         {/* CTA Banner for non-logged-in users */}
         {!isLoggedIn && showBanner && (
@@ -424,7 +431,7 @@ const PublicEventPage = () => {
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6 } as const}
-              className="aspect-[2.5/1] w-full overflow-hidden rounded-lg mb-6"
+              className="aspect-event-cover w-full overflow-hidden rounded-lg mb-6"
             >
               <img
                 src={event.cover_image_url}
