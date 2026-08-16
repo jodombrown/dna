@@ -16,7 +16,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { Calendar, MapPin, Users, Clock, Share2, ExternalLink, Copy, Check, Video, Globe, Handshake, CalendarDays, UsersRound, Heart, MessageSquare, Loader2 } from 'lucide-react';
+import { Calendar, MapPin, Users, Clock, Share2, ExternalLink, Copy, Check, Video, Globe, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
@@ -654,73 +654,6 @@ const PublicEventPage = () => {
                       </p>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
-
-          {/* Why Join DNA? - Five C's Benefits Block for non-logged-in users */}
-          {!isLoggedIn && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.4 } as const}
-            >
-              <Card className="mb-4">
-                <CardContent className="p-5 sm:p-6">
-                  <h3 className="font-bold text-lg mb-4 text-center">Why Join DNA?</h3>
-                  
-                  {/* Four C's in quadrant layout */}
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    {[
-                      { icon: Handshake, label: 'Connect', desc: 'Build your network', href: '/connect' },
-                      { icon: CalendarDays, label: 'Convene', desc: 'Attend events', href: '/convene' },
-                      { icon: UsersRound, label: 'Collaborate', desc: 'Join projects', href: '/collaborate' },
-                      { icon: Heart, label: 'Contribute', desc: 'Make an impact', href: '/contribute' },
-                    ].map((item, index) => (
-                      <motion.a
-                        key={item.label}
-                        href={item.href}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ 
-                          duration: 0.3, 
-                          delay: 0.5 + index * 0.1,
-                          type: "spring",
-                          stiffness: 400,
-                          damping: 30
-                        } as const}
-                        className="flex flex-col items-center text-center p-3 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer"
-                      >
-                        <div className="w-10 h-10 rounded-full bg-dna-emerald/10 flex items-center justify-center mb-2">
-                          <item.icon className="w-5 h-5 text-dna-emerald" />
-                        </div>
-                        <span className="font-semibold text-sm">{item.label}</span>
-                        <span className="text-xs text-muted-foreground">{item.desc}</span>
-                      </motion.a>
-                    ))}
-                  </div>
-                  
-                  {/* Convey centered below */}
-                  <motion.a
-                    href="/convey"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ 
-                      duration: 0.3, 
-                      delay: 0.9,
-                      type: "spring",
-                      stiffness: 400,
-                      damping: 30
-                    } as const}
-                    className="flex flex-col items-center text-center p-3 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer mx-auto w-fit"
-                  >
-                    <div className="w-10 h-10 rounded-full bg-dna-emerald/10 flex items-center justify-center mb-2">
-                      <MessageSquare className="w-5 h-5 text-dna-emerald" />
-                    </div>
-                    <span className="font-semibold text-sm">Convey</span>
-                    <span className="text-xs text-muted-foreground">Share your story</span>
-                  </motion.a>
                 </CardContent>
               </Card>
             </motion.div>
