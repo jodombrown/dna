@@ -168,7 +168,11 @@ const Auth = () => {
   ];
 
   const modeSubtitle =
-    authMode === 'signup' ? 'Create your account' : 'Sign in to your account';
+    authMode === 'signup'
+      ? signupPaused
+        ? 'Request beta access'
+        : 'Create your account'
+      : 'Sign in to your account';
 
 
   // Auth content switches between sign up and sign in
