@@ -49,6 +49,10 @@ const Auth = () => {
     setAuthMode(resolveMode(queryMode));
   }, [queryMode]);
 
+  // Signup is paused for the beta window unless the flag reopens it early.
+  const { registrationEnabled } = useFeatureFlags();
+  const signupPaused = isSignupPaused(registrationEnabled);
+
 
 
 
