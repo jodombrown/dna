@@ -775,6 +775,27 @@ html {
 
 /* Enhanced Mobile-first responsive design utilities */
 @layer utilities {
+  /* Ghana pathway nav strip: horizontal-scroll affordance at either edge. */
+  .ghana-nav-fade-left {
+    background: linear-gradient(to right, hsl(var(--glass-bg)), transparent);
+  }
+
+  .ghana-nav-fade-right {
+    background: linear-gradient(to left, hsl(var(--glass-bg)), transparent);
+  }
+
+  /* Ghana top stories carousel: 82% mobile (next card peeks), 19%/230px min desktop. */
+  .ghana-carousel-card {
+    flex: 0 0 auto;
+    width: 82%;
+  }
+
+  @media (min-width: 768px) {
+    .ghana-carousel-card {
+      width: max(19%, 230px);
+    }
+  }
+
   /* Container utilities */
   .mobile-container {
     @apply px-4 md:px-6 lg:px-8;
