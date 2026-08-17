@@ -98,6 +98,8 @@ const CuratedSourceReviews = lazy(() => import("./pages/admin/CuratedSourceRevie
 
 // Static pages  
 const About = lazy(() => import("./pages/About"));
+const Beta = lazy(() => import("./pages/Beta"));
+
 const Install = lazy(() => import("./pages/Install"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
