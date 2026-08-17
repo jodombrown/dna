@@ -425,8 +425,11 @@ export default function WaitlistManagement() {
                     </th>
                     <th className="text-left p-3">Applicant</th>
                     <th className="text-left p-3">Email</th>
+                    <th className="text-left p-3">Country</th>
+                    <th className="text-left p-3">LinkedIn</th>
                     <th className="text-left p-3">Status</th>
                     <th className="text-left p-3">Applied</th>
+                    <th className="text-left p-3">Access email</th>
                     <th className="text-left p-3">Actions</th>
                   </tr>
                 </thead>
