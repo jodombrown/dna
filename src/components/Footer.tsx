@@ -5,7 +5,7 @@ import { config } from '@/lib/config';
 
 const Footer = () => {
   return (
-    <footer className="bg-[hsl(151,75%,10%)] text-white py-6 lg:py-8">
+    <footer className="bg-footer text-white py-6 lg:py-8">
       <div className="max-w-6xl mx-auto px-3 sm:px-4 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-center gap-3 md:gap-0">
           {/* Copyright and Documentation Link */}
