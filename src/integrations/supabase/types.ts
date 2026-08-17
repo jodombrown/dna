@@ -402,6 +402,7 @@ export type Database = {
         Row: {
           archived_at: string | null
           archived_by: string | null
+          country: string | null
           created_at: string
           email: string
           full_name: string | null
@@ -416,6 +417,7 @@ export type Database = {
         Insert: {
           archived_at?: string | null
           archived_by?: string | null
+          country?: string | null
           created_at?: string
           email: string
           full_name?: string | null
@@ -430,6 +432,7 @@ export type Database = {
         Update: {
           archived_at?: string | null
           archived_by?: string | null
+          country?: string | null
           created_at?: string
           email?: string
           full_name?: string | null
@@ -13057,12 +13060,10 @@ export type Database = {
         }
         Returns: string
       }
-      get_organizer_analytics:
-        | { Args: { p_organizer_id: string }; Returns: Json }
-        | {
-            Args: { p_days_back: number; p_organizer_id: string }
-            Returns: Json
-          }
+      get_organizer_analytics: {
+        Args: { p_days_back?: number; p_organizer_id: string }
+        Returns: Json
+      }
       get_own_contact_settings: {
         Args: never
         Returns: {

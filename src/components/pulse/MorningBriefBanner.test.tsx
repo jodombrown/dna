@@ -135,10 +135,13 @@ describe('MorningBriefBanner', () => {
     const setHour = (hour: number) => {
       const RealDate = Date;
       vi.spyOn(global, 'Date').mockImplementation(
-        (...args: ConstructorParameters<typeof Date>) =>
-          args.length === 0 ? new RealDate(2024, 0, 1, hour) : new RealDate(...args),
+        (...args: unknown[]) =>
+          args.length === 0
+            ? new RealDate(2024, 0, 1, hour)
+            : new (RealDate as unknown as new (...a: unknown[]) => Date)(...args),
       );
     };
+
 
     afterEach(() => {
       vi.restoreAllMocks();

@@ -14,6 +14,7 @@ import { DnaMobileHeader, type DnaMobileHeaderBubble } from '@/components/mobile
 import { useMobile } from '@/hooks/useMobile';
 import { useMobileHeaderHeight } from '@/hooks/useMobileHeaderHeight';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
+import { BetaTransitionBanner } from '@/components/shared/BetaTransitionBanner';
 import { cn } from '@/lib/utils';
 
 interface DnaMobileHubShellProps {
@@ -87,6 +88,7 @@ export function DnaMobileHubShell({
         */
         style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
       >
+        <BetaTransitionBanner />
         <div
           className={cn(
             'transition-all duration-200 overflow-hidden',
