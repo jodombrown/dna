@@ -35,6 +35,14 @@ exports[`DnaMobileHubShell > renders the canonical fixed top bar, tabs slot, and
             >
               Launch campaign lands for Detty December in Accra.
             </span>
+             
+            <a
+              class="text-foreground underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+              data-discover="true"
+              href="/beta"
+            >
+              Click here to learn more about beta in-app testing
+            </a>
           </span>
           <button
             aria-label="Dismiss beta transition notice"
