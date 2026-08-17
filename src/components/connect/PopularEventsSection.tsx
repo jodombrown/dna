@@ -6,6 +6,8 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures';
 import { Event } from '@/types/search';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
+import { useAuth } from '@/contexts/AuthContext';
+import { useMyManagedEventIds } from '@/hooks/useMyManagedEventIds';
 
 interface PopularEventsSectionProps {
   events: Event[];
@@ -22,6 +24,9 @@ const PopularEventsSection: React.FC<PopularEventsSectionProps> = ({
   onCreatorClick,
   onViewAll
 }) => {
+  const { user } = useAuth();
+  const managedEventIds = useMyManagedEventIds(user?.id);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -56,6 +61,8 @@ const PopularEventsSection: React.FC<PopularEventsSectionProps> = ({
                 <div className="h-[420px]">
                   <ConveneEventCard
                     event={event}
+                    isOrganizer={managedEventIds.has(event.id)}
+                    showActions={managedEventIds.has(event.id)}
                     showRsvp
                     onRsvp={() => onRegisterEvent(event)}
                     onClick={() => onEventClick(event)}

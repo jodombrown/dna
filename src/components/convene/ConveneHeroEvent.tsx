@@ -26,6 +26,8 @@ import { resolveEventAction, EVENT_ACTION_LABELS } from '@/components/cards/reso
 import type { EventPriceTicketType } from '@/components/cards/resolveEventPrice';
 import { EventPlate } from '@/components/cards/EventPlate';
 import { useConveneEventSelection } from '@/contexts/convene/ConveneEventSelectionContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { useEventManagementRole } from '@/hooks/useEventManagementRole';
 
 const CARD_PADDING = 'var(--card-padding)';
 
@@ -91,10 +93,17 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
     }
   };
 
+  const { user } = useAuth();
+  const hasManagementRole = useEventManagementRole(event.id, user?.id);
+
   // The primary action always just navigates to the event page — no inline
   // RSVP flow here — so it shares one action word resolved from the ticket
-  // types, same as ConveneEventCard and CuratedEventCard.
-  const actionLabel = EVENT_ACTION_LABELS[resolveEventAction(event.event_ticket_types ?? [])];
+  // types, same as ConveneEventCard and CuratedEventCard. Except for the
+  // event's own organizer/team (BD591): they get "Manage" instead, since
+  // "I'm going" makes no sense on your own hosted event.
+  const actionLabel = hasManagementRole
+    ? 'Manage'
+    : EVENT_ACTION_LABELS[resolveEventAction(event.event_ticket_types ?? [])];
 
   return (
     <div

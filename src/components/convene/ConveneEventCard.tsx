@@ -307,18 +307,6 @@ export function ConveneEventCard({
       >
         <HelpCircle className="mr-1 h-3.5 w-3.5" /> Maybe
       </Button>
-    ) : showRsvp && onRsvp ? (
-      <Button
-        variant="default"
-        size="sm"
-        className="flex-1"
-        onClick={(e) => {
-          e.stopPropagation();
-          onRsvp('going');
-        }}
-      >
-        {actionLabel}
-      </Button>
     ) : showActions && isOrganizer ? (
       <Button
         variant="outline"
@@ -330,6 +318,18 @@ export function ConveneEventCard({
         }}
       >
         Manage
+      </Button>
+    ) : showRsvp && onRsvp ? (
+      <Button
+        variant="default"
+        size="sm"
+        className="flex-1"
+        onClick={(e) => {
+          e.stopPropagation();
+          onRsvp('going');
+        }}
+      >
+        {actionLabel}
       </Button>
     ) : (
       <Button
