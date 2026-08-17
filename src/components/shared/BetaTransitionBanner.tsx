@@ -75,9 +75,9 @@ export function BetaTransitionBanner({ className }: BetaTransitionBannerProps) {
                 aria-hidden={isClone || undefined}
                 className="text-meta font-body text-muted-foreground whitespace-nowrap pr-16"
               >
-                <span className="text-foreground">We are in beta through October 15, 2026.</span>{' '}
-                The transition runs from August 15, and public launch follows with a full campaign
-                into Detty December in Accra, Ghana.
+                <span className="text-foreground">Beta: August 15 to October 15, 2026.</span>{' '}
+                Public launch follows into Detty December in Accra, Ghana.
+
               </span>
             ))}
           </div>
