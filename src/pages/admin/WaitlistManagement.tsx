@@ -627,6 +627,22 @@ export default function WaitlistManagement() {
                 )}
               </Button>
             )}
+            {selectedEntry?.status === 'approved' && !selectedEntry?.archived_at && (
+              <Button
+                variant="secondary"
+                onClick={() => handleSendAccessEmail(selectedEntry)}
+                disabled={processing}
+              >
+                {processing ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    <Send className="h-4 w-4 mr-2" />
+                    {selectedEntry.last_invite_sent_at ? 'Re-send access email' : 'Send access email'}
+                  </>
+                )}
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
