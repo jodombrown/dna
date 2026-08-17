@@ -12,6 +12,8 @@ import { CuratedEventCard } from '@/components/convene/CuratedEventCard';
 import { pickEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 import { cn } from '@/lib/utils';
 import type { EventPriceTicketType } from '@/components/cards/resolveEventPrice';
+import { useAuth } from '@/contexts/AuthContext';
+import { useMyManagedEventIds } from '@/hooks/useMyManagedEventIds';
 
 export interface DiscoveryEvent extends EventPlaceInput {
   id: string;
@@ -72,6 +74,9 @@ export function DiscoveryLane({
   distanceLabels,
   suppressDateTbc,
 }: DiscoveryLaneProps) {
+  const { user } = useAuth();
+  const managedEventIds = useMyManagedEventIds(user?.id);
+
   if (events.length === 0 && !emptyMessage) return null;
 
   return (
@@ -153,6 +158,8 @@ export function DiscoveryLane({
                     event_ticket_types: event.event_ticket_types,
                   }}
                   showOrganizer
+                  isOrganizer={managedEventIds.has(event.id)}
+                  showActions={managedEventIds.has(event.id)}
                   showMutualAttendees={showMutualAttendees}
                   distanceLabel={distanceLabels?.[event.id]}
                   suppressDateTbc={suppressDateTbc}

@@ -39,6 +39,7 @@ import { ConveneFacetRailCollapsed } from '@/components/convene/ConveneFacetRail
 import { ConveneNarrowSheet } from '@/components/convene/ConveneNarrowSheet';
 import { ConveneDiscoveryHeaderRow } from '@/components/convene/ConveneDiscoveryHeaderRow';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
+import { useMyManagedEventIds } from '@/hooks/useMyManagedEventIds';
 import type { ConveneFacetKey, ConveneFacetValues } from '@/components/convene/ConveneFacetControls';
 import { useConveneCities, useUserCity } from '@/hooks/convene/useConveneCities';
 import { useConveneEventTags } from '@/hooks/convene/useConveneEventTags';
@@ -77,6 +78,7 @@ function CopperDivider() {
 export function ConveneDiscovery() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const managedEventIds = useMyManagedEventIds(user?.id);
   const composer = useUniversalComposer();
   const [searchParams, setSearchParams] = useSearchParams();
   const { isMobile, isDesktop } = useMobile();
@@ -810,6 +812,8 @@ export function ConveneDiscovery() {
                                 <ConveneEventCard
                                   key={event.id}
                                   event={event}
+                                  isOrganizer={managedEventIds.has(event.id)}
+                                  showActions={managedEventIds.has(event.id)}
                                   showRsvp={!isEventCompleted(event)}
                                   onRsvp={() =>
                                     isDesktop
