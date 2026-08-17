@@ -134,6 +134,8 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				'surface-raised': 'hsl(var(--surface-raised))',
+				footer: 'hsl(var(--color-footer))',
+				glass: 'hsl(var(--glass-bg))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))'
@@ -219,6 +221,7 @@ export default {
 						DEFAULT: 'hsl(var(--dna-dia))',
 						light: 'hsl(var(--dna-dia-light))',
 						glow: 'hsl(var(--dna-dia-glow))',
+						dark: 'hsl(var(--dna-dia-dark))',
 					},
 					// Neutral palette (warm)
 					cream: 'hsl(var(--dna-cream))',
@@ -431,6 +434,9 @@ export default {
 				'dna-inner': 'var(--shadow-inner)',
 				'dna-focus': 'var(--shadow-focus)',
 				'dna-glow': 'var(--shadow-glow)',
+			},
+			backdropBlur: {
+				glass: 'var(--glass-blur)',
 			},
 			keyframes: {
 				'accordion-down': {

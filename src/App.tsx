@@ -31,6 +31,10 @@ import AfricaSpinner from "@/components/ui/AfricaSpinner";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 
+const GhanaHome = lazy(() => import("./pages/countries/ghana/GhanaHome"));
+const GhanaPathwayPage = lazy(() => import("./pages/countries/ghana/GhanaPathwayPage"));
+const GhanaArticlePage = lazy(() => import("./pages/countries/ghana/GhanaArticlePage"));
+
 // Loading fallback for lazy-loaded routes
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center">
@@ -384,7 +388,14 @@ function App() {
               <Route path="/dna/u/:username" element={<LegacyUsernameRedirect />} />
               <Route path="/post/:postId" element={<PublicPostPage />} />
               <Route path="/event/:slugOrId" element={<PublicEventPage />} />
-              
+
+              {/* Ghana country page — public, signed-out. BD110's app-chrome merge
+                  gate does not apply; GhanaPublicShell claims chrome ownership. */}
+              <Route path="/west-africa/ghana" element={<GhanaHome />} />
+              <Route path="/west-africa/ghana/:pathwayId" element={<GhanaPathwayPage />} />
+              <Route path="/west-africa/ghana/:pathwayId/:articleId" element={<GhanaArticlePage />} />
+
+
               {/* Core authentication */}
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
               {/* Waitlist retired: signup is open, so both legacy paths land on sign up. */}

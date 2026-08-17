@@ -145,6 +145,15 @@ html {
     --dna-dia: 39 65% 47%; /* Gold — intelligence */
     --dna-dia-light: 39 50% 91%;
     --dna-dia-glow: 39 65% 60%;
+    --dna-dia-dark: 39 65% 30%; /* Referenced by the search overlay's DIA pill; was undefined. */
+
+    /* ── GLASS CHROME (sticky headers) ── */
+    --glass-bg: 34 33% 97% / 0.72;
+    --glass-blur: 16px;
+
+    /* ── FOOTER BAND ── */
+    /* Fixed brand value, not derived from a token per the design handoff. */
+    --color-footer: 151 75% 10%;
 
     /* ── NEUTRAL PALETTE (warm, not cold) ── */
     --dna-cream: 34 33% 97%; /* #F9F7F4 primary bg */
@@ -528,6 +537,14 @@ html {
     --dna-dia: 39 65% 55%;
     --dna-dia-light: 39 40% 18%;
     --dna-dia-glow: 39 65% 65%;
+    --dna-dia-dark: 39 65% 72%;
+
+    /* ── GLASS CHROME (dark) ── */
+    --glass-bg: 0 0% 10% / 0.72;
+    --glass-blur: 16px;
+
+    /* ── FOOTER BAND ── */
+    --color-footer: 151 75% 10%;
 
     /* ── NEUTRAL PALETTE (dark swaps per PRD §12) ── */
     --dna-cream: 0 0% 10%; /* maps to dark.background */
