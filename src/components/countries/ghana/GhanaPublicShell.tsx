@@ -3,6 +3,8 @@ import Footer from "@/components/Footer";
 import { useChromeOwner } from "@/layouts/ChromeOwnerContext";
 import { GhanaHeader } from "./GhanaHeader";
 import { GhanaNavStrip } from "./GhanaNavStrip";
+import { GhanaDrawer } from "./GhanaDrawer";
+import { GhanaSearchOverlay } from "./GhanaSearchOverlay";
 
 export interface GhanaPublicShellProps {
   children: React.ReactNode;
@@ -15,6 +17,8 @@ export interface GhanaPublicShellProps {
  */
 export function GhanaPublicShell({ children }: GhanaPublicShellProps) {
   const { claim, release } = useChromeOwner();
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [searchOpen, setSearchOpen] = React.useState(false);
 
   React.useLayoutEffect(() => {
     claim();
@@ -23,8 +27,13 @@ export function GhanaPublicShell({ children }: GhanaPublicShellProps) {
 
   return (
     <div className="min-h-dvh bg-background">
-      <GhanaHeader />
+      <GhanaHeader
+        onOpenDrawer={() => setDrawerOpen(true)}
+        onOpenSearch={() => setSearchOpen((isOpen) => !isOpen)}
+      />
       <GhanaNavStrip />
+      <GhanaSearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
+      <GhanaDrawer open={drawerOpen} onOpenChange={setDrawerOpen} />
       {children}
       <Footer />
     </div>
