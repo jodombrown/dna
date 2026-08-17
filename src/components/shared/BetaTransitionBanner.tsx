@@ -60,22 +60,35 @@ export function BetaTransitionBanner({ className }: BetaTransitionBannerProps) {
         className,
       )}
     >
-      <div className="max-w-7xl mx-auto flex items-center gap-2 px-3 py-1.5 sm:px-6 lg:px-8">
-        <span className="text-meta font-body text-muted-foreground min-w-0">
-          <span className="text-foreground">We are in beta through October 15, 2026.</span>{' '}
-          <span className="hidden sm:inline">
-            The transition runs from August 15, and public launch follows with a full campaign into
-            Detty December in Accra, Ghana.
-          </span>
-          <span className="sm:hidden">Launch campaign lands for Detty December in Accra.</span>{' '}
-          <Link
-            to="/beta"
-            className="text-foreground underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
-          >
-            Click here to learn more about beta in-app testing
-          </Link>
-        </span>
+      <div className="max-w-7xl mx-auto flex items-center gap-3 px-3 py-1.5 sm:px-6 lg:px-8">
+        {/*
+          One line only. The notice scrolls in a ticker so the full sentence fits
+          at any width; the link and the dismiss control stay put beside it.
+          The copy is duplicated so the loop is seamless, and the second copy is
+          hidden from assistive tech.
+        */}
+        <div className="flex-1 min-w-0 overflow-hidden">
+          <div className="flex w-max animate-ticker motion-reduce:animate-none">
+            {[false, true].map((isClone) => (
+              <span
+                key={isClone ? 'clone' : 'copy'}
+                aria-hidden={isClone || undefined}
+                className="text-meta font-body text-muted-foreground whitespace-nowrap pr-16"
+              >
+                <span className="text-foreground">We are in beta through October 15, 2026.</span>{' '}
+                The transition runs from August 15, and public launch follows with a full campaign
+                into Detty December in Accra, Ghana.
+              </span>
+            ))}
+          </div>
+        </div>
 
+        <Link
+          to="/beta"
+          className="hidden shrink-0 text-meta font-body text-foreground underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm sm:inline"
+        >
+          Click here to learn more about beta in-app testing
+        </Link>
 
         <button
           type="button"

@@ -439,6 +439,14 @@ export default {
 				glass: 'var(--glass-blur)',
 			},
 			keyframes: {
+				'ticker': {
+					from: {
+						transform: 'translateX(0)'
+					},
+					to: {
+						transform: 'translateX(-50%)'
+					}
+				},
 				'accordion-down': {
 					from: {
 						height: '0'
@@ -581,7 +589,9 @@ export default {
 			'float': 'float 3s ease-in-out infinite',
 			'slideInLeft': 'slideInLeft 0.5s ease-out forwards',
 			'slideInRight': 'slideInRight 0.5s ease-out forwards',
-			'arrow-travel-right': 'arrow-travel-right 1.5s ease-in-out infinite'
+			'arrow-travel-right': 'arrow-travel-right 1.5s ease-in-out infinite',
+			// Readable scrolling notice (banner ticker). Slow enough to read.
+			'ticker': 'ticker 42s linear infinite'
 		}
 		}
 	},
