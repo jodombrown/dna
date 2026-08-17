@@ -456,6 +456,23 @@ export default function WaitlistManagement() {
                           <span className="text-sm">{entry.email}</span>
                         </div>
                       </td>
+                      <td className="p-3">
+                        <span className="text-sm">{entry.country || '-'}</span>
+                      </td>
+                      <td className="p-3">
+                        {entry.linkedin_url ? (
+                          <a
+                            href={entry.linkedin_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-primary hover:underline"
+                          >
+                            Profile
+                          </a>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">-</span>
+                        )}
+                      </td>
                       <td className="p-3">{getStatusBadge(entry.status)}</td>
                       <td className="p-3">
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -464,16 +481,36 @@ export default function WaitlistManagement() {
                         </div>
                       </td>
                       <td className="p-3">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            setSelectedEntry(entry);
-                            setShowReviewDialog(true);
-                          }}
-                        >
-                          Review
-                        </Button>
+                        <span className="text-sm text-muted-foreground">
+                          {entry.last_invite_sent_at
+                            ? `Sent ${formatDistanceToNow(new Date(entry.last_invite_sent_at), { addSuffix: true })}`
+                            : 'Not sent'}
+                        </span>
+                      </td>
+                      <td className="p-3">
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedEntry(entry);
+                              setShowReviewDialog(true);
+                            }}
+                          >
+                            Review
+                          </Button>
+                          {entry.status === 'approved' && !entry.archived_at && (
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              disabled={processing}
+                              onClick={() => handleSendAccessEmail(entry)}
+                            >
+                              <Send className="h-4 w-4 mr-1" />
+                              {entry.last_invite_sent_at ? 'Re-send' : 'Send access email'}
+                            </Button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
