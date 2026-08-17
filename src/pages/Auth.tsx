@@ -11,6 +11,9 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { getErrorMessage } from '@/lib/errorLogger';
 import { SignUpApprovalGate } from '@/components/auth/SignUpApprovalGate';
+import BetaSignupPaused from '@/components/auth/BetaSignupPaused';
+import { isSignupPaused } from '@/lib/betaAccess';
+import { useFeatureFlags } from '@/hooks/useFeatureFlags';
 import { AuthModeToggle } from '@/components/auth/AuthModeToggle';
 
 type AuthMode = 'signup' | 'signin';
@@ -45,6 +48,10 @@ const Auth = () => {
   useEffect(() => {
     setAuthMode(resolveMode(queryMode));
   }, [queryMode]);
+
+  // Signup is paused for the beta window unless the flag reopens it early.
+  const { registrationEnabled } = useFeatureFlags();
+  const signupPaused = isSignupPaused(registrationEnabled);
 
 
 
@@ -161,16 +168,18 @@ const Auth = () => {
   ];
 
   const modeSubtitle =
-    authMode === 'signup' ? 'Create your account' : 'Sign in to your account';
+    authMode === 'signup'
+      ? signupPaused
+        ? 'Request beta access'
+        : 'Create your account'
+      : 'Sign in to your account';
 
 
   // Auth content switches between sign up and sign in
   const authContent = (
     <div className="w-full space-y-4">
       {authMode === 'signup' ? (
-        <SignUpApprovalGate />
-
-
+        signupPaused ? <BetaSignupPaused /> : <SignUpApprovalGate />
       ) : (
         <form onSubmit={handleSignIn} className="space-y-4">
           <div className="space-y-2">

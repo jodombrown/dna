@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Search, Download, CheckCircle, XCircle, Clock, Mail, User, Calendar } from 'lucide-react';
+import { Loader2, Search, Download, CheckCircle, XCircle, Clock, Mail, User, Calendar, Send } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface WaitlistEntry {
@@ -19,9 +19,13 @@ interface WaitlistEntry {
   full_name: string | null;
   message: string | null;
   linkedin_url: string | null;
+  country: string | null;
   status: string;
   created_at: string;
   updated_at: string;
+  last_invite_sent_at: string | null;
+  last_invite_sent_by: string | null;
+  archived_at: string | null;
 }
 
 export default function WaitlistManagement() {
@@ -182,15 +186,44 @@ export default function WaitlistManagement() {
     }
   };
 
+  const handleSendAccessEmail = async (entry: WaitlistEntry) => {
+    setProcessing(true);
+    try {
+      const { error } = await supabase.functions.invoke('send-beta-access-granted', {
+        body: { waitlistId: entry.id },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: 'Access email sent',
+        description: `${entry.email} can now set a password and sign in.`,
+      });
+
+      fetchWaitlist();
+    } catch (error) {
+      console.error('Failed to send access email', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to send the access email',
+        variant: 'destructive',
+      });
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   const handleDownloadCSV = () => {
-    const csvHeaders = ['Name', 'Email', 'LinkedIn', 'Message', 'Status', 'Joined Date'];
+    const csvHeaders = ['Name', 'Email', 'Country', 'LinkedIn', 'Message', 'Status', 'Joined Date', 'Access Email Sent'];
     const csvData = filteredEntries.map(entry => [
       entry.full_name || 'N/A',
       entry.email,
+      entry.country || 'N/A',
       entry.linkedin_url || 'N/A',
       entry.message || 'N/A',
       entry.status,
       new Date(entry.created_at).toLocaleDateString(),
+      entry.last_invite_sent_at ? new Date(entry.last_invite_sent_at).toLocaleDateString() : 'Not sent',
     ]);
 
     const csvContent = [csvHeaders, ...csvData]
@@ -392,8 +425,11 @@ export default function WaitlistManagement() {
                     </th>
                     <th className="text-left p-3">Applicant</th>
                     <th className="text-left p-3">Email</th>
+                    <th className="text-left p-3">Country</th>
+                    <th className="text-left p-3">LinkedIn</th>
                     <th className="text-left p-3">Status</th>
                     <th className="text-left p-3">Applied</th>
+                    <th className="text-left p-3">Access email</th>
                     <th className="text-left p-3">Actions</th>
                   </tr>
                 </thead>
@@ -420,6 +456,23 @@ export default function WaitlistManagement() {
                           <span className="text-sm">{entry.email}</span>
                         </div>
                       </td>
+                      <td className="p-3">
+                        <span className="text-sm">{entry.country || '-'}</span>
+                      </td>
+                      <td className="p-3">
+                        {entry.linkedin_url ? (
+                          <a
+                            href={entry.linkedin_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-primary hover:underline"
+                          >
+                            Profile
+                          </a>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">-</span>
+                        )}
+                      </td>
                       <td className="p-3">{getStatusBadge(entry.status)}</td>
                       <td className="p-3">
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -428,16 +481,36 @@ export default function WaitlistManagement() {
                         </div>
                       </td>
                       <td className="p-3">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            setSelectedEntry(entry);
-                            setShowReviewDialog(true);
-                          }}
-                        >
-                          Review
-                        </Button>
+                        <span className="text-sm text-muted-foreground">
+                          {entry.last_invite_sent_at
+                            ? `Sent ${formatDistanceToNow(new Date(entry.last_invite_sent_at), { addSuffix: true })}`
+                            : 'Not sent'}
+                        </span>
+                      </td>
+                      <td className="p-3">
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedEntry(entry);
+                              setShowReviewDialog(true);
+                            }}
+                          >
+                            Review
+                          </Button>
+                          {entry.status === 'approved' && !entry.archived_at && (
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              disabled={processing}
+                              onClick={() => handleSendAccessEmail(entry)}
+                            >
+                              <Send className="h-4 w-4 mr-1" />
+                              {entry.last_invite_sent_at ? 'Re-send' : 'Send access email'}
+                            </Button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -465,6 +538,18 @@ export default function WaitlistManagement() {
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">Email</label>
                   <p className="text-foreground">{selectedEntry.email}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Country</label>
+                  <p className="text-foreground">{selectedEntry.country || 'Not provided'}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Access email</label>
+                  <p className="text-foreground">
+                    {selectedEntry.last_invite_sent_at
+                      ? `Sent ${formatDistanceToNow(new Date(selectedEntry.last_invite_sent_at), { addSuffix: true })}`
+                      : 'Not sent'}
+                  </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">LinkedIn</label>
@@ -538,6 +623,22 @@ export default function WaitlistManagement() {
                   <>
                     <CheckCircle className="h-4 w-4 mr-2" />
                     Approve
+                  </>
+                )}
+              </Button>
+            )}
+            {selectedEntry?.status === 'approved' && !selectedEntry?.archived_at && (
+              <Button
+                variant="secondary"
+                onClick={() => handleSendAccessEmail(selectedEntry)}
+                disabled={processing}
+              >
+                {processing ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    <Send className="h-4 w-4 mr-2" />
+                    {selectedEntry.last_invite_sent_at ? 'Re-send access email' : 'Send access email'}
                   </>
                 )}
               </Button>
