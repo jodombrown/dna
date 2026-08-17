@@ -58,7 +58,7 @@ export interface OrganizerAnalytics {
  */
 export function useEventAnalytics(eventId: string | undefined) {
   return useQuery({
-    queryKey: ['event-analytics', eventId],
+    queryKey: ['event-rpc-analytics', eventId],
     queryFn: async () => {
       if (!eventId) throw new Error('Event ID required');
 

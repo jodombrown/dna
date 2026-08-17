@@ -44,6 +44,7 @@ import { usePostBookmarks } from '@/hooks/usePostBookmarks';
 import { useEventDetailsForFeed } from '@/hooks/useEventDetailsForFeed';
 import { useEventRsvpFromFeed } from '@/hooks/useEventRsvpFromFeed';
 import { useMutualAttendees } from '@/hooks/useMutualAttendees';
+import { useEventManagementRole } from '@/hooks/useEventManagementRole';
 import { ThreadedComments } from '@/components/posts/ThreadedComments';
 import { ProofSheet } from '@/components/feed/ProofSheet';
 import { PostMenuOwn } from '@/components/posts/PostMenuOwn';
@@ -91,12 +92,18 @@ export const EventCard: React.FC<EventCardProps> = ({
   const selfRsvp = useEventRsvpFromFeed(item.event_id, currentUserId);
   const attending = onRsvp ? isAttending : selfRsvp.isAttending;
 
+  const hasManagementRole = useEventManagementRole(item.event_id, currentUserId);
+
   // You cannot attend what you are hosting. The envelope author is usually the
-  // host, but the events row is the source of truth — check both, so a stale
-  // or system-authored envelope can never hand the host a dead RSVP button.
+  // host, but the events row is the source of truth — check both, plus
+  // event_roles for a team-invited Organizer/co-host/Promoter who is
+  // neither the post author nor the literal creator (BD586/BD588) — so a
+  // stale or system-authored envelope, or a team-invited teammate, can
+  // never get handed a dead RSVP button.
   const isOwner =
     item.author_id === currentUserId ||
-    (!!eventDetails?.organizer_id && eventDetails.organizer_id === currentUserId);
+    (!!eventDetails?.organizer_id && eventDetails.organizer_id === currentUserId) ||
+    hasManagementRole;
   const authorName = item.author_display_name || item.author_username || 'Host';
 
   const title = eventDetails?.title || item.event_title || item.title || 'Event';
