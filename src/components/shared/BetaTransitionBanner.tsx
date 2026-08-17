@@ -13,7 +13,9 @@
  */
 import React, { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+
 
 const DISMISS_KEY = 'dna_beta_transition_notice_2026_08';
 
