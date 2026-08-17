@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Search, Download, CheckCircle, XCircle, Clock, Mail, User, Calendar } from 'lucide-react';
+import { Loader2, Search, Download, CheckCircle, XCircle, Clock, Mail, User, Calendar, Send } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface WaitlistEntry {
@@ -19,9 +19,13 @@ interface WaitlistEntry {
   full_name: string | null;
   message: string | null;
   linkedin_url: string | null;
+  country: string | null;
   status: string;
   created_at: string;
   updated_at: string;
+  last_invite_sent_at: string | null;
+  last_invite_sent_by: string | null;
+  archived_at: string | null;
 }
 
 export default function WaitlistManagement() {
