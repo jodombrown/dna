@@ -186,15 +186,44 @@ export default function WaitlistManagement() {
     }
   };
 
+  const handleSendAccessEmail = async (entry: WaitlistEntry) => {
+    setProcessing(true);
+    try {
+      const { error } = await supabase.functions.invoke('send-beta-access-granted', {
+        body: { waitlistId: entry.id },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: 'Access email sent',
+        description: `${entry.email} can now set a password and sign in.`,
+      });
+
+      fetchWaitlist();
+    } catch (error) {
+      console.error('Failed to send access email', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to send the access email',
+        variant: 'destructive',
+      });
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   const handleDownloadCSV = () => {
-    const csvHeaders = ['Name', 'Email', 'LinkedIn', 'Message', 'Status', 'Joined Date'];
+    const csvHeaders = ['Name', 'Email', 'Country', 'LinkedIn', 'Message', 'Status', 'Joined Date', 'Access Email Sent'];
     const csvData = filteredEntries.map(entry => [
       entry.full_name || 'N/A',
       entry.email,
+      entry.country || 'N/A',
       entry.linkedin_url || 'N/A',
       entry.message || 'N/A',
       entry.status,
       new Date(entry.created_at).toLocaleDateString(),
+      entry.last_invite_sent_at ? new Date(entry.last_invite_sent_at).toLocaleDateString() : 'Not sent',
     ]);
 
     const csvContent = [csvHeaders, ...csvData]
