@@ -591,7 +591,7 @@ export default {
 			'slideInRight': 'slideInRight 0.5s ease-out forwards',
 			'arrow-travel-right': 'arrow-travel-right 1.5s ease-in-out infinite',
 			// Readable scrolling notice (banner ticker). Slow enough to read.
-			'ticker': 'ticker 26s linear infinite'
+			'ticker': 'ticker 90s linear infinite'
 		}
 		}
 	},
