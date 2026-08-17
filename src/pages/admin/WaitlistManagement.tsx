@@ -540,6 +540,18 @@ export default function WaitlistManagement() {
                   <p className="text-foreground">{selectedEntry.email}</p>
                 </div>
                 <div>
+                  <label className="text-sm font-medium text-muted-foreground">Country</label>
+                  <p className="text-foreground">{selectedEntry.country || 'Not provided'}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Access email</label>
+                  <p className="text-foreground">
+                    {selectedEntry.last_invite_sent_at
+                      ? `Sent ${formatDistanceToNow(new Date(selectedEntry.last_invite_sent_at), { addSuffix: true })}`
+                      : 'Not sent'}
+                  </p>
+                </div>
+                <div>
                   <label className="text-sm font-medium text-muted-foreground">LinkedIn</label>
                   {selectedEntry.linkedin_url ? (
                     <a
