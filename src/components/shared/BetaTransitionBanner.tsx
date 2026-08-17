@@ -65,8 +65,15 @@ export function BetaTransitionBanner({ className }: BetaTransitionBannerProps) {
             The transition runs from August 15, and public launch follows with a full campaign into
             Detty December in Accra, Ghana.
           </span>
-          <span className="sm:hidden">Launch campaign lands for Detty December in Accra.</span>
+          <span className="sm:hidden">Launch campaign lands for Detty December in Accra.</span>{' '}
+          <Link
+            to="/beta"
+            className="text-foreground underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+          >
+            Click here to learn more about beta in-app testing
+          </Link>
         </span>
+
 
         <button
           type="button"
