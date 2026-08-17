@@ -168,9 +168,7 @@ const Auth = () => {
   const authContent = (
     <div className="w-full space-y-4">
       {authMode === 'signup' ? (
-        <SignUpApprovalGate />
-
-
+        signupPaused ? <BetaSignupPaused /> : <SignUpApprovalGate />
       ) : (
         <form onSubmit={handleSignIn} className="space-y-4">
           <div className="space-y-2">
