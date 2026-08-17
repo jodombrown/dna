@@ -11,6 +11,9 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { getErrorMessage } from '@/lib/errorLogger';
 import { SignUpApprovalGate } from '@/components/auth/SignUpApprovalGate';
+import BetaSignupPaused from '@/components/auth/BetaSignupPaused';
+import { isSignupPaused } from '@/lib/betaAccess';
+import { useFeatureFlags } from '@/hooks/useFeatureFlags';
 import { AuthModeToggle } from '@/components/auth/AuthModeToggle';
 
 type AuthMode = 'signup' | 'signin';
