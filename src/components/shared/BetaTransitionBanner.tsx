@@ -85,10 +85,14 @@ export function BetaTransitionBanner({ className }: BetaTransitionBannerProps) {
 
         <Link
           to="/beta"
-          className="hidden shrink-0 text-meta font-body text-foreground underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm sm:inline"
+          className="shrink-0 text-meta font-body text-foreground underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
         >
-          Click here to learn more about beta in-app testing
+          <span className="sm:hidden">Learn more</span>
+          <span className="hidden sm:inline">
+            Click here to learn more about beta in-app testing
+          </span>
         </Link>
+
 
         <button
           type="button"
