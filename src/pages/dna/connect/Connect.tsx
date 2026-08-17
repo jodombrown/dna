@@ -144,6 +144,18 @@ const Connect = () => {
     setExpandedChat(true);
   }, []);
 
+  // Deep-link into a specific conversation via ?conversation=<id>, used by
+  // introduction notifications and post-send navigation (BD598).
+  useEffect(() => {
+    const conversationId = searchParams.get('conversation');
+    if (conversationId) {
+      handleSelectConversation(conversationId);
+      const next = new URLSearchParams(searchParams);
+      next.delete('conversation');
+      setSearchParams(next, { replace: true });
+    }
+  }, [searchParams, handleSelectConversation, setSearchParams]);
+
   // Handle chat expansion toggle
   const handleChatExpand = useCallback((expanded: boolean) => {
     setExpandedChat(expanded);
