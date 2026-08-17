@@ -11,6 +11,7 @@
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 
 vi.mock('@/hooks/useMobile', () => ({
   useMobile: () => ({ isMobile: true }),
@@ -37,12 +38,14 @@ import { DnaMobileHubShell } from '@/components/mobile/DnaMobileHubShell';
 describe('DnaMobileHubShell', () => {
   it('renders the canonical fixed top bar, tabs slot, and content', () => {
     const { container, getByTestId, getByText } = render(
-      <DnaMobileHubShell
-        bubble={{ kind: 'static', placeholder: 'Discover' }}
-        tabs={<div data-testid="hub-tabs">Tabs</div>}
-      >
-        <main>Body</main>
-      </DnaMobileHubShell>,
+      <MemoryRouter>
+        <DnaMobileHubShell
+          bubble={{ kind: 'static', placeholder: 'Discover' }}
+          tabs={<div data-testid="hub-tabs">Tabs</div>}
+        >
+          <main>Body</main>
+        </DnaMobileHubShell>
+      </MemoryRouter>,
     );
 
     // Header + tabs present.
