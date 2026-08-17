@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { useSetCSSHeaderHeight } from '@/hooks/useSetCSSHeaderHeight';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
@@ -31,6 +31,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
+import { BetaTransitionBanner } from '@/components/shared/BetaTransitionBanner';
 import { publicNavItems } from './header/navigationConfig';
 import { useUnreadMessageCount } from '@/hooks/useUnreadMessageCount';
 import { MESSAGING_ENABLED } from '@/config/featureFlags';
@@ -46,8 +47,16 @@ const UnifiedHeader = () => {
   const profile = liveProfile ?? authProfile;
   const { open: openAccountDrawer } = useAccountDrawer();
   const { isMobile } = useMobile();
-  const headerRef = useRef<HTMLElement>(null);
+  // State-backed ref on purpose: on first paint this component renders the
+  // loading skeleton, which carries no ref, so a plain useRef left the measure
+  // effect running once against null and --unified-header-height never left its
+  // index.css default. Tracking the element in state re-runs the effect when
+  // the real header mounts, so the token follows the MEASURED chrome (banner
+  // row included).
+  const [headerEl, setHeaderEl] = useState<HTMLElement | null>(null);
+  const headerRef = useMemo(() => ({ current: headerEl }), [headerEl]);
   useSetCSSHeaderHeight(headerRef, '--unified-header-height');
+
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -271,7 +280,7 @@ const UnifiedHeader = () => {
   return (
     <>
       <header 
-        ref={headerRef}
+        ref={setHeaderEl}
         data-unified-header
         className="bg-background border-b border-border fixed left-0 right-0 z-50 shadow-sm motion-safe:transition-[top] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]"
         /*
@@ -293,6 +302,7 @@ const UnifiedHeader = () => {
         */
         style={{ top: 0, paddingTop: 'env(safe-area-inset-top, 0px)' }}
       >
+        <BetaTransitionBanner />
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Left section - Logo and Search */}
