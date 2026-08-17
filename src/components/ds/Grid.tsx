@@ -7,13 +7,14 @@ const GAP = {
   l: "gap-6",
 } as const;
 
-// Desktop column count. Mobile is always 1 col unless cols=2, which stays
-// 2-up at every width (e.g. quick facts).
+// Desktop column count. Mobile is always 1 col unless cols=2 or cols=5,
+// which start 2-up (e.g. quick facts, the pathway grid) and cols=5 steps up
+// again at lg (e.g. the pathway grid's 5-up desktop density).
 const DESKTOP_COLS = {
   2: "grid-cols-2",
   3: "md:grid-cols-3",
   4: "md:grid-cols-2 lg:grid-cols-4",
-  5: "md:grid-cols-2 lg:grid-cols-5",
+  5: "grid-cols-2 lg:grid-cols-5",
 } as const;
 
 export interface GridProps extends React.HTMLAttributes<HTMLDivElement> {

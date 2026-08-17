@@ -2,12 +2,19 @@ import * as React from "react";
 import { Helmet } from "react-helmet-async";
 import { GhanaPublicShell } from "@/components/countries/ghana/GhanaPublicShell";
 import { GhanaHero } from "@/components/countries/ghana/GhanaHero";
+import { GhanaLiveDataBanner } from "@/components/countries/ghana/GhanaLiveDataBanner";
+import { GhanaTopStories } from "@/components/countries/ghana/GhanaTopStories";
+import { GhanaHistoryTeaser } from "@/components/countries/ghana/GhanaHistoryTeaser";
+import { GhanaPathwayGrid } from "@/components/countries/ghana/GhanaPathwayGrid";
+import { GhanaQuickFacts } from "@/components/countries/ghana/GhanaQuickFacts";
+import { GhanaCommunityCards } from "@/components/countries/ghana/GhanaCommunityCards";
 import { GhanaFooterCta } from "@/components/countries/ghana/GhanaFooterCta";
 
 /**
- * PR1: route, shell, content module. Renders header, nav strip, hero, and
- * the footer CTA band only — the live-data banner, carousel, history teaser,
- * pathway grid, quick facts, and community cards land in PR2.
+ * PR2: the home sections between the hero and the footer CTA. The map
+ * section ("Ghana, mapped") lands in PR6 and is intentionally left out,
+ * not stubbed. Drawer, search, and country-redirect search stay wired to
+ * no-ops until PR3.
  */
 export default function GhanaHome() {
   return (
@@ -21,6 +28,12 @@ export default function GhanaHome() {
       </Helmet>
       <GhanaPublicShell>
         <GhanaHero />
+        <GhanaLiveDataBanner />
+        <GhanaTopStories />
+        <GhanaHistoryTeaser />
+        <GhanaPathwayGrid />
+        <GhanaQuickFacts />
+        <GhanaCommunityCards />
         <GhanaFooterCta />
       </GhanaPublicShell>
     </>

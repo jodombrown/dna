@@ -11,7 +11,7 @@ const Footer = () => {
           {/* Copyright and Documentation Link */}
           <div className="mb-4 md:mb-0 text-center md:text-left">
             <p className="text-white/60 text-sm">
-              © 2025 DNA - Diaspora Network of Africa. All rights reserved.
+              © {new Date().getFullYear()} DNA - Diaspora Network of Africa. All rights reserved.
             </p>
             <Link 
               to="/documentation/features" 

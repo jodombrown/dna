@@ -10,7 +10,7 @@ export interface GhanaPublicShellProps {
 
 /**
  * Public shell for the Ghana country page. Claims chrome ownership (BD110)
- * on mount so BaseLayout's UnifiedHeader/PulseBar/PulseDock stand down —
+ * on mount so BaseLayout's UnifiedHeader/PulseBar/PulseDock stand down,
  * this is signed-out app chrome, not the authenticated app shell.
  */
 export function GhanaPublicShell({ children }: GhanaPublicShellProps) {

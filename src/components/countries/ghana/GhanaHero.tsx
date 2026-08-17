@@ -6,7 +6,7 @@ import { Stack } from "@/components/ds/Stack";
 import { GHANA_FLAG } from "@/content/ghana-content";
 
 /**
- * Home hero. Header/title only for PR1 — the DC handoff's hero subhead copy
+ * Home hero. Header/title only for PR1, since the DC handoff's hero subhead copy
  * is not in ghana-content.ts, so nothing is invented here pending the design
  * bundle. Type scale: the handoff specifies 34/1.08 mobile, 46/1.05 desktop,
  * which sits between this repo's `display` (32px) and `hero` (48px) tokens;
