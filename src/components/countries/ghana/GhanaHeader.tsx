@@ -10,8 +10,9 @@ export interface GhanaHeaderProps {
 }
 
 /**
- * Sticky glass header, 56px mobile / 64px desktop. Drawer and search buttons
- * are wired to no-ops until PR3 (nav, drawer, search) lands.
+ * Sticky glass header, 56px mobile / 64px desktop. Drawer and search
+ * buttons call back up to GhanaPublicShell, which owns the drawer and
+ * search overlay state.
  *
  * DNA mark, divider, country wordmark: this composition is the template
  * header for all 54 country pages. The wordmark is the only country-specific
