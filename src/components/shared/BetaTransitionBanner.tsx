@@ -62,26 +62,24 @@ export function BetaTransitionBanner({ className }: BetaTransitionBannerProps) {
     >
       <div className="max-w-7xl mx-auto flex items-center gap-3 px-3 py-1.5 sm:px-6 lg:px-8">
         {/*
-          One line only. The notice scrolls in a ticker so the full sentence fits
-          at any width; the link and the dismiss control stay put beside it.
-          The copy is duplicated so the loop is seamless, and the second copy is
-          hidden from assistive tech.
+          One line only. The sentence repeats three times per loop, and the set is
+          duplicated so the wrap is seamless. Clones are hidden from assistive tech.
         */}
         <div className="flex-1 min-w-0 overflow-hidden">
           <div className="flex w-max animate-ticker motion-reduce:animate-none">
-            {[false, true].map((isClone) => (
+            {[0, 1, 2, 3, 4, 5].map((index) => (
               <span
-                key={isClone ? 'clone' : 'copy'}
-                aria-hidden={isClone || undefined}
-                className="text-meta font-body text-muted-foreground whitespace-nowrap pr-16"
+                key={index}
+                aria-hidden={index > 0 || undefined}
+                className="text-meta font-body text-muted-foreground whitespace-nowrap pr-8"
               >
                 <span className="text-foreground">Beta: August 15 to October 15, 2026.</span>{' '}
                 Public launch follows into Detty December in Accra, Ghana.
-
               </span>
             ))}
           </div>
         </div>
+
 
         <Link
           to="/beta"
