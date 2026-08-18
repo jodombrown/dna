@@ -13863,6 +13863,7 @@ export type Database = {
           original_created_at: string
           original_image_url: string
           original_post_id: string
+          pinned_at: string
           post_type: string
           privacy_level: string
           progress_pct: number
