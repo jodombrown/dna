@@ -8,9 +8,41 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Search, Download, CheckCircle, XCircle, Clock, Mail, User, Calendar, Send } from 'lucide-react';
+import {
+  Loader2,
+  Search,
+  Download,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Mail,
+  User,
+  Calendar,
+  Send,
+  MoreHorizontal,
+  Archive,
+  ArchiveRestore,
+  RotateCcw,
+  Copy,
+  Trash2,
+} from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface WaitlistEntry {
@@ -41,6 +73,8 @@ export default function WaitlistManagement() {
   const [showReviewDialog, setShowReviewDialog] = useState(false);
   const [adminNotes, setAdminNotes] = useState('');
   const [processing, setProcessing] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{ ids: string[]; label: string } | null>(null);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
   useEffect(() => {
     fetchWaitlist();
@@ -74,9 +108,14 @@ export default function WaitlistManagement() {
   const filterEntries = () => {
     let filtered = [...entries];
 
-    // Filter by status
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(e => e.status === statusFilter);
+    // Archived entries live in their own view, never in the working list
+    if (statusFilter === 'archived') {
+      filtered = filtered.filter(e => e.archived_at);
+    } else {
+      filtered = filtered.filter(e => !e.archived_at);
+      if (statusFilter !== 'all') {
+        filtered = filtered.filter(e => e.status === statusFilter);
+      }
     }
 
     // Filter by search query
@@ -234,8 +273,124 @@ export default function WaitlistManagement() {
     }
   };
 
+  const handleArchiveToggle = async (ids: string[], archive: boolean) => {
+    setProcessing(true);
+    try {
+      const { data, error } = await supabase
+        .from('beta_waitlist')
+        .update({
+          archived_at: archive ? new Date().toISOString() : null,
+          archived_by: archive ? user!.id : null,
+          updated_at: new Date().toISOString(),
+        })
+        .in('id', ids)
+        .select('id, archived_at');
+
+      if (error) throw error;
+
+      await logAdminAction(archive ? 'waitlist_archived' : 'waitlist_unarchived', ids.length === 1 ? ids[0] : 'multiple', {
+        entry_ids: ids,
+        count: ids.length,
+      });
+
+      toast({
+        title: archive ? 'Archived' : 'Restored',
+        description: `${data?.length ?? 0} ${(data?.length ?? 0) === 1 ? 'entry' : 'entries'} ${archive ? 'archived' : 'restored'}`,
+      });
+
+      setSelectedEntries(new Set());
+      setShowReviewDialog(false);
+      fetchWaitlist();
+    } catch (error) {
+      console.error('Failed to archive waitlist entries', error);
+      toast({
+        title: 'Error',
+        description: archive ? 'Failed to archive' : 'Failed to restore',
+        variant: 'destructive',
+      });
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleResetToPending = async (entryId: string) => {
+    setProcessing(true);
+    try {
+      const previous = entries.find(e => e.id === entryId)?.status;
+      const { data, error } = await supabase
+        .from('beta_waitlist')
+        .update({ status: 'pending', updated_at: new Date().toISOString() })
+        .eq('id', entryId)
+        .select('id, status')
+        .maybeSingle();
+
+      if (error) throw error;
+      if (!data) throw new Error('Entry not found');
+
+      await logAdminAction('waitlist_reset_pending', entryId, {
+        previous_status: previous ?? null,
+        new_status: data.status,
+      });
+
+      toast({ title: 'Reset to pending', description: 'No email was sent.' });
+      setShowReviewDialog(false);
+      fetchWaitlist();
+    } catch (error) {
+      console.error('Failed to reset waitlist entry', error);
+      toast({ title: 'Error', description: 'Failed to reset the entry', variant: 'destructive' });
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleCopyEmail = async (email: string) => {
+    try {
+      await navigator.clipboard.writeText(email);
+      toast({ title: 'Email copied', description: email });
+    } catch (error) {
+      console.error('Clipboard write failed', error);
+      toast({ title: 'Could not copy', description: email, variant: 'destructive' });
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
+    setProcessing(true);
+    try {
+      const { data, error } = await supabase
+        .from('beta_waitlist')
+        .delete()
+        .in('id', deleteTarget.ids)
+        .select('id, email');
+
+      if (error) throw error;
+
+      await logAdminAction('waitlist_deleted', deleteTarget.ids.length === 1 ? deleteTarget.ids[0] : 'multiple', {
+        entry_ids: deleteTarget.ids,
+        emails: (data ?? []).map(row => row.email),
+        count: data?.length ?? 0,
+      });
+
+      toast({
+        title: 'Deleted',
+        description: `${data?.length ?? 0} ${(data?.length ?? 0) === 1 ? 'entry' : 'entries'} permanently deleted`,
+      });
+
+      setDeleteTarget(null);
+      setDeleteConfirmText('');
+      setSelectedEntries(new Set());
+      setShowReviewDialog(false);
+      fetchWaitlist();
+    } catch (error) {
+      console.error('Failed to delete waitlist entries', error);
+      toast({ title: 'Error', description: 'Failed to delete', variant: 'destructive' });
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   const handleDownloadCSV = () => {
-    const csvHeaders = ['Name', 'Email', 'Country', 'LinkedIn', 'Message', 'Status', 'Joined Date', 'Access Email Sent'];
+    const csvHeaders = ['Name', 'Email', 'Country', 'LinkedIn', 'Message', 'Status', 'Joined Date', 'Access Email Sent', 'Archived'];
     const csvData = filteredEntries.map(entry => [
       entry.full_name || 'N/A',
       entry.email,
@@ -245,6 +400,7 @@ export default function WaitlistManagement() {
       entry.status,
       new Date(entry.created_at).toLocaleDateString(),
       entry.last_invite_sent_at ? new Date(entry.last_invite_sent_at).toLocaleDateString() : 'Not sent',
+      entry.archived_at ? new Date(entry.archived_at).toLocaleDateString() : 'No',
     ]);
 
     const csvContent = [csvHeaders, ...csvData]
@@ -296,11 +452,13 @@ export default function WaitlistManagement() {
     );
   };
 
+  const activeEntries = entries.filter(e => !e.archived_at);
   const stats = {
-    total: entries.length,
-    pending: entries.filter(e => e.status === 'pending').length,
-    approved: entries.filter(e => e.status === 'approved').length,
-    rejected: entries.filter(e => e.status === 'rejected').length,
+    total: activeEntries.length,
+    pending: activeEntries.filter(e => e.status === 'pending').length,
+    approved: activeEntries.filter(e => e.status === 'approved').length,
+    rejected: activeEntries.filter(e => e.status === 'rejected').length,
+    archived: entries.filter(e => e.archived_at).length,
   };
 
   if (loading) {
