@@ -40,6 +40,8 @@ import {
   Images,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { connectionService } from '@/services/connectionService';
 import { usePostLikes } from '@/hooks/usePostLikes';
 import { usePostBookmarks } from '@/hooks/usePostBookmarks';
 import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
@@ -104,6 +106,11 @@ export const StoryCard: React.FC<StoryCardProps> = ({
   const { userHasBookmarked, toggleBookmark } = usePostBookmarks(item.post_id, currentUserId);
 
   const isOwner = item.author_id === currentUserId;
+  const { data: connectionStatus } = useQuery({
+    queryKey: ['connection-status', item.author_id],
+    queryFn: () => connectionService.getConnectionStatus(item.author_id),
+    enabled: !isOwner,
+  });
   const authorName = item.author_display_name || item.author_username || 'this member';
   const firstName = authorName.split(' ')[0];
 
@@ -289,7 +296,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
       )}
 
       {/* Convey → Connect hand-off (loop closes; Connect green, not Convey) */}
-      {!isOwner && (
+      {!isOwner && connectionStatus !== 'connected' && (
         <div className="mt-3 flex items-center gap-2.5 rounded-lg border p-2.5">
           <Avatar className="h-7 w-7 flex-shrink-0">
             <AvatarImage src={item.author_avatar_url || ''} />
