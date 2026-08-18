@@ -480,7 +480,7 @@ export default function WaitlistManagement() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
@@ -510,6 +510,14 @@ export default function WaitlistManagement() {
             <div className="text-center">
               <p className="text-3xl font-bold text-red-600">{stats.rejected}</p>
               <p className="text-sm text-muted-foreground mt-1">Rejected</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <p className="text-3xl font-bold text-muted-foreground">{stats.archived}</p>
+              <p className="text-sm text-muted-foreground mt-1">Archived</p>
             </div>
           </CardContent>
         </Card>
