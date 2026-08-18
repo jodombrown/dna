@@ -98,8 +98,6 @@ project_id = "ybhssuehmfnxrzneobok"
     verify_jwt = false
   [functions.send-beta-access-granted]
     verify_jwt = false
-  [functions.send-beta-invite-email]
-    verify_jwt = false
   [functions.send-connection-request]
     verify_jwt = true
   [functions.send-event-reminders]

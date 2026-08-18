@@ -75,6 +75,7 @@ const handler = async (req: Request): Promise<Response> => {
     // the invite fails, so fall back to a plain magic link so a re-send never
     // dies on "user already registered".
     let actionLink: string | null = null;
+    let grantedUserId: string | null = null;
 
     const invite = await supabaseAdmin.auth.admin.generateLink({
       type: "invite",
@@ -93,11 +94,40 @@ const handler = async (req: Request): Promise<Response> => {
         return json({ error: "Could not generate a sign-in link", details: magic.error.message }, 500);
       }
       actionLink = magic.data.properties?.action_link ?? null;
+      grantedUserId = magic.data.user?.id ?? null;
     } else {
       actionLink = invite.data.properties?.action_link ?? null;
+      grantedUserId = invite.data.user?.id ?? null;
     }
 
     if (!actionLink) return json({ error: "Could not generate a sign-in link" }, 500);
+
+    // generateLink('invite') creates the auth.users row (and, via
+    // handle_new_user, the profiles row) synchronously, so the profile
+    // already exists here even before the invitee clicks the link. Flip
+    // is_beta_tester now rather than waiting on a step that never runs
+    // server-side: nothing else in this flow observes "invitee finished
+    // setting their password". profiles.is_beta_tester is guarded against
+    // client-side self-escalation (see profiles_prevent_privilege_escalation),
+    // but that guard only blocks requests carrying a user JWT — this admin
+    // client authenticates as service_role with none, so auth.uid() is
+    // null and the update goes through same as the rest of this function's
+    // writes to beta_waitlist.
+    if (grantedUserId) {
+      const { error: betaFlagErr } = await supabaseAdmin
+        .from("profiles")
+        .update({
+          is_beta_tester: true,
+          beta_status: "active",
+          // Mirrors BETA_WINDOW_CLOSES in src/lib/betaAccess.ts — the beta
+          // program's fixed end date, not a per-user trial length.
+          beta_expires_at: "2026-10-15T23:59:59Z",
+        })
+        .eq("id", grantedUserId);
+      if (betaFlagErr) console.error("Could not set is_beta_tester:", betaFlagErr);
+    } else {
+      console.error("No user id returned from generateLink; is_beta_tester not set for", entry.email);
+    }
 
     const firstName = (entry.full_name || "").trim().split(/\s+/)[0] || "there";
 

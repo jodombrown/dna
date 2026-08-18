@@ -117,16 +117,12 @@ export default function WaitlistManagement() {
       if (error) throw error;
 
       if (newStatus === 'approved') {
-        const entry = entries.find(e => e.id === entryId);
-        const { error: inviteErr } = await supabase.functions.invoke('send-beta-invite-email', {
-          body: { waitlistId: entryId, email: entry?.email, fullName: entry?.full_name },
+        // send-beta-access-granted generates the real Supabase Auth invite
+        // link, emails it, and stamps last_invite_sent_at/by itself.
+        const { error: inviteErr } = await supabase.functions.invoke('send-beta-access-granted', {
+          body: { waitlistId: entryId },
         });
         if (inviteErr) throw inviteErr;
-
-        await supabase.from('beta_waitlist').update({
-          last_invite_sent_at: new Date().toISOString(),
-          last_invite_sent_by: user!.id,
-        }).eq('id', entryId);
       }
 
       await logAdminAction(`waitlist_${newStatus}`, entryId, {
@@ -176,17 +172,14 @@ export default function WaitlistManagement() {
       await Promise.all(updates);
 
       if (action === 'approved') {
-        const entriesToInvite = entries.filter(e => selectedEntries.has(e.id));
-        await Promise.all(entriesToInvite.map(async (entry) => {
-          const { error: inviteErr } = await supabase.functions.invoke('send-beta-invite-email', {
-            body: { waitlistId: entry.id, email: entry.email, fullName: entry.full_name },
+        const idsToInvite = Array.from(selectedEntries);
+        await Promise.all(idsToInvite.map(async (id) => {
+          // send-beta-access-granted generates the real Supabase Auth invite
+          // link, emails it, and stamps last_invite_sent_at/by itself.
+          const { error: inviteErr } = await supabase.functions.invoke('send-beta-access-granted', {
+            body: { waitlistId: id },
           });
           if (inviteErr) throw inviteErr;
-
-          await supabase.from('beta_waitlist').update({
-            last_invite_sent_at: new Date().toISOString(),
-            last_invite_sent_by: user!.id,
-          }).eq('id', entry.id);
         }));
       }
 
