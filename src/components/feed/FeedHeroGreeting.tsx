@@ -27,7 +27,7 @@ export const FeedHeroGreeting: React.FC = () => {
       const [eventsRes, connectionsRes, postsRes] = await Promise.all([
         supabase.from('events').select('id', { count: 'exact', head: true }).gte('start_time', new Date().toISOString()).eq('status', 'published'),
         supabase.from('connections').select('id', { count: 'exact', head: true }).gte('created_at', weekAgo).eq('status', 'accepted'),
-        supabase.from('posts').select('id', { count: 'exact', head: true }).gte('created_at', dayAgo),
+        supabase.from('posts').select('id', { count: 'exact', head: true }).eq('is_deleted', false).gte('created_at', dayAgo),
       ]);
 
       return {

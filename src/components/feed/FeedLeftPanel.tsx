@@ -38,7 +38,7 @@ export const FeedLeftPanel: React.FC<FeedLeftPanelProps> = ({ onSearchClick }) =
         supabase.from('connections').select('id', { count: 'exact', head: true }).or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`).eq('status', 'accepted'),
         supabase.from('event_attendees').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
         supabase.from('space_members').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('status', 'active'),
-        supabase.from('posts').select('id', { count: 'exact', head: true }).eq('author_id', user.id),
+        supabase.from('posts').select('id', { count: 'exact', head: true }).eq('author_id', user.id).eq('is_deleted', false),
       ]);
 
       return {

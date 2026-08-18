@@ -64,6 +64,8 @@ interface ProofSheetProps {
   entityId: string | null | undefined;
   /** Optional override, e.g. "Going to African Tech Summit". */
   title?: string;
+  /** Overrides the default tap behavior (view profile) — e.g. brokering an introduction. */
+  onPersonClick?: (person: ProofPerson) => void;
 }
 
 const SHEET_COPY: Record<ProofSheetKind, { title: string; empty: string }> = {
@@ -258,6 +260,7 @@ export const ProofSheet: React.FC<ProofSheetProps> = ({
   kind,
   entityId,
   title,
+  onPersonClick,
 }) => {
   const navigate = useNavigate();
   const { people, isLoading } = useProofPeople(kind, entityId, open);
@@ -267,6 +270,10 @@ export const ProofSheet: React.FC<ProofSheetProps> = ({
 
   const go = (p: ProofPerson) => {
     onOpenChange(false);
+    if (onPersonClick) {
+      onPersonClick(p);
+      return;
+    }
     if (p.username) navigate(`/dna/${p.username}`);
   };
 

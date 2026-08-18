@@ -26,6 +26,7 @@ export const FeedGreeting: React.FC = () => {
       const { count } = await supabase
         .from('posts')
         .select('id', { count: 'exact', head: true })
+        .eq('is_deleted', false)
         .gt('created_at', yesterday);
 
       return { newPosts: count || 0 };

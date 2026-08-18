@@ -28,8 +28,10 @@ import React, { useState } from 'react';
 import { UniversalFeedItem } from '@/types/feed';
 import { FeedCardBase } from './FeedCardBase';
 import { CardActionRow } from './CardActionRow';
-import { ProofSheet } from '@/components/feed/ProofSheet';
+import { CardMedia } from './CardMedia';
+import { ProofSheet, ProofPerson } from '@/components/feed/ProofSheet';
 import { ReshareDialog } from '@/components/feed/dialogs/ReshareDialog';
+import { IntroductionModal } from '@/components/connect/IntroductionModal';
 import { useReshare } from '@/hooks/useReshare';
 import { linkifyContent } from '@/utils/linkifyContent';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -43,12 +45,14 @@ import {
   Bookmark,
   Repeat2,
   Smile,
+  Images,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 import { usePostLikes } from '@/hooks/usePostLikes';
 import { usePostBookmarks } from '@/hooks/usePostBookmarks';
 import { ThreadedComments } from '@/components/posts/ThreadedComments';
@@ -62,9 +66,9 @@ interface ConnectCardProps {
   onUpdate: () => void;
   showComments?: boolean;
   onCommentClick?: () => void;
-  /** "I can help" / "Reach out" — opens a message to the author. */
+  /** "I can help" / "Reach out" — opens a message to the author. Defaults to starting a DM. */
   onRespond?: (authorId: string) => void;
-  /** Broker from your own network. */
+  /** Broker from your own network. Defaults to picking a mutual connection to introduce. */
   onIntroduce?: (authorId: string) => void;
 }
 
@@ -116,8 +120,12 @@ export const ConnectCard: React.FC<ConnectCardProps> = ({
   onIntroduce,
 }) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [localShowComments, setLocalShowComments] = useState(showComments);
   const [proofOpen, setProofOpen] = useState(false);
+  const [introduceOpen, setIntroduceOpen] = useState(false);
+  const [introducee, setIntroducee] = useState<ProofPerson | null>(null);
+  const [isRespondLoading, setIsRespondLoading] = useState(false);
 
   const { likeCount, userHasLiked, toggleLike } = usePostLikes(item.post_id, currentUserId);
   const { userHasBookmarked, toggleBookmark } = usePostBookmarks(item.post_id, currentUserId);
@@ -154,6 +162,54 @@ export const ConnectCard: React.FC<ConnectCardProps> = ({
   const handleCommentClick = () => {
     if (onCommentClick) onCommentClick();
     else setLocalShowComments((v) => !v);
+  };
+
+  // Respond — same find-or-create-conversation pattern used across the
+  // network hub (ConnectMemberCard, MemberCard): reuse an existing 1:1
+  // conversation with the author if one exists, otherwise start one.
+  const handleRespond = async (authorId: string) => {
+    if (onRespond) {
+      onRespond(authorId);
+      return;
+    }
+    setIsRespondLoading(true);
+    try {
+      const { data: existing } = await supabase
+        .from('conversations')
+        .select('id')
+        .or(
+          `and(user_a.eq.${currentUserId},user_b.eq.${authorId}),and(user_a.eq.${authorId},user_b.eq.${currentUserId})`
+        )
+        .maybeSingle();
+
+      if (existing) {
+        navigate(`/dna/messages/${existing.id}`);
+        return;
+      }
+
+      const { data: newConv, error } = await supabase
+        .from('conversations')
+        .insert({ user_a: currentUserId, user_b: authorId })
+        .select('id')
+        .single();
+      if (error) throw error;
+      navigate(`/dna/messages/${newConv.id}`);
+    } catch {
+      toast({ title: 'Error', description: 'Could not start conversation', variant: 'destructive' });
+    } finally {
+      setIsRespondLoading(false);
+    }
+  };
+
+  // Introduce — brokering from your own network. Reuses the mutual
+  // connections already fetched for the proof block: pick one, then compose
+  // the introduction in the same IntroductionModal DIA uses.
+  const handleIntroduce = (authorId: string) => {
+    if (onIntroduce) {
+      onIntroduce(authorId);
+      return;
+    }
+    setIntroduceOpen(true);
   };
 
   return (
@@ -234,6 +290,43 @@ export const ConnectCard: React.FC<ConnectCardProps> = ({
         </p>
       )}
 
+      {/* Media — hero. Bleeds to the frame (BD178); mid-card, so square corners. */}
+      {item.media_url && (
+        <CardMedia className="mt-3 h-44 sm:h-48">
+          <img
+            src={item.media_url}
+            alt=""
+            className="h-full w-full object-cover"
+            loading="lazy"
+          />
+        </CardMedia>
+      )}
+
+      {/* Media — gallery (carousel with peek, BD074) */}
+      {item.gallery_urls && item.gallery_urls.length > 0 && (
+        <div className="mt-3 space-y-2">
+          <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+            <Images className="h-3.5 w-3.5" />
+            <span>{item.gallery_urls.length} photos</span>
+          </div>
+          <div className="story-scroll -mx-1 flex snap-x snap-mandatory gap-2 overflow-x-auto px-1 pb-1">
+            {item.gallery_urls.map((url, idx) => (
+              <div
+                key={idx}
+                className="h-36 w-[78%] min-w-[220px] max-w-[280px] flex-shrink-0 snap-start overflow-hidden rounded-xl bg-muted/30 sm:h-40 sm:w-[240px]"
+              >
+                <img
+                  src={url}
+                  alt={`Gallery ${idx + 1}`}
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* PROOF — recognition. The only place numbers live on this card,
           and it is a door (BD086). */}
       {mutuals.length > 0 && (
@@ -271,8 +364,8 @@ export const ConnectCard: React.FC<ConnectCardProps> = ({
           <Button
             size="sm"
             className="flex-1 bg-bevel-connect text-white hover:bg-bevel-connect/90"
-            disabled={!onRespond}
-            onClick={() => onRespond?.(item.author_id)}
+            disabled={isRespondLoading}
+            onClick={() => handleRespond(item.author_id)}
           >
             {isSeeking ? 'I can help' : `Reach out to ${firstName}`}
           </Button>
@@ -280,8 +373,8 @@ export const ConnectCard: React.FC<ConnectCardProps> = ({
             size="sm"
             variant="outline"
             className="gap-1.5 border-bevel-connect text-bevel-connect hover:bg-bevel-connect/5"
-            disabled={!onIntroduce}
-            onClick={() => onIntroduce?.(item.author_id)}
+            disabled={!onIntroduce && mutuals.length === 0}
+            onClick={() => handleIntroduce(item.author_id)}
           >
             <ArrowLeftRight className="h-3.5 w-3.5" />
             Connect
@@ -347,6 +440,26 @@ export const ConnectCard: React.FC<ConnectCardProps> = ({
         onReshare={handleReshare}
         isLoading={isResharing}
       />
+
+      {/* Introduce — pick a mutual connection to broker to the author. */}
+      <ProofSheet
+        open={introduceOpen}
+        onOpenChange={setIntroduceOpen}
+        kind="mutual_connections"
+        entityId={item.author_id}
+        title={`Introduce ${firstName} to who you know`}
+        onPersonClick={(p) => setIntroducee(p)}
+      />
+
+      {introducee && (
+        <IntroductionModal
+          open={!!introducee}
+          onOpenChange={(open) => { if (!open) setIntroducee(null); }}
+          personAId={item.author_id}
+          personBId={introducee.user_id}
+          introducerId={currentUserId}
+        />
+      )}
     </FeedCardBase>
   );
 };
