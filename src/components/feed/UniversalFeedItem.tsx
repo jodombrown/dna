@@ -10,7 +10,6 @@ import { UniversalFeedItem as UniversalFeedItemType } from '@/types/feed';
 import { PostCard } from '@/components/posts/PostCard';
 import { EventCard } from './cards/EventCard';
 import { SpaceCard } from './cards/SpaceCard';
-import { NeedCard } from './cards/NeedCard';
 import { StoryCard } from './cards/StoryCard';
 import { OpportunityFeedCard } from './cards/OpportunityFeedCard';
 import { ConnectCard } from './cards/ConnectCard';
