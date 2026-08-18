@@ -179,6 +179,8 @@ const ProfileEdit = lazy(() => import("./pages/ProfileEdit"));
 const AccountSettings = lazy(() => import("./pages/dna/settings/AccountSettings"));
 const PrivacySettings = lazy(() => import("./pages/dna/settings/PrivacySettings"));
 const BlockedUsersSettings = lazy(() => import("./pages/dna/settings/BlockedUsersSettings"));
+const MutedAccountsSettings = lazy(() => import("./pages/dna/settings/MutedAccountsSettings"));
+const HiddenPostsSettings = lazy(() => import("./pages/dna/settings/HiddenPostsSettings"));
 const MyReportsSettings = lazy(() => import("./pages/dna/settings/MyReportsSettings"));
 const NotificationSettings = lazy(() => import("./pages/dna/settings/NotificationSettings"));
 const PreferencesSettings = lazy(() => import("./pages/dna/settings/PreferencesSettings"));
@@ -460,6 +462,16 @@ function App() {
               <Route path="/dna/settings/blocked" element={
                 <OnboardingGuard>
                   <SettingsRouteShell title="Blocked users"><BlockedUsersSettings /></SettingsRouteShell>
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/settings/muted" element={
+                <OnboardingGuard>
+                  <SettingsRouteShell title="Muted Accounts"><MutedAccountsSettings /></SettingsRouteShell>
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/settings/hidden-posts" element={
+                <OnboardingGuard>
+                  <SettingsRouteShell title="Hidden Posts"><HiddenPostsSettings /></SettingsRouteShell>
                 </OnboardingGuard>
               } />
               <Route path="/dna/settings/reports" element={
