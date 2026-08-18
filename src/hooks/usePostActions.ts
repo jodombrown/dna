@@ -26,6 +26,25 @@ export function usePostActions(postId: string, authorId: string, currentUserId?:
     enabled: !!currentUserId && !isOwnPost,
   });
 
+  // Check if post is hidden
+  const { data: isHidden = false } = useQuery({
+    queryKey: ['hidden-post', currentUserId, postId],
+    queryFn: async () => {
+      if (!currentUserId || isOwnPost) return false;
+
+      const { data, error } = await supabase
+        .from('hidden_posts')
+        .select('id')
+        .eq('user_id', currentUserId)
+        .eq('post_id', postId)
+        .maybeSingle();
+
+      if (error) return false;
+      return !!data;
+    },
+    enabled: !!currentUserId && !isOwnPost,
+  });
+
   // Edit post via the column-allowlisted SECURITY DEFINER RPC. updated_at is
   // owned by a database trigger; the caller passes the row's current
   // updated_at for optimistic concurrency (40001 raised on mismatch).
@@ -168,6 +187,26 @@ export function usePostActions(postId: string, authorId: string, currentUserId?:
     onError: () => toast.error('Failed to hide post'),
   });
 
+  // Unhide post
+  const unhidePost = useMutation({
+    mutationFn: async () => {
+      if (!currentUserId) throw new Error('Not authenticated');
+
+      const { error } = await supabase
+        .from('hidden_posts')
+        .delete()
+        .eq('user_id', currentUserId)
+        .eq('post_id', postId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
+      toast.success('Post restored to your feed');
+    },
+    onError: () => toast.error('Failed to unhide post'),
+  });
+
   // Mute author
   const muteAuthor = useMutation({
     mutationFn: async () => {
@@ -219,12 +258,14 @@ export function usePostActions(postId: string, authorId: string, currentUserId?:
   return {
     isOwnPost,
     isMuted,
+    isHidden,
     editPost,
     deletePost,
     togglePin,
     toggleComments,
     reportPost,
     hidePost,
+    unhidePost,
     muteAuthor,
     unmuteAuthor,
     copyLink,

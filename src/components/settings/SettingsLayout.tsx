@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { useIdentitySheetSafe } from '@/components/ui/settings-kit';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, User, Shield, Bell, Settings, ChevronRight, Hash, UserX, Flag } from 'lucide-react';
+import { ArrowLeft, User, Shield, Bell, Settings, ChevronRight, Hash, UserX, Flag, EyeOff } from 'lucide-react';
 
 interface SettingsNavItem {
   label: string;
@@ -32,6 +32,18 @@ const settingsNavItems: SettingsNavItem[] = [
     href: '/dna/settings/blocked',
     icon: UserX,
     description: 'Manage users you\'ve blocked',
+  },
+  {
+    label: 'Muted Accounts',
+    href: '/dna/settings/muted',
+    icon: UserX,
+    description: 'Manage accounts you\'ve muted',
+  },
+  {
+    label: 'Hidden Posts',
+    href: '/dna/settings/hidden-posts',
+    icon: EyeOff,
+    description: 'Restore posts you\'ve hidden from your feed',
   },
   {
     label: 'My Reports',
