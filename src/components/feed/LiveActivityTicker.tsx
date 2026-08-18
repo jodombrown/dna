@@ -32,6 +32,7 @@ export const LiveActivityTicker: React.FC = () => {
       const { data: recentPosts } = await supabase
         .from('posts')
         .select('id, created_at, author_id, profiles!posts_author_id_fkey(display_name, avatar_url)')
+        .eq('is_deleted', false)
         .gte('created_at', dayAgo)
         .order('created_at', { ascending: false })
         .limit(6);
