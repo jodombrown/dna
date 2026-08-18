@@ -548,6 +548,7 @@ export default function WaitlistManagement() {
                 <SelectItem value="pending">Pending</SelectItem>
                 <SelectItem value="approved">Approved</SelectItem>
                 <SelectItem value="rejected">Rejected</SelectItem>
+                <SelectItem value="archived">Archived</SelectItem>
               </SelectContent>
             </Select>
 
@@ -582,6 +583,42 @@ export default function WaitlistManagement() {
                 >
                   <XCircle className="h-4 w-4 mr-1" />
                   Reject
+                </Button>
+                {statusFilter === 'archived' ? (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleArchiveToggle(Array.from(selectedEntries), false)}
+                    disabled={processing}
+                  >
+                    <ArchiveRestore className="h-4 w-4 mr-1" />
+                    Restore
+                  </Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleArchiveToggle(Array.from(selectedEntries), true)}
+                    disabled={processing}
+                  >
+                    <Archive className="h-4 w-4 mr-1" />
+                    Archive
+                  </Button>
+                )}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setDeleteConfirmText('');
+                    setDeleteTarget({
+                      ids: Array.from(selectedEntries),
+                      label: `${selectedEntries.size} ${selectedEntries.size === 1 ? 'entry' : 'entries'}`,
+                    });
+                  }}
+                  disabled={processing}
+                >
+                  <Trash2 className="h-4 w-4 mr-1" />
+                  Delete
                 </Button>
               </div>
             </div>
