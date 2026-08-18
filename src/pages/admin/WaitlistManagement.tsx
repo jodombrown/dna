@@ -116,6 +116,15 @@ export default function WaitlistManagement() {
 
       if (error) throw error;
 
+      if (newStatus === 'approved') {
+        // send-beta-access-granted generates the real Supabase Auth invite
+        // link, emails it, and stamps last_invite_sent_at/by itself.
+        const { error: inviteErr } = await supabase.functions.invoke('send-beta-access-granted', {
+          body: { waitlistId: entryId },
+        });
+        if (inviteErr) throw inviteErr;
+      }
+
       await logAdminAction(`waitlist_${newStatus}`, entryId, {
         previous_status: entries.find(e => e.id === entryId)?.status,
         new_status: newStatus,
@@ -161,6 +170,18 @@ export default function WaitlistManagement() {
       );
 
       await Promise.all(updates);
+
+      if (action === 'approved') {
+        const idsToInvite = Array.from(selectedEntries);
+        await Promise.all(idsToInvite.map(async (id) => {
+          // send-beta-access-granted generates the real Supabase Auth invite
+          // link, emails it, and stamps last_invite_sent_at/by itself.
+          const { error: inviteErr } = await supabase.functions.invoke('send-beta-access-granted', {
+            body: { waitlistId: id },
+          });
+          if (inviteErr) throw inviteErr;
+        }));
+      }
 
       // Log bulk action
       await logAdminAction(`bulk_waitlist_${action}`, 'multiple', {
