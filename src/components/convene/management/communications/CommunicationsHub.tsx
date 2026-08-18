@@ -250,9 +250,10 @@ const CommunicationsHub: React.FC = () => {
 
       // Trigger edge function for immediate sends
       if (scheduleType === 'now') {
-        await supabase.functions.invoke('send-event-blasts', {
+        const { error: blastError } = await supabase.functions.invoke('send-event-blasts', {
           body: { eventId: event.id },
         });
+        if (blastError) throw blastError;
       }
     },
     onSuccess: () => {
