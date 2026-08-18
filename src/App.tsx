@@ -47,6 +47,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import { OnboardingGuard } from "./components/auth/OnboardingGuard";
+import { AdminOnlyDebugRoute } from "./components/shared/AdminOnlyDebugRoute";
 
 // Lazy-loaded pages - split into separate chunks
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
@@ -558,7 +559,9 @@ function App() {
                {/* Debug feed page */}
                <Route path="/dna/debug/feed" element={
                  <OnboardingGuard>
-                   <DebugUniversalFeed />
+                   <AdminOnlyDebugRoute>
+                     <DebugUniversalFeed />
+                   </AdminOnlyDebugRoute>
                  </OnboardingGuard>
                } />
                {/* Hashtag feed page */}
