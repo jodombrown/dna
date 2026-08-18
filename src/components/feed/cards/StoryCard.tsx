@@ -296,7 +296,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
       )}
 
       {/* Convey → Connect hand-off (loop closes; Connect green, not Convey) */}
-      {!isOwner && connectionStatus !== 'connected' && (
+      {!isOwner && connectionStatus !== 'accepted' && (
         <div className="mt-3 flex items-center gap-2.5 rounded-lg border p-2.5">
           <Avatar className="h-7 w-7 flex-shrink-0">
             <AvatarImage src={item.author_avatar_url || ''} />

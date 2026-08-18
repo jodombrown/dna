@@ -8,9 +8,41 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Search, Download, CheckCircle, XCircle, Clock, Mail, User, Calendar, Send } from 'lucide-react';
+import {
+  Loader2,
+  Search,
+  Download,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Mail,
+  User,
+  Calendar,
+  Send,
+  MoreHorizontal,
+  Archive,
+  ArchiveRestore,
+  RotateCcw,
+  Copy,
+  Trash2,
+} from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface WaitlistEntry {
@@ -41,6 +73,8 @@ export default function WaitlistManagement() {
   const [showReviewDialog, setShowReviewDialog] = useState(false);
   const [adminNotes, setAdminNotes] = useState('');
   const [processing, setProcessing] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{ ids: string[]; label: string } | null>(null);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
   useEffect(() => {
     fetchWaitlist();
@@ -74,9 +108,14 @@ export default function WaitlistManagement() {
   const filterEntries = () => {
     let filtered = [...entries];
 
-    // Filter by status
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(e => e.status === statusFilter);
+    // Archived entries live in their own view, never in the working list
+    if (statusFilter === 'archived') {
+      filtered = filtered.filter(e => e.archived_at);
+    } else {
+      filtered = filtered.filter(e => !e.archived_at);
+      if (statusFilter !== 'all') {
+        filtered = filtered.filter(e => e.status === statusFilter);
+      }
     }
 
     // Filter by search query
@@ -234,8 +273,124 @@ export default function WaitlistManagement() {
     }
   };
 
+  const handleArchiveToggle = async (ids: string[], archive: boolean) => {
+    setProcessing(true);
+    try {
+      const { data, error } = await supabase
+        .from('beta_waitlist')
+        .update({
+          archived_at: archive ? new Date().toISOString() : null,
+          archived_by: archive ? user!.id : null,
+          updated_at: new Date().toISOString(),
+        })
+        .in('id', ids)
+        .select('id, archived_at');
+
+      if (error) throw error;
+
+      await logAdminAction(archive ? 'waitlist_archived' : 'waitlist_unarchived', ids.length === 1 ? ids[0] : 'multiple', {
+        entry_ids: ids,
+        count: ids.length,
+      });
+
+      toast({
+        title: archive ? 'Archived' : 'Restored',
+        description: `${data?.length ?? 0} ${(data?.length ?? 0) === 1 ? 'entry' : 'entries'} ${archive ? 'archived' : 'restored'}`,
+      });
+
+      setSelectedEntries(new Set());
+      setShowReviewDialog(false);
+      fetchWaitlist();
+    } catch (error) {
+      console.error('Failed to archive waitlist entries', error);
+      toast({
+        title: 'Error',
+        description: archive ? 'Failed to archive' : 'Failed to restore',
+        variant: 'destructive',
+      });
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleResetToPending = async (entryId: string) => {
+    setProcessing(true);
+    try {
+      const previous = entries.find(e => e.id === entryId)?.status;
+      const { data, error } = await supabase
+        .from('beta_waitlist')
+        .update({ status: 'pending', updated_at: new Date().toISOString() })
+        .eq('id', entryId)
+        .select('id, status')
+        .maybeSingle();
+
+      if (error) throw error;
+      if (!data) throw new Error('Entry not found');
+
+      await logAdminAction('waitlist_reset_pending', entryId, {
+        previous_status: previous ?? null,
+        new_status: data.status,
+      });
+
+      toast({ title: 'Reset to pending', description: 'No email was sent.' });
+      setShowReviewDialog(false);
+      fetchWaitlist();
+    } catch (error) {
+      console.error('Failed to reset waitlist entry', error);
+      toast({ title: 'Error', description: 'Failed to reset the entry', variant: 'destructive' });
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleCopyEmail = async (email: string) => {
+    try {
+      await navigator.clipboard.writeText(email);
+      toast({ title: 'Email copied', description: email });
+    } catch (error) {
+      console.error('Clipboard write failed', error);
+      toast({ title: 'Could not copy', description: email, variant: 'destructive' });
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
+    setProcessing(true);
+    try {
+      const { data, error } = await supabase
+        .from('beta_waitlist')
+        .delete()
+        .in('id', deleteTarget.ids)
+        .select('id, email');
+
+      if (error) throw error;
+
+      await logAdminAction('waitlist_deleted', deleteTarget.ids.length === 1 ? deleteTarget.ids[0] : 'multiple', {
+        entry_ids: deleteTarget.ids,
+        emails: (data ?? []).map(row => row.email),
+        count: data?.length ?? 0,
+      });
+
+      toast({
+        title: 'Deleted',
+        description: `${data?.length ?? 0} ${(data?.length ?? 0) === 1 ? 'entry' : 'entries'} permanently deleted`,
+      });
+
+      setDeleteTarget(null);
+      setDeleteConfirmText('');
+      setSelectedEntries(new Set());
+      setShowReviewDialog(false);
+      fetchWaitlist();
+    } catch (error) {
+      console.error('Failed to delete waitlist entries', error);
+      toast({ title: 'Error', description: 'Failed to delete', variant: 'destructive' });
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   const handleDownloadCSV = () => {
-    const csvHeaders = ['Name', 'Email', 'Country', 'LinkedIn', 'Message', 'Status', 'Joined Date', 'Access Email Sent'];
+    const csvHeaders = ['Name', 'Email', 'Country', 'LinkedIn', 'Message', 'Status', 'Joined Date', 'Access Email Sent', 'Archived'];
     const csvData = filteredEntries.map(entry => [
       entry.full_name || 'N/A',
       entry.email,
@@ -245,6 +400,7 @@ export default function WaitlistManagement() {
       entry.status,
       new Date(entry.created_at).toLocaleDateString(),
       entry.last_invite_sent_at ? new Date(entry.last_invite_sent_at).toLocaleDateString() : 'Not sent',
+      entry.archived_at ? new Date(entry.archived_at).toLocaleDateString() : 'No',
     ]);
 
     const csvContent = [csvHeaders, ...csvData]
@@ -296,11 +452,13 @@ export default function WaitlistManagement() {
     );
   };
 
+  const activeEntries = entries.filter(e => !e.archived_at);
   const stats = {
-    total: entries.length,
-    pending: entries.filter(e => e.status === 'pending').length,
-    approved: entries.filter(e => e.status === 'approved').length,
-    rejected: entries.filter(e => e.status === 'rejected').length,
+    total: activeEntries.length,
+    pending: activeEntries.filter(e => e.status === 'pending').length,
+    approved: activeEntries.filter(e => e.status === 'approved').length,
+    rejected: activeEntries.filter(e => e.status === 'rejected').length,
+    archived: entries.filter(e => e.archived_at).length,
   };
 
   if (loading) {
@@ -322,7 +480,7 @@ export default function WaitlistManagement() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
@@ -355,6 +513,14 @@ export default function WaitlistManagement() {
             </div>
           </CardContent>
         </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <p className="text-3xl font-bold text-muted-foreground">{stats.archived}</p>
+              <p className="text-sm text-muted-foreground mt-1">Archived</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Filters and Actions */}
@@ -382,6 +548,7 @@ export default function WaitlistManagement() {
                 <SelectItem value="pending">Pending</SelectItem>
                 <SelectItem value="approved">Approved</SelectItem>
                 <SelectItem value="rejected">Rejected</SelectItem>
+                <SelectItem value="archived">Archived</SelectItem>
               </SelectContent>
             </Select>
 
@@ -416,6 +583,42 @@ export default function WaitlistManagement() {
                 >
                   <XCircle className="h-4 w-4 mr-1" />
                   Reject
+                </Button>
+                {statusFilter === 'archived' ? (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleArchiveToggle(Array.from(selectedEntries), false)}
+                    disabled={processing}
+                  >
+                    <ArchiveRestore className="h-4 w-4 mr-1" />
+                    Restore
+                  </Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleArchiveToggle(Array.from(selectedEntries), true)}
+                    disabled={processing}
+                  >
+                    <Archive className="h-4 w-4 mr-1" />
+                    Archive
+                  </Button>
+                )}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setDeleteConfirmText('');
+                    setDeleteTarget({
+                      ids: Array.from(selectedEntries),
+                      label: `${selectedEntries.size} ${selectedEntries.size === 1 ? 'entry' : 'entries'}`,
+                    });
+                  }}
+                  disabled={processing}
+                >
+                  <Trash2 className="h-4 w-4 mr-1" />
+                  Delete
                 </Button>
               </div>
             </div>
@@ -494,7 +697,17 @@ export default function WaitlistManagement() {
                           <span className="text-sm text-muted-foreground">-</span>
                         )}
                       </td>
-                      <td className="p-3">{getStatusBadge(entry.status)}</td>
+                      <td className="p-3">
+                        <div className="flex flex-col items-start gap-1">
+                          {getStatusBadge(entry.status)}
+                          {entry.archived_at && (
+                            <Badge variant="outline" className="gap-1">
+                              <Archive className="h-3 w-3" />
+                              Archived {formatDistanceToNow(new Date(entry.archived_at), { addSuffix: true })}
+                            </Badge>
+                          )}
+                        </div>
+                      </td>
                       <td className="p-3">
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <Calendar className="h-4 w-4" />
@@ -531,6 +744,50 @@ export default function WaitlistManagement() {
                               {entry.last_invite_sent_at ? 'Re-send' : 'Send access email'}
                             </Button>
                           )}
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button size="sm" variant="ghost" aria-label="More actions">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              {entry.archived_at ? (
+                                <DropdownMenuItem onClick={() => handleArchiveToggle([entry.id], false)}>
+                                  <ArchiveRestore className="h-4 w-4 mr-2" />
+                                  Unarchive
+                                </DropdownMenuItem>
+                              ) : (
+                                <DropdownMenuItem onClick={() => handleArchiveToggle([entry.id], true)}>
+                                  <Archive className="h-4 w-4 mr-2" />
+                                  Archive
+                                </DropdownMenuItem>
+                              )}
+                              {entry.status !== 'pending' && (
+                                <DropdownMenuItem onClick={() => handleResetToPending(entry.id)}>
+                                  <RotateCcw className="h-4 w-4 mr-2" />
+                                  Reset to pending
+                                </DropdownMenuItem>
+                              )}
+                              <DropdownMenuItem onClick={() => handleCopyEmail(entry.email)}>
+                                <Copy className="h-4 w-4 mr-2" />
+                                Copy email
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                className="text-destructive focus:text-destructive"
+                                onClick={() => {
+                                  setDeleteConfirmText('');
+                                  setDeleteTarget({
+                                    ids: [entry.id],
+                                    label: `${entry.full_name || 'this applicant'} (${entry.email})`,
+                                  });
+                                }}
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Delete permanently
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                       </td>
                     </tr>
@@ -667,6 +924,58 @@ export default function WaitlistManagement() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Delete confirmation */}
+      <AlertDialog
+        open={Boolean(deleteTarget)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setDeleteTarget(null);
+            setDeleteConfirmText('');
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete permanently?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This removes {deleteTarget?.label} from the waitlist for good. It does not delete an
+              account that has already signed in. Type DELETE to confirm.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <Input
+            value={deleteConfirmText}
+            onChange={(e) => setDeleteConfirmText(e.target.value)}
+            placeholder="DELETE"
+            aria-label="Type DELETE to confirm"
+          />
+          <AlertDialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDeleteTarget(null);
+                setDeleteConfirmText('');
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={processing || deleteConfirmText !== 'DELETE'}
+              onClick={handleConfirmDelete}
+            >
+              {processing ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </>
+              )}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
