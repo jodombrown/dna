@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { useIdentitySheetSafe } from '@/components/ui/settings-kit';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, User, Shield, Bell, Settings, ChevronRight, Hash, UserX, Flag, EyeOff } from 'lucide-react';
+import { ArrowLeft, User, Shield, Bell, Settings, ChevronRight, Hash, UserX, Flag, EyeOff, VolumeX } from 'lucide-react';
 
 interface SettingsNavItem {
   label: string;
@@ -36,7 +36,7 @@ const settingsNavItems: SettingsNavItem[] = [
   {
     label: 'Muted Accounts',
     href: '/dna/settings/muted',
-    icon: UserX,
+    icon: VolumeX,
     description: 'Manage accounts you\'ve muted',
   },
   {
