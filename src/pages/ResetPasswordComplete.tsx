@@ -55,6 +55,19 @@ export default function ResetPasswordComplete() {
     // Give Supabase a tick to process the URL code first.
     const timer = setTimeout(check, 300);
 
+    // Fallback: if neither the manual exchange nor onAuthStateChange has
+    // resolved the state within a reasonable window, the code truly isn't
+    // going to work (expired, already used, or opened on a different
+    // device than it was requested from, PKCE's code verifier lives in
+    // the requesting browser's storage and can't be recovered elsewhere).
+    // Fall through to the existing "invalid or expired" error state
+    // instead of leaving the user on an unexplained spinner forever.
+    const fallbackTimer = setTimeout(() => {
+      if (!cancelled) {
+        setHasRecoverySession((current) => (current === null ? false : current));
+      }
+    }, 8000);
+
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'PASSWORD_RECOVERY' || session) {
         setHasRecoverySession(!!session);
@@ -64,6 +77,7 @@ export default function ResetPasswordComplete() {
     return () => {
       cancelled = true;
       clearTimeout(timer);
+      clearTimeout(fallbackTimer);
       sub.subscription.unsubscribe();
     };
   }, []);
