@@ -697,7 +697,17 @@ export default function WaitlistManagement() {
                           <span className="text-sm text-muted-foreground">-</span>
                         )}
                       </td>
-                      <td className="p-3">{getStatusBadge(entry.status)}</td>
+                      <td className="p-3">
+                        <div className="flex flex-col items-start gap-1">
+                          {getStatusBadge(entry.status)}
+                          {entry.archived_at && (
+                            <Badge variant="outline" className="gap-1">
+                              <Archive className="h-3 w-3" />
+                              Archived {formatDistanceToNow(new Date(entry.archived_at), { addSuffix: true })}
+                            </Badge>
+                          )}
+                        </div>
+                      </td>
                       <td className="p-3">
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <Calendar className="h-4 w-4" />
@@ -734,6 +744,50 @@ export default function WaitlistManagement() {
                               {entry.last_invite_sent_at ? 'Re-send' : 'Send access email'}
                             </Button>
                           )}
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button size="sm" variant="ghost" aria-label="More actions">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              {entry.archived_at ? (
+                                <DropdownMenuItem onClick={() => handleArchiveToggle([entry.id], false)}>
+                                  <ArchiveRestore className="h-4 w-4 mr-2" />
+                                  Unarchive
+                                </DropdownMenuItem>
+                              ) : (
+                                <DropdownMenuItem onClick={() => handleArchiveToggle([entry.id], true)}>
+                                  <Archive className="h-4 w-4 mr-2" />
+                                  Archive
+                                </DropdownMenuItem>
+                              )}
+                              {entry.status !== 'pending' && (
+                                <DropdownMenuItem onClick={() => handleResetToPending(entry.id)}>
+                                  <RotateCcw className="h-4 w-4 mr-2" />
+                                  Reset to pending
+                                </DropdownMenuItem>
+                              )}
+                              <DropdownMenuItem onClick={() => handleCopyEmail(entry.email)}>
+                                <Copy className="h-4 w-4 mr-2" />
+                                Copy email
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                className="text-destructive focus:text-destructive"
+                                onClick={() => {
+                                  setDeleteConfirmText('');
+                                  setDeleteTarget({
+                                    ids: [entry.id],
+                                    label: `${entry.full_name || 'this applicant'} (${entry.email})`,
+                                  });
+                                }}
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Delete permanently
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                       </td>
                     </tr>
