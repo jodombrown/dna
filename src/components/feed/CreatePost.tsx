@@ -82,6 +82,8 @@ export function CreatePost() {
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
       queryClient.invalidateQueries({ queryKey: ['feed-posts'] });
+      queryClient.invalidateQueries({ queryKey: ['feed-five-c-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['feed-platform-pulse'] });
 
       // Process mentions and send notifications (async, don't block UI)
       if (data && postContent) {
