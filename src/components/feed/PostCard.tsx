@@ -200,6 +200,8 @@ export function PostCard({ post }: PostCardProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['feed-posts'] });
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
+      queryClient.invalidateQueries({ queryKey: ['feed-five-c-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['feed-platform-pulse'] });
       toast.success('Post deleted');
     },
     onError: (error) => {
