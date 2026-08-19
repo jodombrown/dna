@@ -16,13 +16,13 @@ export default function ResetPasswordComplete() {
   const [hasRecoverySession, setHasRecoverySession] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // The Supabase client is configured with detectSessionInUrl + PKCE, so it
-    // automatically calls exchangeCodeForSession for `?code=` on init. If we
-    // then call exchangeCodeForSession ourselves, the code has already been
-    // consumed and we get { session: null, error }, which flashes the
-    // "invalid or expired" block before onAuthStateChange corrects it.
-    // Fix: always check for an existing session first; only fall back to the
-    // manual exchange if none exists yet.
+    // The recovery email link carries `token_hash` + `type=recovery` (set via
+    // the `{{ .TokenHash }}` template variable in the Supabase Auth Reset
+    // Password email). verifyOtp redeems that token_hash directly against
+    // Supabase Auth — unlike the old PKCE exchangeCodeForSession(code) path,
+    // it does not depend on a code verifier stashed in the requesting
+    // browser's local storage, so a link requested on one device can be
+    // redeemed on another.
     let cancelled = false;
 
     const check = async () => {
@@ -33,40 +33,27 @@ export default function ResetPasswordComplete() {
         return;
       }
 
-      const code = new URLSearchParams(window.location.search).get('code');
-      if (!code) {
+      const params = new URLSearchParams(window.location.search);
+      const tokenHash = params.get('token_hash');
+      const type = params.get('type');
+      if (!tokenHash || type !== 'recovery') {
         setHasRecoverySession(false);
         return;
       }
 
-      const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+      const { data, error } = await supabase.auth.verifyOtp({
+        token_hash: tokenHash,
+        type: 'recovery',
+      });
       if (cancelled) return;
-      // If the auto-exchange already consumed the code, this call errors but
-      // a session will land via onAuthStateChange shortly. Only mark as
-      // invalid when there's no error AND no session (truly bad code).
       if (data?.session) {
         setHasRecoverySession(true);
-      } else if (!error) {
+      } else if (error) {
         setHasRecoverySession(false);
       }
-      // else: leave as null and let onAuthStateChange resolve it.
     };
 
-    // Give Supabase a tick to process the URL code first.
-    const timer = setTimeout(check, 300);
-
-    // Fallback: if neither the manual exchange nor onAuthStateChange has
-    // resolved the state within a reasonable window, the code truly isn't
-    // going to work (expired, already used, or opened on a different
-    // device than it was requested from, PKCE's code verifier lives in
-    // the requesting browser's storage and can't be recovered elsewhere).
-    // Fall through to the existing "invalid or expired" error state
-    // instead of leaving the user on an unexplained spinner forever.
-    const fallbackTimer = setTimeout(() => {
-      if (!cancelled) {
-        setHasRecoverySession((current) => (current === null ? false : current));
-      }
-    }, 8000);
+    check();
 
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'PASSWORD_RECOVERY' || session) {
@@ -76,8 +63,6 @@ export default function ResetPasswordComplete() {
 
     return () => {
       cancelled = true;
-      clearTimeout(timer);
-      clearTimeout(fallbackTimer);
       sub.subscription.unsubscribe();
     };
   }, []);

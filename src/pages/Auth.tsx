@@ -15,6 +15,7 @@ import BetaSignupPaused from '@/components/auth/BetaSignupPaused';
 import { isSignupPaused } from '@/lib/betaAccess';
 import { useFeatureFlags } from '@/hooks/useFeatureFlags';
 import { AuthModeToggle } from '@/components/auth/AuthModeToggle';
+import { ROUTES } from '@/config/routes';
 
 type AuthMode = 'signup' | 'signin';
 
@@ -220,6 +221,14 @@ const Auth = () => {
                   <Eye className="h-4 w-4" />
                 )}
               </button>
+            </div>
+            <div className="text-right">
+              <Link
+                to={ROUTES.resetPassword}
+                className="text-meta text-muted-foreground hover:text-dna-copper transition-colors"
+              >
+                Forgot password?
+              </Link>
             </div>
           </div>
           <Button
