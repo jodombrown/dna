@@ -91,8 +91,22 @@ function buildActionUrl(emailType: string, url: string): string {
     const actionUrl = new URL(url)
 
     if (actionUrl.pathname.includes('/verify')) {
-      actionUrl.searchParams.set('redirect_to', resetUrl)
-      return actionUrl.toString()
+      // `url` here is GoTrue's hosted /verify?token=...&type=recovery&redirect_to=...
+      // link (the ConfirmationURL shape). Its `token` param IS the token hash, but
+      // hitting /verify server-side mints a PKCE `code` on redirect that only the
+      // browser which requested the reset (holding the matching code verifier) can
+      // exchange — recovery links must work when opened on a different device.
+      // So we skip GoTrue's /verify redirect entirely and link straight to the app
+      // with token_hash + type, which the client redeems via supabase.auth.verifyOtp().
+      const tokenHash = actionUrl.searchParams.get('token')
+      if (!tokenHash) {
+        return url
+      }
+
+      const target = new URL(resetUrl)
+      target.searchParams.set('token_hash', tokenHash)
+      target.searchParams.set('type', 'recovery')
+      return target.toString()
     }
 
     if (actionUrl.hostname === ROOT_DOMAIN || actionUrl.hostname === `www.${ROOT_DOMAIN}`) {
