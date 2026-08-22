@@ -3,7 +3,7 @@ import { ChevronDown, ChevronUp, Pencil, Archive, MessageSquare, Trash2 } from '
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useMessage } from '@/contexts/MessageContext';
-import { CURRENCY_VISUALS, VISIBILITY_LABELS } from '../manifest/currencyConfig';
+import { getCurrencyVisual, VISIBILITY_LABELS } from '../manifest/currencyConfig';
 import { NEED_SCOPE_LABELS, NEED_STATUS_LABELS } from './needsConfig';
 import type { NeedDeclaration } from '@/types/contribute';
 
@@ -34,7 +34,9 @@ export function NeedCard({
 }: NeedCardProps) {
   const [expanded, setExpanded] = useState(false);
   const { openMessageOverlay } = useMessage();
-  const visual = CURRENCY_VISUALS[need.currency];
+  // BD638 (2): the currency arrives from the database, not from the union —
+  // an unrecognized value renders neutrally instead of throwing on undefined.
+  const visual = getCurrencyVisual(need.currency);
   const Icon = visual.icon;
   const status = NEED_STATUS_LABELS[need.status];
   const scope = NEED_SCOPE_LABELS[need.scope];

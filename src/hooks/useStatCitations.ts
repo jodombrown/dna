@@ -35,7 +35,7 @@ export const FALLBACK_STAT_CITATIONS: StatCitation[] = [
     display_value: '200M+',
     label: 'People of African Descent',
     description: 'Living outside Africa, projected to comprise 25% of global population',
-    source_name: 'African Union,     ',
+    source_name: 'African Union',
     source_url: 'https://au.int/en/diaspora-division',
     year: 2024,
     methodology: null,
@@ -81,7 +81,7 @@ export const FALLBACK_STAT_CITATIONS: StatCitation[] = [
     is_active: true,
     updated_at: '',
     scope_population: 'Diaspora age 25 & older',
-    scope_geography: 'in the United State',
+    scope_geography: 'in the United States',
     scope_period: null,
   },
 ];

@@ -1,5 +1,6 @@
 import {
   Banknote,
+  Circle,
   Clock,
   GraduationCap,
   Handshake,
@@ -13,7 +14,11 @@ import type {
 } from '@/types/contribute';
 
 export interface CurrencyVisual {
-  key: ContributionCurrency;
+  /**
+   * `unknown` covers the fallback visual only — see FALLBACK_CURRENCY_VISUAL.
+   * It is never a key of CURRENCY_VISUALS and never authorable.
+   */
+  key: ContributionCurrency | 'unknown';
   label: string;
   icon: LucideIcon;
   placeholderTitle: string;
@@ -76,6 +81,40 @@ export const CURRENCY_VISUALS: Record<ContributionCurrency, CurrencyVisual> = {
     authorable: true,
   },
 };
+
+/**
+ * BD638 (2): CURRENCY_VISUALS is keyed by the TypeScript union, but the value
+ * that actually arrives is a string off the wire, from a database enum that
+ * has carried members the union does not (`resources` reached the Needs and
+ * Manifest cards and took the whole Resources view down: the lookup returned
+ * undefined and `visual.icon` threw during render).
+ *
+ * A card must not be able to crash on an unrecognized currency, whatever the
+ * DB enum permits today or grows tomorrow, so every render-path lookup goes
+ * through getCurrencyVisual() and lands here on a miss. This is a crash
+ * guard, deliberately NOT a taxonomy change: whether `resources` belongs in
+ * ContributionCurrency is a separate decision, and widening the union is how
+ * that decision would be expressed, not this.
+ */
+export const FALLBACK_CURRENCY_VISUAL: CurrencyVisual = {
+  key: 'unknown',
+  label: 'Contribution',
+  icon: Circle,
+  placeholderTitle: '',
+  shortBlurb: '',
+  authorable: false,
+};
+
+/**
+ * Presentation lookup for a currency value of unverified provenance (a row
+ * read back from the database). Authoring surfaces that iterate
+ * AUTHORABLE_CURRENCIES keep indexing CURRENCY_VISUALS directly — their keys
+ * come from the union itself and cannot miss.
+ */
+export function getCurrencyVisual(currency: string | null | undefined): CurrencyVisual {
+  if (!currency) return FALLBACK_CURRENCY_VISUAL;
+  return CURRENCY_VISUALS[currency as ContributionCurrency] ?? FALLBACK_CURRENCY_VISUAL;
+}
 
 export const AVAILABILITY_LABELS: Record<StanceAvailability, { short: string; helper: string }> = {
   open_ongoing: {

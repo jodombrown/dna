@@ -132,25 +132,37 @@ export function ConveneDiscovery() {
     [cities],
   );
 
+  // BD638 (5): both of these build from the FUNCTIONAL `prev`, never from the
+  // `searchParams` captured in this render. The search overlay's
+  // handleEventClick calls closeSearch() (a view= edit) and then
+  // selectHostedEvent() in the same tick; with a captured snapshot the second
+  // write started from the pre-close URL and put ?view=search back, so the
+  // overlay reopened over the event the member had just picked. Composed off
+  // `prev`, the two writes stack in order. `replace` still differs by intent:
+  // a filter edit replaces, selecting an event pushes.
   const updateFilters = (updates: Record<string, string | null>) => {
-    const next = new URLSearchParams(searchParams);
-    for (const [key, value] of Object.entries(updates)) {
-      if (value === null || value === '' || value === 'all') {
-        next.delete(key);
-      } else {
-        next.set(key, value);
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      for (const [key, value] of Object.entries(updates)) {
+        if (value === null || value === '' || value === 'all') {
+          next.delete(key);
+        } else {
+          next.set(key, value);
+        }
       }
-    }
-    setSearchParams(next, { replace: true });
+      return next;
+    }, { replace: true });
   };
 
   // Selecting an event is a real navigation (a history entry, so back/forward
   // work), unlike a filter edit — so this writes ?event= directly rather than
   // going through updateFilters' replace:true.
   const selectHostedEvent = (slugOrId: string) => {
-    const next = new URLSearchParams(searchParams);
-    next.set('event', slugOrId);
-    setSearchParams(next);
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set('event', slugOrId);
+      return next;
+    });
   };
 
   const handleFacetChange = (key: ConveneFacetKey, value: string) => {

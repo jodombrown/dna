@@ -44,6 +44,14 @@ const BUCKET = 'post-media';
 const MAX_IMAGE_BYTES = 25 * 1024 * 1024;
 const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
 const IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+// BD638 (4): video was dropped from the accepted types while every other part
+// of this component still spoke video — MAX_VIDEO_BYTES, the video branch of
+// validateFile, the FileVideo tile, the mp4|webm|mov URL test that rehydrates
+// existing attachments. detectKind() returned null for every video, so the
+// only reachable outcome was "Unsupported format". These three are exactly the
+// video types the post-media bucket's allowed_mime_types accepts; adding one
+// the bucket rejects would move the failure from the picker to the upload.
+const VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime'];
 const DEFAULT_MAX_FILES = 6;
 
 type AttachmentStatus = 'uploading' | 'done' | 'error' | 'cancelled';
@@ -76,8 +84,12 @@ interface MultiAttachmentUploaderProps {
 
 function detectKind(type: string, name: string): 'image' | 'video' | null {
   if (IMAGE_TYPES.includes(type)) return 'image';
+  if (VIDEO_TYPES.includes(type)) return 'video';
+  // Some browsers hand over an empty or generic MIME type for a picked file,
+  // so the extension is the fallback — same two lists, by suffix.
   const lower = name.toLowerCase();
   if (/\.(jpe?g|png|webp|gif)$/.test(lower)) return 'image';
+  if (/\.(mp4|webm|mov)$/.test(lower)) return 'video';
   return null;
 }
 
@@ -177,7 +189,12 @@ export const MultiAttachmentUploader = forwardRef<
     if (!user || !item._file) return;
     const file = item._file;
     const ext = (file.name.split('.').pop() || '').toLowerCase();
-    const safeExt = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'mp4', 'webm'].includes(ext) ? ext : 'bin';
+    // 'mov' belongs here with the rest (BD638 (4)): video/quicktime is an
+    // accepted type and a bucket-allowed MIME, but without its extension a .mov
+    // stored as .bin, and every video check downstream — this component's own
+    // /\.(mp4|webm|mov)/ rehydration test, MediaUploadButton's preview branch —
+    // reads the URL, so the file would come back classified as an image.
+    const safeExt = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'mp4', 'webm', 'mov'].includes(ext) ? ext : 'bin';
     const baseParts = file.name.split('.');
     if (baseParts.length > 1) baseParts.pop();
     const base = sanitize(baseParts.join('.'));
@@ -267,7 +284,10 @@ export const MultiAttachmentUploader = forwardRef<
     }
     const kind = detectKind(file.type, file.name);
     if (!kind) {
-      return { ok: false, reason: 'Unsupported format. Use JPG, PNG, WebP or GIF.' };
+      return {
+        ok: false,
+        reason: 'Unsupported format. Use JPG, PNG, WebP, GIF, MP4, WebM or MOV.',
+      };
     }
     const max = kind === 'video' ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
     if (file.size > max) {
@@ -394,7 +414,7 @@ export const MultiAttachmentUploader = forwardRef<
 
   useImperativeHandle(ref, () => ({ addFiles }), [addFiles]);
 
-  const accepted = useMemo(() => IMAGE_TYPES.join(','), []);
+  const accepted = useMemo(() => [...IMAGE_TYPES, ...VIDEO_TYPES].join(','), []);
   const slotsLeft = Math.max(0, maxFiles - items.length);
 
   const handleTileKeyDown = (e: React.KeyboardEvent<HTMLDivElement>, a: UploaderAttachment) => {
@@ -628,7 +648,7 @@ export const MultiAttachmentUploader = forwardRef<
       )}
 
       <p className="text-[11px] text-muted-foreground">
-        Up to {maxFiles} files. Images auto-optimize up to 25 MB. Drag tiles or use Alt + arrow keys to reorder.
+        Up to {maxFiles} files. Images auto-optimize up to 25 MB, video up to 50 MB. Drag tiles or use Alt + arrow keys to reorder.
       </p>
     </div>
   );

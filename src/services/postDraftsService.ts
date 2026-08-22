@@ -75,7 +75,7 @@ export interface UpdateScheduleParams {
  * behind (BD534 step 5).
  */
 export async function updateDraft(params: UpdateDraftParams): Promise<{ id: string }> {
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('post_drafts')
     .update({
       mode: params.mode,
@@ -83,8 +83,17 @@ export async function updateDraft(params: UpdateDraftParams): Promise<{ id: stri
       status: 'draft',
       updated_at: new Date().toISOString(),
     })
-    .eq('id', params.id);
+    .eq('id', params.id)
+    .select('id');
   if (error) throw error;
+  // BD638 (1): a PostgREST UPDATE that matches no row is not an error — it
+  // returns zero rows and no error, so a write blocked by RLS or aimed at a
+  // deleted/foreign id used to resolve as success and the composer showed a
+  // "Draft saved" toast over work that was never stored. Asking for the
+  // affected rows back is what makes a zero-row update observable.
+  if (!data || data.length === 0) {
+    throw new Error('Draft could not be saved — it may have been deleted.');
+  }
   return { id: params.id };
 }
 
@@ -94,7 +103,7 @@ export async function updateDraft(params: UpdateDraftParams): Promise<{ id: stri
  * doesn't carry its old failure into the next attempt.
  */
 export async function updateSchedule(params: UpdateScheduleParams): Promise<{ id: string }> {
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('post_drafts')
     .update({
       mode: params.mode,
@@ -104,8 +113,13 @@ export async function updateSchedule(params: UpdateScheduleParams): Promise<{ id
       failure_reason: null,
       updated_at: new Date().toISOString(),
     })
-    .eq('id', params.id);
+    .eq('id', params.id)
+    .select('id');
   if (error) throw error;
+  // Same zero-row-is-not-an-error hazard as updateDraft above (BD638).
+  if (!data || data.length === 0) {
+    throw new Error('Schedule could not be saved — the draft may have been deleted.');
+  }
   return { id: params.id };
 }
 

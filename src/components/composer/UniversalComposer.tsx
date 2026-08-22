@@ -409,6 +409,26 @@ export const UniversalComposer = ({
     setUserPickedVerb(true);
     hydratedRef.current = true; // never let the localStorage seed-draft clobber this
 
+    // BD638 (3): the draft's link preview lives in the payload as linkUrl (+
+    // its resolved title/description/thumbnail), but embedData is auto-embed
+    // state, not hydrated state — nothing here used to seed it, so resuming a
+    // draft that had a preview rendered no card, and re-publishing dropped the
+    // link fields entirely. Re-running detection on the saved URL rebuilds it
+    // through the one path that owns embedData.
+    //
+    // The body no longer contains the URL (it was stripped when the preview
+    // first resolved and the draft was saved stripped), so the strip effect
+    // will never fire for it and never set strippedEmbedUrlRef itself. Setting
+    // it here is what stops the very next keystroke from calling detection
+    // with a URL-free body and wiping the preview we just restored — the same
+    // ref, and the same reason, as BD530. removeEmbed() still clears it, so a
+    // member who drops this preview can paste a new link and get detection back.
+    const draftLinkUrl = payload.linkUrl;
+    if (draftLinkUrl) {
+      strippedEmbedUrlRef.current = draftLinkUrl;
+      handleEmbedContentChange(draftLinkUrl);
+    }
+
     if (editDraft.status === 'scheduled' && editDraft.scheduledAt) {
       const zone = browserTimezone();
       const wallTime = utcToWallTime(editDraft.scheduledAt, zone);
@@ -416,7 +436,7 @@ export const UniversalComposer = ({
       setScheduleTime(wallTime.time);
       setSchedulePanelOpen(true);
     }
-  }, [isOpen, context.editDraft]);
+  }, [isOpen, context.editDraft, handleEmbedContentChange]);
 
   // ---- Draft: refresh-safe, quiet, one per member -------------------------
   useEffect(() => {
