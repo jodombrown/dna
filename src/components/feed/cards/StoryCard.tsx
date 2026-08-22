@@ -201,16 +201,19 @@ export const StoryCard: React.FC<StoryCardProps> = ({
         <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{item.subtitle}</p>
       )}
 
-      {/* Media — hero. Bleeds to the frame (BD178); mid-card, so square corners. */}
+      {/* Media — hero. Bleeds to the frame (BD178); mid-card, so square corners.
+          NEVER CROP (BD634): object-contain, so the author's framing survives at
+          any aspect ratio. The band carries bg-muted so the letterbox bars read
+          as an intentional fill rather than a hole in the card. */}
       {item.media_url && (
         <CardMedia
-          className="mt-3 h-44 cursor-pointer sm:h-48"
+          className="mt-3 h-44 cursor-pointer bg-muted sm:h-48"
           onClick={() => navigate(storyHref)}
         >
           <img
             src={item.media_url}
             alt={item.title || 'Story'}
-            className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+            className="h-full w-full object-contain transition-transform duration-300 hover:scale-105"
             loading="lazy"
           />
         </CardMedia>
@@ -235,7 +238,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
                 <img
                   src={url}
                   alt={`Gallery ${idx + 1}`}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-contain"
                   loading="lazy"
                 />
               </div>

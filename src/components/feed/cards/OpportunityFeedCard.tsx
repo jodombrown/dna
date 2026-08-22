@@ -25,6 +25,7 @@ import React, { useState } from 'react';
 import { UniversalFeedItem } from '@/types/feed';
 import { FeedCardBase } from './FeedCardBase';
 import { CardActionRow } from './CardActionRow';
+import { CardMedia } from './CardMedia';
 import { linkifyContent } from '@/utils/linkifyContent';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -35,6 +36,7 @@ import {
   Bookmark,
   Repeat2,
   Smile,
+  Images,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
@@ -176,6 +178,53 @@ export const OpportunityFeedCard: React.FC<OpportunityFeedCardProps> = ({
       <p className="mb-3 text-[15px] font-semibold leading-snug">
         {linkifyContent(item.content || '')}
       </p>
+
+      {/* Media — hero. Bleeds to the frame (BD178); mid-card, so square corners.
+          NEVER CROP (BD634): object-contain, so the author's framing survives at
+          any aspect ratio. The band carries bg-muted so the letterbox bars read
+          as an intentional fill rather than a hole in the card.
+
+          my-3, not mt-3: the ask above owns mb-3 and the proof block below owns
+          no top margin, so the media has to pay for its own bottom gap. Adjacent
+          margins collapse, so this stays 12px whichever combination renders. */}
+      {item.media_url && (
+        <CardMedia className="my-3 h-44 bg-muted sm:h-48">
+          <img
+            src={item.media_url}
+            alt=""
+            className="h-full w-full object-contain"
+            loading="lazy"
+          />
+        </CardMedia>
+      )}
+
+      {/* Media — gallery (carousel with peek, BD074). Same never-crop rule.
+          Tile dimensions come from the width/minWidth/maxWidth gallery-* tokens
+          rather than the arbitrary literals StoryCard and ConnectCard still
+          carry — new code does not get to add a new arbitrary value. */}
+      {item.gallery_urls && item.gallery_urls.length > 0 && (
+        <div className="my-3 space-y-2">
+          <div className="flex items-center gap-2 text-meta font-medium text-muted-foreground">
+            <Images className="h-3.5 w-3.5" />
+            <span>{item.gallery_urls.length} photos</span>
+          </div>
+          <div className="story-scroll -mx-1 flex snap-x snap-mandatory gap-2 overflow-x-auto px-1 pb-1">
+            {item.gallery_urls.map((url, idx) => (
+              <div
+                key={idx}
+                className="h-36 w-gallery-peek min-w-gallery-tile max-w-gallery-tile flex-shrink-0 snap-start overflow-hidden rounded-xl bg-muted/30 sm:h-40 sm:w-gallery-tile"
+              >
+                <img
+                  src={url}
+                  alt={`Gallery ${idx + 1}`}
+                  className="h-full w-full object-contain"
+                  loading="lazy"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* PROOF — the give → to → impact flow. Contribute's signature (BD084). */}
       {hasTriple && (

@@ -350,7 +350,13 @@ export function PostCard({
             className="mb-4"
           />
 
-          {/* Media Display - supports single image/video or multi-image gallery */}
+          {/* Media Display - supports single image/video or multi-image gallery.
+              NEVER CROP (BD634): every surface here is object-contain, and each
+              container carries bg-muted so the letterbox bars read as fill.
+              Accepted cost, stated plainly: in the multi-image grid the tiles
+              are square but the photos are not, so each tile letterboxes by a
+              different amount and the grid will look visibly uneven. That is
+              what "never crop" buys in a mixed-ratio grid. */}
           {(() => {
             const isVideo = post.image_url ? /\.(mp4|webm|mov|quicktime)$/i.test(post.image_url) : false;
             const galleryAll: string[] = [];
@@ -365,12 +371,12 @@ export function PostCard({
             if (isVideo && post.image_url) {
               return (
                 <div
-                  className="mb-4 rounded-lg overflow-hidden border cursor-pointer hover:opacity-95 transition-opacity"
+                  className="mb-4 rounded-lg overflow-hidden border bg-muted cursor-pointer hover:opacity-95 transition-opacity"
                   onClick={() => { setLightboxIndex(0); setShowMediaLightbox(true); }}
                 >
                   <video
                     src={post.image_url}
-                    className="w-full h-auto max-h-[32rem] object-cover"
+                    className="w-full h-auto max-h-media object-contain"
                     onClick={(e) => { e.stopPropagation(); setLightboxIndex(0); setShowMediaLightbox(true); }}
                   >
                     Your browser does not support the video tag.
@@ -386,13 +392,13 @@ export function PostCard({
             if (galleryAll.length === 1) {
               return (
                 <div
-                  className="mb-4 rounded-lg overflow-hidden border cursor-pointer hover:opacity-95 transition-opacity"
+                  className="mb-4 rounded-lg overflow-hidden border bg-muted cursor-pointer hover:opacity-95 transition-opacity"
                   onClick={() => openAt(0)}
                 >
                   <img
                     src={galleryAll[0]}
                     alt="Post media"
-                    className="w-full object-cover max-h-[32rem]"
+                    className="w-full object-contain max-h-media"
                     loading="eager"
                     onError={(e) => {
                       const target = e.currentTarget;
@@ -435,7 +441,7 @@ export function PostCard({
                       <img
                         src={url}
                         alt={`Post media ${idx + 1}`}
-                        className="w-full h-full object-cover aspect-square"
+                        className="w-full h-full object-contain aspect-square"
                         loading={idx === 0 ? 'eager' : 'lazy'}
                       />
                       {showOverlay && (

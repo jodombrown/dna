@@ -178,24 +178,34 @@ export const EventCard: React.FC<EventCardProps> = ({
         )}
       </div>
 
+      {/* Format pill — moved off the cover (BD634). It sat at absolute right-3
+          top-3 over the image, which is exactly the corner a contained (never
+          cropped) cover no longer guarantees is image. It now rides the same
+          slot Connect and Contribute put their type pill in. */}
+      {formatLabel && (
+        <span className="mb-2 inline-block rounded-full bg-bevel-event/15 px-2.5 py-0.5 text-micro text-bevel-event">
+          {formatLabel}
+        </span>
+      )}
+
       {/* Cover — media bleeds to the frame (BD178); mid-card, so square corners.
           Title and the facts you need to decide ride a scrim on the image itself,
-          collapsing the three trailing-gutter rows BD177 exists to remove. */}
+          collapsing the three trailing-gutter rows BD177 exists to remove.
+          NEVER CROP (BD634): object-contain. The band's bg-bevel-event/90 already
+          fills behind it, so the letterbox bars read as the event's own tint. */}
       <CardMedia
         className="mb-3 h-40 cursor-pointer bg-bevel-event/90 sm:h-44"
         onClick={() => navigate(eventHref)}
       >
         {coverImage && (
-          <img src={coverImage} alt={title} className="h-full w-full object-cover" loading="lazy" />
+          <img src={coverImage} alt={title} className="h-full w-full object-contain" loading="lazy" />
         )}
-        {/* Scrim carries white text over a LIGHT cover — from-black/65, not /55.
-            Verify on a real light photo, not the dark placeholder gradient. */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent" />
-        {formatLabel && (
-          <span className="absolute right-3 top-3 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-bevel-event">
-            {formatLabel}
-          </span>
-        )}
+        {/* Scrim covers roughly the bottom half only (BD634). A full-image wash
+            was affordable when the image was cropped to fill; now that the whole
+            frame survives, darkening all of it costs the picture. from-black/75
+            (up from /65) keeps white text readable over a light cover at the
+            bottom, where the text actually sits. */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 p-3">
           <button
             type="button"
