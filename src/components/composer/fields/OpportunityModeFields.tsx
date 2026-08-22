@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/select';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { StoryImageUpload } from './StoryImageUpload';
 
 export type OpportunityDirection = 'need' | 'offer';
 
@@ -32,6 +33,8 @@ export interface OpportunityFieldValues {
   giveWhat?: string;
   giveTo?: string;
   intendedImpact?: string;
+  /** Hero image for the Offer/Ask card. Same uploader and bucket Story uses. */
+  imageUrl?: string;
 }
 
 interface OpportunityModeFieldsProps {
@@ -177,6 +180,14 @@ export const OpportunityModeFields: React.FC<OpportunityModeFieldsProps> = ({
           <p className="mt-1 text-[11px] text-destructive">{errors.intendedImpact}</p>
         )}
       </div>
+
+      {/* Hero image — wired exactly as StoryModeFields wires it, so an Offer or
+          an Ask can carry a picture instead of arriving as a wall of text. */}
+      <StoryImageUpload
+        currentImageUrl={values.imageUrl}
+        onUpload={(url) => onChange({ imageUrl: url })}
+        onRemove={() => onChange({ imageUrl: undefined })}
+      />
     </div>
   );
 };

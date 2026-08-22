@@ -54,6 +54,8 @@ import { usePostLikes } from '@/hooks/usePostLikes';
 import { usePostBookmarks } from '@/hooks/usePostBookmarks';
 import { ThreadedComments } from '@/components/posts/ThreadedComments';
 import { ProofSheet } from '@/components/feed/ProofSheet';
+import { ReshareDialog } from '@/components/feed/dialogs/ReshareDialog';
+import { useReshare } from '@/hooks/useReshare';
 import { PostMenuOwn } from '@/components/posts/PostMenuOwn';
 import { PostMenuOthers } from '@/components/posts/PostMenuOthers';
 
@@ -63,7 +65,6 @@ interface SpaceCardProps {
   onUpdate: () => void;
   showComments?: boolean;
   onCommentClick?: () => void;
-  onReshare?: (postId: string) => void;
   onJoinRequest?: (spaceId: string) => void;
   onFollow?: (spaceId: string) => void;
   isFollowing?: boolean;
@@ -89,7 +90,6 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({
   onUpdate,
   showComments = false,
   onCommentClick,
-  onReshare,
   onJoinRequest,
   onFollow,
   isFollowing = false,
@@ -100,6 +100,23 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({
 
   const { likeCount, userHasLiked, toggleLike } = usePostLikes(item.post_id, currentUserId);
   const { userHasBookmarked, toggleBookmark } = usePostBookmarks(item.post_id, currentUserId);
+
+  // Reshare — same hook + dialog PostCard and ConnectCard use, so a resharable
+  // post is created the same way regardless of which card the click came from.
+  const {
+    hasReshared,
+    isLoading: isResharing,
+    isReshareDialogOpen,
+    openReshareDialog,
+    closeReshareDialog,
+    handleReshare,
+  } = useReshare({
+    postId: item.post_id,
+    userId: currentUserId,
+    originalAuthorId: item.author_id,
+    originalAuthorName: item.author_display_name,
+    onSuccess: onUpdate,
+  });
 
   const isOwner = item.author_id === currentUserId;
   const authorName = item.author_display_name || item.author_username || 'Space';
@@ -363,9 +380,8 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({
           {
             icon: Repeat2,
             label: 'Reshare',
-            onClick: () => onReshare?.(item.post_id),
-            active: item.has_reshared,
-            disabled: !onReshare,
+            onClick: openReshareDialog,
+            active: hasReshared,
           },
         ]}
         trailing={{
@@ -392,6 +408,15 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({
         kind="space_members"
         entityId={item.space_id}
         title={`Inside ${spaceName}`}
+      />
+
+      <ReshareDialog
+        open={isReshareDialogOpen}
+        onOpenChange={closeReshareDialog}
+        post={item}
+        currentUserId={currentUserId}
+        onReshare={handleReshare}
+        isLoading={isResharing}
       />
     </FeedCardBase>
   );

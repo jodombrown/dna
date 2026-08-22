@@ -601,6 +601,7 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
           give_what: data.giveWhat ?? null,
           give_to: data.giveTo ?? null,
           intended_impact: data.intendedImpact ?? null,
+          image_url: data.mediaUrl ?? null,
           related_space_id: context.relatedSpaceId ?? null,
           audience: 'public',
         }])

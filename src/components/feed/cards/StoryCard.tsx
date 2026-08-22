@@ -45,6 +45,8 @@ import { connectionService } from '@/services/connectionService';
 import { usePostLikes } from '@/hooks/usePostLikes';
 import { usePostBookmarks } from '@/hooks/usePostBookmarks';
 import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
+import { ReshareDialog } from '@/components/feed/dialogs/ReshareDialog';
+import { useReshare } from '@/hooks/useReshare';
 import { ThreadedComments } from '@/components/posts/ThreadedComments';
 import { PostMenuOwn } from '@/components/posts/PostMenuOwn';
 import { PostMenuOthers } from '@/components/posts/PostMenuOthers';
@@ -56,7 +58,6 @@ interface StoryCardProps {
   onUpdate: () => void;
   showComments?: boolean;
   onCommentClick?: () => void;
-  onReshare?: (postId: string) => void;
 }
 
 /** A story is "traveled" once it has actually reached beyond the author. */
@@ -97,13 +98,29 @@ export const StoryCard: React.FC<StoryCardProps> = ({
   onUpdate,
   showComments = false,
   onCommentClick,
-  onReshare,
 }) => {
   const navigate = useNavigate();
   const [localShowComments, setLocalShowComments] = useState(showComments);
 
   const { likeCount, userHasLiked, toggleLike } = usePostLikes(item.post_id, currentUserId);
   const { userHasBookmarked, toggleBookmark } = usePostBookmarks(item.post_id, currentUserId);
+
+  // Reshare — same hook + dialog PostCard and ConnectCard use, so a resharable
+  // post is created the same way regardless of which card the click came from.
+  const {
+    hasReshared,
+    isLoading: isResharing,
+    isReshareDialogOpen,
+    openReshareDialog,
+    closeReshareDialog,
+    handleReshare,
+  } = useReshare({
+    postId: item.post_id,
+    userId: currentUserId,
+    originalAuthorId: item.author_id,
+    originalAuthorName: item.author_display_name,
+    onSuccess: onUpdate,
+  });
 
   const isOwner = item.author_id === currentUserId;
   const { data: connectionStatus } = useQuery({
@@ -341,9 +358,8 @@ export const StoryCard: React.FC<StoryCardProps> = ({
           {
             icon: Repeat2,
             label: 'Reshare',
-            onClick: () => onReshare?.(item.post_id),
-            active: item.has_reshared,
-            disabled: !onReshare,
+            onClick: openReshareDialog,
+            active: hasReshared,
           },
         ]}
         trailing={{
@@ -362,6 +378,15 @@ export const StoryCard: React.FC<StoryCardProps> = ({
           commentsDisabled={!!item.comments_disabled}
         />
       )}
+
+      <ReshareDialog
+        open={isReshareDialogOpen}
+        onOpenChange={closeReshareDialog}
+        post={item}
+        currentUserId={currentUserId}
+        onReshare={handleReshare}
+        isLoading={isResharing}
+      />
     </FeedCardBase>
   );
 };

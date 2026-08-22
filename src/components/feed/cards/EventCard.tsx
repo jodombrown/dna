@@ -11,7 +11,8 @@
  * headcount. Backed by useMutualAttendees (connections ⋈ event_attendees).
  *
  * NOTE (BD082): React is wired to the existing like hook until the 5-reaction
- * write path lands. Reshare is presented and routes to the parent handler.
+ * write path lands. Reshare is self-contained: it opens the same ReshareDialog
+ * PostCard and ConnectCard use, via the shared useReshare hook.
  */
 
 import React, { useState } from 'react';
@@ -47,6 +48,8 @@ import { useMutualAttendees } from '@/hooks/useMutualAttendees';
 import { useEventManagementRole } from '@/hooks/useEventManagementRole';
 import { ThreadedComments } from '@/components/posts/ThreadedComments';
 import { ProofSheet } from '@/components/feed/ProofSheet';
+import { ReshareDialog } from '@/components/feed/dialogs/ReshareDialog';
+import { useReshare } from '@/hooks/useReshare';
 import { PostMenuOwn } from '@/components/posts/PostMenuOwn';
 import { PostMenuOthers } from '@/components/posts/PostMenuOthers';
 
@@ -56,7 +59,6 @@ interface EventCardProps {
   onUpdate: () => void;
   showComments?: boolean;
   onCommentClick?: () => void;
-  onReshare?: (postId: string) => void;
   onRsvp?: (eventId: string) => void;
   isAttending?: boolean;
 }
@@ -73,7 +75,6 @@ export const EventCard: React.FC<EventCardProps> = ({
   onUpdate,
   showComments = false,
   onCommentClick,
-  onReshare,
   onRsvp,
   isAttending = false,
 }) => {
@@ -86,6 +87,23 @@ export const EventCard: React.FC<EventCardProps> = ({
 
   const { likeCount, userHasLiked, toggleLike } = usePostLikes(item.post_id, currentUserId);
   const { userHasBookmarked, toggleBookmark } = usePostBookmarks(item.post_id, currentUserId);
+
+  // Reshare — same hook + dialog PostCard and ConnectCard use, so a resharable
+  // post is created the same way regardless of which card the click came from.
+  const {
+    hasReshared,
+    isLoading: isResharing,
+    isReshareDialogOpen,
+    openReshareDialog,
+    closeReshareDialog,
+    handleReshare,
+  } = useReshare({
+    postId: item.post_id,
+    userId: currentUserId,
+    originalAuthorId: item.author_id,
+    originalAuthorName: item.author_display_name,
+    onSuccess: onUpdate,
+  });
 
   // The card RSVPs on its own — the feed does not thread an onRsvp handler
   // down, and a dead grey RSVP button is a bug, not a state.
@@ -359,9 +377,8 @@ export const EventCard: React.FC<EventCardProps> = ({
           {
             icon: Repeat2,
             label: 'Reshare',
-            onClick: () => onReshare?.(item.post_id),
-            active: item.has_reshared,
-            disabled: !onReshare,
+            onClick: openReshareDialog,
+            active: hasReshared,
           },
         ]}
         trailing={{
@@ -388,6 +405,15 @@ export const EventCard: React.FC<EventCardProps> = ({
         kind="attendees"
         entityId={item.event_id}
         title={`Going to ${title}`}
+      />
+
+      <ReshareDialog
+        open={isReshareDialogOpen}
+        onOpenChange={closeReshareDialog}
+        post={item}
+        currentUserId={currentUserId}
+        onReshare={handleReshare}
+        isLoading={isResharing}
       />
     </FeedCardBase>
   );
