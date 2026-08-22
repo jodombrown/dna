@@ -191,14 +191,27 @@ export const EventCard: React.FC<EventCardProps> = ({
       {/* Cover — media bleeds to the frame (BD178); mid-card, so square corners.
           Title and the facts you need to decide ride a scrim on the image itself,
           collapsing the three trailing-gutter rows BD177 exists to remove.
-          NEVER CROP (BD634): object-contain. The band's bg-bevel-event/90 already
-          fills behind it, so the letterbox bars read as the event's own tint. */}
+
+          NEVER CROP, AND NO FIXED BAND (BD634 follow-up). A fixed band plus object-contain
+          never crops but strands a portrait flyer — and event flyers are mostly
+          portrait — in the middle of two bars. The cover takes its own height
+          instead, capped by max-h-media (32rem); the guardrail already bounds
+          uploads to 9:16–16:9, so it cannot run away. mx-auto centres the one
+          case that hits the cap, where bg-bevel-event/90 fills as the event's
+          own tint. The fixed band survives ONLY with no cover: the title and
+          facts are absolutely positioned and contribute no height, so without an
+          image there would be nothing to give the block a box. */}
       <CardMedia
-        className="mb-3 h-40 cursor-pointer bg-bevel-event/90 sm:h-44"
+        className={cn('mb-3 cursor-pointer bg-bevel-event/90', !coverImage && 'h-40 sm:h-44')}
         onClick={() => navigate(eventHref)}
       >
         {coverImage && (
-          <img src={coverImage} alt={title} className="h-full w-full object-contain" loading="lazy" />
+          <img
+            src={coverImage}
+            alt={title}
+            className="mx-auto h-auto max-h-media w-full object-contain"
+            loading="lazy"
+          />
         )}
         {/* Scrim covers roughly the bottom half only (BD634). A full-image wash
             was affordable when the image was cropped to fill; now that the whole

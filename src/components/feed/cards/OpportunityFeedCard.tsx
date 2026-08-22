@@ -27,6 +27,7 @@ import { FeedCardBase } from './FeedCardBase';
 import { CardActionRow } from './CardActionRow';
 import { CardMedia } from './CardMedia';
 import { ExpandableProse } from './ExpandableProse';
+import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -182,19 +183,25 @@ export const OpportunityFeedCard: React.FC<OpportunityFeedCardProps> = ({
       />
 
       {/* Media — hero. Bleeds to the frame (BD178); mid-card, so square corners.
-          NEVER CROP (BD634): object-contain, so the author's framing survives at
-          any aspect ratio. The band carries bg-muted so the letterbox bars read
-          as an intentional fill rather than a hole in the card.
+          NEVER CROP, AND NO FIXED BAND (BD634 follow-up). object-contain inside a fixed
+          height band never crops, but it guarantees a sliver of image ringed by
+          bars the moment the photo is not the band's ratio — which is every
+          portrait flyer. So the container takes the image's height instead: a
+          16:9 photo renders short and wide, a portrait renders tall, both full
+          card width, no bars. max-h-media (32rem) is the only ceiling; an image
+          tall enough to hit it narrows and stays centred (mx-auto), and that is
+          the one case bg-muted still fills. Uploads are bounded to 9:16–16:9 by
+          the aspect-ratio guardrail, so natural height cannot run away.
 
           my-3, not mt-3: the ask above owns mb-3 and the proof block below owns
           no top margin, so the media has to pay for its own bottom gap. Adjacent
           margins collapse, so this stays 12px whichever combination renders. */}
       {item.media_url && (
-        <CardMedia className="my-3 h-44 bg-muted sm:h-48">
+        <CardMedia className="my-3 bg-muted">
           <img
             src={item.media_url}
             alt=""
-            className="h-full w-full object-contain"
+            className="mx-auto h-auto max-h-media w-full object-contain"
             loading="lazy"
           />
         </CardMedia>
@@ -225,6 +232,29 @@ export const OpportunityFeedCard: React.FC<OpportunityFeedCardProps> = ({
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Media — link preview (compact, BD074). The third media state, specced
+          with the hero and the gallery and never built until now: a Contribute
+          post with no image but a link_url — a video the giver is pointing at —
+          rendered nothing at all. Same compact LinkPreviewCard StoryCard uses,
+          so a linked video reads identically wherever it appears in the feed. */}
+      {item.link_url && (
+        <div className="my-3">
+          <LinkPreviewCard
+            data={{
+              url: item.link_url,
+              title: item.link_title || undefined,
+              description: item.link_description || undefined,
+              provider_name: item.link_metadata?.provider_name,
+              thumbnail_url: item.link_metadata?.thumbnail_url,
+              type: item.link_metadata?.embed_type,
+              is_video: item.link_metadata?.is_video,
+            }}
+            showRemoveButton={false}
+            size="compact"
+          />
         </div>
       )}
 

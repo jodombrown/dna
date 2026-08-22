@@ -291,15 +291,21 @@ export const ConnectCard: React.FC<ConnectCardProps> = ({
       )}
 
       {/* Media — hero. Bleeds to the frame (BD178); mid-card, so square corners.
-          NEVER CROP (BD634): object-contain, so the author's framing survives at
-          any aspect ratio. The band carries bg-muted so the letterbox bars read
-          as an intentional fill rather than a hole in the card. */}
+          NEVER CROP, AND NO FIXED BAND (BD634 follow-up). object-contain inside a fixed
+          height band never crops, but it guarantees a sliver of image ringed by
+          bars the moment the photo is not the band's ratio — which is every
+          portrait flyer. So the container takes the image's height instead: a
+          16:9 photo renders short and wide, a portrait renders tall, both full
+          card width, no bars. max-h-media (32rem) is the only ceiling; an image
+          tall enough to hit it narrows and stays centred (mx-auto), and that is
+          the one case bg-muted still fills. Uploads are bounded to 9:16–16:9 by
+          the aspect-ratio guardrail, so natural height cannot run away. */}
       {item.media_url && (
-        <CardMedia className="mt-3 h-44 bg-muted sm:h-48">
+        <CardMedia className="mt-3 bg-muted">
           <img
             src={item.media_url}
             alt=""
-            className="h-full w-full object-contain"
+            className="mx-auto h-auto max-h-media w-full object-contain"
             loading="lazy"
           />
         </CardMedia>
