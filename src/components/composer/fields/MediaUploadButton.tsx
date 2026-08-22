@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { uploadMedia } from '@/lib/uploadMedia';
+import { validateImageDimensions } from '@/utils/validateImageDimensions';
 
 const IMAGE_ACCEPT = 'image/jpeg,image/jpg,image/png,image/webp,image/gif';
 
@@ -52,6 +53,17 @@ export function MediaUploadButton({
       return;
     }
 
+    // Aspect ratio must sit between 9:16 and 16:9, and clear the size floor.
+    const dimensions = await validateImageDimensions(file);
+    if (!dimensions.ok) {
+      toast({
+        title: dimensions.title,
+        description: dimensions.description,
+        variant: 'destructive',
+      });
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
 
     setIsUploading(true);
     try {

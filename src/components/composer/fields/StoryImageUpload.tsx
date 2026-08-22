@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { uploadMedia, ACCEPT } from '@/lib/uploadMedia';
 import { compressAndTinify } from '@/lib/compressImage';
+import { validateImageDimensions } from '@/utils/validateImageDimensions';
 
 interface StoryImageUploadProps {
   currentImageUrl?: string;
@@ -40,6 +41,18 @@ export function StoryImageUpload({ currentImageUrl, onUpload, onRemove }: StoryI
         description: 'Please upload an image smaller than 25MB.',
         variant: 'destructive',
       });
+      return;
+    }
+
+    // Aspect ratio must sit between 9:16 and 16:9, and clear the size floor.
+    const dimensions = await validateImageDimensions(original);
+    if (!dimensions.ok) {
+      toast({
+        title: dimensions.title,
+        description: dimensions.description,
+        variant: 'destructive',
+      });
+      if (fileInputRef.current) fileInputRef.current.value = '';
       return;
     }
 
