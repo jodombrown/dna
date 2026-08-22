@@ -26,7 +26,7 @@ import { UniversalFeedItem } from '@/types/feed';
 import { FeedCardBase } from './FeedCardBase';
 import { CardActionRow } from './CardActionRow';
 import { CardMedia } from './CardMedia';
-import { linkifyContent } from '@/utils/linkifyContent';
+import { ExpandableProse } from './ExpandableProse';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -175,9 +175,11 @@ export const OpportunityFeedCard: React.FC<OpportunityFeedCardProps> = ({
       </span>
 
       {/* The ask, or the offer */}
-      <p className="mb-3 text-[15px] font-semibold leading-snug">
-        {linkifyContent(item.content || '')}
-      </p>
+      <ExpandableProse
+        content={item.content}
+        accentClassName="text-bevel-opportunity"
+        className="mb-3 text-body leading-relaxed text-muted-foreground"
+      />
 
       {/* Media — hero. Bleeds to the frame (BD178); mid-card, so square corners.
           NEVER CROP (BD634): object-contain, so the author's framing survives at
