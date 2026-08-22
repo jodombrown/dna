@@ -28,6 +28,8 @@ import { CardActionRow } from './CardActionRow';
 import { CardMedia } from './CardMedia';
 import { ExpandableProse } from './ExpandableProse';
 import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
+import { ReshareDialog } from '@/components/feed/dialogs/ReshareDialog';
+import { useReshare } from '@/hooks/useReshare';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -53,7 +55,6 @@ interface OpportunityFeedCardProps {
   onUpdate: () => void;
   showComments?: boolean;
   onCommentClick?: () => void;
-  onReshare?: (postId: string) => void;
   /** "I can fill this" / "Request this" */
   onRespond?: (opportunityId: string) => void;
   /** Broker from your network — the compounding move. */
@@ -77,7 +78,6 @@ export const OpportunityFeedCard: React.FC<OpportunityFeedCardProps> = ({
   onUpdate,
   showComments = false,
   onCommentClick,
-  onReshare,
   onRespond,
   onRefer,
 }) => {
@@ -86,6 +86,23 @@ export const OpportunityFeedCard: React.FC<OpportunityFeedCardProps> = ({
 
   const { likeCount, userHasLiked, toggleLike } = usePostLikes(item.post_id, currentUserId);
   const { userHasBookmarked, toggleBookmark } = usePostBookmarks(item.post_id, currentUserId);
+
+  // Reshare — same hook + dialog PostCard and ConnectCard use, so a resharable
+  // post is created the same way regardless of which card the click came from.
+  const {
+    hasReshared,
+    isLoading: isResharing,
+    isReshareDialogOpen,
+    openReshareDialog,
+    closeReshareDialog,
+    handleReshare,
+  } = useReshare({
+    postId: item.post_id,
+    userId: currentUserId,
+    originalAuthorId: item.author_id,
+    originalAuthorName: item.author_display_name,
+    onSuccess: onUpdate,
+  });
 
   const isOwner = item.author_id === currentUserId;
   const authorName = item.author_display_name || item.author_username || 'Member';
@@ -323,9 +340,8 @@ export const OpportunityFeedCard: React.FC<OpportunityFeedCardProps> = ({
           {
             icon: Repeat2,
             label: 'Reshare',
-            onClick: () => onReshare?.(item.post_id),
-            active: item.has_reshared,
-            disabled: !onReshare,
+            onClick: openReshareDialog,
+            active: hasReshared,
           },
         ]}
         trailing={{
@@ -344,6 +360,15 @@ export const OpportunityFeedCard: React.FC<OpportunityFeedCardProps> = ({
           commentsDisabled={!!item.comments_disabled}
         />
       )}
+
+      <ReshareDialog
+        open={isReshareDialogOpen}
+        onOpenChange={closeReshareDialog}
+        post={item}
+        currentUserId={currentUserId}
+        onReshare={handleReshare}
+        isLoading={isResharing}
+      />
     </FeedCardBase>
   );
 };

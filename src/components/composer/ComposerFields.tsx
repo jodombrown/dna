@@ -314,6 +314,14 @@ export const ComposerFields: React.FC<ComposerFieldsProps> = ({
         </p>
       </div>
 
+      {/* Hero image — same uploader and bucket Convey uses. An Offer or an Ask
+          without a picture arrives as a wall of text and reads as one. */}
+      <StoryImageUpload
+        currentImageUrl={mediaUrl}
+        onUpload={onMediaChange}
+        onRemove={() => onMediaChange(undefined)}
+      />
+
       <MultiAttachmentUploader value={galleryUrls} onChange={onGalleryChange} maxFiles={6} />
     </div>
   );

@@ -492,8 +492,8 @@ const EventOverview = ({ eventId: eventIdProp, hosted = false }: EventOverviewPr
         {(event.cover_image_url as string) && (
           <div ref={heroRef} className="relative overflow-hidden rounded-lg mb-6 sm:mb-8">
             <CulturalPattern pattern="kente" opacity={0.05} />
-            <div className="aspect-event-cover w-full overflow-hidden">
-              <img src={event.cover_image_url as string} alt={event.title as string} className="w-full h-full object-cover" />
+            <div className="w-full overflow-hidden">
+              <img src={event.cover_image_url as string} alt={event.title as string} className="h-auto max-h-media w-full object-contain" />
             </div>
           </div>
         )}
