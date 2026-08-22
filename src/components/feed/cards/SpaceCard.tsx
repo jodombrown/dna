@@ -20,13 +20,21 @@
  *
  * BUGFIX: the previous card rendered `item.view_count` labelled "members" — a
  * wrong number wearing a right label. Now reads the real member count.
+ *
+ * BUGFIX: the header avatar read `item.media_url || item.author_avatar_url`.
+ * A Space post's attached photo is not a profile photo, so any Space that
+ * posted an image wore that image as its avatar — the poster's own picture was
+ * only ever a fallback for the case where no media existed. The attached media
+ * now belongs to the media block below, where it was always meant to render.
  */
 
 import React, { useState } from 'react';
 import { UniversalFeedItem } from '@/types/feed';
 import { FeedCardBase } from './FeedCardBase';
 import { CardActionRow } from './CardActionRow';
-import { linkifyContent } from '@/utils/linkifyContent';
+import { CardMedia } from './CardMedia';
+import { ExpandableProse } from './ExpandableProse';
+import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -37,6 +45,7 @@ import {
   Smile,
   Zap,
   ChevronRight,
+  Images,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
@@ -122,7 +131,7 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({
       {/* Header — the Space is the actor, not the person */}
       <div className="mb-3 flex items-start gap-3">
         <Avatar className="h-10 w-10 flex-shrink-0 cursor-pointer" onClick={() => navigate(spaceHref)}>
-          <AvatarImage src={item.media_url || item.author_avatar_url || ''} />
+          <AvatarImage src={item.author_avatar_url || ''} />
           <AvatarFallback>{spaceName[0]?.toUpperCase() || 'S'}</AvatarFallback>
         </Avatar>
 
@@ -169,10 +178,14 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({
         </span>
       )}
 
-      {/* What the Space is doing */}
-      <p className="mb-3 text-[15px] font-semibold leading-snug">
-        {linkifyContent(item.content || '')}
-      </p>
+      {/* What the Space is doing. ExpandableProse, not a clamped bold slab
+          (BD635): a Space update is prose, and a semibold wall of it is
+          unreadable at any length the composer actually allows. */}
+      <ExpandableProse
+        content={item.content}
+        accentClassName="text-bevel-space"
+        className="mb-3 text-body leading-relaxed text-muted-foreground"
+      />
 
       {/* Recruiting — the roles that need filling */}
       {isRecruiting && rolesNeeded.length > 0 && (
@@ -197,6 +210,83 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({
             <span className="font-semibold text-bevel-space">{progress}%</span>
           </div>
           <Progress value={progress} className="h-1.5" />
+        </div>
+      )}
+
+      {/* Media — hero. Bleeds to the frame (BD178); mid-card, so square corners.
+          NEVER CROP, AND NO FIXED BAND (BD634 follow-up). object-contain inside a fixed
+          height band never crops, but it guarantees a sliver of image ringed by
+          bars the moment the photo is not the band's ratio — which is every
+          portrait flyer. So the container takes the image's height instead: a
+          16:9 photo renders short and wide, a portrait renders tall, both full
+          card width, no bars. max-h-media (32rem) is the only ceiling; an image
+          tall enough to hit it narrows and stays centred (mx-auto), and that is
+          the one case bg-muted still fills. Uploads are bounded to 9:16–16:9 by
+          the aspect-ratio guardrail, so natural height cannot run away.
+
+          my-3, not mt-3: the block above owns mb-3 and the proof block below
+          owns no top margin, so the media has to pay for its own bottom gap.
+          Adjacent margins collapse, so this stays 12px whichever combination
+          of body, roles and progress renders above it. */}
+      {item.media_url && (
+        <CardMedia className="my-3 bg-muted">
+          <img
+            src={item.media_url}
+            alt=""
+            className="mx-auto h-auto max-h-media w-full object-contain"
+            loading="lazy"
+          />
+        </CardMedia>
+      )}
+
+      {/* Media — gallery (carousel with peek, BD074). Same never-crop rule.
+          Tile dimensions come from the width/minWidth/maxWidth gallery-* tokens
+          rather than the arbitrary literals StoryCard and ConnectCard still
+          carry — new code does not get to add a new arbitrary value. */}
+      {item.gallery_urls && item.gallery_urls.length > 0 && (
+        <div className="my-3 space-y-2">
+          <div className="flex items-center gap-2 text-meta font-medium text-muted-foreground">
+            <Images className="h-3.5 w-3.5" />
+            <span>{item.gallery_urls.length} photos</span>
+          </div>
+          <div className="story-scroll -mx-1 flex snap-x snap-mandatory gap-2 overflow-x-auto px-1 pb-1">
+            {item.gallery_urls.map((url, idx) => (
+              <div
+                key={idx}
+                className="h-36 w-gallery-peek min-w-gallery-tile max-w-gallery-tile flex-shrink-0 snap-start overflow-hidden rounded-xl bg-muted/30 sm:h-40 sm:w-gallery-tile"
+              >
+                <img
+                  src={url}
+                  alt={`Gallery ${idx + 1}`}
+                  className="h-full w-full object-contain"
+                  loading="lazy"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Media — link preview (compact, BD074). The third media state: a Space
+          update whose payload is a link — a demo video, a partner's site — with
+          no image of its own rendered nothing at all. Same compact
+          LinkPreviewCard the other cards use, so a linked video reads
+          identically wherever it appears in the feed. */}
+      {item.link_url && (
+        <div className="my-3">
+          <LinkPreviewCard
+            data={{
+              url: item.link_url,
+              title: item.link_title || undefined,
+              description: item.link_description || undefined,
+              provider_name: item.link_metadata?.provider_name,
+              thumbnail_url: item.link_metadata?.thumbnail_url,
+              type: item.link_metadata?.embed_type,
+              is_video: item.link_metadata?.is_video,
+            }}
+            showRemoveButton={false}
+            size="compact"
+          />
         </div>
       )}
 
