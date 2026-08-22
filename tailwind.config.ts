@@ -78,6 +78,8 @@ export default {
 			feed: '35rem',   /* 560px, feed column ceiling. Mobile fills the viewport;
 			                    tablet and desktop cap. This is the lever that prevents
 			                    media elongation on wide viewports, not the aspect ratio. */
+			'gallery-tile': '17.5rem', /* 280px, feed-card gallery carousel tile ceiling.
+			                    Pairs with width.gallery-* and minWidth.gallery-tile. */
 		},
 		fontFamily: {
 			body: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
@@ -122,10 +124,24 @@ export default {
 			},
 			maxHeight: {
 				sheet: '92dvh',   // must mirror height.sheet; same name, same unit
+				// Feed media ceiling (PostCard single image / video). Named so the
+				// value lives in the config rather than as an arbitrary max-h-[32rem]
+				// at the call site — the never-crop pass (BD634) had to touch those
+				// lines, and a moved arbitrary value is a new arbitrary value.
+				media: '32rem',   // 512px
 			},
 			width: {
 				handle: '100px',      // default drawer drag handle
 				'handle-sm': '68px',  // compact handle on colored sheet headers
+				// Feed-card gallery carousel tile (BD074 peek behaviour). Named so a
+				// card can consume the track without restating the four literals the
+				// pattern needs; StoryCard and ConnectCard still carry the older
+				// arbitrary form and are deliberately left alone (one page per commit).
+				'gallery-peek': '78%',      // mobile: next tile peeks past the edge
+				'gallery-tile': '15rem',    // 240px, sm and up
+			},
+			minWidth: {
+				'gallery-tile': '13.75rem', // 220px
 			},
 			colors: {
 				border: 'hsl(var(--border))',
