@@ -8,12 +8,17 @@ export interface InputProps
   variant?: 'default' | 'search'
 }
 
+// BD638 (6): no autoComplete default. Defaulting every field in the product to
+// 'off' turned the browser's and password manager's autofill off everywhere —
+// name, email, address, one-time codes — which is a real accessibility and
+// usability cost, not a neutral one. Unset lets the browser apply its own
+// heuristics; a field that genuinely must not autofill passes autoComplete
+// explicitly and that value still reaches the element through ...props.
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, variant = 'default', autoComplete = 'off', ...props }, ref) => {
+  ({ className, type, variant = 'default', ...props }, ref) => {
     return (
       <input
         type={type}
-        autoComplete={autoComplete}
         className={cn(
           // Base
           "flex w-full bg-background text-foreground ring-offset-background transition-[border-color,box-shadow] duration-150",

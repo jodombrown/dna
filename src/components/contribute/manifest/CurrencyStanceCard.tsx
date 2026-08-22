@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { useMessage } from '@/contexts/MessageContext';
 import {
   AVAILABILITY_LABELS,
-  CURRENCY_VISUALS,
+  getCurrencyVisual,
   VISIBILITY_LABELS,
 } from './currencyConfig';
 import type { CurrencyStance } from '@/types/contribute';
@@ -25,7 +25,9 @@ export function CurrencyStanceCard({
 }: CurrencyStanceCardProps) {
   const [expanded, setExpanded] = useState(false);
   const { openMessageOverlay } = useMessage();
-  const visual = CURRENCY_VISUALS[stance.currency];
+  // BD638 (2): the currency arrives from the database, not from the union —
+  // an unrecognized value renders neutrally instead of throwing on undefined.
+  const visual = getCurrencyVisual(stance.currency);
   const Icon = visual.icon;
 
   const handleReachOut = () => {

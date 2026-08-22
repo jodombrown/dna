@@ -177,6 +177,13 @@ export const useComposerState = (initialContext?: ComposerContext) => {
   const close = useCallback(() => {
     setIsOpen(false);
     setSuccessData(null);
+    // BD638 (1): the context is per-open-session, not per-provider. open()
+    // MERGES into whatever is already there, so anything left behind here —
+    // above all `editDraft` — silently attaches to the NEXT composer session:
+    // a fresh post opened after closing a draft edit would UPDATE that draft
+    // row instead of creating its own, and the draft's content is gone.
+    // Closing ends the session, so the session's context ends with it.
+    setContext({});
     trackComposerEvent('cancel', mode);
   }, [mode]);
 

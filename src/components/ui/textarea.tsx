@@ -6,11 +6,12 @@ import { cn } from "@/lib/utils"
 export interface TextareaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
 
+// BD638 (6): no autoComplete default — see the note on Input. A caller that
+// needs 'off' passes it, and ...props carries it through.
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, autoComplete = 'off', ...props }, ref) => {
+  ({ className, ...props }, ref) => {
     return (
       <textarea
-        autoComplete={autoComplete}
         className={cn(
           "flex min-h-[80px] w-full rounded-dna-md border-[1.5px] border-dna-stone bg-background px-4 py-3 text-base md:text-[15px] text-foreground ring-offset-background",
           "placeholder:text-dna-gray400",

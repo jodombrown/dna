@@ -7,7 +7,16 @@ import { useToast } from '@/hooks/use-toast';
 import { uploadMedia } from '@/lib/uploadMedia';
 import { validateImageDimensions } from '@/utils/validateImageDimensions';
 
-const IMAGE_ACCEPT = 'image/jpeg,image/jpg,image/png,image/webp,image/gif';
+const IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+// BD638 (4): video was dropped from the picker while the component still
+// rendered a <video> for an existing .mp4/.webm/.mov media URL — the preview
+// path survived, the way to reach it did not. These three match the
+// post-media bucket's allowed_mime_types.
+const VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime'];
+const MEDIA_ACCEPT = [...IMAGE_TYPES, ...VIDEO_TYPES].join(',');
+
+const MAX_IMAGE_BYTES = 25 * 1024 * 1024;
+const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
 
 interface MediaUploadButtonProps {
   label?: string;
@@ -31,45 +40,52 @@ export function MediaUploadButton({
     const file = e.target.files?.[0];
     if (!file || !user) return;
 
-    const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
-    const isImage = validImageTypes.includes(file.type);
+    const isImage = IMAGE_TYPES.includes(file.type);
+    const isVideo = VIDEO_TYPES.includes(file.type);
 
-    if (!isImage) {
+    if (!isImage && !isVideo) {
       toast({
         title: 'Invalid file type',
-        description: 'Please upload a JPG, PNG, WebP, or GIF image.',
+        description: 'Please upload a JPG, PNG, WebP or GIF image, or an MP4, WebM or MOV video.',
         variant: 'destructive',
       });
       return;
     }
 
-    const maxSize = 25 * 1024 * 1024;
+    const maxSize = isVideo ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
     if (file.size > maxSize) {
       toast({
         title: 'File too large',
-        description: 'Please upload an image smaller than 25MB.',
+        description: isVideo
+          ? 'Please upload a video smaller than 50MB.'
+          : 'Please upload an image smaller than 25MB.',
         variant: 'destructive',
       });
       return;
     }
 
     // Aspect ratio must sit between 9:16 and 16:9, and clear the size floor.
-    const dimensions = await validateImageDimensions(file);
-    if (!dimensions.ok) {
-      toast({
-        title: dimensions.title,
-        description: dimensions.description,
-        variant: 'destructive',
-      });
-      if (fileInputRef.current) fileInputRef.current.value = '';
-      return;
+    // Images only — the check decodes a still bitmap, and a video handed to it
+    // reads as undecodable, which its best-effort path would wave through
+    // anyway. Skipping is the honest version of the same outcome.
+    if (isImage) {
+      const dimensions = await validateImageDimensions(file);
+      if (!dimensions.ok) {
+        toast({
+          title: dimensions.title,
+          description: dimensions.description,
+          variant: 'destructive',
+        });
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        return;
+      }
     }
 
     setIsUploading(true);
     try {
       const { url } = await uploadMedia(file, 'post');
       onUpload(url);
-      toast({ description: 'Image uploaded successfully.' });
+      toast({ description: isVideo ? 'Video uploaded successfully.' : 'Image uploaded successfully.' });
     } catch (error) {
       toast({
         title: 'Upload failed',
@@ -121,7 +137,7 @@ export function MediaUploadButton({
         <input
           ref={fileInputRef}
           type="file"
-          accept={IMAGE_ACCEPT}
+          accept={MEDIA_ACCEPT}
           onChange={handleFileSelect}
           className="hidden"
         />
@@ -134,7 +150,7 @@ export function MediaUploadButton({
       <input
         ref={fileInputRef}
         type="file"
-        accept={IMAGE_ACCEPT}
+        accept={MEDIA_ACCEPT}
         onChange={handleFileSelect}
         className="hidden"
       />
