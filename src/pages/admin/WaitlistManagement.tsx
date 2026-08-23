@@ -624,20 +624,20 @@ export default function WaitlistManagement() {
           <CardContent className="pt-6">
             <button
               type="button"
-              className="w-full text-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="w-full flex flex-col items-center gap-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               onClick={() => setStatusFilter(NEEDS_INVITE_FILTER)}
               aria-label={`Needs invite: ${stats.needsInvite}. Show these entries.`}
             >
               <p
                 className={
                   stats.needsInvite > 0
-                    ? 'text-3xl font-bold text-destructive'
-                    : 'text-3xl font-bold text-muted-foreground'
+                    ? 'text-display font-bold text-destructive'
+                    : 'text-display font-bold text-muted-foreground'
                 }
               >
                 {stats.needsInvite}
               </p>
-              <p className="text-sm text-muted-foreground mt-1">Needs invite</p>
+              <p className="text-body text-muted-foreground">Needs invite</p>
             </button>
           </CardContent>
         </Card>
@@ -683,7 +683,7 @@ export default function WaitlistManagement() {
           {/* Bulk Actions */}
           {selectedEntries.size > 0 && (
             <div className="flex items-center gap-2 mt-4 p-3 bg-muted rounded-lg">
-              <p className="text-sm font-medium flex items-center gap-2" aria-live="polite">
+              <p className="text-body font-medium flex items-center gap-2" aria-live="polite">
                 {bulkProgress ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
