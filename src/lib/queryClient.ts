@@ -27,6 +27,29 @@ export const STALE_TIMES = {
 
 /**
  * Query key factories for consistent cache key generation
+ *
+ * DERIVED COUNTS (BD651 step 1). Every key under a `counts` namespace is a
+ * number computed from rows the user never edits directly — a badge, a stat
+ * strip, a follower tally. They are the keys most likely to go stale silently,
+ * because nothing on screen looks broken when they do: a wrong number wears a
+ * right label.
+ *
+ * Two rules make that failure impossible to reintroduce:
+ *
+ * 1. A counts key is ALWAYS a prefix-extension of its entity's `all` key, so
+ *    `invalidateQueries({ queryKey: queryKeys.posts.all })` reaches every
+ *    derived number under `posts` — including ones added after the mutation
+ *    site was written. Mutation sites should invalidate the parent namespace,
+ *    not enumerate leaves.
+ * 2. Adding a derived count means adding it HERE, never as a string literal at
+ *    the call site. A hand-written key cannot be found by the parent
+ *    invalidation, which is exactly how a count goes stale and still certifies
+ *    clean.
+ *
+ * CAUTION on `messages.all`: `['messages', conversationId]` is a live,
+ * hand-written key for the message list in a thread, so `messages.all` is a
+ * coarse prefix that would refetch every open conversation. Invalidate
+ * `messages.counts.all` when you mean the unread badge.
  */
 export const queryKeys = {
   // Profile queries
@@ -34,6 +57,12 @@ export const queryKeys = {
     all: ['profiles'] as const,
     detail: (id: string) => ['profile', id] as const,
     current: (id: string) => ['profile', 'current', id] as const,
+    counts: {
+      all: ['profiles', 'counts'] as const,
+      /** follower_count / following_count for one profile, maintained by the
+          sync_follow_counts DB trigger and read back by useFollow. */
+      follow: (userId: string | undefined) => ['profiles', 'counts', 'follow', userId] as const,
+    },
   },
   // Feed queries
   feed: {
@@ -48,18 +77,35 @@ export const queryKeys = {
     likes: (id: string) => ['post-likes', id] as const,
     reactions: (id: string) => ['post-reactions', id] as const,
     bookmarks: (userId: string) => ['post-bookmarks', userId] as const,
+    counts: {
+      all: ['posts', 'counts'] as const,
+      /** The viewer's own Five C's tallies in FeedLeftPanel: connections,
+          events, spaces and posts. Lives under `posts` because posts are the
+          only one of the four that the feed's create/delete mutations move. */
+      fiveC: (userId: string | undefined) => ['posts', 'counts', 'five-c', userId] as const,
+      /** Platform-wide activity in FeedHeroGreeting. Not user-scoped. */
+      platformPulse: ['posts', 'counts', 'platform-pulse'] as const,
+    },
   },
   // Message queries
   messages: {
     all: ['messages'] as const,
     conversations: ['conversations'] as const,
     thread: (id: string) => ['messages', 'thread', id] as const,
-    unread: ['unread-count'] as const,
+    counts: {
+      all: ['messages', 'counts'] as const,
+      /** Unread message badge. Omit userId to invalidate every viewer's badge. */
+      unread: (userId: string | undefined) => ['messages', 'counts', 'unread', userId] as const,
+    },
   },
   // Notification queries
   notifications: {
     all: ['notifications'] as const,
-    unread: ['notifications', 'unread'] as const,
+    counts: {
+      all: ['notifications', 'counts'] as const,
+      /** Unread notification badge, RPC-backed. */
+      unread: (userId: string | undefined) => ['notifications', 'counts', 'unread', userId] as const,
+    },
   },
   // Connection queries
   connections: {

@@ -9,6 +9,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { queryKeys } from '@/lib/queryClient';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = supabase as any;
@@ -49,7 +50,7 @@ export function useFollow(targetUserId: string | undefined): UseFollowResult {
 
   // Fetch follower/following counts for target user
   const { data: counts } = useQuery({
-    queryKey: ['follow-counts', targetUserId],
+    queryKey: queryKeys.profile.counts.follow(targetUserId),
     queryFn: async () => {
       if (!targetUserId) return { followerCount: 0, followingCount: 0 };
 
@@ -101,10 +102,10 @@ export function useFollow(targetUserId: string | undefined): UseFollowResult {
     // Optimistic update
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['follow-state', user?.id, targetUserId] });
-      await queryClient.cancelQueries({ queryKey: ['follow-counts', targetUserId] });
+      await queryClient.cancelQueries({ queryKey: queryKeys.profile.counts.follow(targetUserId) });
 
       const prevFollowState = queryClient.getQueryData(['follow-state', user?.id, targetUserId]);
-      const prevCounts = queryClient.getQueryData(['follow-counts', targetUserId]);
+      const prevCounts = queryClient.getQueryData(queryKeys.profile.counts.follow(targetUserId));
 
       const isCurrentlyFollowing = followState?.isFollowing || false;
 
@@ -112,7 +113,7 @@ export function useFollow(targetUserId: string | undefined): UseFollowResult {
         isFollowing: !isCurrentlyFollowing,
       });
 
-      queryClient.setQueryData(['follow-counts', targetUserId], {
+      queryClient.setQueryData(queryKeys.profile.counts.follow(targetUserId), {
         followerCount: (counts?.followerCount || 0) + (isCurrentlyFollowing ? -1 : 1),
         followingCount: counts?.followingCount || 0,
       });
@@ -124,12 +125,15 @@ export function useFollow(targetUserId: string | undefined): UseFollowResult {
         queryClient.setQueryData(['follow-state', user?.id, targetUserId], context.prevFollowState);
       }
       if (context?.prevCounts) {
-        queryClient.setQueryData(['follow-counts', targetUserId], context.prevCounts);
+        queryClient.setQueryData(queryKeys.profile.counts.follow(targetUserId), context.prevCounts);
       }
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['follow-state', user?.id, targetUserId] });
-      queryClient.invalidateQueries({ queryKey: ['follow-counts', targetUserId] });
+      // Parent namespace, not the target's leaf: a follow toggle moves the
+      // target's follower_count AND the actor's following_count, and the
+      // leaf-only invalidation left the actor's own tally stale.
+      queryClient.invalidateQueries({ queryKey: queryKeys.profile.counts.all });
     },
   });
 

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { messageService } from '@/services/messageService';
+import { queryKeys } from '@/lib/queryClient';
 
 /**
  * useUnreadMessageCount - Hook to fetch the count of unread messages
@@ -13,7 +14,7 @@ export function useUnreadMessageCount() {
   const { user } = useAuth();
 
   return useQuery({
-    queryKey: ['unread-message-count', user?.id],
+    queryKey: queryKeys.messages.counts.unread(user?.id),
     queryFn: async () => {
       if (!user) return 0;
       return messageService.getTotalUnreadCount();

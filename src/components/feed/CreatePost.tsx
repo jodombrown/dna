@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { queryKeys } from '@/lib/queryClient';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -82,8 +83,9 @@ export function CreatePost() {
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
       queryClient.invalidateQueries({ queryKey: ['feed-posts'] });
-      queryClient.invalidateQueries({ queryKey: ['feed-five-c-stats'] });
-      queryClient.invalidateQueries({ queryKey: ['feed-platform-pulse'] });
+      // Derived post counts (Five C's strip, platform pulse) at the parent
+      // namespace — new counts under `posts` are covered without a revisit.
+      queryClient.invalidateQueries({ queryKey: queryKeys.posts.all });
 
       // Process mentions and send notifications (async, don't block UI)
       if (data && postContent) {

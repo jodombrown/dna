@@ -16,6 +16,7 @@ import { Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { queryKeys } from '@/lib/queryClient';
 import { useNavigate } from 'react-router-dom';
 import { useTypingIndicator } from '@/hooks/useTypingIndicator';
 import { TypingIndicatorDisplay } from '@/components/messaging/group/TypingIndicatorDisplay';
@@ -306,7 +307,7 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
       messageService.markAsRead(conversationId)
         .then(() => {
           // Invalidate all relevant queries after marking as read
-          queryClient.invalidateQueries({ queryKey: ['unread-message-count'] });
+          queryClient.invalidateQueries({ queryKey: queryKeys.messages.counts.all });
           queryClient.invalidateQueries({ queryKey: ['conversations'] });
           queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
         })

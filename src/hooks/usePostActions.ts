@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { logHighError } from '@/lib/errorLogger';
+import { queryKeys } from '@/lib/queryClient';
 
 export function usePostActions(postId: string, authorId: string, currentUserId?: string) {
   const queryClient = useQueryClient();
@@ -99,9 +100,9 @@ export function usePostActions(postId: string, authorId: string, currentUserId?:
       // Finding F: this is the delete path for Story/Event/Connect/Space/
       // Opportunity cards (PostMenuOwn), not feed/PostCard.tsx. The Five C's
       // counters and the platform pulse read post counts, so they go stale
-      // here too.
-      queryClient.invalidateQueries({ queryKey: ['feed-five-c-stats'] });
-      queryClient.invalidateQueries({ queryKey: ['feed-platform-pulse'] });
+      // here too. Invalidated at the parent namespace, so a derived count
+      // added under `posts` later is covered without editing this site.
+      queryClient.invalidateQueries({ queryKey: queryKeys.posts.all });
       toast.success('Post deleted');
     },
     onError: (error) => {

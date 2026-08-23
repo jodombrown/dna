@@ -18,6 +18,7 @@ import { toast } from '@/hooks/use-toast';
 import { MODE_HANDLERS } from '@/components/composer/modeHandlers';
 import type { ComposerSubmitContext } from '@/components/composer/modeHandlers';
 import { logHighError } from '@/lib/errorLogger';
+import { queryKeys } from '@/lib/queryClient';
 import { deletePostDraft } from '@/services/postDraftsService';
 import type { UniversalFeedItem } from '@/types/feed';
 import { DEFAULT_MODE, type ComposerMode } from '@/config/composerModes';
@@ -303,8 +304,9 @@ export const useComposerState = (initialContext?: ComposerContext) => {
       await queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
       // Finding F: the composer is the real create path, not
       // feed/CreatePost.tsx. A new post moves both counter queries.
-      await queryClient.invalidateQueries({ queryKey: ['feed-five-c-stats'] });
-      await queryClient.invalidateQueries({ queryKey: ['feed-platform-pulse'] });
+      // Invalidated at the parent namespace, so a derived count added under
+      // `posts` later is covered without editing this site.
+      await queryClient.invalidateQueries({ queryKey: queryKeys.posts.all });
 
       // BD534 step 5: publishing an edit session's content — the post_drafts
       // row it came from has no further purpose. Best-effort; a failure here

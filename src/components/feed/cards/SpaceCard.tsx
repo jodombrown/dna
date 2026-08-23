@@ -26,6 +26,13 @@
  * posted an image wore that image as its avatar — the poster's own picture was
  * only ever a fallback for the case where no media existed. The attached media
  * now belongs to the media block below, where it was always meant to render.
+ *
+ * BUGFIX (BD650): the header put the Space in the name slot while the avatar
+ * rendered the person — a human face labelled with a Space name, and the
+ * already-computed `authorName` went unused. Reputation is person-scoped (D046),
+ * so crediting only the Space erased the member in the surface where reputation
+ * accrues. Name and avatar now lead with the author; the Space is subtitle
+ * context.
  */
 
 import React, { useState } from 'react';
@@ -119,7 +126,7 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({
   });
 
   const isOwner = item.author_id === currentUserId;
-  const authorName = item.author_display_name || item.author_username || 'Space';
+  const authorName = item.author_display_name || item.author_username || 'Member';
   const spaceName = item.space_title || item.title || 'Space';
   const spaceHref = item.space_id ? `/dna/collaborate/spaces/${item.space_id}` : '/dna/collaborate';
 
@@ -145,22 +152,35 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({
 
   return (
     <FeedCardBase bevelType="space">
-      {/* Header — the Space is the actor, not the person */}
+      {/* Header — the person is the actor, the Space is the context.
+          Reputation is person-scoped (D046). A Space post that renders only the
+          Space makes the member's contribution invisible in the exact surface
+          where reputation accrues: a real face wearing a Space's name, crediting
+          nobody. So the name slot and the avatar both point at the author, the
+          way every other card type already does, and the Space moves down to the
+          subtitle as secondary context — still a door, still carrying spaceHref. */}
       <div className="mb-3 flex items-start gap-3">
-        <Avatar className="h-10 w-10 flex-shrink-0 cursor-pointer" onClick={() => navigate(spaceHref)}>
+        <Avatar
+          className="h-10 w-10 flex-shrink-0 cursor-pointer"
+          onClick={() => navigate(`/dna/${item.author_username}`)}
+        >
           <AvatarImage src={item.author_avatar_url || ''} />
-          <AvatarFallback>{spaceName[0]?.toUpperCase() || 'S'}</AvatarFallback>
+          <AvatarFallback>{authorName[0]?.toUpperCase() || 'M'}</AvatarFallback>
         </Avatar>
 
         <div className="min-w-0 flex-1">
           <span
             className="cursor-pointer text-sm font-semibold hover:underline"
-            onClick={() => navigate(spaceHref)}
+            onClick={() => navigate(`/dna/${item.author_username}`)}
           >
-            {spaceName}
+            {authorName}
           </span>
           <p className="text-xs text-muted-foreground">
             <span className="font-semibold text-bevel-space">Collaborate</span>
+            {' · '}
+            <span className="cursor-pointer hover:underline" onClick={() => navigate(spaceHref)}>
+              {spaceName}
+            </span>
             {' · '}
             {isRecruiting ? 'Recruiting' : 'Update'}
             {' · '}
