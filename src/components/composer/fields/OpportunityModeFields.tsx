@@ -33,8 +33,8 @@ export interface OpportunityFieldValues {
   giveWhat?: string;
   giveTo?: string;
   intendedImpact?: string;
-  /** Hero image for the Offer/Ask card. Same uploader and bucket Story uses. */
-  imageUrl?: string;
+  /** Hero image for the Offer/Ask card. Keyed `mediaUrl` — the key modeHandlers' need.submit reads when it writes opportunities.image_url. */
+  mediaUrl?: string;
 }
 
 interface OpportunityModeFieldsProps {
@@ -184,9 +184,9 @@ export const OpportunityModeFields: React.FC<OpportunityModeFieldsProps> = ({
       {/* Hero image — wired exactly as StoryModeFields wires it, so an Offer or
           an Ask can carry a picture instead of arriving as a wall of text. */}
       <StoryImageUpload
-        currentImageUrl={values.imageUrl}
-        onUpload={(url) => onChange({ imageUrl: url })}
-        onRemove={() => onChange({ imageUrl: undefined })}
+        currentImageUrl={values.mediaUrl}
+        onUpload={(url) => onChange({ mediaUrl: url })}
+        onRemove={() => onChange({ mediaUrl: undefined })}
       />
     </div>
   );
