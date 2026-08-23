@@ -4,6 +4,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { PROFILE_SELECT_COLUMNS } from '@/lib/profileColumns';
+import { queryKeys } from '@/lib/queryClient';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -200,8 +201,9 @@ export function PostCard({ post }: PostCardProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['feed-posts'] });
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
-      queryClient.invalidateQueries({ queryKey: ['feed-five-c-stats'] });
-      queryClient.invalidateQueries({ queryKey: ['feed-platform-pulse'] });
+      // Derived post counts (Five C's strip, platform pulse) at the parent
+      // namespace — new counts under `posts` are covered without a revisit.
+      queryClient.invalidateQueries({ queryKey: queryKeys.posts.all });
       toast.success('Post deleted');
     },
     onError: (error) => {

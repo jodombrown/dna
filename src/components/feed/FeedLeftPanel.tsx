@@ -11,6 +11,7 @@ import { useProfile } from '@/hooks/useProfile';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { queryKeys } from '@/lib/queryClient';
 import { Bookmark, ChevronRight, Users, Calendar, Layers, HandHeart, BookOpen, MapPin, Search } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { FeedUpcomingEvents } from '@/components/feed/FeedUpcomingEvents';
@@ -30,7 +31,7 @@ export const FeedLeftPanel: React.FC<FeedLeftPanelProps> = ({ onSearchClick }) =
 
   // Five C's stats
   const { data: stats } = useQuery({
-    queryKey: ['feed-five-c-stats', user?.id],
+    queryKey: queryKeys.posts.counts.fiveC(user?.id),
     queryFn: async () => {
       if (!user?.id) return null;
 

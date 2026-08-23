@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { queryKeys } from '@/lib/queryClient';
 
 /**
  * useUnreadNotificationCount - Hook to fetch the count of unread notifications
@@ -13,7 +14,7 @@ export function useUnreadNotificationCount() {
   const { user } = useAuth();
 
   return useQuery({
-    queryKey: ['notifications-unread-count', user?.id],
+    queryKey: queryKeys.notifications.counts.unread(user?.id),
     queryFn: async () => {
       if (!user) return 0;
 

@@ -18,6 +18,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { queryKeys } from '@/lib/queryClient';
 import {
   unifiedNotificationService,
   type UnifiedNotification,
@@ -30,8 +31,9 @@ import {
 
 const QK_UNIFIED_NOTIFICATIONS = 'unified-notifications';
 // The canonical unread count lives in useUnreadNotificationCount (RPC-backed,
-// query key ['notifications-unread-count']). Keep it in sync on realtime events.
-const QK_UNREAD_COUNT = 'notifications-unread-count';
+// keyed by queryKeys.notifications.counts.unread). Keep it in sync on realtime
+// events. Invalidating counts.all rather than one viewer's leaf preserves the
+// previous user-agnostic prefix behaviour.
 
 // ============================================================
 // TIME GROUPING
@@ -121,7 +123,7 @@ export function useUnifiedNotifications(
           queryClient.invalidateQueries({
             queryKey: [QK_UNIFIED_NOTIFICATIONS],
           });
-          queryClient.invalidateQueries({ queryKey: [QK_UNREAD_COUNT] });
+          queryClient.invalidateQueries({ queryKey: queryKeys.notifications.counts.all });
         }
       )
       .subscribe();
@@ -139,7 +141,7 @@ export function useUnifiedNotifications(
   // Invalidate helper — refresh the unified stream and the canonical RPC count.
   const invalidateAll = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: [QK_UNIFIED_NOTIFICATIONS] });
-    queryClient.invalidateQueries({ queryKey: [QK_UNREAD_COUNT] });
+    queryClient.invalidateQueries({ queryKey: queryKeys.notifications.counts.all });
   }, [queryClient]);
 
   // Mark as read

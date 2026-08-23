@@ -7,6 +7,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { queryKeys } from '@/lib/queryClient';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useNavigate } from 'react-router-dom';
@@ -19,7 +20,7 @@ export const FeedHeroGreeting: React.FC = () => {
   const { data: profile } = useProfile();
 
   const { data: pulse } = useQuery({
-    queryKey: ['feed-platform-pulse'],
+    queryKey: queryKeys.posts.counts.platformPulse,
     queryFn: async () => {
       const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
       const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
