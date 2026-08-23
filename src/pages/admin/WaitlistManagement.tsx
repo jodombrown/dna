@@ -44,6 +44,14 @@ import {
   Trash2,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import {
+  settleBulkAction,
+  describeSettlement,
+  needsInvite,
+  reasonOf,
+  NEEDS_INVITE_FILTER,
+  type WaitlistRowRef,
+} from '@/lib/waitlistSettlement';
 
 interface WaitlistEntry {
   id: string;
@@ -111,6 +119,10 @@ export default function WaitlistManagement() {
     // Archived entries live in their own view, never in the working list
     if (statusFilter === 'archived') {
       filtered = filtered.filter(e => e.archived_at);
+    } else if (statusFilter === NEEDS_INVITE_FILTER) {
+      // Not a beta_waitlist.status. This is the stranded-row invariant:
+      // approved, never emailed, not archived. See needsInvite.
+      filtered = filtered.filter(needsInvite);
     } else {
       filtered = filtered.filter(e => !e.archived_at);
       if (statusFilter !== 'all') {
@@ -145,40 +157,115 @@ export default function WaitlistManagement() {
     }
   };
 
+  /**
+   * Pull the real cause out of a functions.invoke failure.
+   *
+   * supabase-js reports any non-2xx as a FunctionsHttpError whose message is
+   * the generic "Edge Function returned a non-2xx status code". The body that
+   * says WHY hangs off err.context, so a summary built from err.message alone
+   * would name the failing addresses and tell the admin nothing about them.
+   */
+  const invokeReason = async (err: unknown): Promise<string> => {
+    const context = (err as { context?: unknown } | null)?.context;
+    if (context && typeof (context as Response).clone === 'function') {
+      try {
+        const body = await (context as Response).clone().json();
+        const detail = body?.error ?? body?.message;
+        if (typeof detail === 'string' && detail.trim()) return detail.trim();
+      } catch {
+        // Body was not JSON, or was already read. Fall back to the message.
+      }
+    }
+    return reasonOf(err);
+  };
+
+  /**
+   * Flip one row's status, throwing when it did not actually change.
+   *
+   * postgrest resolves with { data, error } rather than rejecting, so an
+   * allSettled over these would report "fulfilled" for a failed write. The
+   * explicit throw is what makes the settlement readable. .select() is what
+   * catches the silent case: no error, no matching row, nothing updated.
+   */
+  const updateRowStatus = async (row: WaitlistRowRef, status: string): Promise<void> => {
+    const { data, error } = await supabase
+      .from('beta_waitlist')
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq('id', row.id)
+      .select('id')
+      .maybeSingle();
+
+    if (error) throw new Error(error.message);
+    if (!data) throw new Error('No matching row was updated');
+  };
+
+  /**
+   * Send one row's access email, throwing with the real cause on failure.
+   *
+   * send-beta-access-granted returns 409 unless the row already reads
+   * 'approved', so this can only run after the flip has landed. It stamps
+   * last_invite_sent_at itself, and only once Resend has confirmed, which is
+   * what makes the "Needs invite" invariant trustworthy.
+   */
+  const sendRowInvite = async (row: WaitlistRowRef): Promise<void> => {
+    const { error } = await supabase.functions.invoke('send-beta-access-granted', {
+      body: { waitlistId: row.id },
+    });
+    if (error) throw new Error(await invokeReason(error));
+  };
+
+  /** Pair selected ids with their addresses so failures can be named. */
+  const rowsFor = (ids: string[]): WaitlistRowRef[] =>
+    ids.map(id => ({ id, email: entries.find(e => e.id === id)?.email ?? id }));
+
   const handleStatusUpdate = async (entryId: string, newStatus: string) => {
     setProcessing(true);
     try {
-      const { error } = await supabase
-        .from('beta_waitlist')
-        .update({ status: newStatus, updated_at: new Date().toISOString() })
-        .eq('id', entryId);
+      const [row] = rowsFor([entryId]);
+      const previousStatus = entries.find(e => e.id === entryId)?.status;
 
-      if (error) throw error;
+      await updateRowStatus(row, newStatus);
 
+      // From here the flip HAS landed. A failure past this point is an email
+      // failure, not a status failure, and must not be reported as one.
+      let inviteError: string | null = null;
       if (newStatus === 'approved') {
-        // send-beta-access-granted generates the real Supabase Auth invite
-        // link, emails it, and stamps last_invite_sent_at/by itself.
-        const { error: inviteErr } = await supabase.functions.invoke('send-beta-access-granted', {
-          body: { waitlistId: entryId },
-        });
-        if (inviteErr) throw inviteErr;
+        try {
+          await sendRowInvite(row);
+        } catch (err) {
+          inviteError = reasonOf(err);
+          console.error('Access email failed after approval', row.email, err);
+        }
       }
 
       await logAdminAction(`waitlist_${newStatus}`, entryId, {
-        previous_status: entries.find(e => e.id === entryId)?.status,
+        previous_status: previousStatus,
         new_status: newStatus,
         notes: adminNotes || null,
+        invite_error: inviteError,
       });
 
-      toast({
-        title: 'Success',
-        description: `Entry ${newStatus}`,
-      });
+      if (inviteError) {
+        toast({
+          title: 'Approved, but the email did not send',
+          description: `${row.email} is approved. The access email failed: ${inviteError}. The row is waiting under "Needs invite", where Resend invite will try again.`,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Success',
+          description: `Entry ${newStatus}`,
+        });
+      }
 
+      // Refetch either way. The old code skipped this on an invite failure, so
+      // the table went on showing the pre-flip status for a row that had in
+      // fact already been approved.
       fetchWaitlist();
       setShowReviewDialog(false);
       setAdminNotes('');
     } catch (error) {
+      console.error('Failed to update waitlist status', error);
       toast({
         title: 'Error',
         description: 'Failed to update status',
@@ -201,41 +288,39 @@ export default function WaitlistManagement() {
 
     setProcessing(true);
     try {
-      const updates = Array.from(selectedEntries).map(id =>
-        supabase
-          .from('beta_waitlist')
-          .update({ status: action, updated_at: new Date().toISOString() })
-          .eq('id', id)
-      );
+      const rows = rowsFor(Array.from(selectedEntries));
 
-      await Promise.all(updates);
+      // Both phases settle per row. The flip has to precede the send because
+      // send-beta-access-granted answers 409 on anything not already approved,
+      // which makes a partly-emailed batch structurally possible. Reporting it
+      // per row is the whole point: see src/lib/waitlistSettlement.ts.
+      const settlement = await settleBulkAction(rows, {
+        updateStatus: row => updateRowStatus(row, action),
+        sendInvite: action === 'approved' ? sendRowInvite : undefined,
+      });
 
-      if (action === 'approved') {
-        const idsToInvite = Array.from(selectedEntries);
-        await Promise.all(idsToInvite.map(async (id) => {
-          // send-beta-access-granted generates the real Supabase Auth invite
-          // link, emails it, and stamps last_invite_sent_at/by itself.
-          const { error: inviteErr } = await supabase.functions.invoke('send-beta-access-granted', {
-            body: { waitlistId: id },
-          });
-          if (inviteErr) throw inviteErr;
-        }));
-      }
-
-      // Log bulk action
       await logAdminAction(`bulk_waitlist_${action}`, 'multiple', {
-        count: selectedEntries.size,
-        entry_ids: Array.from(selectedEntries),
+        count: rows.length,
+        entry_ids: rows.map(r => r.id),
+        status_ok: settlement.statusOk.length,
+        status_failed: settlement.statusFailed.map(r => ({ email: r.email, reason: r.reason })),
+        invites_sent: settlement.inviteOk.length,
+        invites_failed: settlement.inviteFailed.map(r => ({ email: r.email, reason: r.reason })),
       });
 
+      const summary = describeSettlement(action, settlement);
       toast({
-        title: 'Success',
-        description: `${selectedEntries.size} entries ${action}`,
+        title: summary.title,
+        description: summary.description,
+        variant: summary.destructive ? 'destructive' : 'default',
       });
 
-      setSelectedEntries(new Set());
+      // Rows that did not fully settle stay selected, so a retry is one click.
+      // A row carries a reason only when something about it is unfinished.
+      setSelectedEntries(new Set(settlement.rows.filter(r => r.reason).map(r => r.id)));
       fetchWaitlist();
     } catch (error) {
+      console.error('Bulk action failed', error);
       toast({
         title: 'Error',
         description: 'Failed to perform bulk action',
@@ -249,11 +334,10 @@ export default function WaitlistManagement() {
   const handleSendAccessEmail = async (entry: WaitlistEntry) => {
     setProcessing(true);
     try {
-      const { error } = await supabase.functions.invoke('send-beta-access-granted', {
-        body: { waitlistId: entry.id },
-      });
-
-      if (error) throw error;
+      // Safe to call repeatedly: send-beta-access-granted falls back from
+      // invite to magiclink when the auth user already exists, so a resend
+      // does not die on "user already registered".
+      await sendRowInvite({ id: entry.id, email: entry.email });
 
       toast({
         title: 'Access email sent',
@@ -265,7 +349,7 @@ export default function WaitlistManagement() {
       console.error('Failed to send access email', error);
       toast({
         title: 'Error',
-        description: 'Failed to send the access email',
+        description: `Could not email ${entry.email}: ${reasonOf(error)}`,
         variant: 'destructive',
       });
     } finally {
@@ -459,6 +543,9 @@ export default function WaitlistManagement() {
     approved: activeEntries.filter(e => e.status === 'approved').length,
     rejected: activeEntries.filter(e => e.status === 'rejected').length,
     archived: entries.filter(e => e.archived_at).length,
+    // Approved, never emailed, not archived. Reads 0 when nobody is stranded,
+    // which is the invariant the founder QA checks after an approval.
+    needsInvite: entries.filter(needsInvite).length,
   };
 
   if (loading) {
@@ -480,7 +567,7 @@ export default function WaitlistManagement() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
@@ -521,6 +608,32 @@ export default function WaitlistManagement() {
             </div>
           </CardContent>
         </Card>
+        {/*
+          Approved but never emailed. This is the counter that would have made
+          a half-sent batch of 200 legible, so it sits with the others rather
+          than behind the filter dropdown. Clicking it opens the same view.
+        */}
+        <Card>
+          <CardContent className="pt-6">
+            <button
+              type="button"
+              className="w-full text-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              onClick={() => setStatusFilter(NEEDS_INVITE_FILTER)}
+              aria-label={`Needs invite: ${stats.needsInvite}. Show these entries.`}
+            >
+              <p
+                className={
+                  stats.needsInvite > 0
+                    ? 'text-3xl font-bold text-destructive'
+                    : 'text-3xl font-bold text-muted-foreground'
+                }
+              >
+                {stats.needsInvite}
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">Needs invite</p>
+            </button>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Filters and Actions */}
@@ -548,6 +661,7 @@ export default function WaitlistManagement() {
                 <SelectItem value="pending">Pending</SelectItem>
                 <SelectItem value="approved">Approved</SelectItem>
                 <SelectItem value="rejected">Rejected</SelectItem>
+                <SelectItem value={NEEDS_INVITE_FILTER}>Needs invite</SelectItem>
                 <SelectItem value="archived">Archived</SelectItem>
               </SelectContent>
             </Select>
@@ -634,7 +748,9 @@ export default function WaitlistManagement() {
         <CardContent>
           {filteredEntries.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
-              No entries found
+              {statusFilter === NEEDS_INVITE_FILTER
+                ? 'Nobody is waiting on an invite. Every approved entry has been emailed.'
+                : 'No entries found'}
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -700,6 +816,12 @@ export default function WaitlistManagement() {
                       <td className="p-3">
                         <div className="flex flex-col items-start gap-1">
                           {getStatusBadge(entry.status)}
+                          {needsInvite(entry) && (
+                            <Badge variant="destructive" className="gap-1">
+                              <Send className="h-3 w-3" />
+                              Needs invite
+                            </Badge>
+                          )}
                           {entry.archived_at && (
                             <Badge variant="outline" className="gap-1">
                               <Archive className="h-3 w-3" />
@@ -736,12 +858,12 @@ export default function WaitlistManagement() {
                           {entry.status === 'approved' && !entry.archived_at && (
                             <Button
                               size="sm"
-                              variant="secondary"
+                              variant={needsInvite(entry) ? 'default' : 'secondary'}
                               disabled={processing}
                               onClick={() => handleSendAccessEmail(entry)}
                             >
                               <Send className="h-4 w-4 mr-1" />
-                              {entry.last_invite_sent_at ? 'Re-send' : 'Send access email'}
+                              {entry.last_invite_sent_at ? 'Resend invite' : 'Send invite'}
                             </Button>
                           )}
                           <DropdownMenu>
