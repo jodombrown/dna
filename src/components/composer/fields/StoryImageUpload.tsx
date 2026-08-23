@@ -7,6 +7,8 @@ import { useToast } from '@/hooks/use-toast';
 import { uploadMedia, ACCEPT } from '@/lib/uploadMedia';
 import { compressAndTinify } from '@/lib/compressImage';
 import { validateImageDimensions } from '@/utils/validateImageDimensions';
+import { isCroppableImage } from '@/lib/utils/cropImage';
+import { ImageCropDialog } from './ImageCropDialog';
 
 interface StoryImageUploadProps {
   currentImageUrl?: string;
@@ -18,32 +20,17 @@ export function StoryImageUpload({ currentImageUrl, onUpload, onRemove }: StoryI
   const { user } = useAuth();
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
+  // Non-null while the crop step is open. The file is held here and nowhere
+  // else, so cancelling costs nothing and changes nothing.
+  const [pendingCrop, setPendingCrop] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const original = e.target.files?.[0];
-    if (!original || !user) return;
-
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    if (!validTypes.includes(original.type)) {
-      toast({
-        title: 'Invalid file type',
-        description: 'Please upload a JPG, PNG, or WebP image.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    // Hard ceiling before compression (avoid decoding absurd files)
-    if (original.size > 25 * 1024 * 1024) {
-      toast({
-        title: 'File too large',
-        description: 'Please upload an image smaller than 25MB.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
+  /**
+   * The pipeline, unchanged: validate, compress, upload. What reaches it is
+   * either the member's original file or the crop they chose — nothing here
+   * knows or needs to know which.
+   */
+  const processFile = async (original: File) => {
     // Aspect ratio must sit between 9:16 and 16:9, and clear the size floor.
     const dimensions = await validateImageDimensions(original);
     if (!dimensions.ok) {
@@ -52,7 +39,6 @@ export function StoryImageUpload({ currentImageUrl, onUpload, onRemove }: StoryI
         description: dimensions.description,
         variant: 'destructive',
       });
-      if (fileInputRef.current) fileInputRef.current.value = '';
       return;
     }
 
@@ -83,37 +69,71 @@ export function StoryImageUpload({ currentImageUrl, onUpload, onRemove }: StoryI
       });
     } finally {
       setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
-  if (currentImageUrl) {
-    return (
-      <div className="space-y-2">
-        <Label>Hero Image (optional)</Label>
-        <div className="relative rounded-lg border border-border overflow-hidden">
-          <img src={currentImageUrl} alt="Story hero" className="w-full h-40 object-cover" />
-          <div className="absolute top-2 right-2 flex gap-2">
-            <Button type="button" size="sm" variant="secondary" onClick={() => fileInputRef.current?.click()}>
-              Change
-            </Button>
-            <Button type="button" size="sm" variant="destructive" onClick={onRemove}>
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept={ACCEPT.story}
-          onChange={handleFileSelect}
-          className="hidden"
-        />
-      </div>
-    );
-  }
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const original = e.target.files?.[0];
+    // Cleared up front, not in a finally: the File is already captured, and
+    // clearing here is what lets a member re-pick the same file after
+    // cancelling the crop step (a change event does not fire for an
+    // unchanged value).
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    if (!original || !user) return;
 
-  return (
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(original.type)) {
+      toast({
+        title: 'Invalid file type',
+        description: 'Please upload a JPG, PNG, or WebP image.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Hard ceiling before compression (avoid decoding absurd files)
+    if (original.size > 25 * 1024 * 1024) {
+      toast({
+        title: 'File too large',
+        description: 'Please upload an image smaller than 25MB.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Crop first, validate second. The dialog only ever hands back something
+    // the guardrail accepts, so a deliberate crop is not re-litigated.
+    if (isCroppableImage(original)) {
+      setPendingCrop(original);
+      return;
+    }
+
+    void processFile(original);
+  };
+
+  const body = currentImageUrl ? (
+    <div className="space-y-2">
+      <Label>Hero Image (optional)</Label>
+      <div className="relative rounded-lg border border-border overflow-hidden">
+        <img src={currentImageUrl} alt="Story hero" className="w-full h-40 object-cover" />
+        <div className="absolute top-2 right-2 flex gap-2">
+          <Button type="button" size="sm" variant="secondary" onClick={() => fileInputRef.current?.click()}>
+            Change
+          </Button>
+          <Button type="button" size="sm" variant="destructive" onClick={onRemove}>
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept={ACCEPT.story}
+        onChange={handleFileSelect}
+        className="hidden"
+      />
+    </div>
+  ) : (
     <div className="space-y-2">
       <Label>Hero Image (optional)</Label>
       <button
@@ -145,5 +165,19 @@ export function StoryImageUpload({ currentImageUrl, onUpload, onRemove }: StoryI
         className="hidden"
       />
     </div>
+  );
+
+  return (
+    <>
+      {body}
+      <ImageCropDialog
+        file={pendingCrop}
+        onComplete={(file) => {
+          setPendingCrop(null);
+          void processFile(file);
+        }}
+        onCancel={() => setPendingCrop(null)}
+      />
+    </>
   );
 }
