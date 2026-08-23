@@ -47,6 +47,7 @@ import { formatDistanceToNow } from 'date-fns';
 import {
   settleBulkAction,
   describeSettlement,
+  describeProgress,
   needsInvite,
   reasonOf,
   NEEDS_INVITE_FILTER,
@@ -81,6 +82,10 @@ export default function WaitlistManagement() {
   const [showReviewDialog, setShowReviewDialog] = useState(false);
   const [adminNotes, setAdminNotes] = useState('');
   const [processing, setProcessing] = useState(false);
+  // Label for an in-flight bulk batch. Capped concurrency means a large batch
+  // takes a minute or two, and a disabled button with no feedback reads as a
+  // hang. Null when nothing is running.
+  const [bulkProgress, setBulkProgress] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{ ids: string[]; label: string } | null>(null);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
@@ -297,6 +302,7 @@ export default function WaitlistManagement() {
       const settlement = await settleBulkAction(rows, {
         updateStatus: row => updateRowStatus(row, action),
         sendInvite: action === 'approved' ? sendRowInvite : undefined,
+        onProgress: progress => setBulkProgress(describeProgress(action, progress)),
       });
 
       await logAdminAction(`bulk_waitlist_${action}`, 'multiple', {
@@ -327,6 +333,7 @@ export default function WaitlistManagement() {
         variant: 'destructive',
       });
     } finally {
+      setBulkProgress(null);
       setProcessing(false);
     }
   };
@@ -676,8 +683,15 @@ export default function WaitlistManagement() {
           {/* Bulk Actions */}
           {selectedEntries.size > 0 && (
             <div className="flex items-center gap-2 mt-4 p-3 bg-muted rounded-lg">
-              <p className="text-sm font-medium">
-                {selectedEntries.size} selected
+              <p className="text-sm font-medium flex items-center gap-2" aria-live="polite">
+                {bulkProgress ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    {bulkProgress}
+                  </>
+                ) : (
+                  `${selectedEntries.size} selected`
+                )}
               </p>
               <div className="flex gap-2 ml-auto">
                 <Button

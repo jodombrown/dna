@@ -171,6 +171,50 @@ describe('WaitlistManagement bulk approve', () => {
     await waitFor(() => expect(screen.getAllByText('Needs invite').length).toBeGreaterThan(0));
   });
 
+  it('shows a live count while a capped batch works through the rows', async () => {
+    // Nine rows at four concurrent is three rounds, so the bar has something
+    // to say for long enough to be worth saying. Each send parks until
+    // released, which is what a real one-to-two minute batch looks like.
+    table = Array.from({ length: 9 }, (_, i) => makeRow(i + 1));
+
+    const releases: Array<() => void> = [];
+    invokeMock.mockImplementation(
+      (_fn: string, opts: { body: { waitlistId: string } }) =>
+        new Promise(resolve => {
+          releases.push(() => {
+            const row = table.find(r => r.id === opts.body.waitlistId);
+            if (row) row.last_invite_sent_at = '2026-08-23T00:00:00Z';
+            resolve({ data: { success: true }, error: null });
+          });
+        }),
+    );
+
+    render(<WaitlistManagement />);
+    await waitFor(() => expect(screen.getByText('person1@example.com')).toBeInTheDocument());
+    fireEvent.click(screen.getAllByRole('checkbox')[0]);
+    fireEvent.click(await screen.findByRole('button', { name: /^Approve$/ }));
+
+    // Status flips settle on their own, then the sends park mid-batch.
+    await waitFor(() => expect(releases.length).toBeGreaterThan(0));
+    expect(await screen.findByText(/^Sending \d+ of 9$/)).toBeInTheDocument();
+
+    // Never more than the cap in flight, which is the whole point of batching.
+    expect(releases.length).toBeLessThanOrEqual(4);
+
+    // Drain every round as it opens.
+    for (let guard = 0; guard < 20 && releases.length > 0; guard += 1) {
+      releases.splice(0).forEach(release => release());
+      await waitFor(() => expect(invokeMock.mock.calls.length).toBeGreaterThan(0));
+    }
+
+    await waitFor(() => expect(toastMock).toHaveBeenCalled());
+    expect(invokeMock).toHaveBeenCalledTimes(9);
+    expect(lastToast().description).toBe('Approved 9. Invites sent 9, failed 0.');
+
+    // The label clears once the batch settles, rather than sticking on screen.
+    await waitFor(() => expect(screen.queryByText(/^Sending /)).not.toBeInTheDocument());
+  });
+
   it('reads zero and sends a plain toast when every invite lands', async () => {
     invokeMock.mockImplementation(async (_fn: string, opts: { body: { waitlistId: string } }) => {
       const row = table.find(r => r.id === opts.body.waitlistId);

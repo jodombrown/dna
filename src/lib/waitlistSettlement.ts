@@ -45,6 +45,33 @@ export interface BulkSettlement {
   inviteFailed: RowSettlement[];
 }
 
+/** Which half of the action a progress tick is reporting. */
+export type SettlementPhase = 'status' | 'invite';
+
+export interface SettlementProgress {
+  phase: SettlementPhase;
+  done: number;
+  total: number;
+}
+
+/**
+ * How many rows are in flight at once.
+ *
+ * Four, not "all of them". Each send-beta-access-granted invocation is roughly
+ * seven round trips: token check, has_role RPC, waitlist select, generateLink
+ * against the auth admin API, a profiles update, the Resend send, then the
+ * waitlist stamp and the audit insert. Two hundred of those in parallel is
+ * around fourteen hundred concurrent operations and two hundred simultaneous
+ * sends at a transactional mail provider that rate limits by design.
+ *
+ * That is a spurious-failure generator, and it would defeat the point of this
+ * module. A settlement summary is only worth reading if a name on the failure
+ * list means the row actually failed, rather than meaning the batch throttled
+ * itself. Two hundred rows at four concurrent is about fifty rounds and a
+ * minute or two of wall clock, which is fine for an admin action.
+ */
+export const DEFAULT_CONCURRENCY = 4;
+
 export interface SettlementOps {
   /** Flip one row's status. Must reject or throw when the row did not change. */
   updateStatus: (row: WaitlistRowRef) => Promise<void>;
@@ -53,6 +80,56 @@ export interface SettlementOps {
    * Omit for actions that send nothing, such as reject.
    */
   sendInvite?: (row: WaitlistRowRef) => Promise<void>;
+  /** In-flight cap for both phases. Defaults to DEFAULT_CONCURRENCY. */
+  concurrency?: number;
+  /**
+   * Called as each row completes, so a batch that runs for a minute can say so.
+   * A disabled button with no feedback reads as a hang and gets force-quit.
+   */
+  onProgress?: (progress: SettlementProgress) => void;
+}
+
+/**
+ * Settle items in sequential batches, never more than `limit` in flight.
+ *
+ * Results come back positionally aligned with `items`, because the batches are
+ * ordered slices and each batch's results are appended in order. Callers rely
+ * on that alignment to attribute a failure to the right row.
+ *
+ * The progress tick lives in a finally so it fires for a rejected row too. A
+ * counter that stalls on the first failure is worse than no counter.
+ */
+async function settleInBatches(
+  items: WaitlistRowRef[],
+  limit: number,
+  worker: (item: WaitlistRowRef) => Promise<void>,
+  onDone: (completed: number) => void,
+): Promise<PromiseSettledResult<void>[]> {
+  const results: PromiseSettledResult<void>[] = [];
+  let completed = 0;
+  const size = Math.max(1, Math.floor(limit));
+
+  // Announce the phase before the first row finishes. Without this the label
+  // holds the previous phase's "9 of 9" for as long as the first send takes,
+  // which is the exact stretch the admin is staring at it.
+  if (items.length > 0) onDone(0);
+
+  for (let i = 0; i < items.length; i += size) {
+    const batch = items.slice(i, i + size);
+    const settled = await Promise.allSettled(
+      batch.map(async item => {
+        try {
+          await worker(item);
+        } finally {
+          completed += 1;
+          onDone(completed);
+        }
+      }),
+    );
+    results.push(...settled);
+  }
+
+  return results;
 }
 
 /** Best effort human-readable cause from anything a rejection can carry. */
@@ -69,8 +146,10 @@ export function reasonOf(err: unknown): string {
 /**
  * Run a bulk action over rows and return what settled, never what was fired.
  *
- * Both phases use Promise.allSettled, so one rejection never cancels a sibling.
- * Every row is accounted for in the result whether it succeeded or not.
+ * Both phases use Promise.allSettled, so one rejection never cancels a sibling,
+ * and both run at most DEFAULT_CONCURRENCY rows at a time so a large batch does
+ * not manufacture its own failures. Every row is accounted for in the result
+ * whether it succeeded or not.
  *
  * A row whose status flip failed is deliberately not sent to: the edge function
  * would answer 409 for exactly that row, and a 409 in the failure list would
@@ -87,7 +166,16 @@ export async function settleBulkAction(
     inviteOk: false,
   }));
 
-  const statusResults = await Promise.allSettled(rows.map(row => ops.updateStatus(row)));
+  const limit = ops.concurrency ?? DEFAULT_CONCURRENCY;
+  const report = (phase: SettlementPhase, total: number) => (done: number) =>
+    ops.onProgress?.({ phase, done, total });
+
+  const statusResults = await settleInBatches(
+    rows,
+    limit,
+    row => ops.updateStatus(row),
+    report('status', rows.length),
+  );
   statusResults.forEach((result, i) => {
     if (result.status === 'fulfilled') {
       settlements[i].statusOk = true;
@@ -100,10 +188,14 @@ export async function settleBulkAction(
 
   if (ops.sendInvite) {
     const send = ops.sendInvite;
-    // .map fires every send before the first await, so a rejection in the
-    // middle of the batch cannot stop the rows after it from being attempted.
-    const inviteResults = await Promise.allSettled(
-      inviteTargets.map(s => send({ id: s.id, email: s.email })),
+    // Every row still gets attempted. A rejection settles its own batch slot
+    // and the rounds after it run regardless, so one bad address can never
+    // strand the rows queued behind it.
+    const inviteResults = await settleInBatches(
+      inviteTargets.map(s => ({ id: s.id, email: s.email })),
+      limit,
+      row => send(row),
+      report('invite', inviteTargets.length),
     );
     inviteResults.forEach((result, i) => {
       if (result.status === 'fulfilled') {
@@ -173,6 +265,22 @@ export function describeSettlement(action: string, settlement: BulkSettlement): 
     description: parts.join(' '),
     destructive: failed,
   };
+}
+
+/**
+ * The label for an in-flight batch, e.g. "Sending 48 of 200".
+ *
+ * The two phases are named separately on purpose. "Approving" and "Sending"
+ * are different operations with different failure modes, and an admin watching
+ * a two-minute batch should be able to tell which half is running.
+ */
+export function describeProgress(action: string, progress: SettlementProgress): string {
+  if (progress.phase === 'invite') {
+    return `Sending ${progress.done} of ${progress.total}`;
+  }
+  const gerund =
+    action === 'approved' ? 'Approving' : action === 'rejected' ? 'Rejecting' : 'Updating';
+  return `${gerund} ${progress.done} of ${progress.total}`;
 }
 
 /** The subset of a waitlist row the stranded invariant reads. */

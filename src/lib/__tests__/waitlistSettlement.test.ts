@@ -13,8 +13,10 @@ import { describe, it, expect, vi } from 'vitest';
 import {
   settleBulkAction,
   describeSettlement,
+  describeProgress,
   needsInvite,
   reasonOf,
+  DEFAULT_CONCURRENCY,
 } from '../waitlistSettlement';
 
 const ROWS = [
@@ -122,6 +124,124 @@ describe('settleBulkAction', () => {
     });
 
     expect(settlement.inviteFailed[0].reason).toBe('Entry is not approved');
+  });
+});
+
+describe('concurrency cap', () => {
+  /** A worker that records peak in-flight count and resolves on demand. */
+  const trackingWorker = () => {
+    let inFlight = 0;
+    let peak = 0;
+    const worker = async () => {
+      inFlight += 1;
+      peak = Math.max(peak, inFlight);
+      // Yield twice so every sibling in the round is admitted before any exits.
+      await Promise.resolve();
+      await Promise.resolve();
+      inFlight -= 1;
+    };
+    return { worker, peak: () => peak };
+  };
+
+  it('never runs more than four sends at once, whatever the batch size', async () => {
+    const rows = Array.from({ length: 50 }, (_, i) => ({
+      id: `row-${i}`,
+      email: `user${i}@example.com`,
+    }));
+    const status = trackingWorker();
+    const invite = trackingWorker();
+
+    await settleBulkAction(rows, {
+      updateStatus: status.worker,
+      sendInvite: invite.worker,
+    });
+
+    // Assert the observed peak first, so a regression reports the real
+    // symptom (50 in flight) rather than only the changed constant.
+    expect(invite.peak()).toBeLessThanOrEqual(4);
+    expect(status.peak()).toBeLessThanOrEqual(4);
+    // And the cap is a cap, not a serialisation: it does use the headroom.
+    expect(invite.peak()).toBe(4);
+    expect(DEFAULT_CONCURRENCY).toBe(4);
+  });
+
+  it('runs the rounds after a failing round, and settles every row', async () => {
+    // The old code threw on the first rejection. Batching reintroduces the
+    // chance to strand rows queued behind a failure, so pin it: row 2 fails in
+    // round one and rows 5 through 9 are in later rounds.
+    const rows = Array.from({ length: 9 }, (_, i) => ({
+      id: `row-${i}`,
+      email: `user${i}@example.com`,
+    }));
+    const sendInvite = vi.fn(async (row: { id: string }) => {
+      if (row.id === 'row-1') throw new Error('rate limited');
+    });
+
+    const settlement = await settleBulkAction(rows, {
+      updateStatus: vi.fn().mockResolvedValue(undefined),
+      sendInvite,
+    });
+
+    expect(sendInvite).toHaveBeenCalledTimes(9);
+    expect(settlement.inviteOk).toHaveLength(8);
+    expect(settlement.inviteFailed.map(r => r.id)).toEqual(['row-1']);
+    // Positional alignment survives batching: the failure is attributed to the
+    // row that actually failed, not to whichever slot it landed in.
+    expect(settlement.rows[1].email).toBe('user1@example.com');
+    expect(settlement.rows[1].inviteOk).toBe(false);
+    expect(settlement.rows[8].inviteOk).toBe(true);
+  });
+
+  it('reports progress for both phases, counting failed rows too', async () => {
+    const rows = Array.from({ length: 6 }, (_, i) => ({
+      id: `row-${i}`,
+      email: `user${i}@example.com`,
+    }));
+    const seen: string[] = [];
+
+    await settleBulkAction(rows, {
+      updateStatus: vi.fn().mockResolvedValue(undefined),
+      sendInvite: vi.fn(async (row: { id: string }) => {
+        if (row.id === 'row-0') throw new Error('nope');
+      }),
+      onProgress: p => seen.push(describeProgress('approved', p)),
+    });
+
+    // Both phases counted to completion. A counter that stalls on the first
+    // failure is worse than no counter.
+    // Each phase announces itself at 0, then counts to its own total.
+    expect(seen[0]).toBe('Approving 0 of 6');
+    expect(seen).toContain('Approving 6 of 6');
+    expect(seen).toContain('Sending 0 of 6');
+    expect(seen).toContain('Sending 6 of 6');
+    expect(seen.filter(l => l.startsWith('Approving'))).toHaveLength(7);
+    expect(seen.filter(l => l.startsWith('Sending'))).toHaveLength(7);
+    // The label never runs backwards or repeats a phase out of order.
+    expect(seen.indexOf('Sending 0 of 6')).toBeGreaterThan(seen.indexOf('Approving 6 of 6'));
+  });
+
+  it('honours an explicit concurrency and never divides by zero', async () => {
+    const rows = Array.from({ length: 5 }, (_, i) => ({ id: `row-${i}`, email: `u${i}@e.com` }));
+    const tracked = trackingWorker();
+
+    await settleBulkAction(rows, { updateStatus: tracked.worker, concurrency: 1 });
+    expect(tracked.peak()).toBe(1);
+
+    const zero = trackingWorker();
+    const settlement = await settleBulkAction(rows, { updateStatus: zero.worker, concurrency: 0 });
+    expect(zero.peak()).toBe(1);
+    expect(settlement.statusOk).toHaveLength(5);
+  });
+});
+
+describe('describeProgress', () => {
+  it('names the phase that is running', () => {
+    expect(describeProgress('approved', { phase: 'status', done: 48, total: 200 }))
+      .toBe('Approving 48 of 200');
+    expect(describeProgress('approved', { phase: 'invite', done: 48, total: 200 }))
+      .toBe('Sending 48 of 200');
+    expect(describeProgress('rejected', { phase: 'status', done: 1, total: 2 }))
+      .toBe('Rejecting 1 of 2');
   });
 });
 
