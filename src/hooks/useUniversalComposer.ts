@@ -301,6 +301,10 @@ export const useComposerState = (initialContext?: ComposerContext) => {
       // Invalidate as backup so server state reconciles
       await queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       await queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
+      // Finding F: the composer is the real create path, not
+      // feed/CreatePost.tsx. A new post moves both counter queries.
+      await queryClient.invalidateQueries({ queryKey: ['feed-five-c-stats'] });
+      await queryClient.invalidateQueries({ queryKey: ['feed-platform-pulse'] });
 
       // BD534 step 5: publishing an edit session's content — the post_drafts
       // row it came from has no further purpose. Best-effort; a failure here

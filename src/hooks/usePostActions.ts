@@ -96,6 +96,12 @@ export function usePostActions(postId: string, authorId: string, currentUserId?:
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
+      // Finding F: this is the delete path for Story/Event/Connect/Space/
+      // Opportunity cards (PostMenuOwn), not feed/PostCard.tsx. The Five C's
+      // counters and the platform pulse read post counts, so they go stale
+      // here too.
+      queryClient.invalidateQueries({ queryKey: ['feed-five-c-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['feed-platform-pulse'] });
       toast.success('Post deleted');
     },
     onError: (error) => {
