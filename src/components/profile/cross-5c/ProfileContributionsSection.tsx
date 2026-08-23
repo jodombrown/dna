@@ -19,7 +19,7 @@ interface ContributionItem {
   type: ContributionType;
   title: string;
   description?: string;
-  spaceId: string;
+  spaceId?: string;
   spaceName?: string;
   status: string;
   created_at: string;
@@ -44,29 +44,29 @@ const ProfileContributionsSectionImpl: React.FC<ProfileContributionsSectionProps
 
       // Get needs created by user
       const { data: needs, error: needsError } = await supabase
-        .from('contribution_needs')
+        .from('opportunities')
         .select(`
           id,
           title,
           description,
           status,
           created_at,
-          space_id,
-          spaces (name)
+          space_id
         `)
         .eq('created_by', userId)
+        .eq('direction', 'need')
         .order('created_at', { ascending: false })
         .limit(limit);
 
       if (!needsError && needs) {
-        needs.forEach((need: { id: string; title: string; description: string | null; status: string; created_at: string; space_id: string; spaces: { name: string } | null }) => {
+        needs.forEach((need: { id: string; title: string; description: string | null; status: string; created_at: string; space_id: string | null }) => {
           allContributions.push({
             id: need.id,
             type: 'need',
             title: need.title,
             description: need.description,
-            spaceId: need.space_id,
-            spaceName: need.spaces?.name,
+            spaceId: need.space_id ?? undefined,
+            spaceName: undefined,
             status: need.status,
             created_at: need.created_at,
           });
@@ -75,29 +75,27 @@ const ProfileContributionsSectionImpl: React.FC<ProfileContributionsSectionProps
 
       // Get offers made by user
       const { data: offers, error: offersError } = await supabase
-        .from('contribution_offers')
+        .from('opportunity_interests')
         .select(`
           id,
           message,
           status,
           created_at,
-          space_id,
-          spaces (name),
-          contribution_needs (title)
+          opportunities (title, space_id)
         `)
-        .eq('created_by', userId)
+        .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .limit(limit);
 
       if (!offersError && offers) {
-        offers.forEach((offer: { id: string; message: string | null; status: string; created_at: string; space_id: string; spaces: { name: string } | null; contribution_needs: { title: string } | null }) => {
+        offers.forEach((offer: { id: string; message: string | null; status: string; created_at: string; opportunities: { title: string; space_id: string | null } | null }) => {
           allContributions.push({
             id: offer.id,
             type: 'offer',
-            title: offer.contribution_needs?.title || 'Contribution Offer',
+            title: offer.opportunities?.title || 'Contribution Offer',
             description: offer.message,
-            spaceId: offer.space_id,
-            spaceName: offer.spaces?.name,
+            spaceId: offer.opportunities?.space_id ?? undefined,
+            spaceName: undefined,
             status: offer.status,
             created_at: offer.created_at,
           });

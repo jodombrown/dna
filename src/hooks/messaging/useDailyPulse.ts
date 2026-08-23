@@ -27,7 +27,6 @@ export interface PulseNeed {
   spaceId: string;
   spaceTitle: string;
   type: string;
-  priority: string;
   href: string;
 }
 
@@ -155,11 +154,11 @@ export function useDailyPulse(enabled: boolean) {
       let needs: PulseNeed[] = [];
       if (spaceIds.length > 0) {
         const needsRes = await supabase
-          .from('contribution_needs')
-          .select('id, title, space_id, type, priority, status, created_at, spaces:spaces(id, name)')
+          .from('opportunities')
+          .select('id, title, space_id, type, status, created_at')
           .in('space_id', spaceIds)
-          .eq('status', 'open')
-          .order('priority', { ascending: false })
+          .eq('status', 'active')
+          .eq('direction', 'need')
           .order('created_at', { ascending: false })
           .limit(5);
 
@@ -167,19 +166,29 @@ export function useDailyPulse(enabled: boolean) {
           (needsRes.data ?? []) as Array<{
             id: string;
             title: string;
-            space_id: string;
+            space_id: string | null;
             type: string;
-            priority: string;
-            spaces: { id: string; name: string } | null;
           }>;
+
+        // Space names are resolved with an explicit lookup rather than a
+        // PostgREST embed: opportunities.space_id carries no FK to spaces, so
+        // `spaces(...)` would silently join through related_space_id instead.
+        const needSpaceIds = [...new Set(needsRaw.map((n) => n.space_id).filter(Boolean))] as string[];
+        const spaceNames = new Map<string, string>();
+        if (needSpaceIds.length > 0) {
+          const { data: spaceRows } = await supabase
+            .from('spaces')
+            .select('id, name')
+            .in('id', needSpaceIds);
+          (spaceRows ?? []).forEach((s: { id: string; name: string }) => spaceNames.set(s.id, s.name));
+        }
 
         needs = needsRaw.map((n) => ({
           id: n.id,
           title: n.title,
-          spaceId: n.space_id,
-          spaceTitle: n.spaces?.name || 'Space',
+          spaceId: n.space_id ?? '',
+          spaceTitle: (n.space_id && spaceNames.get(n.space_id)) || 'Space',
           type: n.type,
-          priority: n.priority,
           href: `/dna/contribute/needs/${n.id}`,
         }));
       }

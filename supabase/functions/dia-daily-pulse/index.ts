@@ -24,7 +24,7 @@ interface PulseNeed {
   title: string;
   spaceTitle: string;
   type: string;
-  priority: string;
+  priority?: string;
 }
 
 interface BodyShape {

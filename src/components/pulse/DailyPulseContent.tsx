@@ -211,7 +211,6 @@ export const DailyPulseContent: React.FC<DailyPulseContentProps> = ({
                           </p>
                           <p className="text-meta text-muted-foreground truncate">
                             {n.spaceTitle} - {n.type}
-                            {n.priority === 'high' ? ' - high priority' : ''}
                           </p>
                           {hl?.suggestion && (
                             <p className="text-meta text-primary mt-0.5">

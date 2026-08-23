@@ -193,10 +193,11 @@ export function NetworkActivityFeed() {
 
       // 4. Contribution needs posted by connections
       const { data: contributions } = await supabase
-        .from('contribution_needs')
+        .from('opportunities')
         .select('id, title, created_by, type, created_at')
         .in('created_by', connectionIds)
-        .eq('status', 'open')
+        .eq('status', 'active')
+        .eq('direction', 'need')
         .gte('created_at', oneWeekAgo.toISOString())
         .order('created_at', { ascending: false })
         .limit(3);

@@ -174,9 +174,10 @@ export function useUserPulseTotals(cModule: CModule | null, enabled: boolean) {
         case 'contribute': {
           const [{ count: needs }, { count: offers }] = await Promise.all([
             supabase
-              .from('contribution_needs')
+              .from('opportunities')
               .select('id', { count: 'exact', head: true })
-              .eq('created_by', uid),
+              .eq('created_by', uid)
+              .eq('direction', 'need'),
             supabase
               .from('contribution_offers')
               .select('id', { count: 'exact', head: true })

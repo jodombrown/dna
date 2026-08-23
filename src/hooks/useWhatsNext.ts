@@ -77,10 +77,11 @@ export function useWhatsNext() {
         const spaceIds = memberSpaces.map((m: { space_id: string }) => m.space_id).filter(Boolean);
         
         const { data: openNeeds } = await supabase
-          .from('contribution_needs')
+          .from('opportunities')
           .select('id, title, space_id')
           .in('space_id', spaceIds)
-          .eq('status', 'open')
+          .eq('status', 'active')
+          .eq('direction', 'need')
           .limit(1);
 
         if (openNeeds && openNeeds.length > 0) {

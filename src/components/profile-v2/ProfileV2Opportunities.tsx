@@ -9,7 +9,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { HandHeart, Lightbulb, Plus } from 'lucide-react';
 import { supabaseClient } from '@/lib/supabaseHelpers';
 import { ProfileV2Data, ProfileV2Visibility } from '@/types/profileV2';
-import { ContributionNeedType, ContributionNeedStatus, ContributionOfferStatus } from '@/types/contributeTypes';
+import { ContributionOfferStatus } from '@/types/contributeTypes';
+
+// opportunities.type and .status are free text, not the retired
+// contribution_need_* enums, so these are plain strings here.
+type OpportunityType = string;
+type OpportunityStatus = string;
 import { formatDistanceToNow } from 'date-fns';
 import { REBUILD_FLAGS } from '@/lib/rebuildFlags';
 
@@ -22,9 +27,8 @@ interface ProfileV2OpportunitiesProps {
 interface OpportunityDisplayItem {
   id: string;
   title: string;
-  type: ContributionNeedType;
-  status: ContributionNeedStatus;
-  priority: 'normal' | 'high';
+  type: OpportunityType;
+  status: OpportunityStatus;
   description: string;
   created_at: string;
   space?: {
@@ -46,7 +50,7 @@ interface ContributionDisplayItem {
   need?: {
     id: string;
     title: string;
-    type: ContributionNeedType;
+    type: OpportunityType;
   };
   space?: {
     id: string;
@@ -56,7 +60,7 @@ interface ContributionDisplayItem {
 }
 
 // Type icons mapping
-const TYPE_ICONS: Record<ContributionNeedType | string, string> = {
+const TYPE_ICONS: Record<string, string> = {
   funding: '💰',
   skills: '🛠️',
   time: '⏰',
@@ -67,9 +71,9 @@ const TYPE_ICONS: Record<ContributionNeedType | string, string> = {
 };
 
 // Status badge variants
-const getStatusVariant = (status: ContributionNeedStatus): 'default' | 'secondary' | 'outline' => {
+const getStatusVariant = (status: OpportunityStatus): 'default' | 'secondary' | 'outline' => {
   switch (status) {
-    case 'open':
+    case 'active':
       return 'default';
     case 'in_progress':
       return 'secondary';
@@ -114,24 +118,24 @@ const ProfileV2OpportunitiesImpl: React.FC<ProfileV2OpportunitiesProps> = ({
     queryKey: ['profile-created-opportunities', profileUserId, isOwner],
     queryFn: async () => {
       let query = supabaseClient
-        .from('contribution_needs')
+        .from('opportunities')
         .select(`
           id,
           title,
           type,
           status,
-          priority,
           description,
           created_at,
-          space:spaces(id, name, slug),
-          offers:contribution_offers(count)
+          space_id,
+          offers:opportunity_interests(count)
         `)
         .eq('created_by', profileUserId)
+        .eq('direction', 'need')
         .order('created_at', { ascending: false });
 
-      // For non-owners, only show open opportunities
+      // For non-owners, only show active opportunities
       if (!isOwner) {
-        query = query.eq('status', 'open');
+        query = query.eq('status', 'active');
       }
 
       const { data, error } = await query;
@@ -140,22 +144,20 @@ const ProfileV2OpportunitiesImpl: React.FC<ProfileV2OpportunitiesProps> = ({
       return (data || []).map((item: {
         id: string;
         title: string;
-        type: ContributionNeedType;
-        status: ContributionNeedStatus;
-        priority: 'normal' | 'high';
-        description: string;
+        type: OpportunityType;
+        status: OpportunityStatus;
+        description: string | null;
         created_at: string;
-        space: { id: string; name: string; slug: string } | null;
+        space_id: string | null;
         offers: { count: number }[];
       }): OpportunityDisplayItem => ({
         id: item.id,
         title: item.title,
         type: item.type,
         status: item.status,
-        priority: item.priority,
         description: item.description,
         created_at: item.created_at,
-        space: item.space ?? undefined,
+        space: undefined,
         offer_count: item.offers?.[0]?.count || 0,
       }));
     },
@@ -167,24 +169,21 @@ const ProfileV2OpportunitiesImpl: React.FC<ProfileV2OpportunitiesProps> = ({
     queryKey: ['profile-made-contributions', profileUserId, isOwner],
     queryFn: async () => {
       let query = supabaseClient
-        .from('contribution_offers')
+        .from('opportunity_interests')
         .select(`
           id,
-          need_id,
+          opportunity_id,
           status,
           message,
-          offered_amount,
-          offered_currency,
           created_at,
-          need:contribution_needs(id, title, type),
-          space:spaces(id, name, slug)
+          need:opportunities(id, title, type)
         `)
-        .eq('created_by', profileUserId)
+        .eq('user_id', profileUserId)
         .order('created_at', { ascending: false });
 
       // For non-owners, only show completed/validated contributions
       if (!isOwner) {
-        query = query.in('status', ['completed', 'validated']);
+        query = query.in('status', ['completed', 'validated', 'accepted']);
       }
 
       const { data, error } = await query;
@@ -192,24 +191,22 @@ const ProfileV2OpportunitiesImpl: React.FC<ProfileV2OpportunitiesProps> = ({
 
       return (data || []).map((item: {
         id: string;
-        need_id: string;
+        opportunity_id: string;
         status: ContributionOfferStatus;
-        message: string;
-        offered_amount: number | null;
-        offered_currency: string | null;
+        message: string | null;
         created_at: string;
-        need: { id: string; title: string; type: ContributionNeedType } | null;
-        space: { id: string; name: string; slug: string } | null;
+        need: { id: string; title: string; type: OpportunityType } | null;
       }): ContributionDisplayItem => ({
         id: item.id,
-        need_id: item.need_id,
+        need_id: item.opportunity_id,
         status: item.status,
-        message: item.message,
-        offered_amount: item.offered_amount,
-        offered_currency: item.offered_currency,
+        message: item.message ?? '',
+        // opportunity_interests carries no amount fields.
+        offered_amount: undefined,
+        offered_currency: undefined,
         created_at: item.created_at,
-        need: item.need,
-        space: item.space,
+        need: item.need ?? undefined,
+        space: undefined,
       }));
     },
     enabled: !!profileUserId,
@@ -219,7 +216,7 @@ const ProfileV2OpportunitiesImpl: React.FC<ProfileV2OpportunitiesProps> = ({
   const sortOpportunities = (opportunities: OpportunityDisplayItem[]) => {
     return [...opportunities].sort((a, b) => {
       // Open status first
-      const statusOrder = { open: 0, in_progress: 1, fulfilled: 2, closed: 3 };
+      const statusOrder: Record<string, number> = { active: 0, in_progress: 1, fulfilled: 2, closed: 3 };
       const aOrder = statusOrder[a.status] ?? 4;
       const bOrder = statusOrder[b.status] ?? 4;
       if (aOrder !== bOrder) return aOrder - bOrder;
@@ -303,11 +300,6 @@ const ProfileV2OpportunitiesImpl: React.FC<ProfileV2OpportunitiesProps> = ({
             <Badge variant="outline" className="text-xs">
               {TYPE_ICONS[opportunity.type] || '📋'} {opportunity.type.charAt(0).toUpperCase() + opportunity.type.slice(1)}
             </Badge>
-            {opportunity.priority === 'high' && (
-              <Badge variant="destructive" className="text-xs">
-                High Priority
-              </Badge>
-            )}
           </div>
 
           <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">

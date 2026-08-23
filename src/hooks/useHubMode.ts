@@ -58,9 +58,9 @@ const HUB_CONFIGS: Record<HubType, HubModeConfig> = {
     threshold: 10,
     countQuery: async () => safeCountQuery(async () => {
       const { count, error } = await supabase
-        .from('contribution_needs')
+        .from('opportunities')
         .select('id', { count: 'exact', head: true })
-        .in('status', ['open', 'in_progress']);
+        .in('status', ['active', 'in_progress']);
       return { count, error };
     })
   },

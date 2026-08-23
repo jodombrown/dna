@@ -66,7 +66,6 @@ export function useDailyPulseBrief(enabled: boolean): UseDailyPulseBriefResult {
               title: n.title,
               spaceTitle: n.spaceTitle,
               type: n.type,
-              priority: n.priority,
             })),
           },
         },

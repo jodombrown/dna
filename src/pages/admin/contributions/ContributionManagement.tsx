@@ -38,13 +38,14 @@ interface NeedWithDetails {
   description: string;
   type: string;
   status: string;
-  priority: string;
+  /** Derived from opportunities.budget_range jsonb; no scalar column exists. */
   target_amount: number | null;
   currency: string | null;
   created_at: string;
   updated_at: string;
   created_by: string;
-  space_id: string;
+  /** Nullable: opportunities.space_id allows standalone asks (D098). */
+  space_id: string | null;
   space_title: string;
   creator_name: string | null;
   creator_email: string | null;
@@ -53,8 +54,10 @@ interface NeedWithDetails {
 
 type SortField = 'created_at' | 'offer_count' | 'status';
 type SortDirection = 'asc' | 'desc';
-type StatusFilter = 'all' | 'open' | 'in_progress' | 'fulfilled' | 'closed';
-type TypeFilter = 'all' | 'funding' | 'skills' | 'time' | 'access' | 'resources';
+type StatusFilter = 'all' | 'active' | 'in_progress' | 'fulfilled' | 'closed';
+// opportunities.type is free text (default 'general'), not a fixed enum, so the
+// filter options are derived from the loaded rows rather than hard-coded.
+type TypeFilter = string;
 
 const ITEMS_PER_PAGE = 25;
 
@@ -95,36 +98,47 @@ export default function ContributionManagement() {
 
       // Fetch all needs with creator and space info
       const { data: needsData, error: needsError } = await (supabase as any)
-        .from('contribution_needs')
+        .from('opportunities')
         .select(`
           id,
           title,
           description,
           type,
           status,
-          priority,
-          target_amount,
-          currency,
+          budget_range,
           created_at,
           updated_at,
           created_by,
           space_id,
-          space:spaces!contribution_needs_space_id_fkey(name),
-          creator:profiles!contribution_needs_created_by_fkey(full_name)
+          creator:profiles!opportunities_created_by_fkey(full_name)
         `)
         .order('created_at', { ascending: false });
 
       if (needsError) throw needsError;
 
-      // Get offer counts
+      // Space names need an explicit lookup: opportunities.space_id carries no
+      // FK to spaces, so a PostgREST embed would join via related_space_id.
+      const spaceIds = [...new Set(
+        (needsData as Array<{ space_id: string | null }> | null ?? []).map((n) => n.space_id).filter(Boolean)
+      )] as string[];
+      const spaceNames: Record<string, string> = {};
+      if (spaceIds.length > 0) {
+        const { data: spaceRows } = await supabase
+          .from('spaces')
+          .select('id, name')
+          .in('id', spaceIds);
+        (spaceRows ?? []).forEach((s) => { spaceNames[s.id] = s.name; });
+      }
+
+      // Get interest counts (opportunities-native equivalent of offers)
       const { data: offerCounts } = await (supabase as any)
-        .from('contribution_offers')
-        .select('need_id');
+        .from('opportunity_interests')
+        .select('opportunity_id');
 
       // Build offer count map
       const offerCountMap: Record<string, number> = {};
-      offerCounts?.forEach((o: any) => {
-        offerCountMap[o.need_id] = (offerCountMap[o.need_id] || 0) + 1;
+      (offerCounts as Array<{ opportunity_id: string }> | null ?? []).forEach((o) => {
+        offerCountMap[o.opportunity_id] = (offerCountMap[o.opportunity_id] || 0) + 1;
       });
 
       const formattedNeeds: NeedWithDetails[] = (needsData || []).map((need: any) => ({
@@ -133,14 +147,13 @@ export default function ContributionManagement() {
         description: need.description,
         type: need.type,
         status: need.status,
-        priority: need.priority,
-        target_amount: need.target_amount,
-        currency: need.currency,
+        target_amount: typeof need.budget_range?.amount === 'number' ? need.budget_range.amount : null,
+        currency: need.budget_range?.currency ?? null,
         created_at: need.created_at,
         updated_at: need.updated_at,
         created_by: need.created_by,
         space_id: need.space_id,
-        space_title: need.space?.name || 'Unknown Space',
+        space_title: need.space_id ? (spaceNames[need.space_id] || 'Unknown Space') : 'No Space',
         creator_name: need.creator?.full_name || 'Unknown',
         creator_email: need.creator?.email || '',
         offer_count: offerCountMap[need.id] || 0
@@ -157,6 +170,13 @@ export default function ContributionManagement() {
       setLoading(false);
     }
   };
+
+  // opportunities.type is free text, so the filter offers exactly the types
+  // present in the data instead of a hard-coded enum that would match nothing.
+  const availableTypes = useMemo(
+    () => [...new Set(needs.map((n) => n.type).filter(Boolean))].sort(),
+    [needs]
+  );
 
   // Filter and sort needs
   const filteredAndSortedNeeds = useMemo(() => {
@@ -236,7 +256,7 @@ export default function ContributionManagement() {
     setProcessing(true);
     try {
       const { error } = await (supabase as any)
-        .from('contribution_needs')
+        .from('opportunities')
         .update({ status: 'closed' })
         .eq('id', selectedNeed.id);
 
@@ -323,8 +343,8 @@ export default function ContributionManagement() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'open':
-        return <Badge className="bg-green-500/10 text-green-600 border-green-500"><AlertCircle className="h-3 w-3 mr-1" />Open</Badge>;
+      case 'active':
+        return <Badge className="bg-green-500/10 text-green-600 border-green-500"><AlertCircle className="h-3 w-3 mr-1" />Active</Badge>;
       case 'in_progress':
         return <Badge className="bg-blue-500/10 text-blue-600 border-blue-500"><Clock className="h-3 w-3 mr-1" />In Progress</Badge>;
       case 'fulfilled':
@@ -381,9 +401,9 @@ export default function ContributionManagement() {
         <Card>
           <CardContent className="pt-6">
             <div className="text-2xl font-bold text-green-600">
-              {needs.filter(n => n.status === 'open').length}
+              {needs.filter(n => n.status === 'active').length}
             </div>
-            <p className="text-sm text-muted-foreground">Open Opportunities</p>
+            <p className="text-sm text-muted-foreground">Active Opportunities</p>
           </CardContent>
         </Card>
         <Card>
@@ -428,7 +448,7 @@ export default function ContributionManagement() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="open">Open</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
                 <SelectItem value="in_progress">In Progress</SelectItem>
                 <SelectItem value="fulfilled">Fulfilled</SelectItem>
                 <SelectItem value="closed">Closed</SelectItem>
@@ -440,11 +460,11 @@ export default function ContributionManagement() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="funding">Funding</SelectItem>
-                <SelectItem value="skills">Skills</SelectItem>
-                <SelectItem value="time">Time</SelectItem>
-                <SelectItem value="access">Access</SelectItem>
-                <SelectItem value="resources">Resources</SelectItem>
+                {availableTypes.map((t) => (
+                  <SelectItem key={t} value={t}>
+                    <span className="capitalize">{t}</span>
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <Button variant="outline" onClick={exportToCSV}>
@@ -606,9 +626,6 @@ export default function ContributionManagement() {
                   <div className="flex gap-2 mt-2">
                     {getTypeBadge(selectedNeed.type)}
                     {getStatusBadge(selectedNeed.status)}
-                    {selectedNeed.priority === 'high' && (
-                      <Badge className="bg-red-500/10 text-red-600 border-red-500">High Priority</Badge>
-                    )}
                   </div>
                 </div>
               </div>

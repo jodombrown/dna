@@ -340,20 +340,20 @@ export async function executeTool(
 
       case "find_opportunities": {
         let q = supabase
-          .from("contribution_needs")
-          .select("id, title, type, description, region, focus_areas, space:spaces(id, title)")
-          .in("status", ["open", "in_progress"]);
+          .from("opportunities")
+          .select("id, title, type, description, specific_region, tags, space_id")
+          .in("status", ["active", "in_progress"]);
         if (args.query) {
           const k = String(args.query).trim();
           q = q.or(`title.ilike.%${k}%,description.ilike.%${k}%`);
         }
-        if (args.region) q = q.ilike("region", `%${args.region}%`);
-        if (args.focus_area) q = q.contains("focus_areas", [args.focus_area]);
+        if (args.region) q = q.ilike("specific_region", `%${args.region}%`);
+        if (args.focus_area) q = q.contains("tags", [args.focus_area]);
         const { data } = await q.order("created_at", { ascending: false }).limit(ROW_CAP);
         const opportunities = (data ?? []).map((o: any) => ({
           id: o.id, title: o.title, type: o.type,
-          space_name: o.space?.title, region: o.region, focus_areas: o.focus_areas,
-          relevance: "Open contribution need",
+          space_id: o.space_id, region: o.specific_region, focus_areas: o.tags,
+          relevance: "Open opportunity",
         }));
         return { text: JSON.stringify({ count: opportunities.length, opportunities: opportunities.slice(0, 8) }), results: { opportunities } };
       }
