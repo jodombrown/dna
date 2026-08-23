@@ -13871,6 +13871,7 @@ export type Database = {
           roles_needed: Json
           slug: string
           space_id: string
+          space_title: string
           story_type: string
           subtitle: string
           title: string
