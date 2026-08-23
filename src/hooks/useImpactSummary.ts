@@ -12,7 +12,8 @@ export interface ImpactSummary {
   need: {
     id: string;
     title: string;
-    description: string;
+    /** Nullable: opportunities.description has no NOT NULL constraint. */
+    description: string | null;
     type: string;
   };
   contributions: {
@@ -41,7 +42,7 @@ export function useImpactSummary(spaceId: string | undefined, needId: string | u
 
       // Fetch need data
       const { data: need, error: needError } = await supabaseClient
-        .from('contribution_needs')
+        .from('opportunities')
         .select('id, title, description, type')
         .eq('id', needId)
         .single();
@@ -130,7 +131,7 @@ Thanks to ${validated_count} validated contribution${validated_count !== 1 ? 's'
 
 We published a Need on DNA looking for ${need.type} support to help us ${need.title.toLowerCase()}.
 
-${need.description}
+${need.description ?? ''}
 
 ## How the Community Showed Up
 

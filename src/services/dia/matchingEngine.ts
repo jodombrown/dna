@@ -59,9 +59,10 @@ async function matchOpportunitiesToProfile(
   if (!profile) return [];
 
   const { data: opportunities } = await supabase
-    .from('contribution_needs')
-    .select('id, title, description, type, region')
-    .eq('status', 'open')
+    .from('opportunities')
+    .select('id, title, description, type, specific_region')
+    .eq('status', 'active')
+    .eq('direction', 'need')
     .limit(100);
 
   if (!opportunities) return [];
@@ -88,8 +89,8 @@ async function matchOpportunitiesToProfile(
       totalScore += relevanceScore * 0.50;
 
       // Region proximity (weight: 0.30)
-      const locationScore = opp.region && profile.location &&
-        (opp.region.toLowerCase().includes(profile.location.toLowerCase().split(',')[0]))
+      const locationScore = opp.specific_region && profile.location &&
+        (opp.specific_region.toLowerCase().includes(profile.location.toLowerCase().split(',')[0]))
         ? 80 : 20;
       factors.push({
         factor: 'location',

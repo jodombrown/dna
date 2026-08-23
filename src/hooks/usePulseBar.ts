@@ -251,40 +251,41 @@ async function fetchCollaboratePulse(userId: string): Promise<CollaboratePulse> 
  * Fetch Contribute pulse data (matches + listings)
  */
 async function fetchContributePulse(userId: string): Promise<ContributePulse> {
-  // Fetch pending offers on user's contribution needs
+  // Fetch pending interest registered against this user's opportunities
   const { data: pendingOffers } = await supabase
-    .from('contribution_offers')
+    .from('opportunity_interests')
     .select(`
       id,
       status,
       created_at,
-      contribution_needs!inner (
+      opportunities!inner (
         id,
         title,
         created_by
       )
     `)
-    .eq('contribution_needs.created_by', userId)
+    .eq('opportunities.created_by', userId)
     .eq('status', 'pending')
     .order('created_at', { ascending: false })
     .limit(5);
 
-  // Fetch user's open listings
+  // Fetch user's active listings
   const { data: openListings } = await supabase
-    .from('contribution_needs')
+    .from('opportunities')
     .select('id, title')
     .eq('created_by', userId)
-    .eq('status', 'open')
+    .eq('status', 'active')
+    .eq('direction', 'need')
     .limit(10);
 
   const matchCount = pendingOffers?.length || 0;
   const openCount = openListings?.length || 0;
 
-  const topItems: PulseItem[] = (pendingOffers || []).slice(0, 3).map((offer: { id: string; created_at: string; contribution_needs: { id: string; title: string } }) => ({
+  const topItems: PulseItem[] = (pendingOffers || []).slice(0, 3).map((offer: { id: string; created_at: string; opportunities: { id: string; title: string } }) => ({
     id: offer.id,
-    title: offer.contribution_needs.title,
+    title: offer.opportunities.title,
     subtitle: 'New offer received',
-    action_url: `/contribute/needs/${offer.contribution_needs.id}`,
+    action_url: `/contribute/needs/${offer.opportunities.id}`,
     timestamp: offer.created_at,
   }));
 
@@ -537,7 +538,7 @@ export function usePulseBar() {
     );
 
     // Contribute pulse intentionally has NO realtime channel. The fetch
-    // reads offers RECEIVED on this user's needs (contribution_needs.created_by),
+    // reads interest RECEIVED on this user's opportunities (opportunities.created_by),
     // and realtime `postgres_changes` filters can't traverse an FK. Rather
     // than subscribe to every offer platform-wide (the original bug), we
     // let the 5-minute stale window + on-mount refetch cover it.

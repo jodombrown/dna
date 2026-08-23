@@ -120,14 +120,10 @@ async function getMatchingOpportunitiesForUser(
 ): Promise<Array<{ opportunity: any; score: number; reasons: string[] }>> {
   // Get open opportunities not created by user
   const { data: opportunities, error } = await supabase
-    .from('contribution_needs')
-    .select(`
-      *,
-      space:spaces(id, name, slug, focus_areas, region)
-    `)
-    .in('status', ['open', 'in_progress'])
+    .from('opportunities')
+    .select('*')
+    .in('status', ['active', 'in_progress'])
     .neq('created_by', userId)
-    .order('priority', { ascending: false })
     .order('created_at', { ascending: false })
     .limit(30)
 
@@ -138,15 +134,15 @@ async function getMatchingOpportunitiesForUser(
 
   // Get user's contribution history
   const { data: offers } = await supabase
-    .from('contribution_offers')
-    .select('need_id, contribution_needs(type)')
-    .eq('created_by', userId)
+    .from('opportunity_interests')
+    .select('opportunity_id, opportunities(type)')
+    .eq('user_id', userId)
     .in('status', ['accepted', 'completed', 'validated'])
 
   const contributionTypes = new Set<string>()
   offers?.forEach((offer: any) => {
-    if (offer.contribution_needs?.type) {
-      contributionTypes.add(offer.contribution_needs.type)
+    if (offer.opportunities?.type) {
+      contributionTypes.add(offer.opportunities.type)
     }
   })
 
@@ -158,7 +154,7 @@ async function getMatchingOpportunitiesForUser(
     // Skills matching (30%)
     if (opp.type === 'skills') {
       const userSkills = userProfile.skills || []
-      const oppFocusAreas = [...(opp.focus_areas || []), ...(opp.space?.focus_areas || [])]
+      const oppFocusAreas = [...(opp.tags || [])]
       const skillsScore = calculateArrayMatch(userSkills, oppFocusAreas)
       score += skillsScore * 0.30
       if (skillsScore > 30) {
@@ -175,7 +171,7 @@ async function getMatchingOpportunitiesForUser(
       ...(userProfile.focus_areas || []),
       ...(userProfile.impact_areas || [])
     ]
-    const oppFocusAreas = [...(opp.focus_areas || []), ...(opp.space?.focus_areas || [])]
+    const oppFocusAreas = [...(opp.tags || [])]
     const interestScore = calculateArrayMatch(userInterests, oppFocusAreas)
     score += interestScore * 0.25
     if (interestScore > 30) {
@@ -185,7 +181,7 @@ async function getMatchingOpportunitiesForUser(
 
     // Location (20%)
     const userLocation = userProfile.current_country || userProfile.location || ''
-    const oppRegion = opp.region || opp.space?.region || ''
+    const oppRegion = opp.specific_region || ''
     let locationScore = 30
 
     if (userLocation && oppRegion) {
@@ -216,12 +212,6 @@ async function getMatchingOpportunitiesForUser(
       score += 40 * 0.25
     } else {
       score += 20 * 0.25
-    }
-
-    // Bonus for high priority
-    if (opp.priority === 'high' && score > 30) {
-      score += 10
-      reasons.push('high priority')
     }
 
     return {
@@ -278,7 +268,7 @@ async function generateOpportunityNudges(supabase: any, userId: string): Promise
     // Build message
     let message = getRandomTemplate('opportunity_match')
     const focusArea = reasons.find(r => r.startsWith('focus:'))?.replace('focus: ', '') ||
-                      opportunity.focus_areas?.[0] || 'your interests'
+                      opportunity.tags?.[0] || 'your interests'
     const skills = reasons.find(r => r.startsWith('skills:'))?.replace('skills: ', '') ||
                    profile.skills?.[0] || 'your expertise'
 
@@ -296,8 +286,7 @@ async function generateOpportunityNudges(supabase: any, userId: string): Promise
       payload: {
         opportunity_id: opportunity.id,
         opportunity_title: opportunity.title,
-        space_id: opportunity.space?.id,
-        space_name: opportunity.space?.name,
+        space_id: opportunity.space_id,
         match_score: score,
         match_reasons: reasons,
         action_url: `/dna/contribute/needs/${opportunity.id}`
@@ -316,16 +305,13 @@ async function generateOpportunityNudges(supabase: any, userId: string): Promise
   if (memberships && memberships.length > 0) {
     const spaceIds = memberships.map((m: any) => m.space_id)
 
-    // Get high-priority needs from user's spaces
+    // Get recent open needs from user's spaces (opportunities has no priority column)
     const { data: trendingNeeds } = await supabase
-      .from('contribution_needs')
-      .select(`
-        *,
-        space:spaces(id, name, slug)
-      `)
+      .from('opportunities')
+      .select('*')
       .in('space_id', spaceIds)
-      .eq('status', 'open')
-      .eq('priority', 'high')
+      .eq('status', 'active')
+      .eq('direction', 'need')
       .neq('created_by', userId)
       .order('created_at', { ascending: false })
       .limit(1)
@@ -345,8 +331,7 @@ async function generateOpportunityNudges(supabase: any, userId: string): Promise
         payload: {
           opportunity_id: need.id,
           opportunity_title: need.title,
-          space_id: need.space?.id,
-          space_name: need.space?.name,
+          space_id: need.space_id,
           action_url: `/dna/contribute/needs/${need.id}`
         },
         expires_at: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString()
@@ -359,7 +344,7 @@ async function generateOpportunityNudges(supabase: any, userId: string): Promise
     .from('contribution_badges')
     .select(`
       *,
-      contribution_needs(title, type),
+      opportunities(title, type),
       spaces(name)
     `)
     .eq('user_id', userId)
@@ -369,7 +354,7 @@ async function generateOpportunityNudges(supabase: any, userId: string): Promise
 
   if (recentBadges && recentBadges.length > 0) {
     const badge = recentBadges[0]
-    const contributionType = CONTRIBUTION_TYPE_LABELS[badge.contribution_needs?.type] || 'contribution'
+    const contributionType = CONTRIBUTION_TYPE_LABELS[badge.opportunities?.type] || 'contribution'
     const projectName = badge.spaces?.name || 'the project'
 
     const message = getRandomTemplate('contribution_impact')

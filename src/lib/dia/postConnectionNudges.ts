@@ -134,17 +134,18 @@ async function findMatchingOpportunities(
 
     // Find open opportunities posted by the connected user
     const { data: opportunities } = await supabase
-      .from('contribution_needs')
-      .select('id, title, type, focus_areas')
+      .from('opportunities')
+      .select('id, title, type, tags')
       .eq('created_by', connectedUserId)
-      .eq('status', 'open')
+      .eq('status', 'active')
+      .eq('direction', 'need')
       .limit(5);
 
     if (!opportunities || opportunities.length === 0) return null;
 
     // Check for skill overlap
     for (const opp of opportunities) {
-      const oppSkills: string[] = (opp.focus_areas as string[]) || [];
+      const oppSkills: string[] = (opp.tags as string[]) || [];
       const overlap = userSkills.filter((s) =>
         oppSkills.some((os) => os.toLowerCase() === s.toLowerCase()),
       );

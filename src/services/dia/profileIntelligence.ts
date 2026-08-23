@@ -115,11 +115,12 @@ async function analyzeProfile(input: ProfileIntelligenceInput): Promise<ProfileI
  * Identify skills that are in-demand on the platform but missing from user's profile.
  */
 async function computeSkillGaps(userSkills: string[]): Promise<SkillGap[]> {
-  // Query popular skills from opportunities — contribution_needs uses 'type' not 'skills_needed'
+  // Query popular skills from opportunities — the table uses 'type' not 'skills_needed'
   const { data: opportunities } = await supabase
-    .from('contribution_needs')
+    .from('opportunities')
     .select('type, title, description')
-    .eq('status', 'open')
+    .eq('status', 'active')
+    .eq('direction', 'need')
     .limit(200);
 
   if (!opportunities) return [];

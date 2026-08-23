@@ -132,8 +132,8 @@ export async function generateEntityEmbedding(
 
       case 'need':
         const { data: need } = await supabase
-          .from('contribution_needs')
-          .select('title, description, type, focus_areas')
+          .from('opportunities')
+          .select('title, description, type, tags')
           .eq('id', entityId)
           .single();
         entityData = need;

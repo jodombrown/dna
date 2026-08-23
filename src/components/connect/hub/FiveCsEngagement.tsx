@@ -75,12 +75,13 @@ export function FiveCsEngagement({
         .eq('user_id', userId)
         .limit(5);
 
-      // Fetch CONTRIBUTE (contribution needs created by user)
+      // Fetch CONTRIBUTE (open needs created by user)
       const { data: contributions } = await supabase
-        .from('contribution_needs')
+        .from('opportunities')
         .select('id, title, type')
         .eq('created_by', userId)
-        .eq('status', 'open')
+        .eq('status', 'active')
+        .eq('direction', 'need')
         .limit(5);
 
       // Fetch CONVEY (posts with post_type = 'story' in last 30 days)

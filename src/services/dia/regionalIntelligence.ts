@@ -117,10 +117,10 @@ async function getRegionalSpaceStats(region: string) {
  */
 async function getRegionalOpportunityStats(region: string) {
   const { count: openCount } = await supabase
-    .from('contribution_needs')
+    .from('opportunities')
     .select('*', { count: 'exact', head: true })
-    .eq('status', 'open')
-    .ilike('location', `%${region}%`);
+    .eq('status', 'active')
+    .or(`location.ilike.%${region}%,specific_region.ilike.%${region}%`);
 
   return { openCount: openCount || 0 };
 }

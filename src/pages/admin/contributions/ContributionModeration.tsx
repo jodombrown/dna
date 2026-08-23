@@ -85,10 +85,10 @@ export default function ContributionModeration() {
           created_at,
           reviewed_at,
           reviewed_by,
-          need:contribution_needs!contribution_reports_need_id_fkey(
+          need:opportunities!contribution_reports_need_id_fkey(
             title,
             created_by,
-            space:spaces!contribution_needs_space_id_fkey(name)
+            space_id
           ),
           reporter:profiles!contribution_reports_reporter_id_fkey(full_name)
         `)
@@ -119,7 +119,7 @@ export default function ContributionModeration() {
         id: report.id,
         need_id: report.need_id,
         need_title: report.need?.title || 'Unknown',
-        space_title: report.need?.space?.name || 'Unknown Space',
+        space_title: report.need?.space_id ? 'Space' : 'No Space',
         reporter_id: report.reporter_id,
         reporter_name: report.reporter?.full_name || 'Unknown',
         reporter_email: report.reporter?.email || '',
@@ -197,7 +197,7 @@ export default function ContributionModeration() {
     try {
       // Close the need
       const { error: needError } = await (supabase as any)
-        .from('contribution_needs')
+        .from('opportunities')
         .update({ status: 'closed' })
         .eq('id', selectedReport.need_id);
 

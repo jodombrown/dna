@@ -121,29 +121,41 @@ export default function ContributionAnalytics() {
 
       // Fetch all needs
       const { data: needsData, error: needsError } = await (supabase as any)
-        .from('contribution_needs')
+        .from('opportunities')
         .select(`
           id,
           title,
           type,
           status,
-          target_amount,
-          currency,
+          budget_range,
           created_at,
-          space:spaces!contribution_needs_space_id_fkey(name)
+          space_id
         `);
 
       if (needsError) throw needsError;
 
+      // Space names via explicit lookup: opportunities.space_id has no FK to
+      // spaces, so a PostgREST embed would join through related_space_id.
+      const analyticsSpaceIds = [...new Set(
+        (needsData as Array<{ space_id: string | null }> | null ?? []).map((n) => n.space_id).filter(Boolean)
+      )] as string[];
+      const analyticsSpaceNames: Record<string, string> = {};
+      if (analyticsSpaceIds.length > 0) {
+        const { data: spaceRows } = await supabase
+          .from('spaces')
+          .select('id, name')
+          .in('id', analyticsSpaceIds);
+        (spaceRows ?? []).forEach((s) => { analyticsSpaceNames[s.id] = s.name; });
+      }
+
       // Fetch all offers
       const { data: offersData, error: offersError } = await (supabase as any)
-        .from('contribution_offers')
+        .from('opportunity_interests')
         .select(`
           id,
-          need_id,
-          created_by,
+          opportunity_id,
+          user_id,
           status,
-          offered_amount,
           created_at
         `);
 
@@ -152,21 +164,21 @@ export default function ContributionAnalytics() {
       // Build offer count map
       const offerCountMap: Record<string, number> = {};
       (offersData || []).forEach((offer: any) => {
-        offerCountMap[offer.need_id] = (offerCountMap[offer.need_id] || 0) + 1;
+        offerCountMap[offer.opportunity_id] = (offerCountMap[offer.opportunity_id] || 0) + 1;
       });
 
       // Calculate stats
       const totalOpportunities = (needsData || []).length;
-      const activeOpportunities = (needsData || []).filter((n: any) => n.status === 'open').length;
+      const activeOpportunities = (needsData || []).filter((n: any) => n.status === 'active').length;
       const fulfilledOpportunities = (needsData || []).filter((n: any) => n.status === 'fulfilled').length;
       const totalOffers = (offersData || []).length;
       const acceptedOffers = (offersData || []).filter((o: any) => o.status === 'accepted' || o.status === 'completed').length;
       const matchRate = totalOpportunities > 0 ? Math.round((fulfilledOpportunities / totalOpportunities) * 100) : 0;
 
-      // Calculate total funding requested
+      // Calculate total funding requested. opportunities has no 'funding' type
+      // and no target_amount column, so this sums every budget_range.amount.
       const totalFundingRequested = (needsData || [])
-        .filter((n: any) => n.type === 'funding' && n.target_amount)
-        .reduce((sum: number, n: any) => sum + (n.target_amount || 0), 0);
+        .reduce((sum: number, n: any) => sum + (typeof n.budget_range?.amount === 'number' ? n.budget_range.amount : 0), 0);
 
       setStats({
         totalOpportunities,
@@ -230,7 +242,7 @@ export default function ContributionAnalytics() {
       const contributorCounts: Record<string, { name: string; email: string; count: number }> = {};
 
       // Get user profiles for contributors
-      const contributorIds = [...new Set((offersData || []).map((o: any) => o.created_by))];
+      const contributorIds = [...new Set((offersData || []).map((o: any) => o.user_id))];
       let profileMap: Record<string, { full_name: string; email: string }> = {};
 
       if (contributorIds.length > 0) {
@@ -244,14 +256,14 @@ export default function ContributionAnalytics() {
       }
 
       (offersData || []).forEach((offer: any) => {
-        if (!contributorCounts[offer.created_by]) {
-          contributorCounts[offer.created_by] = {
-            name: profileMap[offer.created_by]?.full_name || 'Unknown',
-            email: profileMap[offer.created_by]?.email || '',
+        if (!contributorCounts[offer.user_id]) {
+          contributorCounts[offer.user_id] = {
+            name: profileMap[offer.user_id]?.full_name || 'Unknown',
+            email: profileMap[offer.user_id]?.email || '',
             count: 0
           };
         }
-        contributorCounts[offer.created_by].count++;
+        contributorCounts[offer.user_id].count++;
       });
 
       const topContributorsList = Object.entries(contributorCounts)
@@ -267,11 +279,11 @@ export default function ContributionAnalytics() {
 
       // Get hot opportunities (most offers)
       const hotOpportunitiesList = (needsData || [])
-        .filter((n: any) => n.status === 'open')
+        .filter((n: any) => n.status === 'active')
         .map((n: any) => ({
           id: n.id,
           title: n.title,
-          space_title: n.space?.name || 'Unknown Space',
+          space_title: n.space_id ? (analyticsSpaceNames[n.space_id] || 'Unknown Space') : 'No Space',
           type: n.type,
           offer_count: offerCountMap[n.id] || 0,
           created_at: n.created_at
