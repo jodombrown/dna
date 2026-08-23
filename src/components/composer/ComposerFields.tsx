@@ -245,6 +245,14 @@ export const ComposerFields: React.FC<ComposerFieldsProps> = ({
           <RolesChipInput roles={roles} isDia={diaFilled.has('roles')} onChange={onRolesChange} />
           <Choice {...common('type')} label="Type" options={SPACE_TYPES} placeholder="Initiative" />
         </div>
+        {/* Cover image — the same uploader and bucket Convey and Contribute use.
+            Without it the Space's feed envelope had nowhere to carry a picture,
+            so an attached graphic never reached the post (BD650 Finding A). */}
+        <StoryImageUpload
+          currentImageUrl={mediaUrl}
+          onUpload={onMediaChange}
+          onRemove={() => onMediaChange(undefined)}
+        />
         <MultiAttachmentUploader value={galleryUrls} onChange={onGalleryChange} maxFiles={6} />
         <p className="text-[11px] text-muted-foreground">
           Posting creates the Space and shares it to the feed. You stay right here.
