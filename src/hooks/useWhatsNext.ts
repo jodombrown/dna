@@ -78,8 +78,8 @@ export function useWhatsNext() {
         
         const { data: openNeeds } = await supabase
           .from('opportunities')
-          .select('id, title, space_id')
-          .in('space_id', spaceIds)
+          .select('id, title, related_space_id')
+          .in('related_space_id', spaceIds)
           .eq('status', 'active')
           .eq('direction', 'need')
           .limit(1);

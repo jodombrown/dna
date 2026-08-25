@@ -341,7 +341,7 @@ export async function executeTool(
       case "find_opportunities": {
         let q = supabase
           .from("opportunities")
-          .select("id, title, type, description, specific_region, tags, space_id")
+          .select("id, title, type, description, specific_region, tags, related_space_id, space:spaces(id, name)")
           .in("status", ["active", "in_progress"]);
         if (args.query) {
           const k = String(args.query).trim();
@@ -352,7 +352,8 @@ export async function executeTool(
         const { data } = await q.order("created_at", { ascending: false }).limit(ROW_CAP);
         const opportunities = (data ?? []).map((o: any) => ({
           id: o.id, title: o.title, type: o.type,
-          space_id: o.space_id, region: o.specific_region, focus_areas: o.tags,
+          space_id: o.related_space_id, space_name: o.space?.name,
+          region: o.specific_region, focus_areas: o.tags,
           relevance: "Open opportunity",
         }));
         return { text: JSON.stringify({ count: opportunities.length, opportunities: opportunities.slice(0, 8) }), results: { opportunities } };

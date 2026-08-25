@@ -51,7 +51,8 @@ const ProfileContributionsSectionImpl: React.FC<ProfileContributionsSectionProps
           description,
           status,
           created_at,
-          space_id
+          related_space_id,
+          spaces:spaces(name)
         `)
         .eq('created_by', userId)
         .eq('direction', 'need')
@@ -59,14 +60,14 @@ const ProfileContributionsSectionImpl: React.FC<ProfileContributionsSectionProps
         .limit(limit);
 
       if (!needsError && needs) {
-        needs.forEach((need: { id: string; title: string; description: string | null; status: string; created_at: string; space_id: string | null }) => {
+        needs.forEach((need: { id: string; title: string; description: string | null; status: string; created_at: string; related_space_id: string | null; spaces: { name: string } | null }) => {
           allContributions.push({
             id: need.id,
             type: 'need',
             title: need.title,
             description: need.description,
-            spaceId: need.space_id ?? undefined,
-            spaceName: undefined,
+            spaceId: need.related_space_id ?? undefined,
+            spaceName: need.spaces?.name,
             status: need.status,
             created_at: need.created_at,
           });
@@ -81,20 +82,20 @@ const ProfileContributionsSectionImpl: React.FC<ProfileContributionsSectionProps
           message,
           status,
           created_at,
-          opportunities (title, space_id)
+          opportunities (title, related_space_id)
         `)
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .limit(limit);
 
       if (!offersError && offers) {
-        offers.forEach((offer: { id: string; message: string | null; status: string; created_at: string; opportunities: { title: string; space_id: string | null } | null }) => {
+        offers.forEach((offer: { id: string; message: string | null; status: string; created_at: string; opportunities: { title: string; related_space_id: string | null } | null }) => {
           allContributions.push({
             id: offer.id,
             type: 'offer',
             title: offer.opportunities?.title || 'Contribution Offer',
             description: offer.message,
-            spaceId: offer.opportunities?.space_id ?? undefined,
+            spaceId: offer.opportunities?.related_space_id ?? undefined,
             spaceName: undefined,
             status: offer.status,
             created_at: offer.created_at,

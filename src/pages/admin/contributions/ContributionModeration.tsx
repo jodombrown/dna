@@ -85,10 +85,10 @@ export default function ContributionModeration() {
           created_at,
           reviewed_at,
           reviewed_by,
-          need:opportunities!contribution_reports_need_id_fkey(
+          need:opportunities(
             title,
             created_by,
-            space_id
+            related_space_id
           ),
           reporter:profiles!contribution_reports_reporter_id_fkey(full_name)
         `)
@@ -119,7 +119,7 @@ export default function ContributionModeration() {
         id: report.id,
         need_id: report.need_id,
         need_title: report.need?.title || 'Unknown',
-        space_title: report.need?.space_id ? 'Space' : 'No Space',
+        space_title: report.need?.related_space_id ? 'Space' : 'No Space',
         reporter_id: report.reporter_id,
         reporter_name: report.reporter?.full_name || 'Unknown',
         reporter_email: report.reporter?.email || '',

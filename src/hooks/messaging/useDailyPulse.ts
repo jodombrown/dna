@@ -153,10 +153,13 @@ export function useDailyPulse(enabled: boolean) {
 
       let needs: PulseNeed[] = [];
       if (spaceIds.length > 0) {
+        // related_space_id, not space_id: the composer (modeHandlers.ts) only
+        // ever writes related_space_id, and it is the sole FK to spaces, so the
+        // embed below resolves through it unambiguously.
         const needsRes = await supabase
           .from('opportunities')
-          .select('id, title, space_id, type, status, created_at')
-          .in('space_id', spaceIds)
+          .select('id, title, related_space_id, type, status, created_at, spaces:spaces(id, name)')
+          .in('related_space_id', spaceIds)
           .eq('status', 'active')
           .eq('direction', 'need')
           .order('created_at', { ascending: false })
@@ -166,28 +169,16 @@ export function useDailyPulse(enabled: boolean) {
           (needsRes.data ?? []) as Array<{
             id: string;
             title: string;
-            space_id: string | null;
+            related_space_id: string | null;
             type: string;
+            spaces: { id: string; name: string } | null;
           }>;
-
-        // Space names are resolved with an explicit lookup rather than a
-        // PostgREST embed: opportunities.space_id carries no FK to spaces, so
-        // `spaces(...)` would silently join through related_space_id instead.
-        const needSpaceIds = [...new Set(needsRaw.map((n) => n.space_id).filter(Boolean))] as string[];
-        const spaceNames = new Map<string, string>();
-        if (needSpaceIds.length > 0) {
-          const { data: spaceRows } = await supabase
-            .from('spaces')
-            .select('id, name')
-            .in('id', needSpaceIds);
-          (spaceRows ?? []).forEach((s: { id: string; name: string }) => spaceNames.set(s.id, s.name));
-        }
 
         needs = needsRaw.map((n) => ({
           id: n.id,
           title: n.title,
-          spaceId: n.space_id ?? '',
-          spaceTitle: (n.space_id && spaceNames.get(n.space_id)) || 'Space',
+          spaceId: n.related_space_id ?? '',
+          spaceTitle: n.spaces?.name || 'Space',
           type: n.type,
           href: `/dna/contribute/needs/${n.id}`,
         }));

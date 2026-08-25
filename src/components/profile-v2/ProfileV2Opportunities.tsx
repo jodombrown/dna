@@ -126,7 +126,8 @@ const ProfileV2OpportunitiesImpl: React.FC<ProfileV2OpportunitiesProps> = ({
           status,
           description,
           created_at,
-          space_id,
+          related_space_id,
+          space:spaces(id, name, slug),
           offers:opportunity_interests(count)
         `)
         .eq('created_by', profileUserId)
@@ -148,7 +149,8 @@ const ProfileV2OpportunitiesImpl: React.FC<ProfileV2OpportunitiesProps> = ({
         status: OpportunityStatus;
         description: string | null;
         created_at: string;
-        space_id: string | null;
+        related_space_id: string | null;
+        space: { id: string; name: string; slug: string } | null;
         offers: { count: number }[];
       }): OpportunityDisplayItem => ({
         id: item.id,
@@ -157,7 +159,7 @@ const ProfileV2OpportunitiesImpl: React.FC<ProfileV2OpportunitiesProps> = ({
         status: item.status,
         description: item.description,
         created_at: item.created_at,
-        space: undefined,
+        space: item.space ?? undefined,
         offer_count: item.offers?.[0]?.count || 0,
       }));
     },

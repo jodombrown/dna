@@ -128,25 +128,13 @@ export default function ContributionAnalytics() {
           type,
           status,
           budget_range,
+          direction,
           created_at,
-          space_id
+          related_space_id,
+          space:spaces(name)
         `);
 
       if (needsError) throw needsError;
-
-      // Space names via explicit lookup: opportunities.space_id has no FK to
-      // spaces, so a PostgREST embed would join through related_space_id.
-      const analyticsSpaceIds = [...new Set(
-        (needsData as Array<{ space_id: string | null }> | null ?? []).map((n) => n.space_id).filter(Boolean)
-      )] as string[];
-      const analyticsSpaceNames: Record<string, string> = {};
-      if (analyticsSpaceIds.length > 0) {
-        const { data: spaceRows } = await supabase
-          .from('spaces')
-          .select('id, name')
-          .in('id', analyticsSpaceIds);
-        (spaceRows ?? []).forEach((s) => { analyticsSpaceNames[s.id] = s.name; });
-      }
 
       // Fetch all offers
       const { data: offersData, error: offersError } = await (supabase as any)
@@ -176,8 +164,10 @@ export default function ContributionAnalytics() {
       const matchRate = totalOpportunities > 0 ? Math.round((fulfilledOpportunities / totalOpportunities) * 100) : 0;
 
       // Calculate total funding requested. opportunities has no 'funding' type
-      // and no target_amount column, so this sums every budget_range.amount.
+      // and no target_amount column, so this sums budget_range.amount — and only
+      // over asks, since an offer's budget is money being offered, not requested.
       const totalFundingRequested = (needsData || [])
+        .filter((n: any) => n.direction === 'need')
         .reduce((sum: number, n: any) => sum + (typeof n.budget_range?.amount === 'number' ? n.budget_range.amount : 0), 0);
 
       setStats({
@@ -283,7 +273,7 @@ export default function ContributionAnalytics() {
         .map((n: any) => ({
           id: n.id,
           title: n.title,
-          space_title: n.space_id ? (analyticsSpaceNames[n.space_id] || 'Unknown Space') : 'No Space',
+          space_title: n.space?.name || (n.related_space_id ? 'Unknown Space' : 'No Space'),
           type: n.type,
           offer_count: offerCountMap[n.id] || 0,
           created_at: n.created_at

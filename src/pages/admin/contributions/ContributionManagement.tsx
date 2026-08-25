@@ -44,7 +44,7 @@ interface NeedWithDetails {
   created_at: string;
   updated_at: string;
   created_by: string;
-  /** Nullable: opportunities.space_id allows standalone asks (D098). */
+  /** From opportunities.related_space_id; nullable for standalone asks (D098). */
   space_id: string | null;
   space_title: string;
   creator_name: string | null;
@@ -109,26 +109,13 @@ export default function ContributionManagement() {
           created_at,
           updated_at,
           created_by,
-          space_id,
+          related_space_id,
+          space:spaces(name),
           creator:profiles!opportunities_created_by_fkey(full_name)
         `)
         .order('created_at', { ascending: false });
 
       if (needsError) throw needsError;
-
-      // Space names need an explicit lookup: opportunities.space_id carries no
-      // FK to spaces, so a PostgREST embed would join via related_space_id.
-      const spaceIds = [...new Set(
-        (needsData as Array<{ space_id: string | null }> | null ?? []).map((n) => n.space_id).filter(Boolean)
-      )] as string[];
-      const spaceNames: Record<string, string> = {};
-      if (spaceIds.length > 0) {
-        const { data: spaceRows } = await supabase
-          .from('spaces')
-          .select('id, name')
-          .in('id', spaceIds);
-        (spaceRows ?? []).forEach((s) => { spaceNames[s.id] = s.name; });
-      }
 
       // Get interest counts (opportunities-native equivalent of offers)
       const { data: offerCounts } = await (supabase as any)
@@ -152,8 +139,8 @@ export default function ContributionManagement() {
         created_at: need.created_at,
         updated_at: need.updated_at,
         created_by: need.created_by,
-        space_id: need.space_id,
-        space_title: need.space_id ? (spaceNames[need.space_id] || 'Unknown Space') : 'No Space',
+        space_id: need.related_space_id,
+        space_title: need.space?.name || (need.related_space_id ? 'Unknown Space' : 'No Space'),
         creator_name: need.creator?.full_name || 'Unknown',
         creator_email: need.creator?.email || '',
         offer_count: offerCountMap[need.id] || 0
