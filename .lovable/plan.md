@@ -1,33 +1,59 @@
-# Fix the Contribute need card: body weight and missing media
+# Lens Bar handoff brief (for an external design agent)
 
-The card in the screenshot is `OpportunityFeedCard` (Contribute · Need). Two defects, both confirmed in the file:
+Purpose: a self-contained written spec of the DNA Lens Bar so another agent can reproduce its exact look, behaviour and constraints. Nothing in the app changes; the deliverable is this document (I can also drop it in `docs/LENS_BAR_SPEC.md` if you want it in the repo).
 
-1. The whole body is rendered as one semibold paragraph (`font-semibold`, plus an off-scale `text-[15px]`), so a long grant description reads as a wall of bold text.
-2. The card renders no media at all. There is no image, gallery, or link-preview block, so an attached image or a pasted link URL never appears. StoryCard and EventCard already render these through `CardMedia`; Contribute was never wired up.
+## What the Lens Bar is
 
-There is also no expand control on this card, so a long body has no ceiling: it just runs until the card ends.
+One primitive, `src/components/shell/LensBar.tsx`, used by every hub. A horizontal, icon-first segmented control that switches which slice of a surface is shown. It is not navigation between pages and it is not a filter set: filters live in the Rail / Narrow sheet.
 
-## What changes
+Surfaces and their lens sets (order is canonical):
+- Feed: All, For You, My Network, Mine, Saved (no C colour)
+- Connect: Members, Network, Map, Messages (Messages present-but-disabled)
+- Convene: All, Near Me, This Week, Online, Network, Curated by DNA
+- Collaborate: Discover, Mine, Completed
+- Contribute: Needs, Mine, Fulfilled
+- Convey: Pulse, Curated, My Circle, My Voice, Saved
 
-In `src/components/feed/cards/OpportunityFeedCard.tsx` only:
+## Behaviour, the load-bearing part
 
-- Replace the bold body paragraph with the shared `ExpandableProse` block, at normal weight, muted foreground, with the Contribute accent on the Read more control. Same body treatment every other card already uses.
-- Add media, in the same order and shape StoryCard uses, above the body:
-  - hero image from `media_url`, inside `CardMedia`, fixed band height
-  - gallery strip when `gallery_urls` has entries
-  - `LinkPreviewCard` (compact) when `link_url` is present, so a pasted video or article link shows a preview instead of a bare link
-- Keep the header, the currency pill, the give / for / impact proof block, and the action row exactly as they are.
+- State lives in the URL as `?lens=<id>`. No component state, no context. A link can land on a lens; the back button moves between lenses rather than off the surface (`replace: false`).
+- Unknown or absent `?lens=` selects the first lens and does not rewrite the URL.
+- Tapping the ACTIVE lens does not re-navigate: it toggles the descriptor line.
+- A disabled lens keeps its seat: `aria-disabled`, `tabIndex -1`, dashed border, no click. Sets must not renumber when a flag flips.
+- Light haptic on every accepted tap.
 
-## Technical notes
+## Structure
 
-- Body: `<ExpandableProse content={item.content} accentClassName="text-bevel-opportunity" className="mb-3 text-body leading-relaxed text-muted-foreground" />`, which drops the `text-[15px]` bracket value the design-system gate bans.
-- `linkifyContent` is no longer called directly by this card (ExpandableProse handles it); its import gets removed if unused.
-- No data or RPC change: `media_url`, `gallery_urls`, `link_url`, and `link_metadata` are already on `UniversalFeedItem` and already returned by the feed query, which is why StoryCard can read them.
+Track: `role="tablist"` with an `aria-label`; each lens is a `<button role="tab" aria-selected>`. Accessible name is `"{label}: {description}"`, so the descriptor copy has one source per lens.
 
-## Verification
+Active chip: an absolutely positioned span behind the active button, measured from the button's `offsetLeft`/`offsetWidth`. It is content-sized, never `flex-1`, so tapping never reflows siblings. Placement runs before paint, so the first frame is already correct; the transform/width transition only enables after that first placement. A `ResizeObserver` on the active button re-measures when the surrounding rail collapses or expands.
 
-- Render the Contribute need post from the screenshot at 402px: body at normal weight with a Read more control, image visible if one was attached, link preview if a URL was posted.
-- Check 768px and 1440px for the same card.
-- Confirm no bracket values or banned Tailwind sizes entered the file.
+Sizing rules:
+- Active lens: `flex-none`, `p-2`, icon plus label.
+- Inactive lenses: `flex-1` with a 32px floor, icon only below `lg:`.
+- At `lg:` and up every label renders.
+- Min height 36px. Track scrolls horizontally (`overflow-x-auto`, hidden scrollbar) only when the set genuinely cannot fit; the active chip is auto-scrolled into view with a 4px margin. Nothing truncates, nothing compresses, nothing clips.
 
-Only one file is touched. If the post in the screenshot turns out to have no image attached and no link in its content, the missing-image half is a composer/storage question rather than a card question, and I will say so rather than claim it fixed.
+Descriptor line: one italic, muted, single-line `text-meta` sentence under the track, only when the active lens has a description. Visible on arrival and on every lens change. Collapses on scroll-down away from top and latches collapsed (scroll-up does not bring it back, so it cannot flicker); tapping the active lens is the only way back. Collapse animates `max-height` (0 to 20), not opacity, so content below rises into the reclaimed space. 150ms, ease-out, matching the chip. Not persisted: a fresh visit starts visible.
+
+## Colour and tokens
+
+Only one place hue appears: the ACTIVE lens icon. It resolves through the `c5` Tailwind key for the surface's C (`text-c5-connect|convene|collaborate|contribute|convey`). Feed is not a C, so its active icon is `text-foreground`. Inactive icons/labels are `text-foreground/70`, hover `text-foreground`.
+
+Track: `bg-muted`, `rounded-lg`, `p-1`, `gap-1`, plus a 1px inset top hairline in `--border`. Active chip: `bg-surface-raised`, `rounded-md`, `shadow-dna-2`. Focus ring is the emerald `--ring` on every surface and both themes, never the C's colour.
+
+Hard prohibitions the design must respect: no raw hex/rgb/hsl literal, no bracket/arbitrary Tailwind values, no font size outside `hero display h1 h2 h3 body meta micro` (the bar uses `text-meta` only), no `text-sm`/`text-xs`, only `sm md lg` breakpoints. Colour classes must be built literally, never string-interpolated, or Tailwind's scanner misses them.
+
+## Chrome placement
+
+`HubTabsRow` (`px-3 py-1.5 bg-background border-b border-border`) is the only wrapper. It goes in `DnaMobileHubShell`'s `tabs` slot on mobile and `AppShell`'s `tabs` slot on desktop, so the row is a pinned full-bleed chrome band under the header, never inside the page's content column. All five hubs plus Feed do this identically; a hub that renders its bar in content is the defect (that was Collaborate's bug).
+
+Desktop alternative: `LensRail` is the same URL contract presented as a ~208px vertical labelled sidebar with live counts (a count renders only when greater than 0). Exactly one of LensBar / LensRail is mounted at a time.
+
+Empty, loading and error are all part of the surface: the Lens Bar never changes between the three, only the body below it swaps.
+
+Icons are Lucide, one glyph one meaning, unique within a surface and globally reserved (`docs/ICON_USAGE_GUIDE.md`, enforced by `scripts/check-icon-duplicates.ts`). Adinkra is reserved for the C nav itself and never appears in the bar.
+
+## What I need from you before writing the "new enhancements" section
+
+The brief above documents the bar as it ships today. Tell me which enhancements you want the other agent to design toward (for example: label reveal rules, count badges on mobile, animated descriptor, overflow affordance, keyboard arrow-key roving tabindex) and I will add a section stating each as a constraint rather than leaving it open to interpretation.
